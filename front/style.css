@@ -236,10 +236,18 @@ nav {
   font-weight: 600;
   transition: 0.15s;
 }
+
+.sidebar-item img {
+  width: 15%;
+  height: 20%px;
+  filter: invert(100%) sepia(100%) grayscale(200%) brightness(150%);
+}
 .sidebar-item:hover {
   background: var(--primary-mid);
   color: var(--primary);
 }
+
+
 .sidebar-logout {
   margin-top: auto;
   width: 100%;
