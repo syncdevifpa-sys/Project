@@ -331,7 +331,6 @@ let calMes = 5;
 
 function renderCalendario() {
   const label = document.getElementById("calMonthLabel");
-  const grid = document.getElementById("calGrid");
   const evList = document.getElementById("calEventsList");
   if (!label || !grid || !evList) return;
   label.textContent = `${MESES_PT[calMes]} ${calAno}`;
@@ -371,7 +370,6 @@ function renderCalendario() {
   const eventosMes = calEventos
     .filter((e) => e.ano === calAno && e.mes === calMes)
     .sort((a, b) => a.dia - b.dia);
-  const evList = document.getElementById("calEventsList");
   evList.innerHTML = eventosMes.length
     ? eventosMes
         .map(
