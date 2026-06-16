@@ -1,399 +1,233 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcádia</title>
-
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arcádia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
 
-    <div class="overlay" id="overlay"></div>
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">A</div>
+    <span class="logo-text">Arcádia</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#feed">Feed</a></li>
+    <li><a href="#calendario">Calendário</a></li>
+    <li><a href="#documentos">Documentos</a></li>
+    <li><a href="#">Contato</a></li>
+  </ul>
+  <div class="nav-end">
+    <button class="login-btn">Entrar</button>
+    <button class="avatar-btn" id="openSidebar">U</button>
+  </div>
+</nav>
 
-    <!-- NAVBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">U</div>
+      <div>
+        <div class="sidebar-user-name">Usuário</div>
+        <div class="sidebar-user-role">Comunidade Arcádia</div>
+      </div>
+    </div>
+    <button class="sidebar-close" id="closeSidebar">×</button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+    <a href="#" class="sidebar-item">👤 Perfil</a>
+    <a href="#" class="sidebar-item">📁 Projetos</a>
+    <a href="#" class="sidebar-item">⚙️ Configurações</a>
+  </div>
+  <button class="sidebar-logout">🚪 Sair</button>
+</aside>
 
-    <nav>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">✦ Plataforma Acadêmica</div>
+    <h1>Um espaço para a <em>comunidade</em> Arcádia</h1>
+    <p class="hero-sub">Notícias, projetos e comunicados reunidos em um só lugar — para docentes, discentes e toda a comunidade acadêmica.</p>
+    <div class="hero-btns">
+      <a href="#feed" class="btn-primary">Ver Comunicados</a>
+      <a href="#calendario" class="btn-ghost">Calendário Acadêmico</a>
+    </div>
+  </div>
+</section>
 
-        <a href="#" class="nav-logo">
-            <div class="logo-mark">A</div>
-            <span class="logo-text">Arcádia</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="#">Página Inicial</a></li>
-            <li><a href="#">Notícias</a></li>
-            <li><a href="#">Projetos</a></li>
-            <li><a href="#">Contato</a></li>
-        </ul>
-
-        <div class="nav-end">
-
-            <button class="login-btn">
-                Entrar
-            </button>
-
-            <button class="avatar-btn" id="openSidebar">
-                <span class="badge">U</span>
-            </button>
-
-        </div>
-
-    </nav>
-
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar" id="sidebar">
-
-        <div class="sidebar-header">
-
-            <div class="sidebar-user">
-
-                <div class="sidebar-avatar">
-                    U
-                </div>
-
-                <div>
-
-                    <div class="sidebar-user-name">
-                        Usuario
-                    </div>
-
-                </div>
-
-            </div>
-
-            <button class="sidebar-close" id="closeSidebar">
-                ×
-            </button>
-
-        </div>
-
-        <div class="sidebar-section">
-
-            <div class="sidebar-section-label">
-                Menu
-            </div>
-            <a href="#" class="sidebar-item">
-                <img src="img/perfil.png" alt="img-perfil" width="30px">
-                Perfil
-
-            </a>
-
-
-            <a href="#" class="sidebar-item">
-                <img src="img/projects.png" alt="" width="30px">
-                Projetos
-            </a>
-
-            <a href="#" class="sidebar-item">
-                <img src="img/config.png" alt="" width="30px">
-                Configurações
-            </a>
-
-        </div>
-
-        <button class="sidebar-logout">
-
-            <span class="icon">🚪</span>
-
-            Sair
-
-        </button>
-
-    </aside>
-
-</body>
-
-<script src="script.js"></script>
-
-</html>
-
-
+<div class="stats-strip">
+  <div class="stat-item"><span class="stat-num">320+</span><span class="stat-label">Discentes Ativos</span></div>
+  <div class="stat-item"><span class="stat-num">48</span><span class="stat-label">Docentes</span></div>
+  <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">Projetos em Curso</span></div>
+  <div class="stat-item"><span class="stat-num">2026</span><span class="stat-label">Ano Letivo</span></div>
+</div>
 
 <main>
 
-    <section class="hero">
+  <section id="feed" class="page-section">
 
-        <div class="hero-tag">
-            ✦ Bem-vindo ao Arcádia
+    <div class="section-header">
+      <div>
+        <div class="section-label">Comunicados & Informes</div>
+        <h2 class="section-title">Feed de Notícias</h2>
+      </div>
+    </div>
+
+    <div class="feed-controls">
+
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Buscar por título, edital, data ou palavra-chave…"
+        >
+        <button class="search-clear" id="searchClear" style="display:none">×</button>
+      </div>
+
+      <div class="filter-row">
+
+        <div class="filter-group">
+          <span class="filter-label">Público:</span>
+          <div class="filter-chips" id="filterPublico">
+            <button class="chip active" data-filter="todos">Todos</button>
+            <button class="chip" data-filter="aluno">Aluno</button>
+            <button class="chip" data-filter="professor">Professor</button>
+            <button class="chip" data-filter="servidor">Servidor</button>
+          </div>
         </div>
 
-        <h1>
-            Fique por dentro das últimas
-            <em>Notícias</em> e Projetos
-        </h1>
-
-        <p>
-            Acompanhe tudo em um só lugar —
-            conteúdos selecionados, projetos
-            em destaque e atualizações em
-            tempo real para você.
-        </p>
-
-        <div class="hero-btns">
-            <button class="btn-primary">
-                Ver Notícias
-            </button>
-
-            <button class="btn-ghost">
-                Explorar Projetos
-            </button>
+        <div class="filter-group">
+          <span class="filter-label">Categoria:</span>
+          <div class="filter-chips" id="filterCategoria">
+            <button class="chip active" data-cat="todas">Todas</button>
+            <button class="chip" data-cat="matricula">Matrícula</button>
+            <button class="chip" data-cat="evento">Evento</button>
+            <button class="chip" data-cat="cancelamento">Cancelamento</button>
+            <button class="chip" data-cat="edital">Edital</button>
+            <button class="chip" data-cat="calendario">Calendário</button>
+          </div>
         </div>
 
-    </section>
+      </div>
+    </div>
 
-    <!-- NOTÍCIAS -->
+    <div id="feedEmpty" class="feed-empty" style="display:none">
+      <span class="empty-icon">📭</span>
+      <p>Nenhum comunicado encontrado para essa busca.</p>
+    </div>
 
-    <section>
+    <div class="feed-list" id="feedList"></div>
 
-        <h1 class="setor-title">
-            Últimas Notícias
-        </h1>
+  </section>
 
-        <div class="pai-columns">
+  <section id="calendario" class="page-section">
 
-            <div class="card">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Ano Letivo 2026</div>
+        <h2 class="section-title">Calendário Acadêmico</h2>
+      </div>
+    </div>
 
-                <img src="https://picsum.photos/400/250?random=1">
+    <div class="calendar-layout">
 
-                <div class="card-content">
-
-                    <span>Tecnologia</span>
-
-                    <h2>
-                        Nova IA revoluciona o desenvolvimento web
-                    </h2>
-
-                    <p>
-                        Ferramentas modernas estão mudando a forma
-                        como desenvolvedores criam aplicações.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <img src="https://picsum.photos/400/250?random=2">
-
-                <div class="card-content">
-
-                    <span>Projetos</span>
-
-                    <h2>
-                        Equipe Arcádia lança nova plataforma
-                    </h2>
-
-                    <p>
-                        O projeto promete integração moderna
-                        e foco em performance.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <img src="https://picsum.photos/400/250?random=3">
-
-                <div class="card-content">
-
-                    <span>Design</span>
-
-                    <h2>
-                        Tendências minimalistas dominam 2026
-                    </h2>
-
-                    <p>
-                        Interfaces limpas e animações suaves
-                        continuam em alta.
-                    </p>
-
-                </div>
-
-            </div>
-
+      <div class="cal-panel">
+        <div class="cal-nav">
+          <button class="cal-btn" id="prevMonth">‹</button>
+          <span class="cal-month-label" id="calMonthLabel"></span>
+          <button class="cal-btn" id="nextMonth">›</button>
         </div>
-
-    </section>
-
-    <!-- PROJETOS -->
-
-    <section>
-
-        <h1 class="setor-title">
-            Projetos em Destaque
-        </h1>
-
-        <div class="pai-columns">
-
-            <div class="card">
-
-                <img src="https://picsum.photos/400/250?random=10">
-
-                <div class="card-content">
-
-                    <span>Web App</span>
-
-                    <h2>
-                        Sistema de gerenciamento escolar
-                    </h2>
-
-                    <p>
-                        Plataforma desenvolvida para controle
-                        acadêmico, notas e frequência.
-                    </p>
-
-                    <button class="project-btn">
-                        Ver Projeto
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <img src="https://picsum.photos/400/250?random=11">
-
-                <div class="card-content">
-
-                    <span>UI/UX</span>
-
-                    <h2>
-                        Dashboard administrativo moderno
-                    </h2>
-
-                    <p>
-                        Interface minimalista focada em produtividade
-                        e experiência do usuário.
-                    </p>
-
-                    <button class="project-btn">
-                        Ver Projeto
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <img src="https://picsum.photos/400/250?random=12">
-
-                <div class="card-content">
-
-                    <span>Mobile</span>
-
-                    <h2>
-                        Aplicativo de notícias em tempo real
-                    </h2>
-
-                    <p>
-                        Aplicativo responsivo com integração API
-                        e atualização dinâmica.
-                    </p>
-
-                    <button class="project-btn">
-                        Ver Projeto
-                    </button>
-
-                </div>
-
-            </div>
-
+        <div class="cal-grid-header">
+          <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
         </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <span class="leg-dot leg-prova"></span><span>Prova</span>
+          <span class="leg-dot leg-prazo"></span><span>Prazo</span>
+          <span class="leg-dot leg-evento"></span><span>Evento</span>
+          <span class="leg-dot leg-feriado"></span><span>Feriado</span>
+        </div>
+      </div>
 
-    </section>
+      <div class="cal-events-panel">
+        <h3 class="cal-events-title">Eventos do mês</h3>
+        <div class="cal-events-list" id="calEventsList"></div>
+      </div>
+
+    </div>
+
+    <div class="reminders-wrap">
+      <h3 class="reminders-title">⏰ Próximos lembretes</h3>
+      <div class="reminders-grid" id="remindersGrid"></div>
+    </div>
+
+  </section>
+
+  <section id="documentos" class="page-section">
+
+    <div class="section-header">
+      <div>
+        <div class="section-label">Acesso Rápido</div>
+        <h2 class="section-title">Central de Documentos e Links</h2>
+      </div>
+    </div>
+
+    <div class="docs-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="docsSearch" class="search-input" placeholder="Buscar formulários, manuais, e-mails…">
+    </div>
+
+    <div class="docs-grid" id="docsGrid"></div>
+
+  </section>
 
 </main>
 
 <footer>
-
-    <div class="footer-container">
-
-        <div class="footer-brand">
-
-            <div class="footer-logo">
-
-                <div class="logo-mark">A</div>
-
-                <span class="logo-text">
-                    Arcádia
-                </span>
-
-            </div>
-
-            <p>
-                Plataforma focada em notícias,
-                tecnologia, projetos e inovação digital.
-            </p>
-
-        </div>
-
-        <div class="footer-links">
-
-            <div class="footer-column">
-
-                <h3>Navegação</h3>
-
-                <a href="#">Início</a>
-                <a href="#">Notícias</a>
-                <a href="#">Projetos</a>
-                <a href="#">Contato</a>
-
-            </div>
-
-            <div class="footer-column">
-
-                <h3>Projetos</h3>
-
-                <a href="#">Dashboard</a>
-                <a href="#">Web Apps</a>
-                <a href="#">UI/UX</a>
-                <a href="#">Mobile</a>
-
-            </div>
-
-            <div class="footer-column">
-
-                <h3>Redes</h3>
-
-                <a href="#">Instagram</a>
-                <a href="#">GitHub</a>
-                <a href="#">LinkedIn</a>
-                <a href="#">YouTube</a>
-
-            </div>
-
-        </div>
-
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">
+        <div class="logo-mark">A</div>
+        <span class="logo-text">Arcádia</span>
+      </a>
+      <p>Plataforma de comunicação acadêmica para docentes, discentes e a comunidade Arcádia.</p>
     </div>
-
-    <div class="footer-bottom">
-
-        <p>
-            © 2026 Arcádia. Todos os direitos reservados.
-        </p>
-
-        <span>
-            Desenvolvido por SyncDev
-        </span>
-
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <a href="#feed">Feed</a>
+        <a href="#calendario">Calendário</a>
+        <a href="#documentos">Documentos</a>
+        <a href="#">Contato</a>
+      </div>
+      <div class="footer-col">
+        <h4>Público</h4>
+        <a href="#">Alunos</a>
+        <a href="#">Professores</a>
+        <a href="#">Servidores</a>
+      </div>
+      <div class="footer-col">
+        <h4>Redes</h4>
+        <a href="#">Instagram</a>
+        <a href="#">GitHub</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">YouTube</a>
+      </div>
     </div>
-
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Arcádia. Todos os direitos reservados.</p>
+    <span>Desenvolvido por SyncDev</span>
+  </div>
 </footer>
 
+<script src="script.js"></script>
 </body>
-
 </html>
-
