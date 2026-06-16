@@ -813,3 +813,162 @@ body.dark-theme .login-btn:hover {
   border-color: var(--primary);
   color: var(--primary);
 }
+
+/* Cards e Grids */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 32px;
+    padding: 24px 48px 0;
+}
+
+.card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all .3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,.1);
+    border-color: var(--primary-mid);
+}
+
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--primary-mid);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.card-content h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+    line-height: 1.3;
+}
+
+.card-content p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.project-btn {
+    margin-top: 16px;
+    padding: 8px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.project-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.02);
+}
+
+/* Footer ajustes */
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 48px;
+    flex-wrap: wrap;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.footer-brand p {
+    max-width: 280px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.footer-links {
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-column h3 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.footer-column a {
+    color: var(--muted);
+    font-size: 14px;
+    transition: .15s;
+}
+
+.footer-column a:hover {
+    color: var(--primary);
+}
+
+.footer-bottom {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* Tema escuro para os cards */
+body.dark-theme .card {
+    background: var(--surface);
+}
+
+body.dark-theme .card:hover {
+    box-shadow: 0 12px 24px rgba(0,0,0,.3);
+}
+
+body.dark-theme .project-btn {
+    background: var(--primary);
+}
+
+body.dark-theme .project-btn:hover {
+    background: var(--primary-hover);
+}
