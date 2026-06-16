@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcádia</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- OVERLAY -->
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- NAVBAR -->
+
+    <nav>
+
+        <a href="#" class="nav-logo">
+            <div class="logo-mark">A</div>
+            <span class="logo-text">Arcádia</span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#">Página Inicial</a></li>
+            <li><a href="#">Notícias</a></li>
+            <li><a href="#">Projetos</a></li>
+            <li><a href="#">Contato</a></li>
+        </ul>
+
+        <div class="nav-end">
+
+            <button class="login-btn">
+                Entrar
+            </button>
+
+            <button class="avatar-btn" id="openSidebar">
+                <span class="badge">U</span>
+            </button>
+
+        </div>
+
+    </nav>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+
+            <div class="sidebar-user">
+
+                <div class="sidebar-avatar">
+                    U
+                </div>
+
+                <div>
+
+                    <div class="sidebar-user-name">
+                        Usuario
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button class="sidebar-close" id="closeSidebar">
+                ×
+            </button>
+
+        </div>
+
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-label">
+                Menu
+            </div>
+            <a href="#" class="sidebar-item">
+                <img src="img/perfil.png" alt="img-perfil" width="30px">
+                Perfil
+
+            </a>
+
+
+            <a href="#" class="sidebar-item">
+                <img src="img/projects.png" alt="" width="30px">
+                Projetos
+            </a>
+
+            <a href="#" class="sidebar-item">
+                <img src="img/config.png" alt="" width="30px">
+                Configurações
+            </a>
+
+        </div>
+
+        <button class="sidebar-logout">
+
+            <span class="icon">🚪</span>
+
+            Sair
+
+        </button>
+
+    </aside>
+
+</body>
+
+<script src="script.js"></script>
+
+</html>
+
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-tag">
+            ✦ Bem-vindo ao Arcádia
+        </div>
+
+        <h1>
+            Fique por dentro das últimas
+            <em>Notícias</em> e Projetos
+        </h1>
+
+        <p>
+            Acompanhe tudo em um só lugar —
+            conteúdos selecionados, projetos
+            em destaque e atualizações em
+            tempo real para você.
+        </p>
+
+        <div class="hero-btns">
+            <button class="btn-primary">
+                Ver Notícias
+            </button>
+
+            <button class="btn-ghost">
+                Explorar Projetos
+            </button>
+        </div>
+
+    </section>
+
+    <!-- NOTÍCIAS -->
+
+    <section>
+
+        <h1 class="setor-title">
+            Últimas Notícias
+        </h1>
+
+        <div class="pai-columns">
+
+            <div class="card">
+
+                <img src="https://picsum.photos/400/250?random=1">
+
+                <div class="card-content">
+
+                    <span>Tecnologia</span>
+
+                    <h2>
+                        Nova IA revoluciona o desenvolvimento web
+                    </h2>
+
+                    <p>
+                        Ferramentas modernas estão mudando a forma
+                        como desenvolvedores criam aplicações.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <img src="https://picsum.photos/400/250?random=2">
+
+                <div class="card-content">
+
+                    <span>Projetos</span>
+
+                    <h2>
+                        Equipe Arcádia lança nova plataforma
+                    </h2>
+
+                    <p>
+                        O projeto promete integração moderna
+                        e foco em performance.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <img src="https://picsum.photos/400/250?random=3">
+
+                <div class="card-content">
+
+                    <span>Design</span>
+
+                    <h2>
+                        Tendências minimalistas dominam 2026
+                    </h2>
+
+                    <p>
+                        Interfaces limpas e animações suaves
+                        continuam em alta.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PROJETOS -->
+
+    <section>
+
+        <h1 class="setor-title">
+            Projetos em Destaque
+        </h1>
+
+        <div class="pai-columns">
+
+            <div class="card">
+
+                <img src="https://picsum.photos/400/250?random=10">
+
+                <div class="card-content">
+
+                    <span>Web App</span>
+
+                    <h2>
+                        Sistema de gerenciamento escolar
+                    </h2>
+
+                    <p>
+                        Plataforma desenvolvida para controle
+                        acadêmico, notas e frequência.
+                    </p>
+
+                    <button class="project-btn">
+                        Ver Projeto
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <img src="https://picsum.photos/400/250?random=11">
+
+                <div class="card-content">
+
+                    <span>UI/UX</span>
+
+                    <h2>
+                        Dashboard administrativo moderno
+                    </h2>
+
+                    <p>
+                        Interface minimalista focada em produtividade
+                        e experiência do usuário.
+                    </p>
+
+                    <button class="project-btn">
+                        Ver Projeto
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <img src="https://picsum.photos/400/250?random=12">
+
+                <div class="card-content">
+
+                    <span>Mobile</span>
+
+                    <h2>
+                        Aplicativo de notícias em tempo real
+                    </h2>
+
+                    <p>
+                        Aplicativo responsivo com integração API
+                        e atualização dinâmica.
+                    </p>
+
+                    <button class="project-btn">
+                        Ver Projeto
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <div class="footer-logo">
+
+                <div class="logo-mark">A</div>
+
+                <span class="logo-text">
+                    Arcádia
+                </span>
+
+            </div>
+
+            <p>
+                Plataforma focada em notícias,
+                tecnologia, projetos e inovação digital.
+            </p>
+
+        </div>
+
+        <div class="footer-links">
+
+            <div class="footer-column">
+
+                <h3>Navegação</h3>
+
+                <a href="#">Início</a>
+                <a href="#">Notícias</a>
+                <a href="#">Projetos</a>
+                <a href="#">Contato</a>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Projetos</h3>
+
+                <a href="#">Dashboard</a>
+                <a href="#">Web Apps</a>
+                <a href="#">UI/UX</a>
+                <a href="#">Mobile</a>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Redes</h3>
+
+                <a href="#">Instagram</a>
+                <a href="#">GitHub</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">YouTube</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Arcádia. Todos os direitos reservados.
+        </p>
+
+        <span>
+            Desenvolvido por SyncDev
+        </span>
+
+    </div>
+
+</footer>
+
+</body>
+
+</html>
+
