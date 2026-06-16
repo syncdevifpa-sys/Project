@@ -2,6 +2,37 @@ const sidebar = document.getElementById("sidebar");
 const overlay = document.getElementById("overlay");
 const openBtn = document.getElementById("openSidebar");
 const closeBtn = document.getElementById("closeSidebar");
+const loginBtn = document.getElementById("login");
+
+function openLoginPanel() {
+  const painel = document.createElement("div");
+  painel.className = "painel-login";
+  painel.innerHTML = `
+    <div class="painel-login-content">
+      <button class="painel-login-close" type="button" aria-label="Fechar">×</button>
+      <h2>Login</h2>
+      <input type="text" placeholder="Usuário" id="loginUser">
+      <input type="password" placeholder="Senha" id="loginPass">
+      <button id="submitLogin">Entrar</button>
+    </div>
+  `;
+  document.body.appendChild(painel);
+
+  const closeLogin = painel.querySelector(".painel-login-close");
+  if (closeLogin) {
+    closeLogin.addEventListener("click", () => painel.remove());
+  }
+
+  painel.addEventListener("click", (event) => {
+    if (event.target === painel) {
+      painel.remove();
+    }
+  });
+}
+
+if (loginBtn) {
+  loginBtn.addEventListener("click", openLoginPanel);
+}
 
 if (sidebar && overlay && openBtn && closeBtn) {
   openBtn.addEventListener("click", () => {
@@ -194,17 +225,23 @@ document.getElementById("filterCategoria").addEventListener("click", (e) => {
 
 const searchInput = document.getElementById("searchInput");
 const searchClear = document.getElementById("searchClear");
-searchInput.addEventListener("input", () => {
-  searchTerm = searchInput.value;
-  searchClear.style.display = searchTerm ? "block" : "none";
-  renderFeed();
-});
-searchClear.addEventListener("click", () => {
-  searchInput.value = "";
-  searchTerm = "";
-  searchClear.style.display = "none";
-  renderFeed();
-});
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    searchTerm = searchInput.value;
+    if (searchClear) {
+      searchClear.style.display = searchTerm ? "block" : "none";
+    }
+    renderFeed();
+  });
+}
+if (searchClear) {
+  searchClear.addEventListener("click", () => {
+    if (searchInput) searchInput.value = "";
+    searchTerm = "";
+    searchClear.style.display = "none";
+    renderFeed();
+  });
+}
 
 renderFeed();
 
@@ -331,6 +368,7 @@ let calMes = 5;
 
 function renderCalendario() {
   const label = document.getElementById("calMonthLabel");
+  const grid = document.getElementById("calGrid");
   const evList = document.getElementById("calEventsList");
   if (!label || !grid || !evList) return;
   label.textContent = `${MESES_PT[calMes]} ${calAno}`;
@@ -418,7 +456,6 @@ function renderLembretes() {
     .sort((a, b) => a.data - b.data)
     .slice(0, 6);
 
-  const grid = document.getElementById("remindersGrid");
   grid.innerHTML = proximos
     .map((e) => {
       const diff = Math.ceil((e.data - hoje) / 86400000);
