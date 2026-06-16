@@ -1,0 +1,122 @@
+.profile-container{
+    max-width: 1300px;
+    margin: 40px auto;
+
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+
+    padding: 0 20px;
+}
+
+.profile-sidebar{
+    background: white;
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    height: fit-content;
+}
+
+.profile-avatar{
+    width: 100%;
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 4px solid var(--primary);
+}
+
+.profile-sidebar h2{
+    margin-top: 20px;
+}
+
+.profile-user{
+    color: var(--muted);
+}
+
+.profile-bio{
+    margin-top: 15px;
+
+    line-height: 1.6;
+}
+
+.edit-profile{
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: var(--primary);
+    color: white;
+
+    font-weight: bold;
+}
+
+.profile-content{
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.profile-stats{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+}
+
+.stat-card{
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    text-align: center;
+}
+
+.stat-card h3{
+    font-size: 32px;
+    color: var(--primary);
+}
+
+.profile-section{
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    padding: 25px;
+}
+
+.project-list{
+    margin-top: 15px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.project-item{
+    padding: 15px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    transition: .2s;
+}
+
+.project-item:hover{
+    background: #f8fafc;
+}
