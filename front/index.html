@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arcádia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -38,26 +40,35 @@
                 <div class="sidebar-avatar">U</div>
                 <div>
                     <div class="sidebar-user-name">Usuário</div>
-                    <div class="sidebar-user-role">Comunidade Arcádia</div>
+                    <div class="sidebar-user-role">@Usuario123</div>
                 </div>
             </div>
             <button class="sidebar-close" id="closeSidebar">×</button>
         </div>
 
         <div class="sidebar-section">
-            <div class="sidebar-section-label">Menu</div>
-            <a href="#" class="sidebar-item">
-               <img src="img/user-icon.png" alt="Icone de Usuario">
-                Perfil
-            </a>
-            <a href="#" class="sidebar-item">
-                <img src="img/project-icon.png" alt="">
-                Projetos
-            </a>
-            <a href="#" class="sidebar-item">
-                <img src="img/config-icon.png" alt="" color="black">
-                Configurações
-            </a>
+            <div class="sidebar-section">
+
+                <div class="sidebar-section-label">
+                    Menu
+                </div>
+
+                <a href="usernav.html" class="sidebar-item" target="_blank" >
+                    <img src="img/user-icon.png" alt="Ícone de Usuário" >
+                    Perfil
+                </a>
+
+                <a href="projetos.html" class="sidebar-item">
+                    <img src="img/project-icon.png" alt="Ícone de Projetos">
+                    Projetos
+                </a>
+
+                <a href="config.html" class="sidebar-item">
+                    <img src="img/config-icon.png" alt="Ícone de Configurações">
+                    Configurações
+                </a>
+
+            </div>
         </div>
 
         <button class="sidebar-logout">
@@ -71,7 +82,8 @@
             <div class="hero-inner">
                 <div class="hero-eyebrow">✦ Bem-vindo ao Arcádia</div>
                 <h1>Fique por dentro das últimas <em>Notícias</em> e Projetos</h1>
-                <p class="hero-sub">Acompanhe tudo em um só lugar — conteúdos selecionados, projetos em destaque e atualizações em tempo real para você.</p>
+                <p class="hero-sub">Acompanhe tudo em um só lugar — conteúdos selecionados, projetos em destaque e
+                    atualizações em tempo real para você.</p>
                 <div class="hero-btns">
                     <a href="#" class="btn-primary">Ver Notícias</a>
                     <a href="#" class="btn-ghost">Explorar Projetos</a>
@@ -80,109 +92,70 @@
         </section>
 
         <section class="page-section" id="feed-institucional">
-    <div class="section-header">
-        <div>
-            <div class="section-label">Institucional</div>
-            <h2 class="section-title">Feed de Notícias e Avisos</h2>
-        </div>
-    </div>
-
-    <div class="feed-controls">
-        <div class="search-wrap">
-            <span class="search-icon">🔎</span>
-            <input id="searchInput" class="search-input" type="text" placeholder="Buscar por edital, data, projeto ou palavra-chave...">
-            <button id="searchClear" class="search-clear" style="display:none;">×</button>
-        </div>
-
-        <div class="filter-row">
-            <div class="filter-group" id="filterPublico">
-                <span class="filter-label">Público:</span>
-                <div class="filter-chips">
-                    <button class="chip active" data-filter="todos">Todos</button>
-                    <button class="chip" data-filter="aluno">Aluno</button>
-                    <button class="chip" data-filter="professor">Professor</button>
-                    <button class="chip" data-filter="servidor">Servidor</button>
+            <div class="section-header">
+                <div>
+                    <div class="section-label">Institucional</div>
+                    <h2 class="section-title">Feed de Notícias e Avisos</h2>
                 </div>
             </div>
 
-            <div class="filter-group" id="filterCategoria">
-                <span class="filter-label">Categoria:</span>
-                <div class="filter-chips">
-                    <button class="chip active" data-cat="todas">Todas</button>
-                    <button class="chip" data-cat="matricula">Matrículas</button>
-                    <button class="chip" data-cat="calendario">Calendário</button>
-                    <button class="chip" data-cat="evento">Eventos</button>
-                    <button class="chip" data-cat="cancelamento">Cancelamentos</button>
-                    <button class="chip" data-cat="edital">Editais</button>
+            <div class="feed-controls">
+                <div class="search-wrap">
+                    <span class="search-icon">🔎</span>
+                    <input id="searchInput" class="search-input" type="text"
+                        placeholder="Buscar por edital, data, projeto ou palavra-chave...">
+                    <button id="searchClear" class="search-clear" style="display:none;">×</button>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group" id="filterPublico">
+                        <span class="filter-label">Público:</span>
+                        <div class="filter-chips">
+                            <button class="chip active" data-filter="todos">Todos</button>
+                            <button class="chip" data-filter="aluno">Aluno</button>
+                            <button class="chip" data-filter="professor">Professor</button>
+                            <button class="chip" data-filter="servidor">Servidor</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-group" id="filterCategoria">
+                        <span class="filter-label">Categoria:</span>
+                        <div class="filter-chips">
+                            <button class="chip active" data-cat="todas">Todas</button>
+                            <button class="chip" data-cat="matricula">Matrículas</button>
+                            <button class="chip" data-cat="calendario">Calendário</button>
+                            <button class="chip" data-cat="evento">Eventos</button>
+                            <button class="chip" data-cat="cancelamento">Cancelamentos</button>
+                            <button class="chip" data-cat="edital">Editais</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="feed-list" id="feedList"></div>
+            <div class="feed-list" id="feedList"></div>
 
-    <div class="feed-empty" id="feedEmpty" style="display:none;">
-        <span class="empty-icon">🔍</span>
-        Nenhum aviso encontrado.
-    </div>
-</section>
+            <div class="feed-empty" id="feedEmpty" style="display:none;">
+                <span class="empty-icon">🔍</span>
+                Nenhum aviso encontrado.
+            </div>
+        </section>
 
-<section class="page-section" id="calendario-academico">
-    <div class="section-header">
-        <div>
-            <div class="section-label">Agenda</div>
-            <h2 class="section-title">Calendário Acadêmico Interativo</h2>
-        </div>
-    </div>
 
-    <div class="calendar-layout">
-        <div class="cal-panel">
-            <div class="cal-nav">
-                <button class="cal-btn" id="prevMonth">‹</button>
-                <div class="cal-month-label" id="calMonthLabel"></div>
-                <button class="cal-btn" id="nextMonth">›</button>
+        <section class="page-section" id="documentos-links">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">Central</div>
+                    <h2 class="section-title">Documentos e Links Úteis</h2>
+                </div>
             </div>
 
-            <div class="cal-grid-header">
-                <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            <div class="docs-search-wrap">
+                <input id="docsSearch" class="search-input" type="text"
+                    placeholder="Buscar formulário, manual, e-mail ou biblioteca...">
             </div>
 
-            <div class="cal-grid" id="calGrid"></div>
-
-            <div class="cal-legend">
-                <span><i class="leg-dot leg-prova"></i> Prova</span>
-                <span><i class="leg-dot leg-prazo"></i> Prazo</span>
-                <span><i class="leg-dot leg-evento"></i> Evento</span>
-                <span><i class="leg-dot leg-feriado"></i> Feriado</span>
-            </div>
-        </div>
-
-        <div class="cal-events-panel">
-            <div class="cal-events-title">Eventos do mês</div>
-            <div class="cal-events-list" id="calEventsList"></div>
-        </div>
-    </div>
-
-    <div class="reminders-wrap">
-        <h3 class="reminders-title">Lembretes automáticos dos próximos 30 dias</h3>
-        <div class="reminders-grid" id="remindersGrid"></div>
-    </div>
-</section>
-
-<section class="page-section" id="documentos-links">
-    <div class="section-header">
-        <div>
-            <div class="section-label">Central</div>
-            <h2 class="section-title">Documentos e Links Úteis</h2>
-        </div>
-    </div>
-
-    <div class="docs-search-wrap">
-        <input id="docsSearch" class="search-input" type="text" placeholder="Buscar formulário, manual, e-mail ou biblioteca...">
-    </div>
-
-    <div class="docs-grid" id="docsGrid"></div>
-</section>
+            <div class="docs-grid" id="docsGrid"></div>
+        </section>
 
         <section class="page-section">
             <div class="section-header">
