@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { PaletteProvider } from "@/components/command-palette";
 import Inicio from "@/pages/inicio";
 import EmConstrucao from "@/pages/em-construcao";
+import DevUi from "@/pages/dev-ui";
 import { AnnounceProvider } from "@/state/announce";
 import { DemoProvider } from "@/state/demo";
 
@@ -23,6 +24,7 @@ export default function App() {
                   <Route path="projetos" element={<EmConstrucao titulo="Projetos" />} />
                   <Route path="calendario" element={<EmConstrucao titulo="Calendário" />} />
                   <Route path="perfil" element={<EmConstrucao titulo="Perfil" />} />
+                  <Route path="dev/ui" element={<DevUi />} />
                 </Route>
               </Routes>
             </PaletteProvider>
