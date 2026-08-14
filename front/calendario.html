@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário — Portal Arcádia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="portal">
+
+        <aside class="portal-sidebar">
+            <a href="index.html" class="portal-logo">Arcádia</a>
+            <span class="micro">Portal</span>
+            <ul class="portal-nav">
+                <li><a href="inicio.html">Início</a></li>
+                <li><a href="avisos.html">Avisos</a></li>
+                <li><a href="documentos.html">Documentos</a></li>
+                <li><a href="projetos.html">Projetos</a></li>
+                <li><a href="calendario.html" class="ativo">Calendário</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+            </ul>
+            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
+        </aside>
+
+        <main class="portal-main">
+
+            <div class="portal-topo">
+                <span class="breadcrumb">Portal › <strong>Calendário</strong></span>
+                <div class="cal-toggle" data-filtro>
+                    <button class="pill">Lista</button>
+                    <button class="pill ativo">Mês</button>
+                </div>
+            </div>
+            <h1 class="portal-titulo">Junho de 2026</h1>
+
+            <table class="calendario">
+                <thead>
+                    <tr>
+                        <th>Seg</th>
+                        <th>Ter</th>
+                        <th>Qua</th>
+                        <th>Qui</th>
+                        <th>Sex</th>
+                        <th>Sáb</th>
+                        <th>Dom</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>02</td>
+                        <td>03</td>
+                        <td>04</td>
+                        <td class="dia-edital">05<em>Edital</em></td>
+                        <td>06</td>
+                        <td>07</td>
+                    </tr>
+                    <tr>
+                        <td>08</td>
+                        <td class="dia-documento">09<em>Documento</em></td>
+                        <td class="dia-edital">10<em>Calendário</em></td>
+                        <td>11</td>
+                        <td class="dia-evento">12<em>Evento</em></td>
+                        <td>13</td>
+                        <td>14</td>
+                    </tr>
+                    <tr>
+                        <td class="dia-edital">15<em>Edital</em></td>
+                        <td>16</td>
+                        <td>17</td>
+                        <td class="dia-cancelamento">18<em>Cancelam.</em></td>
+                        <td>19</td>
+                        <td class="dia-matricula">20<em>Matrícula</em></td>
+                        <td>21</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>23</td>
+                        <td>24</td>
+                        <td>25</td>
+                        <td>26</td>
+                        <td class="dia-matricula">27<em>Fim matríc.</em></td>
+                        <td>28</td>
+                    </tr>
+                    <tr>
+                        <td>29</td>
+                        <td>30</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

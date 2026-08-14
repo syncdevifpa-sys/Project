@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início — Portal Arcádia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="portal">
+
+        <aside class="portal-sidebar">
+            <a href="index.html" class="portal-logo">Arcádia</a>
+            <span class="micro">Portal</span>
+            <ul class="portal-nav">
+                <li><a href="inicio.html" class="ativo">Início</a></li>
+                <li><a href="avisos.html">Avisos</a></li>
+                <li><a href="documentos.html">Documentos</a></li>
+                <li><a href="projetos.html">Projetos</a></li>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+            </ul>
+            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
+        </aside>
+
+        <main class="portal-main">
+
+            <div class="portal-topo">
+                <span class="breadcrumb">Portal › <strong>Início</strong></span>
+                <span class="portal-meta">Vínculo em verificação</span>
+            </div>
+            <h1 class="portal-titulo">Bem-vinda, Ana</h1>
+
+            <!-- onboarding: três passos -->
+            <div class="onboarding-grid">
+                <div class="onboarding-card">
+                    <span class="micro">Passo 1</span>
+                    <h3>Confirme seu curso</h3>
+                    <p>Engenharia de Software · 4º período</p>
+                    <button class="btn btn-tinta">Confirmar</button>
+                </div>
+                <div class="onboarding-card">
+                    <span class="micro">Passo 2</span>
+                    <h3>Escolha as categorias</h3>
+                    <p>Editais, eventos e calendário do seu curso.</p>
+                    <button class="btn btn-alcance">Definir</button>
+                </div>
+                <div class="onboarding-card">
+                    <span class="micro">Passo 3</span>
+                    <h3>Ative o resumo diário</h3>
+                    <p>Um e-mail por dia, às 7h, com o que foi publicado.</p>
+                    <button class="btn btn-alcance">Ativar</button>
+                </div>
+            </div>
+
+            <div class="faixa-status">
+                <span>Enquanto a secretaria verifica o vínculo, você já vê os avisos públicos.</span>
+                <span class="micro">2 de 3 concluídos</span>
+            </div>
+
+            <!-- notificações + resumo diário -->
+            <div class="duplo">
+                <section class="bloco-claro">
+                    <span class="micro">Notificações</span>
+                    <h2>Caixa de avisos</h2>
+
+                    <div class="cartoes">
+                        <div class="cartao">
+                            <strong>Matrícula 2026/2 aberta</strong>
+                            <span>Hoje, 07:00 · não lida</span>
+                        </div>
+                        <div class="cartao">
+                            <strong>Sua inscrição no Edital 012 foi recebida</strong>
+                            <span>Ontem, 14:32</span>
+                        </div>
+                        <div class="cartao">
+                            <strong>Aulas de 18/06 canceladas</strong>
+                            <span>18/06, 09:10</span>
+                        </div>
+                        <div class="cartao">
+                            <strong>Projeto aprovado pela coordenação</strong>
+                            <span>14/06, 16:45</span>
+                        </div>
+                    </div>
+
+                    <p class="bloco-nota">Cancelamento e matrícula chegam sempre, independentemente das preferências.</p>
+                </section>
+
+                <section class="bloco-aviso">
+                    <span class="micro">Resumo diário</span>
+                    <h2>O e-mail das 7h</h2>
+
+                    <div class="email-preview">
+                        <span class="micro">Arcádia · 20 de junho</span>
+                        <strong>3 publicações para você hoje</strong>
+                        <div class="email-itens">
+                            <span>Matrícula 2026/2 — veteranos</span>
+                            <span>Reposição de aula — 21/06</span>
+                            <span>Semana Acadêmica — inscrições</span>
+                        </div>
+                        <a href="avisos.html" class="btn btn-tinta">Abrir o mural</a>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

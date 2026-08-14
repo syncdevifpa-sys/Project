@@ -4,306 +4,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcádia</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap"
+    <title>Arcádia — Tudo que a sua instituição publica, em um lugar só</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital@0;1&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="landing.css">
 </head>
 
 <body>
 
-    <div class="overlay" id="overlay"></div>
+    <header class="container">
+        <nav class="nav-landing">
+            <a href="index.html" class="nav-logo">
+                Arcadia
+                <svg class="logo-acento" viewBox="0 0 26 14" aria-hidden="true">
+                    <path d="M3 12 C10 4 16 2 23 3" fill="none" stroke="#E8563F" stroke-width="2.6"
+                        stroke-linecap="round" />
+                </svg>
+                <svg class="logo-risco" viewBox="0 0 150 12" aria-hidden="true">
+                    <path d="M4 8 C40 2 105 2 146 6" fill="none" stroke="#2B3FD9" stroke-width="3"
+                        stroke-linecap="round" />
+                </svg>
+            </a>
 
-    <nav>
-        <a href="index.html" class="nav-logo">
-            <div class="logo-mark">A</div>
-            <span class="logo-text">Arcádia</span>
-        </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#produto" class="ativo">Produto</a></li>
+                <li><a href="#avisos">Avisos</a></li>
+                <li><a href="documentos.html">Documentos</a></li>
+                <li><a href="projetos.html">Projetos</a></li>
+            </ul>
 
-        <ul class="nav-links">
-            <li><a href="index.html">Página Inicial</a></li>
-            <li><a href="#feed-institucional">Notícias</a></li>
-            <li><a href="projetos.html">Projetos</a></li>
-            <li><a href="#contato">Contato</a></li>
-        </ul>
-
-        <div class="nav-end">
-            <button class="login-btn" id="login">Entrar</button>
-            <button class="avatar-btn" id="openSidebar" aria-label="Abrir menu do usuário">U</button>
-            <button class="nav-toggle" id="navToggle" aria-label="Abrir menu de navegação">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-        </div>
-    </nav>
-
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-user">
-                <div class="sidebar-avatar" id="sidebarAvatar">U</div>
-                <div>
-                    <div class="sidebar-user-name" id="sidebarUserName">Visitante</div>
-                    <div class="sidebar-user-role" id="sidebarUserRole">Não conectado</div>
-                </div>
+            <div class="nav-end">
+                <a href="login.html" class="nav-entrar">Entrar</a>
+                <a href="cadastro.html" class="btn-pill btn-tinta">Criar conta</a>
+                <button class="nav-toggle" id="navToggle" aria-label="Abrir menu de navegação">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
-            <button class="sidebar-close" id="closeSidebar" aria-label="Fechar menu">×</button>
-        </div>
-
-        <div class="sidebar-section">
-            <div class="sidebar-section-label">Menu</div>
-
-            <a href="usernav.html" class="sidebar-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Perfil
-            </a>
-
-            <a href="projetos.html" class="sidebar-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                Projetos
-            </a>
-
-            <a href="config.html" class="sidebar-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                Configurações
-            </a>
-        </div>
-
-        <button class="sidebar-logout" id="logoutBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Sair
-        </button>
-    </aside>
+        </nav>
+    </header>
 
     <main>
 
-        <section class="hero">
-            <div class="hero-inner">
-                <div class="hero-eyebrow">Bem-vindo ao Arcádia</div>
-                <h1>Fique por dentro das últimas <em>Notícias</em> e Projetos</h1>
-                <p class="hero-sub">Acompanhe tudo em um só lugar — conteúdos selecionados, projetos em destaque e
-                    atualizações em tempo real para você.</p>
-                <div class="hero-btns">
-                    <a href="#feed-institucional" class="btn-primary">Ver Notícias</a>
-                    <a href="projetos.html" class="btn-ghost">Explorar Projetos</a>
-                </div>
-            </div>
-        </section>
+        <!-- hero -->
+        <section class="hero container">
+            <img class="ilu ilu-mural-hero" src="ilustracoes/mural-axonometrico.svg" alt="" aria-hidden="true">
 
-        <div class="stats-strip">
-            <div class="stat-item">
-                <span class="stat-num">120+</span>
-                <span class="stat-label">Avisos publicados</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-num">35</span>
-                <span class="stat-label">Projetos ativos</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-num">14</span>
-                <span class="stat-label">Eventos este mês</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-num">800+</span>
-                <span class="stat-label">Alunos conectados</span>
-            </div>
-        </div>
-
-        <section class="page-section" id="feed-institucional">
-            <div class="section-header">
-                <div>
-                    <div class="section-label">Institucional</div>
-                    <h2 class="section-title">Feed de Notícias e Avisos</h2>
-                </div>
-            </div>
-
-            <div class="feed-controls">
-                <div class="search-wrap">
-                    <span class="search-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </span>
-                    <input id="searchInput" class="search-input" type="text"
-                        placeholder="Buscar por edital, data, projeto ou palavra-chave...">
-                    <button id="searchClear" class="search-clear" style="display:none;" aria-label="Limpar busca">×</button>
-                </div>
-
-                <div class="filter-row">
-                    <div class="filter-group" id="filterPublico">
-                        <span class="filter-label">Público:</span>
-                        <div class="filter-chips">
-                            <button class="chip active" data-filter="todos">Todos</button>
-                            <button class="chip" data-filter="aluno">Aluno</button>
-                            <button class="chip" data-filter="professor">Professor</button>
-                            <button class="chip" data-filter="servidor">Servidor</button>
-                        </div>
-                    </div>
-
-                    <div class="filter-group" id="filterCategoria">
-                        <span class="filter-label">Categoria:</span>
-                        <div class="filter-chips">
-                            <button class="chip active" data-cat="todas">Todas</button>
-                            <button class="chip" data-cat="matricula">Matrículas</button>
-                            <button class="chip" data-cat="calendario">Calendário</button>
-                            <button class="chip" data-cat="evento">Eventos</button>
-                            <button class="chip" data-cat="cancelamento">Cancelamentos</button>
-                            <button class="chip" data-cat="edital">Editais</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="feed-count" id="feedCount"></div>
-            </div>
-
-            <div class="feed-list" id="feedList"></div>
-
-            <div class="feed-empty" id="feedEmpty" style="display:none;">
-                <span class="empty-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            <h1 class="display">
+                Tudo que a sua<br>
+                instituição publica,<br>
+                <span class="circulado">em um lugar só.
+                    <img class="ilu doodle-elipse" src="ilustracoes/destaque-elipse.svg" alt="" aria-hidden="true">
                 </span>
-                Nenhum aviso encontrado.
+                <img class="ilu doodle-asterisco" src="ilustracoes/asterisco.svg" alt="" aria-hidden="true">
+            </h1>
+
+            <div class="hero-right">
+                <div class="hero-lista">
+                    <img class="ilu doodle-chave" src="ilustracoes/chave.svg" alt="" aria-hidden="true">
+                    <ul>
+                        <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Avisos</li>
+                        <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Documentos</li>
+                        <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Projetos</li>
+                    </ul>
+                </div>
+
+                <div class="hero-acoes">
+                    <a href="cadastro.html" class="btn-pill btn-tinta">Criar conta</a>
+                    <a href="login.html" class="btn-pill btn-claro">Entrar no portal</a>
+                </div>
+
+                <p class="hero-sub">Editais, matrículas, calendário acadêmico, documentos e projetos&nbsp; com data,
+                    categoria e público. Sem grupo de WhatsApp, sem PDF perdido.</p>
+
+                <img class="ilu hero-onda ilu--rule" src="ilustracoes/sublinha.svg" alt="" aria-hidden="true">
             </div>
         </section>
 
+        <!-- o semestre em números -->
+        <section class="secao container" id="semestre">
+            <p class="eyebrow">Semestre</p>
+            <h2 class="secao-titulo">O semestre em <span class="tom-violeta">números</span>: o que a secretaria
+                publicou, em quanto <span class="tom-vermelho">tempo</span> chegou e quantos abriram.</h2>
 
-        <section class="page-section" id="documentos-links">
-            <div class="section-header">
-                <div>
-                    <div class="section-label">Central</div>
-                    <h2 class="section-title">Documentos e Links Úteis</h2>
+            <div class="stats">
+                <article class="stat-card card-lilas">
+                    <p class="eyebrow tom-violeta">Alcance</p>
+                    <p class="stat-numero">1.284</p>
+                    <p class="stat-desc"><strong>avisos entregues</strong> a alunos, professores e servidores sem
+                        repetir a publicação em outro canal.</p>
+                </article>
+
+                <article class="stat-card card-creme">
+                    <p class="eyebrow">Tempo</p>
+                    <p class="stat-numero">24h</p>
+                    <p class="stat-desc"><strong>do envio da secretaria</strong> à publicação no mural.</p>
+                </article>
+
+                <article class="stat-card card-tinta">
+                    <p class="eyebrow">Constância</p>
+                    <p class="stat-numero">92%</p>
+                    <p class="stat-desc"><strong>dos alunos</strong> abriram o mural na semana de provas.</p>
+                </article>
+
+                <div class="stat-linha">
+                    <span class="stat-linha-num">5</span>
+                    <span class="stat-linha-texto">categorias fixas de aviso</span>
                 </div>
-            </div>
-
-            <div class="docs-search-wrap">
-                <input id="docsSearch" class="search-input" type="text"
-                    placeholder="Buscar formulário, manual, e-mail ou biblioteca...">
-            </div>
-
-            <div class="docs-grid" id="docsGrid"></div>
-        </section>
-
-        <section class="page-section" id="noticias">
-            <div class="section-header">
-                <div>
-                    <div class="section-label">Destaques</div>
-                    <h2 class="section-title">Últimas Notícias</h2>
+                <div class="stat-linha">
+                    <span class="stat-linha-num">3</span>
+                    <span class="stat-linha-texto">vínculos com filtro próprio</span>
                 </div>
-            </div>
-
-            <div class="cards-grid">
-                <div class="card">
-                    <img src="https://picsum.photos/400/250?random=1" alt="">
-                    <div class="card-content">
-                        <span class="card-category">Tecnologia</span>
-                        <h3>Nova IA revoluciona o desenvolvimento web</h3>
-                        <p>Ferramentas modernas estão mudando a forma como desenvolvedores criam aplicações.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="https://picsum.photos/400/250?random=2" alt="">
-                    <div class="card-content">
-                        <span class="card-category">Projetos</span>
-                        <h3>Equipe Arcádia lança nova plataforma</h3>
-                        <p>O projeto promete integração moderna e foco em performance.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="https://picsum.photos/400/250?random=3" alt="">
-                    <div class="card-content">
-                        <span class="card-category">Design</span>
-                        <h3>Tendências minimalistas dominam 2026</h3>
-                        <p>Interfaces limpas e animações suaves continuam em alta.</p>
-                    </div>
+                <div class="stat-linha">
+                    <span class="stat-linha-num">0</span>
+                    <span class="stat-linha-texto">planilhas para manter</span>
                 </div>
             </div>
         </section>
 
-        <section class="page-section">
-            <div class="section-header">
-                <div>
-                    <div class="section-label">Portfólio</div>
-                    <h2 class="section-title">Projetos em Destaque</h2>
-                </div>
-                <a href="projetos.html" class="section-link">Ver todos →</a>
+        <!-- produto -->
+        <section class="secao container" id="produto">
+            <p class="eyebrow">Produto</p>
+            <div class="produto-intro">
+                <h2 class="secao-titulo">Quatro problemas acadêmicos, resolvidos de forma
+                    <span class="tom-azul">chata</span>: um mural só, filtro por
+                    <span class="tom-vermelho">vínculo</span>, papelada no lugar e portfólio publicado.</h2>
+
+                <img class="ilu ilu-fluxo" src="ilustracoes/fluxo-unico.svg" alt="" aria-hidden="true">
             </div>
 
-            <div class="cards-grid">
-                <div class="card">
-                    <img src="https://picsum.photos/400/250?random=10" alt="">
-                    <div class="card-content">
-                        <span class="card-category">Web App</span>
-                        <h3>Sistema de gerenciamento escolar</h3>
-                        <p>Plataforma desenvolvida para controle acadêmico, notas e frequência.</p>
-                        <button class="project-btn">Ver Projeto</button>
+            <div class="produto-cards">
+
+                <article class="produto-card card-bloco">
+                    <p class="eyebrow eyebrow-com-icone"><img class="ilu ilu-icone"
+                            src="ilustracoes/mural-icone.svg" alt="" aria-hidden="true"> Um mural, não sete grupos</p>
+                    <h3>Editais, matrículas e cancelamentos entram por um canal só.</h3>
+                    <p class="card-p">Saem com data, categoria e público definidos, no mesmo dia em que a secretaria
+                        publica.</p>
+                    <div class="card-metric">
+                        <span class="metric-circulado">
+                            <span class="metric-num">1</span>
+                            <img class="ilu doodle-circulo" src="ilustracoes/numero-circulado.svg" alt=""
+                                aria-hidden="true">
+                        </span>
+                        <span class="eyebrow">Canal de publicação</span>
+                    </div>
+                </article>
+
+                <article class="produto-card card-tinta" id="avisos">
+                    <p class="eyebrow">Filtrado pelo vínculo</p>
+                    <h3>Você vê primeiro o que foi publicado para você.</h3>
+
+                    <div class="pills" data-filtro>
+                        <button class="pill ativo" type="button">Aluno</button>
+                        <button class="pill" type="button">Professor</button>
+                        <button class="pill" type="button">Servidor</button>
+                    </div>
+
+                    <ul class="mural-lista">
+                        <li>
+                            <svg class="ilu doodle-check" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
+                                aria-hidden="true">
+                                <path d="M3.5 4.5h17L14 11v8.5h-4V11Z" />
+                                <circle cx="12" cy="22" r="1.1" fill="#2F5BFF" stroke="none" />
+                            </svg>
+                            <span class="mural-data">20 jun</span>
+                            <div>
+                                <p class="eyebrow">Matrícula</p>
+                                <p class="mural-titulo">Matrícula 2026/2 aberta de 20 a 27 de junho</p>
+                            </div>
+                        </li>
+                        <li>
+                            <svg class="ilu doodle-check" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
+                                aria-hidden="true">
+                                <path d="M3.5 4.5h17L14 11v8.5h-4V11Z" />
+                                <circle cx="12" cy="22" r="1.1" fill="#2F5BFF" stroke="none" />
+                            </svg>
+                            <span class="mural-data">15 jun</span>
+                            <div>
+                                <p class="eyebrow">Edital</p>
+                                <p class="mural-titulo">Edital 012/2026 de bolsas de Iniciação Científica</p>
+                            </div>
+                        </li>
+                        <li>
+                            <svg class="ilu doodle-check" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
+                                aria-hidden="true">
+                                <path d="M3.5 4.5h17L14 11v8.5h-4V11Z" />
+                                <circle cx="12" cy="22" r="1.1" fill="#2F5BFF" stroke="none" />
+                            </svg>
+                            <span class="mural-data">01 jun</span>
+                            <div>
+                                <p class="eyebrow">Edital</p>
+                                <p class="mural-titulo">Monitoria de Cálculo I com inscrições até 10/06</p>
+                            </div>
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="produto-card card-bloco">
+                    <p class="eyebrow eyebrow-com-icone"><img class="ilu ilu-icone"
+                            src="ilustracoes/documento.svg" alt="" aria-hidden="true"> A papelada onde deveria estar</p>
+                    <h3>Formulários, manuais e contatos reunidos num endereço.</h3>
+                    <div class="card-metric">
+                        <span class="metric-num">24</span>
+                        <span class="eyebrow">Recursos publicados</span>
+                    </div>
+
+                    <img class="ilu doodle-papel" src="ilustracoes/pilha-documentos.svg" alt="" aria-hidden="true">
+                </article>
+
+                <article class="produto-card card-lilas">
+                    <p class="eyebrow tom-violeta eyebrow-com-icone"><img class="ilu ilu-icone"
+                            src="ilustracoes/selo-verificado.svg" alt="" aria-hidden="true"> Portfólio publicado</p>
+                    <h3>O projeto do aluno sai do drive particular e ganha endereço.</h3>
+                    <p class="card-p">Com autoria, curso e link de acesso, aprovado pela coordenação antes de entrar no
+                        ar.</p>
+
+                    <div class="projeto-mini">
+                        <p class="eyebrow">Web app de eng. de software</p>
+                        <p class="projeto-mini-titulo">Sistema de gerenciamento escolar</p>
+                        <p class="eyebrow projeto-mini-autor">Ana Ribeiro, 4º período</p>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- faixa escura -->
+        <section class="faixa-escura">
+            <div class="container">
+
+                <div class="marca-bloco">
+                    <span class="marca-quadrado">A</span>
+                    <p class="marca-frase">Movido pelo mural institucional da
+                        <span class="marca-nome">Arcádia<img class="ilu doodle-sublinha"
+                                src="ilustracoes/sublinha.svg" alt="" aria-hidden="true"></span>, que transforma publicações espalhadas em um único fluxo verificado.</p>
+                </div>
+
+                <svg class="ilu ilu-prazo" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
+                    aria-hidden="true">
+                    <circle cx="12" cy="12" r="9.5" />
+                    <path d="M12 6.5V12l3.5 2" />
+                    <circle cx="12" cy="12" r="1.1" fill="#2F5BFF" stroke="none" />
+                </svg>
+
+                <div class="faixa-stats">
+                    <div class="faixa-stat">
+                        <p class="faixa-num">24h</p>
+                        <p class="eyebrow">Do envio à publicação</p>
+                    </div>
+                    <div class="faixa-stat">
+                        <p class="faixa-num">5</p>
+                        <p class="eyebrow">Categorias de aviso</p>
+                        <svg class="ilu ilu-vinculos" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
+                            aria-hidden="true">
+                            <circle cx="5.5" cy="5.5" r="2.75" />
+                            <circle cx="18.5" cy="5.5" r="2.75" />
+                            <circle cx="12" cy="19" r="2.75" />
+                            <path d="M7.7 7.2l3.2 2.5M16.3 7.2l-3.2 2.5M12 16.25v-4.35" />
+                            <circle cx="12" cy="10.5" r="1.1" fill="#2F5BFF" stroke="none" />
+                        </svg>
+                    </div>
+                    <div class="faixa-stat">
+                        <p class="faixa-num">800+</p>
+                        <p class="eyebrow">Alunos conectados</p>
                     </div>
                 </div>
 
-                <div class="card">
-                    <img src="https://picsum.photos/400/250?random=11" alt="">
-                    <div class="card-content">
-                        <span class="card-category">UI/UX</span>
-                        <h3>Dashboard administrativo moderno</h3>
-                        <p>Interface minimalista focada em produtividade e experiência do usuário.</p>
-                        <button class="project-btn">Ver Projeto</button>
+                <svg class="ilu ilu--rule doodle-divisor" viewBox="0 0 240 12" preserveAspectRatio="none" fill="none"
+                    stroke="currentColor" stroke-width="1.25" stroke-linecap="butt" stroke-linejoin="miter"
+                    aria-hidden="true">
+                    <path d="M0 10.5h240" vector-effect="non-scaling-stroke" />
+                    <path d="M12 10.5V5M36 10.5V5M60 10.5V5M84 10.5V5M108 10.5V5M132 10.5V5M156 10.5V5M180 10.5V5M204 10.5V5M228 10.5V5"
+                        vector-effect="non-scaling-stroke" />
+                </svg>
+
+                <div class="feed-grid">
+                    <article class="feed-item">
+                        <p class="feed-data">20 jun</p>
+                        <p class="eyebrow">Matrícula</p>
+                        <h4>Período de matrícula 2026/2 para alunos veteranos</h4>
+                        <p class="feed-desc">As matrículas para o segundo semestre de 2026 estarão abertas de 20 a 27 de
+                            junho.</p>
+                    </article>
+                    <article class="feed-item">
+                        <p class="feed-data">18 jun</p>
+                        <p class="eyebrow">Cancelamento</p>
+                        <h4>Cancelamento de aulas por greve parcial dos servidores técnicos</h4>
+                        <p class="feed-desc">As aulas dos turnos vespertino e noturno do dia 18/06 estão canceladas.</p>
+                    </article>
+                    <article class="feed-item">
+                        <p class="feed-data">15 jun</p>
+                        <p class="eyebrow">Edital</p>
+                        <h4>Edital Nº 012/2026 de Bolsas de Iniciação Científica</h4>
+                        <p class="feed-desc">Inscrições abertas até 30/08 para alunos matriculados a partir do 2º
+                            período.</p>
+                    </article>
+                    <article class="feed-item">
+                        <p class="feed-data">12 jun</p>
+                        <p class="eyebrow">Evento</p>
+                        <h4>Semana Acadêmica Arcádia 2026 com a programação completa</h4>
+                        <p class="feed-desc">Palestras, workshops e apresentações de projetos entre os dias 7 e 11 de
+                            julho.</p>
+                    </article>
+                    <article class="feed-item">
+                        <p class="feed-data">10 jun</p>
+                        <p class="eyebrow eyebrow-com-icone"><svg class="ilu ilu-icone" viewBox="0 0 24 24"
+                                width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true">
+                                <path d="M3.5 5h17v15.5h-17Z" />
+                                <path d="M3.5 9.5h17" />
+                                <path d="M8 2.5v4M16 2.5v4" />
+                                <circle cx="15" cy="15" r="1.1" fill="#2F5BFF" stroke="none" />
+                            </svg> Calendário</p>
+                        <h4>Atualização do calendário com as reposições de junho</h4>
+                        <p class="feed-desc">Foram acrescidas datas de reposição em 21/06 e 28/06.</p>
+                    </article>
+                    <article class="feed-item">
+                        <p class="feed-data">09 jun</p>
+                        <p class="eyebrow">Documento</p>
+                        <h4>Regulamento Acadêmico 2026 em versão consolidada</h4>
+                        <p class="feed-desc">Substitui a versão de 2023 e vale a partir de 01/07.</p>
+                    </article>
+                </div>
+
+                <div class="cta-final">
+                    <h2>Tudo que a<br>instituição publica,<br><em>em um lugar só</em></h2>
+                    <div class="cta-acao">
+                        <a href="cadastro.html" class="btn-pill btn-branco">Criar conta</a>
                     </div>
                 </div>
 
-                <div class="card">
-                    <img src="https://picsum.photos/400/250?random=12" alt="">
-                    <div class="card-content">
-                        <span class="card-category">Mobile</span>
-                        <h3>Aplicativo de notícias em tempo real</h3>
-                        <p>Aplicativo responsivo com integração API e atualização dinâmica.</p>
-                        <button class="project-btn">Ver Projeto</button>
+                <footer class="rodape">
+                    <div class="rodape-colunas">
+                        <div>
+                            <p class="rodape-tema">Institucional</p>
+                            <ul>
+                                <li><a href="avisos.html">Secretaria</a></li>
+                                <li><a href="avisos.html">Coordenação</a></li>
+                                <li><a href="avisos.html">Ouvidoria</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="rodape-tema">Acesso</p>
+                            <ul>
+                                <li><a href="login.html">Portal do aluno</a></li>
+                                <li><a href="documentos.html">Documentos</a></li>
+                                <li><a href="projetos.html">Projetos</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="rodape-tema">Legal</p>
+                            <ul>
+                                <li><a href="#">Política de privacidade</a></li>
+                                <li><a href="#">Termos de uso</a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                </footer>
+
+                <p class="wordmark">Arcádia</p>
             </div>
         </section>
 
     </main>
-
-    <footer id="contato">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <div class="footer-logo">
-                    <div class="logo-mark">A</div>
-                    <span class="logo-text">Arcádia</span>
-                </div>
-                <p>Plataforma focada em notícias, tecnologia, projetos e inovação digital.</p>
-            </div>
-
-            <div class="footer-links">
-                <div class="footer-column">
-                    <h3>Navegação</h3>
-                    <a href="index.html">Início</a>
-                    <a href="#feed-institucional">Notícias</a>
-                    <a href="projetos.html">Projetos</a>
-                    <a href="usernav.html">Perfil</a>
-                </div>
-
-                <div class="footer-column">
-                    <h3>Projetos</h3>
-                    <a href="projetos.html">Dashboard</a>
-                    <a href="projetos.html">Web Apps</a>
-                    <a href="projetos.html">UI/UX</a>
-                    <a href="projetos.html">Mobile</a>
-                </div>
-
-                <div class="footer-column">
-                    <h3>Redes</h3>
-                    <a href="#">Instagram</a>
-                    <a href="https://github.com/syncdevifpa-sys" target="_blank" rel="noopener">GitHub</a>
-                    <a href="#">LinkedIn</a>
-                    <a href="#">YouTube</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>© 2026 Arcádia. Todos os direitos reservados.</p>
-            <span>Desenvolvido por SyncDev</span>
-        </div>
-    </footer>
 
     <script src="script.js"></script>
 </body>

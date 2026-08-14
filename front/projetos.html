@@ -1,99 +1,99 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projetos - Arcádia</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap"
+    <title>Projetos — Portal Arcádia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <nav>
-        <a href="index.html" class="nav-logo">
-            <div class="logo-mark">A</div>
-            <span class="logo-text">Arcádia</span>
-        </a>
+    <div class="portal">
 
-        <ul class="nav-links">
-            <li><a href="index.html">Página Inicial</a></li>
-            <li><a href="index.html#feed-institucional">Notícias</a></li>
-            <li><a href="projetos.html">Projetos</a></li>
-            <li><a href="usernav.html">Perfil</a></li>
-        </ul>
+        <aside class="portal-sidebar">
+            <a href="index.html" class="portal-logo">Arcádia</a>
+            <span class="micro">Portal</span>
+            <ul class="portal-nav">
+                <li><a href="inicio.html">Início</a></li>
+                <li><a href="avisos.html">Avisos</a></li>
+                <li><a href="documentos.html">Documentos</a></li>
+                <li><a href="projetos.html" class="ativo">Projetos</a></li>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+            </ul>
+            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
+        </aside>
 
-        <div class="nav-end">
-            <a href="index.html" class="login-btn">Voltar ao início</a>
-            <button class="nav-toggle" id="navToggle" aria-label="Abrir menu de navegação">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-        </div>
-    </nav>
+        <main class="portal-main">
 
-    <main>
+            <div class="portal-topo">
+                <span class="breadcrumb">Portal › <strong>Projetos</strong></span>
+                <a href="#enviar" class="btn btn-tinta">Enviar projeto</a>
+            </div>
+            <h1 class="portal-titulo">Projetos em destaque</h1>
 
-        <section class="page-header">
-            <div class="hero-eyebrow">Portfólio SyncDev</div>
-            <h1 class="page-title">Projetos</h1>
-            <p class="page-sub">Explore os projetos desenvolvidos pela equipe — filtre por categoria ou busque pelo nome.</p>
-        </section>
-
-        <section class="page-section" id="projetos">
-            <div class="feed-controls">
-                <div class="search-wrap">
-                    <span class="search-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </span>
-                    <input id="projSearch" class="search-input" type="text"
-                        placeholder="Buscar projeto por nome, tecnologia ou descrição...">
-                </div>
-
-                <div class="filter-row">
-                    <div class="filter-group" id="filterProjCat">
-                        <span class="filter-label">Categoria:</span>
-                        <div class="filter-chips">
-                            <button class="chip active" data-pcat="todas">Todas</button>
-                            <button class="chip" data-pcat="web">Web</button>
-                            <button class="chip" data-pcat="mobile">Mobile</button>
-                            <button class="chip" data-pcat="uiux">UI/UX</button>
-                            <button class="chip" data-pcat="pesquisa">Pesquisa</button>
-                        </div>
-                    </div>
-
-                    <div class="filter-group" id="filterProjStatus">
-                        <span class="filter-label">Status:</span>
-                        <div class="filter-chips">
-                            <button class="chip active" data-pstatus="todos">Todos</button>
-                            <button class="chip" data-pstatus="ativo">Em andamento</button>
-                            <button class="chip" data-pstatus="concluido">Concluído</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="feed-count" id="projCount"></div>
+            <div class="filtros" data-filtro>
+                <button class="pill ativo">Todos</button>
+                <button class="pill">Web app</button>
+                <button class="pill">UI/UX</button>
+                <button class="pill">Mobile</button>
+                <button class="pill">Pesquisa</button>
             </div>
 
-            <div class="cards-grid" id="projetosGrid"></div>
-
-            <div class="feed-empty" id="projEmpty" style="display:none;">
-                <span class="empty-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                </span>
-                Nenhum projeto encontrado.
+            <div class="projetos-grid">
+                <article class="projeto-card">
+                    <span class="micro">Web app</span>
+                    <h3>Sistema de gerenciamento escolar</h3>
+                    <span>Ana Ribeiro · 4º período</span>
+                </article>
+                <article class="projeto-card">
+                    <span class="micro">UI/UX</span>
+                    <h3>Dashboard administrativo</h3>
+                    <span>Marcos Lima · 6º período</span>
+                </article>
+                <article class="projeto-card">
+                    <span class="micro">Mobile</span>
+                    <h3>Avisos em tempo real</h3>
+                    <span>Júlia Prado · 5º período</span>
+                </article>
+                <article class="projeto-card">
+                    <span class="micro">Pesquisa</span>
+                    <h3>Espectrometria de baixo custo</h3>
+                    <span>Lab. de Química</span>
+                </article>
             </div>
-        </section>
 
-    </main>
+            <section class="enviar-projeto" id="enviar">
+                <h3>Enviar projeto</h3>
+                <form>
+                    <div class="enviar-campos">
+                        <div class="campo">
+                            <label for="titulo">Título</label>
+                            <input type="text" id="titulo">
+                        </div>
+                        <div class="campo">
+                            <label for="categoria">Categoria</label>
+                            <input type="text" id="categoria">
+                        </div>
+                        <div class="campo">
+                            <label for="link">Link de acesso</label>
+                            <input type="url" id="link" placeholder="https://…">
+                        </div>
+                    </div>
+                    <p class="enviar-nota">O envio vai para a coordenação e é publicado depois da aprovação.</p>
+                </form>
+            </section>
 
-    <footer>
-        <div class="footer-bottom">
-            <p>© 2026 Arcádia. Todos os direitos reservados.</p>
-            <span>Desenvolvido por SyncDev</span>
-        </div>
-    </footer>
+        </main>
+    </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>
