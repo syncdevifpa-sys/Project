@@ -30,8 +30,7 @@ document.querySelectorAll('[data-filtro]').forEach((grupo) => {
     });
 });
 
-// acesso: login e cadastro guardam a sessão e entram no portal
-// (o submit é interceptado para a senha não vazar na query string)
+// acesso: login e cadastro guardam a sessao e entram no portal
 document.querySelectorAll('form[data-acesso]').forEach((form) => {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -50,7 +49,7 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
     });
 });
 
-// portal: saudação e identificação com o que foi digitado no acesso
+// portal: saudacao e identificacao
 const sessaoSalva = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
 
 if (sessaoSalva.nome) {
@@ -89,3 +88,12 @@ if (ilustracoes.length) {
     }, { rootMargin: '0px 0px -10% 0px' });
     ilustracoes.forEach((el) => observador.observe(el));
 }
+
+// sidebar: scroll interno quando conteúdo extrapola
+const sidebars = document.querySelectorAll('.portal-sidebar');
+sidebars.forEach((sidebar) => {
+    if (sidebar.scrollHeight > window.innerHeight) {
+        sidebar.style.overflowY = 'auto';
+        sidebar.style.overflowAnchor = 'none';
+    }
+});

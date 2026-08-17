@@ -71,22 +71,23 @@
 
             <section class="enviar-projeto" id="enviar">
                 <h3>Enviar projeto</h3>
-                <form>
+                <form method="post" action="projetos.html">
                     <div class="enviar-campos">
                         <div class="campo">
                             <label for="titulo">Título</label>
-                            <input type="text" id="titulo">
+                            <input type="text" id="titulo" name="titulo">
                         </div>
                         <div class="campo">
                             <label for="categoria">Categoria</label>
-                            <input type="text" id="categoria">
+                            <input type="text" id="categoria" name="categoria">
                         </div>
                         <div class="campo">
                             <label for="link">Link de acesso</label>
-                            <input type="url" id="link" placeholder="https://…">
+                            <input type="url" id="link" name="link" placeholder="https://…">
                         </div>
                     </div>
                     <p class="enviar-nota">O envio vai para a coordenação e é publicado depois da aprovação.</p>
+                    <button type="submit" class="btn btn-tinta">Enviar projeto</button>
                 </form>
             </section>
 

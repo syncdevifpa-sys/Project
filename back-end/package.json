@@ -1,0 +1,14 @@
+{
+  "name": "syncdev-backend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "sqlite3": "^5.1.7"
+  }
+}
