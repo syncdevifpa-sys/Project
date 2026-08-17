@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar conta — Arcádia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital@0;1&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="landing.css">
+</head>
+
+<body>
+
+    <header class="container">
+        <nav class="nav-landing">
+            <a href="index.html" class="nav-logo">
+                Arcadia
+                <svg class="logo-acento" viewBox="0 0 26 14" aria-hidden="true">
+                    <path d="M3 12 C10 4 16 2 23 3" fill="none" stroke="#E8563F" stroke-width="2.6"
+                        stroke-linecap="round" />
+                </svg>
+                <svg class="logo-risco" viewBox="0 0 150 12" aria-hidden="true">
+                    <path d="M4 8 C40 2 105 2 146 6" fill="none" stroke="#2B3FD9" stroke-width="3"
+                        stroke-linecap="round" />
+                </svg>
+            </a>
+
+            <div class="nav-end">
+                <a href="login.html" class="nav-entrar">Entrar</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="acesso-split">
+
+            <section class="acesso-form">
+                <p class="eyebrow">Cadastro</p>
+                <h1>Criar<br>
+                    <span class="circulado">conta.
+                        <svg class="doodle-elipse" viewBox="0 0 560 130" preserveAspectRatio="none" aria-hidden="true">
+                            <path d="M78 24 C210 -6 500 2 545 48 C580 88 420 122 220 124 C90 126 8 106 12 68 C15 40 70 22 150 16"
+                                fill="none" stroke="#2B3FD9" stroke-width="5" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                </h1>
+                <p class="acesso-sub">Grátis com e-mail institucional. Leva menos de um minuto.</p>
+
+                <form action="inicio.html" method="get" data-acesso="cadastro">
+                    <div class="campo">
+                        <label for="nome">Nome completo</label>
+                        <input type="text" id="nome" name="nome" autocomplete="name" required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="email">E-mail institucional</label>
+                        <input type="email" id="email" name="email" placeholder="voce@arcadia.edu.br"
+                            autocomplete="email" required>
+                        <p class="campo-hint">Só domínios da instituição são aceitos.</p>
+                    </div>
+
+                    <div class="campo">
+                        <label>Vínculo</label>
+                        <div class="segmentos pills" data-filtro>
+                            <button type="button" class="pill ativo">Aluno</button>
+                            <button type="button" class="pill">Professor</button>
+                            <button type="button" class="pill">Servidor</button>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" name="senha" placeholder="Mínimo de 8 caracteres"
+                            autocomplete="new-password" minlength="8" required>
+                    </div>
+
+                    <div class="campo-linha">
+                        <label class="check">
+                            <input type="checkbox" required>
+                            Aceito os termos de uso e a política de privacidade
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-pill btn-tinta">Criar conta</button>
+                </form>
+
+                <p class="acesso-troca">Já tem conta? <a href="login.html">Entrar</a></p>
+
+                <svg class="doodle acesso-onda" viewBox="0 0 240 22" aria-hidden="true">
+                    <path d="M4 14 C18 2 30 2 44 12 C58 22 70 22 84 12 C98 2 110 2 124 12 C138 22 150 22 164 12 C178 2 190 2 204 12"
+                        fill="none" stroke="#E8563F" stroke-width="3.2" stroke-linecap="round" />
+                </svg>
+            </section>
+
+            <aside class="acesso-painel card-lilas">
+                <svg class="doodle painel-zigzag" viewBox="0 0 120 30" aria-hidden="true">
+                    <path d="M4 24 L18 6 L32 24 L46 6 L60 24 L74 6 L88 24 L102 6 L116 24" fill="none" stroke="#B98B12"
+                        stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+                <p class="eyebrow tom-violeta">O que acontece depois</p>
+
+                <ol class="painel-passos">
+                    <li>
+                        <span class="passo-num">1</span>
+                        <div>
+                            <p class="passo-titulo">Verificação do vínculo</p>
+                            <p class="passo-p">A secretaria confirma matrícula ou lotação.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="passo-num">2</span>
+                        <div>
+                            <p class="passo-titulo">Filtro automático</p>
+                            <p class="passo-p">O mural passa a mostrar primeiro o que é do seu vínculo.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="passo-num">3</span>
+                        <div>
+                            <p class="passo-titulo">Preferências de aviso</p>
+                            <p class="passo-p">Você escolhe o que chega por e-mail; cancelamento e matrícula sempre
+                                chegam.</p>
+                        </div>
+                    </li>
+                </ol>
+
+                <p class="painel-nota">Cadastro não substitui a matrícula. Dados de vínculo são somente leitura.</p>
+            </aside>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

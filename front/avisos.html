@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avisos — Portal Arcádia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="portal">
+
+        <aside class="portal-sidebar">
+            <a href="index.html" class="portal-logo">Arcádia</a>
+            <span class="micro">Portal</span>
+            <ul class="portal-nav">
+                <li><a href="inicio.html">Início</a></li>
+                <li><a href="avisos.html" class="ativo">Avisos</a></li>
+                <li><a href="documentos.html">Documentos</a></li>
+                <li><a href="projetos.html">Projetos</a></li>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+            </ul>
+            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
+        </aside>
+
+        <main class="portal-main">
+
+            <div class="portal-topo">
+                <span class="breadcrumb">Portal › <strong>Avisos</strong></span>
+                <span class="portal-meta">7 avisos · junho</span>
+            </div>
+            <h1 class="portal-titulo">Feed de notícias e avisos</h1>
+
+            <input type="search" class="busca" placeholder="Buscar aviso, documento ou projeto…">
+
+            <div class="filtros" data-filtro>
+                <span class="micro">Público</span>
+                <button class="pill ativo">Todos</button>
+                <button class="pill">Aluno</button>
+                <button class="pill">Professor</button>
+                <button class="pill">Servidor</button>
+            </div>
+
+            <div class="filtros" data-filtro>
+                <span class="micro">Categoria</span>
+                <button class="pill ativo">Todas</button>
+                <button class="pill pill-matricula">Matrícula</button>
+                <button class="pill pill-edital">Edital</button>
+                <button class="pill pill-evento">Evento</button>
+                <button class="pill pill-cancelamento">Cancelamento</button>
+            </div>
+
+            <div class="avisos-lista">
+                <a href="aviso.html" class="aviso-linha">
+                    <time>20 JUN</time>
+                    <div>
+                        <h3>Período de matrícula 2026/2 — Alunos veteranos</h3>
+                        <p>Abertas de 20 a 27 de junho, pelo portal do aluno.</p>
+                    </div>
+                    <span class="aviso-tag">Aluno · Fixado</span>
+                </a>
+                <a href="aviso.html" class="aviso-linha">
+                    <time>18 JUN</time>
+                    <div>
+                        <h3>Cancelamento de aulas — Greve parcial dos servidores</h3>
+                        <p>Vespertino e noturno de 18/06 cancelados.</p>
+                    </div>
+                    <span class="aviso-tag">Todos</span>
+                </a>
+                <a href="aviso.html" class="aviso-linha">
+                    <time>15 JUN</time>
+                    <div>
+                        <h3>Edital Nº 012/2026 — Bolsas de Iniciação Científica</h3>
+                        <p>Inscrições até 30/08, a partir do 2º período.</p>
+                    </div>
+                    <span class="aviso-tag">Aluno</span>
+                </a>
+                <a href="aviso.html" class="aviso-linha">
+                    <time>12 JUN</time>
+                    <div>
+                        <h3>Semana Acadêmica Arcádia 2026 — Programação</h3>
+                        <p>Entre 7 e 11 de julho.</p>
+                    </div>
+                    <span class="aviso-tag">Aluno · Professor</span>
+                </a>
+            </div>
+
+            <div class="avisos-rodape">
+                <span>4 de 7 avisos</span>
+                <span class="paginacao">‹ 1 2 3 4 ›</span>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
