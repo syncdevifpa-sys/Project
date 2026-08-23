@@ -89,6 +89,20 @@ if (ilustracoes.length) {
     ilustracoes.forEach((el) => observador.observe(el));
 }
 
+// hero-card flutuante: entra com fade + slide quando visível
+const heroCard = document.querySelector('.hero-card');
+if (heroCard) {
+    const cardObservador = new IntersectionObserver((entradas) => {
+        entradas.forEach((entrada) => {
+            if (entrada.isIntersecting) {
+                heroCard.classList.add('is-in');
+                cardObservador.unobserve(heroCard);
+            }
+        });
+    }, { rootMargin: '0px 0px -15% 0px' });
+    cardObservador.observe(heroCard);
+}
+
 // sidebar: scroll interno quando conteúdo extrapola
 const sidebars = document.querySelectorAll('.portal-sidebar');
 sidebars.forEach((sidebar) => {

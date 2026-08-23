@@ -12,7 +12,7 @@
     --preto: #141413;
     --marfim: #FAF9F5;
     --apoio: #5A6068;
-    --apoio-escuro: #A9A9A6;
+    --apoio-escuro: #6B6B6B;
     --lavanda: #C8C3DC;
     --vermelho: #E8563F;
     --vermelho-texto: #F2564B;
@@ -75,7 +75,7 @@ svg[class^="doodle-"] {
     font-weight: 600;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #9A99A5;
+    color: var(--apoio-escuro);
 }
 
 .tom-violeta {
@@ -215,16 +215,35 @@ svg[class^="doodle-"] {
 
 .hero {
     position: relative;
-    padding-top: 90px;
-    padding-bottom: 150px;
+    background: var(--bloco);
+    padding-top: 100px;
+    padding-bottom: 170px;
+    overflow: hidden;
 }
 
-.ilu-mural-hero {
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
     position: absolute;
-    top: 26px;
-    right: 6%;
-    width: 320px;
-    --ilu-opacity: 0.9;
+    top: 100px;
+    left: 36px;
+    z-index: 0;
+}
+
+.hero-badge-text {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--apoio-escuro);
+    background: var(--marfim);
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(16, 20, 26, 0.06);
 }
 
 .hero .display {
@@ -233,14 +252,18 @@ svg[class^="doodle-"] {
     line-height: 1.02;
     letter-spacing: -0.035em;
     max-width: 14em;
+    position: relative;
+    z-index: 1;
 }
 
-.circulado {
+.hero .display .circulado {
+    font-weight: 500;
+    color: var(--azul);
     position: relative;
     display: inline-block;
 }
 
-.doodle-elipse {
+.hero .display .circulado .doodle-elipse {
     position: absolute;
     top: -12%;
     left: -6%;
@@ -248,22 +271,70 @@ svg[class^="doodle-"] {
     height: 128%;
 }
 
-.doodle-asterisco {
+.hero .display .doodle-asterisco {
     width: 0.42em;
     vertical-align: super;
     margin-left: 0.08em;
 }
 
+.hero-social {
+    position: absolute;
+    bottom: 60px;
+    right: 36px;
+    display: flex;
+    gap: 14px;
+    z-index: 0;
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.avatar.is-in {
+    opacity: 1;
+}
+
+.avatar-1 {
+    --ilu-opacity: 1;
+    z-index: 3;
+    transform: translateY(-6px);
+}
+
+.avatar-2 {
+    --ilu-opacity: 0.85;
+    z-index: 2;
+    transform: translateY(-3px);
+}
+
+.avatar-3 {
+    --ilu-opacity: 0.7;
+    z-index: 1;
+    transform: translateY(0px);
+}
+
+.avatar-4 {
+    --ilu-opacity: 0.6;
+    z-index: 0;
+    transform: translateY(3px);
+}
+
 .hero-right {
-    margin-left: 47%;
-    margin-top: 90px;
-    max-width: 640px;
+    margin-left: 40%;
+    margin-top: 100px;
+    max-width: 580px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-lista {
     display: flex;
     gap: 26px;
-    margin-left: 42%;
+    margin-left: 0;
     margin-bottom: 64px;
 }
 
@@ -293,19 +364,87 @@ svg[class^="doodle-"] {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 18px;
-    margin-bottom: 36px;
+    gap: 16px;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-acoes .btn-pill {
+    position: relative;
+}
+
+.hero-acoes .btn-pill+.btn-pill {
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-sub {
     color: var(--apoio);
     font-size: 18.5px;
     max-width: 34em;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-onda {
     width: 220px;
+    height: 12px;
     margin-top: 26px;
+    position: relative;
+    z-index: 0;
+}
+
+.hero-card {
+    position: absolute;
+    top: 140px;
+    left: -80px;
+    width: 220px;
+    background: var(--marfim);
+    border-radius: var(--raio-card);
+    padding: 22px 24px;
+    box-shadow: 0 8px 28px rgba(16, 20, 26, 0.08), 0 2px 6px rgba(16, 20, 26, 0.04);
+    border: 1px solid rgba(16, 20, 26, 0.06);
+    z-index: 2;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.hero-card.is-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.hero-card-date {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--apoio-escuro);
+    display: block;
+    margin-bottom: 10px;
+}
+
+.hero-card-category {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--vermelho);
+    margin-bottom: 8px;
+}
+
+.hero-card-title {
+    font-size: 16.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--tinta);
+    max-width: 100%;
+    margin: 0;
 }
 
 /* ---------- seções claras ---------- */
@@ -322,7 +461,7 @@ svg[class^="doodle-"] {
     letter-spacing: -0.02em;
     max-width: 15em;
     margin-top: 22px;
-    margin-bottom: 70px;
+    margin-bottom: 48px;
 }
 
 /* semestre — cards de estatística */
@@ -570,7 +709,7 @@ svg[class^="doodle-"] {
 }
 
 .projeto-mini-autor {
-    color: #A6A5AF;
+    color: var(--apoio-escuro);
 }
 
 /* ---------- faixa escura ---------- */
@@ -682,11 +821,11 @@ svg[class^="doodle-"] {
 }
 
 .feed-data {
-    font-size: clamp(40px, 4vw, 58px);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-size: clamp(28px, 2.5vw, 38px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .feed-item .eyebrow {
@@ -788,7 +927,7 @@ svg[class^="doodle-"] {
 }
 
 .rodape-tema {
-    color: #82827F;
+    color: var(--apoio-escuro);
     font-size: 18px;
     margin-bottom: 26px;
 }
@@ -880,7 +1019,7 @@ svg[class^="doodle-"] {
 }
 
 .campo input::placeholder {
-    color: #A9A9A6;
+    color: var(--apoio-escuro);
 }
 
 .campo input:focus {
@@ -932,12 +1071,15 @@ svg[class^="doodle-"] {
 
 .link-sub {
     font-size: 15px;
-    color: var(--vermelho-texto);
+    color: #C05030;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
     white-space: nowrap;
 }
 
 .link-sub:hover {
-    text-decoration: underline;
+    color: #A03020;
 }
 
 .acesso-form button[type="submit"] {
@@ -1065,12 +1207,60 @@ svg[class^="doodle-"] {
 /* ---------- responsivo ---------- */
 
 @media (max-width: 1024px) {
+    .hero {
+        padding-top: 90px;
+        padding-bottom: 120px;
+    }
+
+    .hero-badge {
+        top: 90px;
+        left: 22px;
+    }
+
+    .hero-badge-text {
+        font-size: 10.5px;
+        padding: 8px 14px;
+    }
+
+    .hero .display {
+        max-width: 12em;
+    }
+
+    .hero-social {
+        bottom: 30px;
+        right: 22px;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .avatar-1 {
+        transform: translateY(-4px);
+    }
+
+    .avatar-2 {
+        transform: translateY(-2px);
+    }
+
+    .avatar-3 {
+        transform: translateY(0px);
+    }
+
+    .avatar-4 {
+        transform: translateY(2px);
+    }
+
     .hero-right {
-        margin-left: 30%;
+        margin-left: 28%;
+        margin-top: 80px;
+        max-width: 460px;
     }
 
     .hero-lista {
-        margin-left: 0;
+        margin-bottom: 44px;
     }
 
     .ilu-fluxo {
@@ -1093,6 +1283,17 @@ svg[class^="doodle-"] {
 
     .feed-item:nth-child(n + 3) {
         border-top: 1px solid rgba(250, 249, 245, 0.16);
+    }
+
+    .hero-card {
+        top: 110px;
+        left: -40px;
+        width: 180px;
+        padding: 18px 20px;
+    }
+
+    .hero-card-title {
+        font-size: 15px;
     }
 }
 
