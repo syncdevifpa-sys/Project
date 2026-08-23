@@ -103,6 +103,20 @@ if (heroCard) {
     cardObservador.observe(heroCard);
 }
 
+// mural do hero: fade in quando visível
+const mural = document.querySelector('.ilu-mural-hero');
+if (mural) {
+    const muralObservador = new IntersectionObserver((entradas) => {
+        entradas.forEach((entrada) => {
+            if (entrada.isIntersecting) {
+                mural.classList.add('is-in');
+                muralObservador.unobserve(mural);
+            }
+        });
+    }, { rootMargin: '0px 0px -20% 0px' });
+    muralObservador.observe(mural);
+}
+
 // sidebar: scroll interno quando conteúdo extrapola
 const sidebars = document.querySelectorAll('.portal-sidebar');
 sidebars.forEach((sidebar) => {
