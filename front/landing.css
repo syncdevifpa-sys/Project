@@ -398,17 +398,17 @@ svg[class^="doodle-"] {
 
 .hero-card {
     position: absolute;
-    top: 140px;
-    left: 30px;
-    width: 220px;
+    top: 96px;
+    right: 36px;
+    width: 200px;
     background: var(--marfim);
     border-radius: var(--raio-card);
-    padding: 22px 24px;
+    padding: 18px 20px;
     box-shadow: 0 8px 28px rgba(16, 20, 26, 0.08), 0 2px 6px rgba(16, 20, 26, 0.04);
     border: 1px solid rgba(16, 20, 26, 0.06);
-    z-index: 2;
+    z-index: 1;
     opacity: 0;
-    transform: translateX(-12px);
+    transform: translateY(-8px);
     transition: opacity 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
         transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -1502,25 +1502,15 @@ svg[class^="doodle-"] {
         --ilu-opacity: 0.75;
     }
 
-    .hero-right {
-        margin-left: 28%;
-        margin-top: 80px;
-        max-width: 460px;
-    }
-
-    .hero-lista {
-        margin-bottom: 44px;
-    }
-
     .hero-card {
-        top: 110px;
-        left: 20px;
-        width: 200px;
-        padding: 18px 20px;
+        top: 80px;
+        right: 22px;
+        width: 180px;
+        padding: 14px 16px;
     }
 
     .hero-card-title {
-        font-size: 15px;
+        font-size: 14px;
     }
 }
 
