@@ -89,18 +89,18 @@ if (ilustracoes.length) {
     ilustracoes.forEach((el) => observador.observe(el));
 }
 
-// hero-card flutuante: entra com fade + slide quando visível
-const heroCard = document.querySelector('.hero-card');
-if (heroCard) {
-    const cardObservador = new IntersectionObserver((entradas) => {
+// hero-feed-card: entra com fade + slide quando visível
+const heroFeedCard = document.querySelector('.hero-feed-card');
+if (heroFeedCard) {
+    const feedObservador = new IntersectionObserver((entradas) => {
         entradas.forEach((entrada) => {
             if (entrada.isIntersecting) {
-                heroCard.classList.add('is-in');
-                cardObservador.unobserve(heroCard);
+                heroFeedCard.classList.add('is-in');
+                feedObservador.unobserve(heroFeedCard);
             }
         });
     }, { rootMargin: '0px 0px -15% 0px' });
-    cardObservador.observe(heroCard);
+    feedObservador.observe(heroFeedCard);
 }
 
 // mural do hero: fade in quando visível

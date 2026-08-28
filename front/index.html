@@ -49,71 +49,115 @@
 
         <!-- hero -->
         <section class="hero container">
-            <img class="ilu ilu-mural-hero" src="ilustracoes/mural-axonometrico.svg" alt="" aria-hidden="true">
+            <!-- badge: integrado no fluxo, não flutuante -->
+            <span class="hero-badge">Arcádia · Plataforma do campus</span>
 
-            <div class="hero-badge">
-                <span class="hero-badge-text">Arcádia Plataforma do campus</span>
-            </div>
+            <!-- grid two-column: headline esquerda, ilustração direita -->
+            <div class="hero-grid">
+                <div class="hero-copy">
+                    <h1 class="display">
+                        Tudo que a sua instituição<br>
+                        publica, <span class="circulado">em um lugar só.</span>
+                        <img class="ilu doodle-asterisco" src="ilustracoes/asterisco.svg" alt="" aria-hidden="true">
+                    </h1>
 
-            <h1 class="display">
-                Tudo que a sua<br>
-                instituição publica,<br>
-                <span class="circulado">
-                    em um lugar só.
-                    <img class="ilu doodle-elipse" src="ilustracoes/destaque-elipse.svg" alt="" aria-hidden="true">
-                </span>
-                <img class="ilu doodle-asterisco" src="ilustracoes/asterisco.svg" alt="" aria-hidden="true">
-            </h1>
+                    <p class="hero-sub">Editais, matrículas, calendário acadêmico, documentos e projetos com data, categoria
+                        e público. Sem grupo de WhatsApp, sem PDF perdido.</p>
 
-            <div class="hero-social" aria-label="Equipe e parceiros que usam o portal">
-                <svg class="avatar avatar-1" viewBox="0 0 48 48" aria-hidden="true">
-                    <circle cx="24" cy="24" r="24" fill="var(--bloco)"/>
-                    <circle cx="24" cy="19" r="7" fill="var(--tinta)"/>
-                    <path d="M6 41c0-8.3 6.7-15 18-15s18 6.7 18 15" fill="var(--tinta)"/>
-                </svg>
-                <svg class="avatar avatar-2" viewBox="0 0 48 48" aria-hidden="true">
-                    <circle cx="24" cy="24" r="24" fill="var(--lilas)"/>
-                    <circle cx="24" cy="19" r="7" fill="var(--violeta)"/>
-                    <path d="M6 41c0-8.3 6.7-15 18-15s18 6.7 18 15" fill="var(--violeta)"/>
-                </svg>
-                <svg class="avatar avatar-3" viewBox="0 0 48 48" aria-hidden="true">
-                    <circle cx="24" cy="24" r="24" fill="var(--creme)"/>
-                    <circle cx="24" cy="19" r="7" fill="var(--amarelo)"/>
-                    <path d="M6 41c0-8.3 6.7-15 18-15s18 6.7 18 15" fill="var(--amarelo)"/>
-                </svg>
-                <svg class="avatar avatar-4" viewBox="0 0 48 48" aria-hidden="true">
-                    <circle cx="24" cy="24" r="24" fill="var(--marfim)"/>
-                    <circle cx="24" cy="19" r="7" fill="var(--tinta)"/>
-                    <path d="M6 41c0-8.3 6.7-15 18-15s18 6.7 18 15" fill="var(--tinta)"/>
-                </svg>
-            </div>
+                    <div class="hero-ctas">
+                        <a href="cadastro.html" class="btn-hero-primary">Criar conta</a>
+                        <a href="login.html" class="btn-hero-secondary">Entrar no portal</a>
+                    </div>
 
-            <div class="hero-right">
-                <div class="hero-lista">
-                    <img class="ilu doodle-chave" src="ilustracoes/chave.svg" alt="" aria-hidden="true">
-                    <ul>
-                        <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Avisos</li>
-                        <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Documentos</li>
-                        <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Projetos</li>
-                    </ul>
+                    <div class="hero-proof" aria-label="Números que comprovam o uso do mural">
+                        <div class="proof-stat">
+                            <span class="proof-num">1.284</span>
+                            <span class="proof-label">Alunos com conta ativa</span>
+                        </div>
+                        <div class="proof-stat">
+                            <span class="proof-num">24h</span>
+                            <span class="proof-label">Do envio à publicação</span>
+                        </div>
+                        <div class="proof-stat">
+                            <span class="proof-num">92%</span>
+                            <span class="proof-label">Abriram na semana de provas</span>
+                        </div>
+                        <div class="proof-seal">
+                            <img class="ilu ilu-seal" src="ilustracoes/selo-verificado.svg" alt="" aria-hidden="true">
+                            <span class="proof-seal-text">Conteúdo verificado pela coordenação</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-support">
+                        <span class="support-label">Alunos, professores e servidores</span>
+                        <div class="avatar-stack" aria-hidden="true">
+                            <svg class="avatar avatar-1" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="20" fill="var(--bloco)"/>
+                                <circle cx="20" cy="15" r="5.5" fill="var(--tinta)"/>
+                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--tinta)"/>
+                            </svg>
+                            <svg class="avatar avatar-2" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="20" fill="var(--lilas)"/>
+                                <circle cx="20" cy="15" r="5.5" fill="var(--violeta)"/>
+                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--violeta)"/>
+                            </svg>
+                            <svg class="avatar avatar-3" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="20" fill="var(--creme)"/>
+                                <circle cx="20" cy="15" r="5.5" fill="var(--amarelo)"/>
+                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--amarelo)"/>
+                            </svg>
+                            <svg class="avatar avatar-4" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="20" fill="var(--marfim)"/>
+                                <circle cx="20" cy="15" r="5.5" fill="var(--tinta)"/>
+                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--tinta)"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="hero-lista">
+                        <img class="ilu doodle-chave" src="ilustracoes/chave.svg" alt="" aria-hidden="true">
+                        <ul>
+                            <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Avisos</li>
+                            <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Documentos</li>
+                            <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Projetos</li>
+                        </ul>
+                    </div>
+
+                    <img class="hero-onda ilu--rule" src="ilustracoes/sublinha.svg" alt="" aria-hidden="true">
                 </div>
 
-                <div class="hero-acoes">
-                    <a href="cadastro.html" class="btn-pill btn-tinta">Criar conta</a>
-                    <a href="login.html" class="btn-pill btn-claro">Entrar no portal</a>
+                <div class="hero-visual">
+                    <img class="ilu-mural-hero" src="ilustracoes/mural-axonometrico.svg" alt="" aria-hidden="true">
+
+                    <aside class="hero-feed-card" aria-label="Últimas publicações no mural">
+                        <div class="hero-feed-header">
+                            <span class="hero-feed-titulo-cab">Últimas publicações</span>
+                            <a href="avisos.html" class="hero-feed-link">Ver feed →</a>
+                        </div>
+
+                        <ul class="hero-feed-list">
+                            <li class="hero-feed-item">
+                                <span class="hero-feed-data">20 jun</span>
+                                <span class="hero-feed-cat pill-vermelho">Edital</span>
+                                <p class="hero-feed-titulo">Edital 012/2026 — Bolsas de Iniciação Científica</p>
+                                <p class="hero-feed-desc">Inscrições abertas para alunos a partir do 2º período.</p>
+                            </li>
+                            <li class="hero-feed-item">
+                                <span class="hero-feed-data">15 jun</span>
+                                <span class="hero-feed-cat pill-azul">Matrícula</span>
+                                <p class="hero-feed-titulo">Matrícula 2026/2 aberta de 20 a 27 de junho</p>
+                                <p class="hero-feed-desc">Período de matrícula para alunos veteranos e novos.</p>
+                            </li>
+                            <li class="hero-feed-item">
+                                <span class="hero-feed-data">12 jun</span>
+                                <span class="hero-feed-cat pill-amarelo">Evento</span>
+                                <p class="hero-feed-titulo">Semana Acadêmica Arcádia 2026</p>
+                                <p class="hero-feed-desc">Palestras, workshops e apresentações de projetos.</p>
+                            </li>
+                        </ul>
+                    </aside>
                 </div>
-
-                <p class="hero-sub">Editais, matrículas, calendário acadêmico, documentos e projetos&nbsp; com data,
-                    categoria e público. Sem grupo de WhatsApp, sem PDF perdido.</p>
-
-                <img class="ilu hero-onda ilu--rule" src="ilustracoes/sublinha.svg" alt="" aria-hidden="true">
             </div>
-
-            <aside class="hero-card" aria-label="Edital publicado recentemente">
-                <span class="hero-card-date">20 jun</span>
-                <p class="hero-card-category">Edital</p>
-                <p class="hero-card-title">Edital 012/2026 — Bolsas de Iniciação Científica</p>
-            </aside>
         </section>
 
         <!-- o semestre em números -->
