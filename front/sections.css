@@ -53,3 +53,97 @@
     flex-wrap: wrap;
     gap: 8px;
 }
+
+/* ===== SEMESTRE EM NÚMEROS (índice 165-202 do index.html) =====
+   .stats: grid 3 colunas iguais / gap 32px
+   <768px: 1 coluna, gap reduzido
+   .stat-card: card de número; sem sombra, border-radius 12px, flex coluna
+   Variantes de fundo:
+     card-lilas, card-creme: fundo claro / texto tinta
+     card-tinta: fundo escuro / texto claro; label recalculado via color-mix
+   .stat-linha: faixas de linha de fatos abaixo dos cards
+*/
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+@media (max-width: 767px) {
+    .stats {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 32px;
+    border-radius: 12px;
+    background: var(--lilas);
+    color: var(--tinta);
+}
+
+.stat-card .eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--apoio);
+}
+
+.stat-card .stat-numero {
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-card .stat-desc {
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 32ch;
+}
+
+.card-creme {
+    background: var(--creme);
+}
+
+.card-tinta {
+    background: var(--tinta);
+    color: var(--marfim);
+}
+
+.card-tinta .eyebrow {
+    color: color-mix(in srgb, var(--marfim) 70%, transparent);
+}
+
+.stat-linha {
+    display: flex;
+    gap: 32px;
+    align-items: baseline;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 767px) {
+    .stat-linha {
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+.stat-linha-num {
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--tinta);
+}
+
+.stat-linha-texto {
+    font-size: 14px;
+    color: var(--apoio);
+}
