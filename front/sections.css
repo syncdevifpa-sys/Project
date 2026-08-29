@@ -1,0 +1,55 @@
+/* ===== SEÇÕES ABAIXO DO HERO =====
+   Único arquivo editável pelo agente.
+   landing.css (hero + tokens) e index.html são somente leitura.
+   Carregado DEPOIS do landing.css, herda as variáveis do :root dele.
+*/
+
+.secao {
+    display: block;
+    width: 100%;
+    padding-block: 96px;
+}
+
+@media (min-width: 768px) {
+    .secao {
+        padding-block: 128px;
+    }
+}
+
+.secao-titulo {
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    max-width: 60ch;
+    margin-block: 12px 48px;
+    max-width: 60ch;
+}
+
+.pill {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: var(--marfim);
+    color: var(--apoio);
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pill:hover {
+    color: var(--tinta);
+}
+
+.pill.ativo {
+    background: var(--tinta);
+    color: var(--marfim);
+}
+
+.pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
