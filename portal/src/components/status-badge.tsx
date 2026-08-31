@@ -1,38 +1,85 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 
-/* Vocabulário fixo de status em linha de lista. Máximo de dois por linha;
-   público-alvo (Aluno/Professor/Servidor) não é status — vai no metadado. */
+export type CategoriaVariant =
+  | "matricula"
+  | "edital"
+  | "evento"
+  | "cancelamento"
+  | "documento"
+  | "calendario";
 
-export type Status = "fixado" | "novo" | "urgente" | "encerrado";
-
-const ROTULO: Record<Status, string> = {
-  fixado: "Fixado",
-  novo: "Novo",
-  urgente: "Urgente",
-  encerrado: "Encerrado",
+export const ROTULO_CATEGORIA: Record<CategoriaVariant, string> = {
+  matricula: "Matrícula",
+  edital: "Edital",
+  evento: "Evento",
+  cancelamento: "Cancelamento",
+  documento: "Documento",
+  calendario: "Calendário",
 };
 
-const ESTILO: Record<Status, string> = {
-  fixado: "bg-evento-bg text-evento",
-  novo: "bg-concluido-bg text-concluido",
-  urgente: "bg-cancelamento-bg text-cancelamento",
-  encerrado: "bg-documento-bg text-documento",
+const ESTILO_CATEGORIA: Record<CategoriaVariant, string> = {
+  matricula: "bg-matricula-bg text-matricula",
+  edital: "bg-edital-bg text-edital",
+  evento: "bg-evento-bg text-evento",
+  cancelamento: "bg-cancelamento-bg text-cancelamento",
+  documento: "bg-documento-bg text-documento",
+  calendario: "bg-calendario-bg text-calendario",
 };
 
-export function StatusBadge({
-  status,
-  className,
-}: {
-  status: Status;
+interface CategoriaBadgeProps {
+  variante: CategoriaVariant;
   className?: string;
-}) {
+}
+
+export function CategoriaBadge({ variante, className }: CategoriaBadgeProps) {
   return (
     <Badge
       variant="secondary"
-      className={cn("rounded-full px-2 text-[11px] font-medium", ESTILO[status], className)}
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        ESTILO_CATEGORIA[variante],
+        className
+      )}
     >
-      {ROTULO[status]}
+      {ROTULO_CATEGORIA[variante]}
+    </Badge>
+  );
+}
+
+export type TipoDocumentoVariant = "PDF" | "E-mail" | "Link";
+
+export const ROTULO_TIPO_DOCUMENTO: Record<TipoDocumentoVariant, string> = {
+  PDF: "PDF",
+  "E-mail": "E-mail",
+  Link: "Link",
+};
+
+const ESTILO_TIPO_DOCUMENTO: Record<TipoDocumentoVariant, string> = {
+  PDF: "bg-matricula-bg text-matricula",
+  "E-mail": "bg-calendario-bg text-calendario",
+  Link: "bg-evento-bg text-evento",
+};
+
+interface TipoDocumentoBadgeProps {
+  tipo: TipoDocumentoVariant;
+  className?: string;
+}
+
+export function TipoDocumentoBadge({
+  tipo,
+  className,
+}: TipoDocumentoBadgeProps) {
+  return (
+    <Badge
+      variant="secondary"
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        ESTILO_TIPO_DOCUMENTO[tipo],
+        className
+      )}
+    >
+      {ROTULO_TIPO_DOCUMENTO[tipo]}
     </Badge>
   );
 }

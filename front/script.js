@@ -89,6 +89,34 @@ if (ilustracoes.length) {
     ilustracoes.forEach((el) => observador.observe(el));
 }
 
+// hero-feed-card: entra com fade + slide quando visível
+const heroFeedCard = document.querySelector('.hero-feed-card');
+if (heroFeedCard) {
+    const feedObservador = new IntersectionObserver((entradas) => {
+        entradas.forEach((entrada) => {
+            if (entrada.isIntersecting) {
+                heroFeedCard.classList.add('is-in');
+                feedObservador.unobserve(heroFeedCard);
+            }
+        });
+    }, { rootMargin: '0px 0px -15% 0px' });
+    feedObservador.observe(heroFeedCard);
+}
+
+// mural do hero: fade in quando visível
+const mural = document.querySelector('.ilu-mural-hero');
+if (mural) {
+    const muralObservador = new IntersectionObserver((entradas) => {
+        entradas.forEach((entrada) => {
+            if (entrada.isIntersecting) {
+                mural.classList.add('is-in');
+                muralObservador.unobserve(mural);
+            }
+        });
+    }, { rootMargin: '0px 0px -20% 0px' });
+    muralObservador.observe(mural);
+}
+
 // sidebar: scroll interno quando conteúdo extrapola
 const sidebars = document.querySelectorAll('.portal-sidebar');
 sidebars.forEach((sidebar) => {
