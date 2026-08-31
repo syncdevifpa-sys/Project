@@ -1,212 +1,406 @@
-import { useState } from "react";
+import { useId } from "react";
 import { Link } from "react-router-dom";
-import { BellOff, Inbox, Lock, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BreadcrumbBar } from "@/components/breadcrumb-bar";
-import { OnboardingPills } from "@/components/onboarding-pills";
-import { NOTIFICACOES, RESUMO_DIARIO, USUARIO_PADRAO } from "@/mock-data";
 import { useAnunciar } from "@/state/announce";
 import { useDemo } from "@/state/demo";
+import { CategoriaBadge, TipoDocumentoBadge } from "@/components/status-badge";
+import { Metrica } from "@/components/Metrica";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import {
+  ChevronRightIcon,
+  DownloadIcon,
+  MailIcon,
+  ExternalLinkIcon,
+  Lock,
+  InboxIcon,
+  AlertOctagonIcon,
+  SearchIcon,
+  LogOutIcon,
+} from "lucide-react";
 
-/* ---------- blocos de estado reutilizados ---------- */
+type Vinculo = "aluno" | "professor" | "servidor" | "todos";
 
-function EstadoVazio({
-  icone: Icone,
-  frase,
-  acao,
+const vinculoOptions: { value: Vinculo; label: string }[] = [
+  { value: "todos", label: "Todos" },
+  { value: "aluno", label: "Aluno" },
+  { value: "professor", label: "Professor" },
+  { value: "servidor", label: "Servidor" },
+];
+
+function CardAviso({
+  aviso,
+  destacado,
 }: {
-  icone: typeof Inbox;
-  frase: string;
-  acao: React.ReactNode;
+  aviso: Aviso;
+  destacado?: boolean;
 }) {
-  return (
-    <div className="flex flex-col items-center gap-4 py-10 text-center">
-      <Icone aria-hidden className="size-7 text-muted-foreground" strokeWidth={1.4} />
-      <p className="text-[14px] text-muted-foreground">{frase}</p>
-      {acao}
-    </div>
-  );
-}
-
-function EstadoErro({ frase, aoTentar }: { frase: string; aoTentar: () => void }) {
-  return (
-    <div className="flex flex-col items-center gap-4 py-10 text-center">
-      <p className="text-[14px] text-muted-foreground">{frase}</p>
-      <Button variant="outline" onClick={aoTentar}>
-        <RefreshCw aria-hidden /> Tentar novamente
-      </Button>
-    </div>
-  );
-}
-
-function EstadoBloqueado({ explicacao }: { explicacao: string }) {
-  return (
-    <div className="flex flex-col items-center gap-4 py-10 text-center">
-      <Lock aria-hidden className="size-7 text-muted-foreground" strokeWidth={1.4} />
-      <p className="max-w-[36ch] text-[14px] text-muted-foreground">{explicacao}</p>
-    </div>
-  );
-}
-
-/* ---------- página ---------- */
-
-export default function Inicio() {
-  const { dados, setDados, vinculo } = useDemo();
-  const anunciar = useAnunciar();
-  const [pendentesOnboarding, setPendentesOnboarding] = useState(0);
-
-  const usuario = USUARIO_PADRAO;
-  const primeiroNome = usuario.nome.split(" ")[0];
-
-  const naoLidas = dados === "normal" ? NOTIFICACOES.filter((n) => n.meta.includes("não lida")).length : 0;
-  const atencao = pendentesOnboarding + naoLidas;
-
-  const tentarNovamente = () => {
-    setDados("normal");
-    anunciar("Avisos recarregados.");
-  };
-
-  const bloqueadoGeral = vinculo === "recusado";
+  const id = useId();
+  const data = new Date(aviso.data);
+  const dataFormatada = data.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
   return (
-    <>
-      <BreadcrumbBar trilha={[{ rotulo: "Portal" }, { rotulo: "Início" }]} />
-
-      <header className="mb-8">
-        <h1 className="text-[40px] leading-tight font-bold tracking-tight md:text-[48px]">
-          Bem-vinda, {primeiroNome}
-        </h1>
-        {atencao > 0 && dados === "normal" && !bloqueadoGeral && (
-          <p className="mt-1 text-[19px] text-muted-foreground">
-            {atencao} {atencao === 1 ? "item precisa" : "itens precisam"} da sua atenção hoje.
-          </p>
-        )}
+    <article
+      className={cn(
+        "flex min-h-0 w-full flex-col gap-3 rounded-[2rem] bg-card p-6 text-left shadow-none transition-colors duration-150 hover:bg-card-subtle",
+        destacado && "ring-2 ring-lilas/40"
+      )}
+    >
+      <header className="flex items-start justify-between gap-4">
+        <CategoriaBadge variante={aviso.categoria} className="shrink-0" />
+        <time className="shrink-0 text-xs tabular-nums text-muted-foreground">
+          {dataFormatada}
+        </time>
       </header>
 
-      <OnboardingPills onPendentes={setPendentesOnboarding} />
+      <h3 className="text-base leading-snug font-semibold text-foreground">
+        {aviso.titulo}
+      </h3>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* caixa de avisos */}
-        <section
-          aria-labelledby="titulo-caixa"
-          className="rounded-3xl bg-card p-7 md:p-9"
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        {aviso.resumo}
+      </p>
+
+      <footer className="flex items-center gap-2 text-sm">
+        <span className="text-muted-foreground">{aviso.vinculoLabel}</span>
+        <span className="text-foreground">·</span>
+        <Link
+          href={`/aviso/${aviso.id}`}
+          className="inline-flex items-center gap-1 text-foreground underline-offset-2 hover:underline"
         >
-          <p className="micro-label mb-3 text-muted-foreground">Notificações</p>
-          <h2 id="titulo-caixa" className="mb-6 text-[22px] font-bold tracking-tight">
-            Caixa de avisos
-          </h2>
-
-          {bloqueadoGeral ? (
-            <EstadoBloqueado explicacao="Disponível após a correção do vínculo. Fale com a secretaria acadêmica." />
-          ) : dados === "carregando" ? (
-            <div className="flex flex-col gap-2.5" aria-hidden>
-              {[0, 1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-[72px] rounded-2xl bg-muted" />
-              ))}
-            </div>
-          ) : dados === "erro" ? (
-            <EstadoErro
-              frase="Não conseguimos carregar seus avisos."
-              aoTentar={tentarNovamente}
-            />
-          ) : dados === "vazio" ? (
-            <EstadoVazio
-              icone={Inbox}
-              frase="Nenhuma notificação por aqui."
-              acao={
-                <Button variant="outline" asChild>
-                  <Link to="/avisos">Ver todos os avisos</Link>
-                </Button>
-              }
-            />
-          ) : (
-            <>
-              <ul className="flex flex-col gap-2.5">
-                {NOTIFICACOES.map((n) => {
-                  const conteudo = (
-                    <>
-                      <strong className="block text-[14.5px] font-semibold">
-                        {n.titulo}
-                      </strong>
-                      <span className="text-[12.5px] text-muted-foreground">{n.meta}</span>
-                    </>
-                  );
-                  return (
-                    <li key={n.id}>
-                      {n.avisoId ? (
-                        <Link
-                          to={`/avisos/${n.avisoId}`}
-                          className="block rounded-2xl bg-marfim px-5 py-4 transition-colors hover:bg-background"
-                        >
-                          {conteudo}
-                        </Link>
-                      ) : (
-                        <div className="rounded-2xl bg-marfim px-5 py-4">{conteudo}</div>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="mt-5 text-[12.5px] text-muted-foreground">
-                Cancelamento e matrícula chegam sempre, independentemente das preferências.
-              </p>
-            </>
-          )}
-        </section>
-
-        {/* resumo diário — painel de contexto (lilás) */}
-        <section
-          aria-labelledby="titulo-resumo"
-          className="rounded-3xl bg-lilas p-7 md:p-9"
-        >
-          <p className="micro-label mb-3 text-violeta">Resumo diário</p>
-          <h2 id="titulo-resumo" className="mb-6 text-[22px] font-bold tracking-tight">
-            O e-mail das 7h
-          </h2>
-
-          {bloqueadoGeral || vinculo === "verificacao" ? (
-            <EstadoBloqueado explicacao="Disponível após a verificação do vínculo." />
-          ) : dados === "carregando" ? (
-            <Skeleton className="h-[260px] rounded-2xl bg-violeta/10" aria-hidden />
-          ) : dados === "erro" ? (
-            <EstadoErro
-              frase="Não conseguimos carregar o resumo de hoje."
-              aoTentar={tentarNovamente}
-            />
-          ) : dados === "vazio" ? (
-            <EstadoVazio
-              icone={BellOff}
-              frase="O resumo de hoje ainda não chegou."
-              acao={
-                <Button variant="outline" asChild>
-                  <Link to="/perfil">Ativar resumo diário</Link>
-                </Button>
-              }
-            />
-          ) : (
-            <div className="rounded-2xl bg-marfim p-6">
-              <p className="micro-label text-violeta">{RESUMO_DIARIO.origem}</p>
-              <strong className="mt-3 mb-4 block text-[15.5px] font-bold">
-                {RESUMO_DIARIO.titulo}
-              </strong>
-              <ul className="mb-6 flex flex-col gap-2">
-                {RESUMO_DIARIO.itens.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-xl bg-card px-4 py-3 text-[13.5px]"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Button asChild>
-                <Link to="/avisos">Abrir o mural</Link>
-              </Button>
-            </div>
-          )}
-        </section>
-      </div>
-    </>
+          Ler publicação
+          <ChevronRightIcon className="h-4 w-4" />
+        </Link>
+      </footer>
+    </article>
   );
 }
+
+function CardDocumento({
+  documento,
+}: {
+  documento: Documento;
+}) {
+  const acessoLabel =
+    documento.acessos > 1 ? "acessos" : "acesso";
+
+  return (
+    <article
+      className="flex min-h-0 w-full flex-col gap-3 rounded-[2rem] bg-card p-6 text-left shadow-none transition-colors duration-150 hover:bg-card-subtle"
+    >
+      <header className="flex items-start justify-between gap-4">
+        <TipoDocumentoBadge
+          tipo={documento.tipo}
+          className="shrink-0"
+        />
+        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+          {documento.acessos} {acessoLabel}
+        </span>
+      </header>
+
+      <h3 className="text-base leading-snug font-semibold text-foreground">
+        {documento.titulo}
+      </h3>
+
+      <footer className="flex items-center gap-2">
+        {documento.tipo === "PDF" && (
+          <Link
+            href={`/baixar/${documento.id}`}
+            className="inline-flex items-center gap-1 rounded-full bg-matricula/10 px-4 py-1.5 text-xs font-medium text-matricula hover:bg-matricula/20"
+          >
+            <DownloadIcon className="h-3.5 w-3.5" />
+            Baixar
+          </Link>
+        )}
+        {documento.tipo === "E-mail" && (
+          <Link
+            href={`/enviar-email/${documento.id}`}
+            className="inline-flex items-center gap-1 rounded-full bg-calendario/10 px-4 py-1.5 text-xs font-medium text-calendario hover:bg-calendario/20"
+          >
+            <MailIcon className="h-3.5 w-3.5" />
+            Abrir
+          </Link>
+        )}
+        {documento.tipo === "Link" && (
+          <Link
+            href={`/acessar/${documento.id}`}
+            className="inline-flex items-center gap-1 rounded-full bg-evento/10 px-4 py-1.5 text-xs font-medium text-evento hover:bg-evento/20"
+          >
+            <ExternalLinkIcon className="h-3.5 w-3.5" />
+            Acessar
+          </Link>
+        )}
+      </footer>
+    </article>
+  );
+}
+
+function EstadoBloqueado({
+  tentarNovamente,
+}: {
+  tentarNovamente: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-8">
+      <Lock className="h-10 w-10 text-muted-foreground" />
+      <p className="text-sm text-muted-foreground text-left">
+        Seu acesso está temporariamente bloqueado.
+      </p>
+      <button
+        onClick={tentarNovamente}
+        className="inline-flex items-center gap-1 rounded-full bg-destructive px-4 py-1.5 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
+      >
+        Tentar novamente
+      </button>
+    </div>
+  );
+}
+
+function EstadoVazio() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-8">
+      <InboxIcon className="h-10 w-10 text-muted-foreground" />
+      <p className="text-sm text-muted-foreground text-left">
+        Não há publicações para exibir.
+      </p>
+    </div>
+  );
+}
+
+function EstadoErro({
+  tentarNovamente,
+}: {
+  tentarNovamente: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-8">
+      <AlertOctagonIcon className="h-10 w-10 text-destructive" />
+      <p className="text-sm text-destructive text-left">
+        Não foi possível carregar as publicações.
+      </p>
+      <button
+        onClick={tentarNovamente}
+        className="inline-flex items-center gap-1 rounded-full bg-destructive px-4 py-1.5 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
+      >
+        Tentar novamente
+      </button>
+    </div>
+  );
+}
+
+export function Inicio() {
+  const { dados, filtroVinculo, setFiltroVinculo, busca, setBusca } =
+    useAnunciar();
+  const { simular } = useDemo();
+
+  const categoriasComContagem = (() => {
+    const map = new Map<string, number>();
+    for (const aviso of Array.isArray(dados) ? dados : []) {
+      const key = aviso.categoria;
+      map.set(key, (map.get(key) || 0) + 1);
+    }
+    return Array.from(map.entries()).map(([categoria, count]) => ({
+      categoria,
+      count,
+    }));
+  })();
+
+  return (
+    <div className="flex min-h-screen flex-col bg-creme">
+      {/* Hero Section — alinhado à esquerda, max-width no texto */}
+      <section className="flex w-full flex-col px-6 py-10 sm:px-10 lg:px-16">
+        <div className="max-w-3xl">
+          <h1 className="text-display font-bold leading-none text-tinta">
+            Tudo que a secretaria publica, em um só lugar.
+          </h1>
+          <p className="mt-4 text-body-lg text-muted-foreground">
+            Acompanhe avisos de matrícula, editais, eventos, calendário e
+            documentos sem sair da plataforma.
+          </p>
+        </div>
+      </section>
+
+      {/* Filtros e busca — alinhados à esquerda */}
+      <section className="flex w-full flex-col gap-4 px-6 py-4 sm:px-10 lg:px-16">
+        <div className="flex flex-wrap items-center gap-3">
+          {vinculoOptions.map((op) => (
+            <button
+              key={op.value}
+              onClick={() => setFiltroVinculo(op.value)}
+              className={cn(
+                "rounded-full border border-border bg-transparent px-4 py-1.5 text-sm font-medium transition-colors hover:bg-secondary hover:text-foreground",
+                filtroVinculo === op.value
+                  ? "border-foreground/30 bg-foreground text-canvas"
+                  : "text-foreground"
+              )}
+            >
+              {op.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative">
+          <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="search"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar aviso, documento..."
+            className="h-10 w-full rounded-full border border-border bg-card px-10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+      </section>
+
+      {/* Mural de hoje — grid de cards alinhados à esquerda */}
+      <section className="flex w-full flex-col gap-6 px-6 py-6 sm:px-10 lg:px-16">
+        <div className="flex items-center justify-between">
+          <h2 className="text-heading text-tinta">Mural de hoje</h2>
+          <div className="flex flex-wrap gap-2">
+            {categoriasComContagem.map(({ categoria, count }) => (
+              <span
+                key={categoria}
+                className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground"
+              >
+                {categoria === "matricula" && "Matrícula" ||
+                 categoria === "edital" && "Edital" ||
+                 categoria === "evento" && "Evento" ||
+                 categoria === "cancelamento" && "Cancelamento" ||
+                 categoria === "calendario" && "Calendário" ||
+                 categoria === "documento" && "Documento"}{" "}
+                ({count})
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {dados === "carregando" && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-40 rounded-[2rem]" />
+            ))}
+          </div>
+        )}
+
+        {dados === "erro" && <EstadoErro tentarNovamente={simular} />}
+
+        {dados === "vazio" && <EstadoVazio />}
+
+        {Array.isArray(dados) && dados.length === 0 && <EstadoVazio />}
+
+        {Array.isArray(dados) && dados.length > 0 && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {dados
+              .filter((aviso) => {
+                if (filtroVinculo === "todos") return true;
+                return aviso.vinculo === filtroVinculo;
+              })
+              .filter((aviso) => {
+                if (!busca) return true;
+                const termo = busca.toLowerCase();
+                return (
+                  aviso.titulo.toLowerCase().includes(termo) ||
+                  aviso.resumo.toLowerCase().includes(termo)
+                );
+              })
+              .map((aviso) => (
+                <CardAviso key={aviso.id} aviso={aviso} />
+              ))}
+          </div>
+        )}
+      </section>
+
+      {/* O semestre em números — alinhado à esquerda */}
+      <section className="flex w-full flex-col gap-6 px-6 py-8 sm:px-10 lg:px-16">
+        <h2 className="text-heading text-tinta">O semestre em números</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Metrica valor="1.284" rotulo="Alunos que visam" />
+          <Metrica valor="92%" rotulo="Vagas preenchidas" />
+          <Metrica valor="4" rotulo="Novos cursos" />
+        </div>
+      </section>
+
+      {/* Publicações recentes — cards alinhados à esquerda */}
+      <section className="flex w-full flex-col gap-6 px-6 py-8 sm:px-10 lg:px-16">
+        <h2 className="text-heading text-tinta">Publicações recentes</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {avisosSecundarios.map((aviso) => (
+            <CardAviso key={aviso.id} aviso={aviso} />
+          ))}
+        </div>
+      </section>
+
+      {/* Central de documentos — alinhado à esquerda */}
+      <section className="flex w-full flex-col gap-6 px-6 py-8 sm:px-10 lg:px-16">
+        <h2 className="text-heading text-tinta">
+          O que você precisa baixar
+        </h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {documentos.map((doc) => (
+            <CardDocumento key={doc.id} documento={doc} />
+          ))}
+        </div>
+      </section>
+
+      {/* Rodapé — alinhado à esquerda */}
+      <footer className="mt-auto flex w-full flex-col gap-4 border-t border-border bg-papel px-6 py-8 sm:px-10 lg:px-16">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">
+              Vínculos úteis
+            </span>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/secretaria"
+                className="text-link-azul underline-offset-2 hover:text-link-azul/80"
+              >
+                Secretaria acadêmica
+              </Link>
+              <Link
+                href="/biblioteca"
+                className="text-link-azul underline-offset-2 hover:text-link-azul/80"
+              >
+                Biblioteca
+              </Link>
+              <Link
+                href="/calendario"
+                className="text-link-azul underline-offset-2 hover:text-link-azul/80"
+              >
+                Calendário
+              </Link>
+              <Link
+                href="/contato"
+                className="text-link-azul underline-offset-2 hover:text-link-azul/80"
+              >
+                Contato
+              </Link>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+            <span>secretaria@arcadia.edu.br</span>
+            <span>IFPA — Campus Belém</span>
+            <span>© 2026 Arcádia. Todos os direitos reservados.</span>
+          </div>
+        </div>
+      </footer>
+
+      <form
+        action="/logout"
+        method="post"
+        className="fixed bottom-0 right-0 z-50 m-4 flex h-10 w-10 items-center justify-end"
+      >
+        <button
+          type="submit"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:bg-secondary"
+          aria-label="Sair"
+        >
+          <LogOutIcon className="h-5 w-5" />
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default Inicio;

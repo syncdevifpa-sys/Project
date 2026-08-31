@@ -1,149 +1,148 @@
 /* ===== SEÇÕES ABAIXO DO HERO =====
+   CSS de seções que não foram migradas para o landing.css consolidado.
+   O landing.css agora carrega hero, seções e rodapé de forma consolidada.
+   Este arquivo permanece para regras de seção que o landing.css não cobre.
+*/
+
+/* ===== SEÇÕES ABAIXO DO HERO =====
    Único arquivo editável pelo agente.
    landing.css (hero + tokens) e index.html são somente leitura.
    Carregado DEPOIS do landing.css, herda as variáveis do :root dele.
 */
 
 .secao {
-    display: block;
-    width: 100%;
-    padding-block: 96px;
+  display: block;
+  width: 100%;
+  padding-block: 96px;
 }
 
 @media (min-width: 768px) {
-    .secao {
-        padding-block: 128px;
-    }
+  .secao {
+    padding-block: 100px;
+  }
 }
 
 .secao-titulo {
-    font-size: clamp(28px, 4vw, 44px);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    font-weight: 700;
-    max-width: 60ch;
-    margin-block: 12px 48px;
-    max-width: 60ch;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin-block: 12px 48px;
+  max-width: 60ch;
 }
 
+/* Pill de categoria (reference: radius 36px, padding 5px 14px, 2px border, fill=cor, text=tinta) */
 .pill {
-    display: inline-block;
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: var(--marfim);
-    color: var(--apoio);
-    transition: background 0.15s ease, color 0.15s ease;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 36px;
+  border: 2px solid;
 }
 
-.pill:hover {
-    color: var(--tinta);
+/* Pills de filtro (reference: radius 980px, padding 9px 20px) */
+.pill-filtro {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 9px 20px;
+  border-radius: 980px;
+  border: 2px solid;
 }
 
-.pill.ativo {
-    background: var(--tinta);
-    color: var(--marfim);
-}
-
-.pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-/* ===== SEMESTRE EM NÚMEROS (índice 165-202 do index.html) =====
-   .stats: grid 3 colunas iguais / gap 32px
+/* ===== SEMESTRE EM NÚMEROS =====
+   .stats: grid 3 colunas iguais, gap 28px (reference gap)
    <768px: 1 coluna, gap reduzido
-   .stat-card: card de número; sem sombra, border-radius 12px, flex coluna
-   Variantes de fundo:
-     card-lilas, card-creme: fundo claro / texto tinta
-     card-tinta: fundo escuro / texto claro; label recalculado via color-mix
+   .stat-card: card de número; sem sombra, border-radius 28px,
+   borda 2px, fundo branco (default) ou cor da superfície,
    .stat-linha: faixas de linha de fatos abaixo dos cards
 */
 
 .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
 }
 
 @media (max-width: 767px) {
-    .stats {
-        grid-template-columns: 1fr;
-        gap: 24px;
-    }
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .stat-card {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 32px;
-    border-radius: 12px;
-    background: var(--lilas);
-    color: var(--tinta);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px;
+  border-radius: 28px;
+  border: 2px solid color-mix(in srgb, var(--tinta) 100%, transparent);
+  background: var(--papel);
+  color: var(--tinta);
 }
 
-.stat-card .eyebrow {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--apoio);
-}
-
-.stat-card .stat-numero {
-    font-size: clamp(40px, 6vw, 64px);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-}
-
-.stat-card .stat-desc {
-    font-size: 15px;
-    line-height: 1.5;
-    max-width: 32ch;
-}
-
-.card-creme {
-    background: var(--creme);
+.card-lima {
+  background: var(--lima);
+  border-color: color-mix(in srgb, var(--tinta) 40%, var(--lima));
 }
 
 .card-tinta {
-    background: var(--tinta);
-    color: var(--marfim);
+  background: var(--tinta);
+  color: var(--marfim);
+  border-color: var(--marfim);
 }
 
-.card-tinta .eyebrow {
-    color: color-mix(in srgb, var(--marfim) 70%, transparent);
+.stat-card .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--apoio);
+}
+
+.stat-card .stat-numero {
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-card .stat-desc {
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 32ch;
 }
 
 .stat-linha {
-    display: flex;
-    gap: 32px;
-    align-items: baseline;
-    margin-top: 48px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 28px;
+  align-items: baseline;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid color-mix(in srgb, var(--tinta) 20%, transparent);
 }
 
 @media (max-width: 767px) {
-    .stat-linha {
-        flex-direction: column;
-        gap: 16px;
-    }
+  .stat-linha {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .stat-linha-num {
-    font-size: 20px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: var(--tinta);
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--tinta);
 }
 
 .stat-linha-texto {
-    font-size: 14px;
-    color: var(--apoio);
+  font-size: 14px;
+  color: var(--apoio);
 }

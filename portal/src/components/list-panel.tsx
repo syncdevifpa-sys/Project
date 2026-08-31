@@ -1,47 +1,89 @@
-import { useId, type ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { forwardRef, ReactNode, useId } from "react";
 import { cn } from "@/lib/utils";
+import { ChevronRightIcon } from "lucide-react";
 
-/* Vocabulário de lista do portal: container claro com linhas coladas,
-   separadas por divisor hairline. Linha que navega ganha chevron; linha
-   estática, não. A linha inteira é a área clicável. */
+export type ListPanelModalidade = "lista" | "cards";
 
-export function ListPanel({
-  label,
-  rodape,
-  className,
-  children,
-}: {
-  /** Label de seção acima do container: caps, tracking largo, fora do card. */
+interface ListPanelProps {
   label?: string;
-  /** Slot abaixo do container (ex.: link "Ver todos"). */
   rodape?: ReactNode;
   className?: string;
+  modalidade?: ListPanelModalidade;
   children: ReactNode;
-}) {
-  const labelId = useId();
-  return (
-    <section aria-labelledby={label ? labelId : undefined} className={className}>
-      {label && (
-        <p id={labelId} className="micro-label mb-3 px-1 text-muted-foreground">
-          {label}
-        </p>
-      )}
-      <div className="rounded-[16px] bg-marfim">
-        <ul
+}
+
+export const ListPanel = forwardRef<HTMLDivElement, ListPanelProps>(
+  (
+    {
+      label,
+      rodape,
+      className,
+      modalidade = "lista",
+      children,
+    },
+    ref
+  ) => {
+    const id = useId();
+
+    if (modalidade === "cards") {
+      return (
+        <div
+          ref={ref}
           className={cn(
-            "flex flex-col divide-y divide-foreground/8",
-            // arredonda a área de hover da primeira e da última linha
-            "[&>li:first-child>*]:rounded-t-[16px] [&>li:last-child>*]:rounded-b-[16px]",
+            "grid grid-cols-1 gap-4 p-4 rounded-[2rem] bg-marfim",
+            className
           )}
         >
           {children}
+          {rodape && (
+            <div className="mt-4 flex justify-between text-xs text-muted-foreground">
+              {rodape}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "divide-y divide-border bg-card rounded-2xl p-4 text-left",
+          className
+        )}
+      >
+        {label && (
+          <p
+            id={id}
+            className="micro-label mb-3 px-1 text-muted-foreground"
+          >
+            {label}
+          </p>
+        )}
+        <ul className="flex flex-col">
+          {children}
         </ul>
+        {rodape && (
+          <div className="mt-3 flex justify-between text-xs text-muted-foreground">
+            {rodape}
+          </div>
+        )}
       </div>
-      {rodape}
-    </section>
-  );
+    );
+  }
+);
+
+ListPanel.displayName = "ListPanel";
+
+interface ListRowProps {
+  titulo: ReactNode;
+  para?: string;
+  aoClicar?: () => void;
+  badges?: ReactNode;
+  meta?: ReactNode;
+  metaAbaixo?: ReactNode;
+  className?: string;
+  comoCard?: boolean;
 }
 
 export function ListRow({
@@ -52,63 +94,94 @@ export function ListRow({
   meta,
   metaAbaixo,
   className,
-}: {
-  titulo: ReactNode;
-  /** Rota de destino — presença define a variante "com chevron". */
-  para?: string;
-  /** Ação de clique para linha interativa que não navega por rota. */
-  aoClicar?: () => void;
-  /** Até dois StatusBadge, imediatamente após o título. */
-  badges?: ReactNode;
-  /** Metadado cinza alinhado à direita (ex.: público-alvo, data). */
-  meta?: ReactNode;
-  /** Metadado em segunda linha, sob o título. */
-  metaAbaixo?: ReactNode;
-  className?: string;
-}) {
+  comoCard,
+}: ListRowProps) {
+  const id = useId();
+  const interativo = para || aoClicar;
+
   const conteudo = (
     <>
-      <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="text-[15.5px] leading-snug font-medium">{titulo}</span>
+      {badges && (
+        <div className="flex flex-wrap items-center gap-2">
           {badges}
-        </span>
-        {metaAbaixo && (
-          <span className="mt-1 block text-[13px] text-muted-foreground">
-            {metaAbaixo}
-          </span>
-        )}
-      </span>
-      {meta && (
-        <span className="shrink-0 text-[13px] text-muted-foreground">{meta}</span>
+        </div>
       )}
-      {(para || aoClicar) && (
-        <ChevronRight
-          aria-hidden
-          className="size-4 shrink-0 text-muted-foreground"
-          strokeWidth={1.8}
-        />
+
+      <div className="flex min-h-[2.5rem] w-full flex-col gap-1">
+        <div className="flex items-start justify-start">
+          <h4 className="text-sm font-semibold text-foreground">{titulo}</h4>
+        </div>
+
+        {meta && (
+          <div className="text-xs text-muted-foreground">{meta}</div>
+        )}
+      </div>
+
+      {metaAbaixo && (
+        <div className="text-xs text-muted-foreground">{metaAbaixo}</div>
       )}
     </>
   );
 
-  const base = "flex min-h-16 w-full items-center gap-4 px-5 py-3.5 text-left";
-  const interativa =
-    "transition-colors duration-150 hover:bg-foreground/5";
+  if (comoCard) {
+    return (
+      <article
+        className={cn(
+          "flex min-h-0 w-full flex-col gap-3 rounded-[1.5rem] bg-card p-6 text-left shadow-none transition-colors duration-150 hover:bg-card-subtle",
+          className
+        )}
+      >
+        {conteudo}
+      </article>
+    );
+  }
+
+  const elemento = () => {
+    if (para) {
+      return (
+        <Link
+          href={para}
+          className={cn(
+            "flex min-h-[2.5rem] w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-secondary/50",
+            className
+          )}
+        >
+          {conteudo}
+          <ChevronRightIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+        </Link>
+      );
+    }
+
+    if (aoClicar) {
+      return (
+        <button
+          onClick={aoClicar}
+          className={cn(
+            "flex w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-secondary/50",
+            className
+          )}
+        >
+          {conteudo}
+          <ChevronRightIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+        </button>
+      );
+    }
+
+    return (
+      <li
+        className={cn(
+          "flex w-full items-center gap-4 px-4 py-3 text-left",
+          className
+        )}
+      >
+        {conteudo}
+      </li>
+    );
+  };
 
   return (
-    <li className={className}>
-      {para ? (
-        <Link to={para} className={cn(base, interativa)}>
-          {conteudo}
-        </Link>
-      ) : aoClicar ? (
-        <button type="button" onClick={aoClicar} className={cn(base, interativa)}>
-          {conteudo}
-        </button>
-      ) : (
-        <div className={base}>{conteudo}</div>
-      )}
+    <li className="flex w-full">
+      {elemento()}
     </li>
   );
 }

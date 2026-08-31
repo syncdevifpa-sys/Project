@@ -1,458 +1,715 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arcádia — Gestão acadêmica digitada</title>
+    <link rel="stylesheet" href="landing.css" />
+    <script>
+      (function (m, e, t, r, i) {
+        m[t] =
+          m[t] ||
+          function () {
+            (m[t].q = m[t].q || []).push(arguments);
+          };
+        m[t].l = 1 * new Date();
+        i = e.createElement(r);
+        i.async = 1;
+        i.src = "../gcse_wc.js";
+        e.getElementsByTagName(r)[0].parentNode.appendChild(i);
+      })(window, document, "ccWidget", "script");
+    </script>
+  </head>
+  <body>
+    <!-- ============================================================
+       NAVEGAÇÃO — pílula branca, borda 2px tinta
+       Reference: barra fixa branca, logo à esquerda, pílulas
+       centralizadas, ações à direita.
+       ============================================================ -->
+    <nav class="nav">
+      <div class="nav-inner container">
+        <a class="nav-logo" href="/">
+          <span class="nav-badge" aria-hidden="true">A</span>
+          <span>Arcádia</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="/aviso">Avisos</a></li>
+          <li><a href="/documento">Documentos</a></li>
+          <li><a href="/projeto">Projetos</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="/entrar" class="btn btn-secondary">Entrar</a>
+          <a href="/criar-conta" class="btn btn-primary">Criar conta</a>
+        </div>
+      </div>
+    </nav>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcádia — Tudo que a sua instituição publica, em um lugar só</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital@0;1&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="landing.css">
-    <link rel="stylesheet" href="sections.css">
-</head>
+    <!-- ============================================================
+       HERO — canvas céu pálido #dceeff
+       Reference s229: 8 formas chapadas, pilha centralizada,
+       badge wisteria 56px, display até 132px, subtítulo 24px,
+       par de botões, painel branco 1000px com 3 avisos.
+       ============================================================ -->
+    <section class="hero">
+      <div class="hero-inner container">
+        <div
+          class="hero-shape-1 shape shape--pentagon"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="hero-shape-2 shape shape--triangle"
+          aria-hidden="true"
+        ></div>
+        <div class="hero-shape-3 shape shape--semi" aria-hidden="true"></div>
+        <div class="hero-shape-4 shape shape--star" aria-hidden="true"></div>
+        <div class="hero-shape-5 shape shape--circle" aria-hidden="true"></div>
+        <div class="hero-shape-6 shape shape--polygon" aria-hidden="true"></div>
+        <div class="hero-shape-7 shape shape--circle" aria-hidden="true"></div>
+        <div class="hero-shape-8 shape shape--circle" aria-hidden="true"></div>
 
-<body>
+        <!-- Badge da marca (wisteria, 56px) -->
+        <div class="hero-badge" aria-label="Arcádia">A</div>
 
-    <header class="container">
-        <nav class="nav-landing">
-            <a href="index.html" class="nav-logo">
-                Arcadia
-                <svg class="logo-acento" viewBox="0 0 26 14" aria-hidden="true">
-                    <path d="M3 12 C10 4 16 2 23 3" fill="none" stroke="#E8563F" stroke-width="2.6"
-                        stroke-linecap="round" />
-                </svg>
-                <svg class="logo-risco" viewBox="0 0 150 12" aria-hidden="true">
-                    <path d="M4 8 C40 2 105 2 146 6" fill="none" stroke="#2B3FD9" stroke-width="3"
-                        stroke-linecap="round" />
-                </svg>
-            </a>
+        <!-- Título hero — display clamp(58px, 9vw, 132px) -->
+        <h1 class="hero-title">
+          Tudo que a secretaria publica,
+          <span class="hero-title-secondary"
+            >em um lugar só para você ver.</span
+          >
+        </h1>
 
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#produto" class="ativo">Produto</a></li>
-                <li><a href="#avisos">Avisos</a></li>
-                <li><a href="documentos.html">Documentos</a></li>
-                <li><a href="projetos.html">Projetos</a></li>
-            </ul>
+        <!-- Subtítulo 24px -->
+        <p class="hero-subtitle">
+          Matrículas, editais, eventos e cancelamentos. Tudo sincronizado entre
+          os sites dos cursos e o portal do campus. O registro mais limpo de
+          todo o semestre histórico. Com um clique você entra.
+        </p>
 
-            <div class="nav-end">
-                <a href="login.html" class="nav-entrar">Entrar</a>
-                <a href="cadastro.html" class="btn-pill btn-tinta">Criar conta</a>
-                <button class="nav-toggle" id="navToggle" aria-label="Abrir menu de navegação">
-                    <span></span><span></span><span></span>
-                </button>
+        <!-- Par de botões -->
+        <div class="hero-cta">
+          <a href="/entrar" class="btn btn-primary">Entrar na Arcádia</a>
+          <a href="/criar-conta" class="btn btn-secondary"
+            >Criar conta gratuita</a
+          >
+        </div>
+
+        <!-- Painel branco 1000px com 3 avisos -->
+        <div class="hero-panel">
+          <!-- Aviso 1 — Matrícula (céu #91d8ec) -->
+          <div class="hero-panel-row">
+            <span
+              class="hero-color-block"
+              style="background: var(--color-ceu)"
+            ></span>
+            <div class="aviso-content">
+              <span class="hero-notice-meta">20 jun 2024</span>
+              <h3 class="hero-notice-title">
+                Edital de matrícula 2024.2 — Tecnólogo em Administração
+              </h3>
+              <p class="hero-notice-summary">
+                Inscrições abertas para 30 vagas no turno noturno, com bolsa
+                integral para cotistas.
+              </p>
+              <a href="/aviso/edital-matricula-2024-2" class="hero-panel-link"
+                >Ver mais</a
+              >
             </div>
-        </nav>
-    </header>
+          </div>
 
-    <main>
-
-        <!-- hero -->
-        <section class="hero container">
-            <!-- badge: integrado no fluxo, não flutuante -->
-            <span class="hero-badge">Arcádia · Plataforma do campus</span>
-
-            <!-- grid two-column: headline esquerda, ilustração direita -->
-            <div class="hero-grid">
-                <div class="hero-copy">
-                    <h1 class="display">
-                        Tudo que a sua instituição<br>
-                        publica, <span class="circulado">em um lugar só.</span>
-                        <img class="ilu doodle-asterisco" src="ilustracoes/asterisco.svg" alt="" aria-hidden="true">
-                    </h1>
-
-                    <p class="hero-sub">Editais, matrículas, calendário acadêmico, documentos e projetos com data, categoria
-                        e público. Sem grupo de WhatsApp, sem PDF perdido.</p>
-
-                    <div class="hero-ctas">
-                        <a href="cadastro.html" class="btn-hero-primary">Criar conta</a>
-                        <a href="login.html" class="btn-hero-secondary">Entrar no portal</a>
-                    </div>
-
-                    <div class="hero-proof" aria-label="Números que comprovam o uso do mural">
-                        <div class="proof-stat">
-                            <span class="proof-num">1.284</span>
-                            <span class="proof-label">Alunos com conta ativa</span>
-                        </div>
-                        <div class="proof-stat">
-                            <span class="proof-num">24h</span>
-                            <span class="proof-label">Do envio à publicação</span>
-                        </div>
-                        <div class="proof-stat">
-                            <span class="proof-num">92%</span>
-                            <span class="proof-label">Abriram na semana de provas</span>
-                        </div>
-                        <div class="proof-seal">
-                            <img class="ilu ilu-seal" src="ilustracoes/selo-verificado.svg" alt="" aria-hidden="true">
-                            <span class="proof-seal-text">Conteúdo verificado pela coordenação</span>
-                        </div>
-                    </div>
-
-                    <div class="hero-support">
-                        <span class="support-label">Alunos, professores e servidores</span>
-                        <div class="avatar-stack" aria-hidden="true">
-                            <svg class="avatar avatar-1" viewBox="0 0 40 40">
-                                <circle cx="20" cy="20" r="20" fill="var(--bloco)"/>
-                                <circle cx="20" cy="15" r="5.5" fill="var(--tinta)"/>
-                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--tinta)"/>
-                            </svg>
-                            <svg class="avatar avatar-2" viewBox="0 0 40 40">
-                                <circle cx="20" cy="20" r="20" fill="var(--lilas)"/>
-                                <circle cx="20" cy="15" r="5.5" fill="var(--violeta)"/>
-                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--violeta)"/>
-                            </svg>
-                            <svg class="avatar avatar-3" viewBox="0 0 40 40">
-                                <circle cx="20" cy="20" r="20" fill="var(--creme)"/>
-                                <circle cx="20" cy="15" r="5.5" fill="var(--amarelo)"/>
-                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--amarelo)"/>
-                            </svg>
-                            <svg class="avatar avatar-4" viewBox="0 0 40 40">
-                                <circle cx="20" cy="20" r="20" fill="var(--marfim)"/>
-                                <circle cx="20" cy="15" r="5.5" fill="var(--tinta)"/>
-                                <path d="M4 34a16 16 0 0 1 32 0" fill="var(--tinta)"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div class="hero-lista">
-                        <img class="ilu doodle-chave" src="ilustracoes/chave.svg" alt="" aria-hidden="true">
-                        <ul>
-                            <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Avisos</li>
-                            <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Documentos</li>
-                            <li><img class="ilu ilu-cruz" src="ilustracoes/cruz.svg" alt="" aria-hidden="true"> Projetos</li>
-                        </ul>
-                    </div>
-
-                    <img class="hero-onda ilu--rule" src="ilustracoes/sublinha.svg" alt="" aria-hidden="true">
-                </div>
-
-                <div class="hero-visual">
-                    <img class="ilu-mural-hero" src="ilustracoes/mural-axonometrico.svg" alt="" aria-hidden="true">
-
-                    <aside class="hero-feed-card" aria-label="Últimas publicações no mural">
-                        <div class="hero-feed-header">
-                            <span class="hero-feed-titulo-cab">Últimas publicações</span>
-                            <a href="avisos.html" class="hero-feed-link">Ver feed →</a>
-                        </div>
-
-                        <ul class="hero-feed-list">
-                            <li class="hero-feed-item">
-                                <span class="hero-feed-data">20 jun</span>
-                                <span class="hero-feed-cat pill-vermelho">Edital</span>
-                                <p class="hero-feed-titulo">Edital 012/2026 — Bolsas de Iniciação Científica</p>
-                                <p class="hero-feed-desc">Inscrições abertas para alunos a partir do 2º período.</p>
-                            </li>
-                            <li class="hero-feed-item">
-                                <span class="hero-feed-data">15 jun</span>
-                                <span class="hero-feed-cat pill-azul">Matrícula</span>
-                                <p class="hero-feed-titulo">Matrícula 2026/2 aberta de 20 a 27 de junho</p>
-                                <p class="hero-feed-desc">Período de matrícula para alunos veteranos e novos.</p>
-                            </li>
-                            <li class="hero-feed-item">
-                                <span class="hero-feed-data">12 jun</span>
-                                <span class="hero-feed-cat pill-amarelo">Evento</span>
-                                <p class="hero-feed-titulo">Semana Acadêmica Arcádia 2026</p>
-                                <p class="hero-feed-desc">Palestras, workshops e apresentações de projetos.</p>
-                            </li>
-                        </ul>
-                    </aside>
-                </div>
+          <!-- Aviso 2 — Edital (verde #16ab59) -->
+          <div class="hero-panel-row">
+            <span
+              class="hero-color-block"
+              style="background: var(--color-verde)"
+            ></span>
+            <div class="aviso-content">
+              <span class="hero-notice-meta">18 jun 2024</span>
+              <h3 class="hero-notice-title">
+                Prazo de entrega do TCC — Turma 2024
+              </h3>
+              <p class="hero-notice-summary">
+                Os trabalhos devem ser entregues até 15 jul. Prorrogação para 30
+                jul nos casos médicos comprovados.
+              </p>
+              <a href="/aviso/prazo-tcc-2024" class="hero-panel-link"
+                >Ver mais</a
+              >
             </div>
-        </section>
+          </div>
 
-        <!-- o semestre em números -->
-        <section class="secao container" id="semestre">
-            <p class="eyebrow">Semestre</p>
-            <h2 class="secao-titulo">O semestre em <span class="tom-violeta">números</span>: o que a secretaria
-                publicou, em quanto <span class="tom-vermelho">tempo</span> chegou e quantos abriram.</h2>
-
-            <div class="stats">
-                <article class="stat-card card-lilas">
-                    <p class="eyebrow tom-violeta">Alcance</p>
-                    <p class="stat-numero">1.284</p>
-                    <p class="stat-desc"><strong>avisos entregues</strong> a alunos, professores e servidores sem
-                        repetir a publicação em outro canal.</p>
-                </article>
-
-                <article class="stat-card card-creme">
-                    <p class="eyebrow">Tempo</p>
-                    <p class="stat-numero">24h</p>
-                    <p class="stat-desc"><strong>do envio da secretaria</strong> à publicação no mural.</p>
-                </article>
-
-                <article class="stat-card card-tinta">
-                    <p class="eyebrow">Constância</p>
-                    <p class="stat-numero">92%</p>
-                    <p class="stat-desc"><strong>dos alunos</strong> abriram o mural na semana de provas.</p>
-                </article>
-
-                <div class="stat-linha">
-                    <span class="stat-linha-num">5</span>
-                    <span class="stat-linha-texto">categorias fixas de aviso</span>
-                </div>
-                <div class="stat-linha">
-                    <span class="stat-linha-num">3</span>
-                    <span class="stat-linha-texto">vínculos com filtro próprio</span>
-                </div>
-                <div class="stat-linha">
-                    <span class="stat-linha-num">0</span>
-                    <span class="stat-linha-texto">planilhas para manter</span>
-                </div>
+          <!-- Aviso 3 — Evento (amarelo #ffda00) -->
+          <div class="hero-panel-row">
+            <span
+              class="hero-color-block"
+              style="background: var(--color-amarelo)"
+            ></span>
+            <div class="aviso-content">
+              <span class="hero-notice-meta">15 jun 2024</span>
+              <h3 class="hero-notice-title">
+                Feira de cursos 2024 — Universidade Federal
+              </h3>
+              <p class="hero-notice-summary">
+                12 cursos novos no portfolio. Consulte a grade completa e as
+                datas de matrícula antecipada.
+              </p>
+              <a href="/aviso/feira-cursos-2024" class="hero-panel-link"
+                >Ver mais</a
+              >
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <!-- produto -->
-        <section class="secao container" id="produto">
-            <p class="eyebrow">Produto</p>
-            <div class="produto-intro">
-                <h2 class="secao-titulo">Quatro problemas acadêmicos, resolvidos de forma
-                    <span class="tom-azul">chata</span>: um mural só, filtro por
-                    <span class="tom-vermelho">vínculo</span>, papelada no lugar e portfólio publicado.</h2>
+    <!-- ============================================================
+       FAIXA DE CATEGORIAS — banda branca entre 2px
+       Reference s165: banda branca, pílulas centralizadas gap 16px.
+       ============================================================ -->
+    <section class="category-strip">
+      <div class="category-strip-inner container">
+        <span class="category-pill" style="background: var(--color-ceu)"
+          >Matrícula</span
+        >
+        <span class="category-pill" style="background: var(--color-verde)"
+          >Edital</span
+        >
+        <span class="category-pill" style="background: var(--color-amarelo)"
+          >Evento</span
+        >
+        <span class="category-pill" style="background: var(--color-vermelho)"
+          >Cancelamento</span
+        >
+        <span class="category-pill" style="background: var(--color-rosa)"
+          >Calendário</span
+        >
+      </div>
+    </section>
 
-                <img class="ilu ilu-fluxo" src="ilustracoes/fluxo-unico.svg" alt="" aria-hidden="true">
+    <!-- ============================================================
+       SEÇÃO DE NÚMEROS — sala lima #d2e534
+       Reference s233: banda lima, 3 formas, white cards.
+       ============================================================ -->
+    <section class="numbers">
+      <div class="numbers-inner container">
+        <!-- 3 formas decorativas -->
+        <div
+          class="numbers-shape-1 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="numbers-shape-2 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="numbers-shape-3 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+
+        <span class="numbers-eyebrow">Semestre 2024.2</span>
+        <h2 class="numbers-title">O registro mais limpo de todo o semestre.</h2>
+
+        <div class="numbers-grid">
+          <div class="numbers-card">
+            <span class="numbers-card-eyebrow">Publicações</span>
+            <span class="numbers-card-value">47</span>
+            <span class="numbers-card-label"
+              >Avisos publicados no semestre</span
+            >
+          </div>
+          <div class="numbers-card">
+            <span class="numbers-card-eyebrow">Cursos</span>
+            <span class="numbers-card-value">12</span>
+            <span class="numbers-card-label">Cursos com grade atualizada</span>
+          </div>
+          <div class="numbers-card">
+            <span class="numbers-card-eyebrow">Acesso</span>
+            <span class="numbers-card-value">2.4k</span>
+            <span class="numbers-card-label">Alunos com conta ativa</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       SEÇÃO MURAL — sala tinta #1d1d1f
+       Reference s233: banda tinta, 3 formas, eyebrow mono branco,
+       título 42px peso 700 branco, corpo 21px em #a1a1a6.
+       ============================================================ -->
+    <section class="mural">
+      <div class="mural-inner container">
+        <!-- 3 formas chapadas -->
+        <div class="mural-shape-1 shape shape--circle" aria-hidden="true"></div>
+        <div class="mural-shape-2 shape shape--circle" aria-hidden="true"></div>
+        <div class="mural-shape-3 shape shape--circle" aria-hidden="true"></div>
+
+        <span class="mural-eyebrow">Mural de hoje</span>
+        <h2 class="mural-title">O que acontece agora na secretaria.</h2>
+        <p class="mural-lead">
+          Todos os editais, prazos e eventos publicados hoje e esta semana.
+          Filtre por categoria ou vínculo para ver só o que importa para você.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       FILTRO WISTERIA — sala #d8d1ff
+       Reference s144: chip inativo = branco com borda tinta,
+       ativo = lima com texto tinta.
+       ============================================================ -->
+    <section class="filter-section">
+      <div class="filter-inner container">
+        <!-- Categorias -->
+        <div class="filter-group">
+          <span class="filter-label">Categoria</span>
+          <div class="filter-chips">
+            <button class="filter-chip active" aria-pressed="true">
+              Todos
+            </button>
+            <button class="filter-chip" aria-pressed="false">Matrícula</button>
+            <button class="filter-chip" aria-pressed="false">Edital</button>
+            <button class="filter-chip" aria-pressed="false">Evento</button>
+            <button class="filter-chip" aria-pressed="false">
+              Cancelamento
+            </button>
+            <button class="filter-chip" aria-pressed="false">Calendário</button>
+          </div>
+        </div>
+
+        <!-- Vínculos -->
+        <div class="filter-group">
+          <span class="filter-label">Vínculo</span>
+          <div class="filter-chips">
+            <button class="filter-chip active" aria-pressed="true">
+              Todos
+            </button>
+            <button class="filter-chip" aria-pressed="false">Aluno</button>
+            <button class="filter-chip" aria-pressed="false">Professor</button>
+            <button class="filter-chip" aria-pressed="false">Servidor</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       LISTA DE AVISOS — cards brancos sobre sala wisteria
+       Reference s231: card branco, borda 2px tinta, raio 28px,
+       bloco 120px, pill categoria, meta mono, título 28px,
+       resumo 17px, botão primário à esquerda.
+       ============================================================ -->
+    <section class="mural-list-section">
+      <div class="mural-list-inner container">
+        <div class="mural-list">
+          <!-- Aviso 1 — Matrícula -->
+          <div class="aviso-card">
+            <span
+              class="aviso-color-block"
+              style="background: var(--color-ceu)"
+            ></span>
+            <div class="aviso-content">
+              <div class="aviso-meta-row">
+                <span
+                  class="aviso-category-pill"
+                  style="background: var(--color-ceu)"
+                  >Matrícula</span
+                >
+                <span class="aviso-meta">20 jun 2024</span>
+              </div>
+              <h3 class="aviso-title">
+                Edital de matrícula 2024.2 — Tecnólogo em Administração
+              </h3>
+              <p class="aviso-summary">
+                Inscrições abertas para 30 vagas no turno noturno, com bolsa
+                integral para cotistas.
+              </p>
+              <a href="/aviso/edital-matricula-2024-2" class="aviso-link"
+                >Ver mais</a
+              >
             </div>
+          </div>
 
-            <div class="produto-cards">
-
-                <article class="produto-card card-bloco">
-                    <p class="eyebrow eyebrow-com-icone"><img class="ilu ilu-icone"
-                            src="ilustracoes/mural-icone.svg" alt="" aria-hidden="true"> Um mural, não sete grupos</p>
-                    <h3>Editais, matrículas e cancelamentos entram por um canal só.</h3>
-                    <p class="card-p">Saem com data, categoria e público definidos, no mesmo dia em que a secretaria
-                        publica.</p>
-                    <div class="card-metric">
-                        <span class="metric-circulado">
-                            <span class="metric-num">1</span>
-                            <img class="ilu doodle-circulo" src="ilustracoes/numero-circulado.svg" alt=""
-                                aria-hidden="true">
-                        </span>
-                        <span class="eyebrow">Canal de publicação</span>
-                    </div>
-                </article>
-
-                <article class="produto-card card-tinta" id="avisos">
-                    <p class="eyebrow">Filtrado pelo vínculo</p>
-                    <h3>Você vê primeiro o que foi publicado para você.</h3>
-
-                    <div class="pills" data-filtro>
-                        <button class="pill ativo" type="button">Aluno</button>
-                        <button class="pill" type="button">Professor</button>
-                        <button class="pill" type="button">Servidor</button>
-                    </div>
-
-                    <ul class="mural-lista">
-                        <li>
-                            <svg class="ilu doodle-check" viewBox="0 0 24 24" width="24" height="24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
-                                aria-hidden="true">
-                                <path d="M3.5 4.5h17L14 11v8.5h-4V11Z" />
-                                <circle cx="12" cy="22" r="1.1" fill="#2F5BFF" stroke="none" />
-                            </svg>
-                            <span class="mural-data">20 jun</span>
-                            <div>
-                                <p class="eyebrow">Matrícula</p>
-                                <p class="mural-titulo">Matrícula 2026/2 aberta de 20 a 27 de junho</p>
-                            </div>
-                        </li>
-                        <li>
-                            <svg class="ilu doodle-check" viewBox="0 0 24 24" width="24" height="24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
-                                aria-hidden="true">
-                                <path d="M3.5 4.5h17L14 11v8.5h-4V11Z" />
-                                <circle cx="12" cy="22" r="1.1" fill="#2F5BFF" stroke="none" />
-                            </svg>
-                            <span class="mural-data">15 jun</span>
-                            <div>
-                                <p class="eyebrow">Edital</p>
-                                <p class="mural-titulo">Edital 012/2026 de bolsas de Iniciação Científica</p>
-                            </div>
-                        </li>
-                        <li>
-                            <svg class="ilu doodle-check" viewBox="0 0 24 24" width="24" height="24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
-                                aria-hidden="true">
-                                <path d="M3.5 4.5h17L14 11v8.5h-4V11Z" />
-                                <circle cx="12" cy="22" r="1.1" fill="#2F5BFF" stroke="none" />
-                            </svg>
-                            <span class="mural-data">01 jun</span>
-                            <div>
-                                <p class="eyebrow">Edital</p>
-                                <p class="mural-titulo">Monitoria de Cálculo I com inscrições até 10/06</p>
-                            </div>
-                        </li>
-                    </ul>
-                </article>
-
-                <article class="produto-card card-bloco">
-                    <p class="eyebrow eyebrow-com-icone"><img class="ilu ilu-icone"
-                            src="ilustracoes/documento.svg" alt="" aria-hidden="true"> A papelada onde deveria estar</p>
-                    <h3>Formulários, manuais e contatos reunidos num endereço.</h3>
-                    <div class="card-metric">
-                        <span class="metric-num">24</span>
-                        <span class="eyebrow">Recursos publicados</span>
-                    </div>
-
-                    <img class="ilu doodle-papel" src="ilustracoes/pilha-documentos.svg" alt="" aria-hidden="true">
-                </article>
-
-                <article class="produto-card card-lilas">
-                    <p class="eyebrow tom-violeta eyebrow-com-icone"><img class="ilu ilu-icone"
-                            src="ilustracoes/selo-verificado.svg" alt="" aria-hidden="true"> Portfólio publicado</p>
-                    <h3>O projeto do aluno sai do drive particular e ganha endereço.</h3>
-                    <p class="card-p">Com autoria, curso e link de acesso, aprovado pela coordenação antes de entrar no
-                        ar.</p>
-
-                    <div class="projeto-mini">
-                        <p class="eyebrow">Web app de eng. de software</p>
-                        <p class="projeto-mini-titulo">Sistema de gerenciamento escolar</p>
-                        <p class="eyebrow projeto-mini-autor">Ana Ribeiro, 4º período</p>
-                    </div>
-                </article>
-
+          <!-- Aviso 2 — Edital -->
+          <div class="aviso-card">
+            <span
+              class="aviso-color-block"
+              style="background: var(--color-verde)"
+            ></span>
+            <div class="aviso-content">
+              <div class="aviso-meta-row">
+                <span
+                  class="aviso-category-pill"
+                  style="background: var(--color-verde)"
+                  >Edital</span
+                >
+                <span class="aviso-meta">18 jun 2024</span>
+              </div>
+              <h3 class="aviso-title">Prazo de entrega do TCC — Turma 2024</h3>
+              <p class="aviso-summary">
+                Os trabalhos devem ser entregues até 15 jul. Prorrogação para 30
+                jul nos casos médicos comprovados.
+              </p>
+              <a href="/aviso/prazo-tcc-2024" class="aviso-link">Ver mais</a>
             </div>
-        </section>
+          </div>
 
-        <!-- faixa escura -->
-        <section class="faixa-escura">
-            <div class="container">
-
-                <div class="marca-bloco">
-                    <span class="marca-quadrado">A</span>
-                    <p class="marca-frase">Movido pelo mural institucional da
-                        <span class="marca-nome">Arcádia<img class="ilu doodle-sublinha"
-                                src="ilustracoes/sublinha.svg" alt="" aria-hidden="true"></span>, que transforma publicações espalhadas em um único fluxo verificado.</p>
-                </div>
-
-                <svg class="ilu ilu-prazo" viewBox="0 0 24 24" width="24" height="24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
-                    aria-hidden="true">
-                    <circle cx="12" cy="12" r="9.5" />
-                    <path d="M12 6.5V12l3.5 2" />
-                    <circle cx="12" cy="12" r="1.1" fill="#2F5BFF" stroke="none" />
-                </svg>
-
-                <div class="faixa-stats">
-                    <div class="faixa-stat">
-                        <p class="faixa-num">24h</p>
-                        <p class="eyebrow">Do envio à publicação</p>
-                    </div>
-                    <div class="faixa-stat">
-                        <p class="faixa-num">5</p>
-                        <p class="eyebrow">Categorias de aviso</p>
-                        <svg class="ilu ilu-vinculos" viewBox="0 0 24 24" width="24" height="24" fill="none"
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"
-                            aria-hidden="true">
-                            <circle cx="5.5" cy="5.5" r="2.75" />
-                            <circle cx="18.5" cy="5.5" r="2.75" />
-                            <circle cx="12" cy="19" r="2.75" />
-                            <path d="M7.7 7.2l3.2 2.5M16.3 7.2l-3.2 2.5M12 16.25v-4.35" />
-                            <circle cx="12" cy="10.5" r="1.1" fill="#2F5BFF" stroke="none" />
-                        </svg>
-                    </div>
-                    <div class="faixa-stat">
-                        <p class="faixa-num">800+</p>
-                        <p class="eyebrow">Alunos conectados</p>
-                    </div>
-                </div>
-
-                <svg class="ilu ilu--rule doodle-divisor" viewBox="0 0 240 12" preserveAspectRatio="none" fill="none"
-                    stroke="currentColor" stroke-width="1.25" stroke-linecap="butt" stroke-linejoin="miter"
-                    aria-hidden="true">
-                    <path d="M0 10.5h240" vector-effect="non-scaling-stroke" />
-                    <path d="M12 10.5V5M36 10.5V5M60 10.5V5M84 10.5V5M108 10.5V5M132 10.5V5M156 10.5V5M180 10.5V5M204 10.5V5M228 10.5V5"
-                        vector-effect="non-scaling-stroke" />
-                </svg>
-
-                <div class="feed-grid">
-                    <article class="feed-item">
-                        <p class="feed-data">20 jun</p>
-                        <p class="eyebrow">Matrícula</p>
-                        <h4>Período de matrícula 2026/2 para alunos veteranos</h4>
-                        <p class="feed-desc">As matrículas para o segundo semestre de 2026 estarão abertas de 20 a 27 de
-                            junho.</p>
-                    </article>
-                    <article class="feed-item">
-                        <p class="feed-data">18 jun</p>
-                        <p class="eyebrow">Cancelamento</p>
-                        <h4>Cancelamento de aulas por greve parcial dos servidores técnicos</h4>
-                        <p class="feed-desc">As aulas dos turnos vespertino e noturno do dia 18/06 estão canceladas.</p>
-                    </article>
-                    <article class="feed-item">
-                        <p class="feed-data">15 jun</p>
-                        <p class="eyebrow">Edital</p>
-                        <h4>Edital Nº 012/2026 de Bolsas de Iniciação Científica</h4>
-                        <p class="feed-desc">Inscrições abertas até 30/08 para alunos matriculados a partir do 2º
-                            período.</p>
-                    </article>
-                    <article class="feed-item">
-                        <p class="feed-data">12 jun</p>
-                        <p class="eyebrow">Evento</p>
-                        <h4>Semana Acadêmica Arcádia 2026 com a programação completa</h4>
-                        <p class="feed-desc">Palestras, workshops e apresentações de projetos entre os dias 7 e 11 de
-                            julho.</p>
-                    </article>
-                    <article class="feed-item">
-                        <p class="feed-data">10 jun</p>
-                        <p class="eyebrow eyebrow-com-icone"><svg class="ilu ilu-icone" viewBox="0 0 24 24"
-                                width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true">
-                                <path d="M3.5 5h17v15.5h-17Z" />
-                                <path d="M3.5 9.5h17" />
-                                <path d="M8 2.5v4M16 2.5v4" />
-                                <circle cx="15" cy="15" r="1.1" fill="#2F5BFF" stroke="none" />
-                            </svg> Calendário</p>
-                        <h4>Atualização do calendário com as reposições de junho</h4>
-                        <p class="feed-desc">Foram acrescidas datas de reposição em 21/06 e 28/06.</p>
-                    </article>
-                    <article class="feed-item">
-                        <p class="feed-data">09 jun</p>
-                        <p class="eyebrow">Documento</p>
-                        <h4>Regulamento Acadêmico 2026 em versão consolidada</h4>
-                        <p class="feed-desc">Substitui a versão de 2023 e vale a partir de 01/07.</p>
-                    </article>
-                </div>
-
-                <div class="cta-final">
-                    <h2>Tudo que a<br>instituição publica,<br><em>em um lugar só</em></h2>
-                    <div class="cta-acao">
-                        <a href="cadastro.html" class="btn-pill btn-branco">Criar conta</a>
-                    </div>
-                </div>
-
-                <footer class="rodape">
-                    <div class="rodape-colunas">
-                        <div>
-                            <p class="rodape-tema">Institucional</p>
-                            <ul>
-                                <li><a href="avisos.html">Secretaria</a></li>
-                                <li><a href="avisos.html">Coordenação</a></li>
-                                <li><a href="avisos.html">Ouvidoria</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p class="rodape-tema">Acesso</p>
-                            <ul>
-                                <li><a href="login.html">Portal do aluno</a></li>
-                                <li><a href="documentos.html">Documentos</a></li>
-                                <li><a href="projetos.html">Projetos</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p class="rodape-tema">Legal</p>
-                            <ul>
-                                <li><a href="#">Política de privacidade</a></li>
-                                <li><a href="#">Termos de uso</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </footer>
-
+          <!-- Aviso 3 — Evento -->
+          <div class="aviso-card">
+            <span
+              class="aviso-color-block"
+              style="background: var(--color-amarelo)"
+            ></span>
+            <div class="aviso-content">
+              <div class="aviso-meta-row">
+                <span
+                  class="aviso-category-pill"
+                  style="background: var(--color-amarelo)"
+                  >Evento</span
+                >
+                <span class="aviso-meta">15 jun 2024</span>
+              </div>
+              <h3 class="aviso-title">
+                Feira de cursos 2024 — Universidade Federal
+              </h3>
+              <p class="aviso-summary">
+                12 cursos novos no portfolio. Consulte a grade completa e as
+                datas de matrícula antecipada.
+              </p>
+              <a href="/aviso/feira-cursos-2024" class="aviso-link">Ver mais</a>
             </div>
-        </section>
+          </div>
 
-    </main>
+          <!-- Aviso 4 — Cancelamento -->
+          <div class="aviso-card">
+            <span
+              class="aviso-color-block"
+              style="background: var(--color-vermelho)"
+            ></span>
+            <div class="aviso-content">
+              <div class="aviso-meta-row">
+                <span
+                  class="aviso-category-pill"
+                  style="background: var(--color-vermelho)"
+                  >Cancelamento</span
+                >
+                <span class="aviso-meta">12 jun 2024</span>
+              </div>
+              <h3 class="aviso-title">
+                Cancelamento de aulas — Dia 20 jun, turno da manhã
+              </h3>
+              <p class="aviso-summary">
+                Aula suspensa por reunão de conselho. As aulas da tarde seguem
+                normal.
+              </p>
+              <a href="/aviso/cancelamento-aulas-20-jun" class="aviso-link"
+                >Ver mais</a
+              >
+            </div>
+          </div>
 
-    <script src="script.js"></script>
-</body>
+          <!-- Aviso 5 — Calendário -->
+          <div class="aviso-card">
+            <span
+              class="aviso-color-block"
+              style="background: var(--color-rosa)"
+            ></span>
+            <div class="aviso-content">
+              <div class="aviso-meta-row">
+                <span
+                  class="aviso-category-pill"
+                  style="background: var(--color-rosa)"
+                  >Calendário</span
+                >
+                <span class="aviso-meta">10 jun 2024</span>
+              </div>
+              <h3 class="aviso-title">
+                Calendário acadêmico 2024.2 — datas comemorativas
+              </h3>
+              <p class="aviso-summary">
+                Feriados, datas comemorativas e períodos de avaliação
+                atualizados para o semestre.
+              </p>
+              <a href="/aviso/calendario-2024-2" class="aviso-link">Ver mais</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       SEÇÃO DOCUMENTOS — sala creme #f7f4f2
+       ============================================================ -->
+    <section class="documents">
+      <div class="documents-inner container">
+        <!-- 3 formas decorativas -->
+        <div
+          class="documents-shape-1 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="documents-shape-2 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="documents-shape-3 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+
+        <span class="documents-eyebrow">Documentos</span>
+        <h2 class="documents-title">Tudo que você precisa baixar.</h2>
+        <p class="documents-lead">
+          Grade curricular, calendário, editais, formulários e legislação. Todos
+          os documentos oficiais da secretaria em um lugar.
+        </p>
+
+        <div class="documents-grid">
+          <div class="document-card">
+            <span class="document-type">Edital</span>
+            <h3 class="document-title">Edital de Matrícula 2024.2</h3>
+            <p class="document-summary">
+              Processo seletivo para 30 vagas no tecnólogo em Administração,
+              turno noturno.
+            </p>
+            <a href="/documento/edital-matricula-2024-2" class="document-link"
+              >Baixar PDF</a
+            >
+          </div>
+
+          <div class="document-card">
+            <span class="document-type">Grade</span>
+            <h3 class="document-title">Grade Curricular 2024.2</h3>
+            <p class="document-summary">
+              Todas as disciplinas do semestre com carga horária, ementa e
+              bibliografia.
+            </p>
+            <a href="/documento/grade-curricular-2024-2" class="document-link"
+              >Baixar PDF</a
+            >
+          </div>
+
+          <div class="document-card">
+            <span class="document-type">Calendário</span>
+            <h3 class="document-title">Calendário Acadêmico 2024.2</h3>
+            <p class="document-summary">
+              Datas de aula, avaliação, recesso e conclusão de curso para o
+              semestre.
+            </p>
+            <a href="/documento/calendario-2024-2" class="document-link"
+              >Baixar PDF</a
+            >
+          </div>
+
+          <div class="document-card">
+            <span class="document-type">Formulário</span>
+            <h3 class="document-title">Requerimento de Matrícula</h3>
+            <p class="document-summary">
+              Formulário oficial para inscrição nos processos seletivos do
+              semestre.
+            </p>
+            <a href="/documento/requerimento-matricula" class="document-link"
+              >Baixar PDF</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       SEÇÃO PROJETOS — sala tinta #1d1d1f
+       Reference s153: card fundo tinta, borda 2px branca, bloco
+       superior 200px, eixo mono colorido, título 21px peso 600
+       branco, autoria 17px em #a1a1a6.
+       ============================================================ -->
+    <section class="projects">
+      <div class="projects-inner container">
+        <!-- 3 formas decorativas -->
+        <div
+          class="projects-shape-1 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="projects-shape-2 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="projects-shape-3 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+
+        <span class="projects-eyebrow">Projetos</span>
+        <h2 class="projects-title">O que está sendo produzido no campus.</h2>
+        <p class="projects-lead">
+          TCCs, iniciações científicas, extensões e produtos digitais. O
+          registro mais completo do que está acontecendo agora.
+        </p>
+
+        <div class="projects-grid">
+          <div class="project-card">
+            <div
+              class="project-color-block"
+              style="background: var(--color-amarelo)"
+            ></div>
+            <div class="project-body">
+              <span class="project-axis">TCC · 4º período</span>
+              <h3 class="project-title">
+                Sistema de gestão acadêmica para secretarias públicas
+              </h3>
+              <p class="project-author">
+                Ana Ribeiro, 4º período de Sistemas de Informação
+              </p>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div
+              class="project-color-block"
+              style="background: var(--color-verde)"
+            ></div>
+            <div class="project-body">
+              <span class="project-axis">Iniciação Científica</span>
+              <h3 class="project-title">
+                Análise de acesso a documentos de transparência em universidades
+                federais
+              </h3>
+              <p class="project-author">
+                Carlos Mendes, orientação do Prof. Roberto Lima
+              </p>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div
+              class="project-color-block"
+              style="background: var(--color-ceu)"
+            ></div>
+            <div class="project-body">
+              <span class="project-axis">Extensão · 2024.2</span>
+              <h3 class="project-title">
+                OfWorkshop de tecnologia para estudantes da rede pública
+              </h3>
+              <p class="project-author">
+                Marina Sato, coordenadora do Núcleo de Extensão
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       SEÇÃO CTA FINAL — sala tinta #1d1d1f
+       ============================================================ -->
+    <section class="cta-final">
+      <div class="cta-final-inner container">
+        <!-- 3 formas decorativas -->
+        <div
+          class="cta-final-shape-1 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="cta-final-shape-2 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="cta-final-shape-3 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+
+        <h2 class="cta-final-title">Você vê primeiro o que é seu.</h2>
+        <p class="cta-final-lead">
+          Crie sua conta gratuita e receba tudo que a secretaria publica antes
+          de qualquer pessoa. Sem newsletter, sem spam.
+        </p>
+
+        <div class="cta-final-actions">
+          <a href="/criar-conta" class="btn btn-primary"
+            >Criar conta gratuita</a
+          >
+          <a href="/entrar" class="btn btn-ghost-dark">Já tenho conta</a>
+        </div>
+
+        <div class="cta-final-stats">
+          <div>
+            <span class="cta-stat-value">47</span>
+            <span class="cta-stat-label">Publicações no semestre</span>
+          </div>
+          <div>
+            <span class="cta-stat-value">2.4k</span>
+            <span class="cta-stat-label">Alunos com conta ativa</span>
+          </div>
+          <div>
+            <span class="cta-stat-value">12</span>
+            <span class="cta-stat-label">Cursos com grade atualizada</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       RODAPÉ — sala tinta #1d1d1f
+       Reference s235: 3 formas, badge 44px, wordmark 32px peso 700,
+       resumo 21px #a1a1a6, par de botões, 3 colunas de links 17px
+       #a1a1a6 com rótulo mono branco, divisória #3a3a3d,
+       barra legal.
+       ============================================================ -->
+    <footer class="footer">
+      <div class="footer-inner container">
+        <!-- 3 formas decorativas -->
+        <div
+          class="footer-shape-1 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="footer-shape-2 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="footer-shape-3 shape shape--circle"
+          aria-hidden="true"
+        ></div>
+
+        <!-- Bloco de marca -->
+        <div class="footer-brand">
+          <div class="footer-badge" aria-hidden="true">A</div>
+          <div class="footer-wordmark">Arcádia</div>
+          <p class="footer-summary">
+            Gestão acadêmica digitada. Tudo que a secretaria publica, em um
+            lugar só, antes de qualquer pessoa.
+          </p>
+        </div>
+
+        <!-- 3 colunas de links -->
+        <div class="footer-links">
+          <div class="footer-link-col">
+            <span class="footer-link-label">Acesso</span>
+            <a href="/esqueci-senha" class="footer-link">Esqueci senha</a>
+          </div>
+
+          <div class="footer-link-col">
+            <span class="footer-link-label">Conteúdo</span>
+            <a href="/aviso" class="footer-link">Avisos</a>
+            <a href="/documento" class="footer-link">Documentos</a>
+            <a href="/projeto" class="footer-link">Projetos</a>
+          </div>
+
+          <div class="footer-link-col">
+            <span class="footer-link-label">Instituição</span>
+            <a href="/sobre" class="footer-link">Sobre a Arcádia</a>
+            <a href="/contato" class="footer-link">Contato</a>
+            <a href="/privacidade" class="footer-link">Privacidade</a>
+          </div>
+        </div>
+
+        <!-- Divisória e barra legal -->
+        <div class="footer-divider"></div>
+
+        <div class="footer-legal">
+          <span class="footer-institution"
+            >Universidade Federal · Secretaria de Graduação</span
+          >
+          <span class="footer-note"
+            >© 2024 Arcádia. Distribuído sob licença institucional.</span
+          >
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

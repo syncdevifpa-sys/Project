@@ -1,0 +1,335 @@
+/* =========================================================
+   Arcádia — Hero v2 (laboratório)
+   Reescrito do zero. Classes com prefixo hero2-.
+   Tokens: usa exclusivamente o :root do landing.css.
+   ========================================================= */
+
+/* ---------- raiz do hero ---------- */
+
+.hero2-root {
+    min-height: 100vh;
+    background: var(--marfim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+    padding: 48px 24px;
+    box-sizing: border-box;
+}
+
+/* ---------- container de conteúdo ---------- */
+
+.hero2-inner {
+    max-width: 980px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* ---------- badge ---------- */
+
+.hero2-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    color: var(--apoio);
+    background: transparent;
+    margin-bottom: 32px;
+    user-select: none;
+}
+
+/* ---------- headline ---------- */
+
+.hero2-titulo {
+    font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    font-size: clamp(32px, 5.5vw, 72px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    margin-bottom: 40px;
+}
+
+.hero2-titulo-forte {
+    color: var(--tinta);
+}
+
+.hero2-titulo-suave {
+    color: var(--apoio);
+}
+
+/* ---------- monoline inline (entre "sua" e "instituição") ---------- */
+
+.hero2-inline-monoline {
+    display: inline-block;
+    vertical-align: middle;
+    width: 64px;
+    height: 40px;
+    margin: 0 8px;
+    pointer-events: none;
+}
+
+/* ---------- linha de categorias ---------- */
+
+.hero2-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--apoio);
+    margin-bottom: 32px;
+}
+
+.hero2-categoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hero2-estrela {
+    color: var(--vermelho);
+    font-size: 0.85em;
+    line-height: 1;
+}
+
+/* ---------- CTAs ---------- */
+
+.hero2-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.hero2-cta-primario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 32px;
+    background: var(--tinta);
+    color: var(--marfim);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.hero2-cta-primario:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.hero2-cta-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 32px;
+    background: transparent;
+    color: var(--tinta);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 160ms ease, background 160ms ease;
+}
+
+.hero2-cta-secundario:hover {
+    opacity: 0.88;
+    background: rgba(0, 0, 0, 0.03);
+}
+
+/* ---------- prova ---------- */
+
+.hero2-prova {
+    font-size: 14px;
+    color: var(--apoio);
+    margin-bottom: 8px;
+}
+
+/* ---------- cards flutuantes ---------- */
+
+.hero2-card {
+    position: absolute;
+    width: 240px;
+    background: var(--marfim);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero2-card-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.hero2-card-titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--tinta);
+    line-height: 1.3;
+}
+
+/* card esquerdo — Edital */
+
+.hero2-card-left {
+    left: 4%;
+    top: 30%;
+    transform: rotate(-4deg);
+}
+
+.hero2-card-tag-vermelho {
+    background: color-mix(in srgb, var(--vermelho) 12%, transparent);
+    color: color-mix(in srgb, var(--vermelho) 65%, transparent);
+}
+
+/* card direito — Matrícula */
+
+.hero2-card-right {
+    right: 4%;
+    top: 55%;
+    transform: rotate(4deg);
+}
+
+.hero2-card-tag-azul {
+    background: color-mix(in srgb, var(--azul) 12%, transparent);
+    color: color-mix(in srgb, var(--azul) 65%, transparent);
+}
+
+.hero2-card:hover {
+    transform: translateY(-6px) rotate(0deg);
+}
+
+/* ---------- esconder cards abaixo de 1280px ---------- */
+
+@media (max-width: 1280px) {
+    .hero2-card {
+        display: none;
+    }
+}
+
+/* ---------- monoline decorativo (canto inferior direito) ---------- */
+
+.hero2-monoline {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+    width: 240px;
+    height: 180px;
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+/* ---------- animação de entrada ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero2-root {
+        animation: hero2-entra 600ms ease-out both;
+    }
+
+    .hero2-badge {
+        animation: hero2-entra-badge 500ms ease-out 60ms both;
+    }
+
+    .hero2-titulo {
+        animation: hero2-entra-texto 550ms ease-out 120ms both;
+    }
+
+    .hero2-categorias {
+        animation: hero2-entra-texto 500ms ease-out 180ms both;
+    }
+
+    .hero2-ctas {
+        animation: hero2-entra-ctas 500ms ease-out 240ms both;
+    }
+
+    .hero2-prova {
+        animation: hero2-entra-texto 500ms ease-out 300ms both;
+    }
+
+    @keyframes hero2-entra {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes hero2-entra-badge {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes hero2-entra-texto {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes hero2-entra-ctas {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* ---------- parallax leve (desktop, motion preferido) ---------- */
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 1281px) {
+    .hero2-card {
+        transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                    will-change: transform;
+    }
+}

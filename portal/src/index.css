@@ -5,204 +5,235 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: 'Schibsted Grotesk Variable', system-ui, sans-serif;
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+/* ============================================================
+   Arcádia -- tokens do design system (alinhados ao reference)
+   ============================================================ */
+
+@theme {
+  /* Fontes -- conforme reference: system-ui como substituto do SF Pro,
+     ui-monospace como substituto do Martian Mono. */
+  --font-display: system-ui, sans-serif;
+  --font-text: system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  /* Paleta de cores (reference) */
+  --color-tinta: #1d1d1f;
+  --color-papel: #ffffff;
+  --color-creme: #f7f4f2;
+  --color-ceu-palido: #dceeff;
+  --color-cinza-medio: #707070;
+  --color-cinza-sobre-tinta: #a1a1a6;
+  --color-borda-sutil: #3a3a3d;
+  --color-acao-azul: #0071e3;
+  --color-link-azul: #0066cc;
+  --color-lima: #d2e534;
+  --color-wisteria: #d8d1ff;
+  --color-amarelo: #ffda00;
+  --color-amarelo-quente: #ffe54d;
+  --color-vermelho: #ff4141;
+  --color-verde: #16ab59;
+  --color-ceu: #91d8ec;
+  --color-rosa: #ffbac4;
+  --color-pessego: #f6e0db;
+
+  /* Superfícies */
+  --color-superficie-creme: var(--color-creme);
+  --color-superficie-papel: var(--color-papel);
+  --color-superficie-ceu-palido: var(--color-ceu-palido);
+  --color-superficie-lima: var(--color-lima);
+  --color-superficie-wisteria: var(--color-wisteria);
+  --color-superficie-tinta: var(--color-tinta);
+
+  /* Variáveis shadcn (para compatibilidade com as classes bg-border,
+     bg-background, text-muted-foreground, border-ring, etc.) */
+  --color-background: var(--color-papel);
+  --color-foreground: var(--color-tinta);
+  --color-card: var(--color-papel);
+  --color-card-foreground: var(--color-tinta);
+  --color-popover: var(--color-papel);
+  --color-popover-foreground: var(--color-tinta);
+  --color-primary: var(--color-tinta);
+  --color-primary-foreground: var(--color-papel);
+  --color-secondary: var(--color-creme);
+  --color-secondary-foreground: var(--color-tinta);
+  --color-muted: var(--color-ceu-palido);
+  --color-muted-foreground: var(--color-cinza-sobre-tinta);
+  --color-accent: var(--color-wisteria);
+  --color-accent-foreground: var(--color-tinta);
+  --color-destructive: var(--color-vermelho);
+  --color-destructive-foreground: var(--color-papel);
+  --color-border: var(--color-borda-sutil);
+  --color-input: var(--color-borda-sutil);
+  --color-ring: var(--color-acao-azul);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-4xl: 2.5rem;
+  --radius-full: 9999px;
+  --radius: 2rem;
+
+  /* Cores de categoria (para badges/tags de aviso, documentos, etc.) */
+  --color-lilas: var(--color-wisteria);
+  --color-lilas-soft: color-mix(in srgb, var(--color-wisteria) 16%, white);
+  --color-matricula: var(--color-verde);
+  --color-matricula-soft: color-mix(in srgb, var(--color-verde) 16%, white);
+  --color-edital: var(--color-verde);
+  --color-edital-soft: color-mix(in srgb, var(--color-verde) 16%, white);
+  --color-evento: var(--color-amarelo);
+  --color-evento-soft: color-mix(in srgb, var(--color-amarelo) 18%, white);
+  --color-cancelamento: var(--color-vermelho);
+  --color-cancelamento-soft: color-mix(in srgb, var(--color-vermelho) 14%, white);
+  --color-documento: var(--color-ceu);
+  --color-documento-soft: color-mix(in srgb, var(--color-ceu) 18%, white);
+  --color-calendario: var(--color-ceu);
+  --color-calendario-soft: color-mix(in srgb, var(--color-ceu) 16%, white);
+  --color-concluido: var(--color-verde);
+  --color-concluido-soft: color-mix(in srgb, var(--color-verde) 12%, white);
+  --color-canvas: var(--color-creme);
+
+  /* Border radius (reference) */
+  --radius-image: 16px;
+  --radius-cards: 28px;
+  --radius-badges: 36px;
+  --radius-buttons: 980px;
+  --radius-inputs: 980px;
+  --radius-shapes: 0px;
+  --radius-circle: 5000px;
+
+  /* Bordas (reference) */
+  --border-ink: 2px solid var(--color-tinta);
+  --border-paper: 2px solid var(--color-papel);
+  --border-width: 2px;
+
+  /* Tipografia (reference) */
+  --text-display: clamp(58px, 9vw, 132px);
+  --text-heading: 42px;
+  --text-heading-lg: 52px;
+  --text-heading-sm: 28px;
+  --text-body: 17px;
+  --text-body-lg: 21px;
+  --text-lead: 24px;
+  --text-caption: 14px;
+  --text-caption-mono: 12px;
+  --text-number: 62px;
+
+  /* Espaçamento (reference) */
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-48: 48px;
+  --spacing-96: 96px;
 }
 
+/* Paleta padrão do shadcn, sobrescrita com cores do reference.
+   Mantemos os nomes da API shadcn para compatibilidade com os
+   componentes existentes. */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+  --background: var(--color-papel);
+  --foreground: var(--color-tinta);
+  --card: var(--color-papel);
+  --card-foreground: var(--color-tinta);
+  --popover: var(--color-papel);
+  --popover-foreground: var(--color-tinta);
+  --primary: var(--color-tinta);
+  --primary-foreground: var(--color-papel);
+  --secondary: var(--color-creme);
+  --secondary-foreground: var(--color-tinta);
+  --muted: var(--color-ceu-palido);
+  --muted-foreground: var(--color-cinza-sobre-tinta);
+  --accent: var(--color-wisteria);
+  --accent-foreground: var(--color-tinta);
+  --destructive: var(--color-vermelho);
+  --destructive-foreground: var(--color-papel);
+  --border: var(--border-ink);
+  --input: var(--border-ink);
+  --ring: var(--color-acao-azul);
+  --radius: var(--radius-cards);
+}
+
+/* Cores adicionais para componentes de aviso */
+:root {
+  --color-lilas: var(--color-wisteria);
+  --color-lilas-soft: var(--color-lilas-soft);
+  --color-matricula: var(--color-verde);
+  --color-edital: var(--color-verde);
+  --color-evento: var(--color-amarelo);
+  --color-cancelamento: var(--color-vermelho);
+  --color-documento: var(--color-ceu);
+  --color-concluido: var(--color-verde);
+  --canvas: var(--color-creme);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+  --background: var(--color-tinta);
+  --foreground: var(--color-papel);
+  --card: var(--color-tinta);
+  --card-foreground: var(--color-papel);
+  --popover: var(--color-tinta);
+  --popover-foreground: var(--color-papel);
+  --primary: var(--color-papel);
+  --primary-foreground: var(--color-tinta);
+  --secondary: var(--color-tinta);
+  --secondary-foreground: var(--color-papel);
+  --muted: var(--color-lima);
+  --muted-foreground: var(--color-tinta);
+  --accent: var(--color-lima);
+  --accent-foreground: var(--color-tinta);
+  --destructive: var(--color-vermelho);
+  --destructive-foreground: var(--color-papel);
+  --border: 2px solid var(--color-papel);
+  --input: 2px solid var(--color-papel);
+  --ring: var(--color-acao-azul);
+  --radius: var(--radius-cards);
+
+  --color-lilas: var(--color-wisteria);
+  --color-lilas-soft: color-mix(in srgb, var(--color-wisteria) 30%, var(--color-tinta));
+  --color-matricula: var(--color-verde);
+  --color-edital: var(--color-verde);
+  --color-evento: var(--color-amarelo);
+  --color-cancelamento: var(--color-vermelho);
+  --color-documento: var(--color-ceu);
+  --color-concluido: var(--color-verde);
+  --canvas: var(--color-tinta);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
   html {
     @apply font-sans;
-    }
-}
-/* ============================================================
-   Arcádia — tokens do design system (sobrescrevem o preset)
-   ============================================================ */
-
-@theme {
-    --color-lilas: #EFEBFB;
-    --color-violeta: #4C40A8;
-    --color-canvas: #FAF9F6;
-    --color-tinta: #10141A;
-    --color-marfim: #FAF9F5;
-    --color-matricula: #44508F;
-    --color-matricula-bg: #E8ECF7;
-    --color-edital: #3E6B4A;
-    --color-edital-bg: #E5EDE4;
-    --color-evento: #77590C;
-    --color-evento-bg: #F7F0DC;
-    --color-cancelamento: #A03B31;
-    --color-cancelamento-bg: #F7E3E1;
-    --color-documento: #4E545C;
-    --color-documento-bg: #EBE8E0;
-    --color-concluido: #2E6B45;
-    --color-concluido-bg: #E2F0E6;
+  }
 }
 
-:root {
-    --background: #FAF9F6;
-    --foreground: #10141A;
-    --card: #F1F1ED;
-    --card-foreground: #10141A;
-    --popover: #FAF9F5;
-    --popover-foreground: #10141A;
-    --primary: #10141A;
-    --primary-foreground: #FAF9F5;
-    --secondary: #F1F1ED;
-    --secondary-foreground: #10141A;
-    --muted: #ECEBE6;
-    --muted-foreground: #5F5E69;
-    --accent: #EFEBFB;
-    --accent-foreground: #10141A;
-    --destructive: #A03B31;
-    --border: #E4E3DC;
-    --input: #E4E3DC;
-    --ring: #10141A;
-    --radius: 1rem;
-    --sidebar: #141413;
-    --sidebar-foreground: #FAF9F5;
-    --sidebar-primary: #FAF9F5;
-    --sidebar-primary-foreground: #10141A;
-    --sidebar-accent: #23231F;
-    --sidebar-accent-foreground: #FAF9F5;
-    --sidebar-border: rgba(250, 249, 245, 0.1);
-    --sidebar-ring: #FAF9F5;
-}
-
-/* foco visível obrigatório: anel de 2px com offset */
+/* Foco visível obrigatório: anel de 2px com offset */
 :focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .sidebar-escura :focus-visible {
-    outline-color: var(--sidebar-ring);
+  outline-color: var(--sidebar-ring);
 }
 
-/* micro-label de seção: uppercase, tracking largo */
+/* Micro-label de seção: uppercase, tracking largo */
 .micro-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
