@@ -2,116 +2,140 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entrar — Arcádia</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital@0;1&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="landing.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar — Arcádia IFPA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth.css">
+  <style>
+    /* Estilos inline de garantia para renderização instantânea sem falhas */
+    body { background-color: #090b10; color: #ffffff; font-family: 'Schibsted Grotesk', system-ui, sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+    svg { max-width: 100%; height: auto; display: block; }
+  </style>
 </head>
 
 <body>
 
-    <header class="container">
-        <nav class="nav-landing">
-            <a href="index.html" class="nav-logo">
-                Arcadia
-                <svg class="logo-acento" viewBox="0 0 26 14" aria-hidden="true">
-                    <path d="M3 12 C10 4 16 2 23 3" fill="none" stroke="#E8563F" stroke-width="2.6"
-                        stroke-linecap="round" />
-                </svg>
-                <svg class="logo-risco" viewBox="0 0 150 12" aria-hidden="true">
-                    <path d="M4 8 C40 2 105 2 146 6" fill="none" stroke="#2B3FD9" stroke-width="3"
-                        stroke-linecap="round" />
-                </svg>
-            </a>
+  <!-- Topo da Navegação -->
+  <header class="auth-header">
+    <a href="index.html" class="auth-logo" title="Voltar ao início">
+      <div class="logo-badge">A</div>
+      <div class="logo-text">
+        <span class="logo-title">Arcádia</span>
+        <span class="logo-sub">IFPA — CAMPUS BELÉM</span>
+      </div>
+    </a>
 
-            <div class="nav-end">
-                <a href="cadastro.html" class="btn-pill btn-tinta">Criar conta</a>
-            </div>
-        </nav>
-    </header>
+    <a href="cadastro.html" class="auth-nav-link btn-highlight">Criar conta &rarr;</a>
+  </header>
 
-    <main class="container">
-        <div class="acesso-split">
+  <!-- Container Split Neo-Brutalista -->
+  <main class="auth-container">
 
-            <section class="acesso-form">
-                <p class="eyebrow">Entrar</p>
-                <h1>Bom te ver<br>de novo.
-                    <svg class="doodle-asterisco" viewBox="0 0 40 40" aria-hidden="true">
-                        <path d="M20 3 L20 37 M5 12 L35 28 M35 12 L5 28" fill="none" stroke="#E8563F" stroke-width="3"
-                            stroke-linecap="round" />
-                    </svg>
-                </h1>
-                <p class="acesso-sub">Use o e-mail institucional que a sua instituição cadastrou.</p>
+    <!-- Coluna 1: Formulário de Login -->
+    <section class="auth-form-col">
+      <div class="eyebrow">Portal Acadêmico</div>
+      <h1 class="auth-title">Bom te ver<br>de novo.</h1>
+      <p class="auth-desc">Informe seu e-mail institucional cadastrado para acessar o portal.</p>
 
-                <form action="inicio.html" method="get" data-acesso="login">
-                    <div class="campo">
-                        <label for="email">E-mail institucional</label>
-                        <input type="email" id="email" name="email" placeholder="voce@arcadia.edu.br"
-                            autocomplete="email" required>
-                    </div>
+      <form action="inicio.html" method="get" data-acesso="login">
+        <div class="mensagem-erro"></div>
 
-                    <div class="campo">
-                        <label for="senha">Senha</label>
-                        <input type="password" id="senha" name="senha"
-                            autocomplete="current-password" required>
-                    </div>
-
-                    <div class="campo-linha">
-                        <label class="check">
-                            <input type="checkbox" checked>
-                            Manter conectado
-                        </label>
-                        <a href="#" class="link-sub">Esqueci a senha</a>
-                    </div>
-
-                    <button type="submit" class="btn-pill btn-tinta">Entrar no portal</button>
-                </form>
-
-                <p class="acesso-troca">Não tem conta? <a href="cadastro.html">Criar conta</a></p>
-
-                <svg class="doodle acesso-onda" viewBox="0 0 240 22" aria-hidden="true">
-                    <path d="M4 14 C18 2 30 2 44 12 C58 22 70 22 84 12 C98 2 110 2 124 12 C138 22 150 22 164 12 C178 2 190 2 204 12"
-                        fill="none" stroke="#E8563F" stroke-width="3.2" stroke-linecap="round" />
-                </svg>
-            </section>
-
-            <aside class="acesso-painel card-tinta">
-                <svg class="doodle painel-chevrons" viewBox="0 0 112 36" aria-hidden="true">
-                    <path d="M5 4 L16 18 L4 32" fill="none" stroke="#E8563F" stroke-width="3.4" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M33 3 L45 18 L32 31" fill="none" stroke="#E8563F" stroke-width="3.4" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M61 4 L72 18 L61 32" fill="none" stroke="#E8563F" stroke-width="3.4" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M89 3 L101 18 L90 31" fill="none" stroke="#E8563F" stroke-width="3.4"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-
-                <p class="eyebrow">Portal</p>
-                <h2>O aviso chega antes do boato.</h2>
-                <p class="painel-p">Editais, matrículas e calendário publicados pela própria secretaria — com data e
-                    público definidos.</p>
-
-                <div class="painel-stats">
-                    <div class="painel-stat">
-                        <p class="painel-num">1.284</p>
-                        <p class="eyebrow">Avisos publicados</p>
-                    </div>
-                    <div class="painel-stat">
-                        <p class="painel-num">800+</p>
-                        <p class="eyebrow">Alunos conectados</p>
-                    </div>
-                </div>
-            </aside>
-
+        <div class="form-group">
+          <label for="email" class="form-label">E-mail institucional</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
+            placeholder="voce@arcadia.edu.br"
+            autocomplete="email"
+            required
+          >
         </div>
-    </main>
 
-    <script src="script.js"></script>
+        <div class="form-group">
+          <label for="senha" class="form-label">Senha de acesso</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            class="form-input"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" checked>
+            Manter conectado
+          </label>
+          <a href="#" class="forgot-link" onclick="alert('Entre em contato com o suporte do campus para redefinir sua senha.')">Esqueceu a senha?</a>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <span>Entrar no portal</span>
+          <span style="font-size: 16px;">&rarr;</span>
+        </button>
+      </form>
+
+      <p class="auth-switch">
+        Não possui uma conta? <a href="cadastro.html">Criar conta institucional</a>
+      </p>
+    </section>
+
+    <!-- Coluna 2: Vitrine Neo-Brutalista -->
+    <aside class="auth-aside-col">
+      <div>
+        <span class="aside-badge badge-cyan">PORTAL 2.0</span>
+        <h2 class="aside-title">O aviso chega antes do boato.</h2>
+        <p class="aside-desc">
+          Editais, matrículas e projetos publicados diretamente pela coordenação — com dados sincronizados e categorizados em tempo real.
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-num num-cyan">1</span>
+            <div class="feature-content">
+              <h4>Mural e Avisos Oficiais</h4>
+              <p>Confirmação de turmas, cancelamentos e comunicados urgentes da secretaria.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-num num-yellow">2</span>
+            <div class="feature-content">
+              <h4>Projetos e Oportunidades</h4>
+              <p>Inscrições abertas em PIBIC, bolsas acadêmicas e projetos de extensão.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-num num-green">3</span>
+            <div class="feature-content">
+              <h4>Protocolos e Documentos</h4>
+              <p>Acompanhe requerimentos, históricos e atestados com rastreio direto.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside-footer">
+        <div class="aside-footer-badge">
+          <span class="status-dot"></span>
+          <span>SISTEMA ATIVO</span>
+        </div>
+        <span>25+ REGISTROS NO ESPAÇO</span>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="script.js"></script>
 </body>
 
 </html>

@@ -83,3 +83,20 @@ export function TipoDocumentoBadge({
     </Badge>
   );
 }
+
+export function StatusBadge({ status, className }: { status: string; className?: string }) {
+  const map: Record<string, { label: string; cls: string }> = {
+    fixado: { label: "Fixado", cls: "bg-blue-100 text-blue-800" },
+    novo: { label: "Novo", cls: "bg-green-100 text-green-800" },
+    urgente: { label: "Urgente", cls: "bg-red-100 text-red-800" },
+    encerrado: { label: "Encerrado", cls: "bg-gray-100 text-gray-700" },
+    rascunho: { label: "Rascunho", cls: "bg-amber-100 text-amber-800" },
+  };
+  const item = map[status] || { label: status, cls: "bg-gray-100 text-gray-700" };
+  return (
+    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", item.cls, className)}>
+      {item.label}
+    </span>
+  );
+}
+

@@ -1,0 +1,534 @@
+/* ==========================================================================
+   Arcádia — Layout de Autenticação (Login & Cadastro)
+   Design Neo-Brutalista Dark de Alto Contraste alinhado ao Portal 2.0
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-canvas: #090b10;
+  --bg-card: #121620;
+  --bg-surface: #181e2b;
+  --border-color: #2e3646;
+  --border-focus: #1070e5;
+  --text-primary: #ffffff;
+  --text-muted: #9ca3af;
+  --color-lime: #bef264;
+  --color-cyan: #8ae4f9;
+  --color-yellow: #facc15;
+  --color-blue: #1070e5;
+  --color-blue-hover: #085bbd;
+  --color-green: #16a34a;
+  --color-red: #ef4444;
+  --color-lavender: #d8d1ff;
+  --radius-cards: 24px;
+  --radius-inner: 18px;
+  --radius-pill: 9999px;
+  --font-main: 'Schibsted Grotesk', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Header de navegação superior */
+.auth-header {
+  width: 100%;
+  max-width: 1040px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.logo-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-lavender);
+  color: #10141a;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #000;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.logo-sub {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.auth-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.auth-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #4b5563;
+}
+
+.auth-nav-link.btn-highlight {
+  background-color: var(--color-lime);
+  color: #10141a;
+  border-color: #000;
+}
+
+.auth-nav-link.btn-highlight:hover {
+  filter: brightness(0.95);
+}
+
+/* Container do Cartão Split */
+.auth-container {
+  width: 100%;
+  max-width: 1040px;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-cards);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .auth-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Coluna do Formulário */
+.auth-form-col {
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .auth-form-col {
+    padding: 28px 20px;
+  }
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-lime);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-lime);
+}
+
+.auth-title {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.auth-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+
+/* Mensagens de Alerta */
+.mensagem-erro {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1.5px solid var(--color-red);
+  color: #fca5a5;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.mensagem-sucesso {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background-color: rgba(22, 163, 74, 0.15);
+  border: 1.5px solid var(--color-green);
+  color: #86efac;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* Campos de Entrada */
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(16, 112, 229, 0.25);
+}
+
+.form-input::placeholder {
+  color: #6b7280;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Grupo de Filtro / Vínculo (Pills Neo-Brutalistas) */
+.pills-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill-btn {
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill-btn:hover {
+  border-color: #4b5563;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.pill-btn.ativo {
+  background-color: var(--color-lime);
+  color: #10141a;
+  border-color: #000;
+  box-shadow: 0 2px 0 #000;
+}
+
+/* Linha de checkbox e links auxiliares */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  font-size: 12.5px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  accent-color: var(--color-blue);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.forgot-link {
+  color: var(--color-cyan);
+  text-decoration: none;
+  font-weight: 600;
+  transition: text-decoration 0.15s;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Botão Principal */
+.btn-submit {
+  width: 100%;
+  padding: 13px 24px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-blue);
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-submit:hover {
+  background-color: var(--color-blue-hover);
+}
+
+.btn-submit:active {
+  transform: scale(0.99);
+}
+
+/* Rodapé de troca de página */
+.auth-switch {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.auth-switch a {
+  color: var(--color-lime);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* Coluna Lateral de Destaques */
+.auth-aside-col {
+  background-color: var(--bg-surface);
+  border-left: 1.5px solid var(--border-color);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (max-width: 860px) {
+  .auth-aside-col {
+    border-left: none;
+    border-top: 1.5px solid var(--border-color);
+    padding: 28px 20px;
+  }
+}
+
+.aside-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid #000;
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.badge-lime {
+  background-color: var(--color-lime);
+  color: #10141a;
+}
+
+.badge-cyan {
+  background-color: var(--color-cyan);
+  color: #10141a;
+}
+
+.aside-title {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+
+.aside-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+
+/* Lista de Passos / Destaques */
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-inner);
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-card);
+}
+
+.feature-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  shrink-0: 0;
+  border: 1.5px solid #000;
+}
+
+.num-cyan {
+  background-color: var(--color-cyan);
+  color: #10141a;
+}
+
+.num-yellow {
+  background-color: var(--color-yellow);
+  color: #10141a;
+}
+
+.num-green {
+  background-color: var(--color-green);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.feature-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.feature-content h4 {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.feature-content p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Rodapé do Aside */
+.aside-footer {
+  padding-top: 16px;
+  border-top: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.aside-footer-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-green);
+}

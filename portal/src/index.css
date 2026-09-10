@@ -133,25 +133,25 @@
    Mantemos os nomes da API shadcn para compatibilidade com os
    componentes existentes. */
 :root {
-  --background: var(--color-papel);
-  --foreground: var(--color-tinta);
-  --card: var(--color-papel);
-  --card-foreground: var(--color-tinta);
-  --popover: var(--color-papel);
-  --popover-foreground: var(--color-tinta);
-  --primary: var(--color-tinta);
-  --primary-foreground: var(--color-papel);
-  --secondary: var(--color-creme);
-  --secondary-foreground: var(--color-tinta);
-  --muted: var(--color-ceu-palido);
-  --muted-foreground: var(--color-cinza-sobre-tinta);
-  --accent: var(--color-wisteria);
-  --accent-foreground: var(--color-tinta);
-  --destructive: var(--color-vermelho);
-  --destructive-foreground: var(--color-papel);
-  --border: var(--border-ink);
-  --input: var(--border-ink);
-  --ring: var(--color-acao-azul);
+  --background: #090b10;
+  --foreground: #ffffff;
+  --card: #121620;
+  --card-foreground: #ffffff;
+  --popover: #121620;
+  --popover-foreground: #ffffff;
+  --primary: #bef264;
+  --primary-foreground: #10141A;
+  --secondary: #181e2b;
+  --secondary-foreground: #ffffff;
+  --muted: #181e2b;
+  --muted-foreground: #9ca3af;
+  --accent: #bef264;
+  --accent-foreground: #10141A;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: 1.5px solid #2e3646;
+  --input: 1.5px solid #2e3646;
+  --ring: #1070e5;
   --radius: var(--radius-cards);
 }
 

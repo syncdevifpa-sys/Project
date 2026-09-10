@@ -1,4 +1,5 @@
-import { forwardRef, ReactNode, useId } from "react";
+import { forwardRef, useId, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 
@@ -96,9 +97,6 @@ export function ListRow({
   className,
   comoCard,
 }: ListRowProps) {
-  const id = useId();
-  const interativo = para || aoClicar;
-
   const conteudo = (
     <>
       {badges && (
@@ -140,7 +138,7 @@ export function ListRow({
     if (para) {
       return (
         <Link
-          href={para}
+          to={para}
           className={cn(
             "flex min-h-[2.5rem] w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-secondary/50",
             className

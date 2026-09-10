@@ -4,7 +4,8 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 const FRONT_DIR = path.resolve(__dirname, 'front');
-const BACK_END_PORT = 3001;
+const PORTAL_DIR = path.resolve(__dirname, 'portal', 'dist');
+const BACK_END_PORT = process.env.BACK_END_PORT || 3002;
 
 const mimeTypes = {
   '.html': 'text/html',
@@ -23,6 +24,12 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', service: 'proxy' }));
+    return;
+  }
+
   // Encaminhar requisções de API para o back-end local
   if (req.url.startsWith('/api/')) {
     const options = {
@@ -48,8 +55,52 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Servir Portal React (Vite SPA) se acessado via /portal ou assets do portal
+  if (req.url === '/portal') {
+    res.writeHead(302, { Location: '/portal/' });
+    res.end();
+    return;
+  }
+
+  if (req.url.startsWith('/portal/') || req.url.startsWith('/assets/')) {
+    let portalFile;
+    if (req.url.startsWith('/assets/')) {
+      portalFile = path.join(PORTAL_DIR, req.url);
+    } else if (req.url.startsWith('/portal/assets/')) {
+      const assetSub = req.url.replace('/portal/assets/', 'assets/');
+      portalFile = path.join(PORTAL_DIR, assetSub);
+    } else {
+      const subPath = req.url.replace(/^\/portal\/?/, '');
+      portalFile = path.join(PORTAL_DIR, subPath);
+      if (!subPath || !fs.existsSync(portalFile) || fs.statSync(portalFile).isDirectory()) {
+        portalFile = path.join(PORTAL_DIR, 'index.html');
+      }
+    }
+
+    const ext = path.extname(portalFile).toLowerCase();
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+    fs.readFile(portalFile, (err, content) => {
+      if (err) {
+        res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('<h1>Portal não compilado. Execute npm run build na pasta portal.</h1>');
+      } else {
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content);
+      }
+    });
+    return;
+  }
+
   // Servir arquivos estáticos do front
-  let filePath = path.join(FRONT_DIR, req.url === '/' ? 'index.html' : req.url);
+  let requestPath = req.url.split('?')[0];
+  if (requestPath === '/login') requestPath = '/login.html';
+  if (requestPath === '/cadastro') requestPath = '/cadastro.html';
+
+  let filePath = path.join(FRONT_DIR, requestPath === '/' ? 'index.html' : requestPath);
+  if (!path.extname(filePath) && fs.existsSync(filePath + '.html')) {
+    filePath += '.html';
+  }
 
   // Evitar escapes de caminho
   if (!filePath.startsWith(FRONT_DIR)) {

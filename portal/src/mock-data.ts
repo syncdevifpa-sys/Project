@@ -1,4 +1,4 @@
-/* Dados simulados do portal — único ponto de mock, tipado. */
+/* Dados simulados do portal — alinhados 1:1 com Arcadia Portal PDF.pdf */
 
 export type Vinculo = "aluno" | "professor" | "servidor";
 export type EstadoVinculo = "verificacao" | "verificado" | "recusado";
@@ -8,9 +8,11 @@ export type Categoria =
   | "edital"
   | "evento"
   | "cancelamento"
-  | "documento";
+  | "documento"
+  | "calendario";
 
 export interface Usuario {
+  id?: string;
   nome: string;
   vinculo: Vinculo;
   periodo?: string;
@@ -21,164 +23,63 @@ export interface Usuario {
 
 export interface Aviso {
   id: string;
-  data: string; // ISO
-  categoria: Categoria;
-  publico: Vinculo[] | "todos";
   titulo: string;
   resumo: string;
-  lido: boolean;
-  fixado?: boolean;
+  categoria: Categoria;
+  publico: string;
+  data: string;
+  situacao: "Publicado" | "Rascunho" | "Arquivado";
+}
+
+export interface Tarefa {
+  id: string;
+  titulo: string;
+  responsavel: string;
+  prazo: string;
+  situacao: "Aberta" | "Em andamento" | "Aguardando" | "Concluída";
 }
 
 export interface Documento {
   id: string;
-  grupo: "formularios" | "manuais" | "contatos" | "bibliotecas";
   titulo: string;
-  tipo: "PDF" | "E-mail" | "Link";
-  acessos: number;
+  protocolo: string;
+  tipo: "PDF" | "Requerimento" | "Assinatura" | "Link" | "E-mail";
+  situacao: "Pronto" | "Em análise" | "Solicitado" | "Pendente";
+  previsao: string;
+}
+
+export interface EventoCalendario {
+  id: string;
+  titulo: string;
+  subtitulo: string;
+  categoria: Categoria;
+  data: string;
+}
+
+export interface Pessoa {
+  id: string;
+  nome: string;
+  vinculo: "Aluno" | "Professor" | "Servidor";
+  cursoOuSetor: string;
+  email: string;
 }
 
 export interface Projeto {
   id: string;
-  categoria: "web-app" | "ui-ux" | "mobile" | "pesquisa";
   titulo: string;
-  autoria: string;
-  detalhe: string;
-}
-
-export interface PassoOnboarding {
-  id: string;
-  rotulo: string;
+  autor: string;
+  eixo: "Pesquisa" | "Ensino" | "Extensão" | "Inovação";
+  vagas: number;
+  situacao: "Inscrições" | "Em seleção" | "Ativo" | "Concluído";
 }
 
 export const USUARIO_PADRAO: Usuario = {
   nome: "Ana Ribeiro",
   vinculo: "aluno",
   periodo: "4º período",
-  curso: "Engenharia de Software",
-  email: "ana.ribeiro@arcadia.edu.br",
+  curso: "Técnico em Informática",
+  email: "ana.ribeiro@ifpa.edu.br",
   matricula: "2026104882",
-};
-
-export const PASSOS_ONBOARDING: PassoOnboarding[] = [
-  { id: "curso", rotulo: "Confirme seu curso" },
-  { id: "categorias", rotulo: "Escolha as categorias" },
-  { id: "resumo", rotulo: "Ative o resumo diário" },
-];
-
-export const AVISOS: Aviso[] = [
-  {
-    id: "matricula-2026-2",
-    data: "2026-06-20",
-    categoria: "matricula",
-    publico: ["aluno"],
-    titulo: "Período de matrícula 2026/2 para alunos veteranos",
-    resumo: "As matrículas para o segundo semestre estarão abertas de 20 a 27 de junho, pelo portal do aluno.",
-    lido: false,
-    fixado: true,
-  },
-  {
-    id: "greve-servidores",
-    data: "2026-06-18",
-    categoria: "cancelamento",
-    publico: "todos",
-    titulo: "Cancelamento de aulas por greve parcial dos servidores",
-    resumo: "As aulas dos turnos vespertino e noturno do dia 18/06 estão canceladas.",
-    lido: false,
-  },
-  {
-    id: "edital-012",
-    data: "2026-06-15",
-    categoria: "edital",
-    publico: ["aluno"],
-    titulo: "Edital Nº 012/2026 — Bolsas de Iniciação Científica",
-    resumo: "Inscrições abertas até 30/08 para alunos matriculados a partir do 2º período.",
-    lido: true,
-    fixado: true,
-  },
-  {
-    id: "semana-academica",
-    data: "2026-06-12",
-    categoria: "evento",
-    publico: "todos",
-    titulo: "Semana Acadêmica Arcádia 2026 com a programação completa",
-    resumo: "Palestras, workshops e apresentações de projetos entre os dias 7 e 11 de julho.",
-    lido: true,
-  },
-  {
-    id: "reposicoes-junho",
-    data: "2026-06-10",
-    categoria: "documento",
-    publico: "todos",
-    titulo: "Atualização do calendário com as reposições de junho",
-    resumo: "Foram acrescidas datas de reposição em 21/06 e 28/06.",
-    lido: true,
-  },
-  {
-    id: "monitoria-calculo",
-    data: "2026-06-01",
-    categoria: "edital",
-    publico: ["aluno"],
-    titulo: "Monitoria de Cálculo I com inscrições até 10/06",
-    resumo: "Processo seletivo para monitores com bolsa parcial.",
-    lido: true,
-  },
-];
-
-export const NOTIFICACOES = [
-  { id: "n1", titulo: "Matrícula 2026/2 aberta", meta: "Hoje, 07:00 · não lida", avisoId: "matricula-2026-2" },
-  { id: "n2", titulo: "Sua inscrição no Edital 012 foi recebida", meta: "Ontem, 14:32", avisoId: "edital-012" },
-  { id: "n3", titulo: "Aulas de 18/06 canceladas", meta: "18/06, 09:10", avisoId: "greve-servidores" },
-  { id: "n4", titulo: "Projeto aprovado pela coordenação", meta: "14/06, 16:45", avisoId: null },
-];
-
-export const RESUMO_DIARIO = {
-  origem: "Arcádia · 20 de junho",
-  titulo: "3 publicações para você hoje",
-  itens: [
-    "Matrícula 2026/2 — veteranos",
-    "Reposição de aula — 21/06",
-    "Semana Acadêmica — inscrições",
-  ],
-};
-
-export const DOCUMENTOS: Documento[] = [
-  { id: "d1", grupo: "formularios", titulo: "Requerimento Geral", tipo: "PDF", acessos: 412 },
-  { id: "d2", grupo: "formularios", titulo: "Aproveitamento de Disciplina", tipo: "PDF", acessos: 168 },
-  { id: "d3", grupo: "formularios", titulo: "Declaração de Vínculo", tipo: "PDF", acessos: 355 },
-  { id: "d4", grupo: "formularios", titulo: "Trancamento de Matrícula", tipo: "PDF", acessos: 90 },
-  { id: "d5", grupo: "manuais", titulo: "Regulamento Acadêmico 2026", tipo: "PDF", acessos: 501 },
-  { id: "d6", grupo: "manuais", titulo: "Manual do Aluno Ingressante", tipo: "PDF", acessos: 233 },
-  { id: "d7", grupo: "manuais", titulo: "Manual de TCC", tipo: "PDF", acessos: 187 },
-  { id: "d8", grupo: "contatos", titulo: "Secretaria Acadêmica", tipo: "E-mail", acessos: 640 },
-  { id: "d9", grupo: "contatos", titulo: "Coordenação Geral", tipo: "E-mail", acessos: 210 },
-  { id: "d10", grupo: "contatos", titulo: "Ouvidoria", tipo: "E-mail", acessos: 96 },
-  { id: "d11", grupo: "bibliotecas", titulo: "Portal de Periódicos CAPES", tipo: "Link", acessos: 322 },
-  { id: "d12", grupo: "bibliotecas", titulo: "Biblioteca Virtual Pearson", tipo: "Link", acessos: 278 },
-  { id: "d13", grupo: "bibliotecas", titulo: "Portal do Aluno", tipo: "Link", acessos: 720 },
-  { id: "d14", grupo: "bibliotecas", titulo: "Sistema de Frequência", tipo: "Link", acessos: 154 },
-];
-
-export const PROJETOS: Projeto[] = [
-  { id: "p1", categoria: "web-app", titulo: "Sistema de gerenciamento escolar", autoria: "Ana Ribeiro · 4º período", detalhe: "Aplicação web para secretarias." },
-  { id: "p2", categoria: "ui-ux", titulo: "Dashboard administrativo", autoria: "Marcos Lima · 6º período", detalhe: "Redesenho do painel interno." },
-  { id: "p3", categoria: "mobile", titulo: "Avisos em tempo real", autoria: "Júlia Prado · 5º período", detalhe: "App de notificações do mural." },
-  { id: "p4", categoria: "pesquisa", titulo: "Espectrometria de baixo custo", autoria: "Lab. de Química", detalhe: "Instrumentação com hardware aberto." },
-];
-
-/** Atalhos salvos pelo usuário — abastecem o bloco 2 da sidebar. */
-export const ATALHOS_SALVOS: { id: string; rotulo: string; categoria: Categoria; href: string }[] = [
-  { id: "a1", rotulo: "Edital 012 · Bolsas IC", categoria: "edital", href: "/avisos/edital-012" },
-  { id: "a2", rotulo: "Matrícula 2026/2", categoria: "matricula", href: "/avisos/matricula-2026-2" },
-  { id: "a3", rotulo: "Requerimento Geral", categoria: "documento", href: "/documentos" },
-];
-
-export const ROTULO_CATEGORIA: Record<Categoria, string> = {
-  matricula: "Matrícula",
-  edital: "Edital",
-  evento: "Evento",
-  cancelamento: "Cancelamento",
-  documento: "Documento",
 };
 
 export const ROTULO_VINCULO: Record<Vinculo, string> = {
@@ -186,3 +87,239 @@ export const ROTULO_VINCULO: Record<Vinculo, string> = {
   professor: "Professor",
   servidor: "Servidor",
 };
+
+export const AVISOS_INICIAIS: Aviso[] = [
+  {
+    id: "1",
+    titulo: "Abertura da matrícula 2026/2",
+    resumo: "Confirmação de disciplinas pelo portal",
+    categoria: "matricula",
+    publico: "Todos",
+    data: "14 SET",
+    situacao: "Publicado",
+  },
+  {
+    id: "2",
+    titulo: "Edital PIBIC 2026",
+    resumo: "Bolsas de iniciação científica",
+    categoria: "edital",
+    publico: "Aluno",
+    data: "22 SET",
+    situacao: "Publicado",
+  },
+  {
+    id: "3",
+    titulo: "Semana de Ciência e Tecnologia",
+    resumo: "Programação nos três turnos",
+    categoria: "evento",
+    publico: "Todos",
+    data: "05 OUT",
+    situacao: "Rascunho",
+  },
+  {
+    id: "4",
+    titulo: "Aula suspensa — Bloco C",
+    resumo: "Manutenção elétrica no prédio",
+    categoria: "cancelamento",
+    publico: "Todos",
+    data: "09 SET",
+    situacao: "Publicado",
+  },
+  {
+    id: "5",
+    titulo: "Calendário do 2º semestre",
+    resumo: "Datas oficiais consolidadas",
+    categoria: "calendario",
+    publico: "Todos",
+    data: "01 SET",
+    situacao: "Arquivado",
+  },
+];
+
+export const TAREFAS_INICIAIS: Tarefa[] = [
+  {
+    id: "1",
+    titulo: "Confirmar disciplinas do semestre",
+    responsavel: "Ana Ribeiro",
+    prazo: "12 SET",
+    situacao: "Aberta",
+  },
+  {
+    id: "2",
+    titulo: "Entregar relatório de estágio",
+    responsavel: "Ana Ribeiro",
+    prazo: "20 SET",
+    situacao: "Em andamento",
+  },
+  {
+    id: "3",
+    titulo: "Assinar termo de bolsa",
+    responsavel: "Coordenação de pesquisa",
+    prazo: "18 SET",
+    situacao: "Aguardando",
+  },
+  {
+    id: "4",
+    titulo: "Atualizar dados cadastrais",
+    responsavel: "Secretaria acadêmica",
+    prazo: "05 SET",
+    situacao: "Concluída",
+  },
+];
+
+export const DOCUMENTOS_INICIAIS: Documento[] = [
+  {
+    id: "1",
+    titulo: "Histórico escolar completo",
+    protocolo: "2026-0001",
+    tipo: "PDF",
+    situacao: "Pronto",
+    previsao: "08 SET",
+  },
+  {
+    id: "2",
+    titulo: "Declaração de vínculo",
+    protocolo: "2026-0002",
+    tipo: "Requerimento",
+    situacao: "Em análise",
+    previsao: "15 SET",
+  },
+  {
+    id: "3",
+    titulo: "Atestado de matrícula",
+    protocolo: "2026-0003",
+    tipo: "PDF",
+    situacao: "Solicitado",
+    previsao: "19 SET",
+  },
+  {
+    id: "4",
+    titulo: "Termo de compromisso de estágio",
+    protocolo: "2026-0004",
+    tipo: "Assinatura",
+    situacao: "Pendente",
+    previsao: "11 SET",
+  },
+];
+
+export const EVENTOS_CALENDARIO_INICIAIS: EventoCalendario[] = [
+  {
+    id: "1",
+    titulo: "Início do período de matrícula",
+    subtitulo: "Portal do estudante, a partir das 8h",
+    categoria: "matricula",
+    data: "14 SET",
+  },
+  {
+    id: "2",
+    titulo: "Prazo final de trancamento",
+    subtitulo: "Protocolo na secretaria acadêmica",
+    categoria: "cancelamento",
+    data: "26 SET",
+  },
+  {
+    id: "3",
+    titulo: "Semana de Ciência e Tecnologia",
+    subtitulo: "Auditório central e laboratórios",
+    categoria: "evento",
+    data: "05 OUT",
+  },
+  {
+    id: "4",
+    titulo: "Publicação do resultado PIBIC",
+    subtitulo: "Mural institucional e portal",
+    categoria: "edital",
+    data: "12 OUT",
+  },
+];
+
+export const PESSOAS_INICIAIS: Pessoa[] = [
+  {
+    id: "1",
+    nome: "Ana Ribeiro",
+    vinculo: "Aluno",
+    cursoOuSetor: "Técnico em Informática",
+    email: "ana.ribeiro@ifpa.edu.br",
+  },
+  {
+    id: "2",
+    nome: "Marcos Tavares",
+    vinculo: "Professor",
+    cursoOuSetor: "Coordenação de Pesquisa",
+    email: "marcos.tavares@ifpa.edu.br",
+  },
+  {
+    id: "3",
+    nome: "Júlia Andrade",
+    vinculo: "Servidor",
+    cursoOuSetor: "Secretaria Acadêmica",
+    email: "julia.andrade@ifpa.edu.br",
+  },
+  {
+    id: "4",
+    nome: "Rafael Lima",
+    vinculo: "Aluno",
+    cursoOuSetor: "Agroecologia",
+    email: "rafael.lima@ifpa.edu.br",
+  },
+];
+
+export const PROJETOS_INICIAIS: Projeto[] = [
+  {
+    id: "1",
+    titulo: "Palestra: Preservação, Biodiversidade e Bioeconomia na Amazônia",
+    autor: "Prof. Dr. Mauro Santos",
+    eixo: "Extensão",
+    vagas: 60,
+    situacao: "Inscrições",
+  },
+  {
+    id: "2",
+    titulo: "Monitoramento da Qualidade das Águas da Bacia do Guajará",
+    autor: "Larissa Menezes",
+    eixo: "Pesquisa",
+    vagas: 6,
+    situacao: "Ativo",
+  },
+  {
+    id: "3",
+    titulo: "Robótica Educacional com Reaproveitamento de Sucata",
+    autor: "Júlia Andrade",
+    eixo: "Ensino",
+    vagas: 8,
+    situacao: "Em seleção",
+  },
+  {
+    id: "4",
+    titulo: "Mapeamento Colaborativo de Saberes Tradicionais e Etnobotânica",
+    autor: "Rafael Lima",
+    eixo: "Inovação",
+    vagas: 12,
+    situacao: "Ativo",
+  },
+];
+
+export const ATALHOS_SALVOS = [
+  { id: "1", rotulo: "Edital PIBIC 2026", categoria: "edital" as Categoria, href: "/avisos" },
+  { id: "2", rotulo: "Matrícula veteranos", categoria: "matricula" as Categoria, href: "/avisos" },
+];
+
+export const AVISOS = AVISOS_INICIAIS;
+export const DOCUMENTOS = DOCUMENTOS_INICIAIS;
+export const PROJETOS = PROJETOS_INICIAIS;
+
+export const ROTULO_CATEGORIA: Record<string, string> = {
+  matricula: "Matrícula",
+  edital: "Edital",
+  evento: "Evento",
+  cancelamento: "Cancelamento",
+  documento: "Documento",
+  calendario: "Calendário",
+};
+
+export const PASSOS_ONBOARDING = [
+  { id: "curso", rotulo: "Confirmar dados do curso" },
+  { id: "categorias", rotulo: "Explorar categorias de avisos" },
+  { id: "documentos", rotulo: "Verificar pendências de documentos" },
+];
+

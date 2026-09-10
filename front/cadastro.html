@@ -2,139 +2,164 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar conta — Arcádia</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital@0;1&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="landing.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta — Arcádia IFPA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth.css">
+  <style>
+    /* Estilos inline de garantia para renderização instantânea sem falhas */
+    body { background-color: #090b10; color: #ffffff; font-family: 'Schibsted Grotesk', system-ui, sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+    svg { max-width: 100%; height: auto; display: block; }
+  </style>
 </head>
 
 <body>
 
-    <header class="container">
-        <nav class="nav-landing">
-            <a href="index.html" class="nav-logo">
-                Arcadia
-                <svg class="logo-acento" viewBox="0 0 26 14" aria-hidden="true">
-                    <path d="M3 12 C10 4 16 2 23 3" fill="none" stroke="#E8563F" stroke-width="2.6"
-                        stroke-linecap="round" />
-                </svg>
-                <svg class="logo-risco" viewBox="0 0 150 12" aria-hidden="true">
-                    <path d="M4 8 C40 2 105 2 146 6" fill="none" stroke="#2B3FD9" stroke-width="3"
-                        stroke-linecap="round" />
-                </svg>
-            </a>
+  <!-- Topo da Navegação -->
+  <header class="auth-header">
+    <a href="index.html" class="auth-logo" title="Voltar ao início">
+      <div class="logo-badge">A</div>
+      <div class="logo-text">
+        <span class="logo-title">Arcádia</span>
+        <span class="logo-sub">IFPA — CAMPUS BELÉM</span>
+      </div>
+    </a>
 
-            <div class="nav-end">
-                <a href="login.html" class="nav-entrar">Entrar</a>
-            </div>
-        </nav>
-    </header>
+    <a href="login.html" class="auth-nav-link">Já tem conta? Entrar &rarr;</a>
+  </header>
 
-    <main class="container">
-        <div class="acesso-split">
+  <!-- Container Split Neo-Brutalista -->
+  <main class="auth-container">
 
-            <section class="acesso-form">
-                <p class="eyebrow">Cadastro</p>
-                <h1>Criar<br>
-                    <span class="circulado">conta.
-                        <svg class="doodle-elipse" viewBox="0 0 560 130" preserveAspectRatio="none" aria-hidden="true">
-                            <path d="M78 24 C210 -6 500 2 545 48 C580 88 420 122 220 124 C90 126 8 106 12 68 C15 40 70 22 150 16"
-                                fill="none" stroke="#2B3FD9" stroke-width="5" stroke-linecap="round" />
-                        </svg>
-                    </span>
-                </h1>
-                <p class="acesso-sub">Grátis com e-mail institucional. Leva menos de um minuto.</p>
+    <!-- Coluna 1: Formulário de Cadastro -->
+    <section class="auth-form-col">
+      <div class="eyebrow">Cadastro Institucional</div>
+      <h1 class="auth-title">Criar sua<br>conta.</h1>
+      <p class="auth-desc">Leva menos de um minuto para sincronizar seu acesso ao campus.</p>
 
-                <form action="inicio.html" method="get" data-acesso="cadastro">
-                    <div class="campo">
-                        <label for="nome">Nome completo</label>
-                        <input type="text" id="nome" name="nome" autocomplete="name" required>
-                    </div>
+      <form action="inicio.html" method="get" data-acesso="cadastro">
+        <div class="mensagem-erro"></div>
+        <div class="mensagem-sucesso"></div>
 
-                    <div class="campo">
-                        <label for="email">E-mail institucional</label>
-                        <input type="email" id="email" name="email" placeholder="voce@arcadia.edu.br"
-                            autocomplete="email" required>
-                        <p class="campo-hint">Só domínios da instituição são aceitos.</p>
-                    </div>
-
-                    <div class="campo">
-                        <label>Vínculo</label>
-                        <div class="segmentos pills" data-filtro>
-                            <button type="button" class="pill ativo">Aluno</button>
-                            <button type="button" class="pill">Professor</button>
-                            <button type="button" class="pill">Servidor</button>
-                        </div>
-                    </div>
-
-                    <div class="campo">
-                        <label for="senha">Senha</label>
-                        <input type="password" id="senha" name="senha" placeholder="Mínimo de 8 caracteres"
-                            autocomplete="new-password" minlength="8" required>
-                    </div>
-
-                    <div class="campo-linha">
-                        <label class="check">
-                            <input type="checkbox" required>
-                            Aceito os termos de uso e a política de privacidade
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn-pill btn-tinta">Criar conta</button>
-                </form>
-
-                <p class="acesso-troca">Já tem conta? <a href="login.html">Entrar</a></p>
-
-                <svg class="doodle acesso-onda" viewBox="0 0 240 22" aria-hidden="true">
-                    <path d="M4 14 C18 2 30 2 44 12 C58 22 70 22 84 12 C98 2 110 2 124 12 C138 22 150 22 164 12 C178 2 190 2 204 12"
-                        fill="none" stroke="#E8563F" stroke-width="3.2" stroke-linecap="round" />
-                </svg>
-            </section>
-
-            <aside class="acesso-painel card-lilas">
-                <svg class="doodle painel-zigzag" viewBox="0 0 120 30" aria-hidden="true">
-                    <path d="M4 24 L18 6 L32 24 L46 6 L60 24 L74 6 L88 24 L102 6 L116 24" fill="none" stroke="#B98B12"
-                        stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-
-                <p class="eyebrow tom-violeta">O que acontece depois</p>
-
-                <ol class="painel-passos">
-                    <li>
-                        <span class="passo-num">1</span>
-                        <div>
-                            <p class="passo-titulo">Verificação do vínculo</p>
-                            <p class="passo-p">A secretaria confirma matrícula ou lotação.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="passo-num">2</span>
-                        <div>
-                            <p class="passo-titulo">Filtro automático</p>
-                            <p class="passo-p">O mural passa a mostrar primeiro o que é do seu vínculo.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="passo-num">3</span>
-                        <div>
-                            <p class="passo-titulo">Preferências de aviso</p>
-                            <p class="passo-p">Você escolhe o que chega por e-mail; cancelamento e matrícula sempre
-                                chegam.</p>
-                        </div>
-                    </li>
-                </ol>
-
-                <p class="painel-nota">Cadastro não substitui a matrícula. Dados de vínculo são somente leitura.</p>
-            </aside>
-
+        <div class="form-group">
+          <label for="nome" class="form-label">Nome completo</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            class="form-input"
+            placeholder="Ex: Carlos da Silva"
+            autocomplete="name"
+            required
+          >
         </div>
-    </main>
 
-    <script src="script.js"></script>
+        <div class="form-group">
+          <label for="email" class="form-label">E-mail institucional</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
+            placeholder="voce@arcadia.edu.br"
+            autocomplete="email"
+            required
+          >
+          <span class="form-hint">Apenas e-mails institucionais são permitidos.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Vínculo institucional</label>
+          <div class="pills-group" data-filtro>
+            <button type="button" class="pill-btn pill ativo">Aluno</button>
+            <button type="button" class="pill-btn pill">Professor</button>
+            <button type="button" class="pill-btn pill">Servidor</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="senha" class="form-label">Senha de acesso</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            class="form-input"
+            placeholder="Mínimo de 8 caracteres"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" required checked>
+            Aceito os termos de uso e privacidade
+          </label>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <span>Criar conta institucional</span>
+          <span style="font-size: 16px;">&rarr;</span>
+        </button>
+      </form>
+
+      <p class="auth-switch">
+        Já possui cadastro? <a href="login.html">Entrar no portal</a>
+      </p>
+    </section>
+
+    <!-- Coluna 2: O que acontece depois -->
+    <aside class="auth-aside-col">
+      <div>
+        <span class="aside-badge badge-lime">O QUE ACONTECE DEPOIS</span>
+        <h2 class="aside-title">Seu espaço acadêmico sob controle.</h2>
+        <p class="aside-desc">
+          Assim que cadastrado, seu perfil é configurado e conectado aos murais oficiais do IFPA Campus Belém.
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-num num-cyan">1</span>
+            <div class="feature-content">
+              <h4>Verificação de Vínculo</h4>
+              <p>A secretaria valida automaticamente sua matrícula ou setor de lotação.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-num num-yellow">2</span>
+            <div class="feature-content">
+              <h4>Filtro Automático</h4>
+              <p>O portal destaca avisos, prazos e disciplinas exclusivas para o seu vínculo.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-num num-green">3</span>
+            <div class="feature-content">
+              <h4>Notificações e Resumo</h4>
+              <p>Editais urgentes e cancelamentos de aula chegam antes de qualquer boato.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside-footer">
+        <div class="aside-footer-badge">
+          <span class="status-dot"></span>
+          <span>SINCRONIZAÇÃO EM TEMPO REAL</span>
+        </div>
+        <span>IFPA BELÉM</span>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="script.js"></script>
 </body>
 
 </html>
