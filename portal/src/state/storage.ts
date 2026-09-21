@@ -1,11 +1,4 @@
 import {
-  AVISOS_INICIAIS,
-  TAREFAS_INICIAIS,
-  DOCUMENTOS_INICIAIS,
-  EVENTOS_CALENDARIO_INICIAIS,
-  PESSOAS_INICIAIS,
-  PROJETOS_INICIAIS,
-  LEMBRETES_INICIAIS,
   LINKS_UTEIS_INICIAIS,
   type Aviso,
   type Tarefa,
@@ -33,6 +26,22 @@ const KEYS = {
   LINKS_UTEIS: "arcadia_links_uteis",
   CATEGORIAS: "arcadia_categorias",
 };
+
+// Limpeza inicial automática de dados simulados anteriores para o sistema iniciar limpo "do zero"
+const STORAGE_CLEAN_VERSION_KEY = "arcadia_zero_v4";
+if (typeof window !== "undefined") {
+  const version = localStorage.getItem(STORAGE_CLEAN_VERSION_KEY);
+  if (!version) {
+    localStorage.setItem(KEYS.AVISOS, JSON.stringify([]));
+    localStorage.setItem(KEYS.TAREFAS, JSON.stringify([]));
+    localStorage.setItem(KEYS.DOCUMENTOS, JSON.stringify([]));
+    localStorage.setItem(KEYS.CALENDARIO, JSON.stringify([]));
+    localStorage.setItem(KEYS.PESSOAS, JSON.stringify([]));
+    localStorage.setItem(KEYS.PROJETOS, JSON.stringify([]));
+    localStorage.setItem(KEYS.LEMBRETES, JSON.stringify([]));
+    localStorage.setItem(STORAGE_CLEAN_VERSION_KEY, "clean_zero");
+  }
+}
 
 // Event emitter para reatividade global
 type Listener = () => void;
@@ -102,7 +111,7 @@ export async function sincronizarComBackend(): Promise<void> {
     // 2. Avisos
     api.get<{ avisos: Aviso[] }>("/api/avisos")
       .then((data) => {
-        if (data && Array.isArray(data.avisos) && data.avisos.length > 0) {
+        if (data && Array.isArray(data.avisos)) {
           localStorage.setItem(KEYS.AVISOS, JSON.stringify(data.avisos));
           notificarMudanca();
         }
@@ -112,7 +121,7 @@ export async function sincronizarComBackend(): Promise<void> {
     // 3. Tarefas
     api.get<{ tarefas: Tarefa[] }>("/api/tarefas")
       .then((data) => {
-        if (data && Array.isArray(data.tarefas) && data.tarefas.length > 0) {
+        if (data && Array.isArray(data.tarefas)) {
           localStorage.setItem(KEYS.TAREFAS, JSON.stringify(data.tarefas));
           notificarMudanca();
         }
@@ -122,7 +131,7 @@ export async function sincronizarComBackend(): Promise<void> {
     // 4. Documentos
     api.get<{ documentos: Documento[] }>("/api/documentos")
       .then((data) => {
-        if (data && Array.isArray(data.documentos) && data.documentos.length > 0) {
+        if (data && Array.isArray(data.documentos)) {
           localStorage.setItem(KEYS.DOCUMENTOS, JSON.stringify(data.documentos));
           notificarMudanca();
         }
@@ -132,7 +141,7 @@ export async function sincronizarComBackend(): Promise<void> {
     // 5. Calendário
     api.get<{ eventos: EventoCalendario[] }>("/api/calendario")
       .then((data) => {
-        if (data && Array.isArray(data.eventos) && data.eventos.length > 0) {
+        if (data && Array.isArray(data.eventos)) {
           localStorage.setItem(KEYS.CALENDARIO, JSON.stringify(data.eventos));
           notificarMudanca();
         }
@@ -142,7 +151,7 @@ export async function sincronizarComBackend(): Promise<void> {
     // 6. Pessoas
     api.get<{ pessoas: Pessoa[] }>("/api/pessoas")
       .then((data) => {
-        if (data && Array.isArray(data.pessoas) && data.pessoas.length > 0) {
+        if (data && Array.isArray(data.pessoas)) {
           localStorage.setItem(KEYS.PESSOAS, JSON.stringify(data.pessoas));
           notificarMudanca();
         }
@@ -152,8 +161,18 @@ export async function sincronizarComBackend(): Promise<void> {
     // 7. Projetos
     api.get<{ projetos: Projeto[] }>("/api/projetos")
       .then((data) => {
-        if (data && Array.isArray(data.projetos) && data.projetos.length > 0) {
+        if (data && Array.isArray(data.projetos)) {
           localStorage.setItem(KEYS.PROJETOS, JSON.stringify(data.projetos));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+
+    // 8. Lembretes (RF08)
+    api.get<{ lembretes: Lembrete[] }>("/api/lembretes")
+      .then((data) => {
+        if (data && Array.isArray(data.lembretes)) {
+          localStorage.setItem(KEYS.LEMBRETES, JSON.stringify(data.lembretes));
           notificarMudanca();
         }
       })
@@ -247,13 +266,13 @@ export function encerrarSessao(): void {
 export function getAvisos(): Aviso[] {
   try {
     const raw = localStorage.getItem(KEYS.AVISOS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.AVISOS, JSON.stringify(AVISOS_INICIAIS));
-  return AVISOS_INICIAIS;
+  localStorage.setItem(KEYS.AVISOS, JSON.stringify([]));
+  return [];
 }
 
 export function salvarAvisos(itens: Aviso[]): void {
@@ -265,7 +284,7 @@ export function adicionarAviso(novo: Omit<Aviso, "id"> & { id?: string }): Aviso
   const itens = getAvisos();
   const criado: Aviso = {
     ...novo,
-    id: novo.id || String(Date.now()),
+    id: String(novo.id || Date.now()),
   };
   const atualizados = [criado, ...itens];
   salvarAvisos(atualizados);
@@ -295,34 +314,37 @@ export function adicionarAviso(novo: Omit<Aviso, "id"> & { id?: string }): Aviso
 }
 
 export function removerAviso(id: string): void {
-  const itens = getAvisos().filter((i) => i.id !== id);
+  const idStr = String(id);
+  const itens = getAvisos().filter((i) => String(i.id) !== idStr);
   salvarAvisos(itens);
-  api.delete(`/api/avisos/${id}`).catch(() => {});
+  api.delete(`/api/avisos/${idStr}`).catch(() => {});
 }
 
 export function removerAvisosEmLote(ids: string[]): void {
-  const itens = getAvisos().filter((i) => !ids.includes(i.id));
+  const idsSet = new Set(ids.map(String));
+  const itens = getAvisos().filter((i) => !idsSet.has(String(i.id)));
   salvarAvisos(itens);
   api.post("/api/avisos/batch-delete", { ids }).catch(() => {});
 }
 
 export function atualizarAviso(id: string, dados: Partial<Aviso>): void {
-  const itens = getAvisos().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  const idStr = String(id);
+  const itens = getAvisos().map((it) => (String(it.id) === idStr ? { ...it, ...dados } : it));
   salvarAvisos(itens);
-  api.put(`/api/avisos/${id}`, dados).catch(() => {});
+  api.put(`/api/avisos/${idStr}`, dados).catch(() => {});
 }
 
 // ---- Tarefas ----
 export function getTarefas(): Tarefa[] {
   try {
     const raw = localStorage.getItem(KEYS.TAREFAS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.TAREFAS, JSON.stringify(TAREFAS_INICIAIS));
-  return TAREFAS_INICIAIS;
+  localStorage.setItem(KEYS.TAREFAS, JSON.stringify([]));
+  return [];
 }
 
 export function salvarTarefas(itens: Tarefa[]): void {
@@ -334,7 +356,7 @@ export function adicionarTarefa(nova: Omit<Tarefa, "id"> & { id?: string }): Tar
   const itens = getTarefas();
   const criada: Tarefa = {
     ...nova,
-    id: nova.id || String(Date.now()),
+    id: String(nova.id || Date.now()),
   };
   const atualizados = [criada, ...itens];
   salvarTarefas(atualizados);
@@ -357,25 +379,29 @@ export function adicionarTarefa(nova: Omit<Tarefa, "id"> & { id?: string }): Tar
 }
 
 export function atualizarTarefa(id: string, dados: Partial<Tarefa>): void {
-  const itens = getTarefas().map((t) => (t.id === id ? { ...t, ...dados } : t));
+  const idStr = String(id);
+  const itens = getTarefas().map((t) => (String(t.id) === idStr ? { ...t, ...dados } : t));
   salvarTarefas(itens);
-  api.put(`/api/tarefas/${id}`, dados).catch(() => {});
+  api.put(`/api/tarefas/${idStr}`, dados).catch(() => {});
 }
 
 export function removerTarefa(id: string): void {
-  const itens = getTarefas().filter((i) => i.id !== id);
+  const idStr = String(id);
+  const itens = getTarefas().filter((i) => String(i.id) !== idStr);
   salvarTarefas(itens);
-  api.delete(`/api/tarefas/${id}`).catch(() => {});
+  api.delete(`/api/tarefas/${idStr}`).catch(() => {});
 }
 
 export function removerTarefasEmLote(ids: string[]): void {
-  const itens = getTarefas().filter((i) => !ids.includes(i.id));
+  const idsSet = new Set(ids.map(String));
+  const itens = getTarefas().filter((i) => !idsSet.has(String(i.id)));
   salvarTarefas(itens);
   api.post("/api/tarefas/batch-delete", { ids }).catch(() => {});
 }
 
 export function alternarSituacaoTarefa(id: string): void {
-  const tarefa = getTarefas().find((t) => t.id === id);
+  const idStr = String(id);
+  const tarefa = getTarefas().find((t) => String(t.id) === idStr);
   if (!tarefa) return;
   const proximaSituacao =
     tarefa.situacao === "Concluída"
@@ -383,20 +409,20 @@ export function alternarSituacaoTarefa(id: string): void {
       : tarefa.situacao === "Aberta"
       ? "Em andamento"
       : "Concluída";
-  atualizarTarefa(id, { situacao: proximaSituacao as any });
+  atualizarTarefa(idStr, { situacao: proximaSituacao as any });
 }
 
 // ---- Documentos ----
 export function getDocumentos(): Documento[] {
   try {
     const raw = localStorage.getItem(KEYS.DOCUMENTOS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.DOCUMENTOS, JSON.stringify(DOCUMENTOS_INICIAIS));
-  return DOCUMENTOS_INICIAIS;
+  localStorage.setItem(KEYS.DOCUMENTOS, JSON.stringify([]));
+  return [];
 }
 
 export function salvarDocumentos(itens: Documento[]): void {
@@ -408,7 +434,7 @@ export function adicionarDocumento(novo: Omit<Documento, "id"> & { id?: string }
   const itens = getDocumentos();
   const criado: Documento = {
     ...novo,
-    id: novo.id || String(Date.now()),
+    id: String(novo.id || Date.now()),
   };
   const atualizados = [criado, ...itens];
   salvarDocumentos(atualizados);
@@ -433,34 +459,37 @@ export function adicionarDocumento(novo: Omit<Documento, "id"> & { id?: string }
 }
 
 export function removerDocumento(id: string): void {
-  const itens = getDocumentos().filter((i) => i.id !== id);
+  const idStr = String(id);
+  const itens = getDocumentos().filter((i) => String(i.id) !== idStr);
   salvarDocumentos(itens);
-  api.delete(`/api/documentos/${id}`).catch(() => {});
+  api.delete(`/api/documentos/${idStr}`).catch(() => {});
 }
 
 export function removerDocumentosEmLote(ids: string[]): void {
-  const itens = getDocumentos().filter((i) => !ids.includes(i.id));
+  const idsSet = new Set(ids.map(String));
+  const itens = getDocumentos().filter((i) => !idsSet.has(String(i.id)));
   salvarDocumentos(itens);
   api.post("/api/documentos/batch-delete", { ids }).catch(() => {});
 }
 
 export function atualizarDocumento(id: string, dados: Partial<Documento>): void {
-  const itens = getDocumentos().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  const idStr = String(id);
+  const itens = getDocumentos().map((it) => (String(it.id) === idStr ? { ...it, ...dados } : it));
   salvarDocumentos(itens);
-  api.put(`/api/documentos/${id}`, dados).catch(() => {});
+  api.put(`/api/documentos/${idStr}`, dados).catch(() => {});
 }
 
 // ---- Calendário ----
 export function getEventosCalendario(): EventoCalendario[] {
   try {
     const raw = localStorage.getItem(KEYS.CALENDARIO);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.CALENDARIO, JSON.stringify(EVENTOS_CALENDARIO_INICIAIS));
-  return EVENTOS_CALENDARIO_INICIAIS;
+  localStorage.setItem(KEYS.CALENDARIO, JSON.stringify([]));
+  return [];
 }
 
 export function salvarEventosCalendario(itens: EventoCalendario[]): void {
@@ -472,7 +501,7 @@ export function adicionarEventoCalendario(novo: Omit<EventoCalendario, "id"> & {
   const itens = getEventosCalendario();
   const criado: EventoCalendario = {
     ...novo,
-    id: novo.id || String(Date.now()),
+    id: String(novo.id || Date.now()),
   };
   const atualizados = [criado, ...itens];
   salvarEventosCalendario(atualizados);
@@ -495,34 +524,37 @@ export function adicionarEventoCalendario(novo: Omit<EventoCalendario, "id"> & {
 }
 
 export function removerEventoCalendario(id: string): void {
-  const itens = getEventosCalendario().filter((i) => i.id !== id);
+  const idStr = String(id);
+  const itens = getEventosCalendario().filter((i) => String(i.id) !== idStr);
   salvarEventosCalendario(itens);
-  api.delete(`/api/calendario/${id}`).catch(() => {});
+  api.delete(`/api/calendario/${idStr}`).catch(() => {});
 }
 
 export function removerEventosEmLote(ids: string[]): void {
-  const itens = getEventosCalendario().filter((i) => !ids.includes(i.id));
+  const idsSet = new Set(ids.map(String));
+  const itens = getEventosCalendario().filter((i) => !idsSet.has(String(i.id)));
   salvarEventosCalendario(itens);
   api.post("/api/calendario/batch-delete", { ids }).catch(() => {});
 }
 
 export function atualizarEventoCalendario(id: string, dados: Partial<EventoCalendario>): void {
-  const itens = getEventosCalendario().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  const idStr = String(id);
+  const itens = getEventosCalendario().map((it) => (String(it.id) === idStr ? { ...it, ...dados } : it));
   salvarEventosCalendario(itens);
-  api.put(`/api/calendario/${id}`, dados).catch(() => {});
+  api.put(`/api/calendario/${idStr}`, dados).catch(() => {});
 }
 
 // ---- Pessoas ----
 export function getPessoas(): Pessoa[] {
   try {
     const raw = localStorage.getItem(KEYS.PESSOAS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.PESSOAS, JSON.stringify(PESSOAS_INICIAIS));
-  return PESSOAS_INICIAIS;
+  localStorage.setItem(KEYS.PESSOAS, JSON.stringify([]));
+  return [];
 }
 
 export function salvarPessoas(itens: Pessoa[]): void {
@@ -534,7 +566,7 @@ export function adicionarPessoa(nova: Omit<Pessoa, "id"> & { id?: string }): Pes
   const itens = getPessoas();
   const criada: Pessoa = {
     ...nova,
-    id: nova.id || String(Date.now()),
+    id: String(nova.id || Date.now()),
   };
   const atualizados = [criada, ...itens];
   salvarPessoas(atualizados);
@@ -557,34 +589,37 @@ export function adicionarPessoa(nova: Omit<Pessoa, "id"> & { id?: string }): Pes
 }
 
 export function removerPessoa(id: string): void {
-  const itens = getPessoas().filter((i) => i.id !== id);
+  const idStr = String(id);
+  const itens = getPessoas().filter((i) => String(i.id) !== idStr);
   salvarPessoas(itens);
-  api.delete(`/api/pessoas/${id}`).catch(() => {});
+  api.delete(`/api/pessoas/${idStr}`).catch(() => {});
 }
 
 export function removerPessoasEmLote(ids: string[]): void {
-  const itens = getPessoas().filter((i) => !ids.includes(i.id));
+  const idsSet = new Set(ids.map(String));
+  const itens = getPessoas().filter((i) => !idsSet.has(String(i.id)));
   salvarPessoas(itens);
   api.post("/api/pessoas/batch-delete", { ids }).catch(() => {});
 }
 
 export function atualizarPessoa(id: string, dados: Partial<Pessoa>): void {
-  const itens = getPessoas().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  const idStr = String(id);
+  const itens = getPessoas().map((it) => (String(it.id) === idStr ? { ...it, ...dados } : it));
   salvarPessoas(itens);
-  api.put(`/api/pessoas/${id}`, dados).catch(() => {});
+  api.put(`/api/pessoas/${idStr}`, dados).catch(() => {});
 }
 
 // ---- Projetos ----
 export function getProjetos(): Projeto[] {
   try {
     const raw = localStorage.getItem(KEYS.PROJETOS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.PROJETOS, JSON.stringify(PROJETOS_INICIAIS));
-  return PROJETOS_INICIAIS;
+  localStorage.setItem(KEYS.PROJETOS, JSON.stringify([]));
+  return [];
 }
 
 export function salvarProjetos(itens: Projeto[]): void {
@@ -596,7 +631,7 @@ export function adicionarProjeto(novo: Omit<Projeto, "id"> & { id?: string }): P
   const itens = getProjetos();
   const criado: Projeto = {
     ...novo,
-    id: novo.id || String(Date.now()),
+    id: String(novo.id || Date.now()),
   };
   const atualizados = [criado, ...itens];
   salvarProjetos(atualizados);
@@ -620,34 +655,37 @@ export function adicionarProjeto(novo: Omit<Projeto, "id"> & { id?: string }): P
 }
 
 export function removerProjeto(id: string): void {
-  const itens = getProjetos().filter((i) => i.id !== id);
+  const idStr = String(id);
+  const itens = getProjetos().filter((i) => String(i.id) !== idStr);
   salvarProjetos(itens);
-  api.delete(`/api/projetos/${id}`).catch(() => {});
+  api.delete(`/api/projetos/${idStr}`).catch(() => {});
 }
 
 export function removerProjetosEmLote(ids: string[]): void {
-  const itens = getProjetos().filter((i) => !ids.includes(i.id));
+  const idsSet = new Set(ids.map(String));
+  const itens = getProjetos().filter((i) => !idsSet.has(String(i.id)));
   salvarProjetos(itens);
   api.post("/api/projetos/batch-delete", { ids }).catch(() => {});
 }
 
 export function atualizarProjeto(id: string, dados: Partial<Projeto>): void {
-  const itens = getProjetos().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  const idStr = String(id);
+  const itens = getProjetos().map((it) => (String(it.id) === idStr ? { ...it, ...dados } : it));
   salvarProjetos(itens);
-  api.put(`/api/projetos/${id}`, dados).catch(() => {});
+  api.put(`/api/projetos/${idStr}`, dados).catch(() => {});
 }
 
 // ---- Lembretes & Cronômetro (RF08) ----
 export function getLembretes(): Lembrete[] {
   try {
     const raw = localStorage.getItem(KEYS.LEMBRETES);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
-  localStorage.setItem(KEYS.LEMBRETES, JSON.stringify(LEMBRETES_INICIAIS));
-  return LEMBRETES_INICIAIS;
+  localStorage.setItem(KEYS.LEMBRETES, JSON.stringify([]));
+  return [];
 }
 
 export function salvarLembretes(itens: Lembrete[]): void {
@@ -659,7 +697,7 @@ export function adicionarLembrete(novo: Omit<Lembrete, "id"> & { id?: string }):
   const itens = getLembretes();
   const criado: Lembrete = {
     ...novo,
-    id: novo.id || String(Date.now()),
+    id: String(novo.id || Date.now()),
   };
   const atualizados = [criado, ...itens];
   salvarLembretes(atualizados);
@@ -668,27 +706,29 @@ export function adicionarLembrete(novo: Omit<Lembrete, "id"> & { id?: string }):
 }
 
 export function alternarLembrete(id: string): void {
-  const itens = getLembretes().map((l) => (l.id === id ? { ...l, ativo: !l.ativo } : l));
+  const idStr = String(id);
+  const itens = getLembretes().map((l) => (String(l.id) === idStr ? { ...l, ativo: !l.ativo } : l));
   salvarLembretes(itens);
-  const alterado = itens.find((l) => l.id === id);
+  const alterado = itens.find((l) => String(l.id) === idStr);
   if (alterado) {
-    api.put(`/api/lembretes/${id}`, { ativo: alterado.ativo }).catch(() => {});
+    api.put(`/api/lembretes/${idStr}`, { ativo: alterado.ativo }).catch(() => {});
   }
 }
 
 export function removerLembrete(id: string): void {
-  const itens = getLembretes().filter((l) => l.id !== id);
+  const idStr = String(id);
+  const itens = getLembretes().filter((l) => String(l.id) !== idStr);
   salvarLembretes(itens);
-  api.delete(`/api/lembretes/${id}`).catch(() => {});
+  api.delete(`/api/lembretes/${idStr}`).catch(() => {});
 }
 
 // ---- Links Úteis (RF09) ----
 export function getLinksUteis(): LinkUtil[] {
   try {
     const raw = localStorage.getItem(KEYS.LINKS_UTEIS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch {}
   localStorage.setItem(KEYS.LINKS_UTEIS, JSON.stringify(LINKS_UTEIS_INICIAIS));
@@ -704,7 +744,7 @@ export function adicionarLinkUtil(novo: Omit<LinkUtil, "id"> & { id?: string }):
   const itens = getLinksUteis();
   const criado: LinkUtil = {
     ...novo,
-    id: novo.id || String(Date.now()),
+    id: String(novo.id || Date.now()),
   };
   const atualizados = [criado, ...itens];
   salvarLinksUteis(atualizados);
@@ -713,9 +753,23 @@ export function adicionarLinkUtil(novo: Omit<LinkUtil, "id"> & { id?: string }):
 }
 
 export function removerLinkUtil(id: string): void {
-  const itens = getLinksUteis().filter((l) => l.id !== id);
+  const idStr = String(id);
+  const itens = getLinksUteis().filter((l) => String(l.id) !== idStr);
   salvarLinksUteis(itens);
-  api.delete(`/api/links-uteis/${id}`).catch(() => {});
+  api.delete(`/api/links-uteis/${idStr}`).catch(() => {});
+}
+
+// ---- Limpeza Completa (Começar do Zero) ----
+export function limparTodosDados(): void {
+  salvarAvisos([]);
+  salvarTarefas([]);
+  salvarDocumentos([]);
+  salvarEventosCalendario([]);
+  salvarPessoas([]);
+  salvarProjetos([]);
+  salvarLembretes([]);
+  api.post("/api/admin/limpar-dados", {}).catch(() => {});
+  notificarMudanca();
 }
 
 // ---- Categorias Dinâmicas ----

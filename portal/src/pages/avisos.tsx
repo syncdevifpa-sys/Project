@@ -437,22 +437,34 @@ export default function Avisos() {
           </ViewToolbar>
 
           {filteredItens.length === 0 ? (
-            <EmptyState
-              title="Nenhum aviso encontrado"
-              description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
-              actions={
-                <Button
-                  onClick={() => {
-                    setCategoriaAtiva('Tudo');
-                    setBusca('');
-                    setFiltroPublico({ Todos: true, Aluno: true, Professor: true, Servidor: true });
-                    setFiltroSituacao({ Publicado: true, Rascunho: true, Arquivado: true });
-                  }}
-                >
-                  Limpar filtros
-                </Button>
-              }
-            />
+            itens.length === 0 ? (
+              <EmptyState
+                title="Nenhum aviso cadastrado"
+                description="O mural de avisos está pronto para receber suas publicações. Clique no botão abaixo para cadastrar seu primeiro aviso."
+                actions={
+                  <Button variant="primary" onClick={() => setModalNovo(true)}>
+                    + Criar primeiro aviso
+                  </Button>
+                }
+              />
+            ) : (
+              <EmptyState
+                title="Nenhum aviso encontrado"
+                description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
+                actions={
+                  <Button
+                    onClick={() => {
+                      setCategoriaAtiva('Tudo');
+                      setBusca('');
+                      setFiltroPublico({ Todos: true, Aluno: true, Professor: true, Servidor: true });
+                      setFiltroSituacao({ Publicado: true, Rascunho: true, Arquivado: true });
+                    }}
+                  >
+                    Limpar filtros
+                  </Button>
+                }
+              />
+            )
           ) : viewMode === 'lista' ? (
             <div className="ar-card-grid">
               {filteredItens.map((a, index) => {

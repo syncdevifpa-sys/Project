@@ -38,6 +38,7 @@ import {
   alternarLembrete,
   removerLembrete,
   adicionarLembrete,
+  limparTodosDados,
   subscribeToDataChanges,
 } from '@/state/storage';
 import { api } from '@/lib/api';
@@ -526,18 +527,27 @@ export default function Configuracoes() {
                 marginBottom: 16,
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--ink-muted)' }}>
-                  Próximo Prazo Acadêmico Oficial (IFPA)
-                </span>
-                <Badge tone="orange">Urgente</Badge>
-              </div>
-              <div style={{ fontSize: 24, fontWeight: 900, fontFamily: 'monospace', letterSpacing: '-0.02em' }}>
-                ⏳ {formatCountdown(countdownSeconds)}
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--ink)' }}>
-                Marco vigente: <strong>Início do período de matrícula (14 set)</strong>
-              </div>
+              {(() => {
+                const proximoLembrete = lembretes.find((l) => l.ativo) || lembretes[0];
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--ink-muted)' }}>
+                        Próximo Prazo Acadêmico Oficial (IFPA)
+                      </span>
+                      <Badge tone={proximoLembrete ? 'orange' : 'neutral'}>
+                        {proximoLembrete ? 'Urgente' : 'Sem pendências'}
+                      </Badge>
+                    </div>
+                    <div style={{ fontSize: 24, fontWeight: 900, fontFamily: 'monospace', letterSpacing: '-0.02em' }}>
+                      ⏳ {proximoLembrete ? formatCountdown(countdownSeconds) : '00d 00h 00m 00s'}
+                    </div>
+                    <div style={{ fontSize: 13, color: 'var(--ink)' }}>
+                      Marco vigente: <strong>{proximoLembrete ? `${proximoLembrete.titulo} (${proximoLembrete.data}${proximoLembrete.horario ? ` às ${proximoLembrete.horario}` : ''})` : 'Nenhum prazo ou evento cadastrado'}</strong>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -547,36 +557,53 @@ export default function Configuracoes() {
               </Button>
             </div>
 
-            {lembretes.map((l) => (
-              <SettingRow
-                key={l.id}
-                label={l.titulo}
-                description={`Data: ${l.data}${l.horario ? ` às ${l.horario}` : ''} · Tipo: ${l.tipo === 'prazo' ? 'Prazo Acadêmico' : 'Evento Institucional'}`}
+            {lembretes.length === 0 ? (
+              <div
+                style={{
+                  padding: '24px 16px',
+                  textAlign: 'center',
+                  color: 'var(--ink-muted)',
+                  fontSize: 14,
+                  background: 'var(--surface-sunken)',
+                  border: '1px dashed var(--line)',
+                  borderRadius: 'var(--radius-md)',
+                  marginBottom: 16,
+                }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <Switch
-                    label={l.ativo ? 'Ativo' : 'Inativo'}
-                    checked={l.ativo}
-                    onChange={() => {
-                      alternarLembrete(l.id);
-                      setLembretes(getLembretes());
-                      showToast({ message: l.ativo ? 'Lembrete desativado' : 'Lembrete ativado' });
-                    }}
-                  />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      removerLembrete(l.id);
-                      setLembretes(getLembretes());
-                      showToast({ message: 'Lembrete excluído' });
-                    }}
-                  >
-                    Excluir
-                  </Button>
-                </div>
-              </SettingRow>
-            ))}
+                Nenhum lembrete cadastrado. Clique em <strong>+ Novo lembrete</strong> para registrar um prazo ou alerta acadêmico.
+              </div>
+            ) : (
+              lembretes.map((l) => (
+                <SettingRow
+                  key={l.id}
+                  label={l.titulo}
+                  description={`Data: ${l.data}${l.horario ? ` às ${l.horario}` : ''} · Tipo: ${l.tipo === 'prazo' ? 'Prazo Acadêmico' : 'Evento Institucional'}`}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <Switch
+                      label={l.ativo ? 'Ativo' : 'Inativo'}
+                      checked={l.ativo}
+                      onChange={() => {
+                        alternarLembrete(l.id);
+                        setLembretes(getLembretes());
+                        showToast({ message: l.ativo ? 'Lembrete desativado' : 'Lembrete ativado' });
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        removerLembrete(l.id);
+                        setLembretes((prev) => prev.filter((it) => String(it.id) !== String(l.id)));
+                        showToast({ message: 'Lembrete excluído' });
+                      }}
+                    >
+                      Excluir
+                    </Button>
+                  </div>
+                </SettingRow>
+              ))
+            )}
           </SettingsSection>
 
           {/* Seção 4: Conta e segurança */}
@@ -593,6 +620,23 @@ export default function Configuracoes() {
             >
               <Button size="sm" onClick={handleAbrirSessoes}>
                 Ver sessões
+              </Button>
+            </SettingRow>
+
+            <SettingRow
+              label="Iniciar do zero"
+              description="Remove todos os avisos, tarefas e lembretes para testar as funcionalidades com dados 100% limpos."
+            >
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  limparTodosDados();
+                  setLembretes([]);
+                  showToast({ message: 'Sistema zerado com sucesso! Nenhum aviso ou lembrete falso.' });
+                }}
+              >
+                Começar do zero
               </Button>
             </SettingRow>
 

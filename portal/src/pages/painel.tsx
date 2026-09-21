@@ -8,11 +8,14 @@ import {
   Badge,
   TextLink,
   Button,
+  getStatusTone,
 } from '@/components/arcadia';
 import {
   getAvisos,
   getTarefas,
   getDocumentos,
+  getEventosCalendario,
+  getLembretes,
   getUsuarioSessao,
   subscribeToDataChanges,
 } from '@/state/storage';
@@ -23,6 +26,8 @@ export default function Painel() {
   const [avisos, setAvisos] = useState(getAvisos);
   const [tarefas, setTarefas] = useState(getTarefas);
   const [documentos, setDocumentos] = useState(getDocumentos);
+  const [calendario, setCalendario] = useState(getEventosCalendario);
+  const [lembretes, setLembretes] = useState(getLembretes);
 
   useEffect(() => {
     const unsubscribe = subscribeToDataChanges(() => {
@@ -30,6 +35,8 @@ export default function Painel() {
       setAvisos(getAvisos());
       setTarefas(getTarefas());
       setDocumentos(getDocumentos());
+      setCalendario(getEventosCalendario());
+      setLembretes(getLembretes());
     });
     return unsubscribe;
   }, []);
@@ -63,13 +70,20 @@ export default function Painel() {
 
   const primeiroNome = ((usuario && usuario.nome) || 'Ana').trim().split(/\s+/)[0];
 
+  const proximoLembrete = lembretes.find((l) => l.ativo) || lembretes[0];
+
+  const heroDescricao =
+    tarefasEmAberto === 0 && documentosEmAnalise === 0
+      ? 'Tudo em dia no portal! Você não possui tarefas pendentes ou documentos em análise no momento.'
+      : `Você tem ${tarefasEmAberto} tarefa${tarefasEmAberto === 1 ? '' : 's'} em aberto e ${documentosEmAnalise} documento${documentosEmAnalise === 1 ? '' : 's'} em análise.`;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <PageHero
         title={`Olá, ${primeiroNome}`}
         tone="lime"
         size="large"
-        description={`Você tem ${tarefasEmAberto} tarefas em aberto e ${documentosEmAnalise} documentos em análise. O próximo prazo é 12 set.`}
+        description={heroDescricao}
         actions={
           <Button
             variant="primary"
@@ -101,32 +115,36 @@ export default function Painel() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontWeight: 800, fontSize: 14 }}>Próximo Prazo Acadêmico Oficial (RF08)</span>
-              <Badge tone="orange">Urgente</Badge>
+              <Badge tone={proximoLembrete ? 'orange' : 'neutral'}>
+                {proximoLembrete ? 'Urgente' : 'Sem pendências'}
+              </Badge>
             </div>
             <div style={{ fontSize: 13, color: 'var(--ink-muted)', marginTop: 2 }}>
-              Início do período de matrícula — 14 set às 08:00
+              {proximoLembrete
+                ? `${proximoLembrete.titulo} — ${proximoLembrete.data}${proximoLembrete.horario ? ` às ${proximoLembrete.horario}` : ''}`
+                : 'Nenhum prazo acadêmico cadastrado. Configure seus lembretes em Configurações.'}
             </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: 18, color: 'var(--ink)' }}>
-            {formatCountdown(countdownSeconds)}
+            {proximoLembrete ? formatCountdown(countdownSeconds) : '00d 00h 00m 00s'}
           </div>
           <Button
             size="sm"
             variant="secondary"
-            onClick={() => navigate('/calendario')}
+            onClick={() => navigate('/configuracoes#lembretes')}
           >
-            Ver calendário & alertas
+            {proximoLembrete ? 'Ver lembretes' : '+ Novo lembrete'}
           </Button>
         </div>
       </div>
 
       <div className="ar-grid-3">
         <StatCard
-          label="Avisos não lidos"
-          value={Math.min(avisos.length, 2)}
-          caption="Publicados desde sua última visita, em 17 set."
+          label="Avisos no portal"
+          value={avisos.length}
+          caption={avisos.length === 0 ? 'Nenhum aviso publicado.' : `${avisos.length} aviso(s) ativo(s).`}
           link={{
             label: 'Abrir avisos',
             onClick: () => navigate('/avisos'),
@@ -136,7 +154,7 @@ export default function Painel() {
         <StatCard
           label="Tarefas em aberto"
           value={tarefasEmAberto}
-          caption="A próxima vence em 12 set."
+          caption={tarefasEmAberto === 0 ? 'Nenhuma pendência pendente.' : `${tarefasEmAberto} tarefa(s) para realizar.`}
           link={{
             label: 'Ver tarefas',
             onClick: () => navigate('/tarefas'),
@@ -146,7 +164,7 @@ export default function Painel() {
         <StatCard
           label="Documentos em análise"
           value={documentosEmAnalise}
-          caption="A secretaria responde até 26 set."
+          caption={documentosEmAnalise === 0 ? 'Nenhum documento pendente.' : `${documentosEmAnalise} processo(s) em análise.`}
           tone="pink"
           link={{
             label: 'Ver documentos',
@@ -164,64 +182,58 @@ export default function Painel() {
             </TextLink>
           }
         >
-          <ListRow
-            date={{ day: '01', month: 'set' }}
-            title="Calendário do 2º semestre"
-            trailing={<Badge tone="pink">Calendário</Badge>}
-            onClick={() => navigate('/calendario')}
-          />
-          <ListRow
-            date={{ day: '08', month: 'set' }}
-            title="Histórico escolar completo"
-            trailing={<Badge tone="green">Pronto</Badge>}
-            onClick={() => navigate('/documentos')}
-          />
-          <ListRow
-            date={{ day: '09', month: 'set' }}
-            title="Aulas suspensas no Bloco C"
-            trailing={<Badge tone="orange">Cancelamento</Badge>}
-            onClick={() => navigate('/avisos')}
-          />
-          <ListRow
-            date={{ day: '12', month: 'set' }}
-            title="Confirmar disciplinas do semestre"
-            trailing={<Badge tone="cyan">Aberta</Badge>}
-            onClick={() => navigate('/tarefas')}
-          />
+          {calendario.length === 0 && tarefas.length === 0 ? (
+            <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--ink-muted)', fontSize: 13 }}>
+              Nenhuma data ou evento agendado no momento.
+            </div>
+          ) : (
+            [...calendario.map((c) => ({
+              id: c.id,
+              titulo: c.titulo,
+              data: c.data,
+              categoria: c.categoria,
+              tipo: 'calendario' as const,
+            })), ...tarefas.map((t) => ({
+              id: t.id,
+              titulo: t.titulo,
+              data: t.prazo,
+              categoria: t.situacao,
+              tipo: 'tarefas' as const,
+            }))].slice(0, 4).map((item) => (
+              <ListRow
+                key={item.id}
+                title={item.titulo}
+                meta={item.data}
+                trailing={<Badge tone={getStatusTone(item.categoria)}>{item.categoria}</Badge>}
+                onClick={() => navigate(item.tipo === 'calendario' ? '/calendario' : '/tarefas')}
+              />
+            ))
+          )}
         </ListPanel>
 
         <ListPanel
-          label="Criados recentemente"
+          label="Avisos recentes"
           action={
             <TextLink onClick={() => navigate('/avisos')}>
               Abrir avisos
             </TextLink>
           }
         >
-          <ListRow
-            title="Painel de dados abertos do campus"
-            meta="Projetos"
-            trailing="02 set"
-            onClick={() => navigate('/projetos')}
-          />
-          <ListRow
-            title="Termo de compromisso de estágio"
-            meta="Documentos"
-            trailing="02 set"
-            onClick={() => navigate('/documentos')}
-          />
-          <ListRow
-            title="Publicação do resultado PIBIC"
-            meta="Calendário"
-            trailing="01 set"
-            onClick={() => navigate('/calendario')}
-          />
-          <ListRow
-            title="Semana de Ciência e Tecnologia"
-            meta="Avisos"
-            trailing="29 ago"
-            onClick={() => navigate('/avisos')}
-          />
+          {avisos.length === 0 ? (
+            <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--ink-muted)', fontSize: 13 }}>
+              Nenhum aviso publicado recentemente.
+            </div>
+          ) : (
+            avisos.slice(0, 4).map((a) => (
+              <ListRow
+                key={a.id}
+                title={a.titulo}
+                meta={a.data}
+                trailing={<Badge tone={getStatusTone(a.categoria)}>{a.categoria}</Badge>}
+                onClick={() => navigate(`/avisos/${a.id}`)}
+              />
+            ))
+          )}
         </ListPanel>
       </div>
     </div>

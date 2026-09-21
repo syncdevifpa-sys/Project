@@ -183,19 +183,7 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // Seed Lembretes se vazio
-  db.get('SELECT COUNT(*) as count FROM lembretes', (err, r) => {
-    if (!err && (!r || r.count === 0)) {
-      const stmt = db.prepare('INSERT INTO lembretes (evento_id, titulo, data, horario, ativo, tipo, descricao) VALUES (?, ?, ?, ?, ?, ?, ?)');
-      stmt.run('1', 'Abertura da matrícula 2026/2', '14 set', '08:00', 1, 'prazo', 'Confirmação de disciplinas pelo portal acadêmico');
-      stmt.run('2', 'Prazo final de trancamento de matrícula', '26 set', '23:59', 1, 'prazo', 'Protocolo de cancelamento via secretaria acadêmica');
-      stmt.run('3', 'Publicação do resultado PIBIC', '10 out', '18:00', 1, 'evento', 'Divulgação dos selecionados para bolsas de iniciação científica');
-      stmt.run('4', 'Semana de Ciência e Tecnologia', '20 out', '09:00', 0, 'evento', 'Palestras e apresentações de banners no auditório central');
-      stmt.finalize();
-    }
-  });
-
-  // Seed Links Úteis se vazio
+  // Seed Links Úteis se vazio (sempre mantidos como recursos institucionais úteis)
   db.get('SELECT COUNT(*) as count FROM links_uteis', (err, r) => {
     if (!err && (!r || r.count === 0)) {
       const stmt = db.prepare('INSERT INTO links_uteis (titulo, url, descricao, categoria) VALUES (?, ?, ?, ?)');
@@ -246,108 +234,117 @@ db.serialize(() => {
     }
   });
 
-  // Seed Avisos
-  db.get('SELECT COUNT(*) as count FROM avisos', (err, row) => {
-    if (row && row.count === 0) {
-      const avisosIniciais = [
-        ['Abertura da matrícula 2026/2', 'Confirmação de disciplinas pelo portal', 'Confirmação de disciplinas pelo portal', 'matricula', 'Todos', '14 SET', 'Publicado', 1, 1],
-        ['Edital PIBIC 2026', 'Bolsas de iniciação científica', 'Bolsas de iniciação científica para alunos de graduação e ensino técnico', 'edital', 'Aluno', '22 SET', 'Publicado', 0, 0],
-        ['Semana de Ciência e Tecnologia', 'Programação nos três turnos', 'Programação aberta com palestras, oficinas e apresentações', 'evento', 'Todos', '05 OUT', 'Rascunho', 0, 0],
-        ['Aula suspensa no Bloco C', 'Manutenção elétrica no prédio', 'Manutenção corretiva na subestação do bloco C', 'cancelamento', 'Todos', '09 SET', 'Publicado', 1, 0],
-        ['Calendário do 2º semestre', 'Datas oficiais consolidadas', 'Calendário acadêmico aprovado pelo conselho superior', 'calendario', 'Todos', '01 SET', 'Arquivado', 0, 0],
-      ];
-      const stmt = db.prepare(
-        'INSERT INTO avisos (titulo, resumo, conteudo, categoria, publico, data, situacao, urgente, fixado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-      );
-      avisosIniciais.forEach((a) => stmt.run(a));
-      stmt.finalize();
-      console.log('Seeded initial avisos in SQLite.');
-    }
-  });
+  // Apenas semear dados de demonstração se explicitamente solicitado via variável de ambiente
+  if (process.env.SEED_DEMO_DATA === 'true') {
+    // Seed Lembretes se vazio
+    db.get('SELECT COUNT(*) as count FROM lembretes', (err, r) => {
+      if (!err && (!r || r.count === 0)) {
+        const stmt = db.prepare('INSERT INTO lembretes (evento_id, titulo, data, horario, ativo, tipo, descricao) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        stmt.run('1', 'Abertura da matrícula 2026/2', '14 set', '08:00', 1, 'prazo', 'Confirmação de disciplinas pelo portal acadêmico');
+        stmt.run('2', 'Prazo final de trancamento de matrícula', '26 set', '23:59', 1, 'prazo', 'Protocolo de cancelamento via secretaria acadêmica');
+        stmt.run('3', 'Publicação do resultado PIBIC', '10 out', '18:00', 1, 'evento', 'Divulgação dos selecionados para bolsas de iniciação científica');
+        stmt.run('4', 'Semana de Ciência e Tecnologia', '20 out', '09:00', 0, 'evento', 'Palestras e apresentações de banners no auditório central');
+        stmt.finalize();
+      }
+    });
 
-  // Seed Tarefas
-  db.get('SELECT COUNT(*) as count FROM tarefas', (err, row) => {
-    if (row && row.count === 0) {
-      const tarefasIniciais = [
-        ['Confirmar disciplinas do semestre', 'Ana Ribeiro', '12 SET', 'Aberta'],
-        ['Entregar relatório de estágio', 'Ana Ribeiro', '20 SET', 'Em andamento'],
-        ['Assinar termo de bolsa', 'Coordenação de pesquisa', '18 SET', 'Aguardando'],
-        ['Atualizar dados cadastrais', 'Secretaria acadêmica', '05 SET', 'Concluída'],
-      ];
-      const stmt = db.prepare('INSERT INTO tarefas (titulo, responsavel, prazo, situacao) VALUES (?, ?, ?, ?)');
-      tarefasIniciais.forEach((t) => stmt.run(t));
-      stmt.finalize();
-      console.log('Seeded initial tarefas in SQLite.');
-    }
-  });
+    // Seed Avisos
+    db.get('SELECT COUNT(*) as count FROM avisos', (err, row) => {
+      if (row && row.count === 0) {
+        const avisosIniciais = [
+          ['Abertura da matrícula 2026/2', 'Confirmação de disciplinas pelo portal', 'Confirmação de disciplinas pelo portal', 'matricula', 'Todos', '14 SET', 'Publicado', 1, 1],
+          ['Edital PIBIC 2026', 'Bolsas de iniciação científica', 'Bolsas de iniciação científica para alunos de graduação e ensino técnico', 'edital', 'Aluno', '22 SET', 'Publicado', 0, 0],
+          ['Semana de Ciência e Tecnologia', 'Programação nos três turnos', 'Programação aberta com palestras, oficinas e apresentações', 'evento', 'Todos', '05 OUT', 'Rascunho', 0, 0],
+          ['Aula suspensa no Bloco C', 'Manutenção elétrica no prédio', 'Manutenção corretiva na subestação do bloco C', 'cancelamento', 'Todos', '09 SET', 'Publicado', 1, 0],
+          ['Calendário do 2º semestre', 'Datas oficiais consolidadas', 'Calendário acadêmico aprovado pelo conselho superior', 'calendario', 'Todos', '01 SET', 'Arquivado', 0, 0],
+        ];
+        const stmt = db.prepare(
+          'INSERT INTO avisos (titulo, resumo, conteudo, categoria, publico, data, situacao, urgente, fixado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+        avisosIniciais.forEach((a) => stmt.run(a));
+        stmt.finalize();
+      }
+    });
 
-  // Seed Documentos
-  db.get('SELECT COUNT(*) as count FROM documentos', (err, row) => {
-    if (row && row.count === 0) {
-      const docsIniciais = [
-        ['Histórico escolar completo', 'Histórico completo emitido pelo sistema', '2026-0001', 'PDF', 'Pronto', '08 SET'],
-        ['Declaração de vínculo', 'Declaração para passe escolar e estágio', '2026-0002', 'Requerimento', 'Em análise', '15 SET'],
-        ['Atestado de matrícula', 'Comprovante de matrícula atual', '2026-0003', 'PDF', 'Solicitado', '19 SET'],
-        ['Termo de compromisso de estágio', 'Termo tripartite IFPA, empresa e aluno', '2026-0004', 'Assinatura', 'Pendente', '11 SET'],
-      ];
-      const stmt = db.prepare(
-        'INSERT INTO documentos (titulo, descricao, protocolo, tipo, situacao, previsao) VALUES (?, ?, ?, ?, ?, ?)'
-      );
-      docsIniciais.forEach((d) => stmt.run(d));
-      stmt.finalize();
-      console.log('Seeded initial documentos in SQLite.');
-    }
-  });
+    // Seed Tarefas
+    db.get('SELECT COUNT(*) as count FROM tarefas', (err, row) => {
+      if (row && row.count === 0) {
+        const tarefasIniciais = [
+          ['Confirmar disciplinas do semestre', 'Ana Ribeiro', '12 SET', 'Aberta'],
+          ['Entregar relatório de estágio', 'Ana Ribeiro', '20 SET', 'Em andamento'],
+          ['Assinar termo de bolsa', 'Coordenação de pesquisa', '18 SET', 'Aguardando'],
+          ['Atualizar dados cadastrais', 'Secretaria acadêmica', '05 SET', 'Concluída'],
+        ];
+        const stmt = db.prepare('INSERT INTO tarefas (titulo, responsavel, prazo, situacao) VALUES (?, ?, ?, ?)');
+        tarefasIniciais.forEach((t) => stmt.run(t));
+        stmt.finalize();
+      }
+    });
 
-  // Seed Calendário
-  db.get('SELECT COUNT(*) as count FROM calendario', (err, row) => {
-    if (row && row.count === 0) {
-      const eventosIniciais = [
-        ['Início do período de matrícula', 'Portal do estudante, a partir das 8h', 'matricula', '14 SET'],
-        ['Prazo final de trancamento', 'Protocolo na secretaria acadêmica', 'cancelamento', '26 SET'],
-        ['Semana de Ciência e Tecnologia', 'Auditório central e laboratórios', 'evento', '05 OUT'],
-        ['Publicação do resultado PIBIC', 'Mural institucional e portal', 'edital', '12 OUT'],
-      ];
-      const stmt = db.prepare('INSERT INTO calendario (titulo, subtitulo, categoria, data) VALUES (?, ?, ?, ?)');
-      eventosIniciais.forEach((e) => stmt.run(e));
-      stmt.finalize();
-      console.log('Seeded initial calendario in SQLite.');
-    }
-  });
+    // Seed Documentos
+    db.get('SELECT COUNT(*) as count FROM documentos', (err, row) => {
+      if (row && row.count === 0) {
+        const docsIniciais = [
+          ['Histórico escolar completo', 'Histórico completo emitido pelo sistema', '2026-0001', 'PDF', 'Pronto', '08 SET'],
+          ['Declaração de vínculo', 'Declaração para passe escolar e estágio', '2026-0002', 'Requerimento', 'Em análise', '15 SET'],
+          ['Atestado de matrícula', 'Comprovante de matrícula atual', '2026-0003', 'PDF', 'Solicitado', '19 SET'],
+          ['Termo de compromisso de estágio', 'Termo tripartite IFPA, empresa e aluno', '2026-0004', 'Assinatura', 'Pendente', '11 SET'],
+        ];
+        const stmt = db.prepare(
+          'INSERT INTO documentos (titulo, descricao, protocolo, tipo, situacao, previsao) VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        docsIniciais.forEach((d) => stmt.run(d));
+        stmt.finalize();
+      }
+    });
 
-  // Seed Pessoas
-  db.get('SELECT COUNT(*) as count FROM pessoas', (err, row) => {
-    if (row && row.count === 0) {
-      const pessoasIniciais = [
-        ['Ana Ribeiro', 'Aluno', 'Técnico em Informática', 'ana.ribeiro@ifpa.edu.br'],
-        ['Marcos Tavares', 'Professor', 'Coordenação de Pesquisa', 'marcos.tavares@ifpa.edu.br'],
-        ['Júlia Andrade', 'Servidor', 'Secretaria Acadêmica', 'julia.andrade@ifpa.edu.br'],
-        ['Rafael Lima', 'Aluno', 'Agroecologia', 'rafael.lima@ifpa.edu.br'],
-      ];
-      const stmt = db.prepare('INSERT INTO pessoas (nome, vinculo, cursoOuSetor, email) VALUES (?, ?, ?, ?)');
-      pessoasIniciais.forEach((p) => stmt.run(p));
-      stmt.finalize();
-      console.log('Seeded initial pessoas in SQLite.');
-    }
-  });
+    // Seed Calendário
+    db.get('SELECT COUNT(*) as count FROM calendario', (err, row) => {
+      if (row && row.count === 0) {
+        const eventosIniciais = [
+          ['Início do período de matrícula', 'Portal do estudante, a partir das 8h', 'matricula', '14 SET'],
+          ['Prazo final de trancamento', 'Protocolo na secretaria acadêmica', 'cancelamento', '26 SET'],
+          ['Semana de Ciência e Tecnologia', 'Auditório central e laboratórios', 'evento', '05 OUT'],
+          ['Publicação do resultado PIBIC', 'Mural institucional e portal', 'edital', '12 OUT'],
+        ];
+        const stmt = db.prepare('INSERT INTO calendario (titulo, subtitulo, categoria, data) VALUES (?, ?, ?, ?)');
+        eventosIniciais.forEach((e) => stmt.run(e));
+        stmt.finalize();
+      }
+    });
 
-  // Seed Projetos
-  db.get('SELECT COUNT(*) as count FROM projetos', (err, row) => {
-    if (row && row.count === 0) {
-      const projetosIniciais = [
-        ['Palestra: Preservação, Biodiversidade e Bioeconomia na Amazônia', 'Prof. Dr. Mauro Santos', 'Extensão', 60, 'Inscrições'],
-        ['Monitoramento da Qualidade das Águas da Bacia do Guajará', 'Larissa Menezes', 'Pesquisa', 6, 'Ativo'],
-        ['Robótica Educacional com Reaproveitamento de Sucata', 'Júlia Andrade', 'Ensino', 8, 'Em seleção'],
-        ['Mapeamento Colaborativo de Saberes Tradicionais e Etnobotânica', 'Rafael Lima', 'Inovação', 12, 'Ativo'],
-      ];
-      const stmt = db.prepare(
-        'INSERT INTO projetos (titulo, autor, eixo, vagas, situacao, categoria, autor_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
-      );
-      projetosIniciais.forEach((p) => stmt.run([...p, p[2], 3]));
-      stmt.finalize();
-      console.log('Seeded initial projetos in SQLite.');
-    }
-  });
+    // Seed Pessoas
+    db.get('SELECT COUNT(*) as count FROM pessoas', (err, row) => {
+      if (row && row.count === 0) {
+        const pessoasIniciais = [
+          ['Ana Ribeiro', 'Aluno', 'Técnico em Informática', 'ana.ribeiro@ifpa.edu.br'],
+          ['Marcos Tavares', 'Professor', 'Coordenação de Pesquisa', 'marcos.tavares@ifpa.edu.br'],
+          ['Júlia Andrade', 'Servidor', 'Secretaria Acadêmica', 'julia.andrade@ifpa.edu.br'],
+          ['Rafael Lima', 'Aluno', 'Agroecologia', 'rafael.lima@ifpa.edu.br'],
+        ];
+        const stmt = db.prepare('INSERT INTO pessoas (nome, vinculo, cursoOuSetor, email) VALUES (?, ?, ?, ?)');
+        pessoasIniciais.forEach((p) => stmt.run(p));
+        stmt.finalize();
+      }
+    });
+
+    // Seed Projetos
+    db.get('SELECT COUNT(*) as count FROM projetos', (err, row) => {
+      if (row && row.count === 0) {
+        const projetosIniciais = [
+          ['Palestra: Preservação, Biodiversidade e Bioeconomia na Amazônia', 'Prof. Dr. Mauro Santos', 'Extensão', 60, 'Inscrições'],
+          ['Monitoramento da Qualidade das Águas da Bacia do Guajará', 'Larissa Menezes', 'Pesquisa', 6, 'Ativo'],
+          ['Robótica Educacional com Reaproveitamento de Sucata', 'Júlia Andrade', 'Ensino', 8, 'Em seleção'],
+          ['Mapeamento Colaborativo de Saberes Tradicionais e Etnobotânica', 'Rafael Lima', 'Inovação', 12, 'Ativo'],
+        ];
+        const stmt = db.prepare(
+          'INSERT INTO projetos (titulo, autor, eixo, vagas, situacao, categoria, autor_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+        projetosIniciais.forEach((p) => stmt.run([...p, p[2], 3]));
+        stmt.finalize();
+      }
+    });
+  }
 });
 
 // ---- Autenticação e Helpers ----
@@ -1401,6 +1398,26 @@ app.delete('/api/links-uteis/:id', (req, res) => {
   db.run('DELETE FROM links_uteis WHERE id = ?', [req.params.id], function (err) {
     if (err) return res.status(500).json({ error: 'Erro ao excluir link útil' });
     res.json({ message: 'Link útil removido' });
+  });
+});
+
+// ---- Limpeza Geral de Dados (Iniciar do Zero) ----
+app.post('/api/admin/limpar-dados', (req, res) => {
+  const tables = ['avisos', 'tarefas', 'documentos', 'calendario', 'lembretes', 'pessoas', 'projetos'];
+  let count = tables.length;
+  let hasError = false;
+
+  tables.forEach((table) => {
+    db.run(`DELETE FROM ${table}`, (err) => {
+      if (err) hasError = true;
+      count--;
+      if (count === 0) {
+        if (hasError) {
+          return res.status(500).json({ error: 'Erro ao limpar algumas tabelas' });
+        }
+        res.json({ message: 'Todos os registros foram limpos com sucesso. O sistema está zerado.' });
+      }
+    });
   });
 });
 
