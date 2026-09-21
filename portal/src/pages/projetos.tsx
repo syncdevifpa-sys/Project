@@ -361,7 +361,7 @@ export default function Projetos() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
                 gap: 12,
                 alignItems: 'start',
               }}

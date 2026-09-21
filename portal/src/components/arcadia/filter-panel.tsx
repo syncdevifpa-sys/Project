@@ -123,14 +123,15 @@ export function FilterPanel({
         />
       )}
       {groups.map((g) => (
-        <fieldset
+        <div
           key={g.title}
           className="ar-filter-group"
-          style={{ border: 0, margin: 0, padding: 0 }}
+          role="group"
+          aria-label={g.title}
         >
-          <legend className="ar-filter-title" style={{ float: 'left', width: '100%' }}>
+          <div className="ar-filter-title">
             {g.title}
-          </legend>
+          </div>
           {g.options.map((o) => (
             <Checkbox
               key={o.label}
@@ -140,7 +141,7 @@ export function FilterPanel({
               onChange={(e) => o.onChange && o.onChange(e.target.checked)}
             />
           ))}
-        </fieldset>
+        </div>
       ))}
     </aside>
   );

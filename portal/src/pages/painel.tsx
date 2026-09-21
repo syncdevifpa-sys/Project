@@ -86,6 +86,7 @@ export default function Painel() {
         style={{
           background: 'var(--surface-raised)',
           border: '2px solid var(--line)',
+          borderRadius: 'var(--radius-md)',
           boxShadow: 'var(--shadow-hard)',
           padding: '16px 20px',
           display: 'flex',
