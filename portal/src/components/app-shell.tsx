@@ -74,6 +74,7 @@ export function AppShell() {
         brand={{
           name: 'Arcádia',
           sub: 'IFPA CAMPUS BELÉM',
+          logoSrc: '/arcadia-logo-128.png',
           tone: 'lime',
         }}
         homeHref="/"

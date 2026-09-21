@@ -251,6 +251,15 @@ button {
   gap: 12px;
 }
 
+.nav-logo-img,
+.footer-logo-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
 .nav-logo-badge {
   width: 36px;
   height: 36px;
@@ -1202,7 +1211,7 @@ button {
     <header class="nav-wrapper">
       <nav class="nav-container container">
         <a href="/" class="nav-logo">
-          <span class="nav-logo-badge" aria-hidden="true">A</span>
+          <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="nav-logo-img" width="38" height="38" />
           <span class="nav-logo-text">Arcádia</span>
         </a>
 
@@ -1691,7 +1700,7 @@ button {
           <!-- Coluna Marca -->
           <div class="footer-brand-info">
             <div class="footer-logo">
-              <span class="nav-logo-badge" aria-hidden="true">A</span>
+              <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="footer-logo-img" width="38" height="38" />
               <span class="footer-brand-title">Arcádia</span>
             </div>
             <p class="footer-brand-text">

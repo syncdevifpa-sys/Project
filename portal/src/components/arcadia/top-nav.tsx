@@ -18,7 +18,7 @@ export type TopNavItem = NavItem | { separator: true };
 export interface TopNavProps {
   items?: TopNavItem[];
   user?: { name: string; role: string };
-  brand?: { name: string; sub?: string; initials?: string; tone?: Field };
+  brand?: { name: string; sub?: string; initials?: string; tone?: Field; logoSrc?: string };
   homeHref?: string;
   onSearch?: () => void;
   settingsHref?: string;
@@ -36,7 +36,7 @@ function Sup({ n }: { n?: number }) {
 export function TopNav({
   items,
   user,
-  brand = { name: 'Arcádia', sub: 'IFPA CAMPUS BELÉM' },
+  brand = { name: 'Arcádia', sub: 'IFPA CAMPUS BELÉM', logoSrc: '/arcadia-logo-128.png' },
   homeHref = '/',
   onSearch,
   settingsHref = '/configuracoes',
@@ -63,13 +63,23 @@ export function TopNav({
   return (
     <header className={['ar-nav', className].filter(Boolean).join(' ')}>
       <Link className="ar-brand" to={homeHref}>
-        <Avatar
-          name={brand.name}
-          initials={brand.initials || brand.name[0]}
-          tone={brand.tone || 'lime'}
-          size={34}
-          decorative={true}
-        />
+        {brand.logoSrc ? (
+          <img
+            src={brand.logoSrc}
+            alt="Logo Arcádia"
+            className="ar-brand-logo"
+            width={34}
+            height={34}
+          />
+        ) : (
+          <Avatar
+            name={brand.name}
+            initials={brand.initials || brand.name[0]}
+            tone={brand.tone || 'lime'}
+            size={34}
+            decorative={true}
+          />
+        )}
         <span>
           <div className="ar-brand-name">{brand.name}</div>
           {brand.sub && <div className="ar-brand-sub">{brand.sub}</div>}

@@ -51,6 +51,8 @@ body { margin: 0; font-family: var(--font-sans); background: var(--canvas); colo
 /* TopNav */
 .ar-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 8px 12px 8px 16px; background: var(--surface); border-radius: var(--radius-full); box-sizing: border-box; width: 100%; min-width: 0; }
 .ar-brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-width: 0; text-decoration: none; color: var(--ink); padding: 2px 4px 2px 0; }
+.ar-brand-logo { width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; display: block; }
+[data-theme="dark"] .ar-brand-logo { filter: drop-shadow(0 0 2px rgba(45, 212, 191, 0.45)) brightness(1.2); }
 .ar-brand-name { font-size: 18px; line-height: 20px; font-weight: 600; letter-spacing: -.03em; white-space: nowrap; }
 .ar-brand-sub { font-size: 10px; line-height: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); white-space: nowrap; }
 .ar-navpill { display: flex; align-items: center; gap: 2px; margin: 0 auto; padding: 4px; background: var(--surface-sunken); border-radius: var(--radius-full); overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; flex: 0 1 auto; min-width: 0; }
