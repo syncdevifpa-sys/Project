@@ -1,25 +1,67 @@
-import { useState, useMemo, useEffect } from "react";
-import { MetricCard } from "@/components/metric-card";
-import { ViewControls, type ViewMode } from "@/components/view-controls";
-import { SelectionBar } from "@/components/selection-bar";
-import { NovoRegistroModal } from "@/components/novo-registro-modal";
-import { type Pessoa } from "@/mock-data";
+import React, { useState, useMemo, useEffect } from 'react';
+import {
+  PageHero,
+  ChipBar,
+  FilterPanel,
+  ViewToolbar,
+  RecordCard,
+  DataTable,
+  BoardColumn,
+  BoardCard,
+  Button,
+  Badge,
+  Dialog,
+  TextField,
+  ChoiceChips,
+  EmptyState,
+  SelectionBar,
+  useToast,
+  getStatusTone,
+  type Column,
+} from '@/components/arcadia';
 import {
   getPessoas,
   adicionarPessoa,
+  atualizarPessoa,
   removerPessoa,
   salvarPessoas,
   subscribeToDataChanges,
-} from "@/state/storage";
-import { cn } from "@/lib/utils";
+} from '@/state/storage';
+import type { Pessoa } from '@/mock-data';
 
 export default function Pessoas() {
+  const { showToast } = useToast();
+
   const [itens, setItens] = useState<Pessoa[]>(getPessoas);
-  const [viewMode, setViewMode] = useState<ViewMode>("tabela");
-  const [activeFilter, setActiveFilter] = useState("Tudo");
-  const [sortAscending, setSortAscending] = useState(true);
+  const [viewMode, setViewMode] = useState<string>('tabela');
+  const [vinculoAtivo, setVinculoAtivo] = useState('Tudo');
+  const [busca, setBusca] = useState('');
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalNovo, setModalNovo] = useState(false);
+
+  // Edição
+  const [modalEditar, setModalEditar] = useState(false);
+  const [pessoaEditandoId, setPessoaEditandoId] = useState<string | null>(null);
+  const [editNome, setEditNome] = useState('');
+  const [editVinculo, setEditVinculo] = useState<'Aluno' | 'Professor' | 'Servidor'>('Aluno');
+  const [editCurso, setEditCurso] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editErro, setEditErro] = useState('');
+
+  // Filtros laterais
+  const [filtroVinculo, setFiltroVinculo] = useState<Record<string, boolean>>({
+    Aluno: true,
+    Professor: true,
+    Servidor: true,
+  });
+
+  // Modal form
+  const [formNome, setFormNome] = useState('');
+  const [formVinculo, setFormVinculo] = useState<'Aluno' | 'Professor' | 'Servidor'>('Aluno');
+  const [formCurso, setFormCurso] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [formErro, setFormErro] = useState('');
 
   useEffect(() => {
     const unsubscribe = subscribeToDataChanges(() => {
@@ -28,326 +70,506 @@ export default function Pessoas() {
     return unsubscribe;
   }, []);
 
-  const vinculosFiltro = ["Tudo", "Aluno", "Professor", "Servidor"];
+  const vinculosLista = ['Tudo', 'Aluno', 'Professor', 'Servidor'];
 
-  const getVinculoBadgeClass = (vinculo: string) => {
-    switch (vinculo) {
-      case "Aluno":
-        return "bg-[#8ae4f9] text-[#10141A] border-black";
-      case "Professor":
-        return "bg-[#d8d1ff] text-[#10141A] border-black";
-      case "Servidor":
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-      default:
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-    }
-  };
+  const contagemVinculos = useMemo(() => {
+    const map: Record<string, number> = { Tudo: itens.length };
+    vinculosLista.slice(1).forEach((v) => {
+      map[v] = itens.filter(
+        (p) => p.vinculo.toLowerCase() === v.toLowerCase()
+      ).length;
+    });
+    return vinculosLista.map((v) => ({
+      label: v,
+      count: map[v],
+    }));
+  }, [itens]);
 
   const filteredItens = useMemo(() => {
     let result = [...itens];
-    if (activeFilter !== "Tudo") {
+
+    if (vinculoAtivo !== 'Tudo') {
       result = result.filter(
-        (item) => item.vinculo.toLowerCase() === activeFilter.toLowerCase()
+        (p) => p.vinculo.toLowerCase() === vinculoAtivo.toLowerCase()
       );
     }
+
+    if (busca.trim()) {
+      const q = busca.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.nome.toLowerCase().includes(q) ||
+          p.cursoOuSetor.toLowerCase().includes(q) ||
+          p.email.toLowerCase().includes(q)
+      );
+    }
+
+    result = result.filter((p) => filtroVinculo[p.vinculo] ?? true);
+
     result.sort((a, b) => {
-      return sortAscending
+      return sortAsc
         ? a.nome.localeCompare(b.nome)
         : b.nome.localeCompare(a.nome);
     });
+
     return result;
-  }, [itens, activeFilter, sortAscending]);
+  }, [itens, vinculoAtivo, busca, filtroVinculo, sortAsc]);
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredItens.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredItens.map((i) => i.id));
+  const handleAbrirEdicao = (p: Pessoa) => {
+    setPessoaEditandoId(p.id);
+    setEditNome(p.nome);
+    setEditVinculo(p.vinculo);
+    setEditCurso(p.cursoOuSetor);
+    setEditEmail(p.email);
+    setEditErro('');
+    setModalEditar(true);
+  };
+
+  const handleSalvarEdicao = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editNome.trim()) {
+      setEditErro('O nome não pode ficar vazio.');
+      return;
     }
+    if (!pessoaEditandoId) return;
+
+    atualizarPessoa(pessoaEditandoId, {
+      nome: editNome.trim(),
+      vinculo: editVinculo,
+      cursoOuSetor: editCurso.trim() || 'Campus Belém',
+      email: editEmail.trim(),
+    });
+
+    setModalEditar(false);
+    setPessoaEditandoId(null);
+    showToast({ message: 'Dados da pessoa atualizados com sucesso' });
   };
 
-  const toggleSelectItem = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+  const handleDelete = (pessoa: Pessoa) => {
+    const backup = [...itens];
+    removerPessoa(pessoa.id);
+
+    showToast({
+      message: 'Pessoa removida',
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarPessoas(backup),
+      },
+    });
   };
 
-  const handleExcluirSelecionados = () => {
-    if (confirm(`Deseja excluir as ${selectedIds.length} pessoas selecionadas?`)) {
-      const restantes = itens.filter((i) => !selectedIds.includes(i.id));
-      salvarPessoas(restantes);
-      setSelectedIds([]);
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formNome.trim()) {
+      setFormErro('Digite o nome da pessoa');
+      return;
     }
+
+    adicionarPessoa({
+      nome: formNome.trim(),
+      vinculo: formVinculo,
+      cursoOuSetor: formCurso.trim() || (formVinculo === 'Aluno' ? 'Técnico em Informática' : 'Campus Belém'),
+      email: formEmail.trim() || `${formNome.toLowerCase().replace(/\s+/g, '.')}@ifpa.edu.br`,
+    });
+
+    setModalNovo(false);
+    setFormNome('');
+    setFormCurso('');
+    setFormEmail('');
+    setFormErro('');
+
+    showToast({ message: 'Pessoa cadastrada com sucesso' });
   };
 
-  const handleExportar = () => {
+  const handleExportCSV = () => {
+    const list = selectedIds.length > 0
+      ? itens.filter((i) => selectedIds.includes(i.id))
+      : filteredItens;
+
     const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["Nome,Vínculo,Curso ou Setor,E-mail Institucional"]
+      'data:text/csv;charset=utf-8,' +
+      ['Nome,Vínculo,Curso ou setor,E-mail']
         .concat(
-          filteredItens.map(
-            (i) => `"${i.nome}","${i.vinculo}","${i.cursoOuSetor}","${i.email}"`
+          list.map(
+            (p) => `"${p.nome}","${p.vinculo}","${p.cursoOuSetor}","${p.email}"`
           )
         )
-        .join("\n");
+        .join('\n');
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "pessoas.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'pessoas.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleNovaPessoa = (novo: any) => {
-    adicionarPessoa({
-      nome: novo.titulo,
-      vinculo: (novo.publico === "Todos" ? "Aluno" : novo.publico) as any,
-      cursoOuSetor: novo.resumo || "IFPA Campus Belém",
-      email: `${novo.titulo.toLowerCase().replace(/\s+/g, ".")}@ifpa.edu.br`,
+  const handleDeleteSelection = () => {
+    const backup = [...itens];
+    const remaining = itens.filter((i) => !selectedIds.includes(i.id));
+    salvarPessoas(remaining);
+    setSelectedIds([]);
+
+    showToast({
+      message: `${selectedIds.length} pessoas removidas`,
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarPessoas(backup),
+      },
     });
   };
 
+  const columns: Column<Pessoa>[] = [
+    {
+      key: 'nome',
+      label: 'Nome',
+      sortable: true,
+      kind: 'strong',
+      render: (p) => p.nome,
+    },
+    {
+      key: 'vinculo',
+      label: 'Vínculo',
+      render: (p) => (
+        <Badge tone={getStatusTone(p.vinculo)}>{p.vinculo}</Badge>
+      ),
+    },
+    {
+      key: 'cursoOuSetor',
+      label: 'Curso ou setor',
+      render: (p) => p.cursoOuSetor,
+    },
+    {
+      key: 'email',
+      label: 'E-mail institucional',
+      kind: 'mono',
+      render: (p) => p.email,
+    },
+    {
+      key: 'id',
+      label: 'Ações',
+      render: (p) => (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAbrirEdicao(p);
+            }}
+          >
+            Editar
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(p);
+            }}
+          >
+            Excluir
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div className="flex flex-col text-left text-white">
-      {/* Cabeçalho */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#2e3646] pb-4">
-        <div className="flex items-baseline gap-2.5">
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">
-            Pessoas
-          </h2>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            {itens.length} REGISTROS
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleExportar}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-4 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition"
-          >
-            Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#085bbd]"
-          >
-            Nova pessoa &rarr;
-          </button>
-        </div>
-      </div>
-
-      {/* 3 Metric Cards (Alinhados ao PDF Página 7) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard
-          title="Total em pessoas"
-          value={itens.length}
-          sublabel="REGISTROS ATIVOS"
-          badgeText="TODOS OS VÍNCULOS"
-          badgeVariant="lime"
-        />
-        <MetricCard
-          title="Na visão atual"
-          value={filteredItens.length}
-          sublabel={activeFilter === "Tudo" ? "TODOS OS VÍNCULOS" : `FILTRO: ${activeFilter.toUpperCase()}`}
-          badgeText={activeFilter === "Tudo" ? "MOSTRANDO TUDO" : "FILTRADO"}
-          badgeVariant="cyan"
-        />
-        <MetricCard
-          title="Vínculos distintos"
-          value={3}
-          sublabel="3 VÍNCULOS EM USO"
-          badgeText="ALUNO · PROF · SERV"
-          badgeVariant="lavender"
-        />
-      </div>
-
-      {/* Controles de Visualização */}
-      <ViewControls
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        totalCount={filteredItens.length}
-        filterLabel="VÍNCULO"
-        filterOptions={vinculosFiltro}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        sortAscending={sortAscending}
-        onToggleSort={() => setSortAscending(!sortAscending)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* 1. PageHero compacto */}
+      <PageHero
+        title="Pessoas"
+        count={itens.length}
+        tone="cyan"
+        description="Diretório acadêmico de estudantes, docentes e servidores lotados no Campus Belém."
+        actions={
+          <>
+            <Button
+              variant="primary"
+              iconRight="arrow-right"
+              onClick={() => setModalNovo(true)}
+            >
+              Nova pessoa
+            </Button>
+            <Button icon="download" onClick={handleExportCSV}>
+              Exportar CSV
+            </Button>
+          </>
+        }
       />
 
-      {/* Conteúdo */}
-      {filteredItens.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-12 text-center shadow-md">
-          <span className="mb-3 rounded-full border border-zinc-700 bg-zinc-800 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            PESSOAS
-          </span>
-          <h3 className="text-2xl font-extrabold text-white mb-2">
-            Nenhuma pessoa encontrada
-          </h3>
-          <p className="max-w-md text-sm text-[#9ca3af] mb-6">
-            Você não possui cadastros registrados para o filtro selecionado.
-          </p>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#085bbd]"
+      {/* 2. ChipBar com vínculos */}
+      <ChipBar
+        items={contagemVinculos}
+        value={vinculoAtivo}
+        onChange={setVinculoAtivo}
+      />
+
+      {/* 3. Duas colunas: FilterPanel e Conteúdo */}
+      <div className="ar-split">
+        <FilterPanel
+          searchPlaceholder="Buscar por nome ou e-mail"
+          searchValue={busca}
+          onSearchChange={setBusca}
+          groups={[
+            {
+              title: 'VÍNCULO',
+              options: ['Aluno', 'Professor', 'Servidor'].map((v) => ({
+                label: v,
+                checked: filtroVinculo[v] ?? true,
+                count: itens.filter((p) => p.vinculo === v).length,
+                onChange: (checked) =>
+                  setFiltroVinculo((prev) => ({ ...prev, [v]: checked })),
+              })),
+            },
+          ]}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+          <ViewToolbar
+            view={viewMode}
+            onViewChange={setViewMode}
+            summary={`Mostrando todas as ${filteredItens.length} pessoas`}
           >
-            Nova pessoa &rarr;
-          </button>
-        </div>
-      ) : viewMode === "tabela" ? (
-        /* Tabela (PDF Página 7) */
-        <div className="overflow-x-auto rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] shadow-xl">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b-[1.5px] border-[#2e3646] bg-[#121620] text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-              <tr>
-                <th className="w-12 px-4 py-3 text-center">
-                  <button
-                    type="button"
-                    onClick={toggleSelectAll}
-                    className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                  >
-                    {selectedIds.length === filteredItens.length && (
-                      <span className="size-2.5 rounded-full bg-[#bef264]" />
-                    )}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-white">
-                  <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setSortAscending(!sortAscending)}>
-                    <span>NOME</span>
-                    <span className="text-[#bef264]">{sortAscending ? "↑" : "↓"}</span>
-                  </div>
-                </th>
-                <th className="px-4 py-3">VÍNCULO ⇅</th>
-                <th className="px-4 py-3">CURSO OU SETOR ⇅</th>
-                <th className="px-4 py-3">E-MAIL INSTITUCIONAL ⇅</th>
-                <th className="px-4 py-3 text-right">AÇÕES</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#242c3d]">
-              {filteredItens.map((item) => {
-                const isSelected = selectedIds.includes(item.id);
+            <Button
+              size="sm"
+              icon="arrow-up-down"
+              onClick={() => setSortAsc((v) => !v)}
+            >
+              {sortAsc ? 'A a Z' : 'Z a A'}
+            </Button>
+          </ViewToolbar>
+
+          {filteredItens.length === 0 ? (
+            <EmptyState
+              title="Nenhuma pessoa encontrada"
+              description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
+              actions={
+                <Button
+                  onClick={() => {
+                    setVinculoAtivo('Tudo');
+                    setBusca('');
+                    setFiltroVinculo({ Aluno: true, Professor: true, Servidor: true });
+                  }}
+                >
+                  Limpar filtros
+                </Button>
+              }
+            />
+          ) : viewMode === 'lista' ? (
+            <div className="ar-card-grid">
+              {filteredItens.map((p, index) => {
+                const isFixado = index === 0 && vinculoAtivo === 'Tudo';
+
                 return (
-                  <tr
-                    key={item.id}
-                    className={cn(
-                      "transition-colors hover:bg-white/[0.04]",
-                      isSelected && "bg-blue-900/20"
-                    )}
-                  >
-                    <td className="w-12 px-4 py-3.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => toggleSelectItem(item.id)}
-                        className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                      >
-                        {isSelected && <span className="size-2.5 rounded-full bg-[#bef264]" />}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3.5 font-bold text-white">
-                      {item.nome}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-full border-[1.5px] px-3 py-0.5 text-xs font-bold",
-                          getVinculoBadgeClass(item.vinculo)
-                        )}
-                      >
-                        {item.vinculo}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-xs font-semibold text-zinc-300">
-                      {item.cursoOuSetor}
-                    </td>
-                    <td className="px-4 py-3.5 text-xs font-mono text-[#9ca3af]">
-                      {item.email}
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Excluir ${item.nome}?`)) {
-                            removerPessoa(item.id);
-                          }
-                        }}
-                        className="text-xs text-zinc-500 hover:text-red-400 font-semibold"
-                        title="Excluir pessoa"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
+                  <RecordCard
+                    key={p.id}
+                    title={p.nome}
+                    tags={[p.cursoOuSetor]}
+                    badges={[
+                      {
+                        label: p.vinculo,
+                        tone: getStatusTone(p.vinculo),
+                      },
+                    ]}
+                    stamp={isFixado ? 'Fixado' : undefined}
+                    tone={isFixado ? 'pink' : undefined}
+                    meta={[
+                      { label: 'E-mail', value: p.email },
+                      { label: 'Lotação', value: p.cursoOuSetor },
+                    ]}
+                    onClick={() => handleAbrirEdicao(p)}
+                  />
                 );
               })}
-            </tbody>
-          </table>
-          <div className="flex items-center justify-between border-t border-[#2e3646] px-5 py-3 text-xs bg-[#121620]">
-            <span className="font-bold text-[#9ca3af] uppercase tracking-wider text-[10.5px]">
-              MOSTRANDO TODOS OS {filteredItens.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => setModalAberto(true)}
-              className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-3.5 py-1 text-xs font-bold text-white hover:bg-white/10 transition-colors"
-            >
-              + Novo registro
-            </button>
-          </div>
-        </div>
-      ) : (
-        /* Lista */
-        <div className="flex flex-col gap-3">
-          {filteredItens.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col md:flex-row md:items-center justify-between rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-5 shadow-md gap-3"
-            >
-              <div>
-                <h4 className="text-base font-extrabold text-white mb-1">
-                  {item.nome}
-                </h4>
-                <p className="text-xs text-[#9ca3af]">{item.cursoOuSetor} · {item.email}</p>
-              </div>
-              <div className="flex items-center gap-2.5 self-start md:self-auto">
-                <span
-                  className={cn(
-                    "rounded-full border-[1.5px] px-3 py-0.5 text-xs font-bold",
-                    getVinculoBadgeClass(item.vinculo)
-                  )}
-                >
-                  {item.vinculo}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removerPessoa(item.id)}
-                  className="ml-2 text-xs text-zinc-500 hover:text-red-400"
-                >
-                  ✕
-                </button>
-              </div>
             </div>
-          ))}
+          ) : viewMode === 'tabela' ? (
+            <DataTable
+              columns={columns}
+              rows={filteredItens}
+              selectable
+              selected={selectedIds}
+              onSelectAll={() => {
+                if (selectedIds.length === filteredItens.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(filteredItens.map((i) => i.id));
+                }
+              }}
+              onToggleSelect={(id) => {
+                const sId = String(id);
+                setSelectedIds((prev) =>
+                  prev.includes(sId)
+                    ? prev.filter((x) => x !== sId)
+                    : [...prev, sId]
+                );
+              }}
+              onRemove={handleDelete}
+            />
+          ) : (
+            /* Visualização Quadro */
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                gap: 12,
+                alignItems: 'start',
+              }}
+            >
+              {(['Aluno', 'Professor', 'Servidor'] as const).map((v) => {
+                const colunaItens = filteredItens.filter((p) => p.vinculo === v);
+                return (
+                  <BoardColumn
+                    key={v}
+                    title={v}
+                    tone={getStatusTone(v)}
+                    empty={`Nenhuma pessoa vinculada como ${v.toLowerCase()}`}
+                  >
+                    {colunaItens.map((p) => (
+                      <BoardCard
+                        key={p.id}
+                        title={p.nome}
+                        meta={p.cursoOuSetor}
+                        badge={{
+                          label: v,
+                          tone: getStatusTone(v),
+                        }}
+                        footer={p.email}
+                      />
+                    ))}
+                  </BoardColumn>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Floating Selection Bar */}
       <SelectionBar
         count={selectedIds.length}
+        actions={[
+          {
+            label: 'Exportar seleção',
+            onClick: handleExportCSV,
+          },
+          {
+            label: 'Excluir',
+            danger: true,
+            onClick: handleDeleteSelection,
+          },
+        ]}
         onClear={() => setSelectedIds([])}
-        onDelete={handleExcluirSelecionados}
-        onExport={handleExportar}
       />
 
       {/* Modal Nova Pessoa */}
-      <NovoRegistroModal
-        aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
-        onSalvar={handleNovaPessoa}
-        tipoRegistro="Pessoa"
-      />
+      {modalNovo && (
+        <Dialog
+          title="Nova pessoa"
+          eyebrow="DIRETÓRIO ACADÊMICO"
+          description="Cadastre um novo aluno, professor ou servidor no diretório do portal."
+          onClose={() => setModalNovo(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCreate}>
+                Criar registro
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovo(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome completo"
+              value={formNome}
+              onChange={(e) => {
+                setFormNome(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Exemplo: Carlos da Silva"
+              autoFocus
+            />
+
+            <ChoiceChips
+              label="Vínculo institucional"
+              options={['Aluno', 'Professor', 'Servidor']}
+              value={formVinculo}
+              onChange={(v) => setFormVinculo(v as any)}
+            />
+
+            <TextField
+              label="Curso ou setor de lotação"
+              value={formCurso}
+              onChange={(e) => setFormCurso(e.target.value)}
+              placeholder="Exemplo: Técnico em Informática ou Coordenação de Pesquisa"
+            />
+
+            <TextField
+              label="E-mail institucional"
+              type="email"
+              value={formEmail}
+              onChange={(e) => setFormEmail(e.target.value)}
+              placeholder="Exemplo: carlos.silva@ifpa.edu.br"
+            />
+          </form>
+        </Dialog>
+      )}
+
+      {/* Modal Editar Pessoa */}
+      {modalEditar && (
+        <Dialog
+          title="Editar pessoa / usuário"
+          eyebrow="DIRETÓRIO ACADÊMICO"
+          description="Altere as informações de cadastro, lotação ou vínculo desta pessoa."
+          onClose={() => setModalEditar(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleSalvarEdicao}>
+                Salvar alterações
+              </Button>
+              <Button variant="ghost" onClick={() => setModalEditar(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleSalvarEdicao} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome completo"
+              value={editNome}
+              onChange={(e) => {
+                setEditNome(e.target.value);
+                setEditErro('');
+              }}
+              error={editErro}
+              autoFocus
+            />
+
+            <ChoiceChips
+              label="Vínculo institucional"
+              options={['Aluno', 'Professor', 'Servidor']}
+              value={editVinculo}
+              onChange={(v) => setEditVinculo(v as any)}
+            />
+
+            <TextField
+              label="Curso ou setor de lotação"
+              value={editCurso}
+              onChange={(e) => setEditCurso(e.target.value)}
+            />
+
+            <TextField
+              label="E-mail institucional"
+              type="email"
+              value={editEmail}
+              onChange={(e) => setEditEmail(e.target.value)}
+            />
+          </form>
+        </Dialog>
+      )}
     </div>
   );
 }

@@ -5,7 +5,8 @@ import {
   EVENTOS_CALENDARIO_INICIAIS,
   PESSOAS_INICIAIS,
   PROJETOS_INICIAIS,
-  USUARIO_PADRAO,
+  LEMBRETES_INICIAIS,
+  LINKS_UTEIS_INICIAIS,
   type Aviso,
   type Tarefa,
   type Documento,
@@ -13,7 +14,10 @@ import {
   type Pessoa,
   type Projeto,
   type Usuario,
+  type Lembrete,
+  type LinkUtil,
 } from "@/mock-data";
+import { api, getToken } from "@/lib/api";
 
 // Chaves do localStorage
 const KEYS = {
@@ -25,13 +29,16 @@ const KEYS = {
   CALENDARIO: "arcadia_calendario",
   PESSOAS: "arcadia_pessoas",
   PROJETOS: "arcadia_projetos",
+  LEMBRETES: "arcadia_lembretes",
+  LINKS_UTEIS: "arcadia_links_uteis",
+  CATEGORIAS: "arcadia_categorias",
 };
 
-// Event emitter simples para reatividade entre componentes
+// Event emitter para reatividade global
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
-function notificarMudanca() {
+export function notificarMudanca() {
   listeners.forEach((fn) => {
     try {
       fn();
@@ -48,40 +55,192 @@ export function subscribeToDataChanges(callback: Listener): () => void {
   };
 }
 
+// ---- Sincronização em Background com o Backend ----
+let sincronizacaoIniciada = false;
+
+export async function sincronizarComBackend(): Promise<void> {
+  if (typeof window === "undefined") return;
+
+  try {
+    // 1. Carregar perfil do usuário do backend apenas se houver token ativo
+    const tokenAtual = getToken();
+    if (tokenAtual) {
+      api.get("/api/auth/perfil")
+        .then((user) => {
+          if (user && user.nome) {
+            const sessaoLocal = getUsuarioSessao();
+            const raw = localStorage.getItem(KEYS.SESSAO);
+            let sessaoAnterior: any = {};
+            try {
+              if (raw) sessaoAnterior = JSON.parse(raw);
+            } catch {}
+
+            const merged: Usuario & { token?: string; logado?: boolean } = {
+              ...sessaoAnterior,
+              id: String(user.id || sessaoAnterior.id || (sessaoLocal ? sessaoLocal.id : "1")),
+              nome: user.nome,
+              email: user.email || sessaoAnterior.email || (sessaoLocal ? sessaoLocal.email : ""),
+              vinculo: (user.vinculo?.toLowerCase() as any) || sessaoAnterior.vinculo || (sessaoLocal ? sessaoLocal.vinculo : "aluno"),
+              matricula: user.matricula || sessaoAnterior.matricula || (sessaoLocal ? sessaoLocal.matricula : ""),
+              curso: user.curso || sessaoAnterior.curso || (sessaoLocal ? sessaoLocal.curso : ""),
+              token: tokenAtual,
+              logado: true,
+            };
+            localStorage.setItem(KEYS.SESSAO, JSON.stringify(merged));
+            localStorage.setItem("arcadiaToken", tokenAtual);
+            notificarMudanca();
+          }
+        })
+        .catch((err) => {
+          if (err && String(err.message).includes("401")) {
+            console.warn("Sessão expirada no backend:", err.message);
+            encerrarSessao();
+          }
+        });
+    }
+
+    // 2. Avisos
+    api.get<{ avisos: Aviso[] }>("/api/avisos")
+      .then((data) => {
+        if (data && Array.isArray(data.avisos) && data.avisos.length > 0) {
+          localStorage.setItem(KEYS.AVISOS, JSON.stringify(data.avisos));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+
+    // 3. Tarefas
+    api.get<{ tarefas: Tarefa[] }>("/api/tarefas")
+      .then((data) => {
+        if (data && Array.isArray(data.tarefas) && data.tarefas.length > 0) {
+          localStorage.setItem(KEYS.TAREFAS, JSON.stringify(data.tarefas));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+
+    // 4. Documentos
+    api.get<{ documentos: Documento[] }>("/api/documentos")
+      .then((data) => {
+        if (data && Array.isArray(data.documentos) && data.documentos.length > 0) {
+          localStorage.setItem(KEYS.DOCUMENTOS, JSON.stringify(data.documentos));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+
+    // 5. Calendário
+    api.get<{ eventos: EventoCalendario[] }>("/api/calendario")
+      .then((data) => {
+        if (data && Array.isArray(data.eventos) && data.eventos.length > 0) {
+          localStorage.setItem(KEYS.CALENDARIO, JSON.stringify(data.eventos));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+
+    // 6. Pessoas
+    api.get<{ pessoas: Pessoa[] }>("/api/pessoas")
+      .then((data) => {
+        if (data && Array.isArray(data.pessoas) && data.pessoas.length > 0) {
+          localStorage.setItem(KEYS.PESSOAS, JSON.stringify(data.pessoas));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+
+    // 7. Projetos
+    api.get<{ projetos: Projeto[] }>("/api/projetos")
+      .then((data) => {
+        if (data && Array.isArray(data.projetos) && data.projetos.length > 0) {
+          localStorage.setItem(KEYS.PROJETOS, JSON.stringify(data.projetos));
+          notificarMudanca();
+        }
+      })
+      .catch(() => {});
+  } catch (err) {
+    console.warn("Sincronização em segundo plano não pôde ser completada:", err);
+  }
+}
+
+// Disparar sincronização inicial
+if (typeof window !== "undefined" && !sincronizacaoIniciada) {
+  sincronizacaoIniciada = true;
+  setTimeout(sincronizarComBackend, 100);
+}
+
 // ---- Sessão do Usuário ----
-export function getUsuarioSessao(): Usuario {
+export function getUsuarioSessao(): Usuario | null {
   try {
     const raw = localStorage.getItem(KEYS.SESSAO);
+    const token = localStorage.getItem("arcadiaToken");
     if (raw) {
       const sessao = JSON.parse(raw);
-      if (sessao.nome) {
+      if (sessao.nome && (sessao.logado || sessao.token || token)) {
         return {
           id: String(sessao.id || "1"),
           nome: sessao.nome,
-          email: sessao.email || USUARIO_PADRAO.email,
-          vinculo: (sessao.vinculo?.toLowerCase() as any) || USUARIO_PADRAO.vinculo,
-          curso: sessao.curso || USUARIO_PADRAO.curso,
-          matricula: sessao.matricula || USUARIO_PADRAO.matricula,
+          email: sessao.email || "",
+          vinculo: (sessao.vinculo?.toLowerCase() as any) || "aluno",
+          curso: sessao.curso || "",
+          matricula: sessao.matricula || "",
         };
       }
     }
   } catch {}
-  return USUARIO_PADRAO;
+  return null;
 }
 
-export function salvarUsuarioSessao(usuario: Partial<Usuario>): void {
+export function definirSessao(usuario: Usuario, token?: string): void {
+  const sessao = {
+    ...usuario,
+    token: token || "",
+    logado: true,
+  };
+  localStorage.setItem(KEYS.SESSAO, JSON.stringify(sessao));
+  if (token) {
+    localStorage.setItem("arcadiaToken", token);
+  }
+  notificarMudanca();
+  sincronizarComBackend();
+}
+
+export function salvarUsuarioSessao(usuario: Partial<Usuario> & { nomeSocial?: string; emailPessoal?: string; telefone?: string; sobre?: string; preferences?: any }): void {
   const atual = getUsuarioSessao();
-  const atualizado = { ...atual, ...usuario };
+  if (!atual) return;
+  const raw = localStorage.getItem(KEYS.SESSAO);
+  let sessaoAnterior: any = {};
+  try {
+    if (raw) sessaoAnterior = JSON.parse(raw);
+  } catch {}
+  const atualizado = {
+    ...sessaoAnterior,
+    ...atual,
+    ...usuario,
+    logado: true,
+    token: sessaoAnterior.token || localStorage.getItem("arcadiaToken") || "",
+  };
   localStorage.setItem(KEYS.SESSAO, JSON.stringify(atualizado));
   notificarMudanca();
+
+  // Sincronizar com o backend
+  api.put("/api/auth/perfil", {
+    nome: usuario.nome,
+    nomeSocial: usuario.nomeSocial,
+    emailPessoal: usuario.emailPessoal,
+    telefone: usuario.telefone,
+    sobre: usuario.sobre,
+    preferences: usuario.preferences,
+  }).catch((e) => console.warn("Erro ao salvar perfil no backend:", e));
 }
 
 export function encerrarSessao(): void {
   try {
-    fetch("/api/auth/logout", { method: "POST" });
+    api.post("/api/auth/logout", {}).catch(() => {});
   } catch {}
   localStorage.removeItem(KEYS.SESSAO);
-  window.location.href = "/login.html";
+  localStorage.removeItem("arcadiaToken");
+  notificarMudanca();
 }
 
 // ---- Avisos ----
@@ -111,18 +270,26 @@ export function adicionarAviso(novo: Omit<Aviso, "id"> & { id?: string }): Aviso
   const atualizados = [criado, ...itens];
   salvarAvisos(atualizados);
 
-  // Tentar sincronizar em background com o backend
-  try {
-    fetch("/api/avisos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titulo: criado.titulo,
-        conteudo: criado.resumo,
-        data: criado.data,
-      }),
-    }).catch(() => {});
-  } catch {}
+  // Sincronizar criação no SQLite
+  api.post<{ aviso: Aviso }>("/api/avisos", {
+    titulo: criado.titulo,
+    resumo: criado.resumo,
+    conteudo: criado.resumo,
+    categoria: criado.categoria,
+    publico: criado.publico,
+    data: criado.data,
+    situacao: criado.situacao,
+    urgente: criado.categoria === "cancelamento" || criado.categoria === "matricula",
+    fixado: false,
+  })
+    .then((res) => {
+      if (res && res.aviso && res.aviso.id !== criado.id) {
+        // Atualizar id retornado do backend
+        const corrigidos = getAvisos().map((it) => (it.id === criado.id ? res.aviso : it));
+        salvarAvisos(corrigidos);
+      }
+    })
+    .catch(() => {});
 
   return criado;
 }
@@ -130,6 +297,19 @@ export function adicionarAviso(novo: Omit<Aviso, "id"> & { id?: string }): Aviso
 export function removerAviso(id: string): void {
   const itens = getAvisos().filter((i) => i.id !== id);
   salvarAvisos(itens);
+  api.delete(`/api/avisos/${id}`).catch(() => {});
+}
+
+export function removerAvisosEmLote(ids: string[]): void {
+  const itens = getAvisos().filter((i) => !ids.includes(i.id));
+  salvarAvisos(itens);
+  api.post("/api/avisos/batch-delete", { ids }).catch(() => {});
+}
+
+export function atualizarAviso(id: string, dados: Partial<Aviso>): void {
+  const itens = getAvisos().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  salvarAvisos(itens);
+  api.put(`/api/avisos/${id}`, dados).catch(() => {});
 }
 
 // ---- Tarefas ----
@@ -158,28 +338,52 @@ export function adicionarTarefa(nova: Omit<Tarefa, "id"> & { id?: string }): Tar
   };
   const atualizados = [criada, ...itens];
   salvarTarefas(atualizados);
+
+  api.post<{ tarefa: Tarefa }>("/api/tarefas", {
+    titulo: criada.titulo,
+    responsavel: criada.responsavel,
+    prazo: criada.prazo,
+    situacao: criada.situacao,
+  })
+    .then((res) => {
+      if (res && res.tarefa && res.tarefa.id !== criada.id) {
+        const corrigidos = getTarefas().map((it) => (it.id === criada.id ? res.tarefa : it));
+        salvarTarefas(corrigidos);
+      }
+    })
+    .catch(() => {});
+
   return criada;
+}
+
+export function atualizarTarefa(id: string, dados: Partial<Tarefa>): void {
+  const itens = getTarefas().map((t) => (t.id === id ? { ...t, ...dados } : t));
+  salvarTarefas(itens);
+  api.put(`/api/tarefas/${id}`, dados).catch(() => {});
 }
 
 export function removerTarefa(id: string): void {
   const itens = getTarefas().filter((i) => i.id !== id);
   salvarTarefas(itens);
+  api.delete(`/api/tarefas/${id}`).catch(() => {});
+}
+
+export function removerTarefasEmLote(ids: string[]): void {
+  const itens = getTarefas().filter((i) => !ids.includes(i.id));
+  salvarTarefas(itens);
+  api.post("/api/tarefas/batch-delete", { ids }).catch(() => {});
 }
 
 export function alternarSituacaoTarefa(id: string): void {
-  const itens = getTarefas().map((t) => {
-    if (t.id === id) {
-      const proximaSituacao =
-        t.situacao === "Concluída"
-          ? "Aberta"
-          : t.situacao === "Aberta"
-          ? "Em andamento"
-          : "Concluída";
-      return { ...t, situacao: proximaSituacao as any };
-    }
-    return t;
-  });
-  salvarTarefas(itens);
+  const tarefa = getTarefas().find((t) => t.id === id);
+  if (!tarefa) return;
+  const proximaSituacao =
+    tarefa.situacao === "Concluída"
+      ? "Aberta"
+      : tarefa.situacao === "Aberta"
+      ? "Em andamento"
+      : "Concluída";
+  atualizarTarefa(id, { situacao: proximaSituacao as any });
 }
 
 // ---- Documentos ----
@@ -209,16 +413,21 @@ export function adicionarDocumento(novo: Omit<Documento, "id"> & { id?: string }
   const atualizados = [criado, ...itens];
   salvarDocumentos(atualizados);
 
-  try {
-    fetch("/api/documentos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titulo: criado.titulo,
-        descricao: `${criado.protocolo} — ${criado.tipo}`,
-      }),
-    }).catch(() => {});
-  } catch {}
+  api.post<{ documento: Documento }>("/api/documentos", {
+    titulo: criado.titulo,
+    protocolo: criado.protocolo,
+    tipo: criado.tipo,
+    situacao: criado.situacao,
+    previsao: criado.previsao,
+    descricao: `${criado.protocolo} · ${criado.tipo}`,
+  })
+    .then((res) => {
+      if (res && res.documento && res.documento.id !== criado.id) {
+        const corrigidos = getDocumentos().map((it) => (it.id === criado.id ? res.documento : it));
+        salvarDocumentos(corrigidos);
+      }
+    })
+    .catch(() => {});
 
   return criado;
 }
@@ -226,6 +435,19 @@ export function adicionarDocumento(novo: Omit<Documento, "id"> & { id?: string }
 export function removerDocumento(id: string): void {
   const itens = getDocumentos().filter((i) => i.id !== id);
   salvarDocumentos(itens);
+  api.delete(`/api/documentos/${id}`).catch(() => {});
+}
+
+export function removerDocumentosEmLote(ids: string[]): void {
+  const itens = getDocumentos().filter((i) => !ids.includes(i.id));
+  salvarDocumentos(itens);
+  api.post("/api/documentos/batch-delete", { ids }).catch(() => {});
+}
+
+export function atualizarDocumento(id: string, dados: Partial<Documento>): void {
+  const itens = getDocumentos().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  salvarDocumentos(itens);
+  api.put(`/api/documentos/${id}`, dados).catch(() => {});
 }
 
 // ---- Calendário ----
@@ -254,12 +476,40 @@ export function adicionarEventoCalendario(novo: Omit<EventoCalendario, "id"> & {
   };
   const atualizados = [criado, ...itens];
   salvarEventosCalendario(atualizados);
+
+  api.post<{ evento: EventoCalendario }>("/api/calendario", {
+    titulo: criado.titulo,
+    subtitulo: criado.subtitulo,
+    categoria: criado.categoria,
+    data: criado.data,
+  })
+    .then((res) => {
+      if (res && res.evento && res.evento.id !== criado.id) {
+        const corrigidos = getEventosCalendario().map((it) => (it.id === criado.id ? res.evento : it));
+        salvarEventosCalendario(corrigidos);
+      }
+    })
+    .catch(() => {});
+
   return criado;
 }
 
 export function removerEventoCalendario(id: string): void {
   const itens = getEventosCalendario().filter((i) => i.id !== id);
   salvarEventosCalendario(itens);
+  api.delete(`/api/calendario/${id}`).catch(() => {});
+}
+
+export function removerEventosEmLote(ids: string[]): void {
+  const itens = getEventosCalendario().filter((i) => !ids.includes(i.id));
+  salvarEventosCalendario(itens);
+  api.post("/api/calendario/batch-delete", { ids }).catch(() => {});
+}
+
+export function atualizarEventoCalendario(id: string, dados: Partial<EventoCalendario>): void {
+  const itens = getEventosCalendario().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  salvarEventosCalendario(itens);
+  api.put(`/api/calendario/${id}`, dados).catch(() => {});
 }
 
 // ---- Pessoas ----
@@ -288,12 +538,40 @@ export function adicionarPessoa(nova: Omit<Pessoa, "id"> & { id?: string }): Pes
   };
   const atualizados = [criada, ...itens];
   salvarPessoas(atualizados);
+
+  api.post<{ pessoa: Pessoa }>("/api/pessoas", {
+    nome: criada.nome,
+    vinculo: criada.vinculo,
+    cursoOuSetor: criada.cursoOuSetor,
+    email: criada.email,
+  })
+    .then((res) => {
+      if (res && res.pessoa && res.pessoa.id !== criada.id) {
+        const corrigidos = getPessoas().map((it) => (it.id === criada.id ? res.pessoa : it));
+        salvarPessoas(corrigidos);
+      }
+    })
+    .catch(() => {});
+
   return criada;
 }
 
 export function removerPessoa(id: string): void {
   const itens = getPessoas().filter((i) => i.id !== id);
   salvarPessoas(itens);
+  api.delete(`/api/pessoas/${id}`).catch(() => {});
+}
+
+export function removerPessoasEmLote(ids: string[]): void {
+  const itens = getPessoas().filter((i) => !ids.includes(i.id));
+  salvarPessoas(itens);
+  api.post("/api/pessoas/batch-delete", { ids }).catch(() => {});
+}
+
+export function atualizarPessoa(id: string, dados: Partial<Pessoa>): void {
+  const itens = getPessoas().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  salvarPessoas(itens);
+  api.put(`/api/pessoas/${id}`, dados).catch(() => {});
 }
 
 // ---- Projetos ----
@@ -323,17 +601,20 @@ export function adicionarProjeto(novo: Omit<Projeto, "id"> & { id?: string }): P
   const atualizados = [criado, ...itens];
   salvarProjetos(atualizados);
 
-  try {
-    fetch("/api/projetos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titulo: criado.titulo,
-        categoria: criado.eixo,
-        link: criado.autor,
-      }),
-    }).catch(() => {});
-  } catch {}
+  api.post<{ projeto: Projeto }>("/api/projetos", {
+    titulo: criado.titulo,
+    autor: criado.autor,
+    eixo: criado.eixo,
+    vagas: criado.vagas,
+    situacao: criado.situacao,
+  })
+    .then((res) => {
+      if (res && res.projeto && res.projeto.id !== criado.id) {
+        const corrigidos = getProjetos().map((it) => (it.id === criado.id ? res.projeto : it));
+        salvarProjetos(corrigidos);
+      }
+    })
+    .catch(() => {});
 
   return criado;
 }
@@ -341,6 +622,125 @@ export function adicionarProjeto(novo: Omit<Projeto, "id"> & { id?: string }): P
 export function removerProjeto(id: string): void {
   const itens = getProjetos().filter((i) => i.id !== id);
   salvarProjetos(itens);
+  api.delete(`/api/projetos/${id}`).catch(() => {});
+}
+
+export function removerProjetosEmLote(ids: string[]): void {
+  const itens = getProjetos().filter((i) => !ids.includes(i.id));
+  salvarProjetos(itens);
+  api.post("/api/projetos/batch-delete", { ids }).catch(() => {});
+}
+
+export function atualizarProjeto(id: string, dados: Partial<Projeto>): void {
+  const itens = getProjetos().map((it) => (it.id === id ? { ...it, ...dados } : it));
+  salvarProjetos(itens);
+  api.put(`/api/projetos/${id}`, dados).catch(() => {});
+}
+
+// ---- Lembretes & Cronômetro (RF08) ----
+export function getLembretes(): Lembrete[] {
+  try {
+    const raw = localStorage.getItem(KEYS.LEMBRETES);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  localStorage.setItem(KEYS.LEMBRETES, JSON.stringify(LEMBRETES_INICIAIS));
+  return LEMBRETES_INICIAIS;
+}
+
+export function salvarLembretes(itens: Lembrete[]): void {
+  localStorage.setItem(KEYS.LEMBRETES, JSON.stringify(itens));
+  notificarMudanca();
+}
+
+export function adicionarLembrete(novo: Omit<Lembrete, "id"> & { id?: string }): Lembrete {
+  const itens = getLembretes();
+  const criado: Lembrete = {
+    ...novo,
+    id: novo.id || String(Date.now()),
+  };
+  const atualizados = [criado, ...itens];
+  salvarLembretes(atualizados);
+  api.post("/api/lembretes", criado).catch(() => {});
+  return criado;
+}
+
+export function alternarLembrete(id: string): void {
+  const itens = getLembretes().map((l) => (l.id === id ? { ...l, ativo: !l.ativo } : l));
+  salvarLembretes(itens);
+  const alterado = itens.find((l) => l.id === id);
+  if (alterado) {
+    api.put(`/api/lembretes/${id}`, { ativo: alterado.ativo }).catch(() => {});
+  }
+}
+
+export function removerLembrete(id: string): void {
+  const itens = getLembretes().filter((l) => l.id !== id);
+  salvarLembretes(itens);
+  api.delete(`/api/lembretes/${id}`).catch(() => {});
+}
+
+// ---- Links Úteis (RF09) ----
+export function getLinksUteis(): LinkUtil[] {
+  try {
+    const raw = localStorage.getItem(KEYS.LINKS_UTEIS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  localStorage.setItem(KEYS.LINKS_UTEIS, JSON.stringify(LINKS_UTEIS_INICIAIS));
+  return LINKS_UTEIS_INICIAIS;
+}
+
+export function salvarLinksUteis(itens: LinkUtil[]): void {
+  localStorage.setItem(KEYS.LINKS_UTEIS, JSON.stringify(itens));
+  notificarMudanca();
+}
+
+export function adicionarLinkUtil(novo: Omit<LinkUtil, "id"> & { id?: string }): LinkUtil {
+  const itens = getLinksUteis();
+  const criado: LinkUtil = {
+    ...novo,
+    id: novo.id || String(Date.now()),
+  };
+  const atualizados = [criado, ...itens];
+  salvarLinksUteis(atualizados);
+  api.post("/api/links-uteis", criado).catch(() => {});
+  return criado;
+}
+
+export function removerLinkUtil(id: string): void {
+  const itens = getLinksUteis().filter((l) => l.id !== id);
+  salvarLinksUteis(itens);
+  api.delete(`/api/links-uteis/${id}`).catch(() => {});
+}
+
+// ---- Categorias Dinâmicas ----
+export function getCategorias(): string[] {
+  try {
+    const raw = localStorage.getItem(KEYS.CATEGORIAS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  const padrao = ["Matrícula", "Edital", "Evento", "Cancelamento", "Calendário", "Documento"];
+  localStorage.setItem(KEYS.CATEGORIAS, JSON.stringify(padrao));
+  return padrao;
+}
+
+export function adicionarCategoria(nome: string): void {
+  const cat = nome.trim();
+  if (!cat) return;
+  const atuais = getCategorias();
+  if (!atuais.some((c) => c.toLowerCase() === cat.toLowerCase())) {
+    const atualizadas = [...atuais, cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()];
+    localStorage.setItem(KEYS.CATEGORIAS, JSON.stringify(atualizadas));
+    notificarMudanca();
+  }
 }
 
 // ---- Contagem Total de Registros ----

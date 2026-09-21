@@ -1,397 +1,793 @@
-import { useState, useMemo, useEffect } from "react";
-import { MetricCard } from "@/components/metric-card";
-import { ViewControls, type ViewMode } from "@/components/view-controls";
-import { SelectionBar } from "@/components/selection-bar";
-import { NovoRegistroModal } from "@/components/novo-registro-modal";
-import { type Documento } from "@/mock-data";
+import React, { useState, useMemo, useEffect } from 'react';
+import {
+  PageHero,
+  ChipBar,
+  FilterPanel,
+  ViewToolbar,
+  RecordCard,
+  DataTable,
+  BoardColumn,
+  BoardCard,
+  Button,
+  Badge,
+  Dialog,
+  TextField,
+  ChoiceChips,
+  EmptyState,
+  SelectionBar,
+  useToast,
+  getStatusTone,
+  type Column,
+} from '@/components/arcadia';
 import {
   getDocumentos,
   adicionarDocumento,
+  atualizarDocumento,
   removerDocumento,
   salvarDocumentos,
+  getLinksUteis,
+  adicionarLinkUtil,
+  removerLinkUtil,
   subscribeToDataChanges,
-} from "@/state/storage";
-import { cn } from "@/lib/utils";
+} from '@/state/storage';
+import type { Documento, LinkUtil } from '@/mock-data';
 
 export default function Documentos() {
+  const { showToast } = useToast();
+
   const [itens, setItens] = useState<Documento[]>(getDocumentos);
-  const [viewMode, setViewMode] = useState<ViewMode>("tabela");
-  const [activeFilter, setActiveFilter] = useState("Tudo");
-  const [sortAscending, setSortAscending] = useState(true);
+  const [linksUteis, setLinksUteis] = useState<LinkUtil[]>(getLinksUteis);
+  const [viewMode, setViewMode] = useState<string>('tabela');
+  const [tipoAtivo, setTipoAtivo] = useState('Tudo');
+  const [busca, setBusca] = useState('');
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalNovo, setModalNovo] = useState(false);
+
+  // Links Úteis (RF09)
+  const [modalNovoLink, setModalNovoLink] = useState(false);
+  const [linkTitulo, setLinkTitulo] = useState('');
+  const [linkUrl, setLinkUrl] = useState('');
+  const [linkDescricao, setLinkDescricao] = useState('');
+  const [linkCategoria, setLinkCategoria] = useState<'Sistemas' | 'Acadêmico' | 'Institucional' | 'Regulamentos'>('Sistemas');
+  const [linkErro, setLinkErro] = useState('');
+
+  // Edição de Documento
+  const [modalEditar, setModalEditar] = useState(false);
+  const [docEditandoId, setDocEditandoId] = useState<string | null>(null);
+  const [editTitulo, setEditTitulo] = useState('');
+  const [editProtocolo, setEditProtocolo] = useState('');
+  const [editTipo, setEditTipo] = useState<'PDF' | 'Requerimento' | 'Assinatura' | 'Link' | 'E-mail'>('PDF');
+  const [editPrevisao, setEditPrevisao] = useState('');
+  const [editSituacao, setEditSituacao] = useState<'Pronto' | 'Em análise' | 'Solicitado' | 'Pendente'>('Em análise');
+  const [editErro, setEditErro] = useState('');
+
+  // Filtros laterais
+  const [filtroSituacao, setFiltroSituacao] = useState<Record<string, boolean>>({
+    Pronto: true,
+    'Em análise': true,
+    Solicitado: true,
+    Pendente: true,
+  });
+
+  // Modal form
+  const [formTitulo, setFormTitulo] = useState('');
+  const [formTipo, setFormTipo] = useState<'PDF' | 'Requerimento' | 'Assinatura' | 'Link' | 'E-mail'>('PDF');
+  const [formPrevisao, setFormPrevisao] = useState('26 set');
+  const [formSituacao, setFormSituacao] = useState<'Pronto' | 'Em análise' | 'Solicitado' | 'Pendente'>('Em análise');
+  const [formErro, setFormErro] = useState('');
 
   useEffect(() => {
     const unsubscribe = subscribeToDataChanges(() => {
       setItens(getDocumentos());
+      setLinksUteis(getLinksUteis());
     });
     return unsubscribe;
   }, []);
 
-  const situacoesFiltro = ["Tudo", "Solicitado", "Em análise", "Pronto", "Pendente"];
+  const tiposLista = ['Tudo', 'PDF', 'Requerimento', 'Assinatura', 'Link', 'E-mail'];
 
-  const getTipoBadgeClass = (tipo: string) => {
-    switch (tipo) {
-      case "PDF":
-        return "bg-[#facc15] text-[#10141A] border-black";
-      case "Requerimento":
-        return "bg-[#d8d1ff] text-[#10141A] border-black";
-      case "Assinatura":
-        return "bg-[#fbbf24] text-[#10141A] border-black";
-      default:
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-    }
-  };
-
-  const getSituacaoBadgeClass = (sit: string) => {
-    switch (sit) {
-      case "Pronto":
-        return "bg-[#16a34a] text-white border-transparent";
-      case "Em análise":
-        return "bg-[#facc15] text-[#10141A] border-black";
-      case "Solicitado":
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-      case "Pendente":
-        return "bg-[#ef4444] text-white border-transparent";
-      default:
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-    }
-  };
+  const contagemTipos = useMemo(() => {
+    const map: Record<string, number> = { Tudo: itens.length };
+    tiposLista.slice(1).forEach((t) => {
+      map[t] = itens.filter(
+        (d) => d.tipo.toLowerCase() === t.toLowerCase()
+      ).length;
+    });
+    return tiposLista.map((t) => ({
+      label: t,
+      count: map[t],
+    }));
+  }, [itens]);
 
   const filteredItens = useMemo(() => {
     let result = [...itens];
-    if (activeFilter !== "Tudo") {
+
+    if (tipoAtivo !== 'Tudo') {
       result = result.filter(
-        (item) => item.situacao.toLowerCase() === activeFilter.toLowerCase()
+        (d) => d.tipo.toLowerCase() === tipoAtivo.toLowerCase()
       );
     }
+
+    if (busca.trim()) {
+      const q = busca.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.titulo.toLowerCase().includes(q) ||
+          d.protocolo.toLowerCase().includes(q) ||
+          d.tipo.toLowerCase().includes(q)
+      );
+    }
+
+    result = result.filter((d) => filtroSituacao[d.situacao] ?? true);
+
     result.sort((a, b) => {
-      return sortAscending
+      return sortAsc
         ? a.titulo.localeCompare(b.titulo)
         : b.titulo.localeCompare(a.titulo);
     });
+
     return result;
-  }, [itens, activeFilter, sortAscending]);
+  }, [itens, tipoAtivo, busca, filtroSituacao, sortAsc]);
 
-  const emCursoCount = useMemo(() => {
-    return itens.filter((i) => i.situacao === "Solicitado" || i.situacao === "Em análise").length;
-  }, [itens]);
+  const handleAbrirEdicao = (doc: Documento) => {
+    setDocEditandoId(doc.id);
+    setEditTitulo(doc.titulo);
+    setEditProtocolo(doc.protocolo);
+    setEditTipo(doc.tipo);
+    setEditPrevisao(doc.previsao);
+    setEditSituacao(doc.situacao);
+    setEditErro('');
+    setModalEditar(true);
+  };
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredItens.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredItens.map((i) => i.id));
+  const handleSalvarEdicao = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editTitulo.trim()) {
+      setEditErro('O título não pode ficar vazio.');
+      return;
     }
+    if (!docEditandoId) return;
+
+    atualizarDocumento(docEditandoId, {
+      titulo: editTitulo.trim(),
+      protocolo: editProtocolo.trim(),
+      tipo: editTipo,
+      previsao: editPrevisao.trim(),
+      situacao: editSituacao,
+    });
+
+    setModalEditar(false);
+    setDocEditandoId(null);
+    showToast({ message: 'Documento atualizado com sucesso' });
   };
 
-  const toggleSelectItem = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
-
-  const handleExcluirSelecionados = () => {
-    if (confirm(`Deseja excluir os ${selectedIds.length} documentos selecionados?`)) {
-      const restantes = itens.filter((i) => !selectedIds.includes(i.id));
-      salvarDocumentos(restantes);
-      setSelectedIds([]);
+  const handleCriarLink = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!linkTitulo.trim() || !linkUrl.trim()) {
+      setLinkErro('Título e link/URL são obrigatórios.');
+      return;
     }
+
+    adicionarLinkUtil({
+      titulo: linkTitulo.trim(),
+      url: linkUrl.trim(),
+      descricao: linkDescricao.trim() || 'Portal institucional oficial.',
+      categoria: linkCategoria,
+    });
+
+    setLinksUteis(getLinksUteis());
+    setModalNovoLink(false);
+    setLinkTitulo('');
+    setLinkUrl('');
+    setLinkDescricao('');
+    setLinkErro('');
+    showToast({ message: 'Link útil adicionado com sucesso' });
   };
 
-  const handleExportar = () => {
+  const handleExcluirLink = (id: string) => {
+    removerLinkUtil(id);
+    setLinksUteis(getLinksUteis());
+    showToast({ message: 'Link removido' });
+  };
+
+  const handleDelete = (doc: Documento) => {
+    const backup = [...itens];
+    removerDocumento(doc.id);
+
+    showToast({
+      message: 'Documento excluído',
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarDocumentos(backup),
+      },
+    });
+  };
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitulo.trim()) {
+      setFormErro('Digite um título para o documento');
+      return;
+    }
+
+    const protocolo = `${new Date().getFullYear()}.${Math.floor(1000 + Math.random() * 9000)}`;
+    adicionarDocumento({
+      titulo: formTitulo.trim(),
+      protocolo,
+      tipo: formTipo,
+      previsao: formPrevisao.trim() || 'Sob consulta',
+      situacao: formSituacao,
+    });
+
+    setModalNovo(false);
+    setFormTitulo('');
+    setFormErro('');
+
+    showToast({ message: 'Documento cadastrado com sucesso' });
+  };
+
+  const handleExportCSV = () => {
+    const list = selectedIds.length > 0
+      ? itens.filter((i) => selectedIds.includes(i.id))
+      : filteredItens;
+
     const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["Documento,Protocolo,Tipo,Situação,Previsão"]
+      'data:text/csv;charset=utf-8,' +
+      ['Título,Protocolo,Tipo,Previsão,Situação']
         .concat(
-          filteredItens.map(
-            (i) => `"${i.titulo}","${i.protocolo}","${i.tipo}","${i.situacao}","${i.previsao}"`
+          list.map(
+            (d) =>
+              `"${d.titulo}","${d.protocolo}","${d.tipo}","${d.previsao}","${d.situacao}"`
           )
         )
-        .join("\n");
+        .join('\n');
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "documentos.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'documentos.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleNovoDocumento = (novo: any) => {
-    adicionarDocumento({
-      titulo: novo.titulo,
-      protocolo: `2026/BEL-${Math.floor(1000 + Math.random() * 9000)}`,
-      tipo: (novo.categoria === "Matrícula" ? "Requerimento" : "PDF") as any,
-      situacao: (novo.situacao === "Publicado" ? "Solicitado" : novo.situacao) as any,
-      previsao: novo.data || "5 dias úteis",
+  const handleDeleteSelection = () => {
+    const backup = [...itens];
+    const remaining = itens.filter((i) => !selectedIds.includes(i.id));
+    salvarDocumentos(remaining);
+    setSelectedIds([]);
+
+    showToast({
+      message: `${selectedIds.length} documentos excluídos`,
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarDocumentos(backup),
+      },
     });
   };
 
+  const columns: Column<Documento>[] = [
+    {
+      key: 'titulo',
+      label: 'Documento',
+      sortable: true,
+      kind: 'strong',
+      render: (d) => d.titulo,
+    },
+    {
+      key: 'protocolo',
+      label: 'Protocolo',
+      kind: 'mono',
+      render: (d) => d.protocolo,
+    },
+    {
+      key: 'tipo',
+      label: 'Tipo',
+      render: (d) => <Badge tone="cyan">{d.tipo}</Badge>,
+    },
+    {
+      key: 'previsao',
+      label: 'Previsão',
+      kind: 'mono',
+      render: (d) => d.previsao,
+    },
+    {
+      key: 'situacao',
+      label: 'Situação',
+      render: (d) => (
+        <Badge tone={getStatusTone(d.situacao)}>{d.situacao}</Badge>
+      ),
+    },
+    {
+      key: 'id',
+      label: 'Ações',
+      render: (d) => (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAbrirEdicao(d);
+            }}
+          >
+            Editar
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(d);
+            }}
+          >
+            Excluir
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div className="flex flex-col text-left text-white">
-      {/* Cabeçalho */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#2e3646] pb-4">
-        <div className="flex items-baseline gap-2.5">
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">
-            Documentos
-          </h2>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            {itens.length} REGISTROS
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleExportar}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-4 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition"
-          >
-            Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#085bbd]"
-          >
-            Novo documento &rarr;
-          </button>
-        </div>
-      </div>
-
-      {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard
-          title="Total em documentos"
-          value={itens.length}
-          sublabel="SOLICITAÇÕES REGISTRADAS"
-          badgeText="TODOS OS TIPOS"
-          badgeVariant="lime"
-        />
-        <MetricCard
-          title="Em andamento"
-          value={emCursoCount}
-          sublabel="AGUARDANDO CONCLUSÃO"
-          badgeText="EM ANÁLISE"
-          badgeVariant="yellow"
-        />
-        <MetricCard
-          title="Prontos para retirada"
-          value={itens.filter((i) => i.situacao === "Pronto").length}
-          sublabel="CONCLUÍDOS"
-          badgeText="DOCUMENTOS EMITIDOS"
-          badgeVariant="cyan"
-        />
-      </div>
-
-      {/* Controles de Visualização */}
-      <ViewControls
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        totalCount={filteredItens.length}
-        filterLabel="SITUAÇÃO"
-        filterOptions={situacoesFiltro}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        sortAscending={sortAscending}
-        onToggleSort={() => setSortAscending(!sortAscending)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* 1. PageHero compacto */}
+      <PageHero
+        title="Documentos"
+        count={itens.length}
+        tone="cyan"
+        description="Requerimentos, declarações e termos solicitados à secretaria acadêmica. Acompanhe o protocolo."
+        actions={
+          <>
+            <Button
+              variant="primary"
+              iconRight="arrow-right"
+              onClick={() => setModalNovo(true)}
+            >
+              Novo documento
+            </Button>
+            <Button icon="download" onClick={handleExportCSV}>
+              Exportar CSV
+            </Button>
+          </>
+        }
       />
 
-      {/* Conteúdo */}
-      {filteredItens.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-12 text-center shadow-md">
-          <span className="mb-3 rounded-full border border-zinc-700 bg-zinc-800 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            DOCUMENTOS
-          </span>
-          <h3 className="text-2xl font-extrabold text-white mb-2">
-            Nenhum documento encontrado
-          </h3>
-          <p className="max-w-md text-sm text-[#9ca3af] mb-6">
-            Você não possui documentos registrados para o filtro selecionado.
-          </p>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#085bbd]"
+      {/* 2. ChipBar com tipos */}
+      <ChipBar
+        items={contagemTipos}
+        value={tipoAtivo}
+        onChange={setTipoAtivo}
+      />
+
+      {/* 3. Duas colunas: FilterPanel e Conteúdo */}
+      <div className="ar-split">
+        <FilterPanel
+          searchPlaceholder="Buscar documento ou protocolo"
+          searchValue={busca}
+          onSearchChange={setBusca}
+          groups={[
+            {
+              title: 'SITUAÇÃO',
+              options: ['Pronto', 'Em análise', 'Solicitado', 'Pendente'].map((s) => ({
+                label: s,
+                checked: filtroSituacao[s] ?? true,
+                count: itens.filter((d) => d.situacao === s).length,
+                onChange: (checked) =>
+                  setFiltroSituacao((prev) => ({ ...prev, [s]: checked })),
+              })),
+            },
+          ]}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+          <ViewToolbar
+            view={viewMode}
+            onViewChange={setViewMode}
+            summary={`Mostrando todos os ${filteredItens.length}`}
           >
-            Novo documento &rarr;
-          </button>
-        </div>
-      ) : viewMode === "tabela" ? (
-        /* Tabela */
-        <div className="overflow-x-auto rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] shadow-xl">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b-[1.5px] border-[#2e3646] bg-[#121620] text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-              <tr>
-                <th className="w-12 px-4 py-3 text-center">
-                  <button
-                    type="button"
-                    onClick={toggleSelectAll}
-                    className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                    aria-label="Selecionar todos"
-                  >
-                    {selectedIds.length === filteredItens.length && (
-                      <span className="size-2.5 rounded-full bg-[#bef264]" />
-                    )}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-white">
-                  <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setSortAscending(!sortAscending)}>
-                    <span>DOCUMENTO</span>
-                    <span className="text-[#bef264]">{sortAscending ? "↑" : "↓"}</span>
-                  </div>
-                </th>
-                <th className="px-4 py-3">PROTOCOLO ⇅</th>
-                <th className="px-4 py-3">TIPO ⇅</th>
-                <th className="px-4 py-3">SITUAÇÃO ⇅</th>
-                <th className="px-4 py-3">PREVISÃO ⇅</th>
-                <th className="px-4 py-3 text-right">AÇÕES</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#242c3d]">
-              {filteredItens.map((item) => {
-                const isSelected = selectedIds.includes(item.id);
+            <Button
+              size="sm"
+              icon="arrow-up-down"
+              onClick={() => setSortAsc((v) => !v)}
+            >
+              {sortAsc ? 'A a Z' : 'Z a A'}
+            </Button>
+          </ViewToolbar>
+
+          {filteredItens.length === 0 ? (
+            <EmptyState
+              title="Nenhum documento encontrado"
+              description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
+              actions={
+                <Button
+                  onClick={() => {
+                    setTipoAtivo('Tudo');
+                    setBusca('');
+                    setFiltroSituacao({
+                      Pronto: true,
+                      'Em análise': true,
+                      Solicitado: true,
+                      Pendente: true,
+                    });
+                  }}
+                >
+                  Limpar filtros
+                </Button>
+              }
+            />
+          ) : viewMode === 'lista' ? (
+            <div className="ar-card-grid">
+              {filteredItens.map((d, index) => {
+                const isFixado = index === 0 && tipoAtivo === 'Tudo';
+                const isUrgente = d.situacao === 'Em análise';
+
                 return (
-                  <tr
-                    key={item.id}
-                    className={cn(
-                      "transition-colors hover:bg-white/[0.04]",
-                      isSelected && "bg-blue-900/20"
-                    )}
-                  >
-                    <td className="w-12 px-4 py-3.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => toggleSelectItem(item.id)}
-                        className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                        aria-label={`Selecionar ${item.titulo}`}
-                      >
-                        {isSelected && <span className="size-2.5 rounded-full bg-[#bef264]" />}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3.5 font-bold text-white">
-                      {item.titulo}
-                    </td>
-                    <td className="px-4 py-3.5 text-xs font-mono text-zinc-400">
-                      {item.protocolo}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                          getTipoBadgeClass(item.tipo)
-                        )}
-                      >
-                        {item.tipo}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                          getSituacaoBadgeClass(item.situacao)
-                        )}
-                      >
-                        {item.situacao}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-xs font-semibold text-[#9ca3af]">
-                      {item.previsao}
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Excluir o documento "${item.titulo}"?`)) {
-                            removerDocumento(item.id);
-                          }
-                        }}
-                        className="text-xs text-zinc-500 hover:text-red-400 font-semibold"
-                        title="Excluir documento"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
+                  <RecordCard
+                    key={d.id}
+                    title={d.titulo}
+                    tags={[d.tipo]}
+                    badges={[
+                      {
+                        label: d.situacao,
+                        tone: getStatusTone(d.situacao),
+                      },
+                    ]}
+                    flag={isUrgente ? 'Urgente' : undefined}
+                    stamp={isFixado ? 'Fixado' : undefined}
+                    tone={isFixado ? 'pink' : undefined}
+                    meta={[
+                      { label: 'Protocolo', value: d.protocolo },
+                      { label: 'Previsão', value: d.previsao },
+                    ]}
+                    signal={
+                      d.situacao === 'Pronto'
+                        ? { tone: 'link', label: 'Disponível para retirada' }
+                        : { tone: 'muted', label: `Resposta até ${d.previsao}` }
+                    }
+                    onClick={() => handleAbrirEdicao(d)}
+                  />
                 );
               })}
-            </tbody>
-          </table>
-          <div className="flex items-center justify-between border-t border-[#2e3646] px-5 py-3 text-xs bg-[#121620]">
-            <span className="font-bold text-[#9ca3af] uppercase tracking-wider text-[10.5px]">
-              MOSTRANDO TODOS OS {filteredItens.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => setModalAberto(true)}
-              className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-3.5 py-1 text-xs font-bold text-white hover:bg-white/10 transition-colors"
-            >
-              + Novo registro
-            </button>
-          </div>
-        </div>
-      ) : (
-        /* Lista */
-        <div className="flex flex-col gap-3">
-          {filteredItens.map((item) => (
+            </div>
+          ) : viewMode === 'tabela' ? (
+            <DataTable
+              columns={columns}
+              rows={filteredItens}
+              selectable
+              selected={selectedIds}
+              onSelectAll={() => {
+                if (selectedIds.length === filteredItens.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(filteredItens.map((i) => i.id));
+                }
+              }}
+              onToggleSelect={(id) => {
+                const sId = String(id);
+                setSelectedIds((prev) =>
+                  prev.includes(sId)
+                    ? prev.filter((x) => x !== sId)
+                    : [...prev, sId]
+                );
+              }}
+              onRemove={handleDelete}
+            />
+          ) : (
+            /* Visualização Quadro */
             <div
-              key={item.id}
-              className="flex flex-col md:flex-row md:items-center justify-between rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-5 shadow-md gap-3"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                gap: 12,
+                alignItems: 'start',
+              }}
+            >
+              {(['Solicitado', 'Em análise', 'Pronto', 'Pendente'] as const).map((sit) => {
+                const colunaItens = filteredItens.filter((d) => d.situacao === sit);
+                return (
+                  <BoardColumn
+                    key={sit}
+                    title={sit}
+                    tone={getStatusTone(sit)}
+                    empty={`Nenhum documento ${sit.toLowerCase()}`}
+                  >
+                    {colunaItens.map((d) => (
+                      <BoardCard
+                        key={d.id}
+                        title={d.titulo}
+                        meta={`Protocolo ${d.protocolo}`}
+                        badge={{
+                          label: d.tipo,
+                          tone: 'cyan',
+                        }}
+                        footer={d.previsao}
+                      />
+                    ))}
+                  </BoardColumn>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <SelectionBar
+        count={selectedIds.length}
+        actions={[
+          {
+            label: 'Exportar seleção',
+            onClick: handleExportCSV,
+          },
+          {
+            label: 'Excluir',
+            danger: true,
+            onClick: handleDeleteSelection,
+          },
+        ]}
+        onClear={() => setSelectedIds([])}
+      />
+
+      {/* Modal Novo Documento */}
+      {modalNovo && (
+        <Dialog
+          title="Novo documento"
+          eyebrow="REQUERIMENTOS E DECLARAÇÕES"
+          description="Envie uma solicitação para processamento junto à secretaria acadêmica."
+          onClose={() => setModalNovo(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCreate}>
+                Criar registro
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovo(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome do documento"
+              value={formTitulo}
+              onChange={(e) => {
+                setFormTitulo(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Exemplo: Histórico escolar parcial"
+              autoFocus
+            />
+
+            <ChoiceChips
+              label="Tipo de solicitação"
+              options={['PDF', 'Requerimento', 'Assinatura', 'Link', 'E-mail']}
+              value={formTipo}
+              onChange={(v) => setFormTipo(v as any)}
+            />
+
+            <ChoiceChips
+              label="Situação inicial"
+              options={['Solicitado', 'Em análise', 'Pronto', 'Pendente']}
+              value={formSituacao}
+              onChange={(v) => setFormSituacao(v as any)}
+            />
+
+            <TextField
+              label="Previsão de conclusão"
+              value={formPrevisao}
+              onChange={(e) => setFormPrevisao(e.target.value)}
+              placeholder="Exemplo: 26 set"
+            />
+          </form>
+        </Dialog>
+      )}
+
+      {/* 4. Seção de Links Úteis e Documentos Institucionais (RF09) */}
+      <div
+        style={{
+          marginTop: 20,
+          padding: '20px 24px',
+          background: 'var(--surface-raised)',
+          border: '2px solid var(--line)',
+          boxShadow: 'var(--shadow-hard)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 18, fontWeight: 800 }}>Links Úteis & Manuais Institucionais</span>
+              <Badge tone="cyan">{linksUteis.length}</Badge>
+            </div>
+            <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-muted)' }}>
+              Acesso direto a sistemas acadêmicos, biblioteca virtual, regulamentos pedagógicos e ouvidoria (RF09).
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon="plus"
+            onClick={() => setModalNovoLink(true)}
+          >
+            Novo link útil
+          </Button>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 14,
+          }}
+        >
+          {linksUteis.map((l) => (
+            <div
+              key={l.id}
+              style={{
+                background: 'var(--surface-sunken)',
+                border: '1px solid var(--line)',
+                padding: '14px 16px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
             >
               <div>
-                <h4 className="text-base font-extrabold text-white mb-1">
-                  {item.titulo}
-                </h4>
-                <p className="text-xs font-mono text-zinc-400">Protocolo: {item.protocolo}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{l.titulo}</span>
+                  <Badge tone="neutral">{l.categoria}</Badge>
+                </div>
+                <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 6, marginBottom: 0 }}>
+                  {l.descricao}
+                </p>
               </div>
-              <div className="flex items-center gap-2.5 self-start md:self-auto">
-                <span
-                  className={cn(
-                    "rounded-full border px-3 py-0.5 text-xs font-bold",
-                    getTipoBadgeClass(item.tipo)
-                  )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid var(--line)' }}>
+                <a
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: 'var(--accent)',
+                    textDecoration: 'none',
+                  }}
                 >
-                  {item.tipo}
-                </span>
-                <span
-                  className={cn(
-                    "rounded-full border px-3 py-0.5 text-xs font-bold",
-                    getSituacaoBadgeClass(item.situacao)
-                  )}
+                  Acessar portal ↗
+                </a>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleExcluirLink(l.id)}
                 >
-                  {item.situacao}
-                </span>
-                <span className="text-xs font-semibold text-[#9ca3af]">
-                  {item.previsao}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removerDocumento(item.id)}
-                  className="ml-2 text-xs text-zinc-500 hover:text-red-400"
-                >
-                  ✕
-                </button>
+                  Remover
+                </Button>
               </div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Modal Editar Documento */}
+      {modalEditar && (
+        <Dialog
+          title="Editar documento"
+          eyebrow="SECRETARIA ACADÊMICA"
+          description="Altere os dados, protocolo ou situação do documento selecionado."
+          onClose={() => setModalEditar(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleSalvarEdicao}>
+                Salvar alterações
+              </Button>
+              <Button variant="ghost" onClick={() => setModalEditar(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleSalvarEdicao} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome do documento"
+              value={editTitulo}
+              onChange={(e) => {
+                setEditTitulo(e.target.value);
+                setEditErro('');
+              }}
+              error={editErro}
+              autoFocus
+            />
+
+            <TextField
+              label="Número de protocolo"
+              value={editProtocolo}
+              onChange={(e) => setEditProtocolo(e.target.value)}
+            />
+
+            <ChoiceChips
+              label="Tipo de solicitação"
+              options={['PDF', 'Requerimento', 'Assinatura', 'Link', 'E-mail']}
+              value={editTipo}
+              onChange={(v) => setEditTipo(v as any)}
+            />
+
+            <ChoiceChips
+              label="Situação atual"
+              options={['Solicitado', 'Em análise', 'Pronto', 'Pendente']}
+              value={editSituacao}
+              onChange={(v) => setEditSituacao(v as any)}
+            />
+
+            <TextField
+              label="Previsão de conclusão"
+              value={editPrevisao}
+              onChange={(e) => setEditPrevisao(e.target.value)}
+            />
+          </form>
+        </Dialog>
       )}
 
-      {/* Floating Selection Bar */}
-      <SelectionBar
-        count={selectedIds.length}
-        onClear={() => setSelectedIds([])}
-        onDelete={handleExcluirSelecionados}
-        onExport={handleExportar}
-      />
+      {/* Modal Novo Link Útil (RF09) */}
+      {modalNovoLink && (
+        <Dialog
+          title="Novo link útil"
+          eyebrow="LINKS E MANUAIS (RF09)"
+          description="Cadastre um novo link ou manual institucional oficial para todos os usuários."
+          onClose={() => setModalNovoLink(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCriarLink}>
+                Salvar link
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovoLink(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCriarLink} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Título do recurso"
+              value={linkTitulo}
+              onChange={(e) => {
+                setLinkTitulo(e.target.value);
+                setLinkErro('');
+              }}
+              placeholder="Ex: SIGAA IFPA"
+              error={linkErro}
+              autoFocus
+            />
 
-      {/* Modal Novo Documento */}
-      <NovoRegistroModal
-        aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
-        onSalvar={handleNovoDocumento}
-        tipoRegistro="Documento"
-      />
+            <TextField
+              label="Endereço URL completo"
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              placeholder="https://sigaa.ifpa.edu.br"
+            />
+
+            <ChoiceChips
+              label="Categoria"
+              options={['Sistemas', 'Acadêmico', 'Institucional', 'Regulamentos']}
+              value={linkCategoria}
+              onChange={(v) => setLinkCategoria(v as any)}
+            />
+
+            <TextField
+              label="Descrição sucinta"
+              value={linkDescricao}
+              onChange={(e) => setLinkDescricao(e.target.value)}
+              placeholder="Descrição do recurso e utilidade"
+            />
+          </form>
+        </Dialog>
+      )}
     </div>
   );
 }

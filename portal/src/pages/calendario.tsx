@@ -1,361 +1,859 @@
-import { useState, useMemo, useEffect } from "react";
-import { MetricCard } from "@/components/metric-card";
-import { ViewControls, type ViewMode } from "@/components/view-controls";
-import { SelectionBar } from "@/components/selection-bar";
-import { NovoRegistroModal } from "@/components/novo-registro-modal";
-import { type EventoCalendario } from "@/mock-data";
+import React, { useState, useMemo, useEffect } from 'react';
+import {
+  PageHero,
+  ChipBar,
+  FilterPanel,
+  ViewToolbar,
+  RecordCard,
+  DataTable,
+  BoardColumn,
+  BoardCard,
+  Button,
+  Badge,
+  Dialog,
+  TextField,
+  ChoiceChips,
+  Switch,
+  EmptyState,
+  SelectionBar,
+  useToast,
+  getStatusTone,
+  type Column,
+} from '@/components/arcadia';
 import {
   getEventosCalendario,
   adicionarEventoCalendario,
+  atualizarEventoCalendario,
   removerEventoCalendario,
   salvarEventosCalendario,
+  getLembretes,
+  adicionarLembrete,
+  alternarLembrete,
+  removerLembrete,
   subscribeToDataChanges,
-} from "@/state/storage";
-import { cn } from "@/lib/utils";
+} from '@/state/storage';
+import type { EventoCalendario, Lembrete } from '@/mock-data';
 
 export default function Calendario() {
+  const { showToast } = useToast();
+
   const [itens, setItens] = useState<EventoCalendario[]>(getEventosCalendario);
-  const [viewMode, setViewMode] = useState<ViewMode>("lista"); // PDF Página 6 tem Lista ativo por padrão
-  const [activeFilter, setActiveFilter] = useState("Tudo");
-  const [sortAscending, setSortAscending] = useState(true);
+  const [lembretes, setLembretes] = useState<Lembrete[]>(getLembretes);
+  const [viewMode, setViewMode] = useState<string>('lista');
+  const [categoriaAtiva, setCategoriaAtiva] = useState('Tudo');
+  const [busca, setBusca] = useState('');
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalNovo, setModalNovo] = useState(false);
+  const [modalEditar, setModalEditar] = useState(false);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [modalLembretes, setModalLembretes] = useState(false);
+
+  // Form Lembrete
+  const [novoLembreteTitulo, setNovoLembreteTitulo] = useState('');
+  const [novoLembreteData, setNovoLembreteData] = useState('14 set');
+  const [novoLembreteHorario, setNovoLembreteHorario] = useState('08:00');
+  const [novoLembreteTipo, setNovoLembreteTipo] = useState<'prazo' | 'evento'>('prazo');
+
+  // Cronômetro regressivo em segundos (RF08)
+  const [countdownSeconds, setCountdownSeconds] = useState(172800); // 2 dias = 172800s
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdownSeconds((s) => (s > 0 ? s - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Filtros laterais
+  const [filtroCategoria, setFiltroCategoria] = useState<Record<string, boolean>>({
+    matricula: true,
+    edital: true,
+    evento: true,
+    cancelamento: true,
+    calendario: true,
+  });
+
+  // Modal form
+  const [formTitulo, setFormTitulo] = useState('');
+  const [formSubtitulo, setFormSubtitulo] = useState('');
+  const [formCategoria, setFormCategoria] = useState('Calendário');
+  const [formData, setFormData] = useState('01 set');
+  const [formErro, setFormErro] = useState('');
 
   useEffect(() => {
     const unsubscribe = subscribeToDataChanges(() => {
       setItens(getEventosCalendario());
+      setLembretes(getLembretes());
     });
     return unsubscribe;
   }, []);
 
-  const categorias = ["Tudo", "Matrícula", "Cancelamento", "Evento", "Edital"];
+  const categorias = [
+    { label: 'Tudo' },
+    { label: 'Calendário' },
+    { label: 'Matrícula' },
+    { label: 'Edital' },
+    { label: 'Evento' },
+    { label: 'Cancelamento' },
+  ];
 
-  const getCategoriaDisplay = (cat: string) => {
-    switch (cat.toLowerCase()) {
-      case "matricula": return "Matrícula";
-      case "cancelamento": return "Cancelamento";
-      case "evento": return "Evento";
-      case "edital": return "Edital";
-      default: return cat;
-    }
-  };
-
-  const getCategoriaBadgeClass = (cat: string) => {
-    switch (cat.toLowerCase()) {
-      case "matricula": return "bg-[#8ae4f9] text-[#10141A] border-black";
-      case "cancelamento": return "bg-[#ef4444] text-white border-transparent";
-      case "evento": return "bg-[#facc15] text-[#10141A] border-black";
-      case "edital": return "bg-[#16a34a] text-white border-transparent";
-      default: return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-    }
-  };
+  const contagemCategorias = useMemo(() => {
+    const map: Record<string, number> = { Tudo: itens.length };
+    categorias.slice(1).forEach((c) => {
+      map[c.label] = itens.filter(
+        (e) => e.categoria.toLowerCase() === c.label.toLowerCase()
+      ).length;
+    });
+    return categorias.map((c) => ({
+      label: c.label,
+      count: map[c.label],
+    }));
+  }, [itens]);
 
   const filteredItens = useMemo(() => {
     let result = [...itens];
-    if (activeFilter !== "Tudo") {
+
+    if (categoriaAtiva !== 'Tudo') {
       result = result.filter(
-        (item) => getCategoriaDisplay(item.categoria).toLowerCase() === activeFilter.toLowerCase()
+        (e) => e.categoria.toLowerCase() === categoriaAtiva.toLowerCase()
       );
     }
+
+    if (busca.trim()) {
+      const q = busca.toLowerCase();
+      result = result.filter(
+        (e) =>
+          e.titulo.toLowerCase().includes(q) ||
+          e.subtitulo.toLowerCase().includes(q) ||
+          e.data.toLowerCase().includes(q)
+      );
+    }
+
+    result = result.filter((e) => filtroCategoria[e.categoria.toLowerCase()] ?? true);
+
     result.sort((a, b) => {
-      return sortAscending
-        ? a.titulo.localeCompare(b.titulo)
-        : b.titulo.localeCompare(a.titulo);
+      return sortAsc
+        ? a.data.localeCompare(b.data)
+        : b.data.localeCompare(a.data);
     });
+
     return result;
-  }, [itens, activeFilter, sortAscending]);
+  }, [itens, categoriaAtiva, busca, filtroCategoria, sortAsc]);
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredItens.length) {
-      setSelectedIds([]);
+  const handleDelete = (evento: EventoCalendario) => {
+    const backup = [...itens];
+    removerEventoCalendario(evento.id);
+
+    showToast({
+      message: 'Evento excluído',
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarEventosCalendario(backup),
+      },
+    });
+  };
+
+  const handleAbrirEdicao = (evento: EventoCalendario) => {
+    setEditandoId(evento.id);
+    setFormTitulo(evento.titulo);
+    setFormSubtitulo(evento.subtitulo);
+    setFormCategoria(evento.categoria ? evento.categoria.charAt(0).toUpperCase() + evento.categoria.slice(1).toLowerCase() : 'Calendário');
+    setFormData(evento.data);
+    setFormErro('');
+    setModalEditar(true);
+  };
+
+  const handleSalvarEdicao = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitulo.trim()) {
+      setFormErro('Digite um título para o evento');
+      return;
+    }
+    if (!editandoId) return;
+
+    atualizarEventoCalendario(editandoId, {
+      titulo: formTitulo.trim(),
+      subtitulo: formSubtitulo.trim() || 'Data acadêmica oficial',
+      categoria: formCategoria.toLowerCase() as any,
+      data: formData.trim() || '01 set',
+    });
+
+    setModalEditar(false);
+    setEditandoId(null);
+    showToast({ message: 'Evento atualizado com sucesso' });
+  };
+
+  const handleToggleLembreteEvento = (evento: EventoCalendario) => {
+    const existente = lembretes.find((l) => l.eventoId === evento.id || l.titulo === evento.titulo);
+    if (existente) {
+      alternarLembrete(existente.id);
+      showToast({ message: existente.ativo ? 'Lembrete desativado' : 'Lembrete ativado!' });
     } else {
-      setSelectedIds(filteredItens.map((i) => i.id));
+      adicionarLembrete({
+        eventoId: evento.id,
+        titulo: evento.titulo,
+        data: evento.data,
+        horario: '08:00',
+        ativo: true,
+        tipo: 'evento',
+        descricao: evento.subtitulo,
+      });
+      showToast({ message: `Lembrete criado para: ${evento.titulo}` });
     }
   };
 
-  const toggleSelectItem = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+  const handleCriarLembreteCustom = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!novoLembreteTitulo.trim()) return;
+    adicionarLembrete({
+      titulo: novoLembreteTitulo.trim(),
+      data: novoLembreteData.trim(),
+      horario: novoLembreteHorario.trim(),
+      ativo: true,
+      tipo: novoLembreteTipo,
+      descricao: 'Lembrete pessoal configurado no portal',
+    });
+    setNovoLembreteTitulo('');
+    showToast({ message: 'Novo lembrete salvo!' });
   };
 
-  const handleExcluirSelecionados = () => {
-    if (confirm(`Deseja excluir as ${selectedIds.length} datas selecionadas?`)) {
-      const restantes = itens.filter((i) => !selectedIds.includes(i.id));
-      salvarEventosCalendario(restantes);
-      setSelectedIds([]);
+  const dias = Math.floor(countdownSeconds / 86400);
+  const horas = Math.floor((countdownSeconds % 86400) / 3600);
+  const minutos = Math.floor((countdownSeconds % 3600) / 60);
+  const segundos = countdownSeconds % 60;
+  const tempoRestanteFormatado = `${dias}d ${String(horas).padStart(2, '0')}h ${String(minutos).padStart(2, '0')}m ${String(segundos).padStart(2, '0')}s`;
+
+  const proximoEvento = itens[0] || { titulo: 'Abertura da matrícula 2026/2', data: '14 set' };
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitulo.trim()) {
+      setFormErro('Digite um título para o evento');
+      return;
     }
+
+    adicionarEventoCalendario({
+      titulo: formTitulo.trim(),
+      subtitulo: formSubtitulo.trim() || 'Data acadêmica oficial',
+      categoria: formCategoria.toLowerCase() as any,
+      data: formData.trim() || '01 set',
+    });
+
+    setModalNovo(false);
+    setFormTitulo('');
+    setFormSubtitulo('');
+    setFormErro('');
+
+    showToast({ message: 'Evento adicionado ao calendário' });
   };
 
-  const handleExportar = () => {
+  const handleExportCSV = () => {
+    const list = selectedIds.length > 0
+      ? itens.filter((i) => selectedIds.includes(i.id))
+      : filteredItens;
+
     const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["Evento,Detalhes,Categoria,Data"]
+      'data:text/csv;charset=utf-8,' +
+      ['Título,Detalhes,Categoria,Data']
         .concat(
-          filteredItens.map(
-            (i) => `"${i.titulo}","${i.subtitulo}","${getCategoriaDisplay(i.categoria)}","${i.data}"`
+          list.map(
+            (e) => `"${e.titulo}","${e.subtitulo}","${e.categoria}","${e.data}"`
           )
         )
-        .join("\n");
+        .join('\n');
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "calendario.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'calendario.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleNovoEvento = (novo: any) => {
-    adicionarEventoCalendario({
-      titulo: novo.titulo,
-      subtitulo: novo.resumo || "Evento institucional",
-      categoria: novo.categoria.toLowerCase(),
-      data: novo.data || "2026-09-15",
+  const handleDeleteSelection = () => {
+    const backup = [...itens];
+    const remaining = itens.filter((i) => !selectedIds.includes(i.id));
+    salvarEventosCalendario(remaining);
+    setSelectedIds([]);
+
+    showToast({
+      message: `${selectedIds.length} eventos excluídos`,
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarEventosCalendario(backup),
+      },
     });
   };
 
+  const columns: Column<EventoCalendario>[] = [
+    {
+      key: 'data',
+      label: 'Data',
+      kind: 'mono',
+      width: 120,
+      render: (e) => e.data,
+    },
+    {
+      key: 'titulo',
+      label: 'Evento',
+      sortable: true,
+      kind: 'strong',
+      render: (e) => e.titulo,
+    },
+    {
+      key: 'subtitulo',
+      label: 'Detalhes',
+      render: (e) => e.subtitulo,
+    },
+    {
+      key: 'categoria',
+      label: 'Categoria',
+      render: (e) => (
+        <Badge tone={getStatusTone(e.categoria)}>
+          {e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1)}
+        </Badge>
+      ),
+    },
+    {
+      key: 'id',
+      label: 'Ações',
+      render: (e) => {
+        const hasLembrete = lembretes.some((l) => (l.eventoId === e.id || l.titulo === e.titulo) && l.ativo);
+        return (
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Button
+              size="sm"
+              variant={hasLembrete ? 'primary' : 'ghost'}
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleToggleLembreteEvento(e);
+              }}
+            >
+              {hasLembrete ? '🔔 Lembrete ativo' : '🔕 Ativar lembrete'}
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleAbrirEdicao(e);
+              }}
+            >
+              Editar
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleDelete(e);
+              }}
+            >
+              Excluir
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
-    <div className="flex flex-col text-left text-white">
-      {/* Cabeçalho */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#2e3646] pb-4">
-        <div className="flex items-baseline gap-2.5">
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">
-            Calendário
-          </h2>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            {itens.length} REGISTROS
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleExportar}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-4 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition"
-          >
-            Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#085bbd]"
-          >
-            Nova data &rarr;
-          </button>
-        </div>
-      </div>
-
-      {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard
-          title="Total no calendário"
-          value={itens.length}
-          sublabel="EVENTOS AGENDADOS"
-          badgeText="SEMESTRE ATUAL"
-          badgeVariant="lime"
-        />
-        <MetricCard
-          title="Eventos acadêmicos"
-          value={itens.filter((i) => i.categoria === "evento" || i.categoria === "matricula").length}
-          sublabel="AULAS E MATRÍCULAS"
-          badgeText="PRIORIDADE ALTA"
-          badgeVariant="yellow"
-        />
-        <MetricCard
-          title="Editais vigentes"
-          value={itens.filter((i) => i.categoria === "edital").length}
-          sublabel="PUBLICAÇÕES E PRAZOS"
-          badgeText="VER EM EDITAIS"
-          badgeVariant="lavender"
-        />
-      </div>
-
-      {/* Controles de Visualização */}
-      <ViewControls
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        totalCount={filteredItens.length}
-        filterLabel="CATEGORIA"
-        filterOptions={categorias}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        sortAscending={sortAscending}
-        onToggleSort={() => setSortAscending(!sortAscending)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* 1. PageHero compacto */}
+      <PageHero
+        title="Calendário"
+        count={itens.length}
+        tone="cyan"
+        description="Datas acadêmicas oficiais, feriados, recessos e períodos de matrícula do campus."
+        actions={
+          <>
+            <Button
+              variant="primary"
+              iconRight="arrow-right"
+              onClick={() => setModalNovo(true)}
+            >
+              Novo evento
+            </Button>
+            <Button variant="ghost" onClick={() => setModalLembretes(true)}>
+              Lembretes & Cronômetro ({lembretes.filter((l) => l.ativo).length})
+            </Button>
+            <Button icon="download" onClick={handleExportCSV}>
+              Exportar CSV
+            </Button>
+          </>
+        }
       />
 
-      {/* Conteúdo */}
-      {filteredItens.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-12 text-center shadow-md">
-          <span className="mb-3 rounded-full border border-zinc-700 bg-zinc-800 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            CALENDÁRIO
+      {/* Banner Cronômetro Regressivo (RF08) */}
+      <div
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--line)',
+          borderRadius: 'var(--radius-md)',
+          padding: '14px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <Badge tone="cyan">Próximo Prazo Acadêmico</Badge>
+          <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--ink)' }}>
+            {proximoEvento ? proximoEvento.titulo : 'Abertura da matrícula 2026/2'}
           </span>
-          <h3 className="text-2xl font-extrabold text-white mb-2">
-            Nenhuma data encontrada
-          </h3>
-          <p className="max-w-md text-sm text-[#9ca3af] mb-6">
-            Você não possui eventos ou datas para o filtro selecionado.
-          </p>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#085bbd]"
+          <span style={{ fontSize: 13, color: 'var(--ink-secondary)' }}>
+            ({proximoEvento ? proximoEvento.data : '14 set'})
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 15, color: 'var(--ink)' }}>
+            ⏳ {tempoRestanteFormatado}
+          </div>
+          <Button size="sm" variant="ghost" onClick={() => setModalLembretes(true)}>
+            Gerenciar Lembretes
+          </Button>
+        </div>
+      </div>
+
+      {/* 2. ChipBar com categorias */}
+      <ChipBar
+        items={contagemCategorias}
+        value={categoriaAtiva}
+        onChange={setCategoriaAtiva}
+      />
+
+      {/* 3. Duas colunas: FilterPanel e Conteúdo */}
+      <div className="ar-split">
+        <FilterPanel
+          searchPlaceholder="Buscar data ou evento"
+          searchValue={busca}
+          onSearchChange={setBusca}
+          groups={[
+            {
+              title: 'CATEGORIA',
+              options: [
+                { key: 'calendario', label: 'Calendário' },
+                { key: 'matricula', label: 'Matrícula' },
+                { key: 'edital', label: 'Edital' },
+                { key: 'evento', label: 'Evento' },
+                { key: 'cancelamento', label: 'Cancelamento' },
+              ].map((c) => ({
+                label: c.label,
+                checked: filtroCategoria[c.key] ?? true,
+                count: itens.filter((e) => e.categoria.toLowerCase() === c.key).length,
+                onChange: (checked) =>
+                  setFiltroCategoria((prev) => ({ ...prev, [c.key]: checked })),
+              })),
+            },
+          ]}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+          <ViewToolbar
+            view={viewMode}
+            onViewChange={setViewMode}
+            summary={`Mostrando todas as ${filteredItens.length} datas`}
           >
-            Nova data &rarr;
-          </button>
-        </div>
-      ) : viewMode === "lista" ? (
-        /* Lista (PDF Página 6) */
-        <div className="flex flex-col gap-3">
-          {filteredItens.map((item) => {
-            const isSelected = selectedIds.includes(item.id);
-            return (
-              <div
-                key={item.id}
-                className={cn(
-                  "flex flex-col md:flex-row md:items-center justify-between rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-5 shadow-md gap-3 transition-colors hover:bg-white/[0.04]",
-                  isSelected && "bg-blue-900/20"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => toggleSelectItem(item.id)}
-                    className="flex size-5 shrink-0 items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                    aria-label={`Selecionar ${item.titulo}`}
-                  >
-                    {isSelected && <span className="size-2.5 rounded-full bg-[#bef264]" />}
-                  </button>
-                  <div>
-                    <h4 className="text-base font-extrabold text-white mb-0.5">
-                      {item.titulo}
-                    </h4>
-                    <p className="text-xs text-[#9ca3af]">{item.subtitulo}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2.5 self-start md:self-auto ml-8 md:ml-0">
-                  <span
-                    className={cn(
-                      "rounded-full border px-3 py-0.5 text-xs font-bold",
-                      getCategoriaBadgeClass(item.categoria)
-                    )}
-                  >
-                    {getCategoriaDisplay(item.categoria)}
-                  </span>
-                  <span className="text-xs font-bold text-[#9ca3af] w-16 text-right">
-                    {item.data}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (confirm(`Excluir a data "${item.titulo}"?`)) {
-                        removerEventoCalendario(item.id);
-                      }
-                    }}
-                    className="ml-2 text-xs text-zinc-500 hover:text-red-400 font-semibold"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* Tabela */
-        <div className="overflow-x-auto rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] shadow-xl">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b-[1.5px] border-[#2e3646] bg-[#121620] text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-              <tr>
-                <th className="w-12 px-4 py-3 text-center">
-                  <button
-                    type="button"
-                    onClick={toggleSelectAll}
-                    className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                  >
-                    {selectedIds.length === filteredItens.length && (
-                      <span className="size-2.5 rounded-full bg-[#bef264]" />
-                    )}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-white">EVENTO</th>
-                <th className="px-4 py-3">DETALHES</th>
-                <th className="px-4 py-3">CATEGORIA</th>
-                <th className="px-4 py-3">DATA</th>
-                <th className="px-4 py-3 text-right">AÇÕES</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#242c3d]">
-              {filteredItens.map((item) => {
-                const isSelected = selectedIds.includes(item.id);
+            <Button
+              size="sm"
+              icon="arrow-up-down"
+              onClick={() => setSortAsc((v) => !v)}
+            >
+              {sortAsc ? 'Cronológico' : 'Inverso'}
+            </Button>
+          </ViewToolbar>
+
+          {filteredItens.length === 0 ? (
+            <EmptyState
+              title="Nenhuma data encontrada"
+              description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
+              actions={
+                <Button
+                  onClick={() => {
+                    setCategoriaAtiva('Tudo');
+                    setBusca('');
+                    setFiltroCategoria({
+                      matricula: true,
+                      edital: true,
+                      evento: true,
+                      cancelamento: true,
+                      calendario: true,
+                    });
+                  }}
+                >
+                  Limpar filtros
+                </Button>
+              }
+            />
+          ) : viewMode === 'lista' ? (
+            <div className="ar-card-grid">
+              {filteredItens.map((e, index) => {
+                const isFixado = index === 0 && categoriaAtiva === 'Tudo';
+                const parts = e.data.trim().split(/\s+/);
+                const day = parts[0] || '01';
+                const month = parts[1] || 'set';
+
                 return (
-                  <tr
-                    key={item.id}
-                    className={cn(
-                      "transition-colors hover:bg-white/[0.04]",
-                      isSelected && "bg-blue-900/20"
-                    )}
-                  >
-                    <td className="w-12 px-4 py-3.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => toggleSelectItem(item.id)}
-                        className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                      >
-                        {isSelected && <span className="size-2.5 rounded-full bg-[#bef264]" />}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3.5 font-bold text-white">
-                      {item.titulo}
-                    </td>
-                    <td className="px-4 py-3.5 text-xs text-[#9ca3af]">
-                      {item.subtitulo}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                          getCategoriaBadgeClass(item.categoria)
-                        )}
-                      >
-                        {getCategoriaDisplay(item.categoria)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-xs font-semibold text-[#9ca3af]">
-                      {item.data}
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => removerEventoCalendario(item.id)}
-                        className="text-xs text-zinc-500 hover:text-red-400 font-semibold"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
+                  <RecordCard
+                    key={e.id}
+                    title={e.titulo}
+                    description={e.subtitulo}
+                    tags={[e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1)]}
+                    badges={[
+                      {
+                        label: e.categoria.charAt(0).toUpperCase() + e.categoria.slice(1),
+                        tone: getStatusTone(e.categoria),
+                      },
+                    ]}
+                    stamp={isFixado ? 'Fixado' : undefined}
+                    tone={isFixado ? 'pink' : undefined}
+                    meta={[
+                      { label: 'Data', value: `${day} ${month}` },
+                    ]}
+                    signal={{
+                      tone: 'muted',
+                      label: `Agendado para ${e.data}`,
+                    }}
+                  />
                 );
               })}
-            </tbody>
-          </table>
+            </div>
+          ) : viewMode === 'tabela' ? (
+            <DataTable
+              columns={columns}
+              rows={filteredItens}
+              selectable
+              selected={selectedIds}
+              onSelectAll={() => {
+                if (selectedIds.length === filteredItens.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(filteredItens.map((i) => i.id));
+                }
+              }}
+              onToggleSelect={(id) => {
+                const sId = String(id);
+                setSelectedIds((prev) =>
+                  prev.includes(sId)
+                    ? prev.filter((x) => x !== sId)
+                    : [...prev, sId]
+                );
+              }}
+              onRemove={handleDelete}
+            />
+          ) : (
+            /* Visualização Quadro */
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                gap: 12,
+                alignItems: 'start',
+              }}
+            >
+              {['Calendário', 'Matrícula', 'Evento'].map((cat) => {
+                const colunaItens = filteredItens.filter(
+                  (e) => e.categoria.toLowerCase() === cat.toLowerCase()
+                );
+                return (
+                  <BoardColumn
+                    key={cat}
+                    title={cat}
+                    tone={getStatusTone(cat)}
+                    empty={`Nenhuma data em ${cat.toLowerCase()}`}
+                  >
+                    {colunaItens.map((e) => (
+                      <BoardCard
+                        key={e.id}
+                        title={e.titulo}
+                        meta={e.subtitulo}
+                        badge={{
+                          label: cat,
+                          tone: getStatusTone(cat),
+                        }}
+                        footer={e.data}
+                      />
+                    ))}
+                  </BoardColumn>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Floating Selection Bar */}
       <SelectionBar
         count={selectedIds.length}
+        actions={[
+          {
+            label: 'Exportar seleção',
+            onClick: handleExportCSV,
+          },
+          {
+            label: 'Excluir',
+            danger: true,
+            onClick: handleDeleteSelection,
+          },
+        ]}
         onClear={() => setSelectedIds([])}
-        onDelete={handleExcluirSelecionados}
-        onExport={handleExportar}
       />
 
       {/* Modal Novo Evento */}
-      <NovoRegistroModal
-        aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
-        onSalvar={handleNovoEvento}
-        tipoRegistro="Evento"
-      />
+      {modalNovo && (
+        <Dialog
+          title="Novo evento"
+          eyebrow="CALENDÁRIO ACADÊMICO"
+          description="Adicione uma data ou compromisso oficial ao calendário do campus."
+          onClose={() => setModalNovo(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCreate}>
+                Criar registro
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovo(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome do evento ou prazo"
+              value={formTitulo}
+              onChange={(e) => {
+                setFormTitulo(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Exemplo: Início do período letivo"
+              autoFocus
+            />
+
+            <TextField
+              label="Detalhes"
+              value={formSubtitulo}
+              onChange={(e) => setFormSubtitulo(e.target.value)}
+              placeholder="Exemplo: Aulas inaugurais no auditório central"
+            />
+
+            <ChoiceChips
+              label="Categoria"
+              options={['Calendário', 'Matrícula', 'Edital', 'Evento', 'Cancelamento']}
+              value={formCategoria}
+              onChange={setFormCategoria}
+            />
+
+            <TextField
+              label="Data de ocorrência"
+              value={formData}
+              onChange={(e) => setFormData(e.target.value)}
+              placeholder="Exemplo: 01 set"
+            />
+          </form>
+        </Dialog>
+      )}
+
+      {/* Modal Editar Evento (Administrador - Gerenciar Eventos) */}
+      {modalEditar && (
+        <Dialog
+          title="Editar evento acadêmico"
+          eyebrow="CALENDÁRIO OFICIAL"
+          description="Altere os dados da data oficial no calendário."
+          onClose={() => setModalEditar(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleSalvarEdicao}>
+                Salvar alterações
+              </Button>
+              <Button variant="ghost" onClick={() => setModalEditar(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleSalvarEdicao} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome do evento ou prazo"
+              value={formTitulo}
+              onChange={(e) => {
+                setFormTitulo(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Nome do compromisso"
+              autoFocus
+            />
+
+            <TextField
+              label="Detalhes"
+              value={formSubtitulo}
+              onChange={(e) => setFormSubtitulo(e.target.value)}
+              placeholder="Descrição do evento"
+            />
+
+            <ChoiceChips
+              label="Categoria"
+              options={['Calendário', 'Matrícula', 'Edital', 'Evento', 'Cancelamento']}
+              value={formCategoria}
+              onChange={setFormCategoria}
+            />
+
+            <TextField
+              label="Data de ocorrência"
+              value={formData}
+              onChange={(e) => setFormData(e.target.value)}
+              placeholder="Exemplo: 01 set"
+            />
+          </form>
+        </Dialog>
+      )}
+
+      {/* Modal Lembretes & Cronômetro (RF08 - Apresentar e Configurar Lembretes) */}
+      {modalLembretes && (
+        <Dialog
+          title="Lembretes & Cronômetro Acadêmico"
+          eyebrow="ORGANIZAÇÃO E PRAZOS (RF08)"
+          description="Acompanhe a contagem regressiva para os próximos prazos acadêmicos e configure seus alertas."
+          onClose={() => setModalLembretes(false)}
+          footer={
+            <Button variant="ghost" onClick={() => setModalLembretes(false)}>
+              Fechar
+            </Button>
+          }
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {/* Bloco Cronômetro Regressivo */}
+            <div
+              style={{
+                background: 'var(--canvas)',
+                border: '1px solid var(--line)',
+                borderRadius: 'var(--radius-md)',
+                padding: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.05em', color: 'var(--ink-secondary)' }}>
+                  CRONÔMETRO DE CONTAGEM REGRESSIVA
+                </span>
+                <Badge tone="cyan">Tempo Real</Badge>
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>
+                {proximoEvento.titulo}
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 22,
+                  fontWeight: 800,
+                  color: 'var(--cyan-ink, #00d2ff)',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                ⏱️ {tempoRestanteFormatado}
+              </div>
+              <span style={{ fontSize: 12, color: 'var(--ink-muted)' }}>
+                Data do prazo oficial: {proximoEvento.data} às 08:00
+              </span>
+            </div>
+
+            {/* Lista de Lembretes Configurados */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>
+                Seus Lembretes Ativos ({lembretes.filter((l) => l.ativo).length})
+              </div>
+              {lembretes.length === 0 ? (
+                <span style={{ fontSize: 13, color: 'var(--ink-secondary)' }}>
+                  Nenhum lembrete configurado no momento.
+                </span>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {lembretes.map((l) => (
+                    <div
+                      key={l.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '10px 14px',
+                        background: 'var(--surface)',
+                        border: '1px solid var(--line)',
+                        borderRadius: 'var(--radius-sm)',
+                        gap: 10,
+                      }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
+                        <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--ink)' }}>
+                          {l.titulo}
+                        </span>
+                        <span style={{ fontSize: 12, color: 'var(--ink-secondary)' }}>
+                          📅 {l.data} {l.horario ? `às ${l.horario}` : ''} · {l.tipo === 'prazo' ? 'Prazo urgente' : 'Evento'}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Switch
+                          checked={l.ativo}
+                          onChange={() => alternarLembrete(l.id)}
+                          label={l.ativo ? 'Ativado' : 'Desativado'}
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => removerLembrete(l.id)}
+                          title="Remover lembrete"
+                        >
+                          ✕
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Formulário Novo Lembrete Personalizado */}
+            <form onSubmit={handleCriarLembreteCustom} style={{ display: 'flex', flexDirection: 'column', gap: 12, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>
+                Configurar Novo Lembrete
+              </div>
+              <TextField
+                label="Título do lembrete"
+                placeholder="Ex: Entregar relatório de estágio"
+                value={novoLembreteTitulo}
+                onChange={(e) => setNovoLembreteTitulo(e.target.value)}
+              />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <TextField
+                  label="Data"
+                  placeholder="Ex: 28 set"
+                  value={novoLembreteData}
+                  onChange={(e) => setNovoLembreteData(e.target.value)}
+                />
+                <TextField
+                  label="Horário"
+                  placeholder="Ex: 08:00"
+                  value={novoLembreteHorario}
+                  onChange={(e) => setNovoLembreteHorario(e.target.value)}
+                />
+              </div>
+              <ChoiceChips
+                label="Tipo de alerta"
+                options={['prazo', 'evento']}
+                value={novoLembreteTipo}
+                onChange={(v) => setNovoLembreteTipo(v as any)}
+              />
+              <Button type="submit" variant="primary" size="sm" iconRight="arrow-right">
+                Adicionar Lembrete
+              </Button>
+            </form>
+          </div>
+        </Dialog>
+      )}
     </div>
   );
 }

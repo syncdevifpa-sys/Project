@@ -1,34 +1,77 @@
-import { useState, useMemo, useEffect } from "react";
-import { MetricCard } from "@/components/metric-card";
-import { ViewControls, type ViewMode } from "@/components/view-controls";
-import { SelectionBar } from "@/components/selection-bar";
-import { NovoRegistroModal } from "@/components/novo-registro-modal";
-import { type Aviso } from "@/mock-data";
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  PageHero,
+  ChipBar,
+  FilterPanel,
+  ViewToolbar,
+  RecordCard,
+  DataTable,
+  BoardColumn,
+  BoardCard,
+  Button,
+  Badge,
+  Dialog,
+  TextField,
+  ChoiceChips,
+  EmptyState,
+  SelectionBar,
+  useToast,
+  getStatusTone,
+  type Column,
+} from '@/components/arcadia';
 import {
   getAvisos,
   adicionarAviso,
+  atualizarAviso,
   removerAviso,
   salvarAvisos,
+  getUsuarioSessao,
+  getCategorias,
+  adicionarCategoria,
   subscribeToDataChanges,
-} from "@/state/storage";
-import { cn } from "@/lib/utils";
+} from '@/state/storage';
+import type { Aviso } from '@/mock-data';
 
 export default function Avisos() {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+  const usuario = getUsuarioSessao();
+
   const [itens, setItens] = useState<Aviso[]>(getAvisos);
-  const [viewMode, setViewMode] = useState<ViewMode>("tabela");
-  const [activeFilter, setActiveFilter] = useState("Tudo");
-  const [sortAscending, setSortAscending] = useState(true);
+  const [viewMode, setViewMode] = useState<string>('lista');
+  const [categoriaAtiva, setCategoriaAtiva] = useState('Tudo');
+  const [busca, setBusca] = useState('');
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [modalAberto, setModalAberto] = useState(false);
-  const [camposAberto, setCamposAberto] = useState(false);
-  const [colunasVisiveis, setColunasVisiveis] = useState({
-    titulo: true,
-    resumo: true,
-    categoria: true,
-    publico: true,
-    data: true,
-    situacao: true,
+  const [modalNovo, setModalNovo] = useState(false);
+  const [modalEditar, setModalEditar] = useState(false);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [modalNovaCategoria, setModalNovaCategoria] = useState(false);
+  const [novaCategoriaNome, setNovaCategoriaNome] = useState('');
+  const [categoriasLista, setCategoriasLista] = useState<string[]>(getCategorias);
+
+  // Filtros laterais
+  const [filtroPublico, setFiltroPublico] = useState<Record<string, boolean>>({
+    Todos: true,
+    Aluno: true,
+    Professor: true,
+    Servidor: true,
   });
+  const [filtroSituacao, setFiltroSituacao] = useState<Record<string, boolean>>({
+    Publicado: true,
+    Rascunho: true,
+    Arquivado: true,
+  });
+
+  // Estado do formulário do modal
+  const [formTitulo, setFormTitulo] = useState('');
+  const [formResumo, setFormResumo] = useState('');
+  const [formCategoria, setFormCategoria] = useState('Matrícula');
+  const [formPublico, setFormPublico] = useState('Todos');
+  const [formData, setFormData] = useState('Hoje');
+  const [formSituacao, setFormSituacao] = useState<'Publicado' | 'Rascunho' | 'Arquivado'>('Publicado');
+  const [formErro, setFormErro] = useState('');
 
   useEffect(() => {
     const unsubscribe = subscribeToDataChanges(() => {
@@ -37,507 +80,672 @@ export default function Avisos() {
     return unsubscribe;
   }, []);
 
-  const categorias = ["Tudo", "Matrícula", "Edital", "Evento", "Cancelamento", "Calendário"];
+  const categorias = useMemo(() => {
+    return [{ label: 'Tudo' }, ...categoriasLista.map((c) => ({ label: c }))];
+  }, [categoriasLista]);
 
-  const getCategoriaDisplay = (cat: string) => {
-    switch (cat.toLowerCase()) {
-      case "matricula": return "Matrícula";
-      case "edital": return "Edital";
-      case "evento": return "Evento";
-      case "cancelamento": return "Cancelamento";
-      case "calendario": return "Calendário";
-      default: return cat;
-    }
-  };
-
-  const getCategoriaBadgeClass = (cat: string) => {
-    switch (cat.toLowerCase()) {
-      case "matricula": return "bg-[#8ae4f9] text-[#10141A] border-black";
-      case "edital": return "bg-[#16a34a] text-white border-transparent";
-      case "evento": return "bg-[#facc15] text-[#10141A] border-black";
-      case "cancelamento": return "bg-[#ef4444] text-white border-transparent";
-      case "calendario": return "bg-[#ffbac4] text-[#10141A] border-black";
-      default: return "bg-zinc-800 text-zinc-300 border-zinc-700";
-    }
-  };
-
-  const getSituacaoBadge = (sit: string) => {
-    switch (sit) {
-      case "Publicado":
-        return "bg-[#16a34a] text-white border-transparent";
-      case "Rascunho":
-        return "bg-[#181e2b] text-zinc-200 border-[#2e3646]";
-      case "Arquivado":
-        return "bg-zinc-800 text-zinc-400 border-zinc-700";
-      default:
-        return "bg-[#181e2b] text-zinc-200 border-[#2e3646]";
-    }
-  };
+  const contagemCategorias = useMemo(() => {
+    const map: Record<string, number> = { Tudo: itens.length };
+    categorias.slice(1).forEach((c) => {
+      map[c.label] = itens.filter(
+        (a) => a.categoria.toLowerCase() === c.label.toLowerCase()
+      ).length;
+    });
+    return categorias.map((c) => ({
+      label: c.label,
+      count: map[c.label] || 0,
+    }));
+  }, [itens, categorias]);
 
   const filteredItens = useMemo(() => {
     let result = [...itens];
-    if (activeFilter !== "Tudo") {
+
+    if (categoriaAtiva !== 'Tudo') {
       result = result.filter(
-        (item) => getCategoriaDisplay(item.categoria).toLowerCase() === activeFilter.toLowerCase()
+        (item) => item.categoria.toLowerCase() === categoriaAtiva.toLowerCase()
       );
     }
+
+    if (busca.trim()) {
+      const q = busca.toLowerCase();
+      result = result.filter(
+        (item) =>
+          item.titulo.toLowerCase().includes(q) ||
+          item.resumo.toLowerCase().includes(q) ||
+          item.publico.toLowerCase().includes(q)
+      );
+    }
+
+    result = result.filter((item) => {
+      const pubMatch = filtroPublico[item.publico] ?? true;
+      const sitMatch = filtroSituacao[item.situacao] ?? true;
+      return pubMatch && sitMatch;
+    });
+
     result.sort((a, b) => {
-      return sortAscending
+      return sortAsc
         ? a.titulo.localeCompare(b.titulo)
         : b.titulo.localeCompare(a.titulo);
     });
+
     return result;
-  }, [itens, activeFilter, sortAscending]);
+  }, [itens, categoriaAtiva, busca, filtroPublico, filtroSituacao, sortAsc]);
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredItens.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredItens.map((i) => i.id));
+  const handleDelete = (aviso: Aviso) => {
+    const backup = [...itens];
+    removerAviso(aviso.id);
+
+    showToast({
+      message: 'Aviso excluído',
+      action: {
+        label: 'Desfazer',
+        onClick: () => {
+          salvarAvisos(backup);
+        },
+      },
+    });
+  };
+
+  const handleAbrirEdicao = (a: Aviso) => {
+    setEditandoId(a.id);
+    setFormTitulo(a.titulo);
+    setFormResumo(a.resumo);
+    const cat = a.categoria ? a.categoria.charAt(0).toUpperCase() + a.categoria.slice(1).toLowerCase() : 'Matrícula';
+    setFormCategoria(cat);
+    setFormPublico(a.publico);
+    setFormData(a.data);
+    setFormSituacao(a.situacao);
+    setFormErro('');
+    setModalEditar(true);
+  };
+
+  const handleSalvarEdicao = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitulo.trim()) {
+      setFormErro('Digite um título para o aviso');
+      return;
     }
+    if (!editandoId) return;
+
+    atualizarAviso(editandoId, {
+      titulo: formTitulo.trim(),
+      resumo: formResumo.trim() || 'Sem descrição informada.',
+      categoria: formCategoria.toLowerCase() as any,
+      publico: formPublico,
+      data: formData || 'Hoje',
+      situacao: formSituacao,
+    });
+
+    setModalEditar(false);
+    setEditandoId(null);
+    showToast({ message: 'Aviso atualizado com sucesso' });
   };
 
-  const toggleSelectItem = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+  const handleCriarCategoria = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!novaCategoriaNome.trim()) return;
+    adicionarCategoria(novaCategoriaNome.trim());
+    setCategoriasLista(getCategorias());
+    setModalNovaCategoria(false);
+    setNovaCategoriaNome('');
+    showToast({ message: 'Nova categoria adicionada' });
   };
 
-  const handleExcluirSelecionados = () => {
-    if (confirm(`Deseja excluir os ${selectedIds.length} avisos selecionados?`)) {
-      const restantes = itens.filter((i) => !selectedIds.includes(i.id));
-      salvarAvisos(restantes);
-      setSelectedIds([]);
+  const handleFiltrarMeuPerfil = () => {
+    const v = usuario?.vinculo
+      ? usuario.vinculo.charAt(0).toUpperCase() + usuario.vinculo.slice(1).toLowerCase()
+      : 'Aluno';
+    setFiltroPublico({
+      Todos: true,
+      Aluno: v === 'Aluno',
+      Professor: v === 'Professor',
+      Servidor: v === 'Servidor',
+    });
+    showToast({ message: `Filtrando para seu perfil: ${v}` });
+  };
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitulo.trim()) {
+      setFormErro('Digite um título para o aviso');
+      return;
     }
+
+    adicionarAviso({
+      titulo: formTitulo.trim(),
+      resumo: formResumo.trim() || 'Sem descrição informada.',
+      categoria: formCategoria.toLowerCase() as any,
+      publico: formPublico,
+      data: formData || 'Hoje',
+      situacao: formSituacao,
+    });
+
+    setModalNovo(false);
+    setFormTitulo('');
+    setFormResumo('');
+    setFormErro('');
+
+    showToast({ message: 'Aviso criado com sucesso' });
   };
 
-  const handleExportar = () => {
+  const handleExportCSV = () => {
+    const list = selectedIds.length > 0
+      ? itens.filter((i) => selectedIds.includes(i.id))
+      : filteredItens;
+
     const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["Título,Resumo,Categoria,Público,Data,Situação"]
+      'data:text/csv;charset=utf-8,' +
+      ['Título,Categoria,Público,Data,Situação']
         .concat(
-          filteredItens.map(
-            (i) =>
-              `"${i.titulo}","${i.resumo}","${getCategoriaDisplay(i.categoria)}","${i.publico}","${i.data}","${i.situacao}"`
+          list.map(
+            (a) =>
+              `"${a.titulo}","${a.categoria}","${a.publico}","${a.data}","${a.situacao}"`
           )
         )
-        .join("\n");
+        .join('\n');
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "avisos.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'avisos.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleNovoRegistro = (novo: any) => {
-    adicionarAviso({
-      titulo: novo.titulo,
-      resumo: novo.resumo,
-      categoria: novo.categoria.toLowerCase(),
-      publico: novo.publico,
-      data: novo.data || "Hoje",
-      situacao: novo.situacao as any,
+  const handleDeleteSelection = () => {
+    const backup = [...itens];
+    const remaining = itens.filter((i) => !selectedIds.includes(i.id));
+    salvarAvisos(remaining);
+    setSelectedIds([]);
+
+    showToast({
+      message: `${selectedIds.length} avisos excluídos`,
+      action: {
+        label: 'Desfazer',
+        onClick: () => {
+          salvarAvisos(backup);
+        },
+      },
     });
   };
 
+  const columns: Column<Aviso>[] = [
+    {
+      key: 'titulo',
+      label: 'Título',
+      sortable: true,
+      kind: 'strong',
+      render: (a) => (
+        <a
+          href={`/avisos/${a.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(`/avisos/${a.id}`);
+          }}
+          className="ar-link"
+        >
+          {a.titulo}
+        </a>
+      ),
+    },
+    {
+      key: 'resumo',
+      label: 'Resumo',
+      render: (a) => a.resumo,
+    },
+    {
+      key: 'categoria',
+      label: 'Categoria',
+      render: (a) => (
+        <Badge tone={getStatusTone(a.categoria)}>
+          {a.categoria.charAt(0).toUpperCase() + a.categoria.slice(1)}
+        </Badge>
+      ),
+    },
+    {
+      key: 'publico',
+      label: 'Público',
+      render: (a) => a.publico,
+    },
+    {
+      key: 'data',
+      label: 'Data',
+      kind: 'mono',
+      render: (a) => a.data,
+    },
+    {
+      key: 'situacao',
+      label: 'Situação',
+      render: (a) => (
+        <Badge tone={getStatusTone(a.situacao)}>{a.situacao}</Badge>
+      ),
+    },
+    {
+      key: 'id',
+      label: 'Ações',
+      render: (a) => (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAbrirEdicao(a);
+            }}
+          >
+            Editar
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(a);
+            }}
+          >
+            Excluir
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  const userVinculoLabel = usuario?.vinculo
+    ? usuario.vinculo.charAt(0).toUpperCase() + usuario.vinculo.slice(1).toLowerCase()
+    : 'Aluno';
+
   return (
-    <div className="flex flex-col text-left text-white">
-      {/* Cabeçalho */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#2e3646] pb-4">
-        <div className="flex items-baseline gap-2.5">
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">
-            Avisos
-          </h2>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            {itens.length} REGISTROS
-          </span>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* 1. PageHero compacto */}
+      <PageHero
+        title="Avisos"
+        count={itens.length}
+        tone="cyan"
+        description="Comunicados oficiais do campus sobre matrícula, editais, eventos e calendário. Os fixados aparecem primeiro."
+        actions={
+          <>
+            <Button
+              variant="primary"
+              iconRight="arrow-right"
+              onClick={() => setModalNovo(true)}
+            >
+              Novo aviso
+            </Button>
+            <Button variant="ghost" onClick={() => setModalNovaCategoria(true)}>
+              Nova categoria
+            </Button>
+            <Button variant="ghost" onClick={handleFiltrarMeuPerfil}>
+              Filtrar por perfil ({userVinculoLabel})
+            </Button>
+            <Button icon="download" onClick={handleExportCSV}>
+              Exportar CSV
+            </Button>
+          </>
+        }
+      />
 
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleExportar}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-4 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition"
+      {/* 2. ChipBar com categorias */}
+      <ChipBar
+        items={contagemCategorias}
+        value={categoriaAtiva}
+        onChange={setCategoriaAtiva}
+      />
+
+      {/* 3. Duas colunas: FilterPanel (240px) e Conteúdo */}
+      <div className="ar-split">
+        <FilterPanel
+          searchPlaceholder="Buscar aviso"
+          searchValue={busca}
+          onSearchChange={setBusca}
+          groups={[
+            {
+              title: 'PÚBLICO',
+              options: ['Todos', 'Aluno', 'Professor', 'Servidor'].map((p) => ({
+                label: p,
+                checked: filtroPublico[p] ?? true,
+                count: itens.filter((a) => a.publico === p).length,
+                onChange: (checked) =>
+                  setFiltroPublico((prev) => ({ ...prev, [p]: checked })),
+              })),
+            },
+            {
+              title: 'SITUAÇÃO',
+              options: ['Publicado', 'Rascunho', 'Arquivado'].map((s) => ({
+                label: s,
+                checked: filtroSituacao[s] ?? true,
+                count: itens.filter((a) => a.situacao === s).length,
+                onChange: (checked) =>
+                  setFiltroSituacao((prev) => ({ ...prev, [s]: checked })),
+              })),
+            },
+          ]}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+          <ViewToolbar
+            view={viewMode}
+            onViewChange={setViewMode}
+            summary={`Mostrando todos os ${filteredItens.length}`}
           >
-            Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#085bbd]"
-          >
-            Novo aviso &rarr;
-          </button>
-        </div>
-      </div>
+            <Button
+              size="sm"
+              icon="arrow-up-down"
+              onClick={() => setSortAsc((v) => !v)}
+            >
+              {sortAsc ? 'A a Z' : 'Z a A'}
+            </Button>
+          </ViewToolbar>
 
-      {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard
-          title="Total em avisos"
-          value={itens.length}
-          sublabel="REGISTROS CRIADOS"
-          badgeText="INCLUI RASCUNHOS"
-          badgeVariant="lime"
-        />
-        <MetricCard
-          title="Na visão atual"
-          value={filteredItens.length}
-          sublabel={activeFilter === "Tudo" ? "SEM FILTRO APLICADO" : `FILTRO: ${activeFilter.toUpperCase()}`}
-          badgeText={activeFilter === "Tudo" ? "MOSTRANDO TUDO" : "FILTRADO"}
-          badgeVariant="cyan"
-        />
-        <MetricCard
-          title="Em 3 grupos"
-          value={3}
-          sublabel="SITUAÇÕES DISTINTAS"
-          badgeText="3 SITUAÇÕES EM USO"
-          badgeVariant="lavender"
-        />
-      </div>
-
-      {/* Controles de Visualização */}
-      <div className="relative">
-        <ViewControls
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          totalCount={filteredItens.length}
-          filterLabel="CATEGORIA"
-          filterOptions={categorias}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          sortAscending={sortAscending}
-          onToggleSort={() => setSortAscending(!sortAscending)}
-          onToggleCampos={() => setCamposAberto((v) => !v)}
-        />
-      </div>
-
-      {/* Popover Colunas Visíveis */}
-      {camposAberto && (
-        <div className="mb-4 rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#121620] p-4 shadow-xl animate-in fade-in duration-100">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#9ca3af] block mb-2">
-            COLUNAS VISÍVEIS
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {(
-              [
-                ["titulo", "Título do aviso"],
-                ["resumo", "Resumo"],
-                ["categoria", "Categoria"],
-                ["publico", "Público"],
-                ["data", "Data de referência"],
-                ["situacao", "Situação"],
-              ] as const
-            ).map(([key, label]) => {
-              const ativo = colunasVisiveis[key];
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() =>
-                    setColunasVisiveis((prev) => ({ ...prev, [key]: !prev[key] }))
-                  }
-                  className={cn(
-                    "rounded-full border-[1.5px] px-3.5 py-1 text-xs font-bold transition",
-                    ativo
-                      ? "border-black bg-[#bef264] text-[#10141A]"
-                      : "border-[#2e3646] bg-[#181e2b] text-zinc-300 hover:text-white"
-                  )}
+          {filteredItens.length === 0 ? (
+            <EmptyState
+              title="Nenhum aviso encontrado"
+              description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
+              actions={
+                <Button
+                  onClick={() => {
+                    setCategoriaAtiva('Tudo');
+                    setBusca('');
+                    setFiltroPublico({ Todos: true, Aluno: true, Professor: true, Servidor: true });
+                    setFiltroSituacao({ Publicado: true, Rascunho: true, Arquivado: true });
+                  }}
                 >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                  Limpar filtros
+                </Button>
+              }
+            />
+          ) : viewMode === 'lista' ? (
+            <div className="ar-card-grid">
+              {filteredItens.map((a, index) => {
+                // O primeiro aviso é fixado (destaque em rosa, carimbo FIXADO)
+                const isFixado = index === 0 && categoriaAtiva === 'Tudo';
+                const isUrgente = a.categoria === 'cancelamento' || a.categoria === 'matricula';
 
-      {/* Estado Vazio */}
-      {filteredItens.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-12 text-center shadow-md">
-          <span className="mb-3 rounded-full border border-zinc-700 bg-zinc-800 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            AVISOS
-          </span>
-          <h3 className="text-2xl font-extrabold text-white mb-2">
-            Nenhum aviso publicado ainda
-          </h3>
-          <p className="max-w-md text-sm text-[#9ca3af] mb-6">
-            Cada aviso criado aqui entra no mural com categoria, público e data.
-          </p>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#085bbd]"
-          >
-            Novo aviso &rarr;
-          </button>
-        </div>
-      ) : viewMode === "tabela" ? (
-        /* Visualização: Tabela */
-        <div className="overflow-x-auto rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] shadow-xl">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b-[1.5px] border-[#2e3646] bg-[#121620] text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-              <tr>
-                <th className="w-12 px-4 py-3 text-center">
-                  <button
-                    type="button"
-                    onClick={toggleSelectAll}
-                    className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                    aria-label="Selecionar todos"
-                  >
-                    {selectedIds.length === filteredItens.length && (
-                      <span className="size-2.5 rounded-full bg-[#bef264]" />
-                    )}
-                  </button>
-                </th>
-                {colunasVisiveis.titulo && (
-                  <th className="px-4 py-3 text-white">
-                    <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setSortAscending(!sortAscending)}>
-                      <span>TÍTULO DO AVISO</span>
-                      <span className="text-[#bef264]">{sortAscending ? "↑" : "↓"}</span>
-                    </div>
-                  </th>
-                )}
-                {colunasVisiveis.resumo && <th className="px-4 py-3">RESUMO ⇅</th>}
-                {colunasVisiveis.categoria && <th className="px-4 py-3">CATEGORIA ⇅</th>}
-                {colunasVisiveis.publico && <th className="px-4 py-3">PÚBLICO ⇅</th>}
-                {colunasVisiveis.data && <th className="px-4 py-3">DATA ⇅</th>}
-                {colunasVisiveis.situacao && <th className="px-4 py-3">SITUAÇÃO ⇅</th>}
-                <th className="px-4 py-3 text-right">AÇÕES</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#242c3d]">
-              {filteredItens.map((item) => {
-                const isSelected = selectedIds.includes(item.id);
                 return (
-                  <tr
-                    key={item.id}
-                    className={cn(
-                      "transition-colors hover:bg-white/[0.04]",
-                      isSelected && "bg-blue-900/20"
-                    )}
-                  >
-                    <td className="w-12 px-4 py-3.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => toggleSelectItem(item.id)}
-                        className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                        aria-label={`Selecionar ${item.titulo}`}
-                      >
-                        {isSelected && <span className="size-2.5 rounded-full bg-[#bef264]" />}
-                      </button>
-                    </td>
-                    {colunasVisiveis.titulo && (
-                      <td className="px-4 py-3.5 font-bold text-white">
-                        {item.titulo}
-                      </td>
-                    )}
-                    {colunasVisiveis.resumo && (
-                      <td className="px-4 py-3.5 text-xs text-[#9ca3af] max-w-[220px] truncate">
-                        {item.resumo}
-                      </td>
-                    )}
-                    {colunasVisiveis.categoria && (
-                      <td className="px-4 py-3.5">
-                        <span
-                          className={cn(
-                            "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                            getCategoriaBadgeClass(item.categoria)
-                          )}
-                        >
-                          {getCategoriaDisplay(item.categoria)}
-                        </span>
-                      </td>
-                    )}
-                    {colunasVisiveis.publico && (
-                      <td className="px-4 py-3.5">
-                        <span
-                          className={cn(
-                            "rounded-full border-[1.5px] px-3 py-0.5 text-xs font-bold",
-                            item.publico === "Aluno"
-                              ? "border-black bg-[#8ae4f9] text-[#10141A]"
-                              : "border-[#2e3646] bg-[#121620] text-zinc-300"
-                          )}
-                        >
-                          {item.publico}
-                        </span>
-                      </td>
-                    )}
-                    {colunasVisiveis.data && (
-                      <td className="px-4 py-3.5 text-xs font-semibold text-[#9ca3af]">
-                        {item.data}
-                      </td>
-                    )}
-                    {colunasVisiveis.situacao && (
-                      <td className="px-4 py-3.5">
-                        <span
-                          className={cn(
-                            "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                            getSituacaoBadge(item.situacao)
-                          )}
-                        >
-                          {item.situacao}
-                        </span>
-                      </td>
-                    )}
-                    <td className="px-4 py-3.5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Excluir o aviso "${item.titulo}"?`)) {
-                            removerAviso(item.id);
-                          }
-                        }}
-                        className="text-xs text-zinc-500 hover:text-red-400 font-semibold transition"
-                        title="Excluir aviso"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
+                  <RecordCard
+                    key={a.id}
+                    title={a.titulo}
+                    description={a.resumo}
+                    tags={[
+                      a.publico,
+                      a.categoria.charAt(0).toUpperCase() + a.categoria.slice(1),
+                    ]}
+                    badges={[
+                      {
+                        label: a.situacao,
+                        tone: getStatusTone(a.situacao),
+                      },
+                    ]}
+                    flag={isUrgente ? 'Urgente' : undefined}
+                    stamp={isFixado ? 'Fixado' : undefined}
+                    tone={isFixado ? 'pink' : undefined}
+                    meta={[
+                      { label: 'Prazo', value: a.data },
+                      { label: 'Público', value: a.publico },
+                    ]}
+                    signal={
+                      a.situacao === 'Publicado'
+                        ? { tone: 'link', label: 'Atualizado hoje às 09:12' }
+                        : undefined
+                    }
+                    onClick={() => navigate(`/avisos/${a.id}`)}
+                  />
                 );
               })}
-            </tbody>
-          </table>
-          <div className="flex items-center justify-between border-t border-[#2e3646] px-5 py-3 text-xs bg-[#121620]">
-            <span className="font-bold text-[#9ca3af] uppercase tracking-wider text-[10.5px]">
-              MOSTRANDO TODOS OS {filteredItens.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => setModalAberto(true)}
-              className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-3.5 py-1 text-xs font-bold text-white hover:bg-white/10 transition-colors"
-            >
-              + Novo registro
-            </button>
-          </div>
-        </div>
-      ) : viewMode === "quadro" ? (
-        /* Visualização: Quadro Kanban */
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {(["Rascunho", "Publicado", "Arquivado"] as const).map((sit) => {
-            const grupoItens = filteredItens.filter((i) => i.situacao === sit);
-            return (
-              <div
-                key={sit}
-                className="rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-4 shadow-md"
-              >
-                <div className="mb-3 flex items-center justify-between">
-                  <span
-                    className={cn(
-                      "rounded-full border px-3 py-0.5 text-xs font-extrabold uppercase tracking-wider",
-                      getSituacaoBadge(sit)
-                    )}
-                  >
-                    {sit} {grupoItens.length}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-3">
-                  {grupoItens.map((item) => (
-                    <div
-                      key={item.id}
-                      className="rounded-xl border-[1.5px] border-[#2e3646] p-3.5 bg-[#121620] shadow-xs"
-                    >
-                      <div className="flex items-start justify-between gap-1 mb-1">
-                        <h4 className="font-bold text-sm text-white">
-                          {item.titulo}
-                        </h4>
-                        <button
-                          type="button"
-                          onClick={() => removerAviso(item.id)}
-                          className="text-xs text-zinc-500 hover:text-red-400"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <p className="text-xs text-[#9ca3af] mb-2.5 line-clamp-2">
-                        {item.resumo}
-                      </p>
-                      <div className="flex items-center justify-between pt-1 border-t border-[#2e3646] text-xs">
-                        <span
-                          className={cn(
-                            "rounded-full border px-2 py-0.5 text-[10px] font-bold",
-                            getCategoriaBadgeClass(item.categoria)
-                          )}
-                        >
-                          {getCategoriaDisplay(item.categoria)}
-                        </span>
-                        <span className="font-semibold text-[#9ca3af]">{item.data}</span>
-                      </div>
-                    </div>
-                  ))}
-                  {grupoItens.length === 0 && (
-                    <p className="py-6 text-center text-xs text-[#9ca3af]">Nenhum registro</p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* Visualização: Lista */
-        <div className="flex flex-col gap-3">
-          {filteredItens.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col md:flex-row md:items-center justify-between rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-5 shadow-md gap-3"
-            >
-              <div>
-                <h4 className="text-base font-extrabold text-white mb-1">
-                  {item.titulo}
-                </h4>
-                <p className="text-xs text-[#9ca3af]">{item.resumo}</p>
-              </div>
-              <div className="flex items-center gap-2.5 self-start md:self-auto">
-                <span
-                  className={cn(
-                    "rounded-full border px-3 py-0.5 text-xs font-bold",
-                    getCategoriaBadgeClass(item.categoria)
-                  )}
-                >
-                  {getCategoriaDisplay(item.categoria)}
-                </span>
-                <span className="text-xs font-semibold text-[#9ca3af]">
-                  {item.data}
-                </span>
-                <span
-                  className={cn(
-                    "rounded-full border px-3 py-0.5 text-xs font-bold",
-                    getSituacaoBadge(item.situacao)
-                  )}
-                >
-                  {item.situacao}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removerAviso(item.id)}
-                  className="ml-2 text-xs text-zinc-500 hover:text-red-400"
-                >
-                  ✕
-                </button>
-              </div>
             </div>
-          ))}
+          ) : viewMode === 'tabela' ? (
+            <DataTable
+              columns={columns}
+              rows={filteredItens}
+              selectable
+              selected={selectedIds}
+              onSelectAll={() => {
+                if (selectedIds.length === filteredItens.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(filteredItens.map((i) => i.id));
+                }
+              }}
+              onToggleSelect={(id) => {
+                const sId = String(id);
+                setSelectedIds((prev) =>
+                  prev.includes(sId)
+                    ? prev.filter((x) => x !== sId)
+                    : [...prev, sId]
+                );
+              }}
+              onRemove={handleDelete}
+            />
+          ) : (
+            /* Visualização Quadro */
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                gap: 12,
+                alignItems: 'start',
+              }}
+            >
+              {(['Publicado', 'Rascunho', 'Arquivado'] as const).map((sit) => {
+                const colunaItens = filteredItens.filter((a) => a.situacao === sit);
+                return (
+                  <BoardColumn
+                    key={sit}
+                    title={sit}
+                    tone={getStatusTone(sit)}
+                    empty={`Nenhum aviso em ${sit.toLowerCase()}`}
+                  >
+                    {colunaItens.map((a) => (
+                      <BoardCard
+                        key={a.id}
+                        title={a.titulo}
+                        meta={`${a.publico} · ${a.data}`}
+                        badge={{
+                          label: a.categoria.charAt(0).toUpperCase() + a.categoria.slice(1),
+                          tone: getStatusTone(a.categoria),
+                        }}
+                        footer={a.data}
+                        action={{
+                          label: 'Abrir',
+                          onClick: () => navigate(`/avisos/${a.id}`),
+                        }}
+                      />
+                    ))}
+                  </BoardColumn>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Floating Selection Bar */}
+      {/* Seleção em lote */}
       <SelectionBar
         count={selectedIds.length}
+        actions={[
+          {
+            label: 'Exportar seleção',
+            onClick: handleExportCSV,
+          },
+          {
+            label: 'Excluir',
+            danger: true,
+            onClick: handleDeleteSelection,
+          },
+        ]}
         onClear={() => setSelectedIds([])}
-        onDelete={handleExcluirSelecionados}
-        onExport={handleExportar}
       />
 
-      {/* Modal Novo Registro */}
-      <NovoRegistroModal
-        aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
-        onSalvar={handleNovoRegistro}
-        tipoRegistro="Aviso"
-      />
+      {/* Modal Novo Aviso */}
+      {modalNovo && (
+        <Dialog
+          title="Novo aviso"
+          eyebrow="COMUNICADOS OFICIAIS"
+          description="Preencha os campos para publicar um aviso no portal."
+          onClose={() => setModalNovo(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCreate}>
+                Criar registro
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovo(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Título do aviso"
+              value={formTitulo}
+              onChange={(e) => {
+                setFormTitulo(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Exemplo: Período de matrícula 2026/2"
+              autoFocus
+            />
+
+            <TextField
+              label="Resumo"
+              multiline
+              rows={3}
+              value={formResumo}
+              onChange={(e) => setFormResumo(e.target.value)}
+              placeholder="Descreva o comunicado em uma ou duas frases"
+            />
+
+            <ChoiceChips
+              label="Categoria"
+              options={categoriasLista}
+              value={formCategoria}
+              onChange={setFormCategoria}
+            />
+
+            <ChoiceChips
+              label="Público"
+              options={['Todos', 'Aluno', 'Professor', 'Servidor']}
+              value={formPublico}
+              onChange={setFormPublico}
+            />
+
+            <ChoiceChips
+              label="Situação"
+              options={['Publicado', 'Rascunho', 'Arquivado']}
+              value={formSituacao}
+              onChange={(v) => setFormSituacao(v as any)}
+            />
+
+            <TextField
+              label="Data de referência"
+              value={formData}
+              onChange={(e) => setFormData(e.target.value)}
+              placeholder="Exemplo: 27 set"
+            />
+          </form>
+        </Dialog>
+      )}
+
+      {/* Modal Editar Aviso (Administrador - RF03/RF04) */}
+      {modalEditar && (
+        <Dialog
+          title="Editar aviso"
+          eyebrow="GESTÃO DE CONTEÚDO"
+          description="Altere as informações do comunicado oficial."
+          onClose={() => setModalEditar(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleSalvarEdicao}>
+                Salvar alterações
+              </Button>
+              <Button variant="ghost" onClick={() => setModalEditar(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleSalvarEdicao} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Título do aviso"
+              value={formTitulo}
+              onChange={(e) => {
+                setFormTitulo(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Título da publicação"
+              autoFocus
+            />
+
+            <TextField
+              label="Resumo"
+              multiline
+              rows={3}
+              value={formResumo}
+              onChange={(e) => setFormResumo(e.target.value)}
+              placeholder="Descreva o comunicado"
+            />
+
+            <ChoiceChips
+              label="Categoria"
+              options={categoriasLista}
+              value={formCategoria}
+              onChange={setFormCategoria}
+            />
+
+            <ChoiceChips
+              label="Público"
+              options={['Todos', 'Aluno', 'Professor', 'Servidor']}
+              value={formPublico}
+              onChange={setFormPublico}
+            />
+
+            <ChoiceChips
+              label="Situação"
+              options={['Publicado', 'Rascunho', 'Arquivado']}
+              value={formSituacao}
+              onChange={(v) => setFormSituacao(v as any)}
+            />
+
+            <TextField
+              label="Data de referência"
+              value={formData}
+              onChange={(e) => setFormData(e.target.value)}
+              placeholder="Exemplo: 27 set"
+            />
+          </form>
+        </Dialog>
+      )}
+
+      {/* Modal Nova Categoria (Administrador - Gerenciar Categorias) */}
+      {modalNovaCategoria && (
+        <Dialog
+          title="Nova categoria de notícias"
+          eyebrow="GESTÃO DE CATEGORIAS"
+          description="Cadastre uma nova categoria para classificar os avisos institucionais."
+          onClose={() => setModalNovaCategoria(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCriarCategoria}>
+                Salvar categoria
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovaCategoria(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCriarCategoria} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Nome da categoria"
+              value={novaCategoriaNome}
+              onChange={(e) => setNovaCategoriaNome(e.target.value)}
+              placeholder="Exemplo: Estágio, Monitoria, Pesquisa..."
+              autoFocus
+            />
+          </form>
+        </Dialog>
+      )}
     </div>
   );
 }

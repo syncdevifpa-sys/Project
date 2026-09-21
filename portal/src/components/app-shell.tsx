@@ -1,65 +1,89 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import { Menu } from "lucide-react";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import { TopNav, type TopNavItem } from '@/components/arcadia/top-nav';
+import { useCommandPalette } from '@/components/arcadia/command-palette';
+import {
+  getUsuarioSessao,
+  getAvisos,
+  getTarefas,
+  getDocumentos,
+  getEventosCalendario,
+  getPessoas,
+  getProjetos,
+  encerrarSessao,
+  subscribeToDataChanges,
+} from '@/state/storage';
+
+import { AuthModal } from '@/components/arcadia';
 
 export function AppShell() {
-  const [drawerAberto, setDrawerAberto] = useState(false);
+  const [usuario, setUsuario] = useState(getUsuarioSessao);
+  const [contadores, setContadores] = useState(() => ({
+    avisos: getAvisos().length,
+    tarefas: getTarefas().length,
+    documentos: getDocumentos().length,
+    calendario: getEventosCalendario().length,
+    pessoas: getPessoas().length,
+    projetos: getProjetos().length,
+  }));
+
+  const { openWithScope } = useCommandPalette();
+
+  useEffect(() => {
+    const unsubscribe = subscribeToDataChanges(() => {
+      setUsuario(getUsuarioSessao());
+      setContadores({
+        avisos: getAvisos().length,
+        tarefas: getTarefas().length,
+        documentos: getDocumentos().length,
+        calendario: getEventosCalendario().length,
+        pessoas: getPessoas().length,
+        projetos: getProjetos().length,
+      });
+    });
+    return unsubscribe;
+  }, []);
+
+  if (!usuario) {
+    return <AuthModal onSuccess={(u) => setUsuario(u || getUsuarioSessao())} />;
+  }
+
+  const navItems: TopNavItem[] = [
+    { label: 'Painel', href: '/' },
+    { label: 'Avisos', count: contadores.avisos, href: '/avisos' },
+    { label: 'Tarefas', count: contadores.tarefas, href: '/tarefas' },
+    { label: 'Documentos', count: contadores.documentos, href: '/documentos' },
+    { label: 'Calendário', count: contadores.calendario, href: '/calendario' },
+    { separator: true },
+    { label: 'Pessoas', count: contadores.pessoas, href: '/pessoas' },
+    { label: 'Projetos', count: contadores.projetos, href: '/projetos' },
+  ];
+
+  const roleFormatted = usuario.vinculo
+    ? usuario.vinculo.charAt(0).toUpperCase() + usuario.vinculo.slice(1).toLowerCase()
+    : 'Aluno';
 
   return (
-    <div className="min-h-screen bg-[#090b10] p-3 md:p-5 text-white font-sans antialiased selection:bg-[#bef264] selection:text-black">
-      {/* Topo Mobile */}
-      <header className="mb-3 flex items-center justify-between rounded-[18px] border-[1.5px] border-[#2e3646] bg-[#121620] px-4 py-3 md:hidden">
-        <div className="flex items-center gap-2">
-          <span className="flex size-7 items-center justify-center rounded-full border border-black bg-[#d8d1ff] text-xs font-bold text-black">
-            A
-          </span>
-          <span className="text-base font-extrabold tracking-tight text-white">Arcádia</span>
-        </div>
-
-        <Sheet open={drawerAberto} onOpenChange={setDrawerAberto}>
-          <SheetTrigger asChild>
-            <button
-              type="button"
-              aria-label="Abrir menu"
-              className="flex size-9 items-center justify-center rounded-full border border-[#2e3646] bg-[#181e2b] text-white"
-            >
-              <Menu className="size-4" strokeWidth={2} />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[280px] p-2 bg-[#090b10] border-r border-[#2e3646]">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Navegação</SheetTitle>
-              <SheetDescription>Menu do portal</SheetDescription>
-            </SheetHeader>
-            <div
-              className="h-full"
-              onClick={(e) => {
-                if ((e.target as HTMLElement).closest("a")) setDrawerAberto(false);
-              }}
-            >
-              <AppSidebar />
-            </div>
-          </SheetContent>
-        </Sheet>
-      </header>
-
-      {/* Grid Principal: Sidebar + Conteúdo */}
-      <div className="mx-auto flex w-full max-w-[1360px] items-start gap-4">
-        {/* Sidebar Desktop Fixa */}
-        <aside className="sticky top-5 hidden h-[calc(100vh-2.5rem)] w-[260px] shrink-0 md:block">
-          <AppSidebar />
-        </aside>
-
-        {/* Painel Principal */}
-        <main
-          id="conteudo"
-          className="min-h-[calc(100vh-2.5rem)] flex-1 rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#121620] p-5 md:p-8 shadow-2xl relative text-white"
-        >
-          <Outlet />
-        </main>
-      </div>
+    <div className="ar-app">
+      <TopNav
+        items={navItems}
+        user={{
+          name: usuario.nome || 'Ana Ribeiro',
+          role: roleFormatted,
+        }}
+        brand={{
+          name: 'Arcádia',
+          sub: 'IFPA CAMPUS BELÉM',
+          tone: 'lime',
+        }}
+        homeHref="/"
+        settingsHref="/configuracoes"
+        onSearch={() => openWithScope('Tudo')}
+        onSignOut={encerrarSessao}
+      />
+      <main id="conteudo" style={{ minWidth: 0 }}>
+        <Outlet />
+      </main>
     </div>
   );
 }

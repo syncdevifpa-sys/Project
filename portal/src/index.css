@@ -1,239 +1,36 @@
+@import "./tokens.css";
+@import "./bundle.css";
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/schibsted-grotesk";
 
-@custom-variant dark (&:is(.dark *));
-
-/* ============================================================
-   Arcádia -- tokens do design system (alinhados ao reference)
-   ============================================================ */
-
-@theme {
-  /* Fontes -- conforme reference: system-ui como substituto do SF Pro,
-     ui-monospace como substituto do Martian Mono. */
-  --font-display: system-ui, sans-serif;
-  --font-text: system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
-
-  /* Paleta de cores (reference) */
-  --color-tinta: #1d1d1f;
-  --color-papel: #ffffff;
-  --color-creme: #f7f4f2;
-  --color-ceu-palido: #dceeff;
-  --color-cinza-medio: #707070;
-  --color-cinza-sobre-tinta: #a1a1a6;
-  --color-borda-sutil: #3a3a3d;
-  --color-acao-azul: #0071e3;
-  --color-link-azul: #0066cc;
-  --color-lima: #d2e534;
-  --color-wisteria: #d8d1ff;
-  --color-amarelo: #ffda00;
-  --color-amarelo-quente: #ffe54d;
-  --color-vermelho: #ff4141;
-  --color-verde: #16ab59;
-  --color-ceu: #91d8ec;
-  --color-rosa: #ffbac4;
-  --color-pessego: #f6e0db;
-
-  /* Superfícies */
-  --color-superficie-creme: var(--color-creme);
-  --color-superficie-papel: var(--color-papel);
-  --color-superficie-ceu-palido: var(--color-ceu-palido);
-  --color-superficie-lima: var(--color-lima);
-  --color-superficie-wisteria: var(--color-wisteria);
-  --color-superficie-tinta: var(--color-tinta);
-
-  /* Variáveis shadcn (para compatibilidade com as classes bg-border,
-     bg-background, text-muted-foreground, border-ring, etc.) */
-  --color-background: var(--color-papel);
-  --color-foreground: var(--color-tinta);
-  --color-card: var(--color-papel);
-  --color-card-foreground: var(--color-tinta);
-  --color-popover: var(--color-papel);
-  --color-popover-foreground: var(--color-tinta);
-  --color-primary: var(--color-tinta);
-  --color-primary-foreground: var(--color-papel);
-  --color-secondary: var(--color-creme);
-  --color-secondary-foreground: var(--color-tinta);
-  --color-muted: var(--color-ceu-palido);
-  --color-muted-foreground: var(--color-cinza-sobre-tinta);
-  --color-accent: var(--color-wisteria);
-  --color-accent-foreground: var(--color-tinta);
-  --color-destructive: var(--color-vermelho);
-  --color-destructive-foreground: var(--color-papel);
-  --color-border: var(--color-borda-sutil);
-  --color-input: var(--color-borda-sutil);
-  --color-ring: var(--color-acao-azul);
-
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
-  --radius-4xl: 2.5rem;
-  --radius-full: 9999px;
-  --radius: 2rem;
-
-  /* Cores de categoria (para badges/tags de aviso, documentos, etc.) */
-  --color-lilas: var(--color-wisteria);
-  --color-lilas-soft: color-mix(in srgb, var(--color-wisteria) 16%, white);
-  --color-matricula: var(--color-verde);
-  --color-matricula-soft: color-mix(in srgb, var(--color-verde) 16%, white);
-  --color-edital: var(--color-verde);
-  --color-edital-soft: color-mix(in srgb, var(--color-verde) 16%, white);
-  --color-evento: var(--color-amarelo);
-  --color-evento-soft: color-mix(in srgb, var(--color-amarelo) 18%, white);
-  --color-cancelamento: var(--color-vermelho);
-  --color-cancelamento-soft: color-mix(in srgb, var(--color-vermelho) 14%, white);
-  --color-documento: var(--color-ceu);
-  --color-documento-soft: color-mix(in srgb, var(--color-ceu) 18%, white);
-  --color-calendario: var(--color-ceu);
-  --color-calendario-soft: color-mix(in srgb, var(--color-ceu) 16%, white);
-  --color-concluido: var(--color-verde);
-  --color-concluido-soft: color-mix(in srgb, var(--color-verde) 12%, white);
-  --color-canvas: var(--color-creme);
-
-  /* Border radius (reference) */
-  --radius-image: 16px;
-  --radius-cards: 28px;
-  --radius-badges: 36px;
-  --radius-buttons: 980px;
-  --radius-inputs: 980px;
-  --radius-shapes: 0px;
-  --radius-circle: 5000px;
-
-  /* Bordas (reference) */
-  --border-ink: 2px solid var(--color-tinta);
-  --border-paper: 2px solid var(--color-papel);
-  --border-width: 2px;
-
-  /* Tipografia (reference) */
-  --text-display: clamp(58px, 9vw, 132px);
-  --text-heading: 42px;
-  --text-heading-lg: 52px;
-  --text-heading-sm: 28px;
-  --text-body: 17px;
-  --text-body-lg: 21px;
-  --text-lead: 24px;
-  --text-caption: 14px;
-  --text-caption-mono: 12px;
-  --text-number: 62px;
-
-  /* Espaçamento (reference) */
-  --spacing-16: 16px;
-  --spacing-24: 24px;
-  --spacing-28: 28px;
-  --spacing-48: 48px;
-  --spacing-96: 96px;
-}
-
-/* Paleta padrão do shadcn, sobrescrita com cores do reference.
-   Mantemos os nomes da API shadcn para compatibilidade com os
-   componentes existentes. */
 :root {
-  --background: #090b10;
-  --foreground: #ffffff;
-  --card: #121620;
-  --card-foreground: #ffffff;
-  --popover: #121620;
-  --popover-foreground: #ffffff;
-  --primary: #bef264;
-  --primary-foreground: #10141A;
-  --secondary: #181e2b;
-  --secondary-foreground: #ffffff;
-  --muted: #181e2b;
-  --muted-foreground: #9ca3af;
-  --accent: #bef264;
-  --accent-foreground: #10141A;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: 1.5px solid #2e3646;
-  --input: 1.5px solid #2e3646;
-  --ring: #1070e5;
-  --radius: var(--radius-cards);
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--action);
+  --primary-foreground: var(--on-action);
+  --secondary: var(--surface-sunken);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-sunken);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--cyan);
+  --accent-foreground: var(--on-field);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--on-action);
+  --border: var(--line);
+  --input: var(--control-border);
+  --ring: var(--focus);
+  --radius: var(--radius-md);
 }
 
-/* Cores adicionais para componentes de aviso */
-:root {
-  --color-lilas: var(--color-wisteria);
-  --color-lilas-soft: var(--color-lilas-soft);
-  --color-matricula: var(--color-verde);
-  --color-edital: var(--color-verde);
-  --color-evento: var(--color-amarelo);
-  --color-cancelamento: var(--color-vermelho);
-  --color-documento: var(--color-ceu);
-  --color-concluido: var(--color-verde);
-  --canvas: var(--color-creme);
-}
-
-.dark {
-  --background: var(--color-tinta);
-  --foreground: var(--color-papel);
-  --card: var(--color-tinta);
-  --card-foreground: var(--color-papel);
-  --popover: var(--color-tinta);
-  --popover-foreground: var(--color-papel);
-  --primary: var(--color-papel);
-  --primary-foreground: var(--color-tinta);
-  --secondary: var(--color-tinta);
-  --secondary-foreground: var(--color-papel);
-  --muted: var(--color-lima);
-  --muted-foreground: var(--color-tinta);
-  --accent: var(--color-lima);
-  --accent-foreground: var(--color-tinta);
-  --destructive: var(--color-vermelho);
-  --destructive-foreground: var(--color-papel);
-  --border: 2px solid var(--color-papel);
-  --input: 2px solid var(--color-papel);
-  --ring: var(--color-acao-azul);
-  --radius: var(--radius-cards);
-
-  --color-lilas: var(--color-wisteria);
-  --color-lilas-soft: color-mix(in srgb, var(--color-wisteria) 30%, var(--color-tinta));
-  --color-matricula: var(--color-verde);
-  --color-edital: var(--color-verde);
-  --color-evento: var(--color-amarelo);
-  --color-cancelamento: var(--color-vermelho);
-  --color-documento: var(--color-ceu);
-  --color-concluido: var(--color-verde);
-  --canvas: var(--color-tinta);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-}
-
-/* Foco visível obrigatório: anel de 2px com offset */
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-.sidebar-escura :focus-visible {
-  outline-color: var(--sidebar-ring);
-}
-
-/* Micro-label de seção: uppercase, tracking largo */
-.micro-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 0;
 }

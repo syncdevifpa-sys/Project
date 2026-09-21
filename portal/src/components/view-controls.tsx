@@ -28,18 +28,18 @@ export function ViewControls({
   onToggleCampos,
 }: ViewControlsProps) {
   return (
-    <div className="mb-6 flex flex-col gap-3.5">
+    <div className="mb-6 flex flex-col gap-4">
       {/* Linha superior: Switch de visualização + Contador + Ações */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex items-center gap-1 rounded-full border-[1.5px] border-[#2e3646] p-1 bg-[#181e2b]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
+        <div className="inline-flex items-center gap-1 rounded-full p-1 bg-slate-100/90 shadow-2xs">
           <button
             type="button"
             onClick={() => onViewModeChange("tabela")}
             className={cn(
-              "rounded-full px-4 py-1 text-xs font-bold transition-colors",
+              "rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer",
               viewMode === "tabela"
-                ? "bg-[#bef264] text-[#10141A] border-[1.5px] border-black"
-                : "text-zinc-300 hover:bg-white/10 hover:text-white"
+                ? "bg-white text-slate-900 shadow-xs"
+                : "text-slate-500 hover:text-slate-800"
             )}
           >
             Tabela
@@ -48,10 +48,10 @@ export function ViewControls({
             type="button"
             onClick={() => onViewModeChange("quadro")}
             className={cn(
-              "rounded-full px-4 py-1 text-xs font-bold transition-colors",
+              "rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer",
               viewMode === "quadro"
-                ? "bg-[#bef264] text-[#10141A] border-[1.5px] border-black"
-                : "text-zinc-300 hover:bg-white/10 hover:text-white"
+                ? "bg-white text-slate-900 shadow-xs"
+                : "text-slate-500 hover:text-slate-800"
             )}
           >
             Quadro
@@ -60,10 +60,10 @@ export function ViewControls({
             type="button"
             onClick={() => onViewModeChange("lista")}
             className={cn(
-              "rounded-full px-4 py-1 text-xs font-bold transition-colors",
+              "rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer",
               viewMode === "lista"
-                ? "bg-[#bef264] text-[#10141A] border-[1.5px] border-black"
-                : "text-zinc-300 hover:bg-white/10 hover:text-white"
+                ? "bg-white text-slate-900 shadow-xs"
+                : "text-slate-500 hover:text-slate-800"
             )}
           >
             Lista
@@ -71,20 +71,20 @@ export function ViewControls({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Mostrando todos os {totalCount}
           </span>
           <button
             type="button"
             onClick={onToggleCampos}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-3.5 py-1 text-xs font-bold text-white hover:bg-white/10 transition"
+            className="rounded-full border border-slate-200/70 bg-slate-50 px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
           >
             Campos
           </button>
           <button
             type="button"
             onClick={onToggleSort}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-3.5 py-1 text-xs font-bold text-white hover:bg-white/10 transition"
+            className="rounded-full border border-slate-200/70 bg-slate-50 px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
           >
             {sortAscending ? "Crescente ↑" : "Decrescente ↓"}
           </button>
@@ -93,8 +93,8 @@ export function ViewControls({
 
       {/* Linha inferior: Filtros de categoria/situação/vínculo */}
       {filterOptions.length > 0 && onFilterChange && (
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#9ca3af] mr-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mr-2">
             {filterLabel}
           </span>
           {filterOptions.map((opt) => (
@@ -103,10 +103,10 @@ export function ViewControls({
               type="button"
               onClick={() => onFilterChange(opt)}
               className={cn(
-                "rounded-full px-4 py-1 text-xs font-bold border-[1.5px] transition-colors",
+                "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer",
                 activeFilter === opt
-                  ? "bg-[#bef264] text-[#10141A] border-black"
-                  : "bg-[#181e2b] text-zinc-300 border-[#2e3646] hover:border-zinc-500 hover:text-white"
+                  ? "bg-slate-900 text-white font-bold shadow-xs"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
               )}
             >
               {opt}

@@ -1,97 +1,16 @@
-:root {
-  /* Colors */
-  --color-tinta: #1d1d1f;
-  --color-papel: #ffffff;
-  --color-creme: #f7f4f2;
-  --color-ceu-palido: #dceeff;
-  --color-cinza-medio: #707070;
-  --color-cinza-sobre-tinta: #a1a1a6;
-  --color-borda-sutil: #3a3a3d;
-  --color-acao-azul: #0071e3;
-  --color-link-azul: #0066cc;
-  --color-lima: #d2e534;
-  --color-wisteria: #d8d1ff;
-  --color-amarelo: #ffda00;
-  --color-amarelo-quente: #ffe54d;
-  --color-vermelho: #ff4141;
-  --color-verde: #16ab59;
-  --color-ceu: #91d8ec;
-  --color-rosa: #ffbac4;
-  --color-pessego: #f6e0db;
-
-  /* Typography */
-  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  --font-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-  --font-mono: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-
-  --text-caption-mono: 12px;
-  --tracking-caption-mono: -0.156px;
-  --text-caption: 14px;
-  --tracking-caption: -0.224px;
-  --text-body: 17px;
-  --leading-body: 1.47;
-  --tracking-body: -0.374px;
-  --text-body-lg: 21px;
-  --leading-body-lg: 1.38;
-  --tracking-body-lg: 0.231px;
-  --text-lead: 24px;
-  --tracking-lead: -0.2px;
-  --text-heading-sm: 28px;
-  --tracking-heading-sm: 0.196px;
-  --text-heading: 42px;
-  --tracking-heading: -0.378px;
-  --text-heading-lg: 52px;
-  --tracking-heading-lg: -0.468px;
-  --text-display: clamp(58px, 9vw, 132px);
-  --leading-display: 1.05;
-  --tracking-display: -0.015em;
-  --text-number: 62px;
-  --tracking-number: -0.558px;
-
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* Spacing */
-  --spacing-4: 4px;
-  --spacing-8: 8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-20: 20px;
-  --spacing-24: 24px;
-  --spacing-28: 28px;
-  --spacing-32: 32px;
-  --spacing-48: 48px;
-  --spacing-56: 56px;
-  --spacing-88: 88px;
-  --spacing-96: 96px;
-  --spacing-100: 100px;
-
-  /* Layout */
-  --page-max-width: 1200px;
-  --section-padding-y: 96px;
-  --card-padding: 28px;
-  --element-gap: 16px;
-
-  /* Border Radius */
-  --radius-image: 16px;
-  --radius-cards: 28px;
-  --radius-badges: 36px;
-  --radius-buttons: 980px;
-  --radius-inputs: 980px;
-  --radius-shapes: 0px;
-  --radius-circle: 5000px;
-
-  /* Borders */
-  --border-ink: 2px solid #1d1d1f;
-  --border-paper: 2px solid #ffffff;
-
-  /* Surfaces */
-  --surface-creme: #f7f4f2;
-  --surface-papel: #ffffff;
-  --surface-ceu-palido: #dceeff;
-  --surface-lima: #d2e534;
-  --surface-wisteria: #d8d1ff;
-  --surface-tinta: #1d1d1f;
-}
+:root,[data-theme=light]{--canvas:#ebebeb;--surface:#ffffff;--surface-sunken:#f4f4f4;--chip-active:#dcdcdc;--line:#e4e4e4;--control-border:#8c8c8c;--ink:#111111;--ink-muted:#626262;--action:#111111;--on-action:#ffffff;--on-field:#111111;--on-field-muted:#3b3b3b;--cyan:#8fd8ea;--pink:#f7a6cf;--yellow:#ffd84a;--lime:#c6f36b;--orange:#ff6a2b;--link:#2f4bff;--danger:#d9261c;--focus:#111111;--neutral-soft:#ececec;--neutral-ink:#3d3d3d;--cyan-soft:#d6f2f9;--cyan-ink:#0a5566;--pink-soft:#fde1ef;--pink-ink:#8f1a56;--yellow-soft:#fff1b3;--yellow-ink:#634b00;--green-soft:#d4f3e0;--green-ink:#0c6532;--orange-soft:#ffe1d3;--orange-ink:#9c2f00;--blue-soft:#dfe5ff;--blue-ink:#2336b3;--field-shape:#ffffff;--scrim:#11111166;--shadow-float:0 2px 6px #1111110f, 0 18px 40px -8px #11111129;--focus-ring:0 0 0 2px #ffffff, 0 0 0 4px #111111;}
+[data-theme=dark]{--canvas:#0d0d0d;--surface:#191919;--surface-sunken:#222222;--chip-active:#383838;--line:#2c2c2c;--control-border:#6e6e6e;--ink:#f2f2f2;--ink-muted:#a6a6a6;--action:#f2f2f2;--on-action:#111111;--on-field:#111111;--on-field-muted:#3b3b3b;--cyan:#79cfe4;--pink:#f29ac6;--yellow:#f5cf3f;--lime:#bdea62;--orange:#ff7a40;--link:#8fa2ff;--danger:#ff7b72;--focus:#f2f2f2;--neutral-soft:#2e2e2e;--neutral-ink:#d4d4d4;--cyan-soft:#0f3842;--cyan-ink:#95e2f3;--pink-soft:#48152f;--pink-ink:#ffb6db;--yellow-soft:#433706;--yellow-ink:#ffe27d;--green-soft:#0e3a21;--green-ink:#82e3a9;--orange-soft:#4b1d08;--orange-ink:#ffae8a;--blue-soft:#1b2556;--blue-ink:#b0beff;--field-shape:#ffffff;--scrim:#000000a6;--shadow-float:0 18px 40px -8px #000000cc;--focus-ring:0 0 0 2px #191919, 0 0 0 4px #f2f2f2;}
+:root{--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-12:48px;--radius-xs:6px;--radius-sm:10px;--radius-md:14px;--radius-lg:20px;--radius-xl:28px;--radius-full:9999px;--font-sans:"Onest", ui-sans-serif, system-ui, sans-serif;--font-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;}
+@font-face{font-family:'Onest';src:url('./fonts/Onest-Variable-latin.woff2') format('woff2'), url('/fonts/Onest-Variable-latin.woff2') format('woff2');font-weight:100 900;}
+@font-face{font-family:'JetBrains Mono';src:url('./fonts/JetBrainsMono-Variable-latin.woff2') format('woff2'), url('/fonts/JetBrainsMono-Variable-latin.woff2') format('woff2');font-weight:100 800;}
+.display-xl{font-family:var(--font-sans);font-size:64px;line-height:77px;font-weight:500;letter-spacing:-0.035em}
+.display{font-family:var(--font-sans);font-size:44px;line-height:53px;font-weight:500;letter-spacing:-0.03em}
+.stat{font-family:var(--font-sans);font-size:48px;line-height:58px;font-weight:500;letter-spacing:-0.04em}
+.title{font-family:var(--font-sans);font-size:28px;line-height:34px;font-weight:500;letter-spacing:-0.02em}
+.card-title{font-family:var(--font-sans);font-size:22px;line-height:27px;font-weight:500;letter-spacing:-0.015em}
+.body{font-family:var(--font-sans);font-size:15px;line-height:22px;font-weight:400;letter-spacing:normal}
+.body-strong{font-family:var(--font-sans);font-size:15px;line-height:22px;font-weight:600;letter-spacing:-0.005em}
+.small{font-family:var(--font-sans);font-size:13px;line-height:18px;font-weight:400;letter-spacing:normal}
+.label{font-family:var(--font-sans);font-size:12px;line-height:16px;font-weight:500;letter-spacing:normal}
+.overline{font-family:var(--font-sans);font-size:11px;line-height:14px;font-weight:600;letter-spacing:0.08em}
+.mono{font-family:var(--font-mono);font-size:13px;line-height:18px;font-weight:400;letter-spacing:normal}

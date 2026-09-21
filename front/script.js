@@ -33,12 +33,12 @@ document.querySelectorAll('[data-filtro]').forEach((grupo) => {
 // Helper para redirecionar para o portal Arcádia
 function redirecionarParaPortal() {
     if (window.location.port === '3000') {
-        window.location.href = '/portal';
+        window.location.href = '/portal/';
     } else if (window.location.port === '5173') {
         window.location.href = '/';
     } else {
         // Se acessado por outro servidor ou arquivo
-        window.location.href = '/portal';
+        window.location.href = '/portal/';
     }
 }
 
@@ -136,10 +136,14 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                 if (res.ok) {
                     const data = await res.json();
                     const usuario = data.usuario || { nome, email, vinculo };
-                    localStorage.setItem('arcadiaSessao', JSON.stringify({ ...usuario, logado: true }));
+                    const token = data.token || '';
+                    localStorage.setItem('arcadiaSessao', JSON.stringify({ ...usuario, token, logado: true }));
+                    if (token) {
+                        localStorage.setItem('arcadiaToken', token);
+                    }
                     salvarUsuarioLocal({ ...usuario, senha });
                     mostrarSucesso('Conta criada com sucesso! Entrando no portal...');
-                    setTimeout(redirecionarParaPortal, 700);
+                    setTimeout(redirecionarParaPortal, 500);
                     return;
                 } else if (res.status === 409) {
                     return mostrarErro('Este e-mail já está cadastrado. Tente entrar.');
@@ -155,6 +159,7 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                     return mostrarErro('Este e-mail já está cadastrado no sistema.');
                 }
 
+                const tokenLocal = 'local-' + Date.now();
                 const novoUsuario = {
                     id: Date.now(),
                     nome,
@@ -165,9 +170,10 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                     matricula: String(Math.floor(10000000 + Math.random() * 90000000))
                 };
                 salvarUsuarioLocal(novoUsuario);
-                localStorage.setItem('arcadiaSessao', JSON.stringify({ ...novoUsuario, logado: true }));
+                localStorage.setItem('arcadiaSessao', JSON.stringify({ ...novoUsuario, token: tokenLocal, logado: true }));
+                localStorage.setItem('arcadiaToken', tokenLocal);
                 mostrarSucesso('Conta criada com sucesso! Entrando no portal...');
-                setTimeout(redirecionarParaPortal, 700);
+                setTimeout(redirecionarParaPortal, 500);
             }
         } else if (tipoAcesso === 'login') {
             if (!email || !senha) {
@@ -185,11 +191,15 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                 if (res.ok) {
                     const data = await res.json();
                     const usuario = data.usuario || { email, nome: 'Usuário', vinculo: 'Aluno' };
+                    const token = data.token || '';
                     localStorage.setItem('arcadiaSessao', JSON.stringify({
                         ...usuario,
-                        token: data.token,
+                        token,
                         logado: true
                     }));
+                    if (token) {
+                        localStorage.setItem('arcadiaToken', token);
+                    }
                     redirecionarParaPortal();
                     return;
                 } else if (res.status === 401) {
@@ -207,6 +217,7 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                 );
 
                 if (encontrado) {
+                    const tokenLocal = 'local-' + (encontrado.id || Date.now());
                     localStorage.setItem('arcadiaSessao', JSON.stringify({
                         id: encontrado.id,
                         nome: encontrado.nome,
@@ -214,8 +225,10 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                         vinculo: encontrado.vinculo,
                         matricula: encontrado.matricula,
                         curso: encontrado.curso,
+                        token: tokenLocal,
                         logado: true
                     }));
+                    localStorage.setItem('arcadiaToken', tokenLocal);
                     redirecionarParaPortal();
                 } else {
                     mostrarErro('E-mail ou senha inválidos.');
@@ -233,6 +246,7 @@ document.querySelectorAll('[data-logout]').forEach((btn) => {
             fetch('/api/auth/logout', { method: 'POST' });
         } catch {}
         localStorage.removeItem('arcadiaSessao');
+        localStorage.removeItem('arcadiaToken');
         window.location.href = 'login.html';
     });
 });

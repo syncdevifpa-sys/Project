@@ -118,7 +118,7 @@ export const AVISOS_INICIAIS: Aviso[] = [
   },
   {
     id: "4",
-    titulo: "Aula suspensa — Bloco C",
+    titulo: "Aula suspensa no Bloco C",
     resumo: "Manutenção elétrica no prédio",
     categoria: "cancelamento",
     publico: "Todos",
@@ -321,5 +321,105 @@ export const PASSOS_ONBOARDING = [
   { id: "curso", rotulo: "Confirmar dados do curso" },
   { id: "categorias", rotulo: "Explorar categorias de avisos" },
   { id: "documentos", rotulo: "Verificar pendências de documentos" },
+];
+
+export interface Lembrete {
+  id: string;
+  eventoId?: string;
+  titulo: string;
+  data: string;
+  horario?: string;
+  ativo: boolean;
+  tipo: 'evento' | 'prazo' | 'aviso';
+  descricao?: string;
+}
+
+export const LEMBRETES_INICIAIS: Lembrete[] = [
+  {
+    id: "1",
+    eventoId: "1",
+    titulo: "Abertura da matrícula 2026/2",
+    data: "14 set",
+    horario: "08:00",
+    ativo: true,
+    tipo: "prazo",
+    descricao: "Confirmação de disciplinas pelo portal acadêmico",
+  },
+  {
+    id: "2",
+    eventoId: "2",
+    titulo: "Prazo final de trancamento de matrícula",
+    data: "26 set",
+    horario: "23:59",
+    ativo: true,
+    tipo: "prazo",
+    descricao: "Protocolo de cancelamento via secretaria acadêmica",
+  },
+  {
+    id: "3",
+    eventoId: "3",
+    titulo: "Publicação do resultado PIBIC",
+    data: "10 out",
+    horario: "18:00",
+    ativo: true,
+    tipo: "evento",
+    descricao: "Divulgação dos selecionados para bolsas de iniciação científica",
+  },
+  {
+    id: "4",
+    eventoId: "4",
+    titulo: "Semana de Ciência e Tecnologia",
+    data: "20 out",
+    horario: "09:00",
+    ativo: false,
+    tipo: "evento",
+    descricao: "Palestras e apresentações de banners no auditório central",
+  },
+];
+
+export interface LinkUtil {
+  id: string;
+  titulo: string;
+  url: string;
+  descricao: string;
+  categoria: "Sistemas" | "Acadêmico" | "Institucional" | "Regulamentos";
+}
+
+export const LINKS_UTEIS_INICIAIS: LinkUtil[] = [
+  {
+    id: "1",
+    titulo: "SIGAA — Sistema Integrado de Gestão Acadêmica",
+    url: "https://sigaa.ifpa.edu.br",
+    descricao: "Acesso a notas, frequências, histórico acadêmico e planos de ensino.",
+    categoria: "Sistemas",
+  },
+  {
+    id: "2",
+    titulo: "Biblioteca Virtual IFPA",
+    url: "https://biblioteca.ifpa.edu.br",
+    descricao: "Acervo digital de livros, periódicos, artigos e teses do campus.",
+    categoria: "Acadêmico",
+  },
+  {
+    id: "3",
+    titulo: "Regulamento Didático-Pedagógico (RDP)",
+    url: "https://belem.ifpa.edu.br/documentos-normativos",
+    descricao: "Normas de regime escolar, abono de faltas, dependências e trancamento.",
+    categoria: "Regulamentos",
+  },
+  {
+    id: "4",
+    titulo: "Portal do Aluno e Assistência Estudantil",
+    url: "https://belem.ifpa.edu.br/assistencia-estudantil",
+    descricao: "Editais de auxílio transporte, alimentação, moradia e bolsas de estudo.",
+    categoria: "Institucional",
+  },
+  {
+    id: "5",
+    titulo: "Ouvidoria Geral do IFPA",
+    url: "https://falabr.cgu.gov.br",
+    descricao: "Canal oficial para envio de sugestões, elogios, requerimentos e denúncias.",
+    categoria: "Institucional",
+  },
 ];
 

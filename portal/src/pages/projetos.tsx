@@ -1,25 +1,59 @@
-import { useState, useMemo, useEffect } from "react";
-import { MetricCard } from "@/components/metric-card";
-import { ViewControls, type ViewMode } from "@/components/view-controls";
-import { SelectionBar } from "@/components/selection-bar";
-import { NovoRegistroModal } from "@/components/novo-registro-modal";
-import { type Projeto } from "@/mock-data";
+import React, { useState, useMemo, useEffect } from 'react';
+import {
+  PageHero,
+  ChipBar,
+  FilterPanel,
+  ViewToolbar,
+  RecordCard,
+  DataTable,
+  BoardColumn,
+  BoardCard,
+  Button,
+  Badge,
+  Dialog,
+  TextField,
+  ChoiceChips,
+  EmptyState,
+  SelectionBar,
+  useToast,
+  getStatusTone,
+  type Column,
+} from '@/components/arcadia';
 import {
   getProjetos,
   adicionarProjeto,
   removerProjeto,
   salvarProjetos,
   subscribeToDataChanges,
-} from "@/state/storage";
-import { cn } from "@/lib/utils";
+} from '@/state/storage';
+import type { Projeto } from '@/mock-data';
 
 export default function Projetos() {
+  const { showToast } = useToast();
+
   const [itens, setItens] = useState<Projeto[]>(getProjetos);
-  const [viewMode, setViewMode] = useState<ViewMode>("quadro"); // PDF Página 8 tem Quadro ativo por padrão
-  const [activeFilter, setActiveFilter] = useState("Tudo");
-  const [sortAscending, setSortAscending] = useState(true);
+  const [viewMode, setViewMode] = useState<string>('lista');
+  const [eixoAtivo, setEixoAtivo] = useState('Tudo');
+  const [busca, setBusca] = useState('');
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalNovo, setModalNovo] = useState(false);
+
+  // Filtros laterais
+  const [filtroSituacao, setFiltroSituacao] = useState<Record<string, boolean>>({
+    Inscrições: true,
+    'Em seleção': true,
+    Ativo: true,
+    Concluído: true,
+  });
+
+  // Modal form
+  const [formTitulo, setFormTitulo] = useState('');
+  const [formAutor, setFormAutor] = useState('Prof. Marcos Tavares');
+  const [formEixo, setFormEixo] = useState<'Pesquisa' | 'Ensino' | 'Extensão' | 'Inovação'>('Pesquisa');
+  const [formVagas, setFormVagas] = useState('4');
+  const [formSituacao, setFormSituacao] = useState<'Inscrições' | 'Em seleção' | 'Ativo' | 'Concluído'>('Inscrições');
+  const [formErro, setFormErro] = useState('');
 
   useEffect(() => {
     const unsubscribe = subscribeToDataChanges(() => {
@@ -28,420 +62,417 @@ export default function Projetos() {
     return unsubscribe;
   }, []);
 
-  const eixosFiltro = ["Tudo", "Pesquisa", "Ensino", "Extensão", "Inovação"];
+  const eixosLista = ['Tudo', 'Pesquisa', 'Ensino', 'Extensão', 'Inovação'];
 
-  const getEixoBadgeClass = (eixo: string) => {
-    switch (eixo) {
-      case "Pesquisa":
-        return "bg-[#8ae4f9] text-[#10141A] border-black";
-      case "Ensino":
-        return "bg-[#d8d1ff] text-[#10141A] border-black";
-      case "Extensão":
-        return "bg-[#bef264] text-[#10141A] border-black";
-      case "Inovação":
-        return "bg-[#facc15] text-[#10141A] border-black";
-      default:
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-    }
-  };
-
-  const getSituacaoHeaderClass = (sit: string) => {
-    switch (sit) {
-      case "Inscrições":
-        return "bg-[#facc15] text-[#10141A] border-black";
-      case "Em seleção":
-        return "bg-[#fef08a] text-[#10141A] border-black";
-      case "Ativo":
-        return "bg-[#10b981] text-white border-transparent";
-      case "Concluído":
-        return "bg-[#22c55e] text-white border-transparent";
-      default:
-        return "bg-[#181e2b] text-zinc-300 border-[#2e3646]";
-    }
-  };
+  const contagemEixos = useMemo(() => {
+    const map: Record<string, number> = { Tudo: itens.length };
+    eixosLista.slice(1).forEach((e) => {
+      map[e] = itens.filter(
+        (p) => p.eixo.toLowerCase() === e.toLowerCase()
+      ).length;
+    });
+    return eixosLista.map((e) => ({
+      label: e,
+      count: map[e],
+    }));
+  }, [itens]);
 
   const filteredItens = useMemo(() => {
     let result = [...itens];
-    if (activeFilter !== "Tudo") {
+
+    if (eixoAtivo !== 'Tudo') {
       result = result.filter(
-        (item) => item.eixo.toLowerCase() === activeFilter.toLowerCase()
+        (p) => p.eixo.toLowerCase() === eixoAtivo.toLowerCase()
       );
     }
+
+    if (busca.trim()) {
+      const q = busca.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.titulo.toLowerCase().includes(q) ||
+          p.autor.toLowerCase().includes(q) ||
+          p.eixo.toLowerCase().includes(q)
+      );
+    }
+
+    result = result.filter((p) => filtroSituacao[p.situacao] ?? true);
+
     result.sort((a, b) => {
-      return sortAscending
+      return sortAsc
         ? a.titulo.localeCompare(b.titulo)
         : b.titulo.localeCompare(a.titulo);
     });
+
     return result;
-  }, [itens, activeFilter, sortAscending]);
+  }, [itens, eixoAtivo, busca, filtroSituacao, sortAsc]);
 
-  const totalVagas = useMemo(() => {
-    return itens.reduce((acc, curr) => acc + curr.vagas, 0);
-  }, [itens]);
+  const handleDelete = (projeto: Projeto) => {
+    const backup = [...itens];
+    removerProjeto(projeto.id);
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredItens.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredItens.map((i) => i.id));
+    showToast({
+      message: 'Projeto excluído',
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarProjetos(backup),
+      },
+    });
+  };
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitulo.trim()) {
+      setFormErro('Digite o título do projeto');
+      return;
     }
+
+    adicionarProjeto({
+      titulo: formTitulo.trim(),
+      autor: formAutor.trim() || 'Docente responsável',
+      eixo: formEixo,
+      vagas: parseInt(formVagas, 10) || 1,
+      situacao: formSituacao,
+    });
+
+    setModalNovo(false);
+    setFormTitulo('');
+    setFormErro('');
+
+    showToast({ message: 'Projeto submetido com sucesso' });
   };
 
-  const toggleSelectItem = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
+  const handleExportCSV = () => {
+    const list = selectedIds.length > 0
+      ? itens.filter((i) => selectedIds.includes(i.id))
+      : filteredItens;
 
-  const handleExcluirSelecionados = () => {
-    if (confirm(`Deseja excluir os ${selectedIds.length} projetos selecionados?`)) {
-      const restantes = itens.filter((i) => !selectedIds.includes(i.id));
-      salvarProjetos(restantes);
-      setSelectedIds([]);
-    }
-  };
-
-  const handleExportar = () => {
     const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["Projeto,Autor,Eixo,Vagas,Situação"]
+      'data:text/csv;charset=utf-8,' +
+      ['Título,Coordenador,Eixo,Vagas,Situação']
         .concat(
-          filteredItens.map(
-            (i) =>
-              `"${i.titulo}","${i.autor}","${i.eixo}","${i.vagas}","${i.situacao}"`
+          list.map(
+            (p) =>
+              `"${p.titulo}","${p.autor}","${p.eixo}",${p.vagas},"${p.situacao}"`
           )
         )
-        .join("\n");
+        .join('\n');
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "projetos.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'projetos.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleNovoProjeto = (novo: any) => {
-    adicionarProjeto({
-      titulo: novo.titulo,
-      autor: novo.publico || "Coordenação Geral",
-      eixo: (novo.categoria === "Edital" ? "Pesquisa" : "Extensão") as any,
-      vagas: Math.floor(2 + Math.random() * 8),
-      situacao: (novo.situacao === "Publicado" ? "Inscrições" : "Ativo") as any,
+  const handleDeleteSelection = () => {
+    const backup = [...itens];
+    const remaining = itens.filter((i) => !selectedIds.includes(i.id));
+    salvarProjetos(remaining);
+    setSelectedIds([]);
+
+    showToast({
+      message: `${selectedIds.length} projetos excluídos`,
+      action: {
+        label: 'Desfazer',
+        onClick: () => salvarProjetos(backup),
+      },
     });
   };
 
+  const columns: Column<Projeto>[] = [
+    {
+      key: 'titulo',
+      label: 'Projeto',
+      sortable: true,
+      kind: 'strong',
+      render: (p) => p.titulo,
+    },
+    {
+      key: 'autor',
+      label: 'Coordenador',
+      render: (p) => p.autor,
+    },
+    {
+      key: 'eixo',
+      label: 'Eixo',
+      render: (p) => (
+        <Badge tone={getStatusTone(p.eixo)}>{p.eixo}</Badge>
+      ),
+    },
+    {
+      key: 'vagas',
+      label: 'Vagas',
+      kind: 'mono',
+      render: (p) => `${p.vagas} ${p.vagas === 1 ? 'vaga' : 'vagas'}`,
+    },
+    {
+      key: 'situacao',
+      label: 'Situação',
+      render: (p) => (
+        <Badge tone={getStatusTone(p.situacao)}>{p.situacao}</Badge>
+      ),
+    },
+  ];
+
   return (
-    <div className="flex flex-col text-left text-white">
-      {/* Cabeçalho */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#2e3646] pb-4">
-        <div className="flex items-baseline gap-2.5">
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">
-            Projetos
-          </h2>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            {itens.length} REGISTROS
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleExportar}
-            className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-4 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition"
-          >
-            Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-[#085bbd]"
-          >
-            Novo projeto &rarr;
-          </button>
-        </div>
-      </div>
-
-      {/* 3 Metric Cards (Alinhados ao PDF Página 8) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard
-          title="Total em projetos"
-          value={itens.length}
-          sublabel="PROJETOS CADASTRADOS"
-          badgeText="TODOS OS EIXOS"
-          badgeVariant="lime"
-        />
-        <MetricCard
-          title="Vagas disponíveis"
-          value={totalVagas}
-          sublabel="BOLSAS E VOLUNTÁRIOS"
-          badgeText="VAGAS ABERTAS"
-          badgeVariant="cyan"
-        />
-        <MetricCard
-          title="Situações distintas"
-          value={3}
-          sublabel="3 SITUAÇÕES EM USO"
-          badgeText="EM ANDAMENTO"
-          badgeVariant="lavender"
-        />
-      </div>
-
-      {/* Controles de Visualização */}
-      <ViewControls
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        totalCount={filteredItens.length}
-        filterLabel="EIXO"
-        filterOptions={eixosFiltro}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        sortAscending={sortAscending}
-        onToggleSort={() => setSortAscending(!sortAscending)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* 1. PageHero compacto */}
+      <PageHero
+        title="Projetos"
+        count={itens.length}
+        tone="cyan"
+        description="Iniciativas de pesquisa aplicada, extensão comunitária e desenvolvimento acadêmico no campus."
+        actions={
+          <>
+            <Button
+              variant="primary"
+              iconRight="arrow-right"
+              onClick={() => setModalNovo(true)}
+            >
+              Novo projeto
+            </Button>
+            <Button icon="download" onClick={handleExportCSV}>
+              Exportar CSV
+            </Button>
+          </>
+        }
       />
 
-      {/* Conteúdo */}
-      {filteredItens.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-12 text-center shadow-md">
-          <span className="mb-3 rounded-full border border-zinc-700 bg-zinc-800 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9ca3af]">
-            PROJETOS
-          </span>
-          <h3 className="text-2xl font-extrabold text-white mb-2">
-            Nenhum projeto encontrado
-          </h3>
-          <p className="max-w-md text-sm text-[#9ca3af] mb-6">
-            Você não possui projetos cadastrados para o filtro selecionado.
-          </p>
-          <button
-            type="button"
-            onClick={() => setModalAberto(true)}
-            className="rounded-full bg-[#1070e5] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#085bbd]"
+      {/* 2. ChipBar com eixos */}
+      <ChipBar
+        items={contagemEixos}
+        value={eixoAtivo}
+        onChange={setEixoAtivo}
+      />
+
+      {/* 3. Duas colunas: FilterPanel e Conteúdo */}
+      <div className="ar-split">
+        <FilterPanel
+          searchPlaceholder="Buscar por título ou coordenador"
+          searchValue={busca}
+          onSearchChange={setBusca}
+          groups={[
+            {
+              title: 'SITUAÇÃO',
+              options: ['Inscrições', 'Em seleção', 'Ativo', 'Concluído'].map((s) => ({
+                label: s,
+                checked: filtroSituacao[s] ?? true,
+                count: itens.filter((p) => p.situacao === s).length,
+                onChange: (checked) =>
+                  setFiltroSituacao((prev) => ({ ...prev, [s]: checked })),
+              })),
+            },
+          ]}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+          <ViewToolbar
+            view={viewMode}
+            onViewChange={setViewMode}
+            summary={`Mostrando todos os ${filteredItens.length} projetos`}
           >
-            Novo projeto &rarr;
-          </button>
-        </div>
-      ) : viewMode === "quadro" ? (
-        /* Visualização: Quadro Kanban (PDF Página 8) */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {(["Inscrições", "Em seleção", "Ativo", "Concluído"] as const).map((sit) => {
-            const grupoItens = filteredItens.filter((i) => i.situacao === sit);
-            return (
-              <div
-                key={sit}
-                className="rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-4 shadow-md"
-              >
-                <div className="mb-3 flex items-center justify-between">
-                  <span
-                    className={cn(
-                      "rounded-full border px-3 py-0.5 text-xs font-extrabold uppercase tracking-wider",
-                      getSituacaoHeaderClass(sit)
-                    )}
-                  >
-                    {sit} {grupoItens.length}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-3">
-                  {grupoItens.map((item) => (
-                    <div
-                      key={item.id}
-                      className="rounded-xl border-[1.5px] border-[#2e3646] p-3.5 bg-[#121620] shadow-xs"
-                    >
-                      <div className="flex items-start justify-between gap-1 mb-1">
-                        <h4 className="font-bold text-sm text-white">
-                          {item.titulo}
-                        </h4>
-                        <button
-                          type="button"
-                          onClick={() => removerProjeto(item.id)}
-                          className="text-xs text-zinc-500 hover:text-red-400"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <p className="text-xs text-[#9ca3af] mb-2">{item.autor}</p>
-                      <div className="flex items-center justify-between pt-1 border-t border-[#2e3646] text-xs">
-                        <span
-                          className={cn(
-                            "rounded-full border px-2 py-0.5 text-[10px] font-bold",
-                            getEixoBadgeClass(item.eixo)
-                          )}
-                        >
-                          {item.eixo}
-                        </span>
-                        <span className="font-bold text-zinc-300">
-                          {item.vagas} {item.vagas === 1 ? "vaga" : "vagas"}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                  {grupoItens.length === 0 && (
-                    <p className="py-6 text-center text-xs text-[#9ca3af]">Sem projetos</p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : viewMode === "tabela" ? (
-        /* Visualização: Tabela */
-        <div className="overflow-x-auto rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] shadow-xl">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b-[1.5px] border-[#2e3646] bg-[#121620] text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
-              <tr>
-                <th className="w-12 px-4 py-3 text-center">
-                  <button
-                    type="button"
-                    onClick={toggleSelectAll}
-                    className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                  >
-                    {selectedIds.length === filteredItens.length && (
-                      <span className="size-2.5 rounded-full bg-[#bef264]" />
-                    )}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-white">PROJETO</th>
-                <th className="px-4 py-3">COORDENADOR</th>
-                <th className="px-4 py-3">EIXO</th>
-                <th className="px-4 py-3">VAGAS</th>
-                <th className="px-4 py-3">SITUAÇÃO</th>
-                <th className="px-4 py-3 text-right">AÇÕES</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#242c3d]">
-              {filteredItens.map((item) => {
-                const isSelected = selectedIds.includes(item.id);
+            <Button
+              size="sm"
+              icon="arrow-up-down"
+              onClick={() => setSortAsc((v) => !v)}
+            >
+              {sortAsc ? 'A a Z' : 'Z a A'}
+            </Button>
+          </ViewToolbar>
+
+          {filteredItens.length === 0 ? (
+            <EmptyState
+              title="Nenhum projeto encontrado"
+              description="Tente alterar os termos da busca ou redefinir os filtros aplicados."
+              actions={
+                <Button
+                  onClick={() => {
+                    setEixoAtivo('Tudo');
+                    setBusca('');
+                    setFiltroSituacao({
+                      Inscrições: true,
+                      'Em seleção': true,
+                      Ativo: true,
+                      Concluído: true,
+                    });
+                  }}
+                >
+                  Limpar filtros
+                </Button>
+              }
+            />
+          ) : viewMode === 'lista' ? (
+            <div className="ar-card-grid">
+              {filteredItens.map((p, index) => {
+                const isFixado = index === 0 && eixoAtivo === 'Tudo';
+
                 return (
-                  <tr
-                    key={item.id}
-                    className={cn(
-                      "transition-colors hover:bg-white/[0.04]",
-                      isSelected && "bg-blue-900/20"
-                    )}
-                  >
-                    <td className="w-12 px-4 py-3.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => toggleSelectItem(item.id)}
-                        className="flex size-5 mx-auto items-center justify-center rounded-full border-[1.5px] border-zinc-500 hover:border-white transition"
-                      >
-                        {isSelected && <span className="size-2.5 rounded-full bg-[#bef264]" />}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3.5 font-bold text-white">
-                      {item.titulo}
-                    </td>
-                    <td className="px-4 py-3.5 text-xs text-zinc-300">
-                      {item.autor}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                          getEixoBadgeClass(item.eixo)
-                        )}
-                      >
-                        {item.eixo}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-xs font-bold text-zinc-300">
-                      {item.vagas} vagas
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-full border px-3 py-0.5 text-xs font-bold",
-                          getSituacaoHeaderClass(item.situacao)
-                        )}
-                      >
-                        {item.situacao}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => removerProjeto(item.id)}
-                        className="text-xs text-zinc-500 hover:text-red-400 font-semibold"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
+                  <RecordCard
+                    key={p.id}
+                    title={p.titulo}
+                    tags={[p.eixo]}
+                    badges={[
+                      {
+                        label: p.situacao,
+                        tone: getStatusTone(p.situacao),
+                      },
+                    ]}
+                    stamp={isFixado ? 'Fixado' : undefined}
+                    tone={isFixado ? 'pink' : undefined}
+                    meta={[
+                      { label: 'Coordenador', value: p.autor },
+                      { label: 'Vagas ofertadas', value: String(p.vagas) },
+                    ]}
+                    signal={{
+                      tone: p.situacao === 'Inscrições' ? 'link' : 'muted',
+                      label: `${p.vagas} ${p.vagas === 1 ? 'vaga disponível' : 'vagas disponíveis'}`,
+                    }}
+                  />
                 );
               })}
-            </tbody>
-          </table>
-          <div className="flex items-center justify-between border-t border-[#2e3646] px-5 py-3 text-xs bg-[#121620]">
-            <span className="font-bold text-[#9ca3af] uppercase tracking-wider text-[10.5px]">
-              MOSTRANDO TODOS OS {filteredItens.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => setModalAberto(true)}
-              className="rounded-full border-[1.5px] border-[#2e3646] bg-[#181e2b] px-3.5 py-1 text-xs font-bold text-white hover:bg-white/10 transition-colors"
-            >
-              + Novo registro
-            </button>
-          </div>
-        </div>
-      ) : (
-        /* Visualização: Lista */
-        <div className="flex flex-col gap-3">
-          {filteredItens.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col md:flex-row md:items-center justify-between rounded-[20px] border-[1.5px] border-[#2e3646] bg-[#181e2b] p-5 shadow-md gap-3"
-            >
-              <div>
-                <h4 className="text-base font-extrabold text-white mb-1">
-                  {item.titulo}
-                </h4>
-                <p className="text-xs text-[#9ca3af]">Autor: {item.autor} · {item.vagas} vagas</p>
-              </div>
-              <div className="flex items-center gap-2.5 self-start md:self-auto">
-                <span
-                  className={cn(
-                    "rounded-full border px-3 py-0.5 text-xs font-bold",
-                    getEixoBadgeClass(item.eixo)
-                  )}
-                >
-                  {item.eixo}
-                </span>
-                <span
-                  className={cn(
-                    "rounded-full border px-3 py-0.5 text-xs font-bold",
-                    getSituacaoHeaderClass(item.situacao)
-                  )}
-                >
-                  {item.situacao}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removerProjeto(item.id)}
-                  className="ml-2 text-xs text-zinc-500 hover:text-red-400"
-                >
-                  ✕
-                </button>
-              </div>
             </div>
-          ))}
+          ) : viewMode === 'tabela' ? (
+            <DataTable
+              columns={columns}
+              rows={filteredItens}
+              selectable
+              selected={selectedIds}
+              onSelectAll={() => {
+                if (selectedIds.length === filteredItens.length) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds(filteredItens.map((i) => i.id));
+                }
+              }}
+              onToggleSelect={(id) => {
+                const sId = String(id);
+                setSelectedIds((prev) =>
+                  prev.includes(sId)
+                    ? prev.filter((x) => x !== sId)
+                    : [...prev, sId]
+                );
+              }}
+              onRemove={handleDelete}
+            />
+          ) : (
+            /* Visualização Quadro */
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                gap: 12,
+                alignItems: 'start',
+              }}
+            >
+              {(['Inscrições', 'Em seleção', 'Ativo', 'Concluído'] as const).map((sit) => {
+                const colunaItens = filteredItens.filter((p) => p.situacao === sit);
+                return (
+                  <BoardColumn
+                    key={sit}
+                    title={sit}
+                    tone={getStatusTone(sit)}
+                    empty={`Nenhum projeto em ${sit.toLowerCase()}`}
+                  >
+                    {colunaItens.map((p) => (
+                      <BoardCard
+                        key={p.id}
+                        title={p.titulo}
+                        meta={p.autor}
+                        badge={{
+                          label: p.eixo,
+                          tone: getStatusTone(p.eixo),
+                        }}
+                        footer={`${p.vagas} vagas`}
+                      />
+                    ))}
+                  </BoardColumn>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Floating Selection Bar */}
       <SelectionBar
         count={selectedIds.length}
+        actions={[
+          {
+            label: 'Exportar seleção',
+            onClick: handleExportCSV,
+          },
+          {
+            label: 'Excluir',
+            danger: true,
+            onClick: handleDeleteSelection,
+          },
+        ]}
         onClear={() => setSelectedIds([])}
-        onDelete={handleExcluirSelecionados}
-        onExport={handleExportar}
       />
 
       {/* Modal Novo Projeto */}
-      <NovoRegistroModal
-        aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
-        onSalvar={handleNovoProjeto}
-        tipoRegistro="Projeto"
-      />
+      {modalNovo && (
+        <Dialog
+          title="Novo projeto"
+          eyebrow="INICIATIVAS ACADÊMICAS"
+          description="Submeta uma nova proposta de pesquisa, extensão, ensino ou inovação."
+          onClose={() => setModalNovo(false)}
+          footer={
+            <>
+              <Button variant="primary" onClick={handleCreate}>
+                Criar registro
+              </Button>
+              <Button variant="ghost" onClick={() => setModalNovo(false)}>
+                Cancelar
+              </Button>
+            </>
+          }
+        >
+          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField
+              label="Título do projeto"
+              value={formTitulo}
+              onChange={(e) => {
+                setFormTitulo(e.target.value);
+                setFormErro('');
+              }}
+              error={formErro}
+              placeholder="Exemplo: Robótica educacional na Amazônia"
+              autoFocus
+            />
+
+            <TextField
+              label="Coordenador ou orientador"
+              value={formAutor}
+              onChange={(e) => setFormAutor(e.target.value)}
+              placeholder="Exemplo: Prof. Marcos Tavares"
+            />
+
+            <ChoiceChips
+              label="Eixo temático"
+              options={['Pesquisa', 'Ensino', 'Extensão', 'Inovação']}
+              value={formEixo}
+              onChange={(v) => setFormEixo(v as any)}
+            />
+
+            <TextField
+              label="Quantidade de vagas"
+              type="number"
+              value={formVagas}
+              onChange={(e) => setFormVagas(e.target.value)}
+              placeholder="Exemplo: 4"
+            />
+
+            <ChoiceChips
+              label="Situação inicial"
+              options={['Inscrições', 'Em seleção', 'Ativo', 'Concluído']}
+              value={formSituacao}
+              onChange={(v) => setFormSituacao(v as any)}
+            />
+          </form>
+        </Dialog>
+      )}
     </div>
   );
 }

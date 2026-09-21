@@ -1,10 +1,55 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arcádia — Portal</title>
+    <title>Arcádia: Portal</title>
+    <script>
+      (function() {
+        var root = document.documentElement;
+        try {
+          var THEME_KEY = 'arcadia-theme';
+          var urlTheme = new URLSearchParams(window.location.search).get('theme');
+          var mode = (urlTheme === 'dark' || urlTheme === 'light' || urlTheme === 'auto') ? urlTheme : (localStorage.getItem(THEME_KEY) || 'light');
+          var dark = false;
+          if (mode === 'auto') {
+            dark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          } else {
+            dark = mode === 'dark';
+          }
+          root.setAttribute('data-theme', dark ? 'dark' : 'light');
+          root.setAttribute('data-theme-mode', mode);
+
+          if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+              try {
+                if ((localStorage.getItem(THEME_KEY) || 'light') === 'auto') {
+                  root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+                }
+              } catch (err) {}
+            });
+          }
+
+          var accent = localStorage.getItem(THEME_KEY + '-accent') || 'cyan';
+          root.setAttribute('data-accent', accent);
+
+          var text = localStorage.getItem(THEME_KEY + '-text') || 'default';
+          if (text === 'large') {
+            root.setAttribute('data-text', 'large');
+          } else {
+            root.removeAttribute('data-text');
+          }
+
+          var motion = localStorage.getItem(THEME_KEY + '-motion') || 'full';
+          if (motion === 'reduced') {
+            root.setAttribute('data-motion', 'reduced');
+          } else {
+            root.removeAttribute('data-motion');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
