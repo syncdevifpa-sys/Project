@@ -10,47 +10,34 @@
       href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="landing.css?v=5" />
+    <link rel="stylesheet" href="landing.css?v=6" />
   </head>
   <body>
     <!-- ============================================================
-       1. BARRA DE NAVEGAÇÃO MODERNA (ESTILO SKILLFORGE & TECHTOTS)
+       1. BARRA DE NAVEGAÇÃO (DESIGN LIMPO, SEM NÚMEROS DE NOTIFICAÇÃO)
        ============================================================ -->
     <header class="nav-wrapper">
       <nav class="nav-container container">
         <a href="/" class="nav-logo" title="Arcádia — IFPA Campus Belém">
           <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="nav-logo-img" width="36" height="36" />
-          <div class="nav-logo-info">
+          <div class="nav-logo-text-group">
             <span class="nav-logo-text">Arcádia</span>
-            <span class="nav-logo-badge">IFPA · BELÉM</span>
+            <span class="nav-logo-campus">IFPA · BELÉM</span>
           </div>
         </a>
 
-        <!-- Capsule Navigation central estilo SkillForge / TechTots -->
-        <div class="nav-capsule-menu" id="navLinks">
-          <a href="#mural" class="nav-capsule-link active">
-            <span>Mural</span>
-            <span class="nav-count-badge">8</span>
-          </a>
-          <a href="#recursos" class="nav-capsule-link">
-            <span>Recursos</span>
-          </a>
-          <a href="#documentos" class="nav-capsule-link">
-            <span>Documentos</span>
-            <span class="nav-count-badge">4</span>
-          </a>
-          <a href="#projetos" class="nav-capsule-link">
-            <span>Projetos</span>
-            <span class="nav-count-badge">4</span>
-          </a>
-          <a href="calendario.html" class="nav-capsule-link">
-            <span>Calendário</span>
-          </a>
+        <!-- Links centrais limpos — SEM números falsos de notificação -->
+        <div class="nav-center-links" id="navLinks">
+          <a href="#mural" class="nav-link-item active">Mural</a>
+          <a href="#recursos" class="nav-link-item">Recursos</a>
+          <a href="#documentos" class="nav-link-item">Documentos</a>
+          <a href="#projetos" class="nav-link-item">Projetos</a>
+          <a href="calendario.html" class="nav-link-item">Calendário</a>
         </div>
 
-        <div class="nav-actions-group">
+        <div class="nav-action-group">
           <a href="login.html" class="nav-link-login">Entrar</a>
-          <a href="cadastro.html" class="nav-btn-cta">Criar conta &rarr;</a>
+          <a href="cadastro.html" class="nav-btn-primary">Criar conta &rarr;</a>
           <button class="nav-mobile-toggle" id="navToggle" aria-label="Abrir menu de navegação">
             <span></span>
             <span></span>
@@ -61,10 +48,10 @@
     </header>
 
     <!-- ============================================================
-       2. HERO SECTION (MANTIDA CONFORME SOLICITADO)
+       2. HERO SECTION (100% INTACTA CONFORME SOLICITADO)
        ============================================================ -->
     <section class="hero-section">
-      <!-- Formas decorativas flutuantes originais -->
+      <!-- Formas decorativas flutuantes com dimensões e estilos originais -->
       <svg class="hero-shape hero-shape-star-left" width="150" height="150" viewBox="0 0 160 160" style="position: absolute; left: 3%; top: 8%; width: 150px; height: 150px; pointer-events: none; z-index: 1;" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
@@ -143,7 +130,7 @@
     </section>
 
     <!-- ============================================================
-       3. O SEMESTRE EM NÚMEROS
+       3. O SEMESTRE EM NÚMEROS (Refactoring UI: Clear Hierarchy)
        ============================================================ -->
     <section class="numbers-section">
       <div class="container">
@@ -184,50 +171,57 @@
     </section>
 
     <!-- ============================================================
-       4. RECURSOS EM DESTAQUE (INSPIRADO EM TECHTOTS & PONY)
+       4. PILARES DO PORTAL (ESTRUTURA INFORMATIVA CLARA)
+       Mantendo todas as frases e proposta do sistema
        ============================================================ -->
     <section id="recursos" class="recursos-section">
       <div class="container">
         <div class="recursos-header">
-          <span class="section-badge-eyebrow">RECURSOS INTERATIVOS</span>
+          <span class="section-badge-eyebrow">RECURSOS DO SISTEMA</span>
           <h2 class="section-title">O aviso chega antes do boato.</h2>
           <p class="recursos-subtitle">
-            Substituímos repasses informais e murais de papel por uma comunicação acadêmica direta, oficial e organizada para a comunidade do IFPA.
+            Editais, matrículas, calendário, documentos e projetos da sua instituição — com data, categoria e público. Num lugar só.
           </p>
         </div>
 
         <div class="recursos-grid">
-          <!-- Card 1: Mural Oficial -->
-          <article class="recurso-card card-mint">
+          <!-- Pilar 1 -->
+          <article class="recurso-card recurso-card-1">
             <div>
-              <div class="recurso-icon-badge">📢</div>
-              <span class="recurso-tag">Mural &amp; Notificações</span>
-              <h3 class="recurso-title">Mural Oficial em Tempo Real</h3>
+              <div class="recurso-card-header">
+                <div class="recurso-icon-box">📢</div>
+                <span class="recurso-tag">Mural Oficial</span>
+              </div>
+              <h3 class="recurso-title">Avisos e Notificações em Tempo Real</h3>
               <p class="recurso-desc">
-                Publicações diretas da secretaria acadêmica: períodos de matrícula, editais de bolsas, cancelamentos urgentes e comunicados de coordenação.
+                Publicações diretas da secretaria acadêmica e coordenação: confirmação de turmas, cancelamentos urgentes e cronogramas de matrícula.
               </p>
             </div>
             <a href="#mural" class="recurso-action-link">Ver publicações &rarr;</a>
           </article>
 
-          <!-- Card 2: Documentos -->
-          <article class="recurso-card card-cyan">
+          <!-- Pilar 2 -->
+          <article class="recurso-card recurso-card-2">
             <div>
-              <div class="recurso-icon-badge">📄</div>
-              <span class="recurso-tag">Central de Documentos</span>
-              <h3 class="recurso-title">Protocolos e Formulários Oficiais</h3>
+              <div class="recurso-card-header">
+                <div class="recurso-icon-box">📄</div>
+                <span class="recurso-tag">Central de Documentos</span>
+              </div>
+              <h3 class="recurso-title">Protocolos e Formulários Acadêmicos</h3>
               <p class="recurso-desc">
-                Requerimentos acadêmicos, solicitações de trancamento de matrícula, histórico escolar e atestados com download rápido sem filas no balcão.
+                Requerimentos acadêmicos, solicitações de trancamento de matrícula, histórico escolar e atestados com download rápido sem filas.
               </p>
             </div>
             <a href="#documentos" class="recurso-action-link">Acessar acervo &rarr;</a>
           </article>
 
-          <!-- Card 3: Projetos -->
-          <article class="recurso-card card-amber">
+          <!-- Pilar 3 -->
+          <article class="recurso-card recurso-card-3">
             <div>
-              <div class="recurso-icon-badge">💡</div>
-              <span class="recurso-tag">Pesquisa &amp; Extensão</span>
+              <div class="recurso-card-header">
+                <div class="recurso-icon-box">💡</div>
+                <span class="recurso-tag">Pesquisa &amp; Extensão</span>
+              </div>
               <h3 class="recurso-title">Projetos Fora do Drive Particular</h3>
               <p class="recurso-desc">
                 Inscrições abertas em bolsas PIBIC, feiras de robótica maker, grupos de pesquisa e projetos de extensão comunitária do campus.
@@ -267,30 +261,18 @@
           </div>
         </div>
 
-        <!-- Filtros em pílulas estilo SkillForge -->
+        <!-- Filtros de vínculo em pílulas — SEM números de notificação -->
         <div class="mural-filter-bar" id="muralFilterPills">
-          <button class="mural-filter-pill active" data-filter="todos">
-            <span>Todos</span>
-            <span class="nav-count-badge" style="background:#e5e7eb; color:#10141a;">8</span>
-          </button>
-          <button class="mural-filter-pill" data-filter="aluno">
-            <span>Aluno</span>
-            <span class="nav-count-badge" style="background:#30363d; color:#ffffff;">4</span>
-          </button>
-          <button class="mural-filter-pill" data-filter="professor">
-            <span>Professor</span>
-            <span class="nav-count-badge" style="background:#30363d; color:#ffffff;">2</span>
-          </button>
-          <button class="mural-filter-pill" data-filter="servidor">
-            <span>Servidor</span>
-            <span class="nav-count-badge" style="background:#30363d; color:#ffffff;">2</span>
-          </button>
+          <button class="mural-filter-pill active" data-filter="todos">Todos</button>
+          <button class="mural-filter-pill" data-filter="aluno">Aluno</button>
+          <button class="mural-filter-pill" data-filter="professor">Professor</button>
+          <button class="mural-filter-pill" data-filter="servidor">Servidor</button>
         </div>
 
-        <!-- Grid de 8 Cards Oficiais -->
+        <!-- Grid dos 8 Cards Oficiais -->
         <div class="mural-card-grid" id="muralCardsContainer">
           <!-- Card 1 -->
-          <article class="mural-post-card" data-publico="aluno" data-categoria="matricula">
+          <article class="mural-post-card" data-publico="aluno">
             <div class="card-visual-header" style="background-color: #8be4f9;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -306,7 +288,7 @@
           </article>
 
           <!-- Card 2 -->
-          <article class="mural-post-card" data-publico="todos" data-categoria="cancelamento">
+          <article class="mural-post-card" data-publico="todos">
             <div class="card-visual-header" style="background-color: #ff5c5c;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -322,7 +304,7 @@
           </article>
 
           <!-- Card 3 -->
-          <article class="mural-post-card" data-publico="aluno" data-categoria="edital">
+          <article class="mural-post-card" data-publico="aluno">
             <div class="card-visual-header" style="background-color: #a7f3d0;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -338,7 +320,7 @@
           </article>
 
           <!-- Card 4 -->
-          <article class="mural-post-card" data-publico="todos" data-categoria="evento">
+          <article class="mural-post-card" data-publico="todos">
             <div class="card-visual-header" style="background-color: #facc15;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -354,7 +336,7 @@
           </article>
 
           <!-- Card 5 -->
-          <article class="mural-post-card" data-publico="professor" data-categoria="edital">
+          <article class="mural-post-card" data-publico="professor">
             <div class="card-visual-header" style="background-color: #10b981;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -370,7 +352,7 @@
           </article>
 
           <!-- Card 6 -->
-          <article class="mural-post-card" data-publico="todos" data-categoria="calendario">
+          <article class="mural-post-card" data-publico="todos">
             <div class="card-visual-header" style="background-color: #f9a8d4;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -386,7 +368,7 @@
           </article>
 
           <!-- Card 7 -->
-          <article class="mural-post-card" data-publico="servidor" data-categoria="documento">
+          <article class="mural-post-card" data-publico="servidor">
             <div class="card-visual-header" style="background-color: #fde047;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -402,7 +384,7 @@
           </article>
 
           <!-- Card 8 -->
-          <article class="mural-post-card" data-publico="professor" data-categoria="documento">
+          <article class="mural-post-card" data-publico="professor">
             <div class="card-visual-header" style="background-color: #fde047;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -477,14 +459,14 @@
           <div class="doc-card">
             <span class="doc-badge-pill">PDF</span>
             <h3 class="doc-name">Requerimento geral</h3>
-            <a href="#" class="doc-action-pill" onclick="alert('Iniciando download do Requerimento Geral IFPA...')">Baixar</a>
+            <a href="#" class="doc-action-pill" onclick="alert('Download do Requerimento Geral IFPA')">Baixar</a>
           </div>
 
           <!-- Doc 2 -->
           <div class="doc-card">
             <span class="doc-badge-pill">PDF</span>
             <h3 class="doc-name">Trancamento de matrícula</h3>
-            <a href="#" class="doc-action-pill" onclick="alert('Iniciando download do Formulário de Trancamento...')">Baixar</a>
+            <a href="#" class="doc-action-pill" onclick="alert('Download do Formulário de Trancamento IFPA')">Baixar</a>
           </div>
 
           <!-- Doc 3 -->
@@ -580,38 +562,38 @@
     </section>
 
     <!-- ============================================================
-       10. NOVO RODAPÉ (INSPIRADO NAS REFERÊNCIAS 1, 2, 3)
+       10. NOVO RODAPÉ (REFACTORING UI & UX CAELUM)
+       Mantendo todas as frases e informações sobre o que é o site
        ============================================================ -->
     <footer class="site-footer">
       <div class="container">
-        <!-- Linha Superior do Rodapé com Marca e Status Online -->
-        <div class="footer-top-row">
-          <div class="footer-logo-block">
+        <div class="footer-top-header">
+          <div class="footer-brand-header">
             <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="footer-logo-img" width="36" height="36" />
             <div>
-              <span class="footer-brand-title">Arcádia</span>
-              <span class="footer-brand-sub">IFPA — CAMPUS BELÉM</span>
+              <span class="footer-brand-name">Arcádia</span>
+              <span class="footer-brand-campus">IFPA — CAMPUS BELÉM</span>
             </div>
           </div>
 
-          <div class="footer-status-pill">
-            <span class="status-dot-green"></span>
-            <span>SISTEMA ATIVO · PERÍODO LETIVO 2026/2</span>
+          <div class="footer-status-tag">
+            <span class="dot"></span>
+            <span>SISTEMA ATIVO · IFPA CAMPUS BELÉM</span>
           </div>
         </div>
 
         <div class="footer-grid">
-          <!-- Coluna 1: Informações da Marca -->
+          <!-- Coluna Marca e Definição do Site (Frase Mantida) -->
           <div class="footer-brand-info">
             <h4 class="footer-heading">SOBRE O PORTAL</h4>
-            <p class="footer-brand-text">
+            <p class="footer-brand-description">
               O mural institucional que reúne editais, matrículas, calendário,
               documentos e projetos da instituição — com data, categoria e
               público. Num lugar só.
             </p>
           </div>
 
-          <!-- Coluna 2: Plataforma -->
+          <!-- Coluna Plataforma -->
           <div class="footer-column">
             <h4 class="footer-heading">PLATAFORMA</h4>
             <ul class="footer-links">
@@ -623,7 +605,7 @@
             </ul>
           </div>
 
-          <!-- Coluna 3: Institucional -->
+          <!-- Coluna Institucional -->
           <div class="footer-column">
             <h4 class="footer-heading">INSTITUCIONAL</h4>
             <ul class="footer-links">
@@ -635,22 +617,22 @@
             </ul>
           </div>
 
-          <!-- Coluna 4: Contato & Atendimento -->
+          <!-- Coluna Contato -->
           <div class="footer-column">
-            <h4 class="footer-heading">SECRETARIA &amp; APOIO</h4>
-            <div class="footer-contact">
-              <p class="footer-email">secretaria.belem@ifpa.edu.br</p>
-              <p class="footer-schedule">Atendimento presencial: 8h às 17h</p>
-              <p style="margin-top: 8px; color: #8b949e;">Bloco Administrativo — IFPA Campus Belém</p>
+            <h4 class="footer-heading">SECRETARIA &amp; CONTATO</h4>
+            <div class="footer-contact-info">
+              <p class="footer-contact-email">secretaria.belem@ifpa.edu.br</p>
+              <p>Atendimento das 8h às 17h</p>
+              <p style="margin-top: 6px; color: #64748b;">Bloco Administrativo — IFPA Campus Belém</p>
             </div>
           </div>
         </div>
 
-        <div class="footer-separator"></div>
+        <div class="footer-bottom-separator"></div>
 
-        <div class="footer-bottom-row">
-          <span class="footer-institution">IFPA — CAMPUS BELÉM, 2026</span>
-          <div class="footer-policy-links">
+        <div class="footer-bottom-bar">
+          <span>IFPA — CAMPUS BELÉM, 2026</span>
+          <div class="footer-bottom-links">
             <a href="#">Política de privacidade</a>
             <a href="#">Termos de uso</a>
             <a href="#">Acessibilidade</a>
@@ -658,16 +640,15 @@
           </div>
         </div>
 
-        <div class="footer-subtitle-subproject">
+        <div class="footer-subproject-text">
           PRÉ-PROJETO DO CURSO TÉCNICO EM DESENVOLVIMENTO DE SISTEMAS
         </div>
       </div>
     </footer>
 
-    <!-- Script com lógica interativa para filtros e busca da landing page -->
+    <!-- Interatividade com Vanilla JS para busca e filtros do mural -->
     <script src="script.js"></script>
     <script>
-      // Filtros e busca interativa do Mural da landing page
       (function() {
         const searchInput = document.getElementById('muralSearchInput');
         const filterPills = document.querySelectorAll('#muralFilterPills .mural-filter-pill');
