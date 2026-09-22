@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarefas · Arcádia IFPA</title>
+
+  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <script>
+    (function () {
+      var THEME_KEY = 'arcadia-theme';
+      var root = document.documentElement;
+      var mode = 'light';
+      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
+      var dark = (mode === 'auto')
+        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        : (mode === 'dark');
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      root.setAttribute('data-theme-mode', mode);
+
+      try {
+        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+        root.setAttribute('data-accent', accent);
+      } catch(e) {}
+
+      try {
+        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
+        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="bundle.css">
+</head>
+<body>
+
+  <div class="ar-app">
+
+    <!-- TopNav -->
+    <header class="ar-nav">
+      <a class="ar-brand" href="inicio.html">
+        <span class="ar-avatar ar-avatar--lime" style="width: 34px; height: 34px; font-size: 13px;" aria-hidden="true">A</span>
+        <span>
+          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+        </span>
+      </a>
+
+      <nav class="ar-navpill" aria-label="Seções do portal">
+        <a href="inicio.html">Painel</a>
+        <a href="avisos.html">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html" aria-current="page">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html">Calendário<sup class="ar-sup">(4)</sup></a>
+        <span class="ar-sep" aria-hidden="true"></span>
+        <a href="pessoas.html">Pessoas<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html">Projetos<sup class="ar-sup">(4)</sup></a>
+      </nav>
+
+      <div class="ar-nav-end">
+        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+        </button>
+
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+        </a>
+
+        <a class="ar-user" href="configuracoes.html">
+          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
+          <div>
+            <div class="ar-user-name">Ana Ribeiro</div>
+            <div class="ar-user-role">Aluno</div>
+          </div>
+        </a>
+
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+      </div>
+    </header>
+
+    <!-- PageHero Compacto em Amarelo -->
+    <section class="ar-hero ar-hero--yellow ar-hero--compact">
+      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
+        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+        <circle class="d" cx="752" cy="133" r="5"></circle>
+        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+      </svg>
+      <h1 class="ar-hero-title">Tarefas<sup class="ar-hero-count">(4)</sup></h1>
+      <div class="ar-hero-side">
+        <p class="ar-hero-desc">Acompanhe suas pendências acadêmicas, relatórios de estágio e prazos da secretaria.</p>
+        <div class="ar-hero-actions">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNovaTarefa">
+            <span>Nova tarefa</span>
+            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ChipBar Categorias -->
+    <div class="ar-chipbar" role="group" aria-label="Filtro de tarefas" id="chipbarTarefas">
+      <button type="button" class="ar-chip" aria-pressed="true" data-status="Todas">Todas<sup class="ar-sup">(4)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-status="Aberta">Aberta<sup class="ar-sup">(2)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-status="Em andamento">Em andamento<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-status="Concluída">Concluída<sup class="ar-sup">(1)</sup></button>
+    </div>
+
+    <!-- ViewToolbar -->
+    <div class="ar-toolbar">
+      <div class="ar-seg" role="group" aria-label="Visualização">
+        <button type="button" aria-pressed="true" data-view="quadro">
+          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+          <span>Quadro</span>
+        </button>
+        <button type="button" aria-pressed="false" data-view="tabela">
+          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"></path><path d="M9 3v18"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+          <span>Tabela</span>
+        </button>
+        <button type="button" aria-pressed="false" data-view="lista">
+          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h.01"></path><path d="M3 12h.01"></path><path d="M3 19h.01"></path><path d="M8 5h13"></path><path d="M8 12h13"></path><path d="M8 19h13"></path></svg>
+          <span>Lista</span>
+        </button>
+      </div>
+      <span class="ar-toolbar-sum" id="tarefasSummary">Mostrando 4 tarefas</span>
+    </div>
+
+    <!-- Conteúdo em Abas -->
+    <div id="view-container">
+
+      <!-- 1. QUADRO KANBAN (BoardColumn + BoardCard) -->
+      <div data-view-panel="quadro">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); align-items: start;">
+
+          <!-- Coluna 1: Aberta -->
+          <section class="ar-col">
+            <div class="ar-col-head">
+              <span class="ar-badge ar-badge--cyan">Aberta</span>
+              <span class="ar-col-count">2 itens</span>
+            </div>
+            <article class="ar-bcard" data-id="1">
+              <div><span class="ar-badge ar-badge--neutral">Acadêmico</span></div>
+              <div class="ar-bcard-title">Confirmar disciplinas do semestre</div>
+              <div class="ar-bcard-meta">Prazo: 12 set · Ana Ribeiro</div>
+              <div class="ar-bcard-foot">
+                <span>Pendente</span>
+                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Concluir</button>
+              </div>
+            </article>
+
+            <article class="ar-bcard" data-id="2">
+              <div><span class="ar-badge ar-badge--blue">Pesquisa</span></div>
+              <div class="ar-bcard-title">Assinar termo de bolsa</div>
+              <div class="ar-bcard-meta">Prazo: 18 set · Coordenação</div>
+              <div class="ar-bcard-foot">
+                <span>Aguardando assinatura</span>
+                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Concluir</button>
+              </div>
+            </article>
+          </section>
+
+          <!-- Coluna 2: Em andamento -->
+          <section class="ar-col">
+            <div class="ar-col-head">
+              <span class="ar-badge ar-badge--yellow">Em andamento</span>
+              <span class="ar-col-count">1 item</span>
+            </div>
+            <article class="ar-bcard" data-id="3">
+              <div><span class="ar-badge ar-badge--neutral">Estágio</span></div>
+              <div class="ar-bcard-title">Entregar relatório de estágio</div>
+              <div class="ar-bcard-meta">Prazo: 20 set · Ana Ribeiro</div>
+              <div class="ar-bcard-foot">
+                <span>Relatório semestral</span>
+                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Concluir</button>
+              </div>
+            </article>
+          </section>
+
+          <!-- Coluna 3: Concluída -->
+          <section class="ar-col">
+            <div class="ar-col-head">
+              <span class="ar-badge ar-badge--green">Concluída</span>
+              <span class="ar-col-count">1 item</span>
+            </div>
+            <article class="ar-bcard" data-id="4">
+              <div><span class="ar-badge ar-badge--neutral">Secretaria</span></div>
+              <div class="ar-bcard-title">Atualizar dados cadastrais</div>
+              <div class="ar-bcard-meta">Finalizado em 05 set</div>
+              <div class="ar-bcard-foot">
+                <span class="ar-badge ar-badge--green">Pronto</span>
+              </div>
+            </article>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- 2. TABELA (DataTable) -->
+      <div data-view-panel="tabela" style="display: none;">
+        <div class="ar-table-wrap">
+          <table class="ar-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Responsável</th>
+                <th>Prazo</th>
+                <th>Situação</th>
+                <th style="text-align: right;">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="ar-td-strong">Confirmar disciplinas do semestre</td>
+                <td>Ana Ribeiro</td>
+                <td class="ar-td-mono">12 set</td>
+                <td><span class="ar-badge ar-badge--cyan">Aberta</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Concluir</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="ar-td-strong">Assinar termo de bolsa</td>
+                <td>Coordenação</td>
+                <td class="ar-td-mono">18 set</td>
+                <td><span class="ar-badge ar-badge--cyan">Aberta</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Concluir</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="ar-td-strong">Entregar relatório de estágio</td>
+                <td>Ana Ribeiro</td>
+                <td class="ar-td-mono">20 set</td>
+                <td><span class="ar-badge ar-badge--yellow">Em andamento</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Concluir</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="ar-td-strong">Atualizar dados cadastrais</td>
+                <td>Secretaria</td>
+                <td class="ar-td-mono">05 set</td>
+                <td><span class="ar-badge ar-badge--green">Concluída</span></td>
+                <td style="text-align: right;">
+                  <span class="ar-badge ar-badge--neutral">Finalizada</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. LISTA (RecordCards) -->
+      <div data-view-panel="lista" style="display: none;">
+        <div class="ar-card-grid">
+          <article class="ar-card">
+            <div class="ar-card-top">
+              <span class="ar-tag">Acadêmico</span>
+              <span class="ar-badge ar-badge--cyan">Aberta</span>
+            </div>
+            <h3 class="ar-card-title">Confirmar disciplinas do semestre</h3>
+            <p class="ar-card-desc">Validação de horário e turmas matriculadas.</p>
+            <p class="ar-card-meta">
+              <span>Prazo: <b>12 set</b></span>
+              <span>Responsável: <b>Ana Ribeiro</b></span>
+            </p>
+          </article>
+
+          <article class="ar-card">
+            <div class="ar-card-top">
+              <span class="ar-tag">Pesquisa</span>
+              <span class="ar-badge ar-badge--cyan">Aberta</span>
+            </div>
+            <h3 class="ar-card-title">Assinar termo de bolsa</h3>
+            <p class="ar-card-desc">Termo de outorga PIBIC 2026.</p>
+            <p class="ar-card-meta">
+              <span>Prazo: <b>18 set</b></span>
+              <span>Responsável: <b>Coordenação</b></span>
+            </p>
+          </article>
+
+          <article class="ar-card">
+            <div class="ar-card-top">
+              <span class="ar-tag">Estágio</span>
+              <span class="ar-badge ar-badge--yellow">Em andamento</span>
+            </div>
+            <h3 class="ar-card-title">Entregar relatório de estágio</h3>
+            <p class="ar-card-desc">Relatório de atividades e avaliação da empresa conveniada.</p>
+            <p class="ar-card-meta">
+              <span>Prazo: <b>20 set</b></span>
+              <span>Responsável: <b>Ana Ribeiro</b></span>
+            </p>
+          </article>
+
+          <article class="ar-card">
+            <div class="ar-card-top">
+              <span class="ar-tag">Secretaria</span>
+              <span class="ar-badge ar-badge--green">Concluída</span>
+            </div>
+            <h3 class="ar-card-title">Atualizar dados cadastrais</h3>
+            <p class="ar-card-desc">Comprovante de residência e dados de contato renovados.</p>
+            <p class="ar-card-meta">
+              <span>Conclusão: <b>05 set</b></span>
+            </p>
+          </article>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Dialog: Nova Tarefa -->
+    <div class="ar-scrim" id="modalNovaTarefa" style="display:none; z-index:100;">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Nova tarefa">
+        <div class="ar-dialog-head">
+          <div>
+            <div class="ar-field-label">Pendência acadêmica</div>
+            <h2 class="ar-dialog-title">Nova tarefa</h2>
+            <p class="ar-dialog-desc">Adicione uma tarefa com prazo e responsável.</p>
+          </div>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+
+        <form id="formNovaTarefa" style="display:flex; flex-direction:column; gap:var(--space-3);">
+          <label class="ar-field">
+            <span class="ar-field-label">Título da tarefa</span>
+            <input type="text" id="tarefaTitulo" placeholder="Exemplo: Entregar histórico assinado" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Prazo de entrega</span>
+            <input type="text" id="tarefaPrazo" placeholder="Exemplo: 25 set" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Responsável</span>
+            <input type="text" id="tarefaResponsavel" value="Ana Ribeiro" required>
+          </label>
+
+          <div class="ar-dialog-foot">
+            <button type="submit" class="ar-btn ar-btn--primary">Criar registro</button>
+            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="portal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var btnNova = document.getElementById('btnNovaTarefa');
+      var modalNova = document.getElementById('modalNovaTarefa');
+      if (btnNova && modalNova) {
+        btnNova.addEventListener('click', function () {
+          Arcadia.openDialog(modalNova);
+        });
+      }
+
+      var formNova = document.getElementById('formNovaTarefa');
+      if (formNova) {
+        formNova.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var titulo = document.getElementById('tarefaTitulo').value.trim();
+          if (!titulo) return;
+
+          Arcadia.closeDialog(modalNova);
+          formNova.reset();
+          Arcadia.showToast('Tarefa registrada no quadro.', 'Desfazer', function () {
+            // Callback desfazer
+          });
+        });
+      }
+
+      document.querySelectorAll('.btn-concluir').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var card = btn.closest('.ar-bcard') || btn.closest('tr');
+          if (!card) return;
+          card.style.opacity = '0.5';
+          btn.textContent = 'Concluída';
+          btn.disabled = true;
+
+          Arcadia.showToast('Tarefa marcada como concluída.', 'Desfazer', function () {
+            card.style.opacity = '1';
+            btn.textContent = 'Concluir';
+            btn.disabled = false;
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

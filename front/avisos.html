@@ -1,106 +1,743 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avisos - Portal Arcádia</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avisos · Arcádia IFPA</title>
 
+  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <script>
+    (function () {
+      var THEME_KEY = 'arcadia-theme';
+      var root = document.documentElement;
+      var mode = 'light';
+      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
+      var dark = (mode === 'auto')
+        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        : (mode === 'dark');
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      root.setAttribute('data-theme-mode', mode);
+
+      try {
+        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+        root.setAttribute('data-accent', accent);
+      } catch(e) {}
+
+      try {
+        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
+        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="bundle.css">
+</head>
 <body>
 
-    <div class="portal">
+  <div class="ar-app">
 
-        <aside class="portal-sidebar">
-            <a href="index.html" class="portal-logo">Arcádia</a>
-            <span class="micro">Portal</span>
-            <ul class="portal-nav">
-                <li><a href="inicio.html">Início</a></li>
-                <li><a href="avisos.html" class="ativo">Avisos</a></li>
-                <li><a href="documentos.html">Documentos</a></li>
-                <li><a href="projetos.html">Projetos</a></li>
-                <li><a href="calendario.html">Calendário</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-            </ul>
-            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
-        </aside>
+    <!-- TopNav -->
+    <header class="ar-nav">
+      <a class="ar-brand" href="inicio.html">
+        <span class="ar-avatar ar-avatar--lime" style="width: 34px; height: 34px; font-size: 13px;" aria-hidden="true">A</span>
+        <span>
+          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+        </span>
+      </a>
 
-        <main class="portal-main">
+      <nav class="ar-navpill" aria-label="Seções do portal">
+        <a href="inicio.html">Painel</a>
+        <a href="avisos.html" aria-current="page">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html">Calendário<sup class="ar-sup">(4)</sup></a>
+        <span class="ar-sep" aria-hidden="true"></span>
+        <a href="pessoas.html">Pessoas<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html">Projetos<sup class="ar-sup">(4)</sup></a>
+      </nav>
 
-            <div class="portal-topo">
-                <span class="breadcrumb">Portal › <strong>Avisos</strong></span>
-                <span class="portal-meta">7 avisos · junho</span>
-            </div>
-            <h1 class="portal-titulo">Feed de notícias e avisos</h1>
+      <div class="ar-nav-end">
+        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+        </button>
 
-            <input type="search" class="busca" placeholder="Buscar aviso, documento ou projeto…">
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+        </a>
 
-            <div class="filtros" data-filtro>
-                <span class="micro">Público</span>
-                <button class="pill ativo">Todos</button>
-                <button class="pill">Aluno</button>
-                <button class="pill">Professor</button>
-                <button class="pill">Servidor</button>
-            </div>
+        <a class="ar-user" href="configuracoes.html">
+          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
+          <div>
+            <div class="ar-user-name">Ana Ribeiro</div>
+            <div class="ar-user-role">Aluno</div>
+          </div>
+        </a>
 
-            <div class="filtros" data-filtro>
-                <span class="micro">Categoria</span>
-                <button class="pill ativo">Todas</button>
-                <button class="pill pill-matricula">Matrícula</button>
-                <button class="pill pill-edital">Edital</button>
-                <button class="pill pill-evento">Evento</button>
-                <button class="pill pill-cancelamento">Cancelamento</button>
-            </div>
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+      </div>
+    </header>
 
-            <div class="avisos-lista">
-                <a href="aviso.html" class="aviso-linha">
-                    <time>20 JUN</time>
-                    <div>
-                        <h3>Período de matrícula 2026/2 — Alunos veteranos</h3>
-                        <p>Abertas de 20 a 27 de junho, pelo portal do aluno.</p>
-                    </div>
-                    <span class="aviso-tag">Aluno · Fixado</span>
-                </a>
-                <a href="aviso.html" class="aviso-linha">
-                    <time>18 JUN</time>
-                    <div>
-                        <h3>Cancelamento de aulas — Greve parcial dos servidores</h3>
-                        <p>Vespertino e noturno de 18/06 cancelados.</p>
-                    </div>
-                    <span class="aviso-tag">Todos</span>
-                </a>
-                <a href="aviso.html" class="aviso-linha">
-                    <time>15 JUN</time>
-                    <div>
-                        <h3>Edital Nº 012/2026 — Bolsas de Iniciação Científica</h3>
-                        <p>Inscrições até 30/08, a partir do 2º período.</p>
-                    </div>
-                    <span class="aviso-tag">Aluno</span>
-                </a>
-                <a href="aviso.html" class="aviso-linha">
-                    <time>12 JUN</time>
-                    <div>
-                        <h3>Semana Acadêmica Arcádia 2026 — Programação</h3>
-                        <p>Entre 7 e 11 de julho.</p>
-                    </div>
-                    <span class="aviso-tag">Aluno · Professor</span>
-                </a>
-            </div>
+    <!-- PageHero Compacto em Ciano -->
+    <section class="ar-hero ar-hero--cyan ar-hero--compact">
+      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
+        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+        <circle class="d" cx="752" cy="133" r="5"></circle>
+        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+      </svg>
+      <h1 class="ar-hero-title">Avisos<sup class="ar-hero-count">(5)</sup></h1>
+      <div class="ar-hero-side">
+        <p class="ar-hero-desc">Comunicados oficiais do campus sobre matrícula, editais, eventos e calendário. Os fixados aparecem primeiro.</p>
+        <div class="ar-hero-actions">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNovoAviso">
+            <span>Novo aviso</span>
+            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </button>
+          <button type="button" class="ar-btn ar-btn--secondary" id="btnExportarCsv">
+            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
+            <span>Exportar CSV</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
-            <div class="avisos-rodape">
-                <span>4 de 7 avisos</span>
-                <span class="paginacao">‹ 1 2 3 4 ›</span>
-            </div>
-
-        </main>
+    <!-- ChipBar Categorias -->
+    <div class="ar-chipbar" role="group" aria-label="Categorias de avisos" id="chipbarCategorias">
+      <button type="button" class="ar-chip" aria-pressed="true" data-cat="Tudo">Tudo<sup class="ar-sup">(5)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-cat="Matrícula">Matrícula<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-cat="Edital">Edital<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-cat="Evento">Evento<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-cat="Cancelamento">Cancelamento<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-cat="Calendário">Calendário<sup class="ar-sup">(1)</sup></button>
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Divisão em 2 colunas: Filtros + Conteúdo -->
+    <div class="ar-split">
 
+      <!-- Coluna Esquerda: FilterPanel (240px) -->
+      <aside class="ar-filter" aria-label="Filtros de avisos">
+        <label class="ar-search" style="background: var(--surface);">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+          <span class="ar-sr">Buscar aviso</span>
+          <input type="search" id="filtroTextoAvisos" placeholder="Buscar aviso">
+        </label>
+
+        <fieldset class="ar-filter-group" style="border:0; margin:0; padding:0;">
+          <legend class="ar-filter-title" style="float:left; width:100%;">Público</legend>
+          <label class="ar-check">
+            <input type="checkbox" checked data-filter-publico="Todos">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Todos <span class="ar-check-count">3</span>
+          </label>
+          <label class="ar-check">
+            <input type="checkbox" checked data-filter-publico="Aluno">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Aluno <span class="ar-check-count">2</span>
+          </label>
+          <label class="ar-check">
+            <input type="checkbox" data-filter-publico="Professor">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Professor
+          </label>
+          <label class="ar-check">
+            <input type="checkbox" data-filter-publico="Servidor">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Servidor
+          </label>
+        </fieldset>
+
+        <fieldset class="ar-filter-group" style="border:0; margin:0; padding:0;">
+          <legend class="ar-filter-title" style="float:left; width:100%;">Situação</legend>
+          <label class="ar-check">
+            <input type="checkbox" checked data-filter-situacao="Publicado">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Publicado <span class="ar-check-count">3</span>
+          </label>
+          <label class="ar-check">
+            <input type="checkbox" data-filter-situacao="Rascunho">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Rascunho <span class="ar-check-count">1</span>
+          </label>
+          <label class="ar-check">
+            <input type="checkbox" data-filter-situacao="Arquivado">
+            <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            Arquivado <span class="ar-check-count">1</span>
+          </label>
+        </fieldset>
+      </aside>
+
+      <!-- Coluna Direita: ViewToolbar + Conteúdo -->
+      <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+
+        <!-- ViewToolbar -->
+        <div class="ar-toolbar">
+          <div class="ar-seg" role="group" aria-label="Visualização">
+            <button type="button" aria-pressed="true" data-view="lista">
+              <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h.01"></path><path d="M3 12h.01"></path><path d="M3 19h.01"></path><path d="M8 5h13"></path><path d="M8 12h13"></path><path d="M8 19h13"></path></svg>
+              <span>Lista</span>
+            </button>
+            <button type="button" aria-pressed="false" data-view="tabela">
+              <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"></path><path d="M9 3v18"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+              <span>Tabela</span>
+            </button>
+            <button type="button" aria-pressed="false" data-view="quadro">
+              <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+              <span>Quadro</span>
+            </button>
+          </div>
+          <span class="ar-toolbar-sum" id="avisosSummary">Mostrando todos os 5</span>
+          <button type="button" class="ar-btn ar-btn--secondary ar-btn--sm" style="margin-left:auto;">
+            <svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 16-4 4-4-4"></path><path d="M17 20V4"></path><path d="m3 8 4-4 4 4"></path><path d="M7 4v16"></path></svg>
+            <span>Mais recentes</span>
+          </button>
+        </div>
+
+        <div id="view-container">
+
+          <!-- 1. VISUALIZAÇÃO EM LISTA (Grade de RecordCards) -->
+          <div data-view-panel="lista">
+            <div class="ar-card-grid" id="avisosCardsGrid">
+
+              <!-- Card Fixado (Único colorido em rosa) -->
+              <a class="ar-card ar-card--pink ar-card--link" href="aviso.html" data-cat="Matrícula" data-id="1">
+                <div class="ar-card-top">
+                  <span class="ar-tag ar-tag--onfield">Aluno</span>
+                  <span class="ar-tag ar-tag--onfield">Matrícula</span>
+                  <span class="ar-badge ar-badge--flag">Urgente</span>
+                </div>
+                <h3 class="ar-card-title">Período de matrícula 2026/2</h3>
+                <p class="ar-card-desc">Confirme suas disciplinas pelo portal do estudante até o fim do prazo.</p>
+                <p class="ar-card-meta">
+                  <span>Prazo: <b>27 set</b></span>
+                  <span>Público: <b>Aluno</b></span>
+                </p>
+                <div class="ar-card-signal">
+                  <span class="ar-badge ar-badge--stamp">Fixado</span>
+                </div>
+              </a>
+
+              <!-- Card 2 -->
+              <article class="ar-card" data-cat="Cancelamento" data-id="2">
+                <div class="ar-card-top">
+                  <span class="ar-tag">Todos</span>
+                  <span class="ar-tag">Cancelamento</span>
+                </div>
+                <h3 class="ar-card-title">Aulas suspensas no Bloco C</h3>
+                <p class="ar-card-desc">Manutenção elétrica no prédio. A coordenação já marcou a reposição.</p>
+                <p class="ar-card-meta">
+                  <span>Data: <b>09 set</b></span>
+                  <span>Reposição: <b>16 set</b></span>
+                </p>
+                <div class="ar-card-signal ar-signal--orange">
+                  <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                  <span>Comunicado prioritário</span>
+                </div>
+              </article>
+
+              <!-- Card 3 -->
+              <a class="ar-card ar-card--link" href="aviso.html" data-cat="Edital" data-id="3">
+                <div class="ar-card-top">
+                  <span class="ar-tag">Aluno</span>
+                  <span class="ar-tag">Edital 012/2026</span>
+                  <span class="ar-badge ar-badge--green">Novo</span>
+                </div>
+                <h3 class="ar-card-title">Bolsas de Iniciação Científica</h3>
+                <p class="ar-card-desc">Inscrições pelo portal, com histórico escolar em PDF.</p>
+                <p class="ar-card-meta">
+                  <span>Inscrições até: <b>30 set</b></span>
+                  <span>Vagas: <b>12</b></span>
+                </p>
+                <div class="ar-card-signal ar-signal--link">
+                  <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                  <span>Atualizado hoje às 09:12</span>
+                </div>
+              </a>
+
+              <!-- Card 4 -->
+              <article class="ar-card" data-cat="Evento" data-id="4">
+                <div class="ar-card-top">
+                  <span class="ar-tag">Todos</span>
+                  <span class="ar-tag">Evento</span>
+                </div>
+                <h3 class="ar-card-title">Semana de Ciência e Tecnologia</h3>
+                <p class="ar-card-desc">Programação nos três turnos, auditório central e laboratórios.</p>
+                <p class="ar-card-meta">
+                  <span>Início: <b>05 out</b></span>
+                </p>
+                <div class="ar-card-signal ar-signal--muted">
+                  <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                  <span>Começa em 16 dias</span>
+                </div>
+              </article>
+
+              <!-- Card 5 -->
+              <article class="ar-card" data-cat="Calendário" data-id="5">
+                <div class="ar-card-top">
+                  <span class="ar-tag">Todos</span>
+                  <span class="ar-tag">Calendário</span>
+                  <span class="ar-badge ar-badge--neutral">Encerrado</span>
+                </div>
+                <h3 class="ar-card-title">Calendário do 2º semestre</h3>
+                <p class="ar-card-desc">Datas oficiais consolidadas pelo conselho acadêmico.</p>
+                <p class="ar-card-meta">
+                  <span>Publicado: <b>01 set</b></span>
+                </p>
+              </article>
+
+            </div>
+          </div>
+
+          <!-- 2. VISUALIZAÇÃO EM TABELA (DataTable) -->
+          <div data-view-panel="tabela" style="display: none;">
+            <div class="ar-table-wrap">
+              <table class="ar-table">
+                <thead>
+                  <tr>
+                    <th class="ar-td-check">
+                      <label class="ar-check">
+                        <input type="checkbox" id="checkSelectAll">
+                        <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                      </label>
+                    </th>
+                    <th>Título</th>
+                    <th>Categoria</th>
+                    <th>Público</th>
+                    <th>Data</th>
+                    <th>Situação</th>
+                    <th style="text-align: right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-id="1">
+                    <td class="ar-td-check">
+                      <label class="ar-check">
+                        <input type="checkbox" class="row-select">
+                        <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                      </label>
+                    </td>
+                    <td class="ar-td-strong"><a href="aviso.html" class="ar-link" style="text-decoration:none;">Período de matrícula 2026/2</a></td>
+                    <td><span class="ar-badge ar-badge--cyan">Matrícula</span></td>
+                    <td>Aluno</td>
+                    <td class="ar-td-mono">27 set</td>
+                    <td><span class="ar-badge ar-badge--blue">Fixado</span></td>
+                    <td style="text-align: right;">
+                      <button type="button" class="ar-iconbtn ar-iconbtn--sm ar-iconbtn--ghost btn-excluir" title="Excluir aviso">
+                        <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-id="2">
+                    <td class="ar-td-check">
+                      <label class="ar-check">
+                        <input type="checkbox" class="row-select">
+                        <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                      </label>
+                    </td>
+                    <td class="ar-td-strong">Aulas suspensas no Bloco C</td>
+                    <td><span class="ar-badge ar-badge--orange">Cancelamento</span></td>
+                    <td>Todos</td>
+                    <td class="ar-td-mono">09 set</td>
+                    <td><span class="ar-badge ar-badge--green">Publicado</span></td>
+                    <td style="text-align: right;">
+                      <button type="button" class="ar-iconbtn ar-iconbtn--sm ar-iconbtn--ghost btn-excluir" title="Excluir aviso">
+                        <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-id="3">
+                    <td class="ar-td-check">
+                      <label class="ar-check">
+                        <input type="checkbox" class="row-select">
+                        <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                      </label>
+                    </td>
+                    <td class="ar-td-strong"><a href="aviso.html" class="ar-link" style="text-decoration:none;">Bolsas de Iniciação Científica</a></td>
+                    <td><span class="ar-badge ar-badge--blue">Edital</span></td>
+                    <td>Aluno</td>
+                    <td class="ar-td-mono">30 set</td>
+                    <td><span class="ar-badge ar-badge--green">Novo</span></td>
+                    <td style="text-align: right;">
+                      <button type="button" class="ar-iconbtn ar-iconbtn--sm ar-iconbtn--ghost btn-excluir" title="Excluir aviso">
+                        <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-id="4">
+                    <td class="ar-td-check">
+                      <label class="ar-check">
+                        <input type="checkbox" class="row-select">
+                        <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                      </label>
+                    </td>
+                    <td class="ar-td-strong">Semana de Ciência e Tecnologia</td>
+                    <td><span class="ar-badge ar-badge--yellow">Evento</span></td>
+                    <td>Todos</td>
+                    <td class="ar-td-mono">05 out</td>
+                    <td><span class="ar-badge ar-badge--neutral">Rascunho</span></td>
+                    <td style="text-align: right;">
+                      <button type="button" class="ar-iconbtn ar-iconbtn--sm ar-iconbtn--ghost btn-excluir" title="Excluir aviso">
+                        <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr data-id="5">
+                    <td class="ar-td-check">
+                      <label class="ar-check">
+                        <input type="checkbox" class="row-select">
+                        <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                      </label>
+                    </td>
+                    <td class="ar-td-strong">Calendário do 2º semestre</td>
+                    <td><span class="ar-badge ar-badge--pink">Calendário</span></td>
+                    <td>Todos</td>
+                    <td class="ar-td-mono">01 set</td>
+                    <td><span class="ar-badge ar-badge--neutral">Arquivado</span></td>
+                    <td style="text-align: right;">
+                      <button type="button" class="ar-iconbtn ar-iconbtn--sm ar-iconbtn--ghost btn-excluir" title="Excluir aviso">
+                        <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="ar-table-foot">
+                <span>Total de 5 registros cadastrados</span>
+                <span>Página 1 de 1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. VISUALIZAÇÃO EM QUADRO (BoardColumn + BoardCard) -->
+          <div data-view-panel="quadro" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); align-items: start;">
+
+              <!-- Coluna 1: Publicado -->
+              <section class="ar-col">
+                <div class="ar-col-head">
+                  <span class="ar-badge ar-badge--green">Publicado</span>
+                  <span class="ar-col-count">3 itens</span>
+                </div>
+                <article class="ar-bcard">
+                  <div><span class="ar-badge ar-badge--cyan">Matrícula</span></div>
+                  <div class="ar-bcard-title">Período de matrícula 2026/2</div>
+                  <div class="ar-bcard-meta">Prazo: 27 set · Aluno</div>
+                  <div class="ar-bcard-foot">
+                    <span>Fixado no mural</span>
+                    <a href="aviso.html">Ver detalhe</a>
+                  </div>
+                </article>
+                <article class="ar-bcard">
+                  <div><span class="ar-badge ar-badge--orange">Cancelamento</span></div>
+                  <div class="ar-bcard-title">Aulas suspensas no Bloco C</div>
+                  <div class="ar-bcard-meta">09 set · Reposição 16 set</div>
+                </article>
+                <article class="ar-bcard">
+                  <div><span class="ar-badge ar-badge--blue">Edital</span></div>
+                  <div class="ar-bcard-title">Bolsas de Iniciação Científica</div>
+                  <div class="ar-bcard-meta">Inscrições até 30 set · 12 vagas</div>
+                  <div class="ar-bcard-foot">
+                    <span>Novo</span>
+                    <a href="aviso.html">Ver detalhe</a>
+                  </div>
+                </article>
+              </section>
+
+              <!-- Coluna 2: Rascunho -->
+              <section class="ar-col">
+                <div class="ar-col-head">
+                  <span class="ar-badge ar-badge--neutral">Rascunho</span>
+                  <span class="ar-col-count">1 item</span>
+                </div>
+                <article class="ar-bcard">
+                  <div><span class="ar-badge ar-badge--yellow">Evento</span></div>
+                  <div class="ar-bcard-title">Semana de Ciência e Tecnologia</div>
+                  <div class="ar-bcard-meta">Previsto para 05 out · Auditório central</div>
+                  <div class="ar-bcard-foot">
+                    <span>Em revisão</span>
+                    <button type="button" class="ar-btn ar-btn--xs">Editar</button>
+                  </div>
+                </article>
+              </section>
+
+              <!-- Coluna 3: Arquivado -->
+              <section class="ar-col">
+                <div class="ar-col-head">
+                  <span class="ar-badge ar-badge--neutral">Arquivado</span>
+                  <span class="ar-col-count">1 item</span>
+                </div>
+                <article class="ar-bcard">
+                  <div><span class="ar-badge ar-badge--pink">Calendário</span></div>
+                  <div class="ar-bcard-title">Calendário do 2º semestre</div>
+                  <div class="ar-bcard-meta">Publicado em 01 set</div>
+                </article>
+              </section>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Barra de Seleção Flutuante SelectionBar (inicia escondida) -->
+    <div id="selectionBar" style="display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:90;">
+      <div class="ar-selbar">
+        <span id="selCountText">1 registro selecionado</span>
+        <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnExportSel">Exportar seleção</button>
+        <button type="button" class="ar-btn ar-btn--sm ar-btn--flag" id="btnDeleteSel">Excluir</button>
+        <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Limpar seleção" id="btnClearSel">
+          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Dialog: Novo Aviso -->
+    <div class="ar-scrim" id="modalNovoAviso" style="display:none; z-index:100;">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Novo aviso">
+        <div class="ar-dialog-head">
+          <div>
+            <div class="ar-field-label">Comunicado acadêmico</div>
+            <h2 class="ar-dialog-title">Novo aviso</h2>
+            <p class="ar-dialog-desc">Publique um comunicado oficial visível para a comunidade do campus.</p>
+          </div>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+
+        <form id="formNovoAviso" style="display:flex; flex-direction:column; gap:var(--space-3);">
+          <label class="ar-field">
+            <span class="ar-field-label">Título do aviso</span>
+            <input type="text" id="avisoTitulo" placeholder="Exemplo: Confirmação de turmas 2026/2" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Resumo do comunicado</span>
+            <textarea id="avisoResumo" rows="3" placeholder="Escreva o texto informativo do aviso..."></textarea>
+          </label>
+
+          <div class="ar-field">
+            <span class="ar-field-label">Categoria</span>
+            <div class="ar-choices" id="choiceCategoria">
+              <button type="button" class="ar-chip" aria-pressed="true" data-val="Matrícula">Matrícula</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Edital">Edital</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Evento">Evento</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Cancelamento">Cancelamento</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Calendário">Calendário</button>
+            </div>
+          </div>
+
+          <div class="ar-field">
+            <span class="ar-field-label">Público destinatário</span>
+            <div class="ar-choices" id="choicePublico">
+              <button type="button" class="ar-chip" aria-pressed="true" data-val="Todos">Todos</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Aluno">Aluno</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Professor">Professor</button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-val="Servidor">Servidor</button>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:var(--space-4); margin-top:4px;">
+            <label class="ar-check">
+              <input type="checkbox" id="avisoUrgente">
+              <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+              Marcar como urgente
+            </label>
+            <label class="ar-check">
+              <input type="checkbox" id="avisoFixado">
+              <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+              Fixar no topo
+            </label>
+          </div>
+
+          <div class="ar-dialog-foot">
+            <button type="submit" class="ar-btn ar-btn--primary">Criar registro</button>
+            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="portal.js"></script>
+  <script>
+    // Lógica específica da tela de Avisos
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Abrir modal de novo aviso
+      var btnNovo = document.getElementById('btnNovoAviso');
+      var modalNovo = document.getElementById('modalNovoAviso');
+      if (btnNovo && modalNovo) {
+        btnNovo.addEventListener('click', function () {
+          Arcadia.openDialog(modalNovo);
+        });
+      }
+
+      // Choice chips do modal
+      document.querySelectorAll('#choiceCategoria .ar-chip, #choicePublico .ar-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var parent = chip.parentElement;
+          parent.querySelectorAll('.ar-chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+          chip.setAttribute('aria-pressed', 'true');
+        });
+      });
+
+      // Submissão do formulário de novo aviso
+      var formNovo = document.getElementById('formNovoAviso');
+      if (formNovo) {
+        formNovo.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var titulo = document.getElementById('avisoTitulo').value.trim();
+          var resumo = document.getElementById('avisoResumo').value.trim();
+          var catEl = document.querySelector('#choiceCategoria .ar-chip[aria-pressed="true"]');
+          var cat = catEl ? catEl.getAttribute('data-val') : 'Matrícula';
+          var pubEl = document.querySelector('#choicePublico .ar-chip[aria-pressed="true"]');
+          var pub = pubEl ? pubEl.getAttribute('data-val') : 'Todos';
+          var urgente = document.getElementById('avisoUrgente').checked;
+          var fixado = document.getElementById('avisoFixado').checked;
+
+          if (!titulo) return;
+
+          // Criar novo card na grade
+          var grid = document.getElementById('avisosCardsGrid');
+          var card = document.createElement('article');
+          card.className = 'ar-card';
+          card.setAttribute('data-cat', cat);
+          card.innerHTML = 
+            '<div class="ar-card-top">' +
+              '<span class="ar-tag">' + pub + '</span>' +
+              '<span class="ar-tag">' + cat + '</span>' +
+              (urgente ? '<span class="ar-badge ar-badge--flag">Urgente</span>' : '') +
+              (fixado ? '<span class="ar-badge ar-badge--stamp">Fixado</span>' : '') +
+            '</div>' +
+            '<h3 class="ar-card-title">' + titulo + '</h3>' +
+            '<p class="ar-card-desc">' + (resumo || 'Comunicado oficial publicado no portal.') + '</p>' +
+            '<p class="ar-card-meta">' +
+              '<span>Data: <b>Hoje</b></span>' +
+              '<span>Público: <b>' + pub + '</b></span>' +
+            '</p>' +
+            '<div class="ar-card-signal ar-signal--link">' +
+              Arcadia.getIconSvg('refresh-cw', 14) +
+              '<span>Atualizado hoje às 09:12</span>' +
+            '</div>';
+
+          if (grid) grid.prepend(card);
+
+          Arcadia.closeDialog(modalNovo);
+          formNovo.reset();
+          Arcadia.showToast('Aviso publicado no mural.', 'Desfazer', function () {
+            card.remove();
+          });
+        });
+      }
+
+      // 2. Filtro por ChipBar
+      var chips = document.querySelectorAll('#chipbarCategorias .ar-chip');
+      var cards = document.querySelectorAll('#avisosCardsGrid .ar-card');
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+          chip.setAttribute('aria-pressed', 'true');
+          var cat = chip.getAttribute('data-cat');
+
+          var count = 0;
+          cards.forEach(function (card) {
+            var cCat = card.getAttribute('data-cat');
+            if (cat === 'Tudo' || cCat === cat) {
+              card.style.display = 'flex';
+              count++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          document.getElementById('avisosSummary').textContent = 'Mostrando ' + count + (count === 1 ? ' aviso' : ' avisos');
+        });
+      });
+
+      // 3. Exclusão com Toast e Desfazer
+      document.querySelectorAll('.btn-excluir').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tr = btn.closest('tr');
+          if (!tr) return;
+          var nextSibling = tr.nextSibling;
+          var parent = tr.parentNode;
+          tr.remove();
+
+          Arcadia.showToast('Aviso excluído do sistema.', 'Desfazer', function () {
+            if (nextSibling) parent.insertBefore(tr, nextSibling);
+            else parent.appendChild(tr);
+          });
+        });
+      });
+
+      // 4. Seleção em Lote na Tabela
+      var checkAll = document.getElementById('checkSelectAll');
+      var rowChecks = document.querySelectorAll('.row-select');
+      var selBar = document.getElementById('selectionBar');
+      var selCountText = document.getElementById('selCountText');
+      var btnClearSel = document.getElementById('btnClearSel');
+
+      function updateSel() {
+        var selected = Array.from(rowChecks).filter(function (c) { return c.checked; });
+        if (selected.length > 0) {
+          selBar.style.display = 'block';
+          selCountText.textContent = selected.length + (selected.length === 1 ? ' registro selecionado' : ' registros selecionados');
+        } else {
+          selBar.style.display = 'none';
+        }
+        if (checkAll) {
+          checkAll.checked = selected.length === rowChecks.length && rowChecks.length > 0;
+        }
+      }
+
+      if (checkAll) {
+        checkAll.addEventListener('change', function () {
+          rowChecks.forEach(function (c) { c.checked = checkAll.checked; });
+          updateSel();
+        });
+      }
+
+      rowChecks.forEach(function (c) {
+        c.addEventListener('change', updateSel);
+      });
+
+      if (btnClearSel) {
+        btnClearSel.addEventListener('click', function () {
+          if (checkAll) checkAll.checked = false;
+          rowChecks.forEach(function (c) { c.checked = false; });
+          updateSel();
+        });
+      }
+
+      var btnDeleteSel = document.getElementById('btnDeleteSel');
+      if (btnDeleteSel) {
+        btnDeleteSel.addEventListener('click', function () {
+          var checkedRows = Array.from(rowChecks).filter(function (c) { return c.checked; }).map(function (c) { return c.closest('tr'); });
+          checkedRows.forEach(function (r) { r.style.display = 'none'; });
+          selBar.style.display = 'none';
+
+          Arcadia.showToast(checkedRows.length + ' registros excluídos.', 'Desfazer', function () {
+            checkedRows.forEach(function (r) { r.style.display = ''; });
+            updateSel();
+          });
+        });
+      }
+
+      // Exportar CSV
+      var btnCsv = document.getElementById('btnExportCsv');
+      if (btnCsv) {
+        btnCsv.addEventListener('click', function () {
+          Arcadia.showToast('Exportando registros para CSV...');
+        });
+      }
+    });
+  </script>
+</body>
 </html>

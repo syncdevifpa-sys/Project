@@ -1,111 +1,229 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendário — Portal Arcádia</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendário · Arcádia IFPA</title>
 
+  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <script>
+    (function () {
+      var THEME_KEY = 'arcadia-theme';
+      var root = document.documentElement;
+      var mode = 'light';
+      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
+      var dark = (mode === 'auto')
+        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        : (mode === 'dark');
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      root.setAttribute('data-theme-mode', mode);
+
+      try {
+        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+        root.setAttribute('data-accent', accent);
+      } catch(e) {}
+
+      try {
+        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
+        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="bundle.css">
+</head>
 <body>
 
-    <div class="portal">
+  <div class="ar-app">
 
-        <aside class="portal-sidebar">
-            <a href="index.html" class="portal-logo">Arcádia</a>
-            <span class="micro">Portal</span>
-            <ul class="portal-nav">
-                <li><a href="inicio.html">Início</a></li>
-                <li><a href="avisos.html">Avisos</a></li>
-                <li><a href="documentos.html">Documentos</a></li>
-                <li><a href="projetos.html">Projetos</a></li>
-                <li><a href="calendario.html" class="ativo">Calendário</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-            </ul>
-            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
-        </aside>
+    <!-- TopNav -->
+    <header class="ar-nav">
+      <a class="ar-brand" href="inicio.html">
+        <span class="ar-avatar ar-avatar--lime" style="width: 34px; height: 34px; font-size: 13px;" aria-hidden="true">A</span>
+        <span>
+          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+        </span>
+      </a>
 
-        <main class="portal-main">
+      <nav class="ar-navpill" aria-label="Seções do portal">
+        <a href="inicio.html">Painel</a>
+        <a href="avisos.html">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html" aria-current="page">Calendário<sup class="ar-sup">(4)</sup></a>
+        <span class="ar-sep" aria-hidden="true"></span>
+        <a href="pessoas.html">Pessoas<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html">Projetos<sup class="ar-sup">(4)</sup></a>
+      </nav>
 
-            <div class="portal-topo">
-                <span class="breadcrumb">Portal › <strong>Calendário</strong></span>
-                <div class="cal-toggle" data-filtro>
-                    <button class="pill">Lista</button>
-                    <button class="pill ativo">Mês</button>
-                </div>
-            </div>
-            <h1 class="portal-titulo">Junho de 2026</h1>
+      <div class="ar-nav-end">
+        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+        </button>
 
-            <table class="calendario">
-                <thead>
-                    <tr>
-                        <th>Seg</th>
-                        <th>Ter</th>
-                        <th>Qua</th>
-                        <th>Qui</th>
-                        <th>Sex</th>
-                        <th>Sáb</th>
-                        <th>Dom</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>01</td>
-                        <td>02</td>
-                        <td>03</td>
-                        <td>04</td>
-                        <td class="dia-edital">05<em>Edital</em></td>
-                        <td>06</td>
-                        <td>07</td>
-                    </tr>
-                    <tr>
-                        <td>08</td>
-                        <td class="dia-documento">09<em>Documento</em></td>
-                        <td class="dia-edital">10<em>Calendário</em></td>
-                        <td>11</td>
-                        <td class="dia-evento">12<em>Evento</em></td>
-                        <td>13</td>
-                        <td>14</td>
-                    </tr>
-                    <tr>
-                        <td class="dia-edital">15<em>Edital</em></td>
-                        <td>16</td>
-                        <td>17</td>
-                        <td class="dia-cancelamento">18<em>Cancelam.</em></td>
-                        <td>19</td>
-                        <td class="dia-matricula">20<em>Matrícula</em></td>
-                        <td>21</td>
-                    </tr>
-                    <tr>
-                        <td>22</td>
-                        <td>23</td>
-                        <td>24</td>
-                        <td>25</td>
-                        <td>26</td>
-                        <td class="dia-matricula">27<em>Fim matríc.</em></td>
-                        <td>28</td>
-                    </tr>
-                    <tr>
-                        <td>29</td>
-                        <td>30</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+        </a>
 
-        </main>
+        <a class="ar-user" href="configuracoes.html">
+          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
+          <div>
+            <div class="ar-user-name">Ana Ribeiro</div>
+            <div class="ar-user-role">Aluno</div>
+          </div>
+        </a>
+
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+      </div>
+    </header>
+
+    <!-- PageHero Compacto em Ciano -->
+    <section class="ar-hero ar-hero--cyan ar-hero--compact">
+      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
+        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+        <circle class="d" cx="752" cy="133" r="5"></circle>
+        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+      </svg>
+      <h1 class="ar-hero-title">Calendário<sup class="ar-hero-count">(4)</sup></h1>
+      <div class="ar-hero-side">
+        <p class="ar-hero-desc">Datas consolidadas do semestre letivo, feriados acadêmicos e prazos de matrícula.</p>
+        <div class="ar-hero-actions">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNovoEvento">
+            <span>Adicionar evento</span>
+            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ChipBar Categorias -->
+    <div class="ar-chipbar" role="group" aria-label="Filtro de calendário">
+      <button type="button" class="ar-chip" aria-pressed="true">Todos<sup class="ar-sup">(4)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false">Matrícula<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false">Cancelamento<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false">Evento<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false">Edital<sup class="ar-sup">(1)</sup></button>
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Lista de Datas e Prazos -->
+    <section class="ar-panel" style="padding: var(--space-4) var(--space-3);">
+      <div class="ar-panel-head">
+        <h3 class="ar-panel-label" style="margin: 0;">2º semestre letivo · 2026</h3>
+        <span class="small" style="color: var(--ink-muted);">Datas oficiais homologadas pelo conselho acadêmico</span>
+      </div>
+      <div class="ar-panel-body">
 
+        <div class="ar-row">
+          <span class="ar-row-date"><b>14</b><small>set</small></span>
+          <span class="ar-row-main">
+            <div class="ar-row-title">Início do período de matrícula 2026/2</div>
+            <div class="ar-row-meta">Portal do estudante, a partir das 08:00</div>
+          </span>
+          <span class="ar-row-trail"><span class="ar-badge ar-badge--cyan">Matrícula</span></span>
+        </div>
+
+        <div class="ar-row">
+          <span class="ar-row-date"><b>26</b><small>set</small></span>
+          <span class="ar-row-main">
+            <div class="ar-row-title">Prazo final de trancamento de matrícula</div>
+            <div class="ar-row-meta">Protocolo na secretaria acadêmica até às 18:00</div>
+          </span>
+          <span class="ar-row-trail"><span class="ar-badge ar-badge--orange">Cancelamento</span></span>
+        </div>
+
+        <div class="ar-row">
+          <span class="ar-row-date"><b>05</b><small>out</small></span>
+          <span class="ar-row-main">
+            <div class="ar-row-title">Semana de Ciência e Tecnologia</div>
+            <div class="ar-row-meta">Auditório central e laboratórios em todos os turnos</div>
+          </span>
+          <span class="ar-row-trail"><span class="ar-badge ar-badge--yellow">Evento</span></span>
+        </div>
+
+        <div class="ar-row">
+          <span class="ar-row-date"><b>12</b><small>out</small></span>
+          <span class="ar-row-main">
+            <div class="ar-row-title">Publicação do resultado PIBIC</div>
+            <div class="ar-row-meta">Mural institucional e portal acadêmico</div>
+          </span>
+          <span class="ar-row-trail"><span class="ar-badge ar-badge--blue">Edital</span></span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Modal Dialog: Adicionar Evento -->
+    <div class="ar-scrim" id="modalNovoEvento" style="display:none; z-index:100;">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Adicionar evento">
+        <div class="ar-dialog-head">
+          <div>
+            <div class="ar-field-label">Calendário acadêmico</div>
+            <h2 class="ar-dialog-title">Adicionar evento</h2>
+            <p class="ar-dialog-desc">Insira um novo compromisso ou data importante no calendário.</p>
+          </div>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+
+        <form id="formNovoEvento" style="display:flex; flex-direction:column; gap:var(--space-3);">
+          <label class="ar-field">
+            <span class="ar-field-label">Título do evento</span>
+            <input type="text" id="eventoTitulo" placeholder="Exemplo: Feriado do Círio de Nazaré" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Data</span>
+            <input type="text" id="eventoData" placeholder="Exemplo: 12 out" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Descrição</span>
+            <input type="text" id="eventoDesc" placeholder="Exemplo: Recesso institucional">
+          </label>
+
+          <div class="ar-dialog-foot">
+            <button type="submit" class="ar-btn ar-btn--primary">Criar registro</button>
+            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="portal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var btnNovo = document.getElementById('btnNovoEvento');
+      var modalNovo = document.getElementById('modalNovoEvento');
+      if (btnNovo && modalNovo) {
+        btnNovo.addEventListener('click', function () {
+          Arcadia.openDialog(modalNovo);
+        });
+      }
+
+      var formNovo = document.getElementById('formNovoEvento');
+      if (formNovo) {
+        formNovo.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var titulo = document.getElementById('eventoTitulo').value.trim();
+          if (!titulo) return;
+
+          Arcadia.closeDialog(modalNovo);
+          formNovo.reset();
+          Arcadia.showToast('Evento registrado no calendário.', 'Desfazer', function () {
+            // Callback desfazer
+          });
+        });
+      }
+    });
+  </script>
+</body>
 </html>

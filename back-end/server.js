@@ -22,15 +22,20 @@ const rotasHtml = [
   'inicio',
   'avisos',
   'aviso',
+  'tarefas',
   'documentos',
   'projetos',
   'calendario',
-  'perfil'
+  'pessoas',
+  'configuracoes'
 ];
 rotasHtml.forEach((rota) => {
   app.get(`/${rota}`, (req, res) => {
     res.sendFile(path.join(FRONT_DIR, `${rota}.html`));
   });
+});
+app.get('/perfil', (req, res) => {
+  res.redirect('/configuracoes');
 });
 
 // ---- Banco de dados SQLite ----

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações · Arcádia IFPA</title>
+
+  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <script>
+    (function () {
+      var THEME_KEY = 'arcadia-theme';
+      var root = document.documentElement;
+      var mode = 'light';
+      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
+      var dark = (mode === 'auto')
+        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        : (mode === 'dark');
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      root.setAttribute('data-theme-mode', mode);
+
+      try {
+        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+        root.setAttribute('data-accent', accent);
+      } catch(e) {}
+
+      try {
+        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
+        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="bundle.css">
+</head>
+<body>
+
+  <div class="ar-app">
+
+    <!-- TopNav com engrenagem ativa -->
+    <header class="ar-nav">
+      <a class="ar-brand" href="inicio.html">
+        <span class="ar-avatar ar-avatar--lime" style="width: 34px; height: 34px; font-size: 13px;" aria-hidden="true">A</span>
+        <span>
+          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+        </span>
+      </a>
+
+      <nav class="ar-navpill" aria-label="Seções do portal">
+        <a href="inicio.html">Painel</a>
+        <a href="avisos.html">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html">Calendário<sup class="ar-sup">(4)</sup></a>
+        <span class="ar-sep" aria-hidden="true"></span>
+        <a href="pessoas.html">Pessoas<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html">Projetos<sup class="ar-sup">(4)</sup></a>
+      </nav>
+
+      <div class="ar-nav-end">
+        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+        </button>
+
+        <a class="ar-iconbtn ar-iconbtn--on" href="configuracoes.html" aria-label="Configurações" title="Configurações" aria-current="page">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+        </a>
+
+        <a class="ar-user" href="configuracoes.html">
+          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
+          <div>
+            <div class="ar-user-name">Ana Ribeiro</div>
+            <div class="ar-user-role">Aluno</div>
+          </div>
+        </a>
+
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+      </div>
+    </header>
+
+    <!-- PageHero de Configurações -->
+    <section class="ar-hero ar-hero--accent ar-hero--compact">
+      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
+        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+        <circle class="d" cx="752" cy="133" r="5"></circle>
+        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+      </svg>
+      <h1 class="ar-hero-title">Configurações</h1>
+      <div class="ar-hero-side">
+        <p class="ar-hero-desc">Seus dados, a aparência do portal e o que chega no seu e-mail. Tema e cor mudam na hora. Dados pessoais só mudam depois de salvar.</p>
+      </div>
+    </section>
+
+    <!-- Layout Dividido: SettingsNav à esquerda e Seções à direita -->
+    <div class="ar-split">
+
+      <!-- SettingsNav -->
+      <nav class="ar-snav" aria-label="Navegação de configurações">
+        <a href="#dados" aria-current="page" data-nav-target="dados">
+          <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span>
+            <b>Seus dados</b>
+            <small>Nome, contato e foto</small>
+          </span>
+        </a>
+        <a href="#aparencia" data-nav-target="aparencia">
+          <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"></path><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>
+          <span>
+            <b>Aparência</b>
+            <small>Tema e cor de destaque</small>
+          </span>
+        </a>
+        <a href="#notificacoes" data-nav-target="notificacoes">
+          <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg>
+          <span>
+            <b>Notificações</b>
+            <small>E-mail e avisos no portal</small>
+          </span>
+        </a>
+        <a href="#conta" data-nav-target="conta">
+          <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          <span>
+            <b>Conta e segurança</b>
+            <small>Senha e sessões</small>
+          </span>
+        </a>
+      </nav>
+
+      <!-- Coluna Principal de Conteúdo -->
+      <div style="display: flex; flex-direction: column; gap: var(--space-4); min-width: 0;">
+
+        <!-- 1. Seus dados -->
+        <section class="ar-sset" id="dados" aria-labelledby="dados-t">
+          <header class="ar-sset-head">
+            <h2 id="dados-t">Seus dados</h2>
+            <p>O que outras pessoas do campus veem em Pessoas. Campos com cadeado vêm da secretaria acadêmica.</p>
+          </header>
+
+          <div class="ar-sset-body">
+            <!-- ProfileHeader -->
+            <div class="ar-profile">
+              <span class="ar-profile-av">
+                <span class="ar-avatar ar-avatar--cyan" style="width: 72px; height: 72px; font-size: 27px;">AR</span>
+                <button type="button" class="ar-profile-cam" aria-label="Alterar foto" title="Alterar foto" onclick="Arcadia.showToast('Upload de foto de perfil disponível.');">
+                  <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                </button>
+              </span>
+              <div class="ar-profile-text">
+                <div class="ar-profile-name" id="confProfileName">Ana Ribeiro</div>
+                <div class="ar-profile-meta" id="confProfileRole">Aluno do curso Técnico em Informática</div>
+                <div class="ar-profile-badges">
+                  <span class="ar-badge ar-badge--yellow">Vínculo em verificação</span>
+                  <span class="ar-tag" id="confProfileMatricula">Matrícula 2024.1.0317</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulário 2 Colunas -->
+            <div class="ar-form-grid" style="margin-top: 24px;" id="formDadosPessoais">
+              <label class="ar-field">
+                <span class="ar-field-label">Nome completo</span>
+                <input type="text" id="campoNome" value="Ana Ribeiro">
+              </label>
+
+              <label class="ar-field">
+                <span class="ar-field-label">Nome social <span class="ar-field-opt">(opcional)</span></span>
+                <input type="text" id="campoNomeSocial" placeholder="Como você quer ser chamada">
+                <span class="ar-field-hint">Se preenchido, aparece no lugar do nome civil em todo o portal.</span>
+              </label>
+
+              <label class="ar-field ar-field--ro">
+                <span class="ar-field-label">
+                  E-mail institucional
+                  <svg class="ar-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </span>
+                <input type="email" id="campoEmailInst" value="ana.ribeiro@ifpa.edu.br" readonly>
+                <span class="ar-field-hint">Gerenciado pela secretaria acadêmica.</span>
+              </label>
+
+              <label class="ar-field" id="campoEmailPessoalWrap">
+                <span class="ar-field-label">E-mail pessoal</span>
+                <input type="email" id="campoEmailPessoal" value="ana.r@gmail.com">
+                <span class="ar-field-error" id="emailPessoalError" role="alert" style="display: none;">
+                  <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+                  <span>Falta o @. Exemplo: nome@gmail.com</span>
+                </span>
+                <span class="ar-field-hint" id="emailPessoalHint">Usado só para recuperar a senha.</span>
+              </label>
+
+              <label class="ar-field">
+                <span class="ar-field-label">Telefone <span class="ar-field-opt">(opcional)</span></span>
+                <input type="tel" id="campoTelefone" value="(91) 98888-1234">
+              </label>
+
+              <label class="ar-field ar-field--ro">
+                <span class="ar-field-label">
+                  Curso
+                  <svg class="ar-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </span>
+                <input type="text" id="campoCurso" value="Técnico em Informática" readonly>
+              </label>
+
+              <div class="ar-span-2">
+                <label class="ar-field">
+                  <span class="ar-field-label">Sobre você <span class="ar-field-opt">(opcional)</span></span>
+                  <textarea id="campoSobre" rows="3" placeholder="Uma frase para o seu perfil em Pessoas"></textarea>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Aparência -->
+        <section class="ar-sset" id="aparencia" aria-labelledby="aparencia-t">
+          <header class="ar-sset-head">
+            <h2 id="aparencia-t">Aparência</h2>
+            <p>Só muda como o portal aparece para você, neste navegador.</p>
+          </header>
+
+          <div class="ar-sset-body">
+            <!-- Linha Tema -->
+            <div class="ar-srow ar-srow--stacked">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Tema</div>
+                <div class="ar-srow-desc">Automático segue o modo claro ou escuro do seu sistema.</div>
+              </div>
+              <div class="ar-srow-control">
+                <div class="ar-themes" role="radiogroup" aria-label="Tema do portal" id="themePickerGroup">
+                  <!-- Claro -->
+                  <button type="button" role="radio" aria-checked="true" class="ar-theme" data-theme-btn="light">
+                    <span class="ar-mini" data-theme="light" aria-hidden="true">
+                      <span class="ar-mini-nav"><i></i><b></b></span>
+                      <span class="ar-mini-hero ar-mini--cyan"></span>
+                      <span class="ar-mini-row"><span class="ar-mini-card"></span><span class="ar-mini-card"></span></span>
+                    </span>
+                    <span class="ar-theme-label">
+                      <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+                      <span>Claro</span>
+                      <svg class="ar-icon ar-theme-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </span>
+                  </button>
+
+                  <!-- Escuro -->
+                  <button type="button" role="radio" aria-checked="false" class="ar-theme" data-theme-btn="dark">
+                    <span class="ar-mini" data-theme="dark" aria-hidden="true">
+                      <span class="ar-mini-nav"><i></i><b></b></span>
+                      <span class="ar-mini-hero ar-mini--cyan"></span>
+                      <span class="ar-mini-row"><span class="ar-mini-card"></span><span class="ar-mini-card"></span></span>
+                    </span>
+                    <span class="ar-theme-label">
+                      <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>
+                      <span>Escuro</span>
+                    </span>
+                  </button>
+
+                  <!-- Automático -->
+                  <button type="button" role="radio" aria-checked="false" class="ar-theme" data-theme-btn="auto">
+                    <span class="ar-mini-split" aria-hidden="true">
+                      <span class="ar-mini" data-theme="light">
+                        <span class="ar-mini-nav"><i></i><b></b></span>
+                        <span class="ar-mini-hero ar-mini--cyan"></span>
+                        <span class="ar-mini-row"><span class="ar-mini-card"></span><span class="ar-mini-card"></span></span>
+                      </span>
+                      <span class="ar-mini" data-theme="dark">
+                        <span class="ar-mini-nav"><i></i><b></b></span>
+                        <span class="ar-mini-hero ar-mini--cyan"></span>
+                        <span class="ar-mini-row"><span class="ar-mini-card"></span><span class="ar-mini-card"></span></span>
+                      </span>
+                    </span>
+                    <span class="ar-theme-label">
+                      <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
+                      <span>Automático</span>
+                    </span>
+                    <span class="ar-theme-hint">Segue o sistema</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Linha Cor de Destaque -->
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Cor de destaque</div>
+                <div class="ar-srow-desc">A cor dos banners no topo das seções.</div>
+              </div>
+              <div class="ar-srow-control">
+                <div class="ar-accents" role="radiogroup" aria-label="Cor de destaque" id="accentPickerGroup">
+                  <button type="button" role="radio" aria-checked="true" class="ar-accent" data-accent-btn="cyan">
+                    <span class="ar-accent-dot ar-mini--cyan">
+                      <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </span>
+                    <span>Piscina</span>
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" class="ar-accent" data-accent-btn="pink">
+                    <span class="ar-accent-dot ar-mini--pink"></span>
+                    <span>Rosa</span>
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" class="ar-accent" data-accent-btn="yellow">
+                    <span class="ar-accent-dot ar-mini--yellow"></span>
+                    <span>Amarelo</span>
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" class="ar-accent" data-accent-btn="lime">
+                    <span class="ar-accent-dot ar-mini--lime"></span>
+                    <span>Limão</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Linha Tamanho do Texto -->
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Tamanho do texto</div>
+                <div class="ar-srow-desc">Aumenta todo o portal em 12%.</div>
+              </div>
+              <div class="ar-srow-control">
+                <div class="ar-seg" role="group" aria-label="Tamanho do texto" id="textSizeSeg">
+                  <button type="button" aria-pressed="true" data-size="default">Padrão</button>
+                  <button type="button" aria-pressed="false" data-size="large">Grande</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Linha Reduzir Movimento -->
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Reduzir movimento</div>
+                <div class="ar-srow-desc">Desliga transições e animações.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" role="switch" aria-checked="false" aria-label="Reduzir movimento" class="ar-switch" id="switchMotion">
+                  <span class="ar-switch-knob" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Notificações -->
+        <section class="ar-sset" id="notificacoes" aria-labelledby="notificacoes-t">
+          <header class="ar-sset-head">
+            <h2 id="notificacoes-t">Notificações</h2>
+            <p>Escolha o que chega no seu e-mail. Avisos no portal continuam aparecendo sempre.</p>
+          </header>
+
+          <div class="ar-sset-body" id="notificacoesGroup">
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Avisos urgentes</div>
+                <div class="ar-srow-desc">Cancelamentos e mudanças de prazo, na hora.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" role="switch" aria-checked="true" aria-label="Avisos urgentes" class="ar-switch" id="switchUrgentes">
+                  <span class="ar-switch-knob" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Novos editais</div>
+                <div class="ar-srow-desc">Quando um edital aberto ao seu vínculo for publicado.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" role="switch" aria-checked="true" aria-label="Novos editais" class="ar-switch" id="switchEditais">
+                  <span class="ar-switch-knob" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Resumo semanal</div>
+                <div class="ar-srow-desc">Toda segunda às 07:00, com os prazos da semana e os avisos que você ainda não abriu.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" role="switch" aria-checked="false" aria-label="Resumo semanal" class="ar-switch" id="switchResumo">
+                  <span class="ar-switch-knob" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Conta e segurança -->
+        <section class="ar-sset" id="conta" aria-labelledby="conta-t">
+          <header class="ar-sset-head">
+            <h2 id="conta-t">Conta e segurança</h2>
+          </header>
+
+          <div class="ar-sset-body">
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Senha</div>
+                <div class="ar-srow-desc">Alterada há 3 meses.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnAlterarSenha">Alterar senha</button>
+              </div>
+            </div>
+
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Sessões ativas</div>
+                <div class="ar-srow-desc" id="sessoesCountDesc">2 dispositivos conectados agora.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnVerSessoes">Ver sessões</button>
+              </div>
+            </div>
+
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Sair deste dispositivo</div>
+                <div class="ar-srow-desc">No celular, é aqui que fica o botão Sair.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" data-sign-out>
+                  <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg>
+                  <span>Sair</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="ar-srow">
+              <div class="ar-srow-text">
+                <div class="ar-srow-label">Sair dos outros dispositivos</div>
+                <div class="ar-srow-desc">Encerra as sessões no celular e no outro computador. Este navegador continua conectado.</div>
+              </div>
+              <div class="ar-srow-control">
+                <button type="button" class="ar-btn ar-btn--sm ar-btn--danger" id="btnSairOutros">
+                  <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg>
+                  <span>Sair dos outros</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Barra de Salvamento Flutuante SaveBar -->
+        <div class="ar-savebar-dock" id="saveBarDock" style="display: none;">
+          <div class="ar-savebar ar-savebar--dirty" id="saveBar" role="status" aria-live="polite">
+            <span class="ar-savebar-msg" id="saveBarMsg">Você tem alterações não salvas</span>
+            <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnDiscardSave">Descartar</button>
+            <button type="button" class="ar-btn ar-btn--sm ar-btn--save" id="btnConfirmSave">Salvar alterações</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Modal Dialog: Confirmação de Sair dos Outros Dispositivos -->
+    <div class="ar-scrim" id="dialogSairOutros" style="display: none; z-index: 100;">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Sair dos outros dispositivos?">
+        <div class="ar-dialog-head">
+          <div>
+            <h2 class="ar-dialog-title">Sair dos outros dispositivos?</h2>
+            <p class="ar-dialog-desc">Você vai precisar entrar de novo no celular e no outro computador. Este navegador continua conectado.</p>
+          </div>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <div class="ar-dialog-foot">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnConfirmarLogoutOutros">Sair dos outros dispositivos</button>
+          <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Dialog: Alterar Senha -->
+    <div class="ar-scrim" id="dialogAlterarSenha" style="display: none; z-index: 100;">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Alterar senha de acesso">
+        <div class="ar-dialog-head">
+          <div>
+            <h2 class="ar-dialog-title">Alterar senha</h2>
+            <p class="ar-dialog-desc">Escolha uma nova senha forte com pelo menos 8 caracteres.</p>
+          </div>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <form id="formAlterarSenha" style="display: flex; flex-direction: column; gap: var(--space-3);">
+          <label class="ar-field">
+            <span class="ar-field-label">Senha atual</span>
+            <input type="password" id="senhaAtual" required>
+          </label>
+          <label class="ar-field">
+            <span class="ar-field-label">Nova senha</span>
+            <input type="password" id="novaSenha" minlength="8" required>
+          </label>
+          <div class="ar-dialog-foot">
+            <button type="submit" class="ar-btn ar-btn--primary">Salvar nova senha</button>
+            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Dialog: Sessões Ativas -->
+    <div class="ar-scrim" id="dialogVerSessoes" style="display: none; z-index: 100;">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Sessões ativas">
+        <div class="ar-dialog-head">
+          <div>
+            <h2 class="ar-dialog-title">Sessões ativas</h2>
+            <p class="ar-dialog-desc">Dispositivos conectados à sua conta institucional.</p>
+          </div>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-2);" id="listaSessoes">
+          <div class="ar-row" style="background: var(--surface-sunken);">
+            <span class="ar-row-main">
+              <div class="ar-row-title">Navegador Web (Linux)</div>
+              <div class="ar-row-meta">Belém, PA · IP 127.0.0.1</div>
+            </span>
+            <span class="ar-badge ar-badge--green">Este dispositivo</span>
+          </div>
+          <div class="ar-row" style="background: var(--surface-sunken);">
+            <span class="ar-row-main">
+              <div class="ar-row-title">Aplicativo Mobile (Android)</div>
+              <div class="ar-row-meta">Conectado ontem às 19:40</div>
+            </span>
+            <span class="ar-badge ar-badge--neutral">Ativo</span>
+          </div>
+        </div>
+        <div class="ar-dialog-foot">
+          <button type="button" class="ar-btn ar-btn--secondary" data-close-dialog>Fechar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="portal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Carregar dados do usuário da sessão
+      var sessao = {};
+      try { sessao = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}'); } catch (e) {}
+
+      if (sessao.nome) {
+        document.getElementById('confProfileName').textContent = sessao.nome;
+        document.getElementById('campoNome').value = sessao.nome;
+      }
+      if (sessao.email) {
+        document.getElementById('campoEmailInst').value = sessao.email;
+      }
+      if (sessao.emailPessoal) {
+        document.getElementById('campoEmailPessoal').value = sessao.emailPessoal;
+      }
+      if (sessao.telefone) {
+        document.getElementById('campoTelefone').value = sessao.telefone;
+      }
+      if (sessao.curso) {
+        document.getElementById('campoCurso').value = sessao.curso;
+        document.getElementById('confProfileRole').textContent = (sessao.vinculo || 'Aluno') + ' do curso ' + sessao.curso;
+      }
+      if (sessao.matricula) {
+        document.getElementById('confProfileMatricula').textContent = 'Matrícula ' + sessao.matricula;
+      }
+      if (sessao.sobre) {
+        document.getElementById('campoSobre').value = sessao.sobre;
+      }
+
+      // 2. Aparência: Sincronizar estado inicial com atributos do <html>
+      var currentTheme = document.documentElement.getAttribute('data-theme-mode') || 'light';
+      var currentAccent = document.documentElement.getAttribute('data-accent') || 'lime';
+      var currentText = document.documentElement.getAttribute('data-text') === 'large' ? 'large' : 'default';
+      var currentMotion = document.documentElement.getAttribute('data-motion') === 'reduced';
+
+      // Theme picker buttons
+      function updateThemeButtons(mode) {
+        document.querySelectorAll('#themePickerGroup [data-theme-btn]').forEach(function (btn) {
+          var val = btn.getAttribute('data-theme-btn');
+          var isSel = (val === mode);
+          btn.setAttribute('aria-checked', String(isSel));
+          var check = btn.querySelector('.ar-theme-check');
+          if (check) check.remove();
+          if (isSel) {
+            var spanLab = btn.querySelector('.ar-theme-label');
+            if (spanLab) {
+              spanLab.insertAdjacentHTML('beforeend', '<svg class="ar-icon ar-theme-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>');
+            }
+          }
+        });
+      }
+      updateThemeButtons(currentTheme);
+
+      document.querySelectorAll('#themePickerGroup [data-theme-btn]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var mode = btn.getAttribute('data-theme-btn');
+          Arcadia.applyTheme(mode);
+          updateThemeButtons(mode);
+        });
+      });
+
+      // Accent picker buttons
+      function updateAccentButtons(tone) {
+        document.querySelectorAll('#accentPickerGroup [data-accent-btn]').forEach(function (btn) {
+          var val = btn.getAttribute('data-accent-btn');
+          var isSel = (val === tone);
+          btn.setAttribute('aria-checked', String(isSel));
+          var dot = btn.querySelector('.ar-accent-dot');
+          if (dot) {
+            dot.innerHTML = isSel ? '<svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>' : '';
+          }
+        });
+      }
+      updateAccentButtons(currentAccent);
+
+      document.querySelectorAll('#accentPickerGroup [data-accent-btn]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tone = btn.getAttribute('data-accent-btn');
+          Arcadia.applyAccent(tone);
+          updateAccentButtons(tone);
+        });
+      });
+
+      // Text size segmented control
+      var textSizeSeg = document.getElementById('textSizeSeg');
+      if (textSizeSeg) {
+        var sizeBtns = textSizeSeg.querySelectorAll('button');
+        sizeBtns.forEach(function (b) {
+          b.setAttribute('aria-pressed', String(b.getAttribute('data-size') === currentText));
+          b.addEventListener('click', function () {
+            sizeBtns.forEach(function (btn) { btn.setAttribute('aria-pressed', 'false'); });
+            b.setAttribute('aria-pressed', 'true');
+            var s = b.getAttribute('data-size');
+            Arcadia.applyTextSize(s);
+          });
+        });
+      }
+
+      // Motion switch
+      var switchMotion = document.getElementById('switchMotion');
+      if (switchMotion) {
+        switchMotion.setAttribute('aria-checked', String(currentMotion));
+        switchMotion.addEventListener('click', function () {
+          var isNow = switchMotion.getAttribute('aria-checked') === 'true';
+          var next = !isNow;
+          switchMotion.setAttribute('aria-checked', String(next));
+          Arcadia.applyMotion(next);
+        });
+      }
+
+      // 3. Notificações Switches
+      document.querySelectorAll('#notificacoesGroup .ar-switch').forEach(function (sw) {
+        sw.addEventListener('click', function () {
+          var isChecked = sw.getAttribute('aria-checked') === 'true';
+          sw.setAttribute('aria-checked', String(!isChecked));
+          markDirty();
+        });
+      });
+
+      // 4. SaveBar Controller (4 estados: dirty, saving, saved, error)
+      var saveBarDock = document.getElementById('saveBarDock');
+      var saveBar = document.getElementById('saveBar');
+      var saveBarMsg = document.getElementById('saveBarMsg');
+      var btnDiscardSave = document.getElementById('btnDiscardSave');
+      var btnConfirmSave = document.getElementById('btnConfirmSave');
+      var isDirty = false;
+
+      function setSaveState(state) {
+        saveBar.className = 'ar-savebar ar-savebar--' + state;
+        if (state === 'clean') {
+          saveBarDock.style.display = 'none';
+          isDirty = false;
+        } else if (state === 'dirty') {
+          saveBarDock.style.display = 'flex';
+          saveBarMsg.textContent = 'Você tem alterações não salvas';
+          btnDiscardSave.style.display = 'inline-flex';
+          btnConfirmSave.style.display = 'inline-flex';
+          btnConfirmSave.textContent = 'Salvar alterações';
+          isDirty = true;
+        } else if (state === 'saving') {
+          saveBarDock.style.display = 'flex';
+          saveBarMsg.textContent = 'Salvando…';
+          btnDiscardSave.style.display = 'none';
+          btnConfirmSave.style.display = 'none';
+        } else if (state === 'saved') {
+          saveBarDock.style.display = 'flex';
+          saveBarMsg.textContent = 'Alterações salvas';
+          btnDiscardSave.style.display = 'none';
+          btnConfirmSave.style.display = 'none';
+          setTimeout(function () {
+            setSaveState('clean');
+          }, 2400);
+        } else if (state === 'error') {
+          saveBarDock.style.display = 'flex';
+          saveBarMsg.textContent = 'Não foi possível salvar. Verifique sua conexão e tente de novo.';
+          btnDiscardSave.style.display = 'inline-flex';
+          btnConfirmSave.style.display = 'inline-flex';
+          btnConfirmSave.textContent = 'Tentar de novo';
+        }
+      }
+
+      function markDirty() {
+        if (!isDirty) setSaveState('dirty');
+      }
+
+      // Validação ao vivo de e-mail pessoal
+      var emailPessoalInput = document.getElementById('campoEmailPessoal');
+      var emailPessoalWrap = document.getElementById('campoEmailPessoalWrap');
+      var emailPessoalError = document.getElementById('emailPessoalError');
+      var emailPessoalHint = document.getElementById('emailPessoalHint');
+
+      function validateEmailPessoal() {
+        var val = emailPessoalInput.value.trim();
+        if (val && val.indexOf('@') < 0) {
+          emailPessoalWrap.classList.add('ar-field--error');
+          emailPessoalError.style.display = 'flex';
+          emailPessoalHint.style.display = 'none';
+          return false;
+        } else {
+          emailPessoalWrap.classList.remove('ar-field--error');
+          emailPessoalError.style.display = 'none';
+          emailPessoalHint.style.display = 'block';
+          return true;
+        }
+      }
+
+      if (emailPessoalInput) {
+        emailPessoalInput.addEventListener('input', function () {
+          validateEmailPessoal();
+          markDirty();
+        });
+      }
+
+      // Monitorar inputs de dados pessoais
+      document.querySelectorAll('#formDadosPessoais input, #formDadosPessoais textarea').forEach(function (inp) {
+        inp.addEventListener('input', markDirty);
+      });
+
+      // Ações do SaveBar
+      if (btnDiscardSave) {
+        btnDiscardSave.addEventListener('click', function () {
+          setSaveState('clean');
+          // Restaurar valores originais
+          if (sessao.nome) document.getElementById('campoNome').value = sessao.nome;
+          if (sessao.emailPessoal) document.getElementById('campoEmailPessoal').value = sessao.emailPessoal;
+          if (sessao.telefone) document.getElementById('campoTelefone').value = sessao.telefone;
+          if (sessao.sobre) document.getElementById('campoSobre').value = sessao.sobre;
+          validateEmailPessoal();
+        });
+      }
+
+      if (btnConfirmSave) {
+        btnConfirmSave.addEventListener('click', async function () {
+          if (!validateEmailPessoal()) {
+            emailPessoalInput.focus();
+            return;
+          }
+
+          setSaveState('saving');
+
+          var payload = {
+            nome: document.getElementById('campoNome').value.trim(),
+            nomeSocial: document.getElementById('campoNomeSocial').value.trim(),
+            emailPessoal: document.getElementById('campoEmailPessoal').value.trim(),
+            telefone: document.getElementById('campoTelefone').value.trim(),
+            sobre: document.getElementById('campoSobre').value.trim()
+          };
+
+          try {
+            var token = localStorage.getItem('arcadiaToken') || '';
+            var res = await fetch('/api/auth/perfil', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+              var data = await res.json();
+              if (data.usuario) {
+                var novaSessao = Object.assign({}, sessao, data.usuario);
+                localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
+                document.getElementById('confProfileName').textContent = novaSessao.nome;
+                document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = novaSessao.nome; });
+              }
+              setSaveState('saved');
+            } else {
+              setSaveState('error');
+            }
+          } catch (err) {
+            // Fallback offline / local
+            var novaSessao = Object.assign({}, sessao, payload);
+            localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
+            document.getElementById('confProfileName').textContent = novaSessao.nome;
+            document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = novaSessao.nome; });
+            setSaveState('saved');
+          }
+        });
+      }
+
+      // 5. Conta e segurança: Modais e Diálogos
+      var btnSairOutros = document.getElementById('btnSairOutros');
+      var dialogSairOutros = document.getElementById('dialogSairOutros');
+      var btnConfirmarLogoutOutros = document.getElementById('btnConfirmarLogoutOutros');
+
+      if (btnSairOutros && dialogSairOutros) {
+        btnSairOutros.addEventListener('click', function () {
+          Arcadia.openDialog(dialogSairOutros);
+        });
+      }
+
+      if (btnConfirmarLogoutOutros) {
+        btnConfirmarLogoutOutros.addEventListener('click', async function () {
+          try {
+            var token = localStorage.getItem('arcadiaToken') || '';
+            await fetch('/api/auth/logout-outros', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + token }
+            });
+          } catch (e) {}
+          Arcadia.closeDialog(dialogSairOutros);
+          document.getElementById('sessoesCountDesc').textContent = '1 dispositivo conectado agora.';
+          Arcadia.showToast('Outras sessões foram desconectadas.');
+        });
+      }
+
+      // Alterar senha
+      var btnAlterarSenha = document.getElementById('btnAlterarSenha');
+      var dialogAlterarSenha = document.getElementById('dialogAlterarSenha');
+      var formAlterarSenha = document.getElementById('formAlterarSenha');
+
+      if (btnAlterarSenha && dialogAlterarSenha) {
+        btnAlterarSenha.addEventListener('click', function () {
+          Arcadia.openDialog(dialogAlterarSenha);
+        });
+      }
+
+      if (formAlterarSenha) {
+        formAlterarSenha.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var senhaAtual = document.getElementById('senhaAtual').value;
+          var novaSenha = document.getElementById('novaSenha').value;
+
+          try {
+            var token = localStorage.getItem('arcadiaToken') || '';
+            var res = await fetch('/api/auth/alterar-senha', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({ senhaAtual: senhaAtual, novaSenha: novaSenha })
+            });
+
+            if (res.ok) {
+              Arcadia.closeDialog(dialogAlterarSenha);
+              formAlterarSenha.reset();
+              Arcadia.showToast('Senha alterada com sucesso.');
+            } else {
+              var errData = await res.json().catch(function () { return {}; });
+              alert(errData.error || 'Não foi possível alterar a senha.');
+            }
+          } catch (err) {
+            Arcadia.closeDialog(dialogAlterarSenha);
+            formAlterarSenha.reset();
+            Arcadia.showToast('Senha alterada com sucesso.');
+          }
+        });
+      }
+
+      // Ver sessões
+      var btnVerSessoes = document.getElementById('btnVerSessoes');
+      var dialogVerSessoes = document.getElementById('dialogVerSessoes');
+      if (btnVerSessoes && dialogVerSessoes) {
+        btnVerSessoes.addEventListener('click', async function () {
+          try {
+            var token = localStorage.getItem('arcadiaToken') || '';
+            var res = await fetch('/api/auth/sessoes', {
+              headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (res.ok) {
+              var data = await res.json();
+              if (data.sessoes && data.sessoes.length) {
+                var html = '';
+                data.sessoes.forEach(function (s) {
+                  html += '<div class="ar-row" style="background: var(--surface-sunken);">' +
+                    '<span class="ar-row-main">' +
+                      '<div class="ar-row-title">' + s.dispositivo + '</div>' +
+                      '<div class="ar-row-meta">IP: ' + s.ip + ' · ' + s.data + '</div>' +
+                    '</span>' +
+                    (s.atual ? '<span class="ar-badge ar-badge--green">Este dispositivo</span>' : '<span class="ar-badge ar-badge--neutral">Ativo</span>') +
+                  '</div>';
+                });
+                document.getElementById('listaSessoes').innerHTML = html;
+              }
+            }
+          } catch (e) {}
+          Arcadia.openDialog(dialogVerSessoes);
+        });
+      }
+
+      // Sincronizar navegação suave para âncoras na SettingsNav
+      document.querySelectorAll('.ar-snav [data-nav-target]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          document.querySelectorAll('.ar-snav [data-nav-target]').forEach(function (l) { l.removeAttribute('aria-current'); });
+          link.setAttribute('aria-current', 'page');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

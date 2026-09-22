@@ -1,106 +1,205 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edital Nº 012/2026 — Portal Arcádia</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bolsas de Iniciação Científica · Arcádia IFPA</title>
 
+  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <script>
+    (function () {
+      var THEME_KEY = 'arcadia-theme';
+      var root = document.documentElement;
+      var mode = 'light';
+      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
+      var dark = (mode === 'auto')
+        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        : (mode === 'dark');
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      root.setAttribute('data-theme-mode', mode);
+
+      try {
+        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+        root.setAttribute('data-accent', accent);
+      } catch(e) {}
+
+      try {
+        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
+        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="bundle.css">
+</head>
 <body>
 
-    <div class="portal">
+  <div class="ar-app">
 
-        <aside class="portal-sidebar">
-            <a href="index.html" class="portal-logo">Arcádia</a>
-            <span class="micro">Portal</span>
-            <ul class="portal-nav">
-                <li><a href="inicio.html">Início</a></li>
-                <li><a href="avisos.html" class="ativo">Avisos</a></li>
-                <li><a href="documentos.html">Documentos</a></li>
-                <li><a href="projetos.html">Projetos</a></li>
-                <li><a href="calendario.html">Calendário</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-            </ul>
-            <div class="portal-user">Ana Ribeiro<br>Aluno · 4º per.</div>
-        </aside>
+    <!-- TopNav -->
+    <header class="ar-nav">
+      <a class="ar-brand" href="inicio.html">
+        <span class="ar-avatar ar-avatar--lime" style="width: 34px; height: 34px; font-size: 13px;" aria-hidden="true">A</span>
+        <span>
+          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+        </span>
+      </a>
 
-        <main class="portal-main">
+      <nav class="ar-navpill" aria-label="Seções do portal">
+        <a href="inicio.html">Painel</a>
+        <a href="avisos.html" aria-current="page">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html">Calendário<sup class="ar-sup">(4)</sup></a>
+        <span class="ar-sep" aria-hidden="true"></span>
+        <a href="pessoas.html">Pessoas<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html">Projetos<sup class="ar-sup">(4)</sup></a>
+      </nav>
 
-            <div class="portal-topo">
-                <span class="breadcrumb">Portal › <a href="avisos.html">Avisos</a> › <strong>Edital 012</strong></span>
-                <span class="portal-meta">Aviso aberto</span>
-            </div>
-            <h1 class="portal-titulo">Detalhe, anexos e inscrição</h1>
+      <div class="ar-nav-end">
+        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+        </button>
 
-            <div class="duplo duplo-topo">
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+        </a>
 
-                <section class="bloco-claro detalhe">
-                    <div class="detalhe-tags">
-                        <span class="pill pill-edital">Edital</span>
-                        <span class="pill">Aluno</span>
-                    </div>
+        <a class="ar-user" href="configuracoes.html">
+          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
+          <div>
+            <div class="ar-user-name">Ana Ribeiro</div>
+            <div class="ar-user-role">Aluno</div>
+          </div>
+        </a>
 
-                    <h1>Edital Nº 012/2026 — Bolsas de Iniciação Científica</h1>
-                    <p>Estão abertas as inscrições para bolsas de iniciação científica referentes ao segundo semestre
-                        de 2026. Podem se inscrever alunos matriculados a partir do 2º período, com coeficiente igual
-                        ou superior a 7,0. As inscrições vão de 15/06 a 30/08, exclusivamente pelo portal do aluno.</p>
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+      </div>
+    </header>
 
-                    <div class="anexos">
-                        <a href="#" class="anexo">Edital completo — 012/2026 <span>PDF · 320 KB</span></a>
-                        <a href="#" class="anexo">Formulário de inscrição <span>PDF · 88 KB</span></a>
-                        <a href="#" class="anexo">Cronograma de avaliação <span>PDF · 54 KB</span></a>
-                    </div>
+    <!-- Breadcrumb -->
+    <nav class="ar-crumbs" aria-label="Você está em">
+      <ol>
+        <li><a href="avisos.html">Avisos</a><svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></li>
+        <li><a href="avisos.html">Editais</a><svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></li>
+        <li><span aria-current="page">Bolsas de Iniciação Científica</span></li>
+      </ol>
+    </nav>
 
-                    <div class="detalhe-acoes">
-                        <button class="btn btn-tinta">Inscrever-se</button>
-                        <button class="btn btn-branco">Salvar</button>
-                        <button class="btn btn-branco">Compartilhar</button>
-                    </div>
+    <!-- RecordDetailHero em Rosa -->
+    <section class="ar-detail ar-detail--pink">
+      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
+        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+        <circle class="d" cx="752" cy="133" r="5"></circle>
+        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+      </svg>
+      <div class="ar-detail-eyebrow">
+        <span class="ar-tag ar-tag--onfield">Edital 012/2026</span>
+        <span class="ar-tag ar-tag--onfield">Aluno</span>
+      </div>
+      <h1 class="ar-detail-title">Bolsas de Iniciação Científica</h1>
+      <p class="ar-detail-desc">Seleção de estudantes para projetos de pesquisa do campus, com bolsa mensal por 12 meses.</p>
+      <div class="ar-detail-actions">
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--lg" id="btnInscrever">
+          <span>Inscrever-se</span>
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </button>
+        <button type="button" class="ar-btn ar-btn--ghost" id="btnBaixarEdital">
+          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+          <span>Baixar edital (PDF)</span>
+        </button>
+      </div>
+      <span class="ar-detail-status">Inscrições abertas</span>
+    </section>
 
-                    <p class="detalhe-rodape">Publicado em 15/06/2026 · Secretaria Acadêmica · Protocolo 010/2026</p>
-                </section>
-
-                <aside class="bloco-aviso">
-                    <span class="micro">Prazos</span>
-
-                    <div class="cartoes">
-                        <div class="cartao">
-                            <strong>Inscrições</strong>
-                            <span>15/06 a 30/08</span>
-                        </div>
-                        <div class="cartao">
-                            <strong>Resultado preliminar</strong>
-                            <span>12/09</span>
-                        </div>
-                        <div class="cartao">
-                            <strong>Recursos</strong>
-                            <span>13/09 a 15/09</span>
-                        </div>
-                        <div class="cartao">
-                            <strong>Resultado final</strong>
-                            <span>22/09</span>
-                        </div>
-                    </div>
-
-                    <div class="relacionados">
-                        <span class="micro">Relacionados</span>
-                        <a href="#">Monitoria de Cálculo I · 01/06</a>
-                        <a href="#">Recredenciamento do curso · 05/06</a>
-                    </div>
-                </aside>
-
-            </div>
-
-        </main>
+    <!-- InfoStrip -->
+    <div class="ar-info">
+      <div class="ar-info-item">
+        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+        <div><span>Duração da bolsa: </span><b>12 meses</b></div>
+      </div>
+      <div class="ar-info-item">
+        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v3"></path><path d="M16 2v3"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path></svg>
+        <div><span>Inscrições até: </span><b>30 set</b></div>
+      </div>
+      <div class="ar-info-item">
+        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>
+        <div><span>Vagas: </span><b>12</b></div>
+      </div>
+      <div class="ar-info-item">
+        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg>
+        <div><span>Público: </span><b>Aluno</b></div>
+      </div>
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Seção de Conteúdo e Descrição -->
+    <h2 class="ar-h2">Sobre este edital</h2>
+    <p class="body" style="margin: 0; max-width: 720px;">
+      O programa seleciona estudantes regularmente matriculados para atuar em projetos de pesquisa orientados por docentes do campus. A bolsa é mensal e exige dedicação de 20 horas semanais.
+    </p>
 
+    <!-- Etapas (StepList) -->
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <h2 class="ar-h2">Etapas</h2>
+      <div style="display: flex; gap: 6px; margin-top: 24px;">
+        <span class="ar-tag">4 etapas</span>
+        <span class="ar-tag">2 documentos</span>
+      </div>
+    </div>
+
+    <ol class="ar-steps">
+      <li class="ar-step">
+        <span class="ar-step-n">1</span>
+        <div>
+          <h4 class="ar-step-title">Inscrição pelo portal</h4>
+          <p class="ar-step-desc">Envie o formulário e o histórico escolar em PDF.</p>
+        </div>
+        <span class="ar-step-when">até 30 set</span>
+      </li>
+
+      <li class="ar-step">
+        <span class="ar-step-n">2</span>
+        <div>
+          <h4 class="ar-step-title">Análise de currículo</h4>
+          <p class="ar-step-desc">Banca da coordenação de pesquisa avalia os documentos.</p>
+        </div>
+        <span class="ar-step-when">01 a 08 out</span>
+      </li>
+
+      <li class="ar-step">
+        <span class="ar-step-n">3</span>
+        <div>
+          <h4 class="ar-step-title">Resultado preliminar</h4>
+          <p class="ar-step-desc">Publicado em Avisos, com prazo de recurso de 48h.</p>
+        </div>
+        <span class="ar-step-when">10 out</span>
+      </li>
+    </ol>
+
+  </div>
+
+  <script src="portal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var btnInscrever = document.getElementById('btnInscrever');
+      if (btnInscrever) {
+        btnInscrever.addEventListener('click', function () {
+          Arcadia.showToast('Formulário de inscrição iniciado.');
+        });
+      }
+      var btnBaixar = document.getElementById('btnBaixarEdital');
+      if (btnBaixar) {
+        btnBaixar.addEventListener('click', function () {
+          Arcadia.showToast('Download do edital em andamento...');
+        });
+      }
+    });
+  </script>
+</body>
 </html>
