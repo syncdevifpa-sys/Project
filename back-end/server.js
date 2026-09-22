@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Servir arquivos estáticos do front-end (HTML, CSS, JavaScript, imagens)
 const FRONT_DIR = path.resolve(__dirname, '..', 'front');
@@ -76,6 +76,7 @@ db.serialize(() => {
   safeAddColumn('usuarios', 'email_pessoal TEXT');
   safeAddColumn('usuarios', 'telefone TEXT');
   safeAddColumn('usuarios', 'sobre TEXT');
+  safeAddColumn('usuarios', 'foto TEXT');
 
   // 2. Tokens / Sessões
   db.run(`CREATE TABLE IF NOT EXISTS tokens (
@@ -437,6 +438,7 @@ function formatUser(u) {
     matricula: u.matricula || '',
     curso: u.curso || '',
     sobre: u.sobre || '',
+    foto: u.foto || '',
     preferences: prefs,
   };
 }
@@ -541,7 +543,7 @@ app.put('/api/auth/perfil', (req, res) => {
   getAuthUser(req, (usuario) => {
     if (!usuario) return res.status(401).json({ error: 'Não autorizado' });
 
-    const { nome, nomeSocial, emailPessoal, telefone, sobre, preferences } = req.body;
+    const { nome, nomeSocial, emailPessoal, telefone, sobre, preferences, foto } = req.body;
     const updates = [];
     const values = [];
 
@@ -564,6 +566,10 @@ app.put('/api/auth/perfil', (req, res) => {
     if (sobre != null) {
       updates.push('sobre = ?');
       values.push(String(sobre).trim());
+    }
+    if (foto !== undefined) {
+      updates.push('foto = ?');
+      values.push(foto ? String(foto) : '');
     }
     if (preferences != null) {
       updates.push('preferences = ?');

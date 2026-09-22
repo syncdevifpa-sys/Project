@@ -144,18 +144,20 @@
           <div class="ar-sset-body">
             <!-- ProfileHeader -->
             <div class="ar-profile">
-              <span class="ar-profile-av">
-                <span class="ar-avatar ar-avatar--cyan" style="width: 72px; height: 72px; font-size: 27px;">AR</span>
-                <button type="button" class="ar-profile-cam" aria-label="Alterar foto" title="Alterar foto" onclick="Arcadia.showToast('Upload de foto de perfil disponível.');">
+              <span class="ar-profile-av" id="btnTriggerFoto" title="Clique para alterar foto de perfil" role="button" tabindex="0" aria-label="Alterar foto de perfil">
+                <span class="ar-avatar ar-avatar--cyan" id="confProfileAvatar" style="width: 72px; height: 72px; font-size: 27px;">AR</span>
+                <button type="button" class="ar-profile-cam" id="btnCamAlterarFoto" aria-label="Alterar foto" title="Alterar foto">
                   <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path><circle cx="12" cy="13" r="3"></circle></svg>
                 </button>
               </span>
+              <input type="file" id="inputFotoPerfil" accept="image/png, image/jpeg, image/webp, image/gif" style="display:none;" aria-hidden="true">
               <div class="ar-profile-text">
                 <div class="ar-profile-name" id="confProfileName">Ana Ribeiro</div>
                 <div class="ar-profile-meta" id="confProfileRole">Aluno do curso Técnico em Informática</div>
                 <div class="ar-profile-badges">
                   <span class="ar-badge ar-badge--yellow">Vínculo em verificação</span>
                   <span class="ar-tag" id="confProfileMatricula">Matrícula 2024.1.0317</span>
+                  <button type="button" class="ar-btn ar-btn--ghost ar-btn--xs" id="btnRemoverFoto" style="display: none; height: 24px; padding: 0 8px; font-size: 11px;">Remover foto</button>
                 </div>
               </div>
             </div>
@@ -570,6 +572,146 @@
         document.getElementById('campoSobre').value = sessao.sobre;
       }
 
+      // Avatar e Foto de Perfil
+      var profileAvatarEl = document.getElementById('confProfileAvatar');
+      var btnRemoverFoto = document.getElementById('btnRemoverFoto');
+      var inputFotoPerfil = document.getElementById('inputFotoPerfil');
+      var btnTriggerFoto = document.getElementById('btnTriggerFoto');
+      var btnCamAlterarFoto = document.getElementById('btnCamAlterarFoto');
+
+      function renderProfileAvatar(foto, nome) {
+        nome = nome || sessao.nome || 'Ana Ribeiro';
+        var initials = nome.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'AR';
+        if (foto) {
+          profileAvatarEl.innerHTML = '<img src="' + foto + '" alt="' + nome + '" class="ar-avatar-img">';
+          if (btnRemoverFoto) btnRemoverFoto.style.display = 'inline-flex';
+        } else {
+          profileAvatarEl.textContent = initials;
+          if (btnRemoverFoto) btnRemoverFoto.style.display = 'none';
+        }
+      }
+
+      renderProfileAvatar(sessao.foto, sessao.nome);
+
+      function triggerPhotoUpload() {
+        if (inputFotoPerfil) inputFotoPerfil.click();
+      }
+
+      if (btnTriggerFoto) {
+        btnTriggerFoto.addEventListener('click', triggerPhotoUpload);
+        btnTriggerFoto.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            triggerPhotoUpload();
+          }
+        });
+      }
+      if (btnCamAlterarFoto) {
+        btnCamAlterarFoto.addEventListener('click', function (e) {
+          e.stopPropagation();
+          triggerPhotoUpload();
+        });
+      }
+
+      // Processar arquivo de foto com corte quadrado centralizado e compressão JPEG
+      function processAvatarFile(file, callback) {
+        if (!file.type || !file.type.startsWith('image/')) {
+          Arcadia.showToast('Selecione um arquivo de imagem válido (PNG, JPG ou WEBP).');
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var canvas = document.createElement('canvas');
+            var size = 360;
+            canvas.width = size;
+            canvas.height = size;
+            var ctx = canvas.getContext('2d');
+
+            var minDim = Math.min(img.width, img.height);
+            var sx = (img.width - minDim) / 2;
+            var sy = (img.height - minDim) / 2;
+
+            ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+            callback(null, dataUrl);
+          };
+          img.onerror = function () {
+            callback(new Error('Erro ao carregar os dados da imagem.'));
+          };
+          img.src = e.target.result;
+        };
+        reader.onerror = function () {
+          callback(new Error('Erro ao ler o arquivo selecionado.'));
+        };
+        reader.readAsDataURL(file);
+      }
+
+      if (inputFotoPerfil) {
+        inputFotoPerfil.addEventListener('change', function () {
+          var file = inputFotoPerfil.files && inputFotoPerfil.files[0];
+          if (!file) return;
+
+          processAvatarFile(file, async function (err, fotoDataUrl) {
+            if (err || !fotoDataUrl) {
+              Arcadia.showToast('Não foi possível processar a imagem selecionada.');
+              return;
+            }
+
+            sessao.foto = fotoDataUrl;
+            localStorage.setItem('arcadiaSessao', JSON.stringify(sessao));
+            renderProfileAvatar(fotoDataUrl, sessao.nome);
+            if (Arcadia.updateUserAvatar) {
+              Arcadia.updateUserAvatar(fotoDataUrl, sessao.nome);
+            }
+
+            Arcadia.showToast('Foto de perfil atualizada com sucesso.');
+
+            // Sincronizar com o backend
+            try {
+              var token = localStorage.getItem('arcadiaToken') || '';
+              await fetch('/api/auth/perfil', {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ foto: fotoDataUrl })
+              });
+            } catch (netErr) {}
+
+            inputFotoPerfil.value = '';
+          });
+        });
+      }
+
+      if (btnRemoverFoto) {
+        btnRemoverFoto.addEventListener('click', async function (e) {
+          e.stopPropagation();
+          sessao.foto = '';
+          localStorage.setItem('arcadiaSessao', JSON.stringify(sessao));
+          renderProfileAvatar('', sessao.nome);
+          if (Arcadia.updateUserAvatar) {
+            Arcadia.updateUserAvatar('', sessao.nome);
+          }
+          Arcadia.showToast('Foto de perfil removida.');
+
+          try {
+            var token = localStorage.getItem('arcadiaToken') || '';
+            await fetch('/api/auth/perfil', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({ foto: '' })
+            });
+          } catch (netErr) {}
+        });
+      }
+
       // 2. Aparência: Sincronizar estado inicial com atributos do <html>
       var currentTheme = document.documentElement.getAttribute('data-theme-mode') || 'light';
       var currentAccent = document.documentElement.getAttribute('data-accent') || 'lime';
@@ -787,6 +929,8 @@
                 localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
                 document.getElementById('confProfileName').textContent = novaSessao.nome;
                 document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = novaSessao.nome; });
+                renderProfileAvatar(novaSessao.foto, novaSessao.nome);
+                if (Arcadia.updateUserAvatar) Arcadia.updateUserAvatar(novaSessao.foto, novaSessao.nome);
               }
               setSaveState('saved');
             } else {
@@ -798,6 +942,8 @@
             localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
             document.getElementById('confProfileName').textContent = novaSessao.nome;
             document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = novaSessao.nome; });
+            renderProfileAvatar(novaSessao.foto, novaSessao.nome);
+            if (Arcadia.updateUserAvatar) Arcadia.updateUserAvatar(novaSessao.foto, novaSessao.nome);
             setSaveState('saved');
           }
         });

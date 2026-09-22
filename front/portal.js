@@ -426,6 +426,28 @@
   });
 
   // ---- Hidratação da TopNav e Sessão ----
+  function updateUserAvatar(foto, userName, userInitials) {
+    if (!userName) {
+      try {
+        var s = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
+        userName = s.nome || 'Ana Ribeiro';
+      } catch (e) {
+        userName = 'Ana Ribeiro';
+      }
+    }
+    if (!userInitials) {
+      userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'AR';
+    }
+
+    document.querySelectorAll('.ar-user .ar-avatar').forEach(function (el) {
+      if (foto) {
+        el.innerHTML = '<img src="' + foto + '" alt="' + userName + '" class="ar-avatar-img">';
+      } else {
+        el.textContent = userInitials;
+      }
+    });
+  }
+
   function hydrateTopNav() {
     var sessao = {};
     try {
@@ -439,7 +461,26 @@
     // Atualizar avatares e nomes
     document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = userName; });
     document.querySelectorAll('.ar-user-role').forEach(function (el) { el.textContent = userRole; });
-    document.querySelectorAll('.ar-user .ar-avatar').forEach(function (el) { el.textContent = userInitials; });
+    updateUserAvatar(sessao.foto, userName, userInitials);
+
+    // Sincronização em segundo plano com backend se houver token
+    var token = '';
+    try { token = localStorage.getItem('arcadiaToken') || ''; } catch (e) {}
+    if (token) {
+      fetch('/api/auth/perfil', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      }).then(function (res) {
+        if (res.ok) return res.json();
+      }).then(function (userData) {
+        if (userData && userData.id) {
+          var updated = Object.assign({}, sessao, userData);
+          localStorage.setItem('arcadiaSessao', JSON.stringify(updated));
+          if (updated.foto !== sessao.foto) {
+            updateUserAvatar(updated.foto, updated.nome);
+          }
+        }
+      }).catch(function () {});
+    }
 
     // Botão de busca
     document.querySelectorAll('[data-search-trigger]').forEach(function (btn) {
@@ -506,7 +547,9 @@
     showToast: showToast,
     openDialog: openDialog,
     closeDialog: closeDialog,
-    openCommandPalette: openCommandPalette
+    openCommandPalette: openCommandPalette,
+    updateUserAvatar: updateUserAvatar,
+    hydrateTopNav: hydrateTopNav
   });
 
 })();
