@@ -4,12 +4,34 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Servir arquivos estáticos do front-end (HTML, CSS, JavaScript, imagens)
+const FRONT_DIR = path.resolve(__dirname, '..', 'front');
+app.use(express.static(FRONT_DIR));
+
+// Rotas diretas para páginas HTML amigáveis
+const rotasHtml = [
+  'login',
+  'cadastro',
+  'inicio',
+  'avisos',
+  'aviso',
+  'documentos',
+  'projetos',
+  'calendario',
+  'perfil'
+];
+rotasHtml.forEach((rota) => {
+  app.get(`/${rota}`, (req, res) => {
+    res.sendFile(path.join(FRONT_DIR, `${rota}.html`));
+  });
+});
 
 // ---- Banco de dados SQLite ----
 const dbPath = path.join(__dirname, 'syncdev.db');
@@ -1423,6 +1445,10 @@ app.post('/api/admin/limpar-dados', (req, res) => {
 
 // ---- Inicialização do Servidor ----
 app.listen(PORT, () => {
-  console.log('Arcádia Back-end rodando em http://localhost:' + PORT);
-  console.log('Health check: http://localhost:' + PORT + '/health');
+  console.log(`\n==============================================`);
+  console.log(`🚀 Arcádia (SyncDev IFPA) rodando com sucesso!`);
+  console.log(`🌐 Front-end: http://localhost:${PORT}`);
+  console.log(`📡 API / Health: http://localhost:${PORT}/health`);
+  console.log(`📁 Front-end servido de: ${FRONT_DIR}`);
+  console.log(`==============================================\n`);
 });

@@ -30,16 +30,14 @@ document.querySelectorAll('[data-filtro]').forEach((grupo) => {
     });
 });
 
-// Helper para redirecionar para o portal Arcádia
+// Base da API (caso use Live Server na porta 5500/5501 ou acesse via Node na 3000)
+const API_BASE = (window.location.port === '5500' || window.location.port === '5501' || window.location.protocol === 'file:')
+    ? 'http://localhost:3000'
+    : '';
+
+// Helper para redirecionar para a área interna do portal
 function redirecionarParaPortal() {
-    if (window.location.port === '3000') {
-        window.location.href = '/portal/';
-    } else if (window.location.port === '5173') {
-        window.location.href = '/';
-    } else {
-        // Se acessado por outro servidor ou arquivo
-        window.location.href = '/portal/';
-    }
+    window.location.href = 'inicio.html';
 }
 
 // Inicializar banco local de usuários com fallback seguro
@@ -127,7 +125,7 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
 
             // Tentar API do backend
             try {
-                const res = await fetch('/api/auth/cadastro', {
+                const res = await fetch(`${API_BASE}/api/auth/cadastro`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nome, email, senha, vinculo })
@@ -182,7 +180,7 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
 
             // Tentar API do backend
             try {
-                const res = await fetch('/api/auth/login', {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, senha })
@@ -243,7 +241,7 @@ document.querySelectorAll('[data-logout]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
         try {
-            fetch('/api/auth/logout', { method: 'POST' });
+            fetch(`${API_BASE}/api/auth/logout`, { method: 'POST' });
         } catch {}
         localStorage.removeItem('arcadiaSessao');
         localStorage.removeItem('arcadiaToken');
