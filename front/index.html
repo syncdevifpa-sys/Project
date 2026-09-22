@@ -3,1236 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <title>Arcádia — Gestão acadêmica digitada</title>
+    <title>Arcádia — Mural e Gestão Acadêmica IFPA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="landing.css?v=4" />
-    <style>
-
-/* --- VARIÁVEIS & DESIGN TOKENS --- */
-:root {
-  --color-tinta: #10141A;
-  --color-papel: #FAFAF8;
-  --color-branco: #FFFFFF;
-  --color-creme: #FAF9F3;
-  --color-ceu-hero: #DCEEFF;
-  --color-vinculo-bg: #EFEBFB;
-  --color-dark-bg: #10141A;
-  --color-dark-surface: #171D25;
-  --color-dark-border: #262E38;
-  
-  --color-blue: #1070E5;
-  --color-blue-hover: #085BBD;
-  --color-muted: #5A6068;
-  --color-muted-light: #94A3B8;
-
-  /* Categorias */
-  --cat-matricula: #8BE4F9;
-  --cat-matricula-bg: #D8F0FA;
-  --cat-matricula-text: #0284C7;
-  
-  --cat-cancelamento: #FF5C5C;
-  --cat-cancelamento-bg: #FEE2E2;
-  --cat-cancelamento-text: #DC2626;
-
-  --cat-edital: #10B981;
-  --cat-edital-bg: #DCFCE7;
-  --cat-edital-text: #16A34A;
-
-  --cat-evento: #FACC15;
-  --cat-evento-bg: #FEF3C7;
-  --cat-evento-text: #D97706;
-
-  --cat-calendario: #F9A8D4;
-  --cat-calendario-bg: #FCE7F3;
-  --cat-calendario-text: #DB2777;
-
-  --cat-documento: #FDE047;
-  --cat-documento-bg: #FEF9C3;
-  --cat-documento-text: #CA8A04;
-
-  --font-main: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* --- RESET BÁSICO --- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: var(--font-main);
-  background-color: var(--color-papel);
-  color: var(--color-tinta);
-  font-size: 17px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.container {
-  width: 100%;
-  max-width: 1140px;
-  margin: 0 auto;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-/* --- BOTÕES GERAIS EM PÍLULA (FONTES MAIORES) --- */
-.btn-blue-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-blue);
-  color: #ffffff !important;
-  font-weight: 700;
-  font-size: 15.5px;
-  padding: 10px 26px;
-  border-radius: 9999px;
-  border: 1.5px solid var(--color-blue);
-  transition: background-color 0.15s ease, transform 0.1s ease;
-  white-space: nowrap;
-}
-
-.btn-blue-pill:hover {
-  background-color: var(--color-blue-hover);
-  border-color: var(--color-blue-hover);
-}
-
-.btn-outline-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color: var(--color-tinta);
-  font-weight: 700;
-  font-size: 15.5px;
-  padding: 10px 26px;
-  border-radius: 9999px;
-  border: 1.5px solid var(--color-tinta);
-  transition: background-color 0.15s ease;
-  white-space: nowrap;
-}
-
-.btn-outline-pill:hover {
-  background-color: rgba(16, 20, 26, 0.06);
-}
-
-.btn-dark-outline-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 15.5px;
-  padding: 10px 26px;
-  border-radius: 9999px;
-  border: 1.5px solid #64748B;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-  white-space: nowrap;
-}
-
-.btn-dark-outline-pill:hover {
-  border-color: #CBD5E1;
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-/* --- TYPOGRAPHY UTILS --- */
-.section-title {
-  font-size: clamp(34px, 4.5vw, 48px);
-  font-weight: 800;
-  color: var(--color-tinta);
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-}
-
-.stat-eyebrow,
-.card-eyebrow,
-.section-badge-eyebrow {
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  display: block;
-}
-
-/* --- TAGS / BADGES --- */
-.tag-pill {
-  display: inline-block;
-  font-size: 13.5px;
-  font-weight: 700;
-  padding: 4px 14px;
-  border-radius: 9999px;
-  border: 1px solid transparent;
-  line-height: 1.25;
-}
-
-.tag-matricula {
-  background-color: var(--cat-matricula-bg);
-  color: var(--cat-matricula-text);
-  border-color: #7dd3fc;
-}
-
-.tag-cancelamento {
-  background-color: var(--cat-cancelamento-bg);
-  color: var(--cat-cancelamento-text);
-  border-color: #fca5a5;
-}
-
-.tag-edital {
-  background-color: var(--cat-edital-bg);
-  color: var(--cat-edital-text);
-  border-color: #86efac;
-}
-
-.tag-evento {
-  background-color: var(--cat-evento-bg);
-  color: var(--cat-evento-text);
-  border-color: #fcd34d;
-}
-
-.tag-calendario {
-  background-color: var(--cat-calendario-bg);
-  color: var(--cat-calendario-text);
-  border-color: #f9a8d4;
-}
-
-.tag-documento {
-  background-color: var(--cat-documento-bg);
-  color: var(--cat-documento-text);
-  border-color: #fde047;
-}
-
-/* ============================================================
-   1. BARRA DE NAVEGAÇÃO
-   ============================================================ */
-.nav-wrapper {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: var(--color-branco);
-  border-bottom: 1.5px solid var(--color-tinta);
-}
-
-.nav-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 70px;
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-logo-img,
-.footer-logo-img {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-  flex-shrink: 0;
-  display: block;
-}
-
-.nav-logo-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #d8d1ff;
-  border: 1.5px solid var(--color-tinta);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--color-tinta);
-}
-
-.nav-logo-text {
-  font-size: 21px;
-  font-weight: 800;
-  color: var(--color-tinta);
-  letter-spacing: -0.025em;
-}
-
-.nav-center-pills {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-pill-item {
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 6px 20px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-tinta);
-  background-color: transparent;
-  transition: background-color 0.15s ease;
-}
-
-.nav-pill-item:hover {
-  background-color: #f1f1ed;
-}
-
-.nav-action-pills {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-pill-outline {
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 6px 20px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-tinta);
-  transition: background-color 0.15s ease;
-}
-
-.nav-pill-outline:hover {
-  background-color: #f1f1ed;
-}
-
-/* ============================================================
-   2. HERO SECTION
-   ============================================================ */
-.hero-section {
-  position: relative;
-  background-color: var(--color-ceu-hero);
-  overflow: hidden;
-  padding: 75px 0 95px;
-  text-align: center;
-}
-
-/* Formas decorativas no Hero */
-.hero-shape {
-  position: absolute;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-shape-star-left {
-  left: 3%;
-  top: 8%;
-  width: 150px;
-  height: 150px;
-  max-width: 150px;
-  max-height: 150px;
-}
-
-.hero-shape-crescent-left {
-  left: -20px;
-  top: 40%;
-  width: 140px;
-  height: 180px;
-  max-width: 140px;
-  max-height: 180px;
-}
-
-.hero-shape-poly-right {
-  right: 2%;
-  top: 4%;
-  width: 170px;
-  height: 140px;
-  max-width: 170px;
-  max-height: 140px;
-}
-
-.hero-shape-star-right {
-  right: 7%;
-  top: 30%;
-  width: 110px;
-  height: 110px;
-  max-width: 110px;
-  max-height: 110px;
-}
-
-.hero-shape-wave-right {
-  right: -30px;
-  bottom: 8%;
-  width: 230px;
-  height: 140px;
-  max-width: 230px;
-  max-height: 140px;
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 2;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: clamp(48px, 6.5vw, 76px);
-  font-weight: 800;
-  line-height: 1.05;
-  color: var(--color-tinta);
-  letter-spacing: -0.035em;
-  margin-bottom: 24px;
-}
-
-.hero-subtitle {
-  font-size: clamp(18px, 2.2vw, 21.5px);
-  line-height: 1.55;
-  color: #272f38;
-  margin-bottom: 34px;
-  max-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.hero-cta-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 54px;
-}
-
-/* Painel Mural de Hoje */
-.hero-panel-card {
-  background-color: var(--color-branco);
-  border: 2px solid var(--color-tinta);
-  border-radius: 22px;
-  padding: 28px 32px;
-  margin-bottom: 32px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.04);
-}
-
-.hero-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-.hero-panel-eyebrow {
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: var(--color-muted);
-}
-
-.hero-panel-link {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--color-blue);
-}
-
-.hero-panel-link:hover {
-  text-decoration: underline;
-}
-
-.hero-panel-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.hero-panel-item {
-  background-color: var(--color-branco);
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 14px;
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  text-align: left;
-}
-
-.hero-item-title {
-  font-size: 16.5px;
-  font-weight: 700;
-  color: var(--color-tinta);
-  flex: 1;
-}
-
-.hero-item-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.hero-item-date {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--color-muted);
-}
-
-/* Faixa de Tags de Categoria do Hero */
-.hero-category-strip {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.category-strip-pill {
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 8px 22px;
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--color-tinta);
-}
-
-.pill-matricula { background-color: var(--cat-matricula); }
-.pill-edital { background-color: #34D399; }
-.pill-evento { background-color: #FDE047; }
-.pill-cancelamento { background-color: #F87171; }
-.pill-calendario { background-color: #F472B6; }
-
-/* ============================================================
-   3. O SEMESTRE EM NÚMEROS
-   ============================================================ */
-.numbers-section {
-  background-color: var(--color-creme);
-  padding: 95px 0;
-}
-
-.numbers-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 48px;
-}
-
-.numbers-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-.stat-box {
-  background-color: var(--color-branco);
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 22px;
-  padding: 34px 28px;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.stat-number {
-  font-size: clamp(54px, 5.5vw, 68px);
-  font-weight: 800;
-  color: var(--color-tinta);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-  margin: 12px 0 16px;
-}
-
-.stat-description {
-  font-size: 16.5px;
-  color: #374151;
-  line-height: 1.5;
-  max-width: 28ch;
-}
-
-/* ============================================================
-   4. MURAL INSTITUCIONAL
-   ============================================================ */
-.mural-section {
-  background-color: var(--color-dark-bg);
-  padding: 100px 0 95px;
-  position: relative;
-  overflow: hidden;
-}
-
-.mural-deco-shape {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 220px;
-  height: 220px;
-  max-width: 220px;
-  max-height: 220px;
-  pointer-events: none;
-}
-
-.mural-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 32px;
-  gap: 24px;
-}
-
-.mural-section-label {
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #10B981;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.mural-main-title {
-  font-size: clamp(32px, 4vw, 44px);
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-}
-
-.mural-search-wrapper {
-  position: relative;
-  width: 320px;
-  max-width: 100%;
-}
-
-.search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8;
-  pointer-events: none;
-}
-
-.mural-search-field {
-  width: 100%;
-  background-color: #1B212A;
-  border: 1px solid #333D4B;
-  border-radius: 9999px;
-  padding: 10px 18px 10px 42px;
-  font-size: 14.5px;
-  color: #ffffff;
-  outline: none;
-  font-family: inherit;
-}
-
-.mural-search-field::placeholder {
-  color: #94a3b8;
-}
-
-.mural-filter-bar {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 44px;
-}
-
-.mural-filter-pill {
-  border-radius: 9999px;
-  padding: 7px 22px;
-  font-size: 14.5px;
-  font-weight: 600;
-  background-color: transparent;
-  color: #ffffff;
-  border: 1px solid #333D4B;
-  transition: all 0.15s ease;
-}
-
-.mural-filter-pill.active {
-  background-color: #ffffff;
-  color: var(--color-tinta);
-  border-color: #ffffff;
-  font-weight: 700;
-}
-
-.mural-card-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
-}
-
-.mural-post-card {
-  background-color: var(--color-branco);
-  border-radius: 22px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  text-align: left;
-}
-
-.card-visual-header {
-  width: 100%;
-  height: 110px;
-  border-radius: 14px;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.card-meta-line {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.card-meta-text {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #64748B;
-  text-transform: uppercase;
-}
-
-.card-title {
-  font-size: 21px;
-  font-weight: 800;
-  color: var(--color-tinta);
-  line-height: 1.25;
-  margin-bottom: 10px;
-}
-
-.card-text {
-  font-size: 15.5px;
-  color: #4B5563;
-  line-height: 1.5;
-  margin-bottom: 20px;
-  flex: 1;
-}
-
-.btn-card-action {
-  align-self: flex-start;
-  font-size: 14px;
-  padding: 8px 22px;
-}
-
-.mural-count-footer {
-  text-align: center;
-  margin-top: 44px;
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #64748B;
-}
-
-/* ============================================================
-   5. FILTROS POR VÍNCULO
-   ============================================================ */
-.vinculo-section {
-  background-color: var(--color-vinculo-bg);
-  padding: 100px 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.vinculo-deco-shape {
-  position: absolute;
-  right: 0;
-  top: 15%;
-  width: 150px;
-  height: 220px;
-  max-width: 150px;
-  max-height: 220px;
-  pointer-events: none;
-}
-
-.vinculo-flex {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 48px;
-}
-
-.vinculo-text-side {
-  max-width: 540px;
-}
-
-.vinculo-text-side .section-title {
-  margin: 12px 0 18px;
-}
-
-.vinculo-explanation {
-  font-size: 17.5px;
-  color: #374151;
-  line-height: 1.6;
-}
-
-.vinculo-card-side {
-  flex-shrink: 0;
-  width: 400px;
-  max-width: 100%;
-}
-
-.vinculo-box {
-  background-color: var(--color-branco);
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 22px;
-  padding: 32px 28px;
-}
-
-.vinculo-buttons-row {
-  display: flex;
-  gap: 10px;
-  margin: 16px 0 20px;
-}
-
-.pill-btn-lime {
-  background-color: #BEF264;
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 8px 20px;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-tinta);
-}
-
-.pill-btn-outline {
-  background-color: transparent;
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 8px 20px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-tinta);
-}
-
-.vinculo-status-text {
-  font-size: 15.5px;
-  color: #374151;
-  line-height: 1.5;
-}
-
-/* ============================================================
-   6. CENTRAL DE DOCUMENTOS
-   ============================================================ */
-.documents-section {
-  background-color: var(--color-papel);
-  padding: 100px 0;
-}
-
-.documents-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 42px;
-}
-
-.documents-header .section-title {
-  margin-top: 8px;
-}
-
-.documents-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 22px;
-}
-
-.doc-card {
-  background-color: var(--color-branco);
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 20px;
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 185px;
-  text-align: left;
-}
-
-.doc-badge-pill {
-  border: 1px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 3px 12px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-tinta);
-  align-self: flex-start;
-}
-
-.doc-name {
-  font-size: 17.5px;
-  font-weight: 700;
-  color: var(--color-tinta);
-  line-height: 1.35;
-  margin: 12px 0;
-}
-
-.doc-action-pill {
-  border: 1.5px solid var(--color-tinta);
-  border-radius: 9999px;
-  padding: 6px 18px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-tinta);
-  align-self: flex-start;
-  transition: background-color 0.15s ease;
-}
-
-.doc-action-pill:hover {
-  background-color: #f1f1ed;
-}
-
-/* ============================================================
-   7. PROJETOS DA COMUNIDADE
-   ============================================================ */
-.projects-section {
-  background-color: var(--color-dark-bg);
-  padding: 100px 0;
-}
-
-.projects-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 42px;
-}
-
-.projects-title {
-  font-size: clamp(30px, 4vw, 42px);
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 22px;
-}
-
-.project-post-card {
-  background-color: var(--color-dark-surface);
-  border: 1.5px solid var(--color-dark-border);
-  border-radius: 20px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  text-align: left;
-}
-
-.project-visual-block {
-  height: 130px;
-  border-radius: 12px;
-  width: 100%;
-}
-
-.project-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.project-category-tag {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #94A3B8;
-  text-transform: uppercase;
-}
-
-.project-heading {
-  font-size: 17px;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.35;
-  margin: 8px 0 8px;
-}
-
-.project-author-text {
-  font-size: 14px;
-  color: #64748B;
-}
-
-/* ============================================================
-   8. COMECE PELO MURAL (CTA FINAL)
-   ============================================================ */
-.cta-final-section {
-  background-color: var(--color-dark-bg);
-  padding: 30px 0 95px;
-}
-
-.cta-final-card {
-  border: 1.5px solid var(--color-dark-border);
-  border-radius: 24px;
-  padding: 64px 32px;
-  max-width: 860px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.cta-final-title {
-  font-size: clamp(36px, 5vw, 52px);
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.03em;
-  margin-bottom: 18px;
-}
-
-.cta-final-subtitle {
-  font-size: 17.5px;
-  color: #94A3B8;
-  max-width: 540px;
-  margin: 0 auto 32px;
-  line-height: 1.55;
-}
-
-.cta-final-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-}
-
-/* ============================================================
-   9. RODAPÉ
-   ============================================================ */
-.site-footer {
-  background-color: var(--color-dark-bg);
-  border-top: 1px solid #1E2530;
-  padding: 80px 0 42px;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.2fr;
-  gap: 48px;
-}
-
-.footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.footer-brand-title {
-  font-size: 21px;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.footer-brand-text {
-  font-size: 15px;
-  color: #94A3B8;
-  line-height: 1.55;
-  max-width: 300px;
-}
-
-.footer-heading {
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #94A3B8;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-}
-
-.footer-links {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-links a {
-  font-size: 15px;
-  color: #CBD5E1;
-  transition: color 0.15s ease;
-}
-
-.footer-links a:hover {
-  color: #ffffff;
-}
-
-.footer-contact {
-  font-size: 15px;
-  color: #CBD5E1;
-  line-height: 1.65;
-}
-
-.footer-email {
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.footer-schedule {
-  color: #94A3B8;
-}
-
-.footer-separator {
-  height: 1px;
-  background-color: #1E2530;
-  margin: 50px 0 28px;
-}
-
-.footer-bottom-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13.5px;
-  color: #64748B;
-  margin-bottom: 10px;
-}
-
-.footer-institution {
-  font-weight: 700;
-}
-
-.footer-policy-links {
-  display: flex;
-  gap: 20px;
-}
-
-.footer-policy-links a {
-  color: #64748B;
-  transition: color 0.15s ease;
-}
-
-.footer-policy-links a:hover {
-  color: #94A3B8;
-}
-
-.footer-subtitle-subproject {
-  font-size: 11.5px;
-  color: #475569;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* ============================================================
-   RESPONSIVIDADE (TABLET & MOBILE)
-   ============================================================ */
-@media (max-width: 992px) {
-  .numbers-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .mural-card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .documents-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .projects-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .footer-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 36px;
-  }
-
-  .vinculo-flex {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .vinculo-card-side {
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .nav-center-pills {
-    display: none;
-  }
-
-  .mural-top-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .mural-search-wrapper {
-    width: 100%;
-  }
-
-  .numbers-header,
-  .documents-header,
-  .projects-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-
-  .documents-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-panel-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-bottom-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-}
-
-    </style>
+    <link rel="stylesheet" href="landing.css?v=5" />
   </head>
   <body>
     <!-- ============================================================
-       1. BARRA DE NAVEGAÇÃO
+       1. BARRA DE NAVEGAÇÃO MODERNA (ESTILO SKILLFORGE & TECHTOTS)
        ============================================================ -->
     <header class="nav-wrapper">
       <nav class="nav-container container">
-        <a href="/" class="nav-logo">
-          <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="nav-logo-img" width="38" height="38" />
-          <span class="nav-logo-text">Arcádia</span>
+        <a href="/" class="nav-logo" title="Arcádia — IFPA Campus Belém">
+          <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="nav-logo-img" width="36" height="36" />
+          <div class="nav-logo-info">
+            <span class="nav-logo-text">Arcádia</span>
+            <span class="nav-logo-badge">IFPA · BELÉM</span>
+          </div>
         </a>
 
-        <div class="nav-center-pills">
-          <a href="#mural" class="nav-pill-item">Mural</a>
-          <a href="#documentos" class="nav-pill-item">Documentos</a>
-          <a href="#projetos" class="nav-pill-item">Projetos</a>
+        <!-- Capsule Navigation central estilo SkillForge / TechTots -->
+        <div class="nav-capsule-menu" id="navLinks">
+          <a href="#mural" class="nav-capsule-link active">
+            <span>Mural</span>
+            <span class="nav-count-badge">8</span>
+          </a>
+          <a href="#recursos" class="nav-capsule-link">
+            <span>Recursos</span>
+          </a>
+          <a href="#documentos" class="nav-capsule-link">
+            <span>Documentos</span>
+            <span class="nav-count-badge">4</span>
+          </a>
+          <a href="#projetos" class="nav-capsule-link">
+            <span>Projetos</span>
+            <span class="nav-count-badge">4</span>
+          </a>
+          <a href="calendario.html" class="nav-capsule-link">
+            <span>Calendário</span>
+          </a>
         </div>
 
-        <div class="nav-action-pills">
-          <a href="login.html" class="nav-pill-outline">Entrar</a>
-          <a href="cadastro.html" class="btn-blue-pill">Criar conta &rarr;</a>
+        <div class="nav-actions-group">
+          <a href="login.html" class="nav-link-login">Entrar</a>
+          <a href="cadastro.html" class="nav-btn-cta">Criar conta &rarr;</a>
+          <button class="nav-mobile-toggle" id="navToggle" aria-label="Abrir menu de navegação">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
       </nav>
     </header>
 
     <!-- ============================================================
-       2. HERO SECTION
+       2. HERO SECTION (MANTIDA CONFORME SOLICITADO)
        ============================================================ -->
     <section class="hero-section">
-      <!-- Formas decorativas flutuantes com dimensões e estilos inline explícitos -->
+      <!-- Formas decorativas flutuantes originais -->
       <svg class="hero-shape hero-shape-star-left" width="150" height="150" viewBox="0 0 160 160" style="position: absolute; left: 3%; top: 8%; width: 150px; height: 150px; pointer-events: none; z-index: 1;" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
@@ -1273,7 +105,6 @@ button {
           </div>
 
           <div class="hero-panel-list">
-            <!-- Linha 1 -->
             <div class="hero-panel-item">
               <span class="hero-item-title">Período de matrícula 2026/2 — veteranos</span>
               <div class="hero-item-meta">
@@ -1282,7 +113,6 @@ button {
               </div>
             </div>
 
-            <!-- Linha 2 -->
             <div class="hero-panel-item">
               <span class="hero-item-title">Cancelamento de aulas — greve parcial</span>
               <div class="hero-item-meta">
@@ -1291,7 +121,6 @@ button {
               </div>
             </div>
 
-            <!-- Linha 3 -->
             <div class="hero-panel-item">
               <span class="hero-item-title">Edital nº 012/2026 — bolsas de iniciação científica</span>
               <div class="hero-item-meta">
@@ -1355,11 +184,66 @@ button {
     </section>
 
     <!-- ============================================================
-       4. MURAL INSTITUCIONAL
+       4. RECURSOS EM DESTAQUE (INSPIRADO EM TECHTOTS & PONY)
+       ============================================================ -->
+    <section id="recursos" class="recursos-section">
+      <div class="container">
+        <div class="recursos-header">
+          <span class="section-badge-eyebrow">RECURSOS INTERATIVOS</span>
+          <h2 class="section-title">O aviso chega antes do boato.</h2>
+          <p class="recursos-subtitle">
+            Substituímos repasses informais e murais de papel por uma comunicação acadêmica direta, oficial e organizada para a comunidade do IFPA.
+          </p>
+        </div>
+
+        <div class="recursos-grid">
+          <!-- Card 1: Mural Oficial -->
+          <article class="recurso-card card-mint">
+            <div>
+              <div class="recurso-icon-badge">📢</div>
+              <span class="recurso-tag">Mural &amp; Notificações</span>
+              <h3 class="recurso-title">Mural Oficial em Tempo Real</h3>
+              <p class="recurso-desc">
+                Publicações diretas da secretaria acadêmica: períodos de matrícula, editais de bolsas, cancelamentos urgentes e comunicados de coordenação.
+              </p>
+            </div>
+            <a href="#mural" class="recurso-action-link">Ver publicações &rarr;</a>
+          </article>
+
+          <!-- Card 2: Documentos -->
+          <article class="recurso-card card-cyan">
+            <div>
+              <div class="recurso-icon-badge">📄</div>
+              <span class="recurso-tag">Central de Documentos</span>
+              <h3 class="recurso-title">Protocolos e Formulários Oficiais</h3>
+              <p class="recurso-desc">
+                Requerimentos acadêmicos, solicitações de trancamento de matrícula, histórico escolar e atestados com download rápido sem filas no balcão.
+              </p>
+            </div>
+            <a href="#documentos" class="recurso-action-link">Acessar acervo &rarr;</a>
+          </article>
+
+          <!-- Card 3: Projetos -->
+          <article class="recurso-card card-amber">
+            <div>
+              <div class="recurso-icon-badge">💡</div>
+              <span class="recurso-tag">Pesquisa &amp; Extensão</span>
+              <h3 class="recurso-title">Projetos Fora do Drive Particular</h3>
+              <p class="recurso-desc">
+                Inscrições abertas em bolsas PIBIC, feiras de robótica maker, grupos de pesquisa e projetos de extensão comunitária do campus.
+              </p>
+            </div>
+            <a href="#projetos" class="recurso-action-link">Explorar projetos &rarr;</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       5. MURAL INSTITUCIONAL
        ============================================================ -->
     <section id="mural" class="mural-section">
-      <!-- Decoração curva verde no topo superior direito -->
-      <svg class="mural-deco-shape" width="220" height="220" viewBox="0 0 240 240" style="position: absolute; right: 0; top: 0; width: 220px; height: 220px; pointer-events: none;" aria-hidden="true">
+      <svg class="mural-deco-shape" width="220" height="220" viewBox="0 0 240 240" aria-hidden="true">
         <path d="M240,0 C160,20 120,100 160,180 C190,240 240,240 240,240 Z" fill="#10b981" />
       </svg>
 
@@ -1378,23 +262,35 @@ button {
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <input type="text" placeholder="Buscar aviso, edital ou data…" class="mural-search-field" />
+              <input type="text" id="muralSearchInput" placeholder="Buscar aviso, edital ou data…" class="mural-search-field" />
             </div>
           </div>
         </div>
 
-        <!-- Filtros de vínculo -->
-        <div class="mural-filter-bar">
-          <button class="mural-filter-pill active">Todos</button>
-          <button class="mural-filter-pill">Aluno</button>
-          <button class="mural-filter-pill">Professor</button>
-          <button class="mural-filter-pill">Servidor</button>
+        <!-- Filtros em pílulas estilo SkillForge -->
+        <div class="mural-filter-bar" id="muralFilterPills">
+          <button class="mural-filter-pill active" data-filter="todos">
+            <span>Todos</span>
+            <span class="nav-count-badge" style="background:#e5e7eb; color:#10141a;">8</span>
+          </button>
+          <button class="mural-filter-pill" data-filter="aluno">
+            <span>Aluno</span>
+            <span class="nav-count-badge" style="background:#30363d; color:#ffffff;">4</span>
+          </button>
+          <button class="mural-filter-pill" data-filter="professor">
+            <span>Professor</span>
+            <span class="nav-count-badge" style="background:#30363d; color:#ffffff;">2</span>
+          </button>
+          <button class="mural-filter-pill" data-filter="servidor">
+            <span>Servidor</span>
+            <span class="nav-count-badge" style="background:#30363d; color:#ffffff;">2</span>
+          </button>
         </div>
 
-        <!-- Grid de 8 Cards -->
-        <div class="mural-card-grid">
+        <!-- Grid de 8 Cards Oficiais -->
+        <div class="mural-card-grid" id="muralCardsContainer">
           <!-- Card 1 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="aluno" data-categoria="matricula">
             <div class="card-visual-header" style="background-color: #8be4f9;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1403,15 +299,14 @@ button {
               </div>
               <h3 class="card-title">Período de matrícula 2026/2 — veteranos</h3>
               <p class="card-text">
-                Abertas de 20 a 27 de junho pelo portal. Pendências devem ser
-                resolvidas na secretaria antes de iniciar.
+                Abertas de 20 a 27 de junho pelo portal. Pendências devem ser resolvidas na secretaria antes de iniciar.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
           </article>
 
           <!-- Card 2 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="todos" data-categoria="cancelamento">
             <div class="card-visual-header" style="background-color: #ff5c5c;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1420,15 +315,14 @@ button {
               </div>
               <h3 class="card-title">Cancelamento de aulas — greve parcial</h3>
               <p class="card-text">
-                Vespertino e noturno de 18/06. As reposições entram no
-                calendário na semana seguinte.
+                Vespertino e noturno de 18/06. As reposições entram no calendário na semana seguinte.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
           </article>
 
           <!-- Card 3 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="aluno" data-categoria="edital">
             <div class="card-visual-header" style="background-color: #a7f3d0;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1437,15 +331,14 @@ button {
               </div>
               <h3 class="card-title">Edital nº 012/2026 — bolsas de iniciação científica</h3>
               <p class="card-text">
-                Inscrições até 30/08. Trinta bolsas com vigência de doze meses
-                e cronograma obrigatório.
+                Inscrições até 30/08. Trinta bolsas com vigência de doze meses e cronograma obrigatório.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
           </article>
 
           <!-- Card 4 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="todos" data-categoria="evento">
             <div class="card-visual-header" style="background-color: #facc15;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1454,15 +347,14 @@ button {
               </div>
               <h3 class="card-title">Semana acadêmica — chamada de trabalhos</h3>
               <p class="card-text">
-                Entre 7 e 11 de julho, com submissões de resumos por eixo
-                tecnológico.
+                Entre 7 e 11 de julho, com submissões de resumos por eixo tecnológico.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
           </article>
 
           <!-- Card 5 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="professor" data-categoria="edital">
             <div class="card-visual-header" style="background-color: #10b981;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1478,7 +370,7 @@ button {
           </article>
 
           <!-- Card 6 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="todos" data-categoria="calendario">
             <div class="card-visual-header" style="background-color: #f9a8d4;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1487,15 +379,14 @@ button {
               </div>
               <h3 class="card-title">Alterações no calendário acadêmico</h3>
               <p class="card-text">
-                Novas datas em 21/06 e 28/06 para reposição de aulas do
-                vespertino.
+                Novas datas em 21/06 e 28/06 para reposição de aulas do vespertino.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
           </article>
 
           <!-- Card 7 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="servidor" data-categoria="documento">
             <div class="card-visual-header" style="background-color: #fde047;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1504,15 +395,14 @@ button {
               </div>
               <h3 class="card-title">Novo fluxo de diárias e passagens</h3>
               <p class="card-text">
-                Vale a partir de 01/07, com prazo mínimo de quinze dias de
-                antecedência.
+                Vale a partir de 01/07, com prazo mínimo de quinze dias de antecedência.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
           </article>
 
           <!-- Card 8 -->
-          <article class="mural-post-card">
+          <article class="mural-post-card" data-publico="professor" data-categoria="documento">
             <div class="card-visual-header" style="background-color: #fde047;"></div>
             <div class="card-body">
               <div class="card-meta-line">
@@ -1521,8 +411,7 @@ button {
               </div>
               <h3 class="card-title">Registro de notas do bimestre no sistema</h3>
               <p class="card-text">
-                Lançamento de notas e frequências até 05/07, com suporte no
-                laboratório 2.
+                Lançamento de notas e frequências até 05/07, com suporte no laboratório 2.
               </p>
               <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
             </div>
@@ -1530,17 +419,16 @@ button {
         </div>
 
         <div class="mural-count-footer">
-          <span>8 AVISOS NO MURAL</span>
+          <span id="muralCountLabel">8 AVISOS NO MURAL</span>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-       5. FILTROS POR VÍNCULO
+       6. FILTROS POR VÍNCULO
        ============================================================ -->
     <section class="vinculo-section">
-      <!-- Decoração curva verde na borda direita -->
-      <svg class="vinculo-deco-shape" width="150" height="220" viewBox="0 0 160 200" style="position: absolute; right: 0; top: 15%; width: 150px; height: 220px; pointer-events: none;" aria-hidden="true">
+      <svg class="vinculo-deco-shape" width="150" height="220" viewBox="0 0 160 200" aria-hidden="true">
         <path d="M160,0 C80,30 40,110 80,180 L160,200 Z" fill="#10b981" />
       </svg>
 
@@ -1572,7 +460,7 @@ button {
     </section>
 
     <!-- ============================================================
-       6. CENTRAL DE DOCUMENTOS
+       7. CENTRAL DE DOCUMENTOS
        ============================================================ -->
     <section id="documentos" class="documents-section">
       <div class="container">
@@ -1589,35 +477,35 @@ button {
           <div class="doc-card">
             <span class="doc-badge-pill">PDF</span>
             <h3 class="doc-name">Requerimento geral</h3>
-            <a href="#" class="doc-action-pill">Baixar</a>
+            <a href="#" class="doc-action-pill" onclick="alert('Iniciando download do Requerimento Geral IFPA...')">Baixar</a>
           </div>
 
           <!-- Doc 2 -->
           <div class="doc-card">
             <span class="doc-badge-pill">PDF</span>
             <h3 class="doc-name">Trancamento de matrícula</h3>
-            <a href="#" class="doc-action-pill">Baixar</a>
+            <a href="#" class="doc-action-pill" onclick="alert('Iniciando download do Formulário de Trancamento...')">Baixar</a>
           </div>
 
           <!-- Doc 3 -->
           <div class="doc-card">
             <span class="doc-badge-pill">E-mail</span>
             <h3 class="doc-name">Secretaria acadêmica</h3>
-            <a href="#" class="doc-action-pill">Abrir</a>
+            <a href="mailto:secretaria.belem@ifpa.edu.br" class="doc-action-pill">Abrir</a>
           </div>
 
           <!-- Doc 4 -->
           <div class="doc-card">
             <span class="doc-badge-pill">Link</span>
             <h3 class="doc-name">Portal de periódicos CAPES</h3>
-            <a href="#" class="doc-action-pill">Acessar</a>
+            <a href="https://www.periodicos.capes.gov.br" target="_blank" rel="noopener noreferrer" class="doc-action-pill">Acessar</a>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-       7. PROJETOS DA COMUNIDADE
+       8. PROJETOS DA COMUNIDADE
        ============================================================ -->
     <section id="projetos" class="projects-section">
       <div class="container">
@@ -1641,7 +529,7 @@ button {
 
           <!-- Projeto 2: Pesquisa PIBIC -->
           <div class="project-post-card">
-            <div class="project-visual-block" style="background-color: #8ae4f9;"></div>
+            <div class="project-visual-block" style="background-color: #8be4f9;"></div>
             <div class="project-details">
               <span class="project-category-tag">PESQUISA · PIBIC</span>
               <h3 class="project-heading">Monitoramento da Qualidade das Águas da Bacia do Guajará</h3>
@@ -1673,7 +561,7 @@ button {
     </section>
 
     <!-- ============================================================
-       8. COMECE PELO MURAL (CTA FINAL)
+       9. COMECE PELO MURAL (CTA FINAL)
        ============================================================ -->
     <section class="cta-final-section">
       <div class="container">
@@ -1692,71 +580,142 @@ button {
     </section>
 
     <!-- ============================================================
-       9. RODAPÉ
+       10. NOVO RODAPÉ (INSPIRADO NAS REFERÊNCIAS 1, 2, 3)
        ============================================================ -->
     <footer class="site-footer">
       <div class="container">
-        <div class="footer-grid">
-          <!-- Coluna Marca -->
-          <div class="footer-brand-info">
-            <div class="footer-logo">
-              <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="footer-logo-img" width="38" height="38" />
+        <!-- Linha Superior do Rodapé com Marca e Status Online -->
+        <div class="footer-top-row">
+          <div class="footer-logo-block">
+            <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="footer-logo-img" width="36" height="36" />
+            <div>
               <span class="footer-brand-title">Arcádia</span>
+              <span class="footer-brand-sub">IFPA — CAMPUS BELÉM</span>
             </div>
+          </div>
+
+          <div class="footer-status-pill">
+            <span class="status-dot-green"></span>
+            <span>SISTEMA ATIVO · PERÍODO LETIVO 2026/2</span>
+          </div>
+        </div>
+
+        <div class="footer-grid">
+          <!-- Coluna 1: Informações da Marca -->
+          <div class="footer-brand-info">
+            <h4 class="footer-heading">SOBRE O PORTAL</h4>
             <p class="footer-brand-text">
               O mural institucional que reúne editais, matrículas, calendário,
-              documentos e projetos da instituição.
+              documentos e projetos da instituição — com data, categoria e
+              público. Num lugar só.
             </p>
           </div>
 
-          <!-- Coluna Plataforma -->
+          <!-- Coluna 2: Plataforma -->
           <div class="footer-column">
             <h4 class="footer-heading">PLATAFORMA</h4>
             <ul class="footer-links">
               <li><a href="#mural">Mural de avisos</a></li>
+              <li><a href="#recursos">Recursos interativos</a></li>
               <li><a href="#documentos">Central de documentos</a></li>
               <li><a href="#projetos">Projetos da comunidade</a></li>
               <li><a href="calendario.html">Calendário acadêmico</a></li>
             </ul>
           </div>
 
-          <!-- Coluna Institucional -->
+          <!-- Coluna 3: Institucional -->
           <div class="footer-column">
             <h4 class="footer-heading">INSTITUCIONAL</h4>
             <ul class="footer-links">
-              <li><a href="#">Secretaria acadêmica</a></li>
-              <li><a href="#">Coordenação de curso</a></li>
-              <li><a href="#">Ouvidoria</a></li>
-              <li><a href="#">Acessibilidade</a></li>
+              <li><a href="https://sigaa.ifpa.edu.br" target="_blank" rel="noopener">SIGAA IFPA</a></li>
+              <li><a href="https://biblioteca.ifpa.edu.br" target="_blank" rel="noopener">Biblioteca Virtual</a></li>
+              <li><a href="https://belem.ifpa.edu.br/assistencia-estudantil" target="_blank" rel="noopener">Assistência Estudantil</a></li>
+              <li><a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener">Ouvidoria Geral</a></li>
+              <li><a href="login.html">Área do Servidor</a></li>
             </ul>
           </div>
 
-          <!-- Coluna Contato -->
+          <!-- Coluna 4: Contato & Atendimento -->
           <div class="footer-column">
-            <h4 class="footer-heading">CONTATO</h4>
+            <h4 class="footer-heading">SECRETARIA &amp; APOIO</h4>
             <div class="footer-contact">
-              <p class="footer-email">secretaria@arcadia.edu.br</p>
-              <p class="footer-schedule">Atendimento das 8h às 17h</p>
+              <p class="footer-email">secretaria.belem@ifpa.edu.br</p>
+              <p class="footer-schedule">Atendimento presencial: 8h às 17h</p>
+              <p style="margin-top: 8px; color: #8b949e;">Bloco Administrativo — IFPA Campus Belém</p>
             </div>
           </div>
         </div>
 
         <div class="footer-separator"></div>
 
-        <div class="footer-bottom">
-          <div class="footer-bottom-row">
-            <span class="footer-institution">IFPA — CAMPUS BELÉM, 2026</span>
-            <div class="footer-policy-links">
-              <a href="#">Política de privacidade</a>
-              <a href="#">Termos de uso</a>
-              <a href="#">Mapa do site</a>
-            </div>
+        <div class="footer-bottom-row">
+          <span class="footer-institution">IFPA — CAMPUS BELÉM, 2026</span>
+          <div class="footer-policy-links">
+            <a href="#">Política de privacidade</a>
+            <a href="#">Termos de uso</a>
+            <a href="#">Acessibilidade</a>
+            <a href="#">Mapa do site</a>
           </div>
-          <div class="footer-subtitle-subproject">
-            PRÉ-PROJETO DO CURSO TÉCNICO EM DESENVOLVIMENTO DE SISTEMAS
-          </div>
+        </div>
+
+        <div class="footer-subtitle-subproject">
+          PRÉ-PROJETO DO CURSO TÉCNICO EM DESENVOLVIMENTO DE SISTEMAS
         </div>
       </div>
     </footer>
+
+    <!-- Script com lógica interativa para filtros e busca da landing page -->
+    <script src="script.js"></script>
+    <script>
+      // Filtros e busca interativa do Mural da landing page
+      (function() {
+        const searchInput = document.getElementById('muralSearchInput');
+        const filterPills = document.querySelectorAll('#muralFilterPills .mural-filter-pill');
+        const cards = document.querySelectorAll('#muralCardsContainer .mural-post-card');
+        const countLabel = document.getElementById('muralCountLabel');
+
+        let activeFilter = 'todos';
+        let searchQuery = '';
+
+        function updateCards() {
+          let visibleCount = 0;
+
+          cards.forEach((card) => {
+            const publico = card.getAttribute('data-publico') || 'todos';
+            const textContent = card.innerText.toLowerCase();
+
+            const matchesFilter = activeFilter === 'todos' || publico === activeFilter || publico === 'todos';
+            const matchesSearch = !searchQuery || textContent.includes(searchQuery);
+
+            if (matchesFilter && matchesSearch) {
+              card.style.display = 'flex';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          if (countLabel) {
+            countLabel.textContent = `${visibleCount} AVISO${visibleCount !== 1 ? 'S' : ''} NO MURAL`;
+          }
+        }
+
+        filterPills.forEach((pill) => {
+          pill.addEventListener('click', () => {
+            filterPills.forEach((p) => p.classList.remove('active'));
+            pill.classList.add('active');
+            activeFilter = pill.getAttribute('data-filter') || 'todos';
+            updateCards();
+          });
+        });
+
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            updateCards();
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
