@@ -38,7 +38,7 @@ app.get('/perfil', (req, res) => {
   res.redirect('/configuracoes');
 });
 
-// ---- Banco de dados SQLite ----
+// Conexão com o banco de dados SQLite local
 const dbPath = path.join(__dirname, 'syncdev.db');
 const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
   if (err) {
@@ -224,7 +224,7 @@ db.serialize(() => {
     }
   });
 
-  // ---- SEEDER INICIAL ----
+  // Carga inicial de dados de demonstração (seeder)
   // Seed Ana Ribeiro se necessário
   db.get("SELECT * FROM usuarios WHERE email = 'ana.ribeiro@ifpa.edu.br'", (err, row) => {
     if (!row) {
@@ -375,7 +375,7 @@ db.serialize(() => {
   }
 });
 
-// ---- Autenticação e Helpers ----
+// Funções auxiliares de autenticação e gerenciamento de sessão
 function gerarToken() {
   return 'tok_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 }
@@ -443,12 +443,12 @@ function formatUser(u) {
   };
 }
 
-// ---- Rotas de Saúde ----
+// Rota de verificação do status da API (health check)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// ---- Autenticação ----
+// Rotas de autenticação (login, cadastro, perfil e logout)
 app.post('/api/auth/login', (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) {
@@ -687,7 +687,7 @@ app.post('/api/auth/logout-outros', (req, res) => {
   });
 });
 
-// ---- Avisos ----
+// Rotas para gerenciamento do mural de avisos
 app.get('/api/avisos', (req, res) => {
   db.all('SELECT * FROM avisos ORDER BY fixado DESC, id DESC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar avisos' });
@@ -826,7 +826,7 @@ app.post('/api/avisos/batch-delete', (req, res) => {
   });
 });
 
-// ---- Tarefas ----
+// Rotas para gerenciamento de tarefas acadêmicas
 app.get('/api/tarefas', (req, res) => {
   db.all('SELECT * FROM tarefas ORDER BY id DESC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar tarefas' });
@@ -914,7 +914,7 @@ app.post('/api/tarefas/batch-delete', (req, res) => {
   });
 });
 
-// ---- Documentos ----
+// Rotas para requerimentos e documentos digitais
 app.get('/api/documentos', (req, res) => {
   db.all('SELECT * FROM documentos ORDER BY id DESC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar documentos' });
@@ -1006,7 +1006,7 @@ app.post('/api/documentos/batch-delete', (req, res) => {
   });
 });
 
-// ---- Calendário ----
+// Rotas para eventos do calendário acadêmico
 app.get('/api/calendario', (req, res) => {
   db.all('SELECT * FROM calendario ORDER BY id ASC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar eventos' });
@@ -1094,7 +1094,7 @@ app.post('/api/calendario/batch-delete', (req, res) => {
   });
 });
 
-// ---- Pessoas ----
+// Rotas para catálogo de pessoas da comunidade acadêmica
 app.get('/api/pessoas', (req, res) => {
   db.all('SELECT * FROM pessoas ORDER BY id ASC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar pessoas' });
@@ -1182,7 +1182,7 @@ app.post('/api/pessoas/batch-delete', (req, res) => {
   });
 });
 
-// ---- Projetos ----
+// Rotas para projetos de pesquisa, extensão e inovação
 app.get('/api/projetos', (req, res) => {
   db.all('SELECT * FROM projetos ORDER BY id ASC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao buscar projetos' });
@@ -1275,7 +1275,7 @@ app.post('/api/projetos/batch-delete', (req, res) => {
   });
 });
 
-// ---- Painel / Resumo Integrado ----
+// Rota com dados estatísticos e resumo consolidado do painel
 app.get('/api/painel/resumo', (req, res) => {
   const stats = {
     avisosNaoLidos: 0,
@@ -1315,7 +1315,7 @@ app.get('/api/painel/resumo', (req, res) => {
   });
 });
 
-// ---- Feed do Início (Legado compatível) ----
+// Rota do feed inicial para compatibilidade com versões anteriores
 app.get('/api/inicio', (req, res) => {
   db.all('SELECT * FROM avisos ORDER BY id DESC LIMIT 5', [], (err, avisosRecentes) => {
     db.all('SELECT * FROM projetos ORDER BY id DESC LIMIT 4', [], (err2, projetosRecentes) => {
@@ -1328,7 +1328,7 @@ app.get('/api/inicio', (req, res) => {
   });
 });
 
-// ---- Lembretes (RF08) ----
+// Rotas para criação e listagem de lembretes e prazos
 app.get('/api/lembretes', (req, res) => {
   db.all('SELECT * FROM lembretes ORDER BY id ASC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao listar lembretes' });
@@ -1396,7 +1396,7 @@ app.delete('/api/lembretes/:id', (req, res) => {
   });
 });
 
-// ---- Links Úteis (RF09) ----
+// Rotas para o catálogo de links institucionais úteis
 app.get('/api/links-uteis', (req, res) => {
   db.all('SELECT * FROM links_uteis ORDER BY id ASC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Erro ao listar links úteis' });
@@ -1434,7 +1434,7 @@ app.delete('/api/links-uteis/:id', (req, res) => {
   });
 });
 
-// ---- Limpeza Geral de Dados (Iniciar do Zero) ----
+// Rota administrativa para limpeza de dados e reinicialização do banco
 app.post('/api/admin/limpar-dados', (req, res) => {
   const tables = ['avisos', 'tarefas', 'documentos', 'calendario', 'lembretes', 'pessoas', 'projetos'];
   let count = tables.length;
@@ -1454,12 +1454,9 @@ app.post('/api/admin/limpar-dados', (req, res) => {
   });
 });
 
-// ---- Inicialização do Servidor ----
+// Inicialização do servidor HTTP na porta configurada
 app.listen(PORT, () => {
-  console.log(`\n==============================================`);
-  console.log(`🚀 Arcádia (SyncDev IFPA) rodando com sucesso!`);
-  console.log(`🌐 Front-end: http://localhost:${PORT}`);
-  console.log(`📡 API / Health: http://localhost:${PORT}/health`);
-  console.log(`📁 Front-end servido de: ${FRONT_DIR}`);
-  console.log(`==============================================\n`);
+  console.log(`Servidor Arcádia (SyncDev IFPA) rodando em http://localhost:${PORT}`);
+  console.log(`Página inicial e portal: http://localhost:${PORT}`);
+  console.log(`Status da API: http://localhost:${PORT}/health`);
 });

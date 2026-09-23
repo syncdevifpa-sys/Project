@@ -1,8 +1,4 @@
-/* =========================================================
-   Arcádia — script principal
-   Roda em todas as páginas; cada bloco verifica se os
-   elementos existem antes de agir.
-   ========================================================= */
+// Script com funções utilitárias da landing page e autenticação local
 
 // menu mobile da landing
 const navToggle = document.getElementById('navToggle');

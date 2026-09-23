@@ -1,8 +1,4 @@
-/* ============================================================
-   ARCÁDIA (IFPA Campus Belém) — Landing Page Stylesheet
-   Aplicando: Refactoring UI (Adam Wathan & Steve Schoger),
-   UX e Usabilidade (Caelum) e Fundamentos de UI/UX (Creative Tim)
-   ============================================================ */
+/* Estilos da landing page do Arcádia (IFPA Campus Belém) */
 
 :root {
   --color-tinta: #10141a;
@@ -55,7 +51,7 @@
   --shadow-lg: 0 12px 28px -4px rgba(16, 20, 26, 0.08), 0 4px 8px -2px rgba(16, 20, 26, 0.03);
 }
 
-/* --- RESET & BASE (Refactoring UI: Establish solid defaults) --- */
+/* Reset de estilos e regras base de layout */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -96,7 +92,7 @@ button {
   padding-right: 24px;
 }
 
-/* --- BOTÕES (Refactoring UI: Clear hierarchy and affordance) --- */
+/* Estilos de botões principais e secundários */
 .btn-blue-pill {
   display: inline-flex;
   align-items: center;
@@ -160,7 +156,7 @@ button {
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* --- TIPOGRAFIA & BADGES (Refactoring UI: Type scale & contrast) --- */
+/* Tipografia e identificadores de seção */
 .section-title {
   font-size: clamp(32px, 4vw, 44px);
   font-weight: 800;
@@ -226,10 +222,7 @@ button {
   border-color: #fef08a;
 }
 
-/* ============================================================
-   1. BARRA DE NAVEGAÇÃO MODERNA (SEM NÚMEROS DE NOTIFICAÇÃO)
-   Refactoring UI: "Use fewer borders" + Clean visual weight
-   ============================================================ */
+/* Barra de navegação principal no topo */
 .nav-wrapper {
   position: sticky;
   top: 0;
@@ -385,9 +378,7 @@ button {
   transition: 0.2s ease;
 }
 
-/* ============================================================
-   2. HERO SECTION (100% INTACTA CONFORME SOLICITADO)
-   ============================================================ */
+/* Seção de apresentação principal (Hero) */
 .hero-section {
   position: relative;
   background-color: var(--color-ceu-hero);
@@ -536,9 +527,7 @@ button {
 .pill-cancelamento { background-color: #fca5a5; }
 .pill-calendario { background-color: #f9a8d4; }
 
-/* ============================================================
-   3. O SEMESTRE EM NÚMEROS (Refactoring UI: Card Elevation)
-   ============================================================ */
+/* Seção de estatísticas e indicadores do semestre */
 .numbers-section {
   background-color: var(--color-creme);
   padding: 85px 0;
@@ -591,10 +580,7 @@ button {
   max-width: 28ch;
 }
 
-/* ============================================================
-   4. PILARES DO PORTAL (Refactoring UI: Start with a feature)
-   Apresenta os 3 recursos chave mantendo as frases do sistema
-   ============================================================ */
+/* Seção dos pilares e recursos principais do portal */
 .recursos-section {
   background-color: var(--color-papel);
   padding: 90px 0;
@@ -708,9 +694,7 @@ button {
   text-decoration: underline;
 }
 
-/* ============================================================
-   5. MURAL INSTITUCIONAL (Refactoring UI: Hierarchy & Depth)
-   ============================================================ */
+/* Seção do mural institucional e lista de avisos */
 .mural-section {
   background-color: var(--color-dark-bg);
   padding: 95px 0 90px;
@@ -904,9 +888,7 @@ button {
   color: #8b949e;
 }
 
-/* ============================================================
-   6. FILTROS POR VÍNCULO (Refactoring UI: Split Layout)
-   ============================================================ */
+/* Seção de filtros por vínculo */
 .vinculo-section {
   background-color: var(--color-vinculo-bg);
   padding: 90px 0;
@@ -998,9 +980,7 @@ button {
   line-height: 1.5;
 }
 
-/* ============================================================
-   7. CENTRAL DE DOCUMENTOS
-   ============================================================ */
+/* Seção da central de documentos acadêmicos */
 .documents-section {
   background-color: var(--color-papel);
   padding: 90px 0;
@@ -1077,9 +1057,7 @@ button {
   color: #ffffff;
 }
 
-/* ============================================================
-   8. PROJETOS DA COMUNIDADE
-   ============================================================ */
+/* Seção de projetos acadêmicos e comunitários */
 .projects-section {
   background-color: var(--color-dark-bg);
   padding: 90px 0;
@@ -1156,9 +1134,7 @@ button {
   color: #8b949e;
 }
 
-/* ============================================================
-   9. CTA FINAL ("COMECE PELO MURAL")
-   ============================================================ */
+/* Seção de chamada para ação final */
 .cta-final-section {
   background-color: var(--color-dark-bg);
   padding: 20px 0 90px;
@@ -1197,10 +1173,7 @@ button {
   gap: 14px;
 }
 
-/* ============================================================
-   10. NOVO RODAPÉ (Refactoring UI + UX Caelum)
-   Mantendo todas as frases de informação do que é o site
-   ============================================================ */
+/* Seção do rodapé institucional */
 .site-footer {
   background-color: #080b0f;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -1363,9 +1336,7 @@ button {
   margin-top: 8px;
 }
 
-/* ============================================================
-   RESPONSIVIDADE (TABLET & MOBILE)
-   ============================================================ */
+/* Regras de responsividade para tablets e celulares */
 @media (max-width: 992px) {
   .numbers-grid {
     grid-template-columns: 1fr;

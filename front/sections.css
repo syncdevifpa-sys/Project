@@ -1,14 +1,4 @@
-/* ===== SEÇÕES ABAIXO DO HERO =====
-   CSS de seções que não foram migradas para o landing.css consolidado.
-   O landing.css agora carrega hero, seções e rodapé de forma consolidada.
-   Este arquivo permanece para regras de seção que o landing.css não cobre.
-*/
-
-/* ===== SEÇÕES ABAIXO DO HERO =====
-   Único arquivo editável pelo agente.
-   landing.css (hero + tokens) e index.html são somente leitura.
-   Carregado DEPOIS do landing.css, herda as variáveis do :root dele.
-*/
+/* Estilos complementares para seções da landing page */
 
 .secao {
   display: block;
@@ -55,14 +45,7 @@
   border: 2px solid;
 }
 
-/* ===== SEMESTRE EM NÚMEROS =====
-   .stats: grid 3 colunas iguais, gap 28px (reference gap)
-   <768px: 1 coluna, gap reduzido
-   .stat-card: card de número; sem sombra, border-radius 28px,
-   borda 2px, fundo branco (default) ou cor da superfície,
-   .stat-linha: faixas de linha de fatos abaixo dos cards
-*/
-
+/* Seção com estatísticas do semestre acadêmico */
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

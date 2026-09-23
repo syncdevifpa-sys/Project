@@ -277,7 +277,7 @@ body { margin: 0; font-family: var(--font-sans); background: var(--canvas); colo
   .ar-navpill { order: 3; width: 100%; margin: 0; }
 }
 
-/* ---- Configurações ---- */
+/* Configurações da conta e preferências */
 .ar-iconbtn--on { background: var(--chip-active); border-color: var(--chip-active); }
 a.ar-iconbtn, a.ar-user { color: var(--ink); text-decoration: none; }
 a.ar-user { border-radius: var(--radius-full); padding: 2px 10px 2px 2px; }
@@ -384,8 +384,8 @@ a.ar-user:hover { background: var(--surface-sunken); }
   .ar-snav small { display: none; }
 }
 
-/* ---- Revisão UX (livro Caelum) ---- */
-/* Links navegam, botões agem (cap. 8.2) */
+/* Diretrizes de usabilidade e boas práticas de UX */
+/* Links navegam entre telas, botões disparam ações */
 .ar-link { display: inline-flex; align-items: center; gap: 4px; color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--control-border); text-underline-offset: 3px; border-radius: var(--radius-xs); }
 .ar-link:hover { text-decoration-color: currentColor; }
 .ar-link:focus-visible { outline: 2px solid transparent; box-shadow: var(--focus-ring); }

@@ -9,7 +9,7 @@
   var THEME_KEY = 'arcadia-theme';
   var root = document.documentElement;
 
-  // ---- Dicionário Oficial de Ícones SVG ----
+  // Dicionário de ícones SVG do portal
   var ICONS = {
     'search': '<path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" />',
     'chevron-right': '<path d="m9 18 6-6-6-6" />',
@@ -76,7 +76,7 @@
     });
   }
 
-  // ---- Controle de Tema e Preferências ----
+  // Controle de tema claro/escuro e preferências visuais
   function applyTheme(mode) {
     var dark = false;
     try {
@@ -138,7 +138,7 @@
     return !!reduced;
   }
 
-  // ---- Sistema de Toast com Desfazer ----
+  // Sistema de notificações toast com opção de desfazer
   var toastTimeout = null;
   function showToast(message, actionLabel, onAction, duration) {
     duration = duration || 5000;
@@ -195,7 +195,7 @@
     }, duration);
   }
 
-  // ---- Sistema de Modal Dialog ----
+  // Sistema para abrir e fechar janelas modais
   function openDialog(modalEl) {
     if (!modalEl) return;
     modalEl.style.display = 'grid';
@@ -231,7 +231,7 @@
     }
   });
 
-  // ---- CommandPalette (⌘K / Ctrl+K) ----
+  // Paleta de comandos e busca rápida do portal (Ctrl+K / ⌘K)
   var PALETTE_DATA = [
     { type: 'Avisos', title: 'Período de matrícula 2026/2', meta: 'Avisos · Aluno · Prazo 27 set', desc: 'Confirme suas disciplinas pelo portal do estudante até o fim do prazo.', href: 'aviso.html', icon: 'bell' },
     { type: 'Avisos', title: 'Aulas suspensas no Bloco C', meta: 'Avisos · Manutenção elétrica · 09 set', desc: 'Manutenção elétrica no prédio. A coordenação já marcou a reposição.', href: 'avisos.html', icon: 'bell' },
@@ -425,7 +425,7 @@
     }
   });
 
-  // ---- Hidratação da TopNav e Sessão ----
+  // Preenchimento dos dados do usuário na barra de navegação
   function updateUserAvatar(foto, userName, userInitials) {
     if (!userName) {
       try {
@@ -504,7 +504,7 @@
     });
   }
 
-  // ---- Alternador de Visualização (ViewToolbar: Lista / Quadro / Tabela) ----
+  // Alternador de visualização entre lista, quadro e tabela
   function setupViewToolbar() {
     document.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
       var buttons = seg.querySelectorAll('button');
@@ -529,7 +529,7 @@
     });
   }
 
-  // ---- Inicialização no DOMContentLoaded ----
+  // Inicialização geral dos componentes após o carregamento do DOM
   document.addEventListener('DOMContentLoaded', function () {
     renderIcons();
     hydrateTopNav();
