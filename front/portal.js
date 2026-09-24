@@ -430,13 +430,13 @@
     if (!userName) {
       try {
         var s = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
-        userName = s.nome || 'Ana Ribeiro';
+        userName = s.nome || 'Estudante IFPA';
       } catch (e) {
-        userName = 'Ana Ribeiro';
+        userName = 'Estudante IFPA';
       }
     }
     if (!userInitials) {
-      userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'AR';
+      userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'IF';
     }
 
     document.querySelectorAll('.ar-user .ar-avatar').forEach(function (el) {
@@ -454,9 +454,9 @@
       sessao = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
     } catch (e) {}
 
-    var userName = sessao.nome || 'Ana Ribeiro';
+    var userName = sessao.nome || 'Estudante IFPA';
     var userRole = sessao.vinculo || 'Aluno';
-    var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'AR';
+    var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'IF';
 
     // Atualizar avatares e nomes
     document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = userName; });

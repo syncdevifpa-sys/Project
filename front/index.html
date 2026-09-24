@@ -1,624 +1,574 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arcádia — Mural e Gestão Acadêmica IFPA</title>
+    <meta name=s"viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arcádia Mural Institucional do IFPA Campus Belém</title>
+
+    <!-- Google Fonts: Schibsted Grotesk e IBM Plex Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Schibsted+Grotesk:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="landing.css?v=6" />
+
+    <link rel="icon" type="image/png" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="landing.css" />
   </head>
   <body>
-    <!-- Barra de navegação principal no topo da página -->
-    <header class="nav-wrapper">
-      <nav class="nav-container container">
-        <!-- Logo e identificação do IFPA Campus Belém -->
-        <a href="/" class="nav-logo" title="Arcádia — IFPA Campus Belém">
-          <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="nav-logo-img" width="36" height="36" />
-          <div class="nav-logo-text-group">
-            <span class="nav-logo-text">Arcádia</span>
-            <span class="nav-logo-campus">IFPA · BELÉM</span>
-          </div>
+
+    <!-- 1. Navbar Flutuante e Fixa -->
+    <header class="navbar-wrapper">
+      <nav class="navbar" id="mainNavbar" aria-label="Navegação principal">
+        <a href="#" class="nav-brand">
+          <img src="assets/arcadia-emblem.png" alt="Emblema da Arcádia" class="nav-brand-logo" width="34" height="34" />
+          <span class="nav-brand-title">Arcádia</span>
+          <span class="nav-brand-tag">IFPA Belém</span>
         </a>
 
-        <!-- Links para navegar até as seções da página -->
-        <div class="nav-center-links" id="navLinks">
-          <a href="#mural" class="nav-link-item active">Mural</a>
-          <a href="#recursos" class="nav-link-item">Recursos</a>
-          <a href="#documentos" class="nav-link-item">Documentos</a>
-          <a href="#projetos" class="nav-link-item">Projetos</a>
-          <a href="calendario.html" class="nav-link-item">Calendário</a>
+        <div class="nav-links">
+          <a href="#recursos" class="nav-link">Recursos</a>
+          <a href="#para-quem" class="nav-link">Para quem</a>
+          <a href="#como-funciona" class="nav-link">Como funciona</a>
+          <a href="#duvidas" class="nav-link">Dúvidas</a>
         </div>
 
-        <!-- Botões de ação para entrar ou criar nova conta -->
-        <div class="nav-action-group">
-          <a href="login.html" class="nav-link-login">Entrar</a>
-          <a href="cadastro.html" class="nav-btn-primary">Criar conta &rarr;</a>
-          <!-- Botão para abrir o menu em dispositivos móveis -->
-          <button class="nav-mobile-toggle" id="navToggle" aria-label="Abrir menu de navegação">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+        <div class="nav-actions">
+          <a href="login.html" class="nav-btn-login">Entrar</a>
+          <a href="cadastro.html" class="btn-pill btn-pill--primary nav-btn-signup">Criar conta &rarr;</a>
+          <button type="button" class="nav-toggle-btn" id="navMobileToggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+        </div>
+
+        <!-- Painel Mobile Dropdown -->
+        <div class="nav-mobile-panel" id="navMobilePanel">
+          <a href="#recursos" class="nav-link">Recursos</a>
+          <a href="#para-quem" class="nav-link">Para quem</a>
+          <a href="#como-funciona" class="nav-link">Como funciona</a>
+          <a href="#duvidas" class="nav-link">Dúvidas</a>
+          <div class="nav-mobile-ctas">
+            <a href="login.html" class="btn-pill btn-pill--outline" style="width: 100%;">Entrar</a>
+            <a href="cadastro.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
+          </div>
         </div>
       </nav>
     </header>
 
-    <!-- Seção de apresentação principal (Hero) -->
-    <section class="hero-section">
-      <!-- Formas decorativas flutuantes com dimensões e estilos originais -->
-      <svg class="hero-shape hero-shape-star-left" width="150" height="150" viewBox="0 0 160 160" style="position: absolute; left: 3%; top: 8%; width: 150px; height: 150px; pointer-events: none; z-index: 1;" aria-hidden="true">
+    <!-- 2. Seção Hero -->
+    <section class="hero-card" id="inicio">
+      <!-- Formas Decorativas Flutuantes em SVG -->
+      <!-- Estrela Amarela 10 pontas (superior esquerdo) -->
+      <svg class="hero-deco-shape shape-star-yellow" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
-      <svg class="hero-shape hero-shape-crescent-left" width="140" height="180" viewBox="0 0 140 180" style="position: absolute; left: -20px; top: 40%; width: 140px; height: 180px; pointer-events: none; z-index: 1;" aria-hidden="true">
-        <path d="M10,10 C90,30 130,90 90,160 C50,130 50,70 10,10 Z" fill="#ffd000" opacity="0.9" />
-      </svg>
-      <svg class="hero-shape hero-shape-poly-right" width="170" height="140" viewBox="0 0 180 140" style="position: absolute; right: 2%; top: 4%; width: 170px; height: 140px; pointer-events: none; z-index: 1;" aria-hidden="true">
+
+      <!-- Quadrilátero Vermelho Inclinado (superior direito) -->
+      <svg class="hero-deco-shape shape-quad-red" viewBox="0 0 180 140" aria-hidden="true">
         <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
       </svg>
-      <svg class="hero-shape hero-shape-star-right" width="110" height="110" viewBox="0 0 120 120" style="position: absolute; right: 7%; top: 30%; width: 110px; height: 110px; pointer-events: none; z-index: 1;" aria-hidden="true">
+
+      <!-- Folha Curva Amarela (borda esquerda) -->
+      <svg class="hero-deco-shape shape-leaf-yellow" viewBox="0 0 140 180" aria-hidden="true">
+        <path d="M10,10 C90,30 130,90 90,160 C50,130 50,70 10,10 Z" fill="#ffd000" opacity="0.9" />
+      </svg>
+
+      <!-- Zigue-zague Verde-Limão (inferior esquerdo) -->
+      <svg class="hero-deco-shape shape-zigzag-lime" viewBox="0 0 140 50" aria-hidden="true">
+        <path d="M10,40 L40,10 L70,40 L100,10 L130,40" fill="none" stroke="#bef264" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+      <!-- Estrela Rosa 6 pontas (inferior direito) -->
+      <svg class="hero-deco-shape shape-star-pink" viewBox="0 0 120 120" aria-hidden="true">
         <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
       </svg>
-      <svg class="hero-shape hero-shape-wave-right" width="230" height="140" viewBox="0 0 200 120" style="position: absolute; right: -30px; bottom: 8%; width: 230px; height: 140px; pointer-events: none; z-index: 1;" aria-hidden="true">
-        <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#67e8f9" opacity="0.6" />
+
+      <!-- Onda Ciano (canto inferior direito) -->
+      <svg class="hero-deco-shape shape-wave-cyan" viewBox="0 0 200 120" aria-hidden="true">
+        <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#8be4f9" opacity="0.75" />
       </svg>
 
-      <div class="hero-inner container">
-        <h1 class="hero-title">
-          Tudo que a<br />secretaria publica
+      <!-- Semicírculo Verde (canto inferior esquerdo) -->
+      <svg class="hero-deco-shape shape-semicircle-green" viewBox="0 0 160 90" aria-hidden="true">
+        <path d="M0,80 A80,80 0 0,1 160,80 Z" fill="#3cc299" opacity="0.8" />
+      </svg>
+
+      <!-- Conteúdo Central da Hero -->
+      <div class="hero-content">
+        <span class="eyebrow-pill reveal-item">Mural institucional do IFPA Campus Belém</span>
+
+        <h1 class="hero-title reveal-item">
+          Tudo que a<br />
+          secretaria<br />
+          publica
         </h1>
 
-        <p class="hero-subtitle">
-          Editais, matrículas, calendário, documentos e<br />
-          projetos da sua instituição — com data, categoria e<br />
-          público. Num lugar só.
+        <p class="hero-subtitle reveal-item">
+          Editais, matrículas, calendário, documentos e projetos do seu campus, com data, categoria e público. Num lugar só.
         </p>
 
-        <div class="hero-cta-buttons">
-          <a href="cadastro.html" class="btn-blue-pill">Criar conta &rarr;</a>
-          <a href="login.html" class="btn-outline-pill">Entrar no portal</a>
+        <div class="hero-actions reveal-item">
+          <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
+          <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Entrar no portal</a>
         </div>
 
-        <!-- Painel "Mural de hoje" -->
-        <div class="hero-panel-card">
-          <div class="hero-panel-header">
-            <span class="hero-panel-eyebrow">MURAL DE HOJE</span>
-            <a href="#mural" class="hero-panel-link">Ver o mural completo &rarr;</a>
-          </div>
-
-          <div class="hero-panel-list">
-            <div class="hero-panel-item">
-              <span class="hero-item-title">Período de matrícula 2026/2 — veteranos</span>
-              <div class="hero-item-meta">
-                <span class="tag-pill tag-matricula">Matrícula</span>
-                <span class="hero-item-date">20 JUN</span>
-              </div>
-            </div>
-
-            <div class="hero-panel-item">
-              <span class="hero-item-title">Cancelamento de aulas — greve parcial</span>
-              <div class="hero-item-meta">
-                <span class="tag-pill tag-cancelamento">Cancelamento</span>
-                <span class="hero-item-date">18 JUN</span>
-              </div>
-            </div>
-
-            <div class="hero-panel-item">
-              <span class="hero-item-title">Edital nº 012/2026 — bolsas de iniciação científica</span>
-              <div class="hero-item-meta">
-                <span class="tag-pill tag-edital">Edital</span>
-                <span class="hero-item-date">15 JUN</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Faixa de tags de categoria -->
-        <div class="hero-category-strip">
-          <span class="category-strip-pill pill-matricula">Matrícula</span>
-          <span class="category-strip-pill pill-edital">Edital</span>
-          <span class="category-strip-pill pill-evento">Evento</span>
-          <span class="category-strip-pill pill-cancelamento">Cancelamento</span>
-          <span class="category-strip-pill pill-calendario">Calendário</span>
-        </div>
+        <p class="hero-note reveal-item">Grátis para discentes, docentes e servidores com e-mail institucional.</p>
       </div>
-    </section>
 
-    <!-- Seção com indicadores estatísticos do semestre -->
-    <section class="numbers-section">
-      <div class="container">
-        <!-- Cabeçalho da seção de números -->
-        <div class="numbers-header">
-          <h2 class="section-title">O semestre em números</h2>
-          <a href="#mural" class="btn-blue-pill">Ver todo o conteúdo &rarr;</a>
-        </div>
+      <!-- Janela de Navegador Mockup com Efeito 3D ao Rolar -->
+      <div class="hero-browser-wrapper">
+        <!-- Etiquetas Flutuantes em Volta da Janela (Desktop) -->
+        <span class="hero-tag-floating hero-tag-matricula">Matrícula</span>
+        <span class="hero-tag-floating hero-tag-edital">Edital</span>
+        <span class="hero-tag-floating hero-tag-calendario">Calendário</span>
 
-        <!-- Grade de caixas com os dados numéricos -->
-        <div class="numbers-grid">
-          <!-- Estatística 1: total de avisos entregues -->
-          <div class="stat-box">
-            <span class="stat-eyebrow">ALCANCE</span>
-            <div class="stat-number">1.284</div>
-            <p class="stat-description">
-              avisos entregues sem repetir a publicação em outro canal.
-            </p>
+        <div class="hero-browser-frame" id="heroBrowserFrame">
+          <div class="browser-header">
+            <div class="browser-dots">
+              <span class="browser-dot browser-dot--red"></span>
+              <span class="browser-dot browser-dot--yellow"></span>
+              <span class="browser-dot browser-dot--green"></span>
+            </div>
+            <div class="browser-address-bar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>arcadia.ifpa.edu.br/mural</span>
+            </div>
           </div>
-
-          <!-- Estatística 2: tempo de resposta da secretaria -->
-          <div class="stat-box">
-            <span class="stat-eyebrow">TEMPO</span>
-            <div class="stat-number">24h</div>
-            <p class="stat-description">
-              do envio da secretaria à publicação no mural.
-            </p>
-          </div>
-
-          <!-- Estatística 3: taxa de engajamento dos alunos -->
-          <div class="stat-box">
-            <span class="stat-eyebrow">CONSTÂNCIA</span>
-            <div class="stat-number">92%</div>
-            <p class="stat-description">
-              abriram o mural na semana de provas.
-            </p>
+          <div class="browser-content">
+            <img src="assets/print-hero.png" alt="Mural institucional após o login" class="browser-image" width="1280" height="800" />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Seção dos três pilares principais do portal -->
-    <section id="recursos" class="recursos-section">
-      <div class="container">
-        <!-- Título e explicação dos recursos acadêmicos -->
-        <div class="recursos-header">
-          <span class="section-badge-eyebrow">RECURSOS DO SISTEMA</span>
-          <h2 class="section-title">O aviso chega antes do boato.</h2>
-          <p class="recursos-subtitle">
-            Editais, matrículas, calendário, documentos e projetos da sua instituição — com data, categoria e público. Num lugar só.
-          </p>
+    <!-- 3. Seção "O que é a Arcádia" (Manifesto e Estatísticas) -->
+    <section class="manifesto-section">
+      <span class="eyebrow-pill reveal-item">O que é a Arcádia?</span>
+
+      <h2 class="manifesto-quote reveal-item">
+        A Arcádia é o mural oficial
+        <span class="inline-badge inline-badge--black" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 160 160"><polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" /></svg>
+        </span>
+        da secretaria do IFPA Campus Belém.
+        <span class="text-muted">
+          Editais, prazos e documentos chegam
+          <span class="inline-badge inline-badge--red" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120"><path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#ffffff" /></svg>
+          </span>
+          direto a você, sem depender de quem repassa a informação.
+        </span>
+      </h2>
+
+      <div class="stats-grid">
+        <div class="stat-item reveal-item">
+          <span class="stat-label">Alcance</span>
+          <div class="stat-value">1.284</div>
+          <p class="stat-desc">avisos entregues sem repetir a publicação em outro canal.</p>
         </div>
 
-        <!-- Cartões com os três serviços centrais da plataforma -->
-        <div class="recursos-grid">
-          <!-- Primeiro pilar: Mural de avisos -->
-          <article class="recurso-card recurso-card-1">
+        <div class="stat-item reveal-item">
+          <span class="stat-label">Tempo</span>
+          <div class="stat-value">24h</div>
+          <p class="stat-desc">do envio da secretaria à publicação no mural.</p>
+        </div>
+
+        <div class="stat-item reveal-item">
+          <span class="stat-label">Constância</span>
+          <div class="stat-value">92%</div>
+          <p class="stat-desc">abriram o mural na semana de provas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Seção "Por dentro da plataforma" (Bento Grid) -->
+    <section class="recursos-section" id="recursos">
+      <div class="section-header-centered">
+        <span class="eyebrow-pill reveal-item">Depois do login</span>
+        <h2 class="section-title reveal-item">Por dentro da plataforma</h2>
+        <p class="section-subtitle reveal-item">
+          Veja o que você encontra ao entrar: cada recurso com um exemplo de como ele aparece na tela.
+        </p>
+      </div>
+
+      <div class="bento-grid">
+        <!-- Linha 1: Mural Oficial + Filtro por Vínculo -->
+        <div class="bento-row">
+          <!-- Card 1: Mural Oficial (Largo) -->
+          <article class="bento-card bento-card--mural reveal-item">
             <div>
-              <div class="recurso-card-header">
-                <div class="recurso-icon-box">📢</div>
-                <span class="recurso-tag">Mural Oficial</span>
-              </div>
-              <h3 class="recurso-title">Avisos e Notificações em Tempo Real</h3>
-              <p class="recurso-desc">
-                Publicações diretas da secretaria acadêmica e coordenação: confirmação de turmas, cancelamentos urgentes e cronogramas de matrícula.
+              <span class="bento-tag bento-tag--mural">Mural oficial</span>
+              <h3 class="bento-card-title">Avisos e notificações em tempo real</h3>
+              <p class="bento-card-desc">
+                Publicações diretas da secretaria acadêmica e da coordenação: confirmação de turmas, cancelamentos urgentes e cronogramas de matrícula.
               </p>
             </div>
-            <a href="#mural" class="recurso-action-link">Ver publicações &rarr;</a>
+            <div class="bento-frame-mini">
+              <div class="bento-frame-bar"><span></span><span></span><span></span></div>
+              <img src="assets/print-mural.png" alt="Prévia do mural oficial de avisos" class="bento-print-img" width="1280" height="800" loading="eager" />
+            </div>
           </article>
 
-          <!-- Segundo pilar: Central de documentos -->
-          <article class="recurso-card recurso-card-2">
+          <!-- Card 2: Filtro por Vínculo (Azul com Mockup de Celular) -->
+          <article class="bento-card bento-card--vinculo reveal-item">
+            <!-- Formas decorativas no card azul -->
+            <svg class="shape-vinculo-star" viewBox="0 0 120 120" aria-hidden="true">
+              <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
+            </svg>
+            <div class="shape-vinculo-circle" aria-hidden="true"></div>
+
             <div>
-              <div class="recurso-card-header">
-                <div class="recurso-icon-box">📄</div>
-                <span class="recurso-tag">Central de Documentos</span>
-              </div>
-              <h3 class="recurso-title">Protocolos e Formulários Acadêmicos</h3>
-              <p class="recurso-desc">
-                Requerimentos acadêmicos, solicitações de trancamento de matrícula, histórico escolar e atestados com download rápido sem filas.
+              <span class="bento-tag">Filtro por vínculo</span>
+              <h3 class="bento-card-title">Você vê primeiro o que é seu</h3>
+              <p class="bento-card-desc">
+                Aluno, professor ou servidor: o mural reordena as publicações pelo vínculo confirmado pela secretaria.
               </p>
             </div>
-            <a href="#documentos" class="recurso-action-link">Acessar acervo &rarr;</a>
+
+            <div class="phone-mockup-wrap">
+              <div class="phone-mockup">
+                <div class="phone-mockup-screen">
+                  <img src="assets/print-mobile.png" alt="Prévia do portal no celular" class="phone-mockup-img" width="390" height="844" loading="eager" />
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Linha 2: 3 Cartões Equivalentes -->
+        <div class="bento-row bento-row--tri">
+          <!-- Card 3: Central de Documentos -->
+          <article class="bento-card bento-card--tri reveal-item">
+            <div>
+              <span class="bento-tag bento-tag--doc">Central de documentos</span>
+              <h3 class="bento-card-title">Protocolos e formulários acadêmicos</h3>
+              <p class="bento-card-desc">
+                Requerimentos, trancamento de matrícula, histórico escolar e atestados com download rápido, sem filas.
+              </p>
+            </div>
+            <div class="bento-frame-mini">
+              <div class="bento-frame-bar"><span></span><span></span><span></span></div>
+              <img src="assets/print-documentos.png" alt="Central de documentos acadêmicos" class="bento-print-img" width="1280" height="800" loading="eager" />
+            </div>
           </article>
 
-          <!-- Terceiro pilar: Projetos de pesquisa e extensão -->
-          <article class="recurso-card recurso-card-3">
+          <!-- Card 4: Calendário Acadêmico -->
+          <article class="bento-card bento-card--tri reveal-item">
             <div>
-              <div class="recurso-card-header">
-                <div class="recurso-icon-box">💡</div>
-                <span class="recurso-tag">Pesquisa &amp; Extensão</span>
-              </div>
-              <h3 class="recurso-title">Projetos Fora do Drive Particular</h3>
-              <p class="recurso-desc">
-                Inscrições abertas em bolsas PIBIC, feiras de robótica maker, grupos de pesquisa e projetos de extensão comunitária do campus.
+              <span class="bento-tag bento-tag--cal">Calendário acadêmico</span>
+              <h3 class="bento-card-title">As datas que valem, sempre atualizadas</h3>
+              <p class="bento-card-desc">
+                Provas, reposições e eventos do semestre publicados pela própria secretaria.
               </p>
             </div>
-            <a href="#projetos" class="recurso-action-link">Explorar projetos &rarr;</a>
+            <div class="bento-frame-mini">
+              <div class="bento-frame-bar"><span></span><span></span><span></span></div>
+              <img src="assets/print-calendario.png" alt="Calendário acadêmico oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
+            </div>
+          </article>
+
+          <!-- Card 5: Pesquisa e Extensão -->
+          <article class="bento-card bento-card--tri reveal-item">
+            <div>
+              <span class="bento-tag bento-tag--proj">Pesquisa & extensão</span>
+              <h3 class="bento-card-title">Projetos fora do drive particular</h3>
+              <p class="bento-card-desc">
+                Bolsas PIBIC, feiras de robótica maker, grupos de pesquisa e projetos de extensão do campus.
+              </p>
+            </div>
+            <div class="bento-frame-mini">
+              <div class="bento-frame-bar"><span></span><span></span><span></span></div>
+              <img src="assets/print-projetos.png" alt="Projetos de pesquisa e extensão do campus" class="bento-print-img" width="1280" height="800" loading="eager" />
+            </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Seção do mural institucional com busca e filtros -->
-    <section id="mural" class="mural-section">
-      <svg class="mural-deco-shape" width="220" height="220" viewBox="0 0 240 240" aria-hidden="true">
-        <path d="M240,0 C160,20 120,100 160,180 C190,240 240,240 240,240 Z" fill="#10b981" />
-      </svg>
+    <!-- 5. Seção "Para quem" (Escura) -->
+    <section class="para-quem-card reveal-item" id="para-quem">
+      <div class="shape-paraquem-circle" aria-hidden="true"></div>
 
-      <div class="container" style="position: relative; z-index: 2;">
-        <div class="mural-top-row">
-          <div class="mural-title-col">
-            <span class="mural-section-label">MURAL INSTITUCIONAL</span>
-            <h2 class="mural-main-title">
-              Publicações espalhadas<br />viram um fluxo único
-            </h2>
+      <div class="para-quem-header">
+        <div>
+          <span class="eyebrow-pill eyebrow-pill--green">Para quem é</span>
+          <h2 class="para-quem-title">Feita para toda a comunidade do IFPA</h2>
+        </div>
+        <p class="para-quem-lead">
+          Cada vínculo vê primeiro o que importa para ele, sem garimpar avisos que não são seus.
+        </p>
+      </div>
+
+      <div class="para-quem-grid">
+        <!-- Discentes -->
+        <article class="para-quem-box">
+          <div class="box-top-deco">
+            <svg class="box-icon" viewBox="0 0 160 160" aria-hidden="true">
+              <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+            </svg>
+            <span class="box-tag">Alunos</span>
           </div>
+          <h3 class="box-title">Discentes</h3>
+          <p class="box-desc">Prazos, bolsas e datas do seu curso sem depender do grupo da turma.</p>
+          <ul class="box-list">
+            <li><span class="box-dot box-dot--yellow"></span>Períodos de matrícula e rematrícula</li>
+            <li><span class="box-dot box-dot--yellow"></span>Editais de bolsas e iniciação científica</li>
+            <li><span class="box-dot box-dot--yellow"></span>Calendário de provas e reposições</li>
+          </ul>
+        </article>
 
-          <div class="mural-search-col">
-            <div class="mural-search-wrapper">
-              <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <!-- Docentes -->
+        <article class="para-quem-box">
+          <div class="box-top-deco">
+            <svg class="box-icon" viewBox="0 0 180 140" aria-hidden="true">
+              <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
+            </svg>
+            <span class="box-tag">Professores</span>
+          </div>
+          <h3 class="box-title">Docentes</h3>
+          <p class="box-desc">Chamadas, prazos e mudanças de calendário que afetam as suas turmas.</p>
+          <ul class="box-list">
+            <li><span class="box-dot box-dot--red"></span>Chamadas internas de projetos de extensão</li>
+            <li><span class="box-dot box-dot--red"></span>Prazos de lançamento de notas</li>
+            <li><span class="box-dot box-dot--red"></span>Alterações no calendário acadêmico</li>
+          </ul>
+        </article>
+
+        <!-- Servidores -->
+        <article class="para-quem-box">
+          <div class="box-top-deco">
+            <svg class="box-icon" viewBox="0 0 200 120" aria-hidden="true">
+              <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#8be4f9" />
+            </svg>
+            <span class="box-tag">Técnicos e administrativos</span>
+          </div>
+          <h3 class="box-title">Servidores</h3>
+          <p class="box-desc">Fluxos internos e documentos da gestão do campus num só lugar.</p>
+          <ul class="box-list">
+            <li><span class="box-dot box-dot--cyan"></span>Novos fluxos, como diárias e passagens</li>
+            <li><span class="box-dot box-dot--cyan"></span>Documentos e formulários internos</li>
+            <li><span class="box-dot box-dot--cyan"></span>Comunicados da gestão do campus</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. Seção "Como começar" (Lilás) -->
+    <section class="passos-card reveal-item" id="como-funciona">
+      <div class="shape-passos-right" aria-hidden="true"></div>
+
+      <div class="section-header-centered">
+        <span class="eyebrow-pill">Como começar</span>
+        <h2 class="section-title">Três passos até o seu mural</h2>
+        <p class="section-subtitle">Sem burocracia: quem confirma o seu vínculo é a própria secretaria.</p>
+      </div>
+
+      <ol class="passos-grid">
+        <!-- Passo 1 -->
+        <li class="passo-box">
+          <div class="passo-banner passo-banner--blue">
+            <div class="passo-shape-wrap">
+              <svg viewBox="0 0 160 160" aria-hidden="true">
+                <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
               </svg>
-              <input type="text" id="muralSearchInput" placeholder="Buscar aviso, edital ou data…" class="mural-search-field" />
+              <span class="passo-number">1</span>
             </div>
           </div>
+          <div class="passo-body">
+            <h3 class="passo-title">Crie sua conta</h3>
+            <p class="passo-desc">Cadastre-se com o seu e-mail institucional do IFPA. É grátis.</p>
+          </div>
+        </li>
+
+        <!-- Passo 2 -->
+        <li class="passo-box">
+          <div class="passo-banner passo-banner--red">
+            <div class="passo-shape-wrap">
+              <svg viewBox="0 0 180 140" aria-hidden="true">
+                <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
+              </svg>
+              <span class="passo-number">2</span>
+            </div>
+          </div>
+          <div class="passo-body">
+            <h3 class="passo-title">A secretaria confirma seu vínculo</h3>
+            <p class="passo-desc">Discente, docente ou servidor: a verificação é feita pela própria secretaria.</p>
+          </div>
+        </li>
+
+        <!-- Passo 3 -->
+        <li class="passo-box">
+          <div class="passo-banner passo-banner--green">
+            <div class="passo-shape-wrap">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <path d="M60,4 L73,21 L94,14 L99,35 L120,38 L114,59 L129,74 L114,89 L120,110 L99,113 L94,134 L73,127 L60,144 L47,127 L26,134 L21,113 L0,110 L6,89 L-9,74 L6,59 L0,38 L21,35 L26,14 L47,21 Z" fill="#3cc299" />
+              </svg>
+              <span class="passo-number">3</span>
+            </div>
+          </div>
+          <div class="passo-body">
+            <h3 class="passo-title">Acompanhe o que é seu</h3>
+            <p class="passo-desc">Avisos, prazos e documentos aparecem organizados pelo seu vínculo, no computador ou no celular.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 7. Seção "Dúvidas frequentes" -->
+    <section class="faq-section" id="duvidas">
+      <div class="faq-layout">
+        <div class="faq-left">
+          <span class="eyebrow-pill">Dúvidas frequentes</span>
+          <h2 class="faq-main-title">Antes de criar sua conta</h2>
+          <p class="faq-support-text">Não encontrou o que procurava? Escreva para a secretaria:</p>
+          <a href="mailto:secretaria.belem@ifpa.edu.br" class="faq-email-link">secretaria.belem@ifpa.edu.br</a>
         </div>
 
-        <!-- Botões para filtrar avisos por tipo de público (todos, aluno, professor ou servidor) -->
-        <div class="mural-filter-bar" id="muralFilterPills">
-          <button class="mural-filter-pill active" data-filter="todos">Todos</button>
-          <button class="mural-filter-pill" data-filter="aluno">Aluno</button>
-          <button class="mural-filter-pill" data-filter="professor">Professor</button>
-          <button class="mural-filter-pill" data-filter="servidor">Servidor</button>
-        </div>
-
-        <!-- Grade com os cartões de avisos do mural -->
-        <div class="mural-card-grid" id="muralCardsContainer">
-          <!-- Aviso 1: Período de matrícula para alunos veteranos -->
-          <article class="mural-post-card" data-publico="aluno">
-            <div class="card-visual-header" style="background-color: #8be4f9;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-matricula">Matrícula</span>
-                <span class="card-meta-text">20 JUN PARA ALUNOS</span>
-              </div>
-              <h3 class="card-title">Período de matrícula 2026/2 — veteranos</h3>
-              <p class="card-text">
-                Abertas de 20 a 27 de junho pelo portal. Pendências devem ser resolvidas na secretaria antes de iniciar.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
+        <div class="faq-accordion">
+          <!-- Item 1 (Aberto por padrão) -->
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="true">
+              <span>Quem pode usar a Arcádia?</span>
+              <span class="faq-icon-circle">+</span>
+            </button>
+            <div class="faq-panel">
+              <p>Discentes, docentes e servidores do IFPA Campus Belém. Basta ter um e-mail institucional para criar a conta.</p>
             </div>
-          </article>
+          </div>
 
-          <!-- Aviso 2: Cancelamento de aulas por greve -->
-          <article class="mural-post-card" data-publico="todos">
-            <div class="card-visual-header" style="background-color: #ff5c5c;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-cancelamento">Cancelamento</span>
-                <span class="card-meta-text">18 JUN PARA TODOS</span>
-              </div>
-              <h3 class="card-title">Cancelamento de aulas — greve parcial</h3>
-              <p class="card-text">
-                Vespertino e noturno de 18/06. As reposições entram no calendário na semana seguinte.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
+          <!-- Item 2 -->
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>É preciso pagar alguma coisa?</span>
+              <span class="faq-icon-circle">+</span>
+            </button>
+            <div class="faq-panel">
+              <p>Não. A Arcádia é uma plataforma institucional 100% gratuita desenvolvida para atender toda a comunidade do campus.</p>
             </div>
-          </article>
+          </div>
 
-          <!-- Aviso 3: Edital de bolsas de pesquisa PIBIC -->
-          <article class="mural-post-card" data-publico="aluno">
-            <div class="card-visual-header" style="background-color: #a7f3d0;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-edital">Edital</span>
-                <span class="card-meta-text">15 JUN PARA ALUNOS</span>
-              </div>
-              <h3 class="card-title">Edital nº 012/2026 — bolsas de iniciação científica</h3>
-              <p class="card-text">
-                Inscrições até 30/08. Trinta bolsas com vigência de doze meses e cronograma obrigatório.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
+          <!-- Item 3 -->
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>Como o meu vínculo é confirmado?</span>
+              <span class="faq-icon-circle">+</span>
+            </button>
+            <div class="faq-panel">
+              <p>Ao se cadastrar com o seu e-mail institucional, a própria secretaria acadêmica valida o seu curso, matrícula ou cargo no sistema interno.</p>
             </div>
-          </article>
+          </div>
 
-          <!-- Aviso 4: Chamada de trabalhos para semana acadêmica -->
-          <article class="mural-post-card" data-publico="todos">
-            <div class="card-visual-header" style="background-color: #facc15;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-evento">Evento</span>
-                <span class="card-meta-text">12 JUN PARA TODOS</span>
-              </div>
-              <h3 class="card-title">Semana acadêmica — chamada de trabalhos</h3>
-              <p class="card-text">
-                Entre 7 e 11 de julho, com submissões de resumos por eixo tecnológico.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
+          <!-- Item 4 -->
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>A Arcádia substitui o SIGAA?</span>
+              <span class="faq-icon-circle">+</span>
+            </button>
+            <div class="faq-panel">
+              <p>Não. O SIGAA continua sendo o sistema acadêmico oficial para lançamento de notas e histórico. A Arcádia centraliza a comunicação, editais e avisos em tempo real.</p>
             </div>
-          </article>
+          </div>
 
-          <!-- Aviso 5: Chamada interna de projetos de extensão para professores -->
-          <article class="mural-post-card" data-publico="professor">
-            <div class="card-visual-header" style="background-color: #10b981;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-edital">Edital</span>
-                <span class="card-meta-text">11 JUN PARA PROFESSORES</span>
-              </div>
-              <h3 class="card-title">Chamada interna de projetos de extensão</h3>
-              <p class="card-text">
-                Propostas com carga horária e público estimado até 15/07.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
+          <!-- Item 5 -->
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>Funciona no celular?</span>
+              <span class="faq-icon-circle">+</span>
+            </button>
+            <div class="faq-panel">
+              <p>Sim. O portal é totalmente responsivo e foi construído com navegação ágil para smartphones, sem necessidade de baixar aplicativos externos.</p>
             </div>
-          </article>
-
-          <!-- Aviso 6: Alterações de datas no calendário acadêmico -->
-          <article class="mural-post-card" data-publico="todos">
-            <div class="card-visual-header" style="background-color: #f9a8d4;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-calendario">Calendário</span>
-                <span class="card-meta-text">10 JUN PARA TODOS</span>
-              </div>
-              <h3 class="card-title">Alterações no calendário acadêmico</h3>
-              <p class="card-text">
-                Novas datas em 21/06 e 28/06 para reposição de aulas do vespertino.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
-            </div>
-          </article>
-
-          <!-- Aviso 7: Fluxo de diárias e passagens para servidores -->
-          <article class="mural-post-card" data-publico="servidor">
-            <div class="card-visual-header" style="background-color: #fde047;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-documento">Documento</span>
-                <span class="card-meta-text">09 JUN PARA SERVIDORES</span>
-              </div>
-              <h3 class="card-title">Novo fluxo de diárias e passagens</h3>
-              <p class="card-text">
-                Vale a partir de 01/07, com prazo mínimo de quinze dias de antecedência.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
-            </div>
-          </article>
-
-          <!-- Aviso 8: Lançamento de notas bimestrais para professores -->
-          <article class="mural-post-card" data-publico="professor">
-            <div class="card-visual-header" style="background-color: #fde047;"></div>
-            <div class="card-body">
-              <div class="card-meta-line">
-                <span class="tag-pill tag-documento">Documento</span>
-                <span class="card-meta-text">05 JUN PARA PROFESSORES</span>
-              </div>
-              <h3 class="card-title">Registro de notas do bimestre no sistema</h3>
-              <p class="card-text">
-                Lançamento de notas e frequências até 05/07, com suporte no laboratório 2.
-              </p>
-              <a href="aviso.html" class="btn-blue-pill btn-card-action">Ler publicação &rarr;</a>
-            </div>
-          </article>
-        </div>
-
-        <!-- Indicador de quantidade de avisos exibidos no mural -->
-        <div class="mural-count-footer">
-          <span id="muralCountLabel">8 AVISOS NO MURAL</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Seção de explicação sobre como os filtros organizam o conteúdo por vínculo -->
-    <section class="vinculo-section">
-      <svg class="vinculo-deco-shape" width="150" height="220" viewBox="0 0 160 200" aria-hidden="true">
-        <path d="M160,0 C80,30 40,110 80,180 L160,200 Z" fill="#10b981" />
+    <!-- 8. CTA Final -->
+    <section class="cta-card reveal-item">
+      <!-- Formas flutuantes no CTA final -->
+      <svg class="hero-deco-shape shape-star-yellow" style="top: 40px; left: 8%; width: 70px; height: 70px;" viewBox="0 0 160 160" aria-hidden="true">
+        <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+      </svg>
+      <svg class="hero-deco-shape shape-quad-red" style="top: 40px; right: 8%; width: 76px; height: 60px;" viewBox="0 0 180 140" aria-hidden="true">
+        <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
+      </svg>
+      <svg class="hero-deco-shape shape-zigzag-lime" style="bottom: 90px; left: 10%; width: 80px; height: 40px;" viewBox="0 0 140 50" aria-hidden="true">
+        <path d="M10,40 L40,10 L70,40 L100,10 L130,40" fill="none" stroke="#bef264" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <svg class="hero-deco-shape shape-star-pink" style="bottom: 90px; right: 10%; width: 66px; height: 66px;" viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
       </svg>
 
-      <div class="container vinculo-flex" style="position: relative; z-index: 2;">
-        <div class="vinculo-text-side">
-          <span class="section-badge-eyebrow">FILTROS POR VÍNCULO</span>
-          <h2 class="section-title">Você vê primeiro o que é seu</h2>
-          <p class="vinculo-explanation">
-            Aluno, professor ou servidor: o mural reordena as publicações pelo
-            vínculo confirmado pela secretaria — sem depender de quem repassa a
-            informação.
-          </p>
-        </div>
+      <h2 class="cta-title">Comece pelo mural</h2>
+      <p class="cta-subtitle">Grátis com e-mail institucional. A verificação de vínculo é feita pela própria secretaria.</p>
 
-        <div class="vinculo-card-side">
-          <div class="vinculo-box">
-            <span class="stat-eyebrow">VÍNCULO ATIVO</span>
-            <div class="vinculo-buttons-row">
-              <button class="pill-btn-lime">Aluno</button>
-              <button class="pill-btn-outline">Professor</button>
-              <button class="pill-btn-outline">Servidor</button>
-            </div>
-            <p class="vinculo-status-text">
-              4 de 6 avisos são do seu curso nesta semana.
-            </p>
-          </div>
-        </div>
+      <div class="cta-actions">
+        <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
+        <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Entrar no portal</a>
       </div>
+
+      <!-- Marca d'água gigante vazando na base -->
+      <div class="cta-watermark" aria-hidden="true">Arcádia</div>
     </section>
 
-    <!-- Seção da central de documentos e requerimentos acadêmicos -->
-    <section id="documentos" class="documents-section">
+    <!-- 9. Rodapé Oficial -->
+    <footer class="footer-main">
       <div class="container">
-        <div class="documents-header">
-          <div>
-            <span class="section-badge-eyebrow">CENTRAL DE DOCUMENTOS</span>
-            <h2 class="section-title">A papelada no lugar certo</h2>
-          </div>
-          <a href="documentos.html" class="btn-blue-pill">Ver todos &rarr;</a>
-        </div>
-
-        <div class="documents-grid">
-          <!-- Documento 1: Requerimento geral em formato PDF -->
-          <div class="doc-card">
-            <span class="doc-badge-pill">PDF</span>
-            <h3 class="doc-name">Requerimento geral</h3>
-            <a href="#" class="doc-action-pill" onclick="alert('Download do Requerimento Geral IFPA')">Baixar</a>
-          </div>
-
-          <!-- Documento 2: Formulário para trancamento de matrícula -->
-          <div class="doc-card">
-            <span class="doc-badge-pill">PDF</span>
-            <h3 class="doc-name">Trancamento de matrícula</h3>
-            <a href="#" class="doc-action-pill" onclick="alert('Download do Formulário de Trancamento IFPA')">Baixar</a>
-          </div>
-
-          <!-- Documento 3: Canal direto de contato da secretaria por e-mail -->
-          <div class="doc-card">
-            <span class="doc-badge-pill">E-mail</span>
-            <h3 class="doc-name">Secretaria acadêmica</h3>
-            <a href="mailto:secretaria.belem@ifpa.edu.br" class="doc-action-pill">Abrir</a>
-          </div>
-
-          <!-- Documento 4: Link externo para o portal de periódicos CAPES -->
-          <div class="doc-card">
-            <span class="doc-badge-pill">Link</span>
-            <h3 class="doc-name">Portal de periódicos CAPES</h3>
-            <a href="https://www.periodicos.capes.gov.br" target="_blank" rel="noopener noreferrer" class="doc-action-pill">Acessar</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Seção de projetos e pesquisas acadêmicas da comunidade -->
-    <section id="projetos" class="projects-section">
-      <div class="container">
-        <!-- Cabeçalho da seção de projetos -->
-        <div class="projects-header">
-          <h2 class="projects-title">
-            Projetos da comunidade,<br />fora do drive particular
-          </h2>
-          <a href="projetos.html" class="btn-blue-pill">Ver todos os projetos &rarr;</a>
-        </div>
-
-        <div class="projects-grid">
-          <!-- Projeto 1: Palestra sobre biodiversidade e bioeconomia -->
-          <div class="project-post-card">
-            <div class="project-visual-block" style="background-color: #bef264;"></div>
-            <div class="project-details">
-              <span class="project-category-tag">EXTENSÃO · PALESTRA</span>
-              <h3 class="project-heading">Palestra: Preservação, Biodiversidade e Bioeconomia na Amazônia</h3>
-              <p class="project-author-text">Prof. Dr. Mauro Santos · Lab. de Ecologia</p>
-            </div>
-          </div>
-
-          <!-- Projeto 2: Pesquisa PIBIC sobre monitoramento de águas -->
-          <div class="project-post-card">
-            <div class="project-visual-block" style="background-color: #8be4f9;"></div>
-            <div class="project-details">
-              <span class="project-category-tag">PESQUISA · PIBIC</span>
-              <h3 class="project-heading">Monitoramento da Qualidade das Águas da Bacia do Guajará</h3>
-              <p class="project-author-text">Larissa Menezes · 5º período (Saneamento)</p>
-            </div>
-          </div>
-
-          <!-- Projeto 3: Projeto de robótica educacional com sucata -->
-          <div class="project-post-card">
-            <div class="project-visual-block" style="background-color: #facc15;"></div>
-            <div class="project-details">
-              <span class="project-category-tag">ENSINO &amp; EXTENSÃO</span>
-              <h3 class="project-heading">Robótica Educacional com Reaproveitamento de Sucata</h3>
-              <p class="project-author-text">Coord. de Automação &amp; Grupo Maker</p>
-            </div>
-          </div>
-
-          <!-- Projeto 4: Projeto de inovação e saberes tradicionais -->
-          <div class="project-post-card">
-            <div class="project-visual-block" style="background-color: #fca5a5;"></div>
-            <div class="project-details">
-              <span class="project-category-tag">INOVAÇÃO &amp; COMUNIDADE</span>
-              <h3 class="project-heading">Mapeamento Colaborativo de Saberes Tradicionais e Etnobotânica</h3>
-              <p class="project-author-text">Grupo de Pesquisa Saberes Amazônicos</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Banner de chamada final para criar conta ou acessar o portal -->
-    <section class="cta-final-section">
-      <div class="container">
-        <div class="cta-final-card">
-          <h2 class="cta-final-title">Comece pelo mural</h2>
-          <p class="cta-final-subtitle">
-            Grátis com e-mail institucional. A verificação de vínculo é feita
-            pela própria secretaria.
-          </p>
-          <div class="cta-final-buttons">
-            <a href="cadastro.html" class="btn-blue-pill">Criar conta &rarr;</a>
-            <a href="login.html" class="btn-dark-outline-pill">Entrar no portal</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Rodapé institucional com links úteis, contatos e créditos do projeto -->
-    <footer class="site-footer">
-      <div class="container">
-        <div class="footer-top-header">
-          <div class="footer-brand-header">
-            <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="footer-logo-img" width="36" height="36" />
+        <div class="footer-top">
+          <div class="footer-brand">
+            <img src="assets/arcadia-emblem-dark.png" alt="Emblema da Arcádia" class="nav-brand-logo" width="36" height="36" />
             <div>
-              <span class="footer-brand-name">Arcádia</span>
-              <span class="footer-brand-campus">IFPA — CAMPUS BELÉM</span>
+              <div class="footer-brand-title">Arcádia</div>
+              <div class="footer-brand-sub">IFPA Campus Belém</div>
             </div>
           </div>
-
-          <div class="footer-status-tag">
-            <span class="dot"></span>
-            <span>SISTEMA ATIVO · IFPA CAMPUS BELÉM</span>
-          </div>
+          <span class="footer-badge-status">Sistema ativo no IFPA Campus Belém</span>
         </div>
 
-        <div class="footer-grid">
-          <!-- Coluna 1: Informações sobre o propósito do portal Arcádia -->
-          <div class="footer-brand-info">
-            <h4 class="footer-heading">SOBRE O PORTAL</h4>
-            <p class="footer-brand-description">
-              O mural institucional que reúne editais, matrículas, calendário,
-              documentos e projetos da instituição — com data, categoria e
-              público. Num lugar só.
+        <div class="footer-columns">
+          <!-- Coluna 1: Sobre -->
+          <div>
+            <div class="footer-col-title">Sobre o portal</div>
+            <p class="footer-desc">
+              O mural institucional que reúne editais, matrículas, calendário, documentos e projetos da instituição, com data, categoria e público. Num lugar só.
             </p>
           </div>
 
-          <!-- Coluna 2: Links rápidos para as seções da plataforma -->
-          <div class="footer-column">
-            <h4 class="footer-heading">PLATAFORMA</h4>
+          <!-- Coluna 2: Plataforma -->
+          <div>
+            <div class="footer-col-title">Plataforma</div>
             <ul class="footer-links">
-              <li><a href="#mural">Mural de avisos</a></li>
-              <li><a href="#recursos">Recursos interativos</a></li>
-              <li><a href="#documentos">Central de documentos</a></li>
-              <li><a href="#projetos">Projetos da comunidade</a></li>
+              <li><a href="avisos.html">Mural de avisos</a></li>
+              <li><a href="documentos.html">Central de documentos</a></li>
+              <li><a href="projetos.html">Projetos da comunidade</a></li>
               <li><a href="calendario.html">Calendário acadêmico</a></li>
             </ul>
           </div>
 
-          <!-- Coluna 3: Links para sistemas e páginas oficiais do IFPA -->
-          <div class="footer-column">
-            <h4 class="footer-heading">INSTITUCIONAL</h4>
+          <!-- Coluna 3: Institucional -->
+          <div>
+            <div class="footer-col-title">Institucional</div>
             <ul class="footer-links">
               <li><a href="https://sigaa.ifpa.edu.br" target="_blank" rel="noopener">SIGAA IFPA</a></li>
               <li><a href="https://biblioteca.ifpa.edu.br" target="_blank" rel="noopener">Biblioteca Virtual</a></li>
-              <li><a href="https://belem.ifpa.edu.br/assistencia-estudantil" target="_blank" rel="noopener">Assistência Estudantil</a></li>
+              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Assistência Estudantil</a></li>
               <li><a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener">Ouvidoria Geral</a></li>
-              <li><a href="login.html">Área do Servidor</a></li>
+              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Área do Servidor</a></li>
             </ul>
           </div>
 
-          <!-- Coluna 4: Informações de contato e atendimento da secretaria -->
-          <div class="footer-column">
-            <h4 class="footer-heading">SECRETARIA &amp; CONTATO</h4>
+          <!-- Coluna 4: Secretaria & Contato -->
+          <div>
+            <div class="footer-col-title">Secretaria & contato</div>
             <div class="footer-contact-info">
-              <p class="footer-contact-email">secretaria.belem@ifpa.edu.br</p>
-              <p>Atendimento das 8h às 17h</p>
-              <p style="margin-top: 6px; color: #64748b;">Bloco Administrativo — IFPA Campus Belém</p>
+              <p><a href="mailto:secretaria.belem@ifpa.edu.br">secretaria.belem@ifpa.edu.br</a></p>
+              <p style="margin: 8px 0;">Atendimento das 8h às 17h</p>
+              <p>Bloco Administrativo, IFPA Campus Belém</p>
             </div>
           </div>
         </div>
 
-        <div class="footer-bottom-separator"></div>
-
-        <div class="footer-bottom-bar">
-          <span>IFPA — CAMPUS BELÉM, 2026</span>
+        <div class="footer-bottom">
+          <div>IFPA Campus Belém, 2026 · Pré-projeto do curso técnico em desenvolvimento de sistemas</div>
           <div class="footer-bottom-links">
             <a href="#">Política de privacidade</a>
             <a href="#">Termos de uso</a>
@@ -626,64 +576,10 @@
             <a href="#">Mapa do site</a>
           </div>
         </div>
-
-        <div class="footer-subproject-text">
-          PRÉ-PROJETO DO CURSO TÉCNICO EM DESENVOLVIMENTO DE SISTEMAS
-        </div>
       </div>
     </footer>
 
-    <!-- Script JavaScript para controle da busca e dos filtros do mural -->
-    <script src="script.js"></script>
-    <script>
-      (function() {
-        const searchInput = document.getElementById('muralSearchInput');
-        const filterPills = document.querySelectorAll('#muralFilterPills .mural-filter-pill');
-        const cards = document.querySelectorAll('#muralCardsContainer .mural-post-card');
-        const countLabel = document.getElementById('muralCountLabel');
-
-        let activeFilter = 'todos';
-        let searchQuery = '';
-
-        function updateCards() {
-          let visibleCount = 0;
-
-          cards.forEach((card) => {
-            const publico = card.getAttribute('data-publico') || 'todos';
-            const textContent = card.innerText.toLowerCase();
-
-            const matchesFilter = activeFilter === 'todos' || publico === activeFilter || publico === 'todos';
-            const matchesSearch = !searchQuery || textContent.includes(searchQuery);
-
-            if (matchesFilter && matchesSearch) {
-              card.style.display = 'flex';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
-
-          if (countLabel) {
-            countLabel.textContent = `${visibleCount} AVISO${visibleCount !== 1 ? 'S' : ''} NO MURAL`;
-          }
-        }
-
-        filterPills.forEach((pill) => {
-          pill.addEventListener('click', () => {
-            filterPills.forEach((p) => p.classList.remove('active'));
-            pill.classList.add('active');
-            activeFilter = pill.getAttribute('data-filter') || 'todos';
-            updateCards();
-          });
-        });
-
-        if (searchInput) {
-          searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value.trim().toLowerCase();
-            updateCards();
-          });
-        }
-      })();
-    </script>
+    <!-- Script de Interações e Movimento da Landing -->
+    <script src="landing.js"></script>
   </body>
 </html>

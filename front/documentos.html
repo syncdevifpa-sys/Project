@@ -68,9 +68,9 @@
         </a>
 
         <a class="ar-user" href="configuracoes.html">
-          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
+          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">IF</span>
           <div>
-            <div class="ar-user-name">Ana Ribeiro</div>
+            <div class="ar-user-name">Estudante IFPA</div>
             <div class="ar-user-role">Aluno</div>
           </div>
         </a>
@@ -113,7 +113,7 @@
 
     <!-- Grade de Documentos -->
     <div class="ar-card-grid">
-      <article class="ar-card">
+      <article class="ar-card" data-status="pronto">
         <div class="ar-card-top">
           <span class="ar-tag">PDF</span>
           <span class="ar-badge ar-badge--green">Pronto</span>
@@ -126,11 +126,11 @@
         </p>
         <div class="ar-card-signal ar-signal--link">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;" onclick="Arcadia.showToast('Download do histórico iniciado.'); return false;">Baixar documento</a>
+          <a href="#" class="ar-link" style="font-size:13px;" onclick="baixarArquivoDoc('Historico_Escolar_Completo_IFPA.txt', 'INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO PARÁ - CAMPUS BELÉM\n\nHISTÓRICO ESCOLAR COMPLETO\nAutenticação Digital: IFPA-2026-0001-AUTH-VALID\nData de Emissão: 08/09/2026\nSituação: Regularmente Matriculado'); return false;">Baixar documento</a>
         </div>
       </article>
 
-      <article class="ar-card">
+      <article class="ar-card" data-status="em análise">
         <div class="ar-card-top">
           <span class="ar-tag">Requerimento</span>
           <span class="ar-badge ar-badge--yellow">Em análise</span>
@@ -143,11 +143,11 @@
         </p>
         <div class="ar-card-signal ar-signal--muted">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <span>Secretaria acadêmica avaliando</span>
+          <a href="#" class="ar-link" style="font-size:13px;" onclick="Arcadia.showToast('Protocolo 2026-0002 em análise pela Secretaria Acadêmica.'); return false;">Secretaria acadêmica avaliando</a>
         </div>
       </article>
 
-      <article class="ar-card">
+      <article class="ar-card" data-status="solicitado">
         <div class="ar-card-top">
           <span class="ar-tag">PDF</span>
           <span class="ar-badge ar-badge--neutral">Aguardando</span>
@@ -160,11 +160,11 @@
         </p>
         <div class="ar-card-signal ar-signal--muted">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <span>Aguardando processamento</span>
+          <a href="#" class="ar-link" style="font-size:13px;" onclick="baixarArquivoDoc('Atestado_Matricula_IFPA.txt', 'INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO PARÁ - CAMPUS BELÉM\n\nATESTADO DE MATRÍCULA\nSemestre Letivo: 2026/2\nStatus: Confirmação de Matrícula Ativa'); return false;">Aguardando processamento (Baixar prévia)</a>
         </div>
       </article>
 
-      <article class="ar-card">
+      <article class="ar-card" data-status="pendente">
         <div class="ar-card-top">
           <span class="ar-tag">Assinatura</span>
           <span class="ar-badge ar-badge--neutral">Pendente</span>
@@ -177,7 +177,7 @@
         </p>
         <div class="ar-card-signal ar-signal--orange">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <span>Aguardando assinatura do orientador</span>
+          <a href="#" class="ar-link" style="font-size:13px;" onclick="Arcadia.showToast('Notificação de assinatura reenviada ao orientador.'); return false;">Aguardando assinatura do orientador</a>
         </div>
       </article>
     </div>
@@ -275,6 +275,27 @@
 
   <script src="portal.js"></script>
   <script>
+    function baixarArquivoDoc(nome, texto) {
+      try {
+        var blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = nome;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        if (window.Arcadia && Arcadia.showToast) {
+          Arcadia.showToast('Download de ' + nome + ' iniciado!');
+        }
+      } catch (err) {
+        if (window.Arcadia && Arcadia.showToast) {
+          Arcadia.showToast('Documento pronto: ' + nome);
+        }
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       var btnNovo = document.getElementById('btnNovoDoc');
       var modalNovo = document.getElementById('modalNovoDoc');
@@ -298,6 +319,28 @@
           });
         });
       }
+
+      // Filtro de situação por chips
+      var chips = document.querySelectorAll('.ar-chipbar .ar-chip');
+      var cards = document.querySelectorAll('.ar-card-grid .ar-card');
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+          chip.setAttribute('aria-pressed', 'true');
+
+          var rawText = chip.textContent.replace(/\(\d+\)/g, '').trim().toLowerCase();
+
+          cards.forEach(function (card) {
+            var cardStatus = (card.getAttribute('data-status') || '').toLowerCase();
+            if (rawText === 'todos' || cardStatus === rawText) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
     });
   </script>
 </body>

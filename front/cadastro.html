@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Criar conta · Arcádia IFPA</title>
+  <title>Criar conta — Arcádia IFPA</title>
 
   <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
   <script>
@@ -33,237 +33,800 @@
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="bundle.css">
   <style>
+    /* Estilos da Interface de Autenticação com Cores Vivas e Layout de Referência */
+    :root {
+      --ref-canvas: #0b1a13;
+      --ref-card: #151d18;
+      --ref-showcase: #1b2620;
+      --ref-showcase-border: #28382f;
+      --ref-primary: #2d6a4f;
+      --ref-primary-hover: #40916c;
+      --ref-ink: #f0fdf4;
+      --ref-ink-muted: #a3b8ad;
+      --ref-input-bg: #202b24;
+      --ref-input-border: #324338;
+      --ref-input-focus: #52b788;
+      --ref-coral: #e76f51;
+      --ref-peach: #f4a261;
+      --ref-amber: #e59819;
+      --ref-sage: #52b788;
+      --ref-emerald: #2d6a4f;
+    }
+
+    [data-theme="dark"],
+    [data-theme="light"] {
+      --ref-canvas: #0b1a13;
+      --ref-card: #151d18;
+      --ref-showcase: #1b2620;
+      --ref-showcase-border: #28382f;
+      --ref-primary: #2d6a4f;
+      --ref-primary-hover: #40916c;
+      --ref-ink: #f0fdf4;
+      --ref-ink-muted: #a3b8ad;
+      --ref-input-bg: #202b24;
+      --ref-input-border: #324338;
+      --ref-input-focus: #52b788;
+    }
+
+    body {
+      background: var(--ref-canvas);
+      background-image: radial-gradient(circle at 50% 8%, rgba(45, 106, 79, 0.45) 0%, rgba(19, 42, 31, 0.95) 100%);
+      color: var(--ref-ink);
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Formas Geométricas Decorativas da Landing Page no Fundo */
+    .ar-auth-bg-shapes {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .auth-bg-shape {
+      position: absolute;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.22));
+    }
+
+    .auth-shape-star-left {
+      left: 2%;
+      top: 6%;
+      width: 150px;
+      height: 150px;
+      opacity: 0.92;
+    }
+
+    .auth-shape-crescent-left {
+      left: -20px;
+      top: 45%;
+      width: 140px;
+      height: 180px;
+      opacity: 0.9;
+    }
+
+    .auth-shape-poly-right {
+      right: 2%;
+      top: 5%;
+      width: 170px;
+      height: 140px;
+      opacity: 0.92;
+    }
+
+    .auth-shape-star-right {
+      right: 4%;
+      top: 42%;
+      width: 120px;
+      height: 120px;
+      opacity: 0.92;
+    }
+
+    .auth-shape-wave-right {
+      right: -25px;
+      bottom: 4%;
+      width: 230px;
+      height: 140px;
+      opacity: 0.75;
+    }
+
+    .auth-shape-green-left {
+      left: -30px;
+      bottom: -30px;
+      width: 210px;
+      height: 210px;
+      opacity: 0.8;
+      transform: rotate(-30deg);
+    }
+
+    @media (max-width: 768px) {
+      .auth-bg-shape {
+        opacity: 0.45 !important;
+        transform: scale(0.65);
+      }
+    }
+
     .ar-auth-page {
+      position: relative;
+      z-index: 1;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: var(--space-4);
-      max-width: 1100px;
+      padding: var(--space-4) var(--space-5);
+      max-width: 1140px;
       margin: 0 auto;
       box-sizing: border-box;
     }
-    .ar-auth-wrap {
-      flex: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-      gap: var(--space-6);
+
+    /* Barra Superior com botão na extremidade direita */
+    .ar-auth-header {
+      width: 100%;
+      display: flex;
       align-items: center;
-      margin: auto 0;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--ref-card);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-full);
+      box-sizing: border-box;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+    .ar-auth-header-end {
+      margin-left: auto;
+    }
+    .ar-auth-header-end .ar-btn {
+      background: #ffffff;
+      color: #0b1a13;
+      border: none;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .ar-auth-header-end .ar-btn:hover {
+      background: #e8f5ed;
+      transform: translateY(-1px);
+    }
+
+    .ar-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .ar-brand-name {
+      color: var(--ref-ink);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .ar-brand-sub {
+      color: var(--ref-ink-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    /* Container Principal */
+    .ar-auth-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: var(--space-6) 0;
     }
-    .ar-auth-card {
-      background: var(--surface);
-      border-radius: var(--radius-xl);
-      padding: var(--space-8);
-      box-shadow: var(--shadow-float);
+
+    .ar-auth-card-main {
+      width: 100%;
+      background: var(--ref-card);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.35);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* Coluna do Formulário (Esquerda) */
+    .ar-auth-form-col {
+      padding: 40px 48px;
       display: flex;
       flex-direction: column;
-      gap: var(--space-5);
+      gap: 20px;
+      box-sizing: border-box;
     }
-    .ar-auth-aside {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-      padding: var(--space-6);
-    }
+
     .ar-auth-title {
-      font-size: 36px;
-      line-height: 42px;
+      font-size: 32px;
+      line-height: 38px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin: 0 0 6px 0;
+      color: var(--ref-ink);
+    }
+    .ar-auth-desc {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--ref-ink-muted);
+      margin: 0;
+    }
+
+    /* Seletor de Vínculo estilo Radio Pill */
+    .ar-role-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ar-role-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ref-ink-muted);
+    }
+    .ar-role-selector {
+      display: flex;
+      gap: 8px;
+      background: var(--ref-input-bg);
+      padding: 5px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--ref-input-border);
+    }
+    .ar-role-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ref-ink-muted);
+      font-family: inherit;
+      font-size: 13px;
       font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .ar-role-btn:hover {
+      color: var(--ref-ink);
+      background: rgba(0, 0, 0, 0.04);
+    }
+    .ar-role-btn.is-active,
+    .ar-role-btn[aria-checked="true"] {
+      background: var(--ref-primary);
+      color: #ffffff;
+      font-weight: 600;
+      border-color: var(--ref-primary);
+      box-shadow: 0 3px 10px rgba(27, 67, 50, 0.25);
+    }
+    .ar-radio-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--ref-ink-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .ar-role-btn.is-active .ar-radio-dot,
+    .ar-role-btn[aria-checked="true"] .ar-radio-dot {
+      border-color: #ffffff;
+    }
+    .ar-role-btn.is-active .ar-radio-dot::after,
+    .ar-role-btn[aria-checked="true"] .ar-radio-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+
+    /* Campos de Entrada com Ícones e Arredondamento Elegante */
+    .ar-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .ar-input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ref-ink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ar-input-label-icon {
+      color: var(--ref-primary);
+      flex-shrink: 0;
+    }
+    .ar-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .ar-input-wrap input,
+    .ar-input-wrap select {
+      width: 100%;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1.5px solid var(--ref-input-border);
+      background: var(--ref-input-bg);
+      color: var(--ref-ink);
+      font-family: inherit;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s, background-color 0.18s;
+    }
+    .ar-input-wrap input:focus,
+    .ar-input-wrap select:focus {
+      border-color: var(--ref-input-focus);
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+      background: var(--ref-card);
+    }
+    .ar-input-wrap--password input {
+      padding-right: 44px;
+    }
+    .ar-toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--ref-ink-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 6px;
+    }
+    .ar-toggle-pwd:hover {
+      color: var(--ref-ink);
+    }
+    .ar-field-hint {
+      font-size: 12px;
+      color: var(--ref-ink-muted);
+      line-height: 16px;
+    }
+
+    /* Botão de Registro Primário */
+    .ar-btn-submit {
+      width: 100%;
+      height: 46px;
+      background: #ffffff;
+      color: #0b1a13;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 15px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease;
+      margin-top: 6px;
+    }
+    .ar-btn-submit:hover {
+      background: #e8f5ed;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    .ar-switch-text {
+      margin: 0;
+      font-size: 14px;
+      color: var(--ref-ink-muted);
+      text-align: center;
+    }
+    .ar-switch-text a {
+      color: #52b788;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .ar-switch-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* Coluna de Destaque / Showcase (Direita) */
+    .ar-auth-showcase-col {
+      background: var(--ref-showcase);
+      border-left: 1px solid var(--ref-showcase-border);
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 30px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .ar-showcase-intro {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ar-showcase-title {
+      font-size: 30px;
+      line-height: 38px;
+      font-weight: 700;
+      color: var(--ref-ink);
       letter-spacing: -0.025em;
       margin: 0;
     }
-    .ar-auth-desc {
-      font-size: 15px;
-      line-height: 22px;
-      color: var(--ink-muted);
+    .ar-showcase-desc {
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--ref-ink-muted);
       margin: 0;
     }
-    .ar-auth-steps {
+
+    /* Lista de Recursos Acadêmicos: Caixas preenchidas elegantes, sem emojis e sem bordas */
+    .ar-features-list {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
-      margin-top: var(--space-2);
+      gap: 14px;
     }
-    .ar-auth-step {
+    .ar-feature-item {
       display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
-      background: var(--surface);
-      padding: var(--space-4);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--line);
+      flex-direction: column;
+      gap: 6px;
+      background: #202b24;
+      border: 1px solid #2e3e33;
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
     }
-    .ar-auth-step-n {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-weight: 600;
-      font-size: 13px;
-      flex-shrink: 0;
+    .ar-feature-item h4 {
+      font-size: 17px;
+      line-height: 22px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--ref-ink);
+      letter-spacing: -0.01em;
     }
-    .ar-auth-step h4 {
-      margin: 0 0 2px;
+    .ar-feature-item p {
       font-size: 14px;
       line-height: 20px;
-      font-weight: 600;
-    }
-    .ar-auth-step p {
+      color: var(--ref-ink-muted);
       margin: 0;
-      font-size: 13px;
-      line-height: 18px;
-      color: var(--ink-muted);
     }
-    @media (max-width: 840px) {
-      .ar-auth-wrap {
+
+    /* Arte Vetorial do Campus com Cores da Referência (loginRef) */
+    .ar-campus-art-wrap {
+      width: 100%;
+      padding-top: 8px;
+      display: flex;
+      justify-content: center;
+    }
+    .ar-campus-art {
+      width: 100%;
+      max-height: 150px;
+    }
+
+    @media (max-width: 900px) {
+      .ar-auth-card-main {
         grid-template-columns: 1fr;
       }
-      .ar-auth-aside {
-        order: 2;
+      .ar-auth-showcase-col {
+        border-left: none;
+        border-top: 1px solid var(--ref-showcase-border);
+        padding: 30px 24px;
+      }
+      .ar-auth-form-col {
+        padding: 30px 24px;
       }
     }
   </style>
 </head>
 <body>
 
+  <!-- Formas decorativas da landing page no fundo da tela -->
+  <div class="ar-auth-bg-shapes" aria-hidden="true">
+    <!-- Estrela Amarela Superior Esquerda -->
+    <svg class="auth-bg-shape auth-shape-star-left" width="150" height="150" viewBox="0 0 160 160">
+      <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+    </svg>
+    <!-- Crescente Amarela Esquerda -->
+    <svg class="auth-bg-shape auth-shape-crescent-left" width="140" height="180" viewBox="0 0 140 180">
+      <path d="M10,10 C90,30 130,90 90,160 C50,130 50,70 10,10 Z" fill="#ffd000" opacity="0.9" />
+    </svg>
+    <!-- Polígono Coral / Vermelho Superior Direito -->
+    <svg class="auth-bg-shape auth-shape-poly-right" width="170" height="140" viewBox="0 0 180 140">
+      <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
+    </svg>
+    <!-- Estrela Rosa Direita -->
+    <svg class="auth-bg-shape auth-shape-star-right" width="120" height="120" viewBox="0 0 120 120">
+      <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
+    </svg>
+    <!-- Onda Ciano Inferior Direita -->
+    <svg class="auth-bg-shape auth-shape-wave-right" width="230" height="140" viewBox="0 0 200 120">
+      <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#67e8f9" opacity="0.75" />
+    </svg>
+    <!-- Forma Orgânica Verde Inferior Esquerda -->
+    <svg class="auth-bg-shape auth-shape-green-left" width="210" height="210" viewBox="0 0 240 240">
+      <path d="M240,0 C160,20 120,100 160,180 C190,240 240,240 240,240 Z" fill="#10b981" opacity="0.8" />
+    </svg>
+  </div>
+
   <div class="ar-auth-page">
-    <header class="ar-nav">
+    <!-- Barra Superior -->
+    <header class="ar-auth-header">
       <a class="ar-brand" href="index.html">
         <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="ar-brand-img" width="34" height="34">
-        <span>
+        <div class="ar-brand-text">
           <div class="ar-brand-name">Arcádia</div>
           <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
-        </span>
+        </div>
       </a>
-      <div class="ar-nav-end">
-        <a href="login.html" class="ar-btn ar-btn--secondary ar-btn--sm">Entrar no portal</a>
+      <div class="ar-auth-header-end">
+        <a href="login.html" class="ar-btn ar-btn--sm">Entrar no portal</a>
       </div>
     </header>
 
-    <main class="ar-auth-wrap">
-      <!-- Coluna Formulário -->
-      <section class="ar-auth-card">
-        <div>
-          <span class="overline" style="color: var(--ink-muted);">Cadastro institucional</span>
-          <h1 class="ar-auth-title" style="margin-top: 6px;">Criar sua conta.</h1>
-          <p class="ar-auth-desc" style="margin-top: 4px;">Leva menos de um minuto para sincronizar seu acesso ao campus.</p>
-        </div>
-
-        <form action="inicio.html" method="get" data-acesso="cadastro" style="display: flex; flex-direction: column; gap: var(--space-4);">
-          <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
-          <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
-
-          <label class="ar-field">
-            <span class="ar-field-label">Nome completo</span>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              placeholder="Exemplo: Ana Ribeiro"
-              autocomplete="name"
-              required
-            >
-          </label>
-
-          <label class="ar-field">
-            <span class="ar-field-label">E-mail institucional</span>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="ana.ribeiro@ifpa.edu.br"
-              autocomplete="email"
-              required
-            >
-            <span class="ar-field-hint">Use seu endereço institucional do IFPA.</span>
-          </label>
-
-          <div class="ar-field" role="radiogroup" aria-label="Vínculo institucional">
-            <span class="ar-field-label">Vínculo institucional</span>
-            <div class="ar-choices" data-filtro>
-              <button type="button" role="radio" aria-checked="true" class="ar-chip pill ativo">Aluno</button>
-              <button type="button" role="radio" aria-checked="false" class="ar-chip pill">Professor</button>
-              <button type="button" role="radio" aria-checked="false" class="ar-chip pill">Servidor</button>
-            </div>
+    <!-- Conteúdo Principal -->
+    <main class="ar-auth-main">
+      <div class="ar-auth-card-main">
+        <!-- Coluna do Formulário -->
+        <section class="ar-auth-form-col">
+          <div>
+            <h1 class="ar-auth-title">Criar sua conta</h1>
+            <p class="ar-auth-desc">Preencha seus dados para sincronizar seu acesso institucional ao campus.</p>
           </div>
 
-          <label class="ar-field">
-            <span class="ar-field-label">Senha de acesso</span>
-            <input
-              type="password"
-              id="senha"
-              name="senha"
-              placeholder="Mínimo de 8 caracteres"
-              autocomplete="new-password"
-              minlength="8"
-              required
-            >
-          </label>
+          <form action="inicio.html" method="get" data-acesso="cadastro" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
+            <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
 
-          <label class="ar-check" style="margin: 0; font-size: 13px;">
-            <input type="checkbox" required checked>
-            <span class="ar-check-box" aria-hidden="true">
-              <svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-            </span>
-            Aceito as diretrizes acadêmicas e termos de uso do portal
-          </label>
+            <!-- Seletor Interativo de Vínculo -->
+            <div class="ar-role-group">
+              <span class="ar-role-label">Vínculo institucional</span>
+              <div class="ar-role-selector" role="radiogroup" aria-label="Selecione seu vínculo institucional">
+                <button type="button" role="radio" aria-checked="true" class="ar-role-btn is-active" data-vinculo="Aluno">
+                  <span class="ar-radio-dot" aria-hidden="true"></span>
+                  <span>Aluno</span>
+                </button>
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Professor">
+                  <span class="ar-radio-dot" aria-hidden="true"></span>
+                  <span>Professor</span>
+                </button>
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Servidor">
+                  <span class="ar-radio-dot" aria-hidden="true"></span>
+                  <span>Servidor</span>
+                </button>
+                <input type="hidden" name="vinculo" id="vinculoInput" value="Aluno">
+              </div>
+            </div>
 
-          <button type="submit" class="ar-btn ar-btn--primary ar-btn--lg" style="width: 100%; justify-content: center; margin-top: var(--space-2);">
-            <span>Criar registro</span>
-            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </button>
-        </form>
+            <!-- Nome Completo -->
+            <div class="ar-input-group">
+              <label class="ar-input-label" for="nome">
+                <span>Nome completo</span>
+              </label>
+              <div class="ar-input-wrap">
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  autocomplete="name"
+                  required
+                >
+              </div>
+            </div>
 
-        <p style="margin: 0; font-size: 14px; color: var(--ink-muted); text-align: center;">
-          Já possui uma conta? <a href="login.html" class="ar-link">Entrar no portal</a>
-        </p>
-      </section>
+            <!-- E-mail Institucional -->
+            <div class="ar-input-group">
+              <label class="ar-input-label" for="email">
+                <span>E-mail institucional</span>
+              </label>
+              <div class="ar-input-wrap">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  autocomplete="email"
+                  required
+                >
+              </div>
+              <span class="ar-field-hint">Use seu endereço institucional do IFPA.</span>
+            </div>
 
-      <!-- Coluna Informativa -->
-      <aside class="ar-auth-aside">
-        <div>
-          <span class="ar-badge ar-badge--cyan">Cadastro rápido</span>
-          <h2 style="font-size: 28px; line-height: 34px; font-weight: 500; letter-spacing: -0.02em; margin: 12px 0 8px;">
-            Seu espaço acadêmico em um só lugar.
-          </h2>
-          <p style="margin: 0; font-size: 15px; line-height: 22px; color: var(--ink-muted);">
-            Acesso unificado a mural de avisos, chamadas de pesquisa, requerimentos e calendário oficial.
+            <!-- Número de Telefone -->
+            <div class="ar-input-group">
+              <label class="ar-input-label" for="telefone">
+                <span>Número de telefone</span>
+              </label>
+              <div class="ar-input-wrap">
+                <input
+                  type="tel"
+                  id="telefone"
+                  name="telefone"
+                  placeholder="(91) 98888-1234"
+                  autocomplete="tel"
+                  maxlength="15"
+                  required
+                >
+              </div>
+              <span class="ar-field-hint">Número com DDD para contato institucional.</span>
+            </div>
+
+            <!-- Seleção de Curso do IFPA -->
+            <div class="ar-input-group" id="campoCursoWrapper">
+              <label class="ar-input-label" for="curso">
+                <span>Curso acadêmico</span>
+              </label>
+              <div class="ar-input-wrap">
+                <select id="curso" name="curso" required>
+                  <option value="" disabled selected>Selecione seu curso no IFPA</option>
+                  <optgroup label="Cursos Técnicos — Campus Belém">
+                    <option value="Técnico em Desenvolvimento de Sistemas">Técnico em Desenvolvimento de Sistemas</option>
+                    <option value="Técnico em Informática">Técnico em Informática</option>
+                    <option value="Técnico em Telecomunicações">Técnico em Telecomunicações</option>
+                    <option value="Técnico em Eletrônica">Técnico em Eletrônica</option>
+                    <option value="Técnico em Eletrotécnica">Técnico em Eletrotécnica</option>
+                    <option value="Técnico em Mecânica">Técnico em Mecânica</option>
+                    <option value="Técnico em Metalurgia">Técnico em Metalurgia</option>
+                    <option value="Técnico em Química">Técnico em Química</option>
+                    <option value="Técnico em Edificações">Técnico em Edificações</option>
+                    <option value="Técnico em Agrimensura">Técnico em Agrimensura</option>
+                    <option value="Técnico em Geodésia e Cartografia">Técnico em Geodésia e Cartografia</option>
+                    <option value="Técnico em Estradas">Técnico em Estradas</option>
+                    <option value="Técnico em Saneamento">Técnico em Saneamento</option>
+                    <option value="Técnico em Mineração">Técnico em Mineração</option>
+                    <option value="Técnico em Aquicultura">Técnico em Aquicultura</option>
+                    <option value="Técnico em Recursos Pesqueiros">Técnico em Recursos Pesqueiros</option>
+                    <option value="Técnico em Design de Interiores">Técnico em Design de Interiores</option>
+                    <option value="Técnico em Eventos">Técnico em Eventos</option>
+                    <option value="Técnico em Hospedagem">Técnico em Hospedagem</option>
+                    <option value="Técnico em Guia de Turismo">Técnico em Guia de Turismo</option>
+                    <option value="Técnico em Segurança do Trabalho">Técnico em Segurança do Trabalho</option>
+                    <option value="Técnico em Vigilância em Saúde">Técnico em Vigilância em Saúde</option>
+                    <option value="Técnico em Agente Comunitário de Saúde">Técnico em Agente Comunitário de Saúde</option>
+                  </optgroup>
+                  <optgroup label="Cursos Superiores — Campus Belém">
+                    <option value="Tecnologia em Análise e Desenvolvimento de Sistemas">Tecnologia em Análise e Desenvolvimento de Sistemas (TADS)</option>
+                    <option value="Tecnologia em Gestão Pública">Tecnologia em Gestão Pública</option>
+                    <option value="Tecnologia em Gestão Hospitalar">Tecnologia em Gestão Hospitalar</option>
+                    <option value="Engenharia de Controle e Automação">Engenharia de Controle e Automação</option>
+                    <option value="Engenharia Elétrica">Engenharia Elétrica</option>
+                    <option value="Engenharia de Materiais">Engenharia de Materiais</option>
+                    <option value="Licenciatura em Ciências Biológicas">Licenciatura em Ciências Biológicas</option>
+                    <option value="Licenciatura em Física">Licenciatura em Física</option>
+                    <option value="Licenciatura em Geografia">Licenciatura em Geografia</option>
+                    <option value="Licenciatura em História">Licenciatura em História</option>
+                    <option value="Licenciatura em Letras">Licenciatura em Letras (Língua Portuguesa)</option>
+                    <option value="Licenciatura em Matemática">Licenciatura em Matemática</option>
+                    <option value="Licenciatura em Pedagogia">Licenciatura em Pedagogia</option>
+                    <option value="Licenciatura em Química">Licenciatura em Química</option>
+                  </optgroup>
+                  <optgroup label="Pós-Graduação">
+                    <option value="Mestrado ProfEPT">Mestrado Profissional em Educação Profissional e Tecnológica (ProfEPT)</option>
+                    <option value="Mestrado PPGEMAT">Mestrado em Engenharia de Materiais (PPGEMAT)</option>
+                    <option value="Especialização Lato Sensu">Especialização Lato Sensu</option>
+                  </optgroup>
+                  <optgroup label="Outros Cursos do IFPA">
+                    <option value="Técnico em Redes de Computadores">Técnico em Redes de Computadores</option>
+                    <option value="Técnico em Manutenção e Suporte em Informática">Técnico em Manutenção e Suporte em Informática</option>
+                    <option value="Bacharelado em Ciência da Computação">Bacharelado em Ciência da Computação</option>
+                    <option value="Bacharelado em Sistemas de Informação">Bacharelado em Sistemas de Informação</option>
+                    <option value="Outro curso do IFPA">Outro curso do IFPA</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <!-- Senha de Acesso -->
+            <div class="ar-input-group">
+              <label class="ar-input-label" for="senha">
+                <span>Senha de acesso</span>
+              </label>
+              <div class="ar-input-wrap ar-input-wrap--password">
+                <input
+                  type="password"
+                  id="senha"
+                  name="senha"
+                  placeholder="Mínimo de 8 caracteres"
+                  autocomplete="new-password"
+                  minlength="8"
+                  required
+                >
+                <button type="button" class="ar-toggle-pwd" aria-label="Mostrar ou ocultar senha">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Aceite de Termos -->
+            <label class="ar-check" style="margin: 4px 0 0 0; font-size: 13px;">
+              <input type="checkbox" required checked>
+              <span class="ar-check-box" aria-hidden="true">
+                <svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              </span>
+              Aceito as diretrizes acadêmicas e termos de uso do portal
+            </label>
+
+            <!-- Botão de Ação -->
+            <button type="submit" class="ar-btn-submit">
+              <span>Criar registro</span>
+              <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+          </form>
+
+          <p class="ar-switch-text">
+            Já possui uma conta? <a href="login.html">Entrar no portal</a>
           </p>
-        </div>
+        </section>
 
-        <div class="ar-auth-steps">
-          <div class="ar-auth-step">
-            <span class="ar-auth-step-n" style="background: var(--cyan-soft); color: var(--cyan-ink);">1</span>
-            <div>
-              <h4>Perfil verificado</h4>
-              <p>Validação automática por turma e curso junto à secretaria acadêmica.</p>
+        <!-- Coluna de Destaque / Showcase -->
+        <aside class="ar-auth-showcase-col">
+          <div class="ar-showcase-intro">
+            <h2 class="ar-showcase-title">Seu espaço acadêmico em um só lugar</h2>
+            <p class="ar-showcase-desc">Acesso unificado a avisos oficiais, editais de pesquisa, protocolos e calendário do IFPA Campus Belém.</p>
+          </div>
+
+          <!-- Recursos em Destaque: Texto limpo, sem caixinhas com emojis e sem bordas -->
+          <div class="ar-features-list">
+            <div class="ar-feature-item">
+              <h4>Sincronização por curso</h4>
+              <p>Validação direta de turma e matrícula na secretaria acadêmica.</p>
+            </div>
+
+            <div class="ar-feature-item">
+              <h4>Mural e avisos oficiais</h4>
+              <p>Comunicados urgentes da coordenação e secretaria acadêmica.</p>
+            </div>
+
+            <div class="ar-feature-item">
+              <h4>Acesso institucional seguro</h4>
+              <p>Criptografia e credenciais vinculadas ao seu e-mail do IFPA.</p>
             </div>
           </div>
 
-          <div class="ar-auth-step">
-            <span class="ar-auth-step-n" style="background: var(--yellow-soft); color: var(--yellow-ink);">2</span>
-            <div>
-              <h4>Notificações direcionadas</h4>
-              <p>Receba apenas os prazos e avisos pertinentes ao seu vínculo.</p>
-            </div>
-          </div>
+          <!-- Ilustração Arquitetônica Minimalista com Cores Vivas (loginRef) -->
+          <div class="ar-campus-art-wrap">
+            <svg class="ar-campus-art" viewBox="0 0 380 145" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Prédio Esquerdo com tons Terracotta e Pêssego -->
+              <rect x="25" y="55" width="75" height="85" rx="4" fill="#f4a261" fill-opacity="0.9" stroke="#1b4332" stroke-width="2"/>
+              <line x1="45" y1="68" x2="45" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
+              <line x1="65" y1="68" x2="65" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
+              <rect x="75" y="80" width="15" height="20" fill="#e76f51" stroke="#1b4332" stroke-width="1.5"/>
 
-          <div class="ar-auth-step">
-            <span class="ar-auth-step-n" style="background: var(--green-soft); color: var(--green-ink);">3</span>
-            <div>
-              <h4>Acesso seguro</h4>
-              <p>Criptografia de ponta e controle total sobre suas sessões ativas.</p>
-            </div>
-          </div>
-        </div>
+              <!-- Prédio Central com tons Salmão / Coral e Janelas Mint -->
+              <rect x="115" y="22" width="140" height="118" rx="6" fill="#ffffff" stroke="#1b4332" stroke-width="2.2"/>
+              <rect x="125" y="32" width="120" height="14" rx="2" fill="#2d6a4f" fill-opacity="0.3"/>
+              <line x1="140" y1="52" x2="140" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="165" y1="52" x2="165" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="190" y1="52" x2="190" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="215" y1="52" x2="215" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="235" y1="52" x2="235" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <rect x="160" y="112" width="30" height="28" rx="3" fill="#e76f51" stroke="#1b4332" stroke-width="1.8"/>
 
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-muted); margin-top: var(--space-2);">
-          <span class="ar-badge ar-badge--green">Ativo</span>
-          <span>IFPA Campus Belém · 2026</span>
-        </div>
-      </aside>
+              <!-- Prédio Direito em tom Amarelo Suave -->
+              <rect x="270" y="62" width="85" height="78" rx="4" fill="#ffe3a8" fill-opacity="0.95" stroke="#1b4332" stroke-width="2"/>
+              <line x1="290" y1="74" x2="290" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
+              <line x1="315" y1="74" x2="315" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
+              <line x1="338" y1="74" x2="338" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
+
+              <!-- Árvores em Verde Esmeralda e Sálvia da Referência -->
+              <circle cx="108" cy="115" r="14" fill="#52b788" stroke="#1b4332" stroke-width="1.8"/>
+              <circle cx="264" cy="120" r="12" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.8"/>
+              <circle cx="362" cy="122" r="13" fill="#52b788" stroke="#1b4332" stroke-width="1.8"/>
+
+              <!-- Linha Base do Solo -->
+              <line x1="10" y1="140" x2="370" y2="140" stroke="#1b4332" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </aside>
+      </div>
     </main>
   </div>
 

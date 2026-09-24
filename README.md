@@ -1,18 +1,12 @@
 # SyncDev IFPA — Sistema de Mural e Portal Acadêmico
 
-Projeto simplificado utilizando a stack essencial da web, sem frameworks complexos ou TypeScript.
-
----
-
-## 🛠️ Stacks Utilizadas
+## Stacks Utilizadas
 
 - **Front-end:** HTML5, CSS3 e JavaScript puro (Vanilla JS).
 - **Back-end:** Node.js com Express.
-- **Banco de Dados:** SQLite (`syncdev.db`).
+- **Banco de Dados:** mysql (`syncdev.db`).
 
----
-
-## 📁 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```text
 Project/
@@ -43,11 +37,10 @@ Project/
 └── README.md              # Documentação do projeto
 ```
 
----
 
-## 🚀 Como Executar o Projeto
+## Como Executar o Projeto
 
-### 1. Instalar as dependências (apenas na primeira vez)
+## 1. Instalar as dependências (apenas na primeira vez)
 Entre na pasta do back-end e instale:
 ```bash
 cd back-end

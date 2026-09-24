@@ -16,15 +16,102 @@ if (navToggle && navLinks) {
     });
 }
 
-// grupos de filtro (pills): um ativo por grupo
-document.querySelectorAll('[data-filtro]').forEach((grupo) => {
-    grupo.querySelectorAll('.pill').forEach((pill) => {
-        pill.addEventListener('click', () => {
-            grupo.querySelectorAll('.pill').forEach((p) => p.classList.remove('ativo'));
-            pill.classList.add('ativo');
+// grupos de filtro (pills / roles): um ativo por grupo com interação visual imediata
+function inicializarBotoesVinculo() {
+    // Suporte para .ar-role-btn
+    const roleBtns = document.querySelectorAll('.ar-role-btn');
+    const vinculoInput = document.getElementById('vinculoInput');
+    const cursoWrap = document.getElementById('campoCursoWrapper');
+    const cursoSelect = document.getElementById('curso');
+
+    roleBtns.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            roleBtns.forEach((b) => {
+                b.classList.remove('is-active', 'ativo');
+                b.setAttribute('aria-checked', 'false');
+            });
+            btn.classList.add('is-active', 'ativo');
+            btn.setAttribute('aria-checked', 'true');
+
+            const val = btn.getAttribute('data-vinculo') || btn.textContent.trim();
+            if (vinculoInput) vinculoInput.value = val;
+
+            if (cursoWrap) {
+                if (val === 'Aluno') {
+                    cursoWrap.style.display = 'flex';
+                    if (cursoSelect) cursoSelect.required = true;
+                } else {
+                    cursoWrap.style.display = 'none';
+                    if (cursoSelect) cursoSelect.required = false;
+                }
+            }
         });
     });
-});
+
+    // Suporte retrocompatível para [data-filtro] .pill
+    document.querySelectorAll('[data-filtro]').forEach((grupo) => {
+        grupo.querySelectorAll('.pill, .ar-chip').forEach((pill) => {
+            pill.addEventListener('click', (e) => {
+                e.preventDefault();
+                grupo.querySelectorAll('.pill, .ar-chip').forEach((p) => {
+                    p.classList.remove('ativo', 'is-active');
+                    p.setAttribute('aria-checked', 'false');
+                });
+                pill.classList.add('ativo', 'is-active');
+                pill.setAttribute('aria-checked', 'true');
+                if (vinculoInput) vinculoInput.value = pill.textContent.trim();
+            });
+        });
+    });
+}
+inicializarBotoesVinculo();
+
+// Máscara dinâmica de telefone brasileiro (91) 98888-1234
+function aplicarMascaraTelefone() {
+    const telInput = document.getElementById('telefone');
+    if (!telInput) return;
+
+    telInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+
+        if (v.length === 0) {
+            e.target.value = '';
+        } else if (v.length <= 2) {
+            e.target.value = '(' + v;
+        } else if (v.length <= 6) {
+            e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2);
+        } else if (v.length <= 10) {
+            e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2, 6) + '-' + v.slice(6);
+        } else {
+            e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2, 7) + '-' + v.slice(7, 11);
+        }
+    });
+}
+aplicarMascaraTelefone();
+
+// Alternar visibilidade de senha (ícone olho)
+function inicializarAlternadorSenha() {
+    document.querySelectorAll('.ar-toggle-pwd').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const wrapper = btn.closest('.ar-input-wrap');
+            if (!wrapper) return;
+            const input = wrapper.querySelector('input');
+            if (!input) return;
+
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            const eyeSvg = isPassword
+                ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>'
+                : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>';
+            btn.innerHTML = eyeSvg;
+        });
+    });
+}
+inicializarAlternadorSenha();
 
 // Base da API (caso use Live Server na porta 5500/5501 ou acesse via Node na 3000)
 const API_BASE = (window.location.port === '5500' || window.location.port === '5501' || window.location.protocol === 'file:')
@@ -104,12 +191,19 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
         const emailEl = form.querySelector('#email');
         const senhaEl = form.querySelector('#senha');
         const nomeEl = form.querySelector('#nome');
-        const pillAtiva = form.querySelector('.pill.ativo');
+        const telEl = form.querySelector('#telefone');
+        const cursoEl = form.querySelector('#curso');
+        const vinculoInput = form.querySelector('#vinculoInput');
+        const roleBtnAtivo = form.querySelector('.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo');
 
         const email = emailEl ? emailEl.value.trim() : '';
         const senha = senhaEl ? senhaEl.value : '';
         const nome = nomeEl ? nomeEl.value.trim() : '';
-        const vinculo = pillAtiva ? pillAtiva.textContent.trim() : 'Aluno';
+        const telefone = telEl ? telEl.value.trim() : '';
+        const vinculo = vinculoInput ? vinculoInput.value : (roleBtnAtivo ? (roleBtnAtivo.getAttribute('data-vinculo') || roleBtnAtivo.textContent.trim()) : 'Aluno');
+        const curso = (vinculo === 'Aluno' && cursoEl && cursoEl.value) 
+            ? cursoEl.value 
+            : (vinculo === 'Aluno' ? 'Técnico em Desenvolvimento de Sistemas' : 'Campus Belém');
 
         if (tipoAcesso === 'cadastro') {
             if (!nome || !email || !senha) {
@@ -124,12 +218,12 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                 const res = await fetch(`${API_BASE}/api/auth/cadastro`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome, email, senha, vinculo })
+                    body: JSON.stringify({ nome, email, senha, vinculo, curso, telefone })
                 });
 
                 if (res.ok) {
                     const data = await res.json();
-                    const usuario = data.usuario || { nome, email, vinculo };
+                    const usuario = data.usuario || { nome, email, vinculo, curso, telefone };
                     const token = data.token || '';
                     localStorage.setItem('arcadiaSessao', JSON.stringify({ ...usuario, token, logado: true }));
                     if (token) {
@@ -158,9 +252,10 @@ document.querySelectorAll('form[data-acesso]').forEach((form) => {
                     id: Date.now(),
                     nome,
                     email,
+                    telefone,
                     senha,
                     vinculo,
-                    curso: vinculo === 'Aluno' ? 'Engenharia de Software' : 'Campus Belém',
+                    curso,
                     matricula: String(Math.floor(10000000 + Math.random() * 90000000))
                 };
                 salvarUsuarioLocal(novoUsuario);
