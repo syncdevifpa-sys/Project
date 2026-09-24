@@ -1,0 +1,15 @@
+{
+  "name": "syncdevifpa-sys",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SyncDev IFPA - Sistema de Mural Acadêmico e Portal do Estudante",
+  "scripts": {
+    "start": "node back-end/server.js",
+    "dev": "node back-end/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.4"
+  }
+}
