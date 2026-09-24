@@ -1,0 +1,37 @@
+# Dependências
+node_modules/
+
+# Ambiente e Logs
+.env
+.env.*
+*.log
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Atalhos locais da raiz para Live Server (código-fonte mantido em front/)
+/assets
+/auth.css
+/avisos.html
+/bundle.css
+/cadastro.html
+/calendario.html
+/configuracoes.html
+/documentos.html
+/fonts
+/ilustracoes
+/index.html
+/inicio.html
+/landing.css
+/landing.js
+/login.html
+/pessoas.html
+/portal.js
+/projetos.html
+/public
+/script.js
+/sections.css
+/style.css
+/tarefas.html
+/tokens.css
