@@ -50,7 +50,8 @@ async function login(req, res) {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "8h"
+                expiresIn: "8h",
+                jwtid: crypto.randomUUID()
             }
         );
 
@@ -98,7 +99,7 @@ async function login(req, res) {
         console.error("Erro durante o login:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

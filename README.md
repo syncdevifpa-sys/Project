@@ -1,65 +1,32 @@
-# SyncDev IFPA — Sistema de Mural e Portal Acadêmico
+# Arcádia — Portal acadêmico
 
-## Stacks Utilizadas
+Frontend em HTML, CSS e JavaScript; API em Node.js/Express; banco MySQL.
 
-- **Front-end:** HTML5, CSS3 e JavaScript puro (Vanilla JS).
-- **Back-end:** Node.js com Express.
-- **Banco de Dados:** mysql (`syncdev.db`).
+## Executar
 
-## Estrutura de Pastas
+1. Instale as dependências: `npm install --prefix backend`.
+2. Configure `backend/.env` com `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` e `JWT_SECRET`. A porta HTTP padrão é `3001`; use `PORT` para alterá-la.
+3. Em um banco novo, importe `backend/arcadiaBd.sql`. Confira o script antes de executá-lo sobre um banco existente.
+4. Na raiz do projeto, execute `npm start`.
+5. Abra [a aplicação](http://localhost:3001) ou [o status da API](http://localhost:3001/api).
 
-```text
-Project/
-├── front/                 # Todo o front-end (HTML, CSS, JS e assets)
-│   ├── index.html         # Landing page institucional
-│   ├── login.html         # Tela de login
-│   ├── cadastro.html      # Tela de cadastro (Aluno/Professor/Servidor)
-│   ├── inicio.html        # Dashboard do portal
-│   ├── avisos.html        # Feed e mural de avisos
-│   ├── aviso.html         # Detalhes de um aviso
-│   ├── documentos.html    # Central de documentos acadêmicos
-│   ├── projetos.html      # Mural de projetos e oportunidades
-│   ├── calendario.html    # Calendário acadêmico e prazos
-│   ├── perfil.html        # Perfil e preferências do usuário
-│   ├── script.js          # Lógica JavaScript do front-end
-│   ├── style.css          # Estilos do portal interno
-│   ├── landing.css        # Estilos da landing page
-│   ├── auth.css           # Estilos das telas de autenticação
-│   ├── ilustracoes/       # Vetores e imagens
-│   └── public/            # Logos e ícones
-│
-├── back-end/              # Servidor Node.js + Express
-│   ├── server.js          # API REST e servidor de arquivos estáticos
-│   ├── syncdev.db         # Banco de dados local SQLite
-│   └── package.json       # Dependências (express, cors, sqlite3)
-│
-├── package.json           # Atalho para executar o projeto da raiz
-└── README.md              # Documentação do projeto
-```
+O servidor entrega os arquivos de `front/` e as rotas `/api/*`. Para abrir o frontend em outra porta, configure `window.ARCADIA_API_BASE` antes de carregar `front/js/api.js`. Na porta padrão, também é possível usar Live Server com a API em `http://localhost:3001`.
 
+## Integração
 
-## Como Executar o Projeto
+- `front/js/api.js`: requisições autenticadas, erros e operações CRUD. Atualizações parciais usam `PUT`; aprovação e rejeição de projetos usam `PATCH`.
+- `front/js/auth.js`: cadastro, cursos carregados da API, login e logout.
+- `front/js/pages.js`: listagens e formulários, pessoas, painel inicial e detalhe do aviso.
+- `front/tarefas.html` e `front/js/tasks.js`: tarefas pessoais.
+- `front/configuracoes.html`: perfil, foto, preferências, senha e sessões.
+- `backend/src/`: rotas, autorização, controllers e models.
 
-## 1. Instalar as dependências (apenas na primeira vez)
-Entre na pasta do back-end e instale:
-```bash
-cd back-end
-npm install
-```
+Documentos pessoais usam `GET /api/documents/my`; a listagem administrativa em `GET /api/documents` exige servidor. Avisos e eventos só podem ser criados por docentes ou servidores. O backend verifica as permissões.
 
-### 2. Iniciar o servidor
-A partir da pasta raiz do projeto (`Project`), execute:
-```bash
-npm start
-```
-Ou direto da pasta `back-end`:
-```bash
-node server.js
-```
+Cada JWT institucional precisa ter uma sessão ativa na tabela `tokens`. Logout e encerramento de sessões revogam o acesso. Alterar a senha encerra as outras sessões e preserva a atual.
 
-### 3. Acessar a aplicação
-Abra no navegador:
-- **Aplicação / Front-end:** [http://localhost:3000](http://localhost:3000)
-- **Status da API:** [http://localhost:3000/health](http://localhost:3000/health)
+Arquivos de documentos devem existir na URL cadastrada em `arquivo`. O portal não gera certificados ou PDFs oficiais a partir de dados de demonstração. As preferências de notificação são persistidas; o envio automático de alertas por e-mail depende de um serviço de entrega próprio. A autenticação implementada é por e-mail e senha; não há autenticação OAuth Google no backend.
 
-> **Dica:** Se preferir abrir os arquivos HTML com a extensão **Live Server** do VS Code, a comunicação com a API em `http://localhost:3000` continuará funcionando perfeitamente.
+## Verificar
+
+Execute `npm test` na raiz. Os testes verificam scripts e páginas, contrato HTTP, rotas de configurações, atualização parcial de perfil e revogação de sessões. As operações de banco nos testes usam mocks e não alteram registros existentes.

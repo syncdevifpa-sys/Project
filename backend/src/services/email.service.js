@@ -28,13 +28,13 @@ function createTransporter() {
  * @param {string} userName - User's name
  * @param {string} provider - 'Google' or 'Arcadia'
  */
-async function sendWelcomeEmail(toEmail, userName = 'Student', provider = 'Google') {
+async function sendWelcomeEmail(toEmail, userName = 'Usuário', provider = 'Google') {
     const transporter = createTransporter();
 
-    const subject = `🎉 Welcome to Arcadia IFPA, ${userName}!`;
+    const subject = `🎉 Boas-vindas à Arcadia IFPA, ${userName}!`;
     const htmlContent = `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="pt-BR">
     <head>
       <meta charset="UTF-8">
       <style>
@@ -55,16 +55,16 @@ async function sendWelcomeEmail(toEmail, userName = 'Student', provider = 'Googl
         <div class="brand">
           <div>
             <div class="brand-title">Arcadia</div>
-            <div class="brand-sub">IFPA Belém Campus</div>
+            <div class="brand-sub">IFPA Campus Belém</div>
           </div>
         </div>
-        <h1 class="title">Your account is ready!</h1>
-        <p class="desc">Hello, <strong>${userName}</strong>!</p>
-        <p class="desc">Your account has been successfully linked with <strong>${provider}</strong> using your email <strong>${toEmail}</strong>.</p>
-        <div class="badge">✓ Account Verified with ${provider}</div>
-        <p class="desc">You can now access your campus announcements, academic calendar, notices, and community resources.</p>
+        <h1 class="title">Sua conta está pronta!</h1>
+        <p class="desc">Olá, <strong>${userName}</strong>!</p>
+        <p class="desc">Sua conta foi vinculada a <strong>${provider}</strong> com o e-mail <strong>${toEmail}</strong>.</p>
+        <div class="badge">✓ Conta verificada com ${provider}</div>
+        <p class="desc">Acesse os avisos, o calendário acadêmico e os recursos da comunidade do seu campus.</p>
         <div class="footer">
-          Arcadia Portal · IFPA Belém Campus · Systems Development Academic Project
+          Portal Arcadia · IFPA Campus Belém · Projeto acadêmico de Desenvolvimento de Sistemas
         </div>
       </div>
     </body>
