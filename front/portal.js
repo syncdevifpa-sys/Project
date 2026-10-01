@@ -1,6 +1,6 @@
 /**
- * Arcádia Portal — Sistema de Interface & Comportamento Vanilla JS
- * Baseado no Design System Arcádia (IFPA Campus Belém)
+ * Arcadia Portal — Vanilla JS Interface System
+ * Based on the Arcadia Design System (IFPA Belém Campus)
  */
 
 (function () {
@@ -9,7 +9,7 @@
   var THEME_KEY = 'arcadia-theme';
   var root = document.documentElement;
 
-  // Dicionário de ícones SVG do portal
+  // Portal SVG Icons Dictionary
   var ICONS = {
     'search': '<path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" />',
     'chevron-right': '<path d="m9 18 6-6-6-6" />',
@@ -63,7 +63,6 @@
     return '<svg class="ar-icon" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + strokeWidth + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>';
   }
 
-  // Renderizar ícones em elementos com [data-icon]
   function renderIcons(container) {
     var scope = container || document;
     scope.querySelectorAll('[data-icon]').forEach(function (el) {
@@ -76,7 +75,6 @@
     });
   }
 
-  // Controle de tema claro/escuro e preferências visuais
   function applyTheme(mode) {
     var dark = false;
     try {
@@ -97,7 +95,6 @@
     return mode;
   }
 
-  // Listener para quando estiver em modo auto e o sistema operacional mudar
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
       var curMode = 'light';
@@ -138,7 +135,7 @@
     return !!reduced;
   }
 
-  // Sistema de notificações toast com opção de desfazer
+  // Toast notification system
   var toastTimeout = null;
   function showToast(message, actionLabel, onAction, duration) {
     duration = duration || 5000;
@@ -166,7 +163,7 @@
     if (actionLabel && onAction) {
       html += '<button type="button" class="ar-toast-action" id="ar-toast-action-btn">' + actionLabel + '</button>';
     }
-    html += '<button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar aviso" id="ar-toast-close-btn">' + getIconSvg('x', 14) + '</button>';
+    html += '<button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Close notification" id="ar-toast-close-btn">' + getIconSvg('x', 14) + '</button>';
     toast.innerHTML = html;
 
     dock.appendChild(toast);
@@ -195,11 +192,10 @@
     }, duration);
   }
 
-  // Sistema para abrir e fechar janelas modais
   function openDialog(modalEl) {
     if (!modalEl) return;
     modalEl.style.display = 'grid';
-    var input = modalEl.querySelector('input, textarea, button:not([aria-label="Fechar"])');
+    var input = modalEl.querySelector('input, textarea, button:not([aria-label="Close"])');
     if (input) setTimeout(function () { input.focus(); }, 50);
   }
 
@@ -208,7 +204,6 @@
     modalEl.style.display = 'none';
   }
 
-  // Vincular fechamento de modais via botão de fechar e clique no fundo escuro (scrim)
   document.addEventListener('click', function (e) {
     if (e.target.classList && e.target.classList.contains('ar-scrim')) {
       e.target.style.display = 'none';
@@ -220,7 +215,6 @@
     }
   });
 
-  // Fechar no Escape
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       document.querySelectorAll('.ar-scrim').forEach(function (scrim) {
@@ -231,17 +225,17 @@
     }
   });
 
-  // Paleta de comandos e busca rápida do portal (Ctrl+K / ⌘K)
+  // Fast Command Palette Data (Ctrl+K / ⌘K)
   var PALETTE_DATA = [
-    { type: 'Avisos', title: 'Período de matrícula 2026/2', meta: 'Avisos · Aluno · Prazo 27 set', desc: 'Confirme suas disciplinas pelo portal do estudante até o fim do prazo.', href: 'aviso.html', icon: 'bell' },
-    { type: 'Avisos', title: 'Aulas suspensas no Bloco C', meta: 'Avisos · Manutenção elétrica · 09 set', desc: 'Manutenção elétrica no prédio. A coordenação já marcou a reposição.', href: 'avisos.html', icon: 'bell' },
-    { type: 'Avisos', title: 'Bolsas de Iniciação Científica', meta: 'Avisos · Edital 012/2026 · Vagas 12', desc: 'Seleção de estudantes para projetos de pesquisa do campus.', href: 'aviso.html', icon: 'bell' },
-    { type: 'Tarefas', title: 'Confirmar disciplinas do semestre', meta: 'Tarefas · Prazo 12 set · Aberta', desc: 'Acesse o sistema acadêmico para conferir os horários.', href: 'tarefas.html', icon: 'check' },
-    { type: 'Tarefas', title: 'Entregar relatório de estágio', meta: 'Tarefas · Prazo 20 set · Em andamento', desc: 'Protocolar termo de encerramento assinado pela empresa.', href: 'tarefas.html', icon: 'check' },
-    { type: 'Documentos', title: 'Histórico escolar completo', meta: 'Documentos · PDF emitido · 08 set', desc: 'Documento oficial com assinatura digital da secretaria.', href: 'documentos.html', icon: 'file-text' },
-    { type: 'Documentos', title: 'Declaração de vínculo', meta: 'Documentos · Em análise · Previsão 15 set', desc: 'Para solicitação de passe escolar e estágio supervisionado.', href: 'documentos.html', icon: 'file-text' },
-    { type: 'Projetos', title: 'Monitoramento da Qualidade das Águas', meta: 'Projetos · Pesquisa · 6 vagas', desc: 'Coleta de amostras na bacia do Guajará e análise laboratorial.', href: 'projetos.html', icon: 'folder-kanban' },
-    { type: 'Calendário', title: 'Semana de Ciência e Tecnologia', meta: 'Calendário · 05 out · Auditório central', desc: 'Programação de palestras e minicursos.', href: 'calendario.html', icon: 'calendar' }
+    { type: 'Notices', title: 'Fall 2026 Enrollment Period', meta: 'Notices · Student · Deadline Sep 27', desc: 'Confirm your registered courses through the student portal before the deadline.', href: 'aviso.html', icon: 'bell' },
+    { type: 'Notices', title: 'Classes Suspended in Block C', meta: 'Notices · Electrical Maintenance · Sep 09', desc: 'Electrical maintenance in Block C. Makeup schedule announced by coordinator.', href: 'avisos.html', icon: 'bell' },
+    { type: 'Notices', title: 'Scientific Initiation (PIBIC) Grants', meta: 'Notices · Notice 012/2026 · 12 Openings', desc: 'Student application process for campus research laboratories.', href: 'aviso.html', icon: 'bell' },
+    { type: 'Tasks', title: 'Confirm Semester Courses', meta: 'Tasks · Due Sep 12 · Open', desc: 'Review enrolled course schedule on the academic dashboard.', href: 'tarefas.html', icon: 'check' },
+    { type: 'Tasks', title: 'Submit Internship Report', meta: 'Tasks · Due Sep 20 · In Progress', desc: 'File signed completion documentation and supervisor evaluation.', href: 'tarefas.html', icon: 'check' },
+    { type: 'Documents', title: 'Complete Academic Transcript', meta: 'Documents · Digital PDF · Sep 08', desc: 'Official academic transcript signed digitally by the campus registrar.', href: 'documentos.html', icon: 'file-text' },
+    { type: 'Documents', title: 'Enrollment Status Certificate', meta: 'Documents · In Review · Expected Sep 15', desc: 'Official statement for student transit pass and internship contracts.', href: 'documentos.html', icon: 'file-text' },
+    { type: 'Projects', title: 'Water Quality Monitoring Lab', meta: 'Projects · Research · 6 Vacancies', desc: 'Sample collection in Guajará bay and laboratory water analysis.', href: 'projetos.html', icon: 'folder-kanban' },
+    { type: 'Calendar', title: 'Science and Technology Week', meta: 'Calendar · Oct 05 · Main Auditorium', desc: 'Keynote schedule, student paper presentations, and maker workshops.', href: 'calendario.html', icon: 'calendar' }
   ];
 
   function buildCommandPalette() {
@@ -254,33 +248,33 @@
     scrim.style.cssText = 'display:none; align-items:flex-start; padding-top:80px; z-index:100;';
 
     scrim.innerHTML = 
-      '<div class="ar-pal" role="dialog" aria-label="Busca no portal">' +
+      '<div class="ar-pal" role="dialog" aria-label="Portal search">' +
         '<div class="ar-pal-top">' +
           '<label class="ar-search" style="width:100%">' +
             getIconSvg('search', 16) +
-            '<span class="ar-sr">Buscar no portal</span>' +
-            '<input type="search" id="ar-pal-input" placeholder="Buscar aviso, documento ou projeto" autocomplete="off">' +
+            '<span class="ar-sr">Search the portal</span>' +
+            '<input type="search" id="ar-pal-input" placeholder="Search notices, documents, or projects..." autocomplete="off">' +
             '<kbd class="ar-kbd">Esc</kbd>' +
           '</label>' +
-          '<p class="ar-pal-hint">Tente "matrícula", "edital 012" ou o nome de uma pessoa.</p>' +
-          '<div class="ar-chipbar" id="ar-pal-scopes" role="group" aria-label="Escopos de busca">' +
-            '<button type="button" class="ar-chip" aria-pressed="true" data-scope="Tudo">Tudo</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Avisos">Avisos</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tarefas">Tarefas</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documentos">Documentos</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projetos">Projetos</button>' +
+          '<p class="ar-pal-hint">Try "enrollment", "grant 012", or a colleague name.</p>' +
+          '<div class="ar-chipbar" id="ar-pal-scopes" role="group" aria-label="Search scopes">' +
+            '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">All</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Notices</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tasks</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documents</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projects</button>' +
           '</div>' +
         '</div>' +
         '<div class="ar-pal-body">' +
           '<div class="ar-pal-list" id="ar-pal-results" role="listbox"></div>' +
           '<div class="ar-pal-preview" id="ar-pal-preview">' +
-            '<div class="ar-field-label" style="color:var(--on-field)" id="ar-pal-prev-eyebrow">Avisos</div>' +
-            '<h4 id="ar-pal-prev-title">Selecione um item</h4>' +
-            '<p id="ar-pal-prev-meta" style="margin-top:4px;">Use as setas para navegar</p>' +
+            '<div class="ar-field-label" style="color:var(--on-field)" id="ar-pal-prev-eyebrow">Notices</div>' +
+            '<h4 id="ar-pal-prev-title">Select an item</h4>' +
+            '<p id="ar-pal-prev-meta" style="margin-top:4px;">Use arrow keys to navigate</p>' +
             '<p id="ar-pal-prev-desc" style="margin-top:8px;"></p>' +
             '<span class="ar-pal-keys">' +
-              '<kbd class="ar-kbd">Enter</kbd> abre ' +
-              '<kbd class="ar-kbd">↑ ↓</kbd> navega' +
+              '<kbd class="ar-kbd">Enter</kbd> open ' +
+              '<kbd class="ar-kbd">↑ ↓</kbd> navigate' +
             '</span>' +
           '</div>' +
         '</div>' +
@@ -294,14 +288,14 @@
     var prevTitle = scrim.querySelector('#ar-pal-prev-title');
     var prevMeta = scrim.querySelector('#ar-pal-prev-meta');
     var prevDesc = scrim.querySelector('#ar-pal-prev-desc');
-    var activeScope = 'Tudo';
+    var activeScope = 'All';
     var activeIndex = 0;
     var filteredItems = [];
 
     function updatePreview(item) {
       if (!item) {
         prevEyebrow.textContent = '';
-        prevTitle.textContent = 'Nada selecionado';
+        prevTitle.textContent = 'Nothing selected';
         prevMeta.textContent = '';
         prevDesc.textContent = '';
         return;
@@ -315,7 +309,7 @@
     function renderResults() {
       var q = input.value.trim().toLowerCase();
       filteredItems = PALETTE_DATA.filter(function (it) {
-        if (activeScope !== 'Tudo' && it.type !== activeScope) return false;
+        if (activeScope !== 'All' && it.type !== activeScope) return false;
         if (!q) return true;
         return (it.title.toLowerCase().indexOf(q) > -1 || it.meta.toLowerCase().indexOf(q) > -1 || (it.desc && it.desc.toLowerCase().indexOf(q) > -1));
       });
@@ -324,8 +318,8 @@
         resultsEl.innerHTML = 
           '<div class="ar-empty ar-empty--compact">' +
             '<span class="ar-empty-icon">' + getIconSvg('search', 22) + '</span>' +
-            '<div class="ar-empty-title">Nada encontrado para "' + input.value + '"</div>' +
-            '<p class="ar-empty-desc">Confira a grafia ou busque por outra palavra. Avisos antigos ficam em Calendário.</p>' +
+            '<div class="ar-empty-title">No results found for "' + input.value + '"</div>' +
+            '<p class="ar-empty-desc">Check spelling or search for another keyword. Past events can be found in Calendar.</p>' +
           '</div>';
         updatePreview(null);
         return;
@@ -333,7 +327,6 @@
 
       if (activeIndex >= filteredItems.length) activeIndex = 0;
 
-      // Agrupar por type
       var groups = {};
       filteredItems.forEach(function (it, idx) {
         if (!groups[it.type]) groups[it.type] = [];
@@ -417,7 +410,6 @@
     }
   }
 
-  // Atalho global ⌘K / Ctrl+K
   document.addEventListener('keydown', function (e) {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
@@ -425,18 +417,17 @@
     }
   });
 
-  // Preenchimento dos dados do usuário na barra de navegação
   function updateUserAvatar(foto, userName, userInitials) {
     if (!userName) {
       try {
         var s = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
-        userName = s.nome || 'Estudante IFPA';
+        userName = s.nome || 'Student';
       } catch (e) {
-        userName = 'Estudante IFPA';
+        userName = 'Student';
       }
     }
     if (!userInitials) {
-      userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'IF';
+      userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'ST';
     }
 
     document.querySelectorAll('.ar-user .ar-avatar').forEach(function (el) {
@@ -454,16 +445,14 @@
       sessao = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
     } catch (e) {}
 
-    var userName = sessao.nome || 'Estudante IFPA';
-    var userRole = sessao.vinculo || 'Aluno';
-    var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'IF';
+    var userName = sessao.nome || 'Student';
+    var userRole = sessao.vinculo || 'Student';
+    var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'ST';
 
-    // Atualizar avatares e nomes
     document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = userName; });
     document.querySelectorAll('.ar-user-role').forEach(function (el) { el.textContent = userRole; });
     updateUserAvatar(sessao.foto, userName, userInitials);
 
-    // Sincronização em segundo plano com backend se houver token
     var token = '';
     try { token = localStorage.getItem('arcadiaToken') || ''; } catch (e) {}
     if (token) {
@@ -482,7 +471,6 @@
       }).catch(function () {});
     }
 
-    // Botão de busca
     document.querySelectorAll('[data-search-trigger]').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -490,7 +478,6 @@
       });
     });
 
-    // Botão Sair
     document.querySelectorAll('[data-sign-out]').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -504,7 +491,6 @@
     });
   }
 
-  // Alternador de visualização entre lista, quadro e tabela
   function setupViewToolbar() {
     document.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
       var buttons = seg.querySelectorAll('button');
@@ -529,14 +515,12 @@
     });
   }
 
-  // Inicialização geral dos componentes após o carregamento do DOM
   document.addEventListener('DOMContentLoaded', function () {
     renderIcons();
     hydrateTopNav();
     setupViewToolbar();
   });
 
-  // Exportar API global Arcadia
   window.Arcadia = Object.assign(window.Arcadia || {}, {
     applyTheme: applyTheme,
     applyAccent: applyAccent,
