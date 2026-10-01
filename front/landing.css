@@ -521,7 +521,7 @@ section[id] {
   user-select: none;
 }
 
-.hero-tag-matricula {
+.hero-tag-enrollment {
   top: -24px;
   left: 8%;
   background-color: var(--accent-cyan);
@@ -529,7 +529,7 @@ section[id] {
   transform: rotate(-6deg);
 }
 
-.hero-tag-edital {
+.hero-tag-notice {
   top: -30px;
   right: 12%;
   background-color: var(--accent-lime);
@@ -537,7 +537,7 @@ section[id] {
   transform: rotate(5deg);
 }
 
-.hero-tag-calendario {
+.hero-tag-calendar {
   bottom: 80px;
   right: -16px;
   background-color: var(--accent-pink);
@@ -714,7 +714,7 @@ section[id] {
 /* ==========================================================================
    5. Seção "Por dentro da plataforma" (Bento Grid)
    ========================================================================== */
-.recursos-section {
+.features-section {
   padding: 80px 24px 100px 24px;
   max-width: 1260px;
   margin: 0 auto;
@@ -785,7 +785,7 @@ section[id] {
   margin-bottom: 18px;
 }
 
-.bento-tag--mural { background-color: var(--tag-mural-bg); color: var(--tag-mural-text); }
+.bento-tag--board { background-color: var(--tag-mural-bg); color: var(--tag-mural-text); }
 .bento-tag--doc { background-color: var(--tag-doc-bg); color: var(--tag-doc-text); }
 .bento-tag--cal { background-color: var(--tag-cal-bg); color: var(--tag-cal-text); }
 .bento-tag--proj { background-color: var(--tag-proj-bg); color: var(--tag-proj-text); }
@@ -806,8 +806,8 @@ section[id] {
   margin-bottom: 28px;
 }
 
-/* Card 1: Mural Oficial Largo */
-.bento-card--mural {
+/* Card 1: Board Oficial Largo */
+.bento-card--board {
   flex: 1.75;
   min-width: 480px;
 }
@@ -822,7 +822,7 @@ section[id] {
   margin-top: auto;
 }
 
-.bento-card--mural .bento-frame-mini {
+.bento-card--board .bento-frame-mini {
   height: 330px;
 }
 
@@ -851,8 +851,8 @@ section[id] {
   display: block;
 }
 
-/* Card 2: Filtro por Vínculo (Azul) */
-.bento-card--vinculo {
+/* Card 2: Filtro por Affiliation (Azul) */
+.bento-card--affiliation {
   flex: 1;
   min-width: 320px;
   background-color: var(--color-blue);
@@ -861,16 +861,16 @@ section[id] {
   overflow: hidden;
 }
 
-.bento-card--vinculo .bento-tag {
+.bento-card--affiliation .bento-tag {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
 
-.bento-card--vinculo .bento-card-title {
+.bento-card--affiliation .bento-card-title {
   color: #ffffff;
 }
 
-.bento-card--vinculo .bento-card-desc {
+.bento-card--affiliation .bento-card-desc {
   color: rgba(255, 255, 255, 0.9);
 }
 
@@ -912,7 +912,7 @@ section[id] {
 }
 
 /* Formas Decorativas no Card Azul */
-.shape-vinculo-star {
+.shape-affiliation-star {
   position: absolute;
   bottom: -10px;
   left: -15px;
@@ -921,7 +921,7 @@ section[id] {
   pointer-events: none;
 }
 
-.shape-vinculo-circle {
+.shape-affiliation-circle {
   position: absolute;
   bottom: -20px;
   right: -20px;
@@ -948,9 +948,9 @@ section[id] {
 }
 
 /* ==========================================================================
-   6. Seção "Para quem" (Escura)
+   6. Seção "For Whom" (Escura)
    ========================================================================== */
-.para-quem-card {
+.for-whom-card {
   position: relative;
   background-color: var(--color-dark-bg);
   border-radius: var(--radius-section);
@@ -960,7 +960,7 @@ section[id] {
   overflow: hidden;
 }
 
-.shape-paraquem-circle {
+.shape-forwhom-circle {
   position: absolute;
   top: -120px;
   right: -120px;
@@ -972,7 +972,7 @@ section[id] {
   pointer-events: none;
 }
 
-.para-quem-header {
+.for-whom-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -982,20 +982,20 @@ section[id] {
   z-index: 2;
 }
 
-.para-quem-title {
+.for-whom-title {
   color: #ffffff;
   font-size: clamp(38px, 4.4vw, 56px);
   max-width: 580px;
 }
 
-.para-quem-lead {
+.for-whom-lead {
   font-size: 18px;
   color: var(--color-dark-support);
   line-height: 1.5;
   max-width: 420px;
 }
 
-.para-quem-grid {
+.for-whom-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
@@ -1003,7 +1003,7 @@ section[id] {
   z-index: 2;
 }
 
-.para-quem-box {
+.for-whom-box {
   background-color: var(--color-dark-card);
   border: var(--border-dark);
   border-radius: 24px;
@@ -1013,7 +1013,7 @@ section[id] {
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
-.para-quem-box:hover {
+.for-whom-box:hover {
   transform: translateY(-3px);
   border-color: rgba(255, 255, 255, 0.16);
 }
@@ -1084,7 +1084,7 @@ section[id] {
 /* ==========================================================================
    7. Seção "Como começar" (Lilás)
    ========================================================================== */
-.passos-card {
+.steps-card {
   position: relative;
   background-color: var(--color-lilac-bg);
   border-radius: var(--radius-section);
@@ -1093,7 +1093,7 @@ section[id] {
   overflow: hidden;
 }
 
-.shape-passos-right {
+.shape-steps-right {
   position: absolute;
   top: 50%;
   right: -80px;
@@ -1106,7 +1106,7 @@ section[id] {
   opacity: 0.9;
 }
 
-.passos-grid {
+.steps-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
@@ -1116,7 +1116,7 @@ section[id] {
   z-index: 2;
 }
 
-.passo-box {
+.step-box {
   background: #ffffff;
   border-radius: 26px;
   border: var(--border-light);
@@ -1127,12 +1127,12 @@ section[id] {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.passo-box:hover {
+.step-box:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
 }
 
-.passo-banner {
+.step-banner {
   height: 160px;
   display: flex;
   align-items: center;
@@ -1140,11 +1140,11 @@ section[id] {
   position: relative;
 }
 
-.passo-banner--blue { background-color: #dceeff; }
-.passo-banner--red { background-color: #fee2e2; }
-.passo-banner--green { background-color: #dcfce7; }
+.step-banner--blue { background-color: #dceeff; }
+.step-banner--red { background-color: #fee2e2; }
+.step-banner--green { background-color: #dcfce7; }
 
-.passo-shape-wrap {
+.step-shape-wrap {
   position: relative;
   width: 90px;
   height: 90px;
@@ -1153,14 +1153,14 @@ section[id] {
   justify-content: center;
 }
 
-.passo-shape-wrap svg {
+.step-shape-wrap svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.passo-number {
+.step-number {
   position: relative;
   z-index: 2;
   font-family: var(--font-heading);
@@ -1169,21 +1169,21 @@ section[id] {
   color: #10141a;
 }
 
-.passo-body {
+.step-body {
   padding: 32px 28px 36px 28px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.passo-title {
+.step-title {
   font-size: 22px;
   font-weight: 800;
   color: var(--color-ink);
   margin-bottom: 12px;
 }
 
-.passo-desc {
+.step-desc {
   font-size: 15px;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -1556,9 +1556,9 @@ section[id] {
 .shape-semicircle-green { animation: floatA 7.1s ease-in-out infinite 0.8s; }
 .shape-ring-blue { animation: floatB 6.5s ease-in-out infinite 0.4s; }
 
-.hero-tag-matricula { animation: floatA 6.4s ease-in-out infinite 0.2s; }
-.hero-tag-edital { animation: floatB 7.2s ease-in-out infinite 0.7s; }
-.hero-tag-calendario { animation: floatC 6.9s ease-in-out infinite 1.1s; }
+.hero-tag-enrollment { animation: floatA 6.4s ease-in-out infinite 0.2s; }
+.hero-tag-notice { animation: floatB 7.2s ease-in-out infinite 0.7s; }
+.hero-tag-calendar { animation: floatC 6.9s ease-in-out infinite 1.1s; }
 
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-12px); }
@@ -1578,11 +1578,11 @@ section[id] {
     grid-template-columns: 1fr;
   }
 
-  .para-quem-grid {
+  .for-whom-grid {
     grid-template-columns: 1fr;
   }
 
-  .passos-grid {
+  .steps-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1616,12 +1616,12 @@ section[id] {
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
   }
 
-  .bento-card--mural {
+  .bento-card--board {
     flex: 100%;
     min-width: 100%;
   }
 
-  .bento-card--vinculo {
+  .bento-card--affiliation {
     flex: 100%;
     min-width: 100%;
   }
@@ -1635,7 +1635,7 @@ section[id] {
     position: static;
   }
 
-  .para-quem-header {
+  .for-whom-header {
     flex-direction: column;
     gap: 16px;
   }
@@ -1649,7 +1649,7 @@ section[id] {
     min-height: 680px;
   }
 
-  .para-quem-card, .passos-card, .cta-card {
+  .for-whom-card, .steps-card, .cta-card {
     margin: 12px 8px;
     padding: 60px 20px;
     border-radius: 24px;

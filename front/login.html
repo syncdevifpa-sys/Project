@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entrar — Arcádia IFPA</title>
+  <title>Sign in</title>
 
-  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <!-- Inline theme initialization -->
   <script>
     (function () {
       var THEME_KEY = 'arcadia-theme';
@@ -32,8 +32,9 @@
 
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="bundle.css">
+  <!-- Google Identity Services (Official Google OAuth SDK) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    /* Estilos da Interface de Autenticação com Cores Vivas e Layout de Referência */
     :root {
       --ref-canvas: #0b1a13;
       --ref-card: #151d18;
@@ -78,7 +79,7 @@
       overflow-x: hidden;
     }
 
-    /* Formas Geométricas Decorativas da Landing Page no Fundo */
+    /* Decorative background shapes */
     .ar-auth-bg-shapes {
       position: fixed;
       inset: 0;
@@ -163,7 +164,7 @@
       box-sizing: border-box;
     }
 
-    /* Barra Superior com botão na extremidade direita */
+    /* Top bar */
     .ar-auth-header {
       width: 100%;
       display: flex;
@@ -207,7 +208,7 @@
       letter-spacing: 0.08em;
     }
 
-    /* Container Principal */
+    /* Main Container */
     .ar-auth-main {
       flex: 1;
       display: flex;
@@ -228,7 +229,7 @@
       box-sizing: border-box;
     }
 
-    /* Coluna do Formulário (Esquerda) */
+    /* Form Column (Left) */
     .ar-auth-form-col {
       padding: 48px 52px;
       display: flex;
@@ -253,7 +254,7 @@
       margin: 0;
     }
 
-    /* Campos de Entrada com Ícones e Arredondamento Elegante */
+    /* Inputs */
     .ar-input-group {
       display: flex;
       flex-direction: column;
@@ -266,10 +267,6 @@
       display: flex;
       align-items: center;
       gap: 6px;
-    }
-    .ar-input-label-icon {
-      color: var(--ref-primary);
-      flex-shrink: 0;
     }
     .ar-input-wrap {
       position: relative;
@@ -316,7 +313,7 @@
       color: var(--ref-ink);
     }
 
-    /* Botão de Ação Primário */
+    /* Submit Button */
     .ar-btn-submit {
       width: 100%;
       height: 46px;
@@ -341,6 +338,34 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
     }
 
+    /* Social Login Row (Only Google and Facebook) */
+    .ar-social-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 10px;
+    }
+    .ar-social-circle-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      padding: 0;
+    }
+    .ar-social-circle-btn:hover {
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32);
+      background: #f8fafc;
+    }
+
     .ar-switch-text {
       margin: 0;
       font-size: 14px;
@@ -356,7 +381,7 @@
       text-decoration: underline;
     }
 
-    /* Coluna de Destaque / Showcase (Direita) */
+    /* Showcase Column (Right) */
     .ar-auth-showcase-col {
       background: var(--ref-showcase);
       border-left: 1px solid var(--ref-showcase-border);
@@ -389,7 +414,6 @@
       margin: 0;
     }
 
-    /* Lista de Recursos Acadêmicos: Caixas preenchidas elegantes, sem emojis e sem bordas */
     .ar-features-list {
       display: flex;
       flex-direction: column;
@@ -420,7 +444,6 @@
       margin: 0;
     }
 
-    /* Arte Vetorial do Campus com Cores da Referência (loginRef) */
     .ar-campus-art-wrap {
       width: 100%;
       padding-top: 8px;
@@ -430,6 +453,136 @@
     .ar-campus-art {
       width: 100%;
       max-height: 150px;
+    }
+
+    /* Google One-Tap Floating Prompt Box */
+    .ar-google-prompt {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      width: 350px;
+      max-width: calc(100vw - 36px);
+      background: #ffffff;
+      color: #202124;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38), 0 2px 6px rgba(0, 0, 0, 0.12);
+      z-index: 1000;
+      overflow: hidden;
+      border: 1px solid #dadce0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      animation: arSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes arSlideIn {
+      from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .ar-google-prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 8px;
+    }
+    .ar-google-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ar-google-prompt-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #3c4043;
+      margin: 0;
+    }
+    .ar-google-prompt-close {
+      background: transparent;
+      border: none;
+      color: #5f6368;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      padding: 4px 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .ar-google-prompt-close:hover {
+      background: #f1f3f4;
+    }
+    .ar-google-prompt-body {
+      padding: 6px 16px 16px;
+    }
+    .ar-google-prompt-sub {
+      font-size: 13px;
+      color: #5f6368;
+      margin: 0 0 12px;
+    }
+    .ar-google-account-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #f8fafd;
+      border-radius: 12px;
+      border: 1px solid #e1e3e1;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .ar-google-account-pill:hover {
+      background: #edf2fc;
+    }
+    .ar-google-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4285F4, #34A853);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ar-google-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      overflow: hidden;
+    }
+    .ar-google-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #202124;
+    }
+    .ar-google-email {
+      font-size: 12px;
+      color: #5f6368;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .ar-google-continue-btn {
+      width: 100%;
+      height: 40px;
+      background: #1a73e8;
+      color: #ffffff;
+      border: none;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .ar-google-continue-btn:hover {
+      background: #1765cc;
+      box-shadow: 0 1px 3px 1px rgba(66, 133, 244, 0.3);
     }
 
     @media (max-width: 900px) {
@@ -444,88 +597,156 @@
       .ar-auth-form-col {
         padding: 36px 24px;
       }
+      .ar-google-prompt {
+        top: auto;
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Formas decorativas da landing page no fundo da tela -->
+  <!-- Floating Google Sign In Prompt Box (Appears ONLY when the user has actually used their real Google email) -->
+  <div class="ar-google-prompt" id="googlePromptBox" role="dialog" aria-labelledby="googlePromptTitle" style="display: none;">
+    <div class="ar-google-prompt-header">
+      <div class="ar-google-logo-wrap">
+        <!-- Official Google "G" Logo -->
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.66-5.17 3.66-9.12z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.57H1.25C.45 8.15 0 9.99 0 12s.45 3.85 1.25 5.43l4.03-3.14z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"/>
+        </svg>
+        <h3 class="ar-google-prompt-title" id="googlePromptTitle">Sign in with Google</h3>
+      </div>
+      <button type="button" class="ar-google-prompt-close" id="closeGooglePrompt" aria-label="Close Google sign-in">&times;</button>
+    </div>
+    <div class="ar-google-prompt-body">
+      <p class="ar-google-prompt-sub">Continue to Arcadia with your Google account</p>
+      <div class="ar-google-account-pill" id="googlePillAction" title="Sign in with Google">
+        <div class="ar-google-avatar" id="googleUserAvatar">G</div>
+        <div class="ar-google-info">
+          <span class="ar-google-name" id="googleUserName">Google Account</span>
+          <span class="ar-google-email" id="googleUserEmail">account@gmail.com</span>
+        </div>
+      </div>
+      <button type="button" class="ar-google-continue-btn" id="googleContinueBtn">
+        <span id="googleContinueText">Continue with Google</span>
+      </button>
+      <button type="button" class="ar-google-switch-btn" id="googleSwitchAccountBtn" style="background: none; border: none; color: #4285f4; font-size: 11.5px; font-weight: 600; cursor: pointer; margin-top: 8px; text-decoration: underline; padding: 2px 0; text-align: center; width: 100%;">Use another Google account</button>
+    </div>
+  </div>
+
+  <!-- Real Google Account Authentication Modal -->
+  <div class="ar-google-modal-scrim" id="googleAuthModal" style="display: none;">
+    <div class="ar-google-modal" role="dialog" aria-modal="true" aria-labelledby="gModalTitle">
+      <div class="ar-google-modal-head">
+        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.66-5.17 3.66-9.12z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.57H1.25C.45 8.15 0 9.99 0 12s.45 3.85 1.25 5.43l4.03-3.14z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"/>
+        </svg>
+        <h2 id="gModalTitle" class="ar-google-modal-title">Sign in with Google</h2>
+        <p class="ar-google-modal-sub">to continue to Arcadia IFPA</p>
+      </div>
+      <form id="googleAuthForm" class="ar-google-modal-body">
+        <div class="ar-google-modal-field">
+          <label for="realGoogleEmail">Google Account Email</label>
+          <input type="email" id="realGoogleEmail" placeholder="your.email@gmail.com" required autocomplete="email">
+          <span class="ar-google-modal-hint">Enter your real Google or Gmail account email.</span>
+        </div>
+        <div class="ar-google-modal-field" id="realGoogleNameWrap">
+          <label for="realGoogleName">Your Name</label>
+          <input type="text" id="realGoogleName" placeholder="Your real name" autocomplete="name">
+        </div>
+        <div class="ar-google-modal-consent">
+          ✓ Google will verify your account and share your verified email and name with Arcadia IFPA.<br>
+          ✉ A welcome confirmation email will be delivered to your inbox.
+        </div>
+        <div class="ar-google-modal-actions">
+          <button type="button" class="ar-google-modal-cancel" id="cancelGoogleModal">Cancel</button>
+          <button type="submit" class="ar-google-modal-submit" id="submitGoogleModal">Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Decorative shapes -->
   <div class="ar-auth-bg-shapes" aria-hidden="true">
-    <!-- Estrela Amarela Superior Esquerda -->
     <svg class="auth-bg-shape auth-shape-star-left" width="150" height="150" viewBox="0 0 160 160">
       <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
     </svg>
-    <!-- Crescente Amarela Esquerda -->
     <svg class="auth-bg-shape auth-shape-crescent-left" width="140" height="180" viewBox="0 0 140 180">
       <path d="M10,10 C90,30 130,90 90,160 C50,130 50,70 10,10 Z" fill="#ffd000" opacity="0.9" />
     </svg>
-    <!-- Polígono Coral / Vermelho Superior Direito -->
     <svg class="auth-bg-shape auth-shape-poly-right" width="170" height="140" viewBox="0 0 180 140">
       <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
     </svg>
-    <!-- Estrela Rosa Direita -->
     <svg class="auth-bg-shape auth-shape-star-right" width="120" height="120" viewBox="0 0 120 120">
       <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
     </svg>
-    <!-- Onda Ciano Inferior Direita -->
     <svg class="auth-bg-shape auth-shape-wave-right" width="230" height="140" viewBox="0 0 200 120">
       <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#67e8f9" opacity="0.75" />
     </svg>
-    <!-- Forma Orgânica Verde Inferior Esquerda -->
     <svg class="auth-bg-shape auth-shape-green-left" width="210" height="210" viewBox="0 0 240 240">
       <path d="M240,0 C160,20 120,100 160,180 C190,240 240,240 240,240 Z" fill="#10b981" opacity="0.8" />
     </svg>
   </div>
 
   <div class="ar-auth-page">
-    <!-- Barra Superior -->
+    <!-- Top Bar -->
     <header class="ar-auth-header">
       <a class="ar-brand" href="index.html">
-        <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="ar-brand-img" width="34" height="34">
+        <img src="public/arcadia-logo-128.png" alt="Arcadia Logo" class="ar-brand-img" width="34" height="34">
         <div class="ar-brand-text">
-          <div class="ar-brand-name">Arcádia</div>
-          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+          <div class="ar-brand-name">Arcadia</div>
+          <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
         </div>
       </a>
       <div class="ar-auth-header-end">
-        <a href="cadastro.html" class="ar-btn ar-btn--sm">Criar conta</a>
+        <a href="cadastro.html" class="ar-btn ar-btn--sm">Create account</a>
       </div>
     </header>
 
-    <!-- Conteúdo Principal -->
+    <!-- Main Content -->
     <main class="ar-auth-main">
       <div class="ar-auth-card-main">
-        <!-- Coluna do Formulário -->
+        <!-- Form Column -->
         <section class="ar-auth-form-col">
           <div>
-            <h1 class="ar-auth-title">Bom te ver de novo</h1>
-            <p class="ar-auth-desc">Informe seu e-mail institucional e senha para entrar no portal.</p>
+            <h1 class="ar-auth-title">Welcome back</h1>
+            <p class="ar-auth-desc">Please Enter your Account details</p>
           </div>
 
           <form action="inicio.html" method="get" data-acesso="login" style="display: flex; flex-direction: column; gap: 18px;">
             <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
             <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
 
-            <!-- E-mail Institucional -->
+            <!-- Email -->
             <div class="ar-input-group">
               <label class="ar-input-label" for="email">
-                <span>E-mail institucional</span>
+                <span>Email</span>
               </label>
               <div class="ar-input-wrap">
                 <input
                   type="email"
                   id="email"
                   name="email"
+                  placeholder="Johndoe@gmail.com"
                   autocomplete="email"
                   required
                 >
               </div>
             </div>
 
-            <!-- Senha de Acesso -->
+            <!-- Password -->
             <div class="ar-input-group">
               <label class="ar-input-label" for="senha">
-                <span>Senha de acesso</span>
+                <span>Password</span>
               </label>
               <div class="ar-input-wrap ar-input-wrap--password">
                 <input
@@ -536,71 +757,88 @@
                   autocomplete="current-password"
                   required
                 >
-                <button type="button" class="ar-toggle-pwd" aria-label="Mostrar ou ocultar senha">
+                <button type="button" class="ar-toggle-pwd" aria-label="Toggle password visibility">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
               </div>
             </div>
 
-            <!-- Lembrar e Esqueci Senha -->
+            <!-- Keep me logged in and Forgot Password -->
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
               <label class="ar-check" style="margin: 0;">
                 <input type="checkbox" checked>
                 <span class="ar-check-box" aria-hidden="true">
                   <svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
                 </span>
-                Lembrar acesso
+                Keep me logged in
               </label>
-              <a href="#" class="ar-link ar-link--muted" style="font-size: 13px;" onclick="alert('Procure a coordenação ou secretaria acadêmica para redefinição de senha.'); return false;">Esqueceu a senha?</a>
+              <a href="#" class="ar-link ar-link--muted" style="font-size: 13px;" onclick="alert('Please contact academic administration or your coordinator for password recovery.'); return false;">Forgot Password</a>
             </div>
 
-            <!-- Botão de Ação -->
+            <!-- Sign In Button -->
             <button type="submit" class="ar-btn-submit">
-              <span>Entrar no portal</span>
+              <span>Sign in</span>
               <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
             </button>
+
+            <!-- Social Logins (Google & Facebook only) -->
+            <div class="ar-social-row" aria-label="Social sign in options">
+              <!-- Official Google Icon -->
+              <button type="button" class="ar-social-circle-btn" id="googleLoginBtn" title="Sign in with Google" aria-label="Sign in with Google">
+                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.66-5.17 3.66-9.12z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.57H1.25C.45 8.15 0 9.99 0 12s.45 3.85 1.25 5.43l4.03-3.14z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"/>
+                </svg>
+              </button>
+
+              <!-- Official Facebook Icon -->
+              <button type="button" class="ar-social-circle-btn" id="facebookLoginBtn" title="Sign in with Facebook" aria-label="Sign in with Facebook">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </button>
+            </div>
           </form>
 
           <p class="ar-switch-text">
-            Não possui cadastro? <a href="cadastro.html">Criar conta institucional</a>
+            Don't have an account? <a href="cadastro.html">Create an account</a>
           </p>
         </section>
 
-        <!-- Coluna de Destaque / Showcase -->
+        <!-- Showcase Column -->
         <aside class="ar-auth-showcase-col">
           <div class="ar-showcase-intro">
-            <h2 class="ar-showcase-title">Seu espaço acadêmico em um só lugar</h2>
-            <p class="ar-showcase-desc">Acesso unificado a avisos oficiais, editais de pesquisa, protocolos e calendário do IFPA Campus Belém.</p>
+            <h2 class="ar-showcase-title">Your academic space in one place</h2>
+            <p class="ar-showcase-desc">Unified access to official announcements, research notices, records, and calendar for IFPA Belém Campus.</p>
           </div>
 
-          <!-- Recursos em Destaque: Texto limpo, sem caixinhas com emojis e sem bordas -->
           <div class="ar-features-list">
             <div class="ar-feature-item">
-              <h4>Sincronização por curso</h4>
-              <p>Validação direta de turma e matrícula na secretaria acadêmica.</p>
+              <h4>Course Synchronization</h4>
+              <p>Direct enrollment and classroom validation with the academic office.</p>
             </div>
 
             <div class="ar-feature-item">
-              <h4>Mural e avisos oficiais</h4>
-              <p>Comunicados urgentes da coordenação e secretaria acadêmica.</p>
+              <h4>Official Bulletin & Notices</h4>
+              <p>Urgent updates from department coordinators and administration.</p>
             </div>
 
             <div class="ar-feature-item">
-              <h4>Acesso institucional seguro</h4>
-              <p>Criptografia e credenciais vinculadas ao seu e-mail do IFPA.</p>
+              <h4>Secure Account Access</h4>
+              <p>Encrypted credentials linked with Google and academic accounts.</p>
             </div>
           </div>
 
-          <!-- Ilustração Arquitetônica Minimalista com Cores Vivas (loginRef) -->
+          <!-- Vector Campus Art -->
           <div class="ar-campus-art-wrap">
             <svg class="ar-campus-art" viewBox="0 0 380 145" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Prédio Esquerdo com tons Terracotta e Pêssego -->
               <rect x="25" y="55" width="75" height="85" rx="4" fill="#f4a261" fill-opacity="0.9" stroke="#1b4332" stroke-width="2"/>
               <line x1="45" y1="68" x2="45" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
               <line x1="65" y1="68" x2="65" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
               <rect x="75" y="80" width="15" height="20" fill="#e76f51" stroke="#1b4332" stroke-width="1.5"/>
 
-              <!-- Prédio Central com tons Salmão / Coral e Janelas Mint -->
               <rect x="115" y="22" width="140" height="118" rx="6" fill="#ffffff" stroke="#1b4332" stroke-width="2.2"/>
               <rect x="125" y="32" width="120" height="14" rx="2" fill="#2d6a4f" fill-opacity="0.3"/>
               <line x1="140" y1="52" x2="140" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
@@ -610,18 +848,15 @@
               <line x1="235" y1="52" x2="235" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="5 3"/>
               <rect x="160" y="112" width="30" height="28" rx="3" fill="#e76f51" stroke="#1b4332" stroke-width="1.8"/>
 
-              <!-- Prédio Direito em tom Amarelo Suave -->
               <rect x="270" y="62" width="85" height="78" rx="4" fill="#ffe3a8" fill-opacity="0.95" stroke="#1b4332" stroke-width="2"/>
               <line x1="290" y1="74" x2="290" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
               <line x1="315" y1="74" x2="315" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
               <line x1="338" y1="74" x2="338" y2="135" stroke="#1b4332" stroke-width="1.8" stroke-dasharray="4 3"/>
 
-              <!-- Árvores em Verde Esmeralda e Sálvia da Referência -->
               <circle cx="108" cy="115" r="14" fill="#52b788" stroke="#1b4332" stroke-width="1.8"/>
               <circle cx="264" cy="120" r="12" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.8"/>
               <circle cx="362" cy="122" r="13" fill="#52b788" stroke="#1b4332" stroke-width="1.8"/>
 
-              <!-- Linha Base do Solo -->
               <line x1="10" y1="140" x2="370" y2="140" stroke="#1b4332" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
           </div>
@@ -630,6 +865,8 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="auth-config.js"></script>
   <script src="portal.js"></script>
   <script src="script.js"></script>
 </body>
