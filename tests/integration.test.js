@@ -1,3 +1,4 @@
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'arcadia-integration-test-secret';
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -163,7 +164,7 @@ test('formulários criam avisos, eventos, projetos e documentos pelos contratos 
 });
 
 test('senha incorreta não altera a credencial nem revoga sessões', async t => {
-    const bcrypt = require('bcrypt');
+    const bcrypt = require('../backend/node_modules/bcrypt');
     const auth = require('../backend/src/models/auth.model');
     t.mock.method(users, 'findUserById', async () => ({ email: 'test@example.com' }));
     t.mock.method(auth, 'findUserByEmail', async () => ({ senha: await bcrypt.hash('senha-correta', 10) }));

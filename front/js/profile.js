@@ -6,7 +6,8 @@ window.Arcadia = window.Arcadia || {};
     const { api, auth } = A;
 
     function idLogado() {
-        const id = auth.getSessao().id_usuario;
+        const s = auth.getSessao();
+        const id = s.id_usuario || s.id;
         if (!id) throw new Error('Sessão inválida. Faça login novamente.');
         return id;
     }
@@ -21,18 +22,18 @@ window.Arcadia = window.Arcadia || {};
             return extrairUsuario(await api.expect(api.get(`/api/users/${idLogado()}`)));
         },
 
-        // Atualiza nome/e-mail e mantém o tipo_usuario atual (evita undefined no PUT)
-        async atualizar({ nome, email }) {
+        // Atualiza perfil preservando campos obrigatórios
+        async atualizar(novosDados) {
             const atual = await this.carregar();
             const corpo = {
-                nome: nome ?? atual.nome,
-                email: email ?? atual.email,
+                ...atual,
+                ...novosDados,
                 tipo_usuario: atual.tipo_usuario
             };
             await api.expect(api.put(`/api/users/${idLogado()}`, corpo));
 
             const sessao = auth.getSessao();
-            localStorage.setItem('arcadiaSessao', JSON.stringify({ ...sessao, nome: corpo.nome, email: corpo.email }));
+            localStorage.setItem('arcadiaSessao', JSON.stringify({ ...sessao, ...corpo }));
             return corpo;
         },
 
