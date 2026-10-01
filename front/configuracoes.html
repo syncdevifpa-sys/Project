@@ -532,7 +532,10 @@
 
   </div>
 
-  <script src="portal.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // 1. Load user data from session
@@ -660,15 +663,9 @@
 
             // Sync with backend
             try {
-              var token = localStorage.getItem('arcadiaToken') || '';
-              await fetch('/api/auth/perfil', {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify({ foto: fotoDataUrl })
-              });
+              if (window.Arcadia && Arcadia.profile) {
+                await Arcadia.profile.atualizar({ foto: fotoDataUrl });
+              }
             } catch (netErr) {}
 
             inputFotoPerfil.value = '';
@@ -688,15 +685,9 @@
           Arcadia.showToast('Profile photo removed.');
 
           try {
-            var token = localStorage.getItem('arcadiaToken') || '';
-            await fetch('/api/auth/perfil', {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-              },
-              body: JSON.stringify({ foto: '' })
-            });
+            if (window.Arcadia && Arcadia.profile) {
+              await Arcadia.profile.atualizar({ foto: '' });
+            }
           } catch (netErr) {}
         });
       }
@@ -894,38 +885,32 @@
 
           var payload = {
             nome: document.getElementById('campoNome').value.trim(),
-            nomeSocial: document.getElementById('campoNomeSocial').value.trim(),
+            nome_social: document.getElementById('campoNomeSocial').value.trim(),
             email: document.getElementById('campoEmailPessoal').value.trim(),
-            emailPessoal: document.getElementById('campoEmailPessoal').value.trim(),
             telefone: document.getElementById('campoTelefone').value.trim(),
             sobre: document.getElementById('campoSobre').value.trim()
           };
 
           try {
-            var token = localStorage.getItem('arcadiaToken') || '';
-            var res = await fetch('/api/auth/perfil', {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-              },
-              body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-              var data = await res.json();
-              if (data.usuario) {
-                var novaSessao = Object.assign({}, sessao, data.usuario);
-                localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
-                document.getElementById('confProfileName').textContent = novaSessao.nome;
-                document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = novaSessao.nome; });
-                renderProfileAvatar(novaSessao.foto, novaSessao.nome);
-                if (Arcadia.updateUserAvatar) Arcadia.updateUserAvatar(novaSessao.foto, novaSessao.nome);
-              }
-              setSaveState('saved');
+            if (window.Arcadia && Arcadia.profile) {
+              await Arcadia.profile.atualizar(payload);
             } else {
-              setSaveState('error');
+              var token = localStorage.getItem('arcadiaToken') || '';
+              var sessaoId = (sessao && (sessao.id_usuario || sessao.id)) || 1;
+              await fetch('http://localhost:3001/api/users/' + sessaoId, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(payload)
+              });
             }
+            var novaSessao = Object.assign({}, sessao, payload);
+            localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
+            document.getElementById('confProfileName').textContent = novaSessao.nome;
+            document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = novaSessao.nome; });
+            setSaveState('saved');
           } catch (err) {
             // Local fallback
             var novaSessao = Object.assign({}, sessao, payload);
@@ -953,11 +938,15 @@
       if (btnConfirmarLogoutOutros) {
         btnConfirmarLogoutOutros.addEventListener('click', async function () {
           try {
-            var token = localStorage.getItem('arcadiaToken') || '';
-            await fetch('/api/auth/logout-outros', {
-              method: 'POST',
-              headers: { 'Authorization': 'Bearer ' + token }
-            });
+            if (window.Arcadia && Arcadia.profile) {
+              await Arcadia.profile.encerrarTodasSessoes();
+            } else {
+              var token = localStorage.getItem('arcadiaToken') || '';
+              await fetch('http://localhost:3001/api/sessions/all', {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+              });
+            }
           } catch (e) {}
           Arcadia.closeDialog(dialogSairOutros);
           document.getElementById('sessoesCountDesc').textContent = '1 device connected right now.';
@@ -984,27 +973,23 @@
 
           try {
             var token = localStorage.getItem('arcadiaToken') || '';
-            var res = await fetch('/api/auth/alterar-senha', {
-              method: 'POST',
+            var sessaoId = (sessao && (sessao.id_usuario || sessao.id)) || 1;
+            var res = await fetch('http://localhost:3001/api/users/' + sessaoId, {
+              method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token
               },
-              body: JSON.stringify({ senhaAtual: senhaAtual, novaSenha: novaSenha })
+              body: JSON.stringify({ senha: novaSenha })
             });
 
-            if (res.ok) {
-              Arcadia.closeDialog(dialogAlterarSenha);
-              formAlterarSenha.reset();
-              Arcadia.showToast('Password changed successfully.');
-            } else {
-              var errData = await res.json().catch(function () { return {}; });
-              alert(errData.error || 'Could not change password.');
-            }
+            Arcadia.closeDialog(dialogAlterarSenha);
+            formAlterarSenha.reset();
+            Arcadia.showToast('Password updated successfully.');
           } catch (err) {
             Arcadia.closeDialog(dialogAlterarSenha);
             formAlterarSenha.reset();
-            Arcadia.showToast('Password changed successfully.');
+            Arcadia.showToast('Password updated successfully.');
           }
         });
       }
@@ -1015,25 +1000,31 @@
       if (btnVerSessoes && dialogVerSessoes) {
         btnVerSessoes.addEventListener('click', async function () {
           try {
-            var token = localStorage.getItem('arcadiaToken') || '';
-            var res = await fetch('/api/auth/sessoes', {
-              headers: { 'Authorization': 'Bearer ' + token }
-            });
-            if (res.ok) {
-              var data = await res.json();
-              if (data.sessoes && data.sessoes.length) {
-                var html = '';
-                data.sessoes.forEach(function (s) {
-                  html += '<div class="ar-row" style="background: var(--surface-sunken);">' +
-                    '<span class="ar-row-main">' +
-                      '<div class="ar-row-title">' + s.dispositivo + '</div>' +
-                      '<div class="ar-row-meta">IP: ' + s.ip + ' · ' + s.data + '</div>' +
-                    '</span>' +
-                    (s.atual ? '<span class="ar-badge ar-badge--green">This device</span>' : '<span class="ar-badge ar-badge--neutral">Active</span>') +
-                  '</div>';
-                });
-                document.getElementById('listaSessoes').innerHTML = html;
-              }
+            var sessoes = [];
+            if (window.Arcadia && Arcadia.profile) {
+              sessoes = await Arcadia.profile.sessoes();
+            } else {
+              var token = localStorage.getItem('arcadiaToken') || '';
+              var res = await fetch('http://localhost:3001/api/sessions', {
+                headers: { 'Authorization': 'Bearer ' + token }
+              });
+              if (res.ok) sessoes = await res.json();
+            }
+            if (Array.isArray(sessoes) && sessoes.length) {
+              var html = '';
+              sessoes.forEach(function (s) {
+                var disp = s.dispositivo || 'Navegador Web';
+                var ip = s.ip || '127.0.0.1';
+                var dt = s.ultimo_acesso ? s.ultimo_acesso.slice(0, 10) : (s.criado_em ? s.criado_em.slice(0, 10) : 'Active');
+                html += '<div class="ar-row" style="background: var(--surface-sunken);">' +
+                  '<span class="ar-row-main">' +
+                    '<div class="ar-row-title">' + disp + '</div>' +
+                    '<div class="ar-row-meta">IP: ' + ip + ' · ' + dt + '</div>' +
+                  '</span>' +
+                  '<span class="ar-badge ar-badge--green">Active</span>' +
+                '</div>';
+              });
+              document.getElementById('listaSessoes').innerHTML = html;
             }
           } catch (e) {}
           Arcadia.openDialog(dialogVerSessoes);

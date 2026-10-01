@@ -17,7 +17,17 @@ window.Arcadia = window.Arcadia || {};
 
         STATUS: ['solicitado', 'em_analise', 'pronto'],
 
-        // Para servidor/secretaria acompanhar o pedido
-        mudarStatus: (id, status, extras) => crud.patch(id, { status, ...(extras || {}) })
+        listMy: () => api.expect(api.get('/api/documents/my')),
+
+        list: () => {
+            const sessao = (A.auth && A.auth.getSessao()) || {};
+            if (sessao.tipo_usuario === 'servidor') {
+                return crud.list();
+            }
+            return api.expect(api.get('/api/documents/my'));
+        },
+
+        // Para servidor/secretaria acompanhar o pedido (rota PUT /api/documents/:id)
+        mudarStatus: (id, status, extras) => api.expect(api.put(`/api/documents/${id}`, { status, ...(extras || {}) }))
     };
 })(window.Arcadia);

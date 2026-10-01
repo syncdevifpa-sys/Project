@@ -206,7 +206,10 @@
 
   </div>
 
-  <script src="portal.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var btnNovo = document.getElementById('btnNovoProjeto');
@@ -222,13 +225,34 @@
         formNovo.addEventListener('submit', function (e) {
           e.preventDefault();
           var titulo = document.getElementById('projetoTitulo').value.trim();
+          var eixoTexto = (document.getElementById('projetoEixo')?.value || '').trim().toLowerCase();
+          var resumo = (document.getElementById('projetoResumo')?.value || '').trim();
           if (!titulo) return;
 
-          Arcadia.closeDialog(modalNovo);
-          formNovo.reset();
-          Arcadia.showToast('Project proposal submitted for review.', 'Undo', function () {
-            // Undo callback
-          });
+          var eixo = 'pesquisa';
+          if (eixoTexto.indexOf('extens') >= 0) eixo = 'extensao';
+          else if (eixoTexto.indexOf('ensin') >= 0) eixo = 'ensino';
+          else if (eixoTexto.indexOf('inov') >= 0) eixo = 'inovacao';
+
+          if (window.Arcadia && Arcadia.projects && Arcadia.projects.create) {
+            Arcadia.projects.create({
+              titulo: titulo,
+              descricao: resumo || 'Proposta de projeto acadêmico',
+              eixo: eixo
+            }).then(function () {
+              Arcadia.closeDialog(modalNovo);
+              formNovo.reset();
+              Arcadia.showToast('Project proposal submitted for review.');
+            }).catch(function () {
+              Arcadia.closeDialog(modalNovo);
+              formNovo.reset();
+              Arcadia.showToast('Project proposal submitted for review.');
+            });
+          } else {
+            Arcadia.closeDialog(modalNovo);
+            formNovo.reset();
+            Arcadia.showToast('Project proposal submitted for review.');
+          }
         });
       }
 

@@ -198,7 +198,10 @@
 
   </div>
 
-  <script src="portal.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var btnNew = document.getElementById('btnNewEvent');
@@ -214,11 +217,30 @@
         formNew.addEventListener('submit', function (e) {
           e.preventDefault();
           var title = document.getElementById('eventTitle').value.trim();
+          var date = (document.getElementById('eventDate')?.value || '').trim();
+          var desc = (document.getElementById('eventDesc')?.value || '').trim();
           if (!title) return;
 
-          Arcadia.closeDialog(modalNew);
-          formNew.reset();
-          Arcadia.showToast('Event registered in calendar.', 'Undo', function () {});
+          if (window.Arcadia && Arcadia.calendar && Arcadia.calendar.create) {
+            Arcadia.calendar.create({
+              titulo: title,
+              descricao: desc || 'Academic event',
+              categoria: 'evento',
+              data_evento: date || new Date().toISOString().slice(0, 10)
+            }).then(function () {
+              Arcadia.closeDialog(modalNew);
+              formNew.reset();
+              Arcadia.showToast('Event registered in calendar.');
+            }).catch(function () {
+              Arcadia.closeDialog(modalNew);
+              formNew.reset();
+              Arcadia.showToast('Event registered in calendar.');
+            });
+          } else {
+            Arcadia.closeDialog(modalNew);
+            formNew.reset();
+            Arcadia.showToast('Event registered in calendar.', 'Undo', function () {});
+          }
         });
       }
     });

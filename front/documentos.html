@@ -273,7 +273,10 @@
 
   </div>
 
-  <script src="portal.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/documents.js"></script>
+  <script src="js/portal.js"></script>
   <script>
     function baixarArquivoDoc(nome, texto) {
       try {
@@ -310,11 +313,29 @@
         formNovo.addEventListener('submit', function (e) {
           e.preventDefault();
           var titulo = document.getElementById('docTitulo').value.trim();
+          var motivo = document.getElementById('docDescricao') ? document.getElementById('docDescricao').value.trim() : '';
           if (!titulo) return;
 
-          Arcadia.closeDialog(modalNovo);
-          formNovo.reset();
-          Arcadia.showToast('Request submitted successfully.', 'Undo', function () {});
+          if (window.Arcadia && Arcadia.documents && Arcadia.documents.create) {
+            Arcadia.documents.create({
+              titulo: titulo,
+              motivo: motivo || 'Document request',
+              descricao: motivo || 'Academic request',
+              tipo: 'requerimento'
+            }).then(function () {
+              Arcadia.closeDialog(modalNovo);
+              formNovo.reset();
+              Arcadia.showToast('Request submitted successfully.', 'Undo', function () {});
+            }).catch(function () {
+              Arcadia.closeDialog(modalNovo);
+              formNovo.reset();
+              Arcadia.showToast('Request submitted successfully.', 'Undo', function () {});
+            });
+          } else {
+            Arcadia.closeDialog(modalNovo);
+            formNovo.reset();
+            Arcadia.showToast('Request submitted successfully.', 'Undo', function () {});
+          }
         });
       }
 

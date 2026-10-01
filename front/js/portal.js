@@ -460,12 +460,17 @@
     }
 
     // Atualiza o perfil com os dados mais recentes do backend
-    if (A.api && A.token && A.token.get()) {
-      A.api.get('/api/auth/perfil').then(function (r) {
+    var currentUserId = sessao.id_usuario || sessao.id;
+    var userToken = A.token && A.token.get();
+    var ehGoogleOuLocal = sessao.provider === 'Google' || (userToken && (userToken.indexOf('google-') === 0 || userToken.indexOf('local-') === 0));
+    if (A.api && userToken && currentUserId && !ehGoogleOuLocal) {
+      A.api.get('/api/users/' + currentUserId).then(function (r) {
         var userData = r.ok && r.data && (r.data.user || r.data);
-        if (userData && userData.id) {
+        if (userData && (userData.id_usuario || userData.id)) {
           var updated = Object.assign({}, sessao, userData);
-          updated.vinculo = A.auth.paraVinculo(updated.tipo_usuario);
+          if (A.auth && updated.tipo_usuario) {
+            updated.vinculo = A.auth.paraVinculo(updated.tipo_usuario);
+          }
           localStorage.setItem('arcadiaSessao', JSON.stringify(updated));
           if (updated.foto !== sessao.foto) {
             updateUserAvatar(updated.foto, updated.nome);

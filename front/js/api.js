@@ -41,6 +41,13 @@ window.Arcadia = window.Arcadia || {};
         const data = await res.json().catch(() => ({}));
 
         if (res.status === 401 && auth && token) {
+            try {
+                const sess = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
+                if (sess.provider === 'Google' || token.startsWith('google-') || token.startsWith('local-')) {
+                    return { ok: false, status: 401, data };
+                }
+            } catch (e) {}
+
             Token.clear();
             window.location.href = 'login.html';
         }
@@ -48,12 +55,45 @@ window.Arcadia = window.Arcadia || {};
         return { ok: res.ok, status: res.status, data };
     }
 
+    /**
+     * Extrai os dados ou lança exceção em caso de erro na resposta
+     */
+    async function expect(promiseOrResult) {
+        const res = await promiseOrResult;
+        if (!res.ok) {
+            const msg = (res.data && (res.data.error || res.data.message)) || `HTTP ${res.status}`;
+            const err = new Error(msg);
+            err.status = res.status;
+            err.data = res.data;
+            throw err;
+        }
+        return res.data;
+    }
+
+    /**
+     * Fábrica de operações CRUD padrão para uma rota base
+     */
+    function crud(basePath) {
+        return {
+            list: (params) => expect(request(params ? `${basePath}?${new URLSearchParams(params)}` : basePath, { method: 'GET' })),
+            get: (id) => expect(request(`${basePath}/${id}`, { method: 'GET' })),
+            create: (body) => expect(request(basePath, { method: 'POST', body })),
+            update: (id, body) => expect(request(`${basePath}/${id}`, { method: 'PUT', body })),
+            patch: (id, body) => expect(request(`${basePath}/${id}`, { method: 'PATCH', body })),
+            delete: (id) => expect(request(`${basePath}/${id}`, { method: 'DELETE' })),
+            remove: (id) => expect(request(`${basePath}/${id}`, { method: 'DELETE' }))
+        };
+    }
+
     Arcadia.api = {
         BASE: API_BASE,
         request,
+        expect,
+        crud,
         get: (path, opts) => request(path, { ...opts, method: 'GET' }),
         post: (path, body, opts) => request(path, { ...opts, method: 'POST', body }),
         put: (path, body, opts) => request(path, { ...opts, method: 'PUT', body }),
+        patch: (path, body, opts) => request(path, { ...opts, method: 'PATCH', body }),
         del: (path, opts) => request(path, { ...opts, method: 'DELETE' })
     };
     Arcadia.token = Token;

@@ -11,7 +11,7 @@ window.Arcadia = window.Arcadia || {};
 
         TIPOS: ['prazo', 'evento'],
 
-        ativar: (id) => crud.patch(id, { ativo: true }),
-        desativar: (id) => crud.patch(id, { ativo: false })
+        ativar: (id) => A.api.expect(A.api.put(`/api/reminders/${id}`, { ativo: true })),
+        desativar: (id) => A.api.expect(A.api.put(`/api/reminders/${id}`, { ativo: false }))
     };
 })(window.Arcadia);
