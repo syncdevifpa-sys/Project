@@ -10,7 +10,7 @@ async function listCourses(req, res) {
         console.error("Erro ao buscar cursos:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -23,7 +23,7 @@ async function getCourseById(req, res) {
 
         if (!course) {
             return res.status(404).json({
-                error: "Course not found."
+                error: "Curso não encontrado."
             });
         }
 
@@ -33,7 +33,7 @@ async function getCourseById(req, res) {
         console.error("Erro ao buscar curso:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -63,7 +63,7 @@ async function createCourse(req, res) {
         console.error("Erro ao criar curso:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -91,7 +91,7 @@ async function updateCourse(req, res) {
         console.error("Erro ao atualizar curso:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -116,7 +116,7 @@ async function deleteCourse(req, res) {
         console.error("Erro ao excluir curso:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

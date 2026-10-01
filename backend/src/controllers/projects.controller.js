@@ -9,7 +9,7 @@ async function listProjects(req, res) {
         console.error("Erro ao listar projetos:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -31,7 +31,7 @@ async function getProjectById(req, res) {
         console.error("Erro ao buscar projeto:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -59,7 +59,7 @@ async function createProject(req, res) {
         console.error("Erro ao criar projeto:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -84,7 +84,7 @@ async function updateProject(req, res) {
         console.error("Erro ao atualizar projeto:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -108,7 +108,7 @@ async function deleteProject(req, res) {
         console.error("Erro ao excluir projeto:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -133,7 +133,7 @@ async function approveProject(req, res) {
         console.error("Erro ao aprovar projeto:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -158,7 +158,7 @@ async function rejectProject(req, res) {
         console.error("Erro ao recusar projeto:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -200,7 +200,7 @@ async function registerForProject(req, res) {
         }
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -225,7 +225,7 @@ async function cancelRegistration(req, res) {
         console.error("Erro ao cancelar inscrição:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -242,7 +242,7 @@ async function listProjectRegistrations(req, res) {
         console.error("Erro ao buscar inscrições:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

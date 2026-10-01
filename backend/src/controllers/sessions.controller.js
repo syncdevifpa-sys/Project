@@ -7,13 +7,18 @@ async function listSessions(req, res) {
                 req.user.id_usuario
             );
 
-        return res.json(sessions);
+        const result = sessions.map(session => ({
+            ...session,
+            atual: session.id_token === req.session.id_token,
+            data: session.ultimo_acesso
+        }));
+        return res.json(req.baseUrl === '/api/auth' ? { sessoes: result } : result);
 
     } catch (error) {
         console.error("Error listing sessions:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -40,7 +45,7 @@ async function deleteSession(req, res) {
         console.error("Error deleting session:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -61,7 +66,7 @@ async function deleteAllSessions(req, res) {
         console.error("Error deleting sessions:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

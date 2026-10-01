@@ -163,7 +163,7 @@
     if (actionLabel && onAction) {
       html += '<button type="button" class="ar-toast-action" id="ar-toast-action-btn">' + actionLabel + '</button>';
     }
-    html += '<button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Close notification" id="ar-toast-close-btn">' + getIconSvg('x', 14) + '</button>';
+    html += '<button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar notificação" id="ar-toast-close-btn">' + getIconSvg('x', 14) + '</button>';
     toast.innerHTML = html;
 
     dock.appendChild(toast);
@@ -195,7 +195,7 @@
   function openDialog(modalEl) {
     if (!modalEl) return;
     modalEl.style.display = 'grid';
-    var input = modalEl.querySelector('input, textarea, button:not([aria-label="Close"])');
+    var input = modalEl.querySelector('input, textarea, button:not([data-close-dialog])');
     if (input) setTimeout(function () { input.focus(); }, 50);
   }
 
@@ -227,16 +227,13 @@
 
   // Fast Command Palette Data (Ctrl+K / ⌘K)
   var PALETTE_DATA = [
-    { type: 'Notices', title: 'Fall 2026 Enrollment Period', meta: 'Notices · Student · Deadline Sep 27', desc: 'Confirm your registered courses through the student portal before the deadline.', href: 'aviso.html', icon: 'bell' },
-    { type: 'Notices', title: 'Classes Suspended in Block C', meta: 'Notices · Electrical Maintenance · Sep 09', desc: 'Electrical maintenance in Block C. Makeup schedule announced by coordinator.', href: 'avisos.html', icon: 'bell' },
-    { type: 'Notices', title: 'Scientific Initiation (PIBIC) Grants', meta: 'Notices · Notice 012/2026 · 12 Openings', desc: 'Student application process for campus research laboratories.', href: 'aviso.html', icon: 'bell' },
-    { type: 'Tasks', title: 'Confirm Semester Courses', meta: 'Tasks · Due Sep 12 · Open', desc: 'Review enrolled course schedule on the academic dashboard.', href: 'tarefas.html', icon: 'check' },
-    { type: 'Tasks', title: 'Submit Internship Report', meta: 'Tasks · Due Sep 20 · In Progress', desc: 'File signed completion documentation and supervisor evaluation.', href: 'tarefas.html', icon: 'check' },
-    { type: 'Documents', title: 'Complete Academic Transcript', meta: 'Documents · Digital PDF · Sep 08', desc: 'Official academic transcript signed digitally by the campus registrar.', href: 'documentos.html', icon: 'file-text' },
-    { type: 'Documents', title: 'Enrollment Status Certificate', meta: 'Documents · In Review · Expected Sep 15', desc: 'Official statement for student transit pass and internship contracts.', href: 'documentos.html', icon: 'file-text' },
-    { type: 'Projects', title: 'Water Quality Monitoring Lab', meta: 'Projects · Research · 6 Vacancies', desc: 'Sample collection in Guajará bay and laboratory water analysis.', href: 'projetos.html', icon: 'folder-kanban' },
-    { type: 'Calendar', title: 'Science and Technology Week', meta: 'Calendar · Oct 05 · Main Auditorium', desc: 'Keynote schedule, student paper presentations, and maker workshops.', href: 'calendario.html', icon: 'calendar' }
+    { type: 'Notices', title: 'Avisos', meta: 'Mural acadêmico', href: 'avisos.html', icon: 'bell' },
+    { type: 'Tasks', title: 'Tarefas', meta: 'Tarefas pessoais', href: 'tarefas.html', icon: 'check' },
+    { type: 'Documents', title: 'Documentos', meta: 'Solicitações pessoais', href: 'documentos.html', icon: 'file-text' },
+    { type: 'Projects', title: 'Projetos', meta: 'Projetos aprovados', href: 'projetos.html', icon: 'folder-kanban' },
+    { type: 'Calendar', title: 'Calendário', meta: 'Datas e eventos', href: 'calendario.html', icon: 'calendar' }
   ];
+  var SCOPE_LABELS = { Notices: 'Avisos', Tasks: 'Tarefas', Documents: 'Documentos', Projects: 'Projetos', Calendar: 'Calendário' };
 
   function buildCommandPalette() {
     var scrim = document.getElementById('ar-command-palette-scrim');
@@ -248,33 +245,33 @@
     scrim.style.cssText = 'display:none; align-items:flex-start; padding-top:80px; z-index:100;';
 
     scrim.innerHTML = 
-      '<div class="ar-pal" role="dialog" aria-label="Portal search">' +
+      '<div class="ar-pal" role="dialog" aria-label="Busca no portal">' +
         '<div class="ar-pal-top">' +
           '<label class="ar-search" style="width:100%">' +
             getIconSvg('search', 16) +
-            '<span class="ar-sr">Search the portal</span>' +
-            '<input type="search" id="ar-pal-input" placeholder="Search notices, documents, or projects..." autocomplete="off">' +
+            '<span class="ar-sr">Buscar no portal</span>' +
+            '<input type="search" id="ar-pal-input" placeholder="Buscar avisos, documentos ou projetos..." autocomplete="off">' +
             '<kbd class="ar-kbd">Esc</kbd>' +
           '</label>' +
-          '<p class="ar-pal-hint">Try "enrollment", "grant 012", or a colleague name.</p>' +
-          '<div class="ar-chipbar" id="ar-pal-scopes" role="group" aria-label="Search scopes">' +
-            '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">All</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Notices</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tasks</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documents</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projects</button>' +
+          '<p class="ar-pal-hint">Busque uma seção, como Avisos, Tarefas ou Documentos.</p>' +
+          '<div class="ar-chipbar" id="ar-pal-scopes" role="group" aria-label="Seções da busca">' +
+            '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tarefas</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
           '</div>' +
         '</div>' +
         '<div class="ar-pal-body">' +
           '<div class="ar-pal-list" id="ar-pal-results" role="listbox"></div>' +
           '<div class="ar-pal-preview" id="ar-pal-preview">' +
-            '<div class="ar-field-label" style="color:var(--on-field)" id="ar-pal-prev-eyebrow">Notices</div>' +
-            '<h4 id="ar-pal-prev-title">Select an item</h4>' +
-            '<p id="ar-pal-prev-meta" style="margin-top:4px;">Use arrow keys to navigate</p>' +
+            '<div class="ar-field-label" style="color:var(--on-field)" id="ar-pal-prev-eyebrow">Avisos</div>' +
+            '<h4 id="ar-pal-prev-title">Selecione um item</h4>' +
+            '<p id="ar-pal-prev-meta" style="margin-top:4px;">Use as setas para navegar</p>' +
             '<p id="ar-pal-prev-desc" style="margin-top:8px;"></p>' +
             '<span class="ar-pal-keys">' +
-              '<kbd class="ar-kbd">Enter</kbd> open ' +
-              '<kbd class="ar-kbd">↑ ↓</kbd> navigate' +
+              '<kbd class="ar-kbd">Enter</kbd> abrir ' +
+              '<kbd class="ar-kbd">↑ ↓</kbd> navegar' +
             '</span>' +
           '</div>' +
         '</div>' +
@@ -295,12 +292,12 @@
     function updatePreview(item) {
       if (!item) {
         prevEyebrow.textContent = '';
-        prevTitle.textContent = 'Nothing selected';
+        prevTitle.textContent = 'Nenhum item selecionado';
         prevMeta.textContent = '';
         prevDesc.textContent = '';
         return;
       }
-      prevEyebrow.textContent = item.type;
+      prevEyebrow.textContent = SCOPE_LABELS[item.type] || item.type;
       prevTitle.textContent = item.title;
       prevMeta.textContent = item.meta;
       prevDesc.textContent = item.desc || '';
@@ -318,8 +315,8 @@
         resultsEl.innerHTML = 
           '<div class="ar-empty ar-empty--compact">' +
             '<span class="ar-empty-icon">' + getIconSvg('search', 22) + '</span>' +
-            '<div class="ar-empty-title">No results found for "' + input.value + '"</div>' +
-            '<p class="ar-empty-desc">Check spelling or search for another keyword. Past events can be found in Calendar.</p>' +
+            '<div class="ar-empty-title">Nenhum resultado encontrado</div>' +
+            '<p class="ar-empty-desc">Confira o texto ou busque outra palavra. Consulte eventos anteriores no Calendário.</p>' +
           '</div>';
         updatePreview(null);
         return;
@@ -335,7 +332,7 @@
 
       var html = '';
       Object.keys(groups).forEach(function (grp) {
-        html += '<div class="ar-pal-group">' + grp + '</div>';
+        html += '<div class="ar-pal-group">' + (SCOPE_LABELS[grp] || grp) + '</div>';
         groups[grp].forEach(function (pair) {
           var sel = pair.index === activeIndex;
           html += '<div class="ar-pal-item" role="option" tabIndex="0" data-idx="' + pair.index + '" aria-selected="' + (sel ? 'true' : 'false') + '">' +
@@ -421,9 +418,9 @@
     if (!userName) {
       try {
         var s = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
-        userName = s.nome || 'Student';
+        userName = s.nome || 'Usuário';
       } catch (e) {
-        userName = 'Student';
+        userName = 'Usuário';
       }
     }
     if (!userInitials) {
@@ -432,7 +429,11 @@
 
     document.querySelectorAll('.ar-user .ar-avatar').forEach(function (el) {
       if (foto) {
-        el.innerHTML = '<img src="' + foto + '" alt="' + userName + '" class="ar-avatar-img">';
+        var img = document.createElement('img');
+        img.src = foto;
+        img.alt = userName;
+        img.className = 'ar-avatar-img';
+        el.replaceChildren(img);
       } else {
         el.textContent = userInitials;
       }
@@ -463,7 +464,7 @@
     if (A.api && A.token && A.token.get()) {
       A.api.get('/api/auth/perfil').then(function (r) {
         var userData = r.ok && r.data && (r.data.user || r.data);
-        if (userData && userData.id) {
+        if (userData && userData.id_usuario) {
           var updated = Object.assign({}, sessao, userData);
           updated.vinculo = A.auth.paraVinculo(updated.tipo_usuario);
           localStorage.setItem('arcadiaSessao', JSON.stringify(updated));

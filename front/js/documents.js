@@ -14,8 +14,10 @@ window.Arcadia = window.Arcadia || {};
 
     A.documents = {
         ...crud,
+        list: () => api.expect(api.get('/api/documents/my')),
+        listAll: () => api.expect(api.get('/api/documents')),
 
-        STATUS: ['solicitado', 'em_analise', 'pronto'],
+        STATUS: ['solicitado', 'em_analise', 'pendente', 'pronto'],
 
         // Para servidor/secretaria acompanhar o pedido
         mudarStatus: (id, status, extras) => crud.patch(id, { status, ...(extras || {}) })

@@ -10,7 +10,7 @@ async function listNotices(req, res) {
         console.error("Error fetching notices:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -23,7 +23,7 @@ async function getNoticeById(req, res) {
 
         if (!notice) {
             return res.status(404).json({
-                error: "Notice not found."
+                error: "Aviso não encontrado."
             });
         }
 
@@ -33,7 +33,7 @@ async function getNoticeById(req, res) {
         console.error("Error fetching notice:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -48,7 +48,7 @@ async function createNotice(req, res) {
         const result = await noticesModel.createNotice(noticeData);
 
         return res.status(201).json({
-            message: "Notice created successfully.",
+            message: "Aviso criado com sucesso.",
             noticeId: result.insertId
         });
 
@@ -56,7 +56,7 @@ async function createNotice(req, res) {
         console.error("Error creating notice:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -69,7 +69,7 @@ async function updateNotice(req, res) {
 
         if (!notice) {
             return res.status(404).json({
-                error: "Notice not found."
+                error: "Aviso não encontrado."
             });
         }
 
@@ -79,7 +79,7 @@ async function updateNotice(req, res) {
         );
 
         return res.json({
-            message: "Notice updated successfully.",
+            message: "Aviso atualizado com sucesso.",
             affectedRows: result.affectedRows
         });
 
@@ -87,7 +87,7 @@ async function updateNotice(req, res) {
         console.error("Error updating notice:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -100,19 +100,19 @@ async function deleteNotice(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Notice not found."
+                error: "Aviso não encontrado."
             });
         }
 
         return res.json({
-            message: "Notice deleted successfully."
+            message: "Aviso excluído com sucesso."
         });
 
     } catch (error) {
         console.error("Error deleting notice:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

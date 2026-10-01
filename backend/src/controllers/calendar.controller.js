@@ -10,7 +10,7 @@ async function listEvents(req, res) {
         console.error("Erro ao buscar eventos do calendário:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -33,7 +33,7 @@ async function getEventById(req, res) {
         console.error("Erro ao buscar evento do calendário:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -67,7 +67,7 @@ async function createEvent(req, res) {
         console.error("Erro ao criar evento do calendário:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -95,7 +95,7 @@ async function updateEvent(req, res) {
         console.error("Erro ao atualizar evento do calendário:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -120,7 +120,7 @@ async function deleteEvent(req, res) {
         console.error("Erro ao excluir evento do calendário:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

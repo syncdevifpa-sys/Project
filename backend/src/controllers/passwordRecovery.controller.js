@@ -78,7 +78,7 @@ async function requestRecovery(req, res) {
         console.error("Password recovery error:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -140,7 +140,7 @@ async function resetPassword(req, res) {
         console.error("Password reset error:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

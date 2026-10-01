@@ -12,7 +12,9 @@ window.Arcadia = window.Arcadia || {};
         student: 'discente',
         discente: 'discente',
         professor: 'docente',
+        teacher: 'docente',
         docente: 'docente',
+        staff: 'servidor',
         servidor: 'servidor'
     };
 
@@ -112,7 +114,9 @@ window.Arcadia = window.Arcadia || {};
                     try {
                         const { ok, status, data } = await api.post(
                             '/api/users',
-                            { nome, email, senha, tipo_usuario },
+                            { nome, email, senha, tipo_usuario,
+                                telefone: (form.querySelector('#telefone')?.value || '').trim() || null,
+                                id_curso: tipo_usuario === 'discente' ? Number(form.querySelector('#curso')?.value) || null : null },
                             { auth: false }
                         );
 
@@ -168,9 +172,12 @@ window.Arcadia = window.Arcadia || {};
     }
 
     // ---------------------------- Logout ----------------------------
-    function logout() {
-        // O backend não tem /api/auth/logout: o JWT é descartado no navegador.
-        // (Para encerrar a sessão no servidor, use Arcadia.profile.encerrarSessao(id).)
+    async function logout() {
+        // Revoga a sessão no servidor antes de descartar o JWT no navegador.
+        try { await api.expect(api.post('/api/auth/logout')); }
+        catch (error) {
+            if (error.status !== 401) { alert(error.message || 'Não foi possível encerrar a sessão.'); return; }
+        }
         Token.clear();
         window.location.href = 'login.html';
     }
@@ -208,6 +215,7 @@ window.Arcadia = window.Arcadia || {};
             cursoWrap.style.display = ehAluno ? 'flex' : 'none';
             if (cursoSelect) cursoSelect.required = ehAluno;
         }
+        atualizarCurso(paraTipoUsuario(vinculoInput?.value || 'Aluno'));
 
         roleBtns.forEach((btn) => {
             btn.addEventListener('click', (e) => {
@@ -277,10 +285,27 @@ window.Arcadia = window.Arcadia || {};
         });
     }
 
+    async function carregarCursos() {
+        const select = document.getElementById('curso');
+        if (!select) return;
+        select.innerHTML = '<option value="">Carregando cursos...</option>';
+        try {
+            const cursos = await api.expect(api.get('/api/courses', { auth: false }));
+            select.innerHTML = '<option value="">Selecione seu curso</option>';
+            cursos.filter(c => c.ativo).forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id_curso;
+                option.textContent = c.nome;
+                select.appendChild(option);
+            });
+        } catch (error) { select.innerHTML = '<option value="">Não foi possível carregar os cursos</option>'; }
+    }
+
     function iniciar() {
         initRoleButtons();
         initPhoneMask();
         initPasswordToggle();
+        carregarCursos();
         initForms();
         initLogout();
     }
