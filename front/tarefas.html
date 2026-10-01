@@ -135,70 +135,10 @@
     <!-- Tab Panels Container -->
     <div id="view-container">
 
-      <!-- 1. KANBAN BOARD -->
+      <!-- 1. KANBAN BOARD (renderizado por JS a partir de GET /api/tasks) -->
       <div data-view-panel="board">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); align-items: start;">
-
-          <!-- Column 1: Open -->
-          <section class="ar-col">
-            <div class="ar-col-head">
-              <span class="ar-badge ar-badge--cyan">Open</span>
-              <span class="ar-col-count">2 items</span>
-            </div>
-            <article class="ar-bcard" data-id="1">
-              <div><span class="ar-badge ar-badge--neutral">Academic</span></div>
-              <div class="ar-bcard-title">Confirm semester courses</div>
-              <div class="ar-bcard-meta">Due: Sep 12 · Ana Ribeiro</div>
-              <div class="ar-bcard-foot">
-                <span>Pending</span>
-                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
-              </div>
-            </article>
-
-            <article class="ar-bcard" data-id="2">
-              <div><span class="ar-badge ar-badge--blue">Research</span></div>
-              <div class="ar-bcard-title">Sign scholarship grant term</div>
-              <div class="ar-bcard-meta">Due: Sep 18 · Coordination</div>
-              <div class="ar-bcard-foot">
-                <span>Awaiting signature</span>
-                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
-              </div>
-            </article>
-          </section>
-
-          <!-- Column 2: In Progress -->
-          <section class="ar-col">
-            <div class="ar-col-head">
-              <span class="ar-badge ar-badge--yellow">In Progress</span>
-              <span class="ar-col-count">1 item</span>
-            </div>
-            <article class="ar-bcard" data-id="3">
-              <div><span class="ar-badge ar-badge--neutral">Internship</span></div>
-              <div class="ar-bcard-title">Submit internship report</div>
-              <div class="ar-bcard-meta">Due: Sep 20 · Ana Ribeiro</div>
-              <div class="ar-bcard-foot">
-                <span>Semester report</span>
-                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
-              </div>
-            </article>
-          </section>
-
-          <!-- Column 3: Completed -->
-          <section class="ar-col">
-            <div class="ar-col-head">
-              <span class="ar-badge ar-badge--green">Completed</span>
-              <span class="ar-col-count">1 item</span>
-            </div>
-            <article class="ar-bcard" data-id="4">
-              <div><span class="ar-badge ar-badge--neutral">Registrar</span></div>
-              <div class="ar-bcard-title">Update registration records</div>
-              <div class="ar-bcard-meta">Finished on Sep 05</div>
-              <div class="ar-bcard-foot">
-                <span class="ar-badge ar-badge--green">Done</span>
-              </div>
-            </article>
-          </section>
-
+        <div id="kanbanGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); align-items: start;">
+          <p class="ar-card-meta">Loading tasks…</p>
         </div>
       </div>
 
@@ -215,102 +155,14 @@
                 <th style="text-align: right;">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="ar-td-strong">Confirm semester courses</td>
-                <td>Ana Ribeiro</td>
-                <td class="ar-td-mono">Sep 12</td>
-                <td><span class="ar-badge ar-badge--cyan">Open</span></td>
-                <td style="text-align: right;">
-                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
-                </td>
-              </tr>
-              <tr>
-                <td class="ar-td-strong">Sign scholarship grant term</td>
-                <td>Coordination</td>
-                <td class="ar-td-mono">Sep 18</td>
-                <td><span class="ar-badge ar-badge--cyan">Open</span></td>
-                <td style="text-align: right;">
-                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
-                </td>
-              </tr>
-              <tr>
-                <td class="ar-td-strong">Submit internship report</td>
-                <td>Ana Ribeiro</td>
-                <td class="ar-td-mono">Sep 20</td>
-                <td><span class="ar-badge ar-badge--yellow">In Progress</span></td>
-                <td style="text-align: right;">
-                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
-                </td>
-              </tr>
-              <tr>
-                <td class="ar-td-strong">Update registration records</td>
-                <td>Registrar</td>
-                <td class="ar-td-mono">Sep 05</td>
-                <td><span class="ar-badge ar-badge--green">Completed</span></td>
-                <td style="text-align: right;">
-                  <span class="ar-badge ar-badge--neutral">Finished</span>
-                </td>
-              </tr>
-            </tbody>
+            <tbody id="tarefasTbody"></tbody>
           </table>
         </div>
       </div>
 
       <!-- 3. LIST (RecordCards) -->
       <div data-view-panel="list" style="display: none;">
-        <div class="ar-card-grid">
-          <article class="ar-card">
-            <div class="ar-card-top">
-              <span class="ar-tag">Academic</span>
-              <span class="ar-badge ar-badge--cyan">Open</span>
-            </div>
-            <h3 class="ar-card-title">Confirm semester courses</h3>
-            <p class="ar-card-desc">Validation of enrolled classes and weekly timetable.</p>
-            <p class="ar-card-meta">
-              <span>Due: <b>Sep 12</b></span>
-              <span>Assignee: <b>Ana Ribeiro</b></span>
-            </p>
-          </article>
-
-          <article class="ar-card">
-            <div class="ar-card-top">
-              <span class="ar-tag">Research</span>
-              <span class="ar-badge ar-badge--cyan">Open</span>
-            </div>
-            <h3 class="ar-card-title">Sign scholarship grant term</h3>
-            <p class="ar-card-desc">PIBIC 2026 grant grant agreement document.</p>
-            <p class="ar-card-meta">
-              <span>Due: <b>Sep 18</b></span>
-              <span>Assignee: <b>Coordination</b></span>
-            </p>
-          </article>
-
-          <article class="ar-card">
-            <div class="ar-card-top">
-              <span class="ar-tag">Internship</span>
-              <span class="ar-badge ar-badge--yellow">In Progress</span>
-            </div>
-            <h3 class="ar-card-title">Submit internship report</h3>
-            <p class="ar-card-desc">Activity report and supervisor performance evaluation.</p>
-            <p class="ar-card-meta">
-              <span>Due: <b>Sep 20</b></span>
-              <span>Assignee: <b>Ana Ribeiro</b></span>
-            </p>
-          </article>
-
-          <article class="ar-card">
-            <div class="ar-card-top">
-              <span class="ar-tag">Registrar</span>
-              <span class="ar-badge ar-badge--green">Completed</span>
-            </div>
-            <h3 class="ar-card-title">Update registration records</h3>
-            <p class="ar-card-desc">Proof of address and emergency contact details renewed.</p>
-            <p class="ar-card-meta">
-              <span>Completed: <b>Sep 05</b></span>
-            </p>
-          </article>
-        </div>
+        <div class="ar-card-grid" id="tarefasCards"></div>
       </div>
 
     </div>
@@ -336,13 +188,37 @@
           </label>
 
           <label class="ar-field">
+            <span class="ar-field-label">Category</span>
+            <select id="tarefaCategoria">
+              <option value="Academic">Academic</option>
+              <option value="Research">Research</option>
+              <option value="Internship">Internship</option>
+              <option value="Registrar">Registrar</option>
+            </select>
+          </label>
+
+          <label class="ar-field">
             <span class="ar-field-label">Due date</span>
-            <input type="text" id="tarefaPrazo" placeholder="Example: Sep 25" required>
+            <input type="date" id="tarefaPrazo" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Priority</span>
+            <select id="tarefaPrioridade">
+              <option value="baixa">Low</option>
+              <option value="media" selected>Medium</option>
+              <option value="alta">High</option>
+            </select>
           </label>
 
           <label class="ar-field">
             <span class="ar-field-label">Assignee</span>
-            <input type="text" id="tarefaResponsavel" value="Ana Ribeiro" required>
+            <input type="text" id="tarefaResponsavel" required>
+          </label>
+
+          <label class="ar-field">
+            <span class="ar-field-label">Notes (optional)</span>
+            <input type="text" id="tarefaObservacao" placeholder="Short description">
           </label>
 
           <div class="ar-dialog-foot">
@@ -355,47 +231,239 @@
 
   </div>
 
-  <script src="portal.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var btnNova = document.getElementById('btnNovaTarefa');
+      var A = window.Arcadia;
+      if (!A.auth.exigirLogin()) return;
+
+      // ---- Tabelas de apoio: valores do banco -> texto/cores da interface ----
+      var STATUS_UI = {
+        aberta:       { label: 'Open',        badge: 'cyan' },
+        em_andamento: { label: 'In Progress', badge: 'yellow' },
+        concluida:    { label: 'Completed',   badge: 'green' }
+      };
+      var FILTRO_STATUS = { 'All': null, 'Open': 'aberta', 'In Progress': 'em_andamento', 'Completed': 'concluida' };
+      var PRIORIDADE_UI = { baixa: 'Low', media: 'Medium', alta: 'High' };
+
+      var tarefas = [];
+      var filtro = 'All';
+
+      var kanban = document.getElementById('kanbanGrid');
+      var tbody = document.getElementById('tarefasTbody');
+      var cards = document.getElementById('tarefasCards');
       var modalNova = document.getElementById('modalNovaTarefa');
-      if (btnNova && modalNova) {
-        btnNova.addEventListener('click', function () {
-          Arcadia.openDialog(modalNova);
-        });
-      }
-
       var formNova = document.getElementById('formNovaTarefa');
-      if (formNova) {
-        formNova.addEventListener('submit', function (e) {
-          e.preventDefault();
-          var titulo = document.getElementById('tarefaTitulo').value.trim();
-          if (!titulo) return;
 
-          Arcadia.closeDialog(modalNova);
-          formNova.reset();
-          Arcadia.showToast('Task recorded on the board.', 'Undo', function () {
-            // Undo callback
-          });
+      // ---- Utilitários ----
+      function esc(valor) {
+        return String(valor == null ? '' : valor)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function fmtData(valor) {
+        var m = String(valor || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!m) return valor ? esc(valor) : '—';
+        return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+
+      function listaDe(resp) {
+        if (Array.isArray(resp)) return resp;
+        return (resp && (resp.tasks || resp.tarefas || resp.data)) || [];
+      }
+
+      function erro(err) {
+        console.error(err);
+        A.showToast(err && err.status ? err.message : 'Could not connect to the server.');
+      }
+
+      function visiveis() {
+        var status = FILTRO_STATUS[filtro];
+        var lista = status ? tarefas.filter(function (t) { return t.status === status; }) : tarefas.slice();
+        return lista.sort(function (a, b) {
+          return String(a.data_entrega || '').localeCompare(String(b.data_entrega || ''));
         });
       }
 
-      document.querySelectorAll('.btn-concluir').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var card = btn.closest('.ar-bcard') || btn.closest('tr');
-          if (!card) return;
-          card.style.opacity = '0.5';
-          btn.textContent = 'Completed';
-          btn.disabled = true;
+      function statusUi(t) {
+        return STATUS_UI[t.status] || { label: esc(t.status), badge: 'neutral' };
+      }
 
-          Arcadia.showToast('Task marked as completed.', 'Undo', function () {
-            card.style.opacity = '1';
-            btn.textContent = 'Complete';
-            btn.disabled = false;
-          });
+      function botoes(t) {
+        var id = esc(t.id_tarefa);
+        if (t.status === 'concluida') return '<span class="ar-badge ar-badge--neutral">Finished</span>';
+        var html = '';
+        if (t.status === 'aberta') {
+          html += '<button type="button" class="ar-btn ar-btn--xs ar-btn--ghost" data-action="iniciar" data-id="' + id + '">Start</button> ';
+        }
+        html += '<button type="button" class="ar-btn ar-btn--xs btn-concluir" data-action="concluir" data-id="' + id + '">Complete</button>';
+        return html;
+      }
+
+      // ---- Renderização (um único array alimenta as 3 visões) ----
+      function renderBoard(lista) {
+        var colunas = ['aberta', 'em_andamento', 'concluida'];
+        kanban.innerHTML = colunas.map(function (status) {
+          var ui = STATUS_UI[status];
+          var itens = lista.filter(function (t) { return t.status === status; });
+          var corpo = itens.map(function (t) {
+            var meta = status === 'concluida'
+              ? 'Finished on ' + fmtData(t.concluida_em || t.data_entrega)
+              : 'Due: ' + fmtData(t.data_entrega) + ' · ' + esc(t.responsavel);
+            var nota = t.observacao ? esc(String(t.observacao).slice(0, 40)) : 'Priority: ' + (PRIORIDADE_UI[t.prioridade] || '—');
+            var rodape = status === 'concluida'
+              ? '<span class="ar-badge ar-badge--green">Done</span>'
+              : '<span>' + nota + '</span><span>' + botoes(t) + '</span>';
+            return '<article class="ar-bcard" data-id="' + esc(t.id_tarefa) + '">' +
+              '<div><span class="ar-badge ar-badge--neutral">' + esc(t.categoria || 'General') + '</span></div>' +
+              '<div class="ar-bcard-title">' + esc(t.titulo) + '</div>' +
+              '<div class="ar-bcard-meta">' + meta + '</div>' +
+              '<div class="ar-bcard-foot">' + rodape + '</div>' +
+            '</article>';
+          }).join('') || '<p class="ar-card-meta">No tasks</p>';
+
+          return '<section class="ar-col">' +
+            '<div class="ar-col-head"><span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span>' +
+            '<span class="ar-col-count">' + itens.length + (itens.length === 1 ? ' item' : ' items') + '</span></div>' +
+            corpo + '</section>';
+        }).join('');
+      }
+
+      function renderTabela(lista) {
+        tbody.innerHTML = lista.map(function (t) {
+          var ui = statusUi(t);
+          return '<tr>' +
+            '<td class="ar-td-strong">' + esc(t.titulo) + '</td>' +
+            '<td>' + esc(t.responsavel) + '</td>' +
+            '<td class="ar-td-mono">' + fmtData(t.data_entrega) + '</td>' +
+            '<td><span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span></td>' +
+            '<td style="text-align: right;">' + botoes(t) + '</td>' +
+          '</tr>';
+        }).join('') || '<tr><td colspan="5">No tasks</td></tr>';
+      }
+
+      function renderCards(lista) {
+        cards.innerHTML = lista.map(function (t) {
+          var ui = statusUi(t);
+          var meta = t.status === 'concluida'
+            ? '<span>Completed: <b>' + fmtData(t.concluida_em || t.data_entrega) + '</b></span>'
+            : '<span>Due: <b>' + fmtData(t.data_entrega) + '</b></span><span>Assignee: <b>' + esc(t.responsavel) + '</b></span>';
+          var desc = t.observacao ? esc(t.observacao) : 'Priority: ' + (PRIORIDADE_UI[t.prioridade] || '—');
+          return '<article class="ar-card">' +
+            '<div class="ar-card-top"><span class="ar-tag">' + esc(t.categoria || 'General') + '</span>' +
+            '<span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span></div>' +
+            '<h3 class="ar-card-title">' + esc(t.titulo) + '</h3>' +
+            '<p class="ar-card-desc">' + desc + '</p>' +
+            '<p class="ar-card-meta">' + meta + '</p>' +
+          '</article>';
+        }).join('') || '<p class="ar-card-meta">No tasks</p>';
+      }
+
+      function renderContagens(lista) {
+        var total = tarefas.length;
+        document.querySelectorAll('.ar-navpill a[href="tarefas.html"] .ar-sup, .ar-hero-count').forEach(function (el) {
+          el.textContent = '(' + total + ')';
+        });
+        document.querySelectorAll('#chipbarTarefas .ar-chip').forEach(function (chip) {
+          var status = FILTRO_STATUS[chip.getAttribute('data-status')];
+          var n = status ? tarefas.filter(function (t) { return t.status === status; }).length : total;
+          var sup = chip.querySelector('.ar-sup');
+          if (sup) sup.textContent = '(' + n + ')';
+        });
+        document.getElementById('tarefasSummary').textContent =
+          'Showing ' + lista.length + (lista.length === 1 ? ' task' : ' tasks');
+      }
+
+      function render() {
+        var lista = visiveis();
+        renderBoard(lista);
+        renderTabela(lista);
+        renderCards(lista);
+        renderContagens(lista);
+      }
+
+      function carregar() {
+        return A.tasks.list().then(function (resp) {
+          tarefas = listaDe(resp);
+          render();
+        }).catch(erro);
+      }
+
+      // ---- Interações ----
+      document.getElementById('btnNovaTarefa').addEventListener('click', function () {
+        A.openDialog(modalNova);
+      });
+
+      function preencherResponsavel() {
+        document.getElementById('tarefaResponsavel').value = A.auth.getSessao().nome || '';
+      }
+      preencherResponsavel();
+
+      formNova.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var titulo = document.getElementById('tarefaTitulo').value.trim();
+        var prazo = document.getElementById('tarefaPrazo').value;
+        if (!titulo || !prazo) return;
+
+        var enviar = formNova.querySelector('[type="submit"]');
+        enviar.disabled = true;
+
+        A.tasks.create({
+          titulo: titulo,
+          categoria: document.getElementById('tarefaCategoria').value,
+          responsavel: document.getElementById('tarefaResponsavel').value.trim(),
+          data_entrega: prazo,
+          prioridade: document.getElementById('tarefaPrioridade').value,
+          status: 'aberta',
+          observacao: document.getElementById('tarefaObservacao').value.trim() || null
+        }).then(function () {
+          A.closeDialog(modalNova);
+          formNova.reset();
+          preencherResponsavel();
+          A.showToast('Task recorded on the board.');
+          return carregar();
+        }).catch(erro).then(function () {
+          enviar.disabled = false;
         });
       });
+
+      document.getElementById('view-container').addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        var tarefa = tarefas.filter(function (t) { return String(t.id_tarefa) === btn.getAttribute('data-id'); })[0];
+        if (!tarefa) return;
+
+        var novo = btn.getAttribute('data-action') === 'concluir' ? 'concluida' : 'em_andamento';
+        var anterior = tarefa.status;
+        var mensagem = novo === 'concluida' ? 'Task marked as completed.' : 'Task started.';
+
+        btn.disabled = true;
+        A.tasks.patch(tarefa.id_tarefa, { status: novo }).then(function () {
+          return carregar();
+        }).then(function () {
+          A.showToast(mensagem, 'Undo', function () {
+            A.tasks.patch(tarefa.id_tarefa, { status: anterior }).then(carregar).catch(erro);
+          });
+        }).catch(function (err) {
+          btn.disabled = false;
+          erro(err);
+        });
+      });
+
+      var chips = document.querySelectorAll('#chipbarTarefas .ar-chip');
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          filtro = chip.getAttribute('data-status');
+          chips.forEach(function (c) { c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+          render();
+        });
+      });
+
+      carregar();
     });
   </script>
 </body>

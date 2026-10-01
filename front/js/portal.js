@@ -440,29 +440,32 @@
   }
 
   function hydrateTopNav() {
-    var sessao = {};
-    try {
-      sessao = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
-    } catch (e) {}
+    var A = window.Arcadia;
+    var sessao = (A.auth && A.auth.getSessao()) || {};
 
-    var userName = sessao.nome || 'Student';
-    var userRole = sessao.vinculo || 'Student';
-    var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'ST';
+    var userName = sessao.nome || 'Usuário';
+    var userRole = sessao.vinculo || (A.auth ? A.auth.paraVinculo(sessao.tipo_usuario) : 'Usuário');
+    var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'US';
 
     document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = userName; });
     document.querySelectorAll('.ar-user-role').forEach(function (el) { el.textContent = userRole; });
     updateUserAvatar(sessao.foto, userName, userInitials);
 
-    var token = '';
-    try { token = localStorage.getItem('arcadiaToken') || ''; } catch (e) {}
-    if (token) {
-      fetch('/api/auth/perfil', {
-        headers: { 'Authorization': 'Bearer ' + token }
-      }).then(function (res) {
-        if (res.ok) return res.json();
-      }).then(function (userData) {
+    if (sessao.nome) {
+      var primeiroNome = sessao.nome.split(' ')[0];
+      var greetingEl = document.getElementById('painelUserGreeting');
+      if (greetingEl) greetingEl.textContent = primeiroNome;
+      var titleEl = document.querySelector('.portal-titulo');
+      if (titleEl) titleEl.textContent = 'Bem-vindo(a), ' + primeiroNome;
+    }
+
+    // Atualiza o perfil com os dados mais recentes do backend
+    if (A.api && A.token && A.token.get()) {
+      A.api.get('/api/auth/perfil').then(function (r) {
+        var userData = r.ok && r.data && (r.data.user || r.data);
         if (userData && userData.id) {
           var updated = Object.assign({}, sessao, userData);
+          updated.vinculo = A.auth.paraVinculo(updated.tipo_usuario);
           localStorage.setItem('arcadiaSessao', JSON.stringify(updated));
           if (updated.foto !== sessao.foto) {
             updateUserAvatar(updated.foto, updated.nome);
@@ -477,18 +480,7 @@
         openCommandPalette();
       });
     });
-
-    document.querySelectorAll('[data-sign-out]').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        try {
-          fetch('/api/auth/logout', { method: 'POST' });
-        } catch (err) {}
-        localStorage.removeItem('arcadiaSessao');
-        localStorage.removeItem('arcadiaToken');
-        window.location.href = 'login.html';
-      });
-    });
+    // Logout: tratado pelo auth.js ([data-logout] e [data-sign-out])
   }
 
   function setupViewToolbar() {
