@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projetos · Arcádia IFPA</title>
+  <title>Projects</title>
 
-  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <!-- Inline script to apply theme and accessibility before first paint without flicker -->
   <script>
     (function () {
       var THEME_KEY = 'arcadia-theme';
@@ -40,30 +40,30 @@
     <!-- TopNav -->
     <header class="ar-nav">
       <a class="ar-brand" href="inicio.html">
-        <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="ar-brand-img" width="34" height="34">
+        <img src="public/arcadia-logo-128.png" alt="Arcadia Logo" class="ar-brand-img" width="34" height="34">
         <span>
-          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-name">Arcadia</div>
           <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
         </span>
       </a>
 
-      <nav class="ar-navpill" aria-label="Seções do portal">
-        <a href="inicio.html">Painel</a>
-        <a href="avisos.html">Avisos<sup class="ar-sup">(5)</sup></a>
-        <a href="tarefas.html">Tarefas<sup class="ar-sup">(4)</sup></a>
-        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
-        <a href="calendario.html">Calendário<sup class="ar-sup">(4)</sup></a>
+      <nav class="ar-navpill" aria-label="Portal sections">
+        <a href="inicio.html">Dashboard</a>
+        <a href="avisos.html">Notices<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html">Tasks<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documents<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html">Calendar<sup class="ar-sup">(4)</sup></a>
         <span class="ar-sep" aria-hidden="true"></span>
-        <a href="pessoas.html">Pessoas<sup class="ar-sup">(4)</sup></a>
-        <a href="projetos.html" aria-current="page">Projetos<sup class="ar-sup">(4)</sup></a>
+        <a href="pessoas.html">People<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html" aria-current="page">Projects<sup class="ar-sup">(4)</sup></a>
       </nav>
 
       <div class="ar-nav-end">
-        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+        <button type="button" class="ar-iconbtn" aria-label="Search (⌘K)" title="Search (⌘K)" data-search-trigger>
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
         </button>
 
-        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Settings" title="Settings">
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
         </a>
 
@@ -71,15 +71,15 @@
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
           <div>
             <div class="ar-user-name">Ana Ribeiro</div>
-            <div class="ar-user-role">Aluno</div>
+            <div class="ar-user-role">Student</div>
           </div>
         </a>
 
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sign out</button>
       </div>
     </header>
 
-    <!-- PageHero Compacto em Amarelo -->
+    <!-- PageHero Compact in Yellow -->
     <section class="ar-hero ar-hero--yellow ar-hero--compact">
       <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
         <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
@@ -90,115 +90,115 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <h1 class="ar-hero-title">Projetos<sup class="ar-hero-count">(4)</sup></h1>
+      <h1 class="ar-hero-title">Projects<sup class="ar-hero-count">(4)</sup></h1>
       <div class="ar-hero-side">
-        <p class="ar-hero-desc">Projetos de pesquisa, extensão e inovação com inscrições abertas e em andamento no campus.</p>
+        <p class="ar-hero-desc">Research, extension, and innovation projects open for applications and ongoing at campus.</p>
         <div class="ar-hero-actions">
           <button type="button" class="ar-btn ar-btn--primary" id="btnNovoProjeto">
-            <span>Submeter projeto</span>
+            <span>Submit project</span>
             <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- ChipBar Eixo -->
-    <div class="ar-chipbar" role="group" aria-label="Eixo do projeto" id="chipbarProjetos">
-      <button type="button" class="ar-chip" aria-pressed="true" data-eixo="Todos">Todos<sup class="ar-sup">(4)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Pesquisa">Pesquisa<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Extensão">Extensão<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Ensino">Ensino<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Inovação">Inovação<sup class="ar-sup">(1)</sup></button>
+    <!-- ChipBar Thematic Area -->
+    <div class="ar-chipbar" role="group" aria-label="Project track" id="chipbarProjetos">
+      <button type="button" class="ar-chip" aria-pressed="true" data-eixo="All">All<sup class="ar-sup">(4)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Research">Research<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Extension">Extension<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Teaching">Teaching<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Innovation">Innovation<sup class="ar-sup">(1)</sup></button>
     </div>
 
-    <!-- Grade de Projetos -->
+    <!-- Projects Grid -->
     <div class="ar-card-grid" id="gridProjetos">
-      <article class="ar-card" data-eixo="Pesquisa">
+      <article class="ar-card" data-eixo="Research">
         <div class="ar-card-top">
-          <span class="ar-tag">Pesquisa</span>
-          <span class="ar-badge ar-badge--green">Ativo</span>
+          <span class="ar-tag">Research</span>
+          <span class="ar-badge ar-badge--green">Active</span>
         </div>
-        <h3 class="ar-card-title">Monitoramento da Qualidade das Águas da Bacia do Guajará</h3>
-        <p class="ar-card-desc">Coleta periódica e análise físico-química de parâmetros hidrológicos na orla de Belém.</p>
+        <h3 class="ar-card-title">Water Quality Monitoring in Guajará Basin</h3>
+        <p class="ar-card-desc">Periodic sampling and physicochemical analysis of hydrological parameters along Belém's shoreline.</p>
         <p class="ar-card-meta">
-          <span>Orientação: <b>Larissa Menezes</b></span>
-          <span>Vagas: <b>6 bolsas</b></span>
+          <span>Advisor: <b>Larissa Menezes</b></span>
+          <span>Grants: <b>6 scholarships</b></span>
         </p>
       </article>
 
-      <article class="ar-card" data-eixo="Extensão">
+      <article class="ar-card" data-eixo="Extension">
         <div class="ar-card-top">
-          <span class="ar-tag">Extensão</span>
-          <span class="ar-badge ar-badge--yellow">Inscrições</span>
+          <span class="ar-tag">Extension</span>
+          <span class="ar-badge ar-badge--yellow">Open Applications</span>
         </div>
-        <h3 class="ar-card-title">Palestra: Preservação, Biodiversidade e Bioeconomia na Amazônia</h3>
-        <p class="ar-card-desc">Ciclo de encontros abertos a comunidades ribeirinhas e estudantes do IFPA.</p>
+        <h3 class="ar-card-title">Lecture: Preservation, Biodiversity & Bioeconomy in the Amazon</h3>
+        <p class="ar-card-desc">Cycle of interactive workshops open to riverside communities and IFPA students.</p>
         <p class="ar-card-meta">
-          <span>Coordenação: <b>Prof. Dr. Mauro Santos</b></span>
-          <span>Vagas: <b>60 participantes</b></span>
+          <span>Lead: <b>Prof. Dr. Mauro Santos</b></span>
+          <span>Capacity: <b>60 participants</b></span>
         </p>
       </article>
 
-      <article class="ar-card" data-eixo="Ensino">
+      <article class="ar-card" data-eixo="Teaching">
         <div class="ar-card-top">
-          <span class="ar-tag">Ensino</span>
-          <span class="ar-badge ar-badge--yellow">Em andamento</span>
+          <span class="ar-tag">Teaching</span>
+          <span class="ar-badge ar-badge--yellow">In Progress</span>
         </div>
-        <h3 class="ar-card-title">Robótica Educacional com Reaproveitamento de Sucata</h3>
-        <p class="ar-card-desc">Oficinas práticas de lógica e automação utilizando componentes eletrônicos descartados.</p>
+        <h3 class="ar-card-title">Educational Robotics Using Recycled Electronic Waste</h3>
+        <p class="ar-card-desc">Hands-on logic and automation workshops repurposing discarded hardware and electronic scrap.</p>
         <p class="ar-card-meta">
-          <span>Coordenação: <b>Júlia Andrade</b></span>
-          <span>Vagas: <b>8 vagas</b></span>
+          <span>Lead: <b>Júlia Andrade</b></span>
+          <span>Openings: <b>8 spots</b></span>
         </p>
       </article>
 
-      <article class="ar-card" data-eixo="Inovação">
+      <article class="ar-card" data-eixo="Innovation">
         <div class="ar-card-top">
-          <span class="ar-tag">Inovação</span>
-          <span class="ar-badge ar-badge--green">Ativo</span>
+          <span class="ar-tag">Innovation</span>
+          <span class="ar-badge ar-badge--green">Active</span>
         </div>
-        <h3 class="ar-card-title">Mapeamento Colaborativo de Saberes Tradicionais e Etnobotânica</h3>
-        <p class="ar-card-desc">Plataforma digital para registro de espécies medicinais e saberes agroecológicos locais.</p>
+        <h3 class="ar-card-title">Collaborative Mapping of Traditional Knowledge & Ethnobotany</h3>
+        <p class="ar-card-desc">Digital platform for cataloging medicinal plant species and regional agroecological practices.</p>
         <p class="ar-card-meta">
-          <span>Coordenação: <b>Rafael Lima</b></span>
-          <span>Vagas: <b>12 vagas</b></span>
+          <span>Lead: <b>Rafael Lima</b></span>
+          <span>Openings: <b>12 spots</b></span>
         </p>
       </article>
     </div>
 
-    <!-- Modal Dialog: Submeter Projeto -->
+    <!-- Modal Dialog: Submit Project -->
     <div class="ar-scrim" id="modalNovoProjeto" style="display:none; z-index:100;">
-      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Submeter projeto">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Submit project proposal">
         <div class="ar-dialog-head">
           <div>
-            <div class="ar-field-label">Coordenação de pesquisa</div>
-            <h2 class="ar-dialog-title">Submeter projeto</h2>
-            <p class="ar-dialog-desc">Cadastre uma proposta de projeto para avaliação da banca.</p>
+            <div class="ar-field-label">Research Coordination</div>
+            <h2 class="ar-dialog-title">Submit project</h2>
+            <p class="ar-dialog-desc">Register a project proposal for academic committee review.</p>
           </div>
-          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Close" data-close-dialog>
             <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
           </button>
         </div>
 
         <form id="formNovoProjeto" style="display:flex; flex-direction:column; gap:var(--space-3);">
           <label class="ar-field">
-            <span class="ar-field-label">Título do projeto</span>
-            <input type="text" id="projetoTitulo" placeholder="Exemplo: Eficiência energética em servidores" required>
+            <span class="ar-field-label">Project title</span>
+            <input type="text" id="projetoTitulo" placeholder="Example: Energy efficiency in data centers" required>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Eixo temático</span>
-            <input type="text" id="projetoEixo" placeholder="Exemplo: Pesquisa aplicada" required>
+            <span class="ar-field-label">Thematic track</span>
+            <input type="text" id="projetoEixo" placeholder="Example: Applied Research" required>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Resumo da proposta</span>
-            <textarea id="projetoResumo" rows="3" placeholder="Apresente os objetivos gerais e metodologia..."></textarea>
+            <span class="ar-field-label">Proposal abstract</span>
+            <textarea id="projetoResumo" rows="3" placeholder="Outline the main goals, methodology, and expected outcomes..."></textarea>
           </label>
 
           <div class="ar-dialog-foot">
-            <button type="submit" class="ar-btn ar-btn--primary">Criar registro</button>
-            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
+            <button type="submit" class="ar-btn ar-btn--primary">Create submission</button>
+            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancel</button>
           </div>
         </form>
       </div>
@@ -226,8 +226,8 @@
 
           Arcadia.closeDialog(modalNovo);
           formNovo.reset();
-          Arcadia.showToast('Proposta de projeto enviada para avaliação.', 'Desfazer', function () {
-            // Callback desfazer
+          Arcadia.showToast('Project proposal submitted for review.', 'Undo', function () {
+            // Undo callback
           });
         });
       }
@@ -240,7 +240,7 @@
           chip.setAttribute('aria-pressed', 'true');
           var e = chip.getAttribute('data-eixo');
           cards.forEach(function (c) {
-            if (e === 'Todos' || c.getAttribute('data-eixo') === e) {
+            if (e === 'All' || c.getAttribute('data-eixo') === e) {
               c.style.display = 'flex';
             } else {
               c.style.display = 'none';
