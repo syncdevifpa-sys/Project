@@ -12,7 +12,9 @@ window.Arcadia = window.Arcadia || {};
     A.projects = {
         ...api.crud('/api/projects'),
 
-        APROVACAO: ['pendente', 'aprovado', 'rejeitado'],
+        APROVACAO: ['pendente', 'aprovado', 'recusado'],
+        inscrever: (id) => api.expect(api.post(`/api/projects/${id}/register`)),
+        cancelarInscricao: (id) => api.expect(api.del(`/api/projects/${id}/register`)),
 
         aprovar: (id) => api.expect(api.patch(`/api/projects/${id}/approve`)),
         rejeitar: (id) => api.expect(api.patch(`/api/projects/${id}/reject`))

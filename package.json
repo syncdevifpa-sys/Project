@@ -4,8 +4,9 @@
   "private": true,
   "description": "SyncDev IFPA - Sistema de Mural Acadêmico e Portal do Estudante",
   "scripts": {
-    "start": "node back-end/server.js",
-    "dev": "node back-end/server.js"
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

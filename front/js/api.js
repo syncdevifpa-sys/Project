@@ -4,7 +4,8 @@ window.Arcadia = window.Arcadia || {};
 (function (Arcadia) {
     'use strict';
 
-    const API_BASE = 'http://localhost:3001';
+    const API_BASE = (window.ARCADIA_API_BASE || (window.ARCADIA_CONFIG || {}).backendUrl ||
+        (location.port === '3001' ? location.origin : 'http://localhost:3001')).replace(/\/$/, '');
 
     const Token = {
         get() {
@@ -48,9 +49,33 @@ window.Arcadia = window.Arcadia || {};
         return { ok: res.ok, status: res.status, data };
     }
 
+    async function expect(promise) {
+        const result = await promise;
+        if (!result.ok) {
+            const error = new Error(result.data.error || `Erro na requisição (${result.status}).`);
+            error.status = result.status;
+            throw error;
+        }
+        return result.data;
+    }
+
+    function crud(base) {
+        return {
+            list: () => expect(request(base)),
+            get: (id) => expect(request(`${base}/${encodeURIComponent(id)}`)),
+            create: (body) => expect(request(base, { method: 'POST', body })),
+            update: (id, body) => expect(request(`${base}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
+            patch: (id, body) => expect(request(`${base}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
+            remove: (id) => expect(request(`${base}/${encodeURIComponent(id)}`, { method: 'DELETE' }))
+        };
+    }
+
     Arcadia.api = {
         BASE: API_BASE,
         request,
+        expect,
+        crud,
+        patch: (path, body, opts) => request(path, { ...opts, method: 'PATCH', body }),
         get: (path, opts) => request(path, { ...opts, method: 'GET' }),
         post: (path, body, opts) => request(path, { ...opts, method: 'POST', body }),
         put: (path, body, opts) => request(path, { ...opts, method: 'PUT', body }),

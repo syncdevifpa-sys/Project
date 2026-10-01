@@ -12,7 +12,7 @@ async function listMyDocuments(req, res) {
         console.error("Error fetching documents:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -27,7 +27,7 @@ async function listAllDocuments(req, res) {
         console.error("Error fetching documents:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -40,7 +40,7 @@ async function getDocumentById(req, res) {
 
         if (!document) {
             return res.status(404).json({
-                error: "Document not found."
+                error: "Documento não encontrado."
             });
         }
 
@@ -55,7 +55,7 @@ async function getDocumentById(req, res) {
 
         if (!isOwner && !isStaff && !isAdmin) {
             return res.status(403).json({
-                error: "You do not have permission to access this document."
+                error: "Você não tem permissão para acessar este documento."
             });
         }
 
@@ -65,7 +65,7 @@ async function getDocumentById(req, res) {
         console.error("Error fetching document:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -76,7 +76,7 @@ async function createDocument(req, res) {
 
         if (!titulo) {
             return res.status(400).json({
-                error: "Document title is required."
+                error: "O título do documento é obrigatório."
             });
         }
 
@@ -94,7 +94,7 @@ async function createDocument(req, res) {
         );
 
         return res.status(201).json({
-            message: "Document request created successfully.",
+            message: "Solicitação de documento criada com sucesso.",
             documentId: result.insertId,
             protocol
         });
@@ -103,7 +103,7 @@ async function createDocument(req, res) {
         console.error("Error creating document:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -120,19 +120,19 @@ async function updateDocument(req, res) {
 
         if (!result) {
             return res.status(404).json({
-                error: "Document not found."
+                error: "Documento não encontrado."
             });
         }
 
         return res.json({
-            message: "Document updated successfully."
+            message: "Documento atualizado com sucesso."
         });
 
     } catch (error) {
         console.error("Error updating document:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -146,19 +146,19 @@ async function deleteDocument(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Document not found or can no longer be cancelled."
+                error: "Documento não encontrado ou não pode mais ser cancelado."
             });
         }
 
         return res.json({
-            message: "Document request cancelled successfully."
+            message: "Solicitação de documento cancelada com sucesso."
         });
 
     } catch (error) {
         console.error("Error deleting document:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

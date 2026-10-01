@@ -10,7 +10,7 @@ async function listUsefulLinks(req, res) {
         console.error("Error fetching useful links:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -23,7 +23,7 @@ async function getUsefulLinkById(req, res) {
 
         if (!link) {
             return res.status(404).json({
-                error: "Useful link not found."
+                error: "Link útil não encontrado."
             });
         }
 
@@ -33,7 +33,7 @@ async function getUsefulLinkById(req, res) {
         console.error("Error fetching useful link:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -47,7 +47,7 @@ async function createUsefulLink(req, res) {
 
         if (!titulo || !url) {
             return res.status(400).json({
-                error: "Title and URL are required."
+                error: "Título e endereço são obrigatórios."
             });
         }
 
@@ -57,7 +57,7 @@ async function createUsefulLink(req, res) {
         );
 
         return res.status(201).json({
-            message: "Useful link created successfully.",
+            message: "Link útil criado com sucesso.",
             linkId: result.insertId
         });
 
@@ -65,7 +65,7 @@ async function createUsefulLink(req, res) {
         console.error("Error creating useful link:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -79,19 +79,19 @@ async function updateUsefulLink(req, res) {
 
         if (!result) {
             return res.status(404).json({
-                error: "Useful link not found."
+                error: "Link útil não encontrado."
             });
         }
 
         return res.json({
-            message: "Useful link updated successfully."
+            message: "Link útil atualizado com sucesso."
         });
 
     } catch (error) {
         console.error("Error updating useful link:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -104,19 +104,19 @@ async function deleteUsefulLink(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Useful link not found."
+                error: "Link útil não encontrado."
             });
         }
 
         return res.json({
-            message: "Useful link deleted successfully."
+            message: "Link útil excluído com sucesso."
         });
 
     } catch (error) {
         console.error("Error deleting useful link:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

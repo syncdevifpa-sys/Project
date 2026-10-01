@@ -10,7 +10,7 @@ async function listUsers(req, res) {
         console.error("Error fetching users:", error);
 
         res.status(500).json({
-            error: "Error fetching users."
+            error: "Não foi possível listar os usuários."
         });
     }
 }
@@ -23,7 +23,7 @@ async function getUserById(req, res) {
 
         if (!user) {
             return res.status(404).json({
-                error: "User not found."
+                error: "Usuário não encontrado."
             });
         }
 
@@ -32,14 +32,18 @@ async function getUserById(req, res) {
         console.error("Error fetching user:", error);
 
         res.status(500).json({
-            error: "Error fetching user."
+            error: "Não foi possível carregar o usuário."
         });
     }
 }
 
 async function createUser(req, res) {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.senha, 10);
+        const { nome, email, senha, tipo_usuario } = req.body;
+        if (!nome || !email || typeof senha !== 'string' || senha.length < 8 || !['discente', 'docente', 'servidor'].includes(tipo_usuario)) {
+            return res.status(400).json({ error: 'Informe nome, e-mail, vínculo e senha de pelo menos 8 caracteres.' });
+        }
+        const hashedPassword = await bcrypt.hash(senha, 10);
 
         const userData = {
             ...req.body,
@@ -50,14 +54,14 @@ async function createUser(req, res) {
         const result = await usersModel.createUser(userData);
 
         res.status(201).json({
-            message: "Usuario criado com sucesso.",
+            message: "Usuário criado com sucesso.",
             userId: result.insertId
         });
     } catch (error) {
         console.error("Erro ao criar usuario:", error);
 
         res.status(500).json({
-            error: error.message || "Erro ao criar usuario."
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -71,17 +75,17 @@ async function updateUser(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Usuario não encontrado."
+                error: "Usuário não encontrado."
             });
         }
         res.json({
-            message: "Usuario atualizado com sucesso."
+            message: "Usuário atualizado com sucesso."
         });
     } catch (error) {
         console.error("Erro ao atualizar usuario:", error);
 
         res.status(500).json({
-            error: error.message || "Erro ao atualizar usuario."
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -94,18 +98,18 @@ async function deleteUser(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error:"Usuario não encontrado."
+                error:"Usuário não encontrado."
             });
         }
 
         res.json({
-            message: "Usuario deletado com sucesso."
+            message: "Usuário excluído com sucesso."
         });
     } catch (error) {
-        console.error("Erro ao deletar usuario:", error);
+        console.error("Erro ao excluir usuario:", error);
 
         res.status(500).json({
-            error:"Erro ao deletar usuario."
+            error:"Erro ao excluir usuário."
         });
     }
 }

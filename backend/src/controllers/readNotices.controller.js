@@ -16,7 +16,7 @@ async function markAsRead(req, res) {
         console.error("Error marking notice as read:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -42,7 +42,7 @@ async function markAsUnread(req, res) {
         console.error("Error marking notice as unread:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -60,7 +60,7 @@ async function listReadNotices(req, res) {
         console.error("Error listing read notices:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -80,7 +80,7 @@ async function countUnreadNotices(req, res) {
         console.error("Error counting unread notices:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
