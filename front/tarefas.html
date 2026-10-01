@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tasks
+  <title>Tarefas
 
     
   </title>
@@ -43,30 +43,30 @@
     <!-- TopNav -->
     <header class="ar-nav">
       <a class="ar-brand" href="inicio.html">
-        <img src="public/arcadia-logo-128.png" alt="Arcadia Logo" class="ar-brand-img" width="34" height="34">
+        <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
         <span>
           <div class="ar-brand-name">Arcadia</div>
           <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
         </span>
       </a>
 
-      <nav class="ar-navpill" aria-label="Portal sections">
-        <a href="inicio.html">Dashboard</a>
-        <a href="avisos.html">Notices<sup class="ar-sup">(5)</sup></a>
-        <a href="tarefas.html" aria-current="page">Tasks<sup class="ar-sup">(4)</sup></a>
-        <a href="documentos.html">Documents<sup class="ar-sup">(4)</sup></a>
-        <a href="calendario.html">Calendar<sup class="ar-sup">(4)</sup></a>
+      <nav class="ar-navpill" aria-label="Seções do portal">
+        <a href="inicio.html">Início</a>
+        <a href="avisos.html">Avisos</a>
+        <a href="tarefas.html" aria-current="page">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documentos</a>
+        <a href="calendario.html">Calendário</a>
         <span class="ar-sep" aria-hidden="true"></span>
-        <a href="pessoas.html">People<sup class="ar-sup">(4)</sup></a>
-        <a href="projetos.html">Projects<sup class="ar-sup">(4)</sup></a>
+        <a href="pessoas.html">Pessoas</a>
+        <a href="projetos.html">Projetos</a>
       </nav>
 
       <div class="ar-nav-end">
-        <button type="button" class="ar-iconbtn" aria-label="Search (⌘K)" title="Search (⌘K)" data-search-trigger>
+        <button type="button" class="ar-iconbtn" aria-label="Buscar (Ctrl+K)" title="Buscar (Ctrl+K)" data-search-trigger>
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
         </button>
 
-        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Settings" title="Settings">
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
         </a>
 
@@ -74,11 +74,11 @@
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
           <div>
             <div class="ar-user-name">Ana Ribeiro</div>
-            <div class="ar-user-role">Student</div>
+            <div class="ar-user-role">Aluno</div>
           </div>
         </a>
 
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sign out</button>
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
       </div>
     </header>
 
@@ -93,12 +93,12 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <h1 class="ar-hero-title">Tasks<sup class="ar-hero-count">(4)</sup></h1>
+      <h1 class="ar-hero-title">Tarefas<sup class="ar-hero-count">(4)</sup></h1>
       <div class="ar-hero-side">
-        <p class="ar-hero-desc">Track your academic assignments, internship reports, and registrar deadlines.</p>
+        <p class="ar-hero-desc">Acompanhe atividades acadêmicas, relatórios de estágio e prazos da secretaria.</p>
         <div class="ar-hero-actions">
           <button type="button" class="ar-btn ar-btn--primary" id="btnNovaTarefa">
-            <span>New task</span>
+            <span>Nova tarefa</span>
             <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
         </div>
@@ -106,30 +106,30 @@
     </section>
 
     <!-- ChipBar Categories -->
-    <div class="ar-chipbar" role="group" aria-label="Task filter" id="chipbarTarefas">
-      <button type="button" class="ar-chip" aria-pressed="true" data-status="All">All<sup class="ar-sup">(4)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-status="Open">Open<sup class="ar-sup">(2)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-status="In Progress">In Progress<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-status="Completed">Completed<sup class="ar-sup">(1)</sup></button>
+    <div class="ar-chipbar" role="group" aria-label="Filtrar tarefas" id="chipbarTarefas">
+      <button type="button" class="ar-chip" aria-pressed="true" data-status="All" data-filter-key="All">Todos<sup class="ar-sup">(4)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-status="Open" data-filter-key="Open">Aberta<sup class="ar-sup">(2)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-status="In Progress" data-filter-key="In Progress">Em andamento<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-status="Completed" data-filter-key="Completed">Concluída<sup class="ar-sup">(1)</sup></button>
     </div>
 
     <!-- ViewToolbar -->
     <div class="ar-toolbar">
-      <div class="ar-seg" role="group" aria-label="View selection">
+      <div class="ar-seg" role="group" aria-label="Escolher visualização">
         <button type="button" aria-pressed="true" data-view="board">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
-          <span>Board</span>
+          <span>Quadro</span>
         </button>
         <button type="button" aria-pressed="false" data-view="table">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"></path><path d="M9 3v18"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
-          <span>Table</span>
+          <span>Tabela</span>
         </button>
         <button type="button" aria-pressed="false" data-view="list">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h.01"></path><path d="M3 12h.01"></path><path d="M3 19h.01"></path><path d="M8 5h13"></path><path d="M8 12h13"></path><path d="M8 19h13"></path></svg>
-          <span>List</span>
+          <span>Lista</span>
         </button>
       </div>
-      <span class="ar-toolbar-sum" id="tarefasSummary">Showing 4 tasks</span>
+      <span class="ar-toolbar-sum" id="tarefasSummary">Carregando tarefas...</span>
     </div>
 
     <!-- Tab Panels Container -->
@@ -138,7 +138,7 @@
       <!-- 1. KANBAN BOARD (renderizado por JS a partir de GET /api/tasks) -->
       <div data-view-panel="board">
         <div id="kanbanGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); align-items: start;">
-          <p class="ar-card-meta">Loading tasks…</p>
+          <p class="ar-card-meta">Carregando tarefas...</p>
         </div>
       </div>
 
@@ -148,11 +148,11 @@
           <table class="ar-table">
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Assignee</th>
-                <th>Due Date</th>
-                <th>Status</th>
-                <th style="text-align: right;">Actions</th>
+                <th>Título</th>
+                <th>Responsável</th>
+                <th>Prazo</th>
+                <th>Situação</th>
+                <th style="text-align: right;">Ações</th>
               </tr>
             </thead>
             <tbody id="tarefasTbody"></tbody>
@@ -169,61 +169,61 @@
 
     <!-- Modal Dialog: New Task -->
     <div class="ar-scrim" id="modalNovaTarefa" style="display:none; z-index:100;">
-      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="New task">
+      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Nova tarefa">
         <div class="ar-dialog-head">
           <div>
-            <div class="ar-field-label">Academic Assignment</div>
-            <h2 class="ar-dialog-title">New task</h2>
-            <p class="ar-dialog-desc">Add a task with a deadline and assignee.</p>
+            <div class="ar-field-label">Atividade acadêmica</div>
+            <h2 class="ar-dialog-title">Nova tarefa</h2>
+            <p class="ar-dialog-desc">Adicione uma tarefa com prazo e responsável.</p>
           </div>
-          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Close" data-close-dialog>
+          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
             <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
           </button>
         </div>
 
         <form id="formNovaTarefa" style="display:flex; flex-direction:column; gap:var(--space-3);">
           <label class="ar-field">
-            <span class="ar-field-label">Task title</span>
-            <input type="text" id="tarefaTitulo" placeholder="Example: Submit signed academic history" required>
+            <span class="ar-field-label">Título da tarefa</span>
+            <input type="text" id="tarefaTitulo" placeholder="Exemplo: Entregar histórico acadêmico assinado" required>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Category</span>
+            <span class="ar-field-label">Categoria</span>
             <select id="tarefaCategoria">
-              <option value="Academic">Academic</option>
-              <option value="Research">Research</option>
-              <option value="Internship">Internship</option>
-              <option value="Registrar">Registrar</option>
+              <option value="Academic">Acadêmico</option>
+              <option value="Research">Pesquisa</option>
+              <option value="Internship">Estágio</option>
+              <option value="Registrar">Secretaria</option>
             </select>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Due date</span>
+            <span class="ar-field-label">Data de entrega</span>
             <input type="date" id="tarefaPrazo" required>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Priority</span>
+            <span class="ar-field-label">Prioridade</span>
             <select id="tarefaPrioridade">
-              <option value="baixa">Low</option>
-              <option value="media" selected>Medium</option>
-              <option value="alta">High</option>
+              <option value="baixa">Baixa</option>
+              <option value="media" selected>Média</option>
+              <option value="alta">Alta</option>
             </select>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Assignee</span>
+            <span class="ar-field-label">Responsável</span>
             <input type="text" id="tarefaResponsavel" required>
           </label>
 
           <label class="ar-field">
-            <span class="ar-field-label">Notes (optional)</span>
-            <input type="text" id="tarefaObservacao" placeholder="Short description">
+            <span class="ar-field-label">Observações (opcional)</span>
+            <input type="text" id="tarefaObservacao" placeholder="Breve descrição">
           </label>
 
           <div class="ar-dialog-foot">
-            <button type="submit" class="ar-btn ar-btn--primary">Create record</button>
-            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancel</button>
+            <button type="submit" class="ar-btn ar-btn--primary">Criar tarefa</button>
+            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
           </div>
         </form>
       </div>
@@ -242,12 +242,12 @@
 
       // ---- Tabelas de apoio: valores do banco -> texto/cores da interface ----
       var STATUS_UI = {
-        aberta:       { label: 'Open',        badge: 'cyan' },
-        em_andamento: { label: 'In Progress', badge: 'yellow' },
-        concluida:    { label: 'Completed',   badge: 'green' }
+        aberta:       { label: 'Aberta',        badge: 'cyan' },
+        em_andamento: { label: 'Em andamento', badge: 'yellow' },
+        concluida:    { label: 'Concluída',   badge: 'green' }
       };
       var FILTRO_STATUS = { 'All': null, 'Open': 'aberta', 'In Progress': 'em_andamento', 'Completed': 'concluida' };
-      var PRIORIDADE_UI = { baixa: 'Low', media: 'Medium', alta: 'High' };
+      var PRIORIDADE_UI = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
 
       var tarefas = [];
       var filtro = 'All';
@@ -268,7 +268,7 @@
       function fmtData(valor) {
         var m = String(valor || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (!m) return valor ? esc(valor) : '—';
-        return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' });
       }
 
       function listaDe(resp) {
@@ -278,7 +278,7 @@
 
       function erro(err) {
         console.error(err);
-        A.showToast(err && err.status ? err.message : 'Could not connect to the server.');
+        A.showToast(err && err.status ? err.message : 'Não foi possível conectar ao servidor.');
       }
 
       function visiveis() {
@@ -295,12 +295,12 @@
 
       function botoes(t) {
         var id = esc(t.id_tarefa);
-        if (t.status === 'concluida') return '<span class="ar-badge ar-badge--neutral">Finished</span>';
+        if (t.status === 'concluida') return '<span class="ar-badge ar-badge--neutral">Concluída</span>';
         var html = '';
         if (t.status === 'aberta') {
-          html += '<button type="button" class="ar-btn ar-btn--xs ar-btn--ghost" data-action="iniciar" data-id="' + id + '">Start</button> ';
+          html += '<button type="button" class="ar-btn ar-btn--xs ar-btn--ghost" data-action="iniciar" data-id="' + id + '">Iniciar</button> ';
         }
-        html += '<button type="button" class="ar-btn ar-btn--xs btn-concluir" data-action="concluir" data-id="' + id + '">Complete</button>';
+        html += '<button type="button" class="ar-btn ar-btn--xs btn-concluir" data-action="concluir" data-id="' + id + '">Concluir</button>';
         return html;
       }
 
@@ -312,23 +312,23 @@
           var itens = lista.filter(function (t) { return t.status === status; });
           var corpo = itens.map(function (t) {
             var meta = status === 'concluida'
-              ? 'Finished on ' + fmtData(t.concluida_em || t.data_entrega)
-              : 'Due: ' + fmtData(t.data_entrega) + ' · ' + esc(t.responsavel);
-            var nota = t.observacao ? esc(String(t.observacao).slice(0, 40)) : 'Priority: ' + (PRIORIDADE_UI[t.prioridade] || '—');
+              ? 'Concluída em ' + fmtData(t.concluida_em || t.data_entrega)
+              : 'Prazo: ' + fmtData(t.data_entrega) + ' · ' + esc(t.responsavel);
+            var nota = t.observacao ? esc(String(t.observacao).slice(0, 40)) : 'Prioridade: ' + (PRIORIDADE_UI[t.prioridade] || '—');
             var rodape = status === 'concluida'
-              ? '<span class="ar-badge ar-badge--green">Done</span>'
+              ? '<span class="ar-badge ar-badge--green">Concluída</span>'
               : '<span>' + nota + '</span><span>' + botoes(t) + '</span>';
             return '<article class="ar-bcard" data-id="' + esc(t.id_tarefa) + '">' +
-              '<div><span class="ar-badge ar-badge--neutral">' + esc(t.categoria || 'General') + '</span></div>' +
+              '<div><span class="ar-badge ar-badge--neutral">' + esc(t.categoria || 'Geral') + '</span></div>' +
               '<div class="ar-bcard-title">' + esc(t.titulo) + '</div>' +
               '<div class="ar-bcard-meta">' + meta + '</div>' +
               '<div class="ar-bcard-foot">' + rodape + '</div>' +
             '</article>';
-          }).join('') || '<p class="ar-card-meta">No tasks</p>';
+          }).join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
 
           return '<section class="ar-col">' +
             '<div class="ar-col-head"><span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span>' +
-            '<span class="ar-col-count">' + itens.length + (itens.length === 1 ? ' item' : ' items') + '</span></div>' +
+            '<span class="ar-col-count">' + itens.length + (itens.length === 1 ? ' item' : ' itens') + '</span></div>' +
             corpo + '</section>';
         }).join('');
       }
@@ -343,24 +343,24 @@
             '<td><span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span></td>' +
             '<td style="text-align: right;">' + botoes(t) + '</td>' +
           '</tr>';
-        }).join('') || '<tr><td colspan="5">No tasks</td></tr>';
+        }).join('') || '<tr><td colspan="5">Nenhuma tarefa</td></tr>';
       }
 
       function renderCards(lista) {
         cards.innerHTML = lista.map(function (t) {
           var ui = statusUi(t);
           var meta = t.status === 'concluida'
-            ? '<span>Completed: <b>' + fmtData(t.concluida_em || t.data_entrega) + '</b></span>'
-            : '<span>Due: <b>' + fmtData(t.data_entrega) + '</b></span><span>Assignee: <b>' + esc(t.responsavel) + '</b></span>';
-          var desc = t.observacao ? esc(t.observacao) : 'Priority: ' + (PRIORIDADE_UI[t.prioridade] || '—');
+            ? '<span>Concluída em: <b>' + fmtData(t.concluida_em || t.data_entrega) + '</b></span>'
+            : '<span>Prazo: <b>' + fmtData(t.data_entrega) + '</b></span><span>Responsável: <b>' + esc(t.responsavel) + '</b></span>';
+          var desc = t.observacao ? esc(t.observacao) : 'Prioridade: ' + (PRIORIDADE_UI[t.prioridade] || '—');
           return '<article class="ar-card">' +
-            '<div class="ar-card-top"><span class="ar-tag">' + esc(t.categoria || 'General') + '</span>' +
+            '<div class="ar-card-top"><span class="ar-tag">' + esc(t.categoria || 'Geral') + '</span>' +
             '<span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span></div>' +
             '<h3 class="ar-card-title">' + esc(t.titulo) + '</h3>' +
             '<p class="ar-card-desc">' + desc + '</p>' +
             '<p class="ar-card-meta">' + meta + '</p>' +
           '</article>';
-        }).join('') || '<p class="ar-card-meta">No tasks</p>';
+        }).join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
       }
 
       function renderContagens(lista) {
@@ -375,7 +375,7 @@
           if (sup) sup.textContent = '(' + n + ')';
         });
         document.getElementById('tarefasSummary').textContent =
-          'Showing ' + lista.length + (lista.length === 1 ? ' task' : ' tasks');
+          'Exibindo ' + lista.length + (lista.length === 1 ? ' tarefa' : ' tarefas');
       }
 
       function render() {
@@ -424,7 +424,7 @@
           A.closeDialog(modalNova);
           formNova.reset();
           preencherResponsavel();
-          A.showToast('Task recorded on the board.');
+          A.showToast('Tarefa criada com sucesso.');
           return carregar();
         }).catch(erro).then(function () {
           enviar.disabled = false;
@@ -439,13 +439,13 @@
 
         var novo = btn.getAttribute('data-action') === 'concluir' ? 'concluida' : 'em_andamento';
         var anterior = tarefa.status;
-        var mensagem = novo === 'concluida' ? 'Task marked as completed.' : 'Task started.';
+        var mensagem = novo === 'concluida' ? 'Tarefa concluída.' : 'Tarefa iniciada.';
 
         btn.disabled = true;
         A.tasks.patch(tarefa.id_tarefa, { status: novo }).then(function () {
           return carregar();
         }).then(function () {
-          A.showToast(mensagem, 'Undo', function () {
+          A.showToast(mensagem, 'Desfazer', function () {
             A.tasks.patch(tarefa.id_tarefa, { status: anterior }).then(carregar).catch(erro);
           });
         }).catch(function (err) {

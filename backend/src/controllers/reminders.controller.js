@@ -12,7 +12,7 @@ async function listReminders(req, res) {
         console.error("Erro ao listar lembretes:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -36,7 +36,7 @@ async function getReminderById(req, res) {
         console.error("Erro ao buscar lembrete:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -67,7 +67,7 @@ async function createReminder(req, res) {
         console.error("Erro ao criar lembrete:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -94,7 +94,7 @@ async function updateReminder(req, res) {
         console.error("Erro ao atualizar lembrete:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -120,7 +120,7 @@ async function deleteReminder(req, res) {
         console.error("Erro ao excluir lembrete:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
