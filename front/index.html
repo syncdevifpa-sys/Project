@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name=s"viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arcádia Mural Institucional do IFPA Campus Belém</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arcadia — Campus Portal for IFPA Belém</title>
 
-    <!-- Google Fonts: Schibsted Grotesk e IBM Plex Sans -->
+    <!-- Google Fonts: Schibsted Grotesk and IBM Plex Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,108 +18,94 @@
   </head>
   <body>
 
-    <!-- 1. Navbar Flutuante e Fixa -->
+    <!-- 1. Floating & Fixed Navbar -->
     <header class="navbar-wrapper">
-      <nav class="navbar" id="mainNavbar" aria-label="Navegação principal">
+      <nav class="navbar" id="mainNavbar" aria-label="Main navigation">
         <a href="#" class="nav-brand">
-          <img src="assets/arcadia-emblem.png" alt="Emblema da Arcádia" class="nav-brand-logo" width="34" height="34" />
-          <span class="nav-brand-title">Arcádia</span>
+          <img src="assets/arcadia-emblem.png" alt="Arcadia Emblem" class="nav-brand-logo" width="34" height="34" />
+          <span class="nav-brand-title">Arcadia</span>
           <span class="nav-brand-tag">IFPA Belém</span>
         </a>
 
         <div class="nav-links">
-          <a href="#recursos" class="nav-link">Recursos</a>
-          <a href="#para-quem" class="nav-link">Para quem</a>
-          <a href="#como-funciona" class="nav-link">Como funciona</a>
-          <a href="#duvidas" class="nav-link">Dúvidas</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#for-whom" class="nav-link">For Whom</a>
+          <a href="#how-it-works" class="nav-link">How it Works</a>
+          <a href="#faq" class="nav-link">FAQ</a>
         </div>
 
         <div class="nav-actions">
-          <a href="login.html" class="nav-btn-login">Entrar</a>
-          <a href="cadastro.html" class="btn-pill btn-pill--primary nav-btn-signup">Criar conta &rarr;</a>
-          <button type="button" class="nav-toggle-btn" id="navMobileToggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+          <a href="login.html" class="nav-btn-login">Sign in</a>
+          <a href="cadastro.html" class="btn-pill btn-pill--primary nav-btn-signup">Create account &rarr;</a>
+          <button type="button" class="nav-toggle-btn" id="navMobileToggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
         </div>
 
-        <!-- Painel Mobile Dropdown -->
+        <!-- Mobile Dropdown Panel -->
         <div class="nav-mobile-panel" id="navMobilePanel">
-          <a href="#recursos" class="nav-link">Recursos</a>
-          <a href="#para-quem" class="nav-link">Para quem</a>
-          <a href="#como-funciona" class="nav-link">Como funciona</a>
-          <a href="#duvidas" class="nav-link">Dúvidas</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#for-whom" class="nav-link">For Whom</a>
+          <a href="#how-it-works" class="nav-link">How it Works</a>
+          <a href="#faq" class="nav-link">FAQ</a>
           <div class="nav-mobile-ctas">
-            <a href="login.html" class="btn-pill btn-pill--outline" style="width: 100%;">Entrar</a>
-            <a href="cadastro.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
+            <a href="login.html" class="btn-pill btn-pill--outline" style="width: 100%;">Sign in</a>
+            <a href="cadastro.html" class="btn-pill btn-pill--primary" style="width: 100%;">Create account &rarr;</a>
           </div>
         </div>
       </nav>
     </header>
 
-    <!-- 2. Seção Hero -->
-    <section class="hero-card" id="inicio">
-      <!-- Formas Decorativas Flutuantes em SVG -->
-      <!-- Estrela Amarela 10 pontas (superior esquerdo) -->
+    <!-- 2. Hero Section -->
+    <section class="hero-card" id="home">
+      <!-- Floating decorative vector shapes -->
       <svg class="hero-deco-shape shape-star-yellow" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
-
-      <!-- Quadrilátero Vermelho Inclinado (superior direito) -->
       <svg class="hero-deco-shape shape-quad-red" viewBox="0 0 180 140" aria-hidden="true">
         <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
       </svg>
-
-      <!-- Folha Curva Amarela (borda esquerda) -->
       <svg class="hero-deco-shape shape-leaf-yellow" viewBox="0 0 140 180" aria-hidden="true">
         <path d="M10,10 C90,30 130,90 90,160 C50,130 50,70 10,10 Z" fill="#ffd000" opacity="0.9" />
       </svg>
-
-      <!-- Zigue-zague Verde-Limão (inferior esquerdo) -->
       <svg class="hero-deco-shape shape-zigzag-lime" viewBox="0 0 140 50" aria-hidden="true">
         <path d="M10,40 L40,10 L70,40 L100,10 L130,40" fill="none" stroke="#bef264" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-
-      <!-- Estrela Rosa 6 pontas (inferior direito) -->
       <svg class="hero-deco-shape shape-star-pink" viewBox="0 0 120 120" aria-hidden="true">
         <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
       </svg>
-
-      <!-- Onda Ciano (canto inferior direito) -->
       <svg class="hero-deco-shape shape-wave-cyan" viewBox="0 0 200 120" aria-hidden="true">
         <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#8be4f9" opacity="0.75" />
       </svg>
-
-      <!-- Semicírculo Verde (canto inferior esquerdo) -->
       <svg class="hero-deco-shape shape-semicircle-green" viewBox="0 0 160 90" aria-hidden="true">
         <path d="M0,80 A80,80 0 0,1 160,80 Z" fill="#3cc299" opacity="0.8" />
       </svg>
 
-      <!-- Conteúdo Central da Hero -->
+      <!-- Central Hero Content -->
       <div class="hero-content">
-        <span class="eyebrow-pill reveal-item">Mural institucional do IFPA Campus Belém</span>
+        <span class="eyebrow-pill reveal-item">Official campus bulletin for IFPA Belém</span>
 
         <h1 class="hero-title reveal-item">
-          Tudo que a<br />
-          secretaria<br />
-          publica
+          Everything the<br />
+          secretariat<br />
+          publishes
         </h1>
 
         <p class="hero-subtitle reveal-item">
-          Editais, matrículas, calendário, documentos e projetos do seu campus, com data, categoria e público. Num lugar só.
+          Announcements, enrollment, calendar, documents, and research projects from your campus with dates, categories, and target audiences. All in one place.
         </p>
 
         <div class="hero-actions reveal-item">
-          <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
-          <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Entrar no portal</a>
+          <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Create account &rarr;</a>
+          <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Access portal</a>
         </div>
 
-        <p class="hero-note reveal-item">Grátis para discentes, docentes e servidores com e-mail institucional.</p>
+        <p class="hero-note reveal-item">Free for students, faculty, and campus staff. Sign up with Google or email.</p>
       </div>
 
-      <!-- Janela de Navegador Mockup com Efeito 3D ao Rolar -->
+      <!-- 3D Mockup Browser Frame -->
       <div class="hero-browser-wrapper">
-        <!-- Etiquetas Flutuantes em Volta da Janela (Desktop) -->
-        <span class="hero-tag-floating hero-tag-matricula">Matrícula</span>
-        <span class="hero-tag-floating hero-tag-edital">Edital</span>
-        <span class="hero-tag-floating hero-tag-calendario">Calendário</span>
+        <span class="hero-tag-floating hero-tag-enrollment">Enrollment</span>
+        <span class="hero-tag-floating hero-tag-notice">Notices</span>
+        <span class="hero-tag-floating hero-tag-calendar">Calendar</span>
 
         <div class="hero-browser-frame" id="heroBrowserFrame">
           <div class="browser-header">
@@ -130,361 +116,350 @@
             </div>
             <div class="browser-address-bar">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>arcadia.ifpa.edu.br/mural</span>
+              <span>arcadia.app/portal</span>
             </div>
           </div>
           <div class="browser-content">
-            <img src="assets/print-hero.png" alt="Mural institucional após o login" class="browser-image" width="1280" height="800" />
+            <img src="assets/print-hero.png" alt="Arcadia campus dashboard preview" class="browser-image" width="1280" height="800" />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. Seção "O que é a Arcádia" (Manifesto e Estatísticas) -->
+    <!-- 3. Manifesto Section -->
     <section class="manifesto-section">
-      <span class="eyebrow-pill reveal-item">O que é a Arcádia?</span>
+      <span class="eyebrow-pill reveal-item">What is Arcadia?</span>
 
       <h2 class="manifesto-quote reveal-item">
-        A Arcádia é o mural oficial
+        Arcadia is the official digital bulletin
         <span class="inline-badge inline-badge--black" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 160 160"><polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" /></svg>
         </span>
-        da secretaria do IFPA Campus Belém.
+        for the administration of IFPA Belém Campus.
         <span class="text-muted">
-          Editais, prazos e documentos chegam
+          Notices, deadlines, and academic documents delivered
           <span class="inline-badge inline-badge--red" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 120 120"><path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#ffffff" /></svg>
           </span>
-          direto a você, sem depender de quem repassa a informação.
+          directly to you, transparently and in real time.
         </span>
       </h2>
 
       <div class="stats-grid">
         <div class="stat-item reveal-item">
-          <span class="stat-label">Alcance</span>
-          <div class="stat-value">1.284</div>
-          <p class="stat-desc">avisos entregues sem repetir a publicação em outro canal.</p>
+          <span class="stat-label">Reach</span>
+          <div class="stat-value">1,284</div>
+          <p class="stat-desc">verified notices delivered without disjointed group messages.</p>
         </div>
 
         <div class="stat-item reveal-item">
-          <span class="stat-label">Tempo</span>
-          <div class="stat-value">24h</div>
-          <p class="stat-desc">do envio da secretaria à publicação no mural.</p>
+          <span class="stat-label">Speed</span>
+          <div class="stat-value">24/7</div>
+          <p class="stat-desc">from administrative validation to live publication.</p>
         </div>
 
         <div class="stat-item reveal-item">
-          <span class="stat-label">Constância</span>
+          <span class="stat-label">Engagement</span>
           <div class="stat-value">92%</div>
-          <p class="stat-desc">abriram o mural na semana de provas.</p>
+          <p class="stat-desc">student portal activity during exams and registration weeks.</p>
         </div>
       </div>
     </section>
 
-    <!-- 4. Seção "Por dentro da plataforma" (Bento Grid) -->
-    <section class="recursos-section" id="recursos">
+    <!-- 4. Inside the Platform (Bento Grid) -->
+    <section class="features-section" id="features">
       <div class="section-header-centered">
-        <span class="eyebrow-pill reveal-item">Depois do login</span>
-        <h2 class="section-title reveal-item">Por dentro da plataforma</h2>
+        <span class="eyebrow-pill reveal-item">After Signing In</span>
+        <h2 class="section-title reveal-item">Inside the platform</h2>
         <p class="section-subtitle reveal-item">
-          Veja o que você encontra ao entrar: cada recurso com um exemplo de como ele aparece na tela.
+          Explore what awaits inside: purpose-built tools to simplify campus life.
         </p>
       </div>
 
       <div class="bento-grid">
-        <!-- Linha 1: Mural Oficial + Filtro por Vínculo -->
         <div class="bento-row">
-          <!-- Card 1: Mural Oficial (Largo) -->
-          <article class="bento-card bento-card--mural reveal-item">
+          <!-- Card 1: Official Board -->
+          <article class="bento-card bento-card--board reveal-item">
             <div>
-              <span class="bento-tag bento-tag--mural">Mural oficial</span>
-              <h3 class="bento-card-title">Avisos e notificações em tempo real</h3>
+              <span class="bento-tag bento-tag--board">Official bulletin</span>
+              <h3 class="bento-card-title">Real-time notices and announcements</h3>
               <p class="bento-card-desc">
-                Publicações diretas da secretaria acadêmica e da coordenação: confirmação de turmas, cancelamentos urgentes e cronogramas de matrícula.
+                Direct updates from academic coordination: class schedules, urgent cancellations, and enrollment timetables.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-mural.png" alt="Prévia do mural oficial de avisos" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-mural.png" alt="Official bulletin board preview" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
 
-          <!-- Card 2: Filtro por Vínculo (Azul com Mockup de Celular) -->
-          <article class="bento-card bento-card--vinculo reveal-item">
-            <!-- Formas decorativas no card azul -->
-            <svg class="shape-vinculo-star" viewBox="0 0 120 120" aria-hidden="true">
+          <!-- Card 2: Role Filtering -->
+          <article class="bento-card bento-card--affiliation reveal-item">
+            <svg class="shape-affiliation-star" viewBox="0 0 120 120" aria-hidden="true">
               <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
             </svg>
-            <div class="shape-vinculo-circle" aria-hidden="true"></div>
+            <div class="shape-affiliation-circle" aria-hidden="true"></div>
 
             <div>
-              <span class="bento-tag">Filtro por vínculo</span>
-              <h3 class="bento-card-title">Você vê primeiro o que é seu</h3>
+              <span class="bento-tag">Role filtering</span>
+              <h3 class="bento-card-title">See what matters to you first</h3>
               <p class="bento-card-desc">
-                Aluno, professor ou servidor: o mural reordena as publicações pelo vínculo confirmado pela secretaria.
+                Student, professor, or staff: the board prioritizes notices matching your verified campus affiliation.
               </p>
             </div>
 
             <div class="phone-mockup-wrap">
               <div class="phone-mockup">
                 <div class="phone-mockup-screen">
-                  <img src="assets/print-mobile.png" alt="Prévia do portal no celular" class="phone-mockup-img" width="390" height="844" loading="eager" />
+                  <img src="assets/print-mobile.png" alt="Mobile portal view preview" class="phone-mockup-img" width="390" height="844" loading="eager" />
                 </div>
               </div>
             </div>
           </article>
         </div>
 
-        <!-- Linha 2: 3 Cartões Equivalentes -->
+        <!-- Row 2: 3 Cards -->
         <div class="bento-row bento-row--tri">
-          <!-- Card 3: Central de Documentos -->
+          <!-- Card 3: Document Center -->
           <article class="bento-card bento-card--tri reveal-item">
             <div>
-              <span class="bento-tag bento-tag--doc">Central de documentos</span>
-              <h3 class="bento-card-title">Protocolos e formulários acadêmicos</h3>
+              <span class="bento-tag bento-tag--doc">Document center</span>
+              <h3 class="bento-card-title">Academic forms and records</h3>
               <p class="bento-card-desc">
-                Requerimentos, trancamento de matrícula, histórico escolar e atestados com download rápido, sem filas.
+                Certificates, enrollment proofs, declarations, and grade transcripts available for quick download.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-documentos.png" alt="Central de documentos acadêmicos" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-documentos.png" alt="Academic documents center" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
 
-          <!-- Card 4: Calendário Acadêmico -->
+          <!-- Card 4: Academic Calendar -->
           <article class="bento-card bento-card--tri reveal-item">
             <div>
-              <span class="bento-tag bento-tag--cal">Calendário acadêmico</span>
-              <h3 class="bento-card-title">As datas que valem, sempre atualizadas</h3>
+              <span class="bento-tag bento-tag--cal">Academic calendar</span>
+              <h3 class="bento-card-title">Authoritative dates, always current</h3>
               <p class="bento-card-desc">
-                Provas, reposições e eventos do semestre publicados pela própria secretaria.
+                Exams, make-up sessions, holidays, and semester events published directly by the academic secretariat.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-calendario.png" alt="Calendário acadêmico oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-calendario.png" alt="Official academic calendar" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
 
-          <!-- Card 5: Pesquisa e Extensão -->
+          <!-- Card 5: Research & Outreach -->
           <article class="bento-card bento-card--tri reveal-item">
             <div>
-              <span class="bento-tag bento-tag--proj">Pesquisa & extensão</span>
-              <h3 class="bento-card-title">Projetos fora do drive particular</h3>
+              <span class="bento-tag bento-tag--proj">Research & outreach</span>
+              <h3 class="bento-card-title">Projects beyond personal drives</h3>
               <p class="bento-card-desc">
-                Bolsas PIBIC, feiras de robótica maker, grupos de pesquisa e projetos de extensão do campus.
+                PIBIC scientific initiation grants, robotics fairs, research labs, and campus outreach initiatives.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-projetos.png" alt="Projetos de pesquisa e extensão do campus" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-projetos.png" alt="Campus research and outreach projects" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- 5. Seção "Para quem" (Escura) -->
-    <section class="para-quem-card reveal-item" id="para-quem">
-      <div class="shape-paraquem-circle" aria-hidden="true"></div>
+    <!-- 5. For Whom Section -->
+    <section class="for-whom-card reveal-item" id="for-whom">
+      <div class="shape-forwhom-circle" aria-hidden="true"></div>
 
-      <div class="para-quem-header">
+      <div class="for-whom-header">
         <div>
-          <span class="eyebrow-pill eyebrow-pill--green">Para quem é</span>
-          <h2 class="para-quem-title">Feita para toda a comunidade do IFPA</h2>
+          <span class="eyebrow-pill eyebrow-pill--green">Target Audience</span>
+          <h2 class="for-whom-title">Built for the entire IFPA community</h2>
         </div>
-        <p class="para-quem-lead">
-          Cada vínculo vê primeiro o que importa para ele, sem garimpar avisos que não são seus.
+        <p class="for-whom-lead">
+          Every member sees what matters directly to them, without wading through irrelevant announcements.
         </p>
       </div>
 
-      <div class="para-quem-grid">
-        <!-- Discentes -->
-        <article class="para-quem-box">
+      <div class="for-whom-grid">
+        <!-- Students -->
+        <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 160 160" aria-hidden="true">
               <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
             </svg>
-            <span class="box-tag">Alunos</span>
+            <span class="box-tag">Students</span>
           </div>
-          <h3 class="box-title">Discentes</h3>
-          <p class="box-desc">Prazos, bolsas e datas do seu curso sem depender do grupo da turma.</p>
+          <h3 class="box-title">Undergraduates & Technical</h3>
+          <p class="box-desc">Deadlines, scholarships, and course updates without relying on scattered group chats.</p>
           <ul class="box-list">
-            <li><span class="box-dot box-dot--yellow"></span>Períodos de matrícula e rematrícula</li>
-            <li><span class="box-dot box-dot--yellow"></span>Editais de bolsas e iniciação científica</li>
-            <li><span class="box-dot box-dot--yellow"></span>Calendário de provas e reposições</li>
+            <li><span class="box-dot box-dot--yellow"></span>Enrollment & re-registration periods</li>
+            <li><span class="box-dot box-dot--yellow"></span>Scientific initiation (PIBIC) grant calls</li>
+            <li><span class="box-dot box-dot--yellow"></span>Exam timetables & make-up schedules</li>
           </ul>
         </article>
 
-        <!-- Docentes -->
-        <article class="para-quem-box">
+        <!-- Faculty -->
+        <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 180 140" aria-hidden="true">
               <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
             </svg>
-            <span class="box-tag">Professores</span>
+            <span class="box-tag">Faculty</span>
           </div>
-          <h3 class="box-title">Docentes</h3>
-          <p class="box-desc">Chamadas, prazos e mudanças de calendário que afetam as suas turmas.</p>
+          <h3 class="box-title">Professors & Instructors</h3>
+          <p class="box-desc">Calls, submission deadlines, and calendar revisions affecting your classes.</p>
           <ul class="box-list">
-            <li><span class="box-dot box-dot--red"></span>Chamadas internas de projetos de extensão</li>
-            <li><span class="box-dot box-dot--red"></span>Prazos de lançamento de notas</li>
-            <li><span class="box-dot box-dot--red"></span>Alterações no calendário acadêmico</li>
+            <li><span class="box-dot box-dot--red"></span>Internal calls for outreach and research</li>
+            <li><span class="box-dot box-dot--red"></span>Grade submission deadlines</li>
+            <li><span class="box-dot box-dot--red"></span>Academic calendar revisions</li>
           </ul>
         </article>
 
-        <!-- Servidores -->
-        <article class="para-quem-box">
+        <!-- Staff -->
+        <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 200 120" aria-hidden="true">
               <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#8be4f9" />
             </svg>
-            <span class="box-tag">Técnicos e administrativos</span>
+            <span class="box-tag">Staff & Administration</span>
           </div>
-          <h3 class="box-title">Servidores</h3>
-          <p class="box-desc">Fluxos internos e documentos da gestão do campus num só lugar.</p>
+          <h3 class="box-title">Administrative Personnel</h3>
+          <p class="box-desc">Internal workflows, memos, and campus management documents in one place.</p>
           <ul class="box-list">
-            <li><span class="box-dot box-dot--cyan"></span>Novos fluxos, como diárias e passagens</li>
-            <li><span class="box-dot box-dot--cyan"></span>Documentos e formulários internos</li>
-            <li><span class="box-dot box-dot--cyan"></span>Comunicados da gestão do campus</li>
+            <li><span class="box-dot box-dot--cyan"></span>Official forms and administrative workflows</li>
+            <li><span class="box-dot box-dot--cyan"></span>Campus internal documents</li>
+            <li><span class="box-dot box-dot--cyan"></span>Dean and management communications</li>
           </ul>
         </article>
       </div>
     </section>
 
-    <!-- 6. Seção "Como começar" (Lilás) -->
-    <section class="passos-card reveal-item" id="como-funciona">
-      <div class="shape-passos-right" aria-hidden="true"></div>
+    <!-- 6. How it Works Section -->
+    <section class="steps-card reveal-item" id="how-it-works">
+      <div class="shape-steps-right" aria-hidden="true"></div>
 
       <div class="section-header-centered">
-        <span class="eyebrow-pill">Como começar</span>
-        <h2 class="section-title">Três passos até o seu mural</h2>
-        <p class="section-subtitle">Sem burocracia: quem confirma o seu vínculo é a própria secretaria.</p>
+        <span class="eyebrow-pill">Getting Started</span>
+        <h2 class="section-title">Three steps to your campus bulletin</h2>
+        <p class="section-subtitle">Straightforward access: your affiliation is validated directly by campus records.</p>
       </div>
 
-      <ol class="passos-grid">
-        <!-- Passo 1 -->
-        <li class="passo-box">
-          <div class="passo-banner passo-banner--blue">
-            <div class="passo-shape-wrap">
+      <ol class="steps-grid">
+        <li class="step-box">
+          <div class="step-banner step-banner--blue">
+            <div class="step-shape-wrap">
               <svg viewBox="0 0 160 160" aria-hidden="true">
                 <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
               </svg>
-              <span class="passo-number">1</span>
+              <span class="step-number">1</span>
             </div>
           </div>
-          <div class="passo-body">
-            <h3 class="passo-title">Crie sua conta</h3>
-            <p class="passo-desc">Cadastre-se com o seu e-mail institucional do IFPA. É grátis.</p>
+          <div class="step-body">
+            <h3 class="step-title">Create your account</h3>
+            <p class="step-desc">Sign up with Google or your email. It's fast and 100% free.</p>
           </div>
         </li>
 
-        <!-- Passo 2 -->
-        <li class="passo-box">
-          <div class="passo-banner passo-banner--red">
-            <div class="passo-shape-wrap">
+        <li class="step-box">
+          <div class="step-banner step-banner--red">
+            <div class="step-shape-wrap">
               <svg viewBox="0 0 180 140" aria-hidden="true">
                 <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
               </svg>
-              <span class="passo-number">2</span>
+              <span class="step-number">2</span>
             </div>
           </div>
-          <div class="passo-body">
-            <h3 class="passo-title">A secretaria confirma seu vínculo</h3>
-            <p class="passo-desc">Discente, docente ou servidor: a verificação é feita pela própria secretaria.</p>
+          <div class="step-body">
+            <h3 class="step-title">Campus records confirmation</h3>
+            <p class="step-desc">Student, professor, or staff: verification is matched with academic department records.</p>
           </div>
         </li>
 
-        <!-- Passo 3 -->
-        <li class="passo-box">
-          <div class="passo-banner passo-banner--green">
-            <div class="passo-shape-wrap">
+        <li class="step-box">
+          <div class="step-banner step-banner--green">
+            <div class="step-shape-wrap">
               <svg viewBox="0 0 120 120" aria-hidden="true">
                 <path d="M60,4 L73,21 L94,14 L99,35 L120,38 L114,59 L129,74 L114,89 L120,110 L99,113 L94,134 L73,127 L60,144 L47,127 L26,134 L21,113 L0,110 L6,89 L-9,74 L6,59 L0,38 L21,35 L26,14 L47,21 Z" fill="#3cc299" />
               </svg>
-              <span class="passo-number">3</span>
+              <span class="step-number">3</span>
             </div>
           </div>
-          <div class="passo-body">
-            <h3 class="passo-title">Acompanhe o que é seu</h3>
-            <p class="passo-desc">Avisos, prazos e documentos aparecem organizados pelo seu vínculo, no computador ou no celular.</p>
+          <div class="step-body">
+            <h3 class="step-title">Stay up to date</h3>
+            <p class="step-desc">Notices, deadlines, and documents organized by your affiliation on desktop and mobile.</p>
           </div>
         </li>
       </ol>
     </section>
 
-    <!-- 7. Seção "Dúvidas frequentes" -->
-    <section class="faq-section" id="duvidas">
+    <!-- 7. FAQ Section -->
+    <section class="faq-section" id="faq">
       <div class="faq-layout">
         <div class="faq-left">
-          <span class="eyebrow-pill">Dúvidas frequentes</span>
-          <h2 class="faq-main-title">Antes de criar sua conta</h2>
-          <p class="faq-support-text">Não encontrou o que procurava? Escreva para a secretaria:</p>
-          <a href="mailto:secretaria.belem@ifpa.edu.br" class="faq-email-link">secretaria.belem@ifpa.edu.br</a>
+          <span class="eyebrow-pill">FAQ</span>
+          <h2 class="faq-main-title">Frequently asked questions</h2>
+          <p class="faq-support-text">Can't find what you are looking for? Reach out to our campus team:</p>
+          <a href="mailto:arcadia.ifpa@gmail.com" class="faq-email-link">arcadia.ifpa@gmail.com</a>
         </div>
 
         <div class="faq-accordion">
-          <!-- Item 1 (Aberto por padrão) -->
           <div class="faq-item">
             <button type="button" class="faq-trigger" aria-expanded="true">
-              <span>Quem pode usar a Arcádia?</span>
+              <span>Who can use Arcadia?</span>
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Discentes, docentes e servidores do IFPA Campus Belém. Basta ter um e-mail institucional para criar a conta.</p>
+              <p>Students, faculty, and campus staff from IFPA Belém. Anyone with a Google account (Gmail) can sign up.</p>
             </div>
           </div>
 
-          <!-- Item 2 -->
           <div class="faq-item">
             <button type="button" class="faq-trigger" aria-expanded="false">
-              <span>É preciso pagar alguma coisa?</span>
+              <span>Is there any subscription fee?</span>
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Não. A Arcádia é uma plataforma institucional 100% gratuita desenvolvida para atender toda a comunidade do campus.</p>
+              <p>No. Arcadia is a 100% free platform developed to serve the entire campus community.</p>
             </div>
           </div>
 
-          <!-- Item 3 -->
           <div class="faq-item">
             <button type="button" class="faq-trigger" aria-expanded="false">
-              <span>Como o meu vínculo é confirmado?</span>
+              <span>How is my affiliation verified?</span>
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Ao se cadastrar com o seu e-mail institucional, a própria secretaria acadêmica valida o seu curso, matrícula ou cargo no sistema interno.</p>
+              <p>When creating your account, your course, registration number, or staff role is automatically validated with the internal academic system.</p>
             </div>
           </div>
 
-          <!-- Item 4 -->
           <div class="faq-item">
             <button type="button" class="faq-trigger" aria-expanded="false">
-              <span>A Arcádia substitui o SIGAA?</span>
+              <span>Does Arcadia replace SIGAA?</span>
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Não. O SIGAA continua sendo o sistema acadêmico oficial para lançamento de notas e histórico. A Arcádia centraliza a comunicação, editais e avisos em tempo real.</p>
+              <p>No. SIGAA remains the official academic system for grades and formal transcripts. Arcadia centralizes real-time communication, bulletin notices, and community workflows.</p>
             </div>
           </div>
 
-          <!-- Item 5 -->
           <div class="faq-item">
             <button type="button" class="faq-trigger" aria-expanded="false">
-              <span>Funciona no celular?</span>
+              <span>Does it work on smartphones?</span>
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Sim. O portal é totalmente responsivo e foi construído com navegação ágil para smartphones, sem necessidade de baixar aplicativos externos.</p>
+              <p>Yes. The portal is fully responsive and designed for smooth browsing on mobile devices without requiring extra app downloads.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 8. CTA Final -->
+    <!-- 8. Final CTA -->
     <section class="cta-card reveal-item">
-      <!-- Formas flutuantes no CTA final -->
       <svg class="hero-deco-shape shape-star-yellow" style="top: 40px; left: 8%; width: 70px; height: 70px;" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
@@ -498,88 +473,82 @@
         <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
       </svg>
 
-      <h2 class="cta-title">Comece pelo mural</h2>
-      <p class="cta-subtitle">Grátis com e-mail institucional. A verificação de vínculo é feita pela própria secretaria.</p>
+      <h2 class="cta-title">Start with the bulletin</h2>
+      <p class="cta-subtitle">Free with Google or personal email. Affiliation is confirmed directly with academic records.</p>
 
       <div class="cta-actions">
-        <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
-        <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Entrar no portal</a>
+        <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Create account &rarr;</a>
+        <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Access portal</a>
       </div>
 
-      <!-- Marca d'água gigante vazando na base -->
-      <div class="cta-watermark" aria-hidden="true">Arcádia</div>
+      <div class="cta-watermark" aria-hidden="true">Arcadia</div>
     </section>
 
-    <!-- 9. Rodapé Oficial -->
+    <!-- 9. Official Footer -->
     <footer class="footer-main">
       <div class="container">
         <div class="footer-top">
           <div class="footer-brand">
-            <img src="assets/arcadia-emblem-dark.png" alt="Emblema da Arcádia" class="nav-brand-logo" width="36" height="36" />
+            <img src="assets/arcadia-emblem-dark.png" alt="Arcadia Emblem" class="nav-brand-logo" width="36" height="36" />
             <div>
-              <div class="footer-brand-title">Arcádia</div>
-              <div class="footer-brand-sub">IFPA Campus Belém</div>
+              <div class="footer-brand-title">Arcadia</div>
+              <div class="footer-brand-sub">IFPA Belém Campus</div>
             </div>
           </div>
-          <span class="footer-badge-status">Sistema ativo no IFPA Campus Belém</span>
+          <span class="footer-badge-status">System active at IFPA Belém Campus</span>
         </div>
 
         <div class="footer-columns">
-          <!-- Coluna 1: Sobre -->
           <div>
-            <div class="footer-col-title">Sobre o portal</div>
+            <div class="footer-col-title">About the portal</div>
             <p class="footer-desc">
-              O mural institucional que reúne editais, matrículas, calendário, documentos e projetos da instituição, com data, categoria e público. Num lugar só.
+              The campus bulletin that unites announcements, enrollment, calendar, documents, and community projects with dates, categories, and target audiences. All in one place.
             </p>
           </div>
 
-          <!-- Coluna 2: Plataforma -->
           <div>
-            <div class="footer-col-title">Plataforma</div>
+            <div class="footer-col-title">Platform</div>
             <ul class="footer-links">
-              <li><a href="avisos.html">Mural de avisos</a></li>
-              <li><a href="documentos.html">Central de documentos</a></li>
-              <li><a href="projetos.html">Projetos da comunidade</a></li>
-              <li><a href="calendario.html">Calendário acadêmico</a></li>
+              <li><a href="avisos.html">Bulletin Board</a></li>
+              <li><a href="documentos.html">Document Center</a></li>
+              <li><a href="projetos.html">Community Projects</a></li>
+              <li><a href="calendario.html">Academic Calendar</a></li>
             </ul>
           </div>
 
-          <!-- Coluna 3: Institucional -->
           <div>
-            <div class="footer-col-title">Institucional</div>
+            <div class="footer-col-title">Campus Resources</div>
             <ul class="footer-links">
               <li><a href="https://sigaa.ifpa.edu.br" target="_blank" rel="noopener">SIGAA IFPA</a></li>
-              <li><a href="https://biblioteca.ifpa.edu.br" target="_blank" rel="noopener">Biblioteca Virtual</a></li>
-              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Assistência Estudantil</a></li>
-              <li><a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener">Ouvidoria Geral</a></li>
-              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Área do Servidor</a></li>
+              <li><a href="https://biblioteca.ifpa.edu.br" target="_blank" rel="noopener">Virtual Library</a></li>
+              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Student Assistance</a></li>
+              <li><a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener">Campus Ombudsman</a></li>
+              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Faculty & Staff Portal</a></li>
             </ul>
           </div>
 
-          <!-- Coluna 4: Secretaria & Contato -->
           <div>
-            <div class="footer-col-title">Secretaria & contato</div>
+            <div class="footer-col-title">Secretariat & Contact</div>
             <div class="footer-contact-info">
-              <p><a href="mailto:secretaria.belem@ifpa.edu.br">secretaria.belem@ifpa.edu.br</a></p>
-              <p style="margin: 8px 0;">Atendimento das 8h às 17h</p>
-              <p>Bloco Administrativo, IFPA Campus Belém</p>
+              <p><a href="mailto:arcadia.ifpa@gmail.com">arcadia.ifpa@gmail.com</a></p>
+              <p style="margin: 8px 0;">Office hours: 8:00 AM – 5:00 PM</p>
+              <p>Administrative Building, IFPA Belém Campus</p>
             </div>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <div>IFPA Campus Belém, 2026 · Pré-projeto do curso técnico em desenvolvimento de sistemas</div>
+          <div>IFPA Belém Campus, 2026 · Systems Development Academic Project</div>
           <div class="footer-bottom-links">
-            <a href="#">Política de privacidade</a>
-            <a href="#">Termos de uso</a>
-            <a href="#">Acessibilidade</a>
-            <a href="#">Mapa do site</a>
+            <a href="#">Privacy policy</a>
+            <a href="#">Terms of use</a>
+            <a href="#">Accessibility</a>
+            <a href="#">Sitemap</a>
           </div>
         </div>
       </div>
     </footer>
 
-    <!-- Script de Interações e Movimento da Landing -->
     <script src="landing.js"></script>
   </body>
 </html>

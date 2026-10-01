@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pessoas · Arcádia IFPA</title>
+  <title>People</title>
 
-  <!-- Script inline para aplicar tema e acessibilidade antes da primeira pintura sem piscar -->
+  <!-- Inline script to apply theme and accessibility before first paint without flicker -->
   <script>
     (function () {
       var THEME_KEY = 'arcadia-theme';
@@ -40,30 +40,30 @@
     <!-- TopNav -->
     <header class="ar-nav">
       <a class="ar-brand" href="inicio.html">
-        <img src="public/arcadia-logo-128.png" alt="Logo Arcádia" class="ar-brand-img" width="34" height="34">
+        <img src="public/arcadia-logo-128.png" alt="Arcadia Logo" class="ar-brand-img" width="34" height="34">
         <span>
-          <div class="ar-brand-name">Arcádia</div>
+          <div class="ar-brand-name">Arcadia</div>
           <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
         </span>
       </a>
 
-      <nav class="ar-navpill" aria-label="Seções do portal">
-        <a href="inicio.html">Painel</a>
-        <a href="avisos.html">Avisos<sup class="ar-sup">(5)</sup></a>
-        <a href="tarefas.html">Tarefas<sup class="ar-sup">(4)</sup></a>
-        <a href="documentos.html">Documentos<sup class="ar-sup">(4)</sup></a>
-        <a href="calendario.html">Calendário<sup class="ar-sup">(4)</sup></a>
+      <nav class="ar-navpill" aria-label="Portal sections">
+        <a href="inicio.html">Dashboard</a>
+        <a href="avisos.html">Notices<sup class="ar-sup">(5)</sup></a>
+        <a href="tarefas.html">Tasks<sup class="ar-sup">(4)</sup></a>
+        <a href="documentos.html">Documents<sup class="ar-sup">(4)</sup></a>
+        <a href="calendario.html">Calendar<sup class="ar-sup">(4)</sup></a>
         <span class="ar-sep" aria-hidden="true"></span>
-        <a href="pessoas.html" aria-current="page">Pessoas<sup class="ar-sup">(4)</sup></a>
-        <a href="projetos.html">Projetos<sup class="ar-sup">(4)</sup></a>
+        <a href="pessoas.html" aria-current="page">People<sup class="ar-sup">(4)</sup></a>
+        <a href="projetos.html">Projects<sup class="ar-sup">(4)</sup></a>
       </nav>
 
       <div class="ar-nav-end">
-        <button type="button" class="ar-iconbtn" aria-label="Buscar (⌘K)" title="Buscar (⌘K)" data-search-trigger>
+        <button type="button" class="ar-iconbtn" aria-label="Search (⌘K)" title="Search (⌘K)" data-search-trigger>
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
         </button>
 
-        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Settings" title="Settings">
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
         </a>
 
@@ -71,15 +71,15 @@
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
           <div>
             <div class="ar-user-name">Ana Ribeiro</div>
-            <div class="ar-user-role">Aluno</div>
+            <div class="ar-user-role">Student</div>
           </div>
         </a>
 
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sign out</button>
       </div>
     </header>
 
-    <!-- PageHero Compacto em Ciano -->
+    <!-- PageHero Compact in Cyan -->
     <section class="ar-hero ar-hero--cyan ar-hero--compact">
       <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
         <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
@@ -90,33 +90,33 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <h1 class="ar-hero-title">Pessoas<sup class="ar-hero-count">(4)</sup></h1>
+      <h1 class="ar-hero-title">People<sup class="ar-hero-count">(4)</sup></h1>
       <div class="ar-hero-side">
-        <p class="ar-hero-desc">Diretório de contatos acadêmicos, orientadores, servidores e colegas de turma.</p>
+        <p class="ar-hero-desc">Directory of academic contacts, advisors, faculty staff, and classmates.</p>
       </div>
     </section>
 
-    <!-- ChipBar Vínculo -->
-    <div class="ar-chipbar" role="group" aria-label="Filtro de pessoas" id="chipbarPessoas">
-      <button type="button" class="ar-chip" aria-pressed="true" data-vinculo="Todos">Todos<sup class="ar-sup">(4)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Aluno">Aluno<sup class="ar-sup">(2)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Professor">Professor<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Servidor">Servidor<sup class="ar-sup">(1)</sup></button>
+    <!-- ChipBar Affiliation -->
+    <div class="ar-chipbar" role="group" aria-label="People filter" id="chipbarPessoas">
+      <button type="button" class="ar-chip" aria-pressed="true" data-vinculo="All">All<sup class="ar-sup">(4)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Student">Students<sup class="ar-sup">(2)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Professor">Professors<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Staff">Staff<sup class="ar-sup">(1)</sup></button>
     </div>
 
-    <!-- Grade de Pessoas -->
+    <!-- People Grid -->
     <div class="ar-card-grid" id="gridPessoas">
-      <article class="ar-card" data-vinculo="Aluno">
+      <article class="ar-card" data-vinculo="Student">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="ar-avatar ar-avatar--cyan" style="width:44px; height:44px; font-size:16px;">AR</span>
           <div>
             <h3 class="ar-card-title" style="margin:0; font-size:18px; line-height:24px;">Ana Ribeiro</h3>
-            <span class="ar-badge ar-badge--cyan" style="margin-top:4px;">Aluno</span>
+            <span class="ar-badge ar-badge--cyan" style="margin-top:4px;">Student</span>
           </div>
         </div>
-        <p class="ar-card-desc" style="margin-top:var(--space-2);">Técnico em Informática · 4º período</p>
+        <p class="ar-card-desc" style="margin-top:var(--space-2);">Information Technology Technical Degree · 4th semester</p>
         <p class="ar-card-meta">
-          <span>E-mail: <b>ana.ribeiro@ifpa.edu.br</b></span>
+          <span>Email: <b>ana.ribeiro@gmail.com</b></span>
         </p>
       </article>
 
@@ -128,37 +128,37 @@
             <span class="ar-badge ar-badge--pink" style="margin-top:4px;">Professor</span>
           </div>
         </div>
-        <p class="ar-card-desc" style="margin-top:var(--space-2);">Coordenação de Pesquisa e Pós-graduação</p>
+        <p class="ar-card-desc" style="margin-top:var(--space-2);">Coordination of Research & Graduate Studies</p>
         <p class="ar-card-meta">
-          <span>E-mail: <b>marcos.tavares@ifpa.edu.br</b></span>
+          <span>Email: <b>marcos.tavares@gmail.com</b></span>
         </p>
       </article>
 
-      <article class="ar-card" data-vinculo="Servidor">
+      <article class="ar-card" data-vinculo="Staff">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="ar-avatar ar-avatar--yellow" style="width:44px; height:44px; font-size:16px;">JA</span>
           <div>
             <h3 class="ar-card-title" style="margin:0; font-size:18px; line-height:24px;">Júlia Andrade</h3>
-            <span class="ar-badge ar-badge--neutral" style="margin-top:4px;">Servidor</span>
+            <span class="ar-badge ar-badge--neutral" style="margin-top:4px;">Staff</span>
           </div>
         </div>
-        <p class="ar-card-desc" style="margin-top:var(--space-2);">Secretaria Acadêmica · Atendimento ao Aluno</p>
+        <p class="ar-card-desc" style="margin-top:var(--space-2);">Academic Registrar Office · Student Support Desk</p>
         <p class="ar-card-meta">
-          <span>E-mail: <b>julia.andrade@ifpa.edu.br</b></span>
+          <span>Email: <b>julia.andrade@gmail.com</b></span>
         </p>
       </article>
 
-      <article class="ar-card" data-vinculo="Aluno">
+      <article class="ar-card" data-vinculo="Student">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="ar-avatar ar-avatar--lime" style="width:44px; height:44px; font-size:16px;">RL</span>
           <div>
             <h3 class="ar-card-title" style="margin:0; font-size:18px; line-height:24px;">Rafael Lima</h3>
-            <span class="ar-badge ar-badge--cyan" style="margin-top:4px;">Aluno</span>
+            <span class="ar-badge ar-badge--cyan" style="margin-top:4px;">Student</span>
           </div>
         </div>
-        <p class="ar-card-desc" style="margin-top:var(--space-2);">Bacharelado em Agroecologia · 2º período</p>
+        <p class="ar-card-desc" style="margin-top:var(--space-2);">Bachelor in Agroecology · 2nd semester</p>
         <p class="ar-card-meta">
-          <span>E-mail: <b>rafael.lima@ifpa.edu.br</b></span>
+          <span>Email: <b>rafael.lima@gmail.com</b></span>
         </p>
       </article>
     </div>
@@ -176,7 +176,7 @@
           chip.setAttribute('aria-pressed', 'true');
           var v = chip.getAttribute('data-vinculo');
           cards.forEach(function (c) {
-            if (v === 'Todos' || c.getAttribute('data-vinculo') === v) {
+            if (v === 'All' || c.getAttribute('data-vinculo') === v) {
               c.style.display = 'flex';
             } else {
               c.style.display = 'none';
