@@ -723,8 +723,8 @@
           </div>
 
           <form action="inicio.html" method="get" data-acesso="login" style="display: flex; flex-direction: column; gap: 18px;">
-            <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
-            <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
+            <div class="error-message mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
+            <div class="success-message mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
 
             <!-- Email -->
             <div class="ar-input-group">
@@ -745,13 +745,13 @@
 
             <!-- Password -->
             <div class="ar-input-group">
-              <label class="ar-input-label" for="senha">
+              <label class="ar-input-label" for="password">
                 <span>Password</span>
               </label>
               <div class="ar-input-wrap ar-input-wrap--password">
                 <input
                   type="password"
-                  id="senha"
+                  id="password"
                   name="senha"
                   placeholder="••••••••"
                   autocomplete="current-password"

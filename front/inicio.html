@@ -90,7 +90,7 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <h1 class="ar-hero-title">Hello, <span id="painelUserGreeting">Student</span></h1>
+      <h1 class="ar-hero-title">Hello, <span id="panelUserGreeting">Student</span></h1>
       <div class="ar-hero-side">
         <p class="ar-hero-desc">You have 3 open tasks and 2 documents pending review. Next deadline is Sep 12.</p>
         <div class="ar-hero-actions">
@@ -267,7 +267,7 @@
       var sess = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
       if (sess.nome) {
         var pName = sess.nome.split(' ')[0];
-        var el = document.getElementById('painelUserGreeting');
+        var el = document.getElementById('panelUserGreeting');
         if (el) el.textContent = pName;
       }
     } catch (e) {}

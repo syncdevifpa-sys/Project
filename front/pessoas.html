@@ -97,7 +97,7 @@
     </section>
 
     <!-- ChipBar Affiliation -->
-    <div class="ar-chipbar" role="group" aria-label="People filter" id="chipbarPessoas">
+    <div class="ar-chipbar" role="group" aria-label="People filter" id="chipbarPeople">
       <button type="button" class="ar-chip" aria-pressed="true" data-vinculo="All">All<sup class="ar-sup">(4)</sup></button>
       <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Student">Students<sup class="ar-sup">(2)</sup></button>
       <button type="button" class="ar-chip" aria-pressed="false" data-vinculo="Professor">Professors<sup class="ar-sup">(1)</sup></button>
@@ -105,7 +105,7 @@
     </div>
 
     <!-- People Grid -->
-    <div class="ar-card-grid" id="gridPessoas">
+    <div class="ar-card-grid" id="gridPeople">
       <article class="ar-card" data-vinculo="Student">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="ar-avatar ar-avatar--cyan" style="width:44px; height:44px; font-size:16px;">AR</span>
@@ -168,8 +168,8 @@
   <script src="portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var chips = document.querySelectorAll('#chipbarPessoas .ar-chip');
-      var cards = document.querySelectorAll('#gridPessoas .ar-card');
+      var chips = document.querySelectorAll('#chipbarPeople .ar-chip');
+      var cards = document.querySelectorAll('#gridPeople .ar-card');
       chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
           chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });

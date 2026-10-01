@@ -8,11 +8,13 @@
 
     if (navToggle && navLinks) {
         navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
             navLinks.classList.toggle('aberto');
         });
 
         navLinks.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
+                navLinks.classList.remove('open');
                 navLinks.classList.remove('aberto');
             }
         });
@@ -21,18 +23,18 @@
     // Role / Affiliation selector pills
     function initRoleButtons() {
         const roleBtns = document.querySelectorAll('.ar-role-btn');
-        const vinculoInput = document.getElementById('vinculoInput');
-        const cursoWrap = document.getElementById('campoCursoWrapper');
-        const cursoSelect = document.getElementById('curso');
+        const vinculoInput = document.getElementById('affiliationInput') || document.getElementById('vinculoInput');
+        const cursoWrap = document.getElementById('fieldCourseWrapper') || document.getElementById('campoCursoWrapper');
+        const cursoSelect = document.getElementById('course') || document.getElementById('curso');
 
         roleBtns.forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 roleBtns.forEach((b) => {
-                    b.classList.remove('is-active', 'ativo');
+                    b.classList.remove('is-active', 'ativo', 'active');
                     b.setAttribute('aria-checked', 'false');
                 });
-                btn.classList.add('is-active', 'ativo');
+                btn.classList.add('is-active', 'ativo', 'active');
                 btn.setAttribute('aria-checked', 'true');
 
                 const val = btn.getAttribute('data-vinculo') || btn.textContent.trim();
@@ -55,10 +57,10 @@
                 pill.addEventListener('click', (e) => {
                     e.preventDefault();
                     grupo.querySelectorAll('.pill, .ar-chip').forEach((p) => {
-                        p.classList.remove('ativo', 'is-active');
+                        p.classList.remove('ativo', 'active', 'is-active');
                         p.setAttribute('aria-checked', 'false');
                     });
-                    pill.classList.add('ativo', 'is-active');
+                    pill.classList.add('ativo', 'active', 'is-active');
                     pill.setAttribute('aria-checked', 'true');
                     if (vinculoInput) vinculoInput.value = pill.textContent.trim();
                 });
@@ -69,7 +71,7 @@
 
     // Phone mask
     function applyPhoneMask() {
-        const telInput = document.getElementById('telefone');
+        const telInput = document.getElementById('phone') || document.getElementById('telefone');
         if (!telInput) return;
 
         telInput.addEventListener('input', (e) => {
@@ -252,7 +254,7 @@
         }));
 
         const form = document.querySelector('form[data-acesso]');
-        const msgSucesso = form ? form.querySelector('.mensagem-sucesso') : null;
+        const msgSucesso = form ? (form.querySelector('.success-message') || form.querySelector('.mensagem-sucesso')) : null;
         if (msgSucesso) {
             msgSucesso.textContent = `Signed in with Google (${realEmail})! Sending confirmation email...`;
             msgSucesso.style.display = 'block';
@@ -308,7 +310,7 @@
             if (realGoogleName) realGoogleName.required = false;
         }
 
-        const formName = document.getElementById('nome');
+        const formName = document.getElementById('name') || document.getElementById('nome');
         const formEmail = document.getElementById('email');
 
         if (formEmail && formEmail.value.trim() && realGoogleEmail) {
@@ -535,7 +537,7 @@
         localStorage.setItem('arcadiaToken', user.token);
 
         const form = document.querySelector('form[data-acesso]');
-        const msgSucesso = form ? form.querySelector('.mensagem-sucesso') : null;
+        const msgSucesso = form ? (form.querySelector('.success-message') || form.querySelector('.mensagem-sucesso')) : null;
         if (msgSucesso) {
             msgSucesso.textContent = 'Signed in with Facebook! Redirecting...';
             msgSucesso.style.display = 'block';
@@ -554,8 +556,8 @@
     // Forms handling: Sign up and Sign in
     document.querySelectorAll('form[data-acesso]').forEach((form) => {
         const tipoAcesso = form.getAttribute('data-acesso');
-        const msgErro = form.querySelector('.mensagem-erro');
-        const msgSucesso = form.querySelector('.mensagem-sucesso');
+        const msgErro = form.querySelector('.error-message') || form.querySelector('.mensagem-erro');
+        const msgSucesso = form.querySelector('.success-message') || form.querySelector('.mensagem-sucesso');
 
         const showError = (text) => {
             if (msgErro) {
@@ -581,12 +583,12 @@
             if (msgSucesso) msgSucesso.style.display = 'none';
 
             const emailEl = form.querySelector('#email');
-            const senhaEl = form.querySelector('#senha');
-            const nomeEl = form.querySelector('#nome');
-            const telEl = form.querySelector('#telefone');
-            const cursoEl = form.querySelector('#curso');
-            const vinculoInput = form.querySelector('#vinculoInput');
-            const roleBtnAtivo = form.querySelector('.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo');
+            const senhaEl = form.querySelector('#password') || form.querySelector('#senha');
+            const nomeEl = form.querySelector('#name') || form.querySelector('#nome');
+            const telEl = form.querySelector('#phone') || form.querySelector('#telefone');
+            const cursoEl = form.querySelector('#course') || form.querySelector('#curso');
+            const vinculoInput = form.querySelector('#affiliationInput') || form.querySelector('#vinculoInput');
+            const roleBtnAtivo = form.querySelector('.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo, .pill.active');
 
             const email = emailEl ? emailEl.value.trim() : '';
             const senha = senhaEl ? senhaEl.value : '';
@@ -763,7 +765,7 @@
     if (currentSession.nome) {
         const firstName = currentSession.nome.split(' ')[0];
 
-        const greetingEl = document.getElementById('painelUserGreeting');
+        const greetingEl = document.getElementById('panelUserGreeting') || document.getElementById('painelUserGreeting');
         if (greetingEl) {
             greetingEl.textContent = firstName;
         }

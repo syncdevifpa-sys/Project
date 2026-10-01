@@ -94,7 +94,7 @@
       <div class="ar-hero-side">
         <p class="ar-hero-desc">Research, extension, and innovation projects open for applications and ongoing at campus.</p>
         <div class="ar-hero-actions">
-          <button type="button" class="ar-btn ar-btn--primary" id="btnNovoProjeto">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNewProject">
             <span>Submit project</span>
             <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
@@ -103,7 +103,7 @@
     </section>
 
     <!-- ChipBar Thematic Area -->
-    <div class="ar-chipbar" role="group" aria-label="Project track" id="chipbarProjetos">
+    <div class="ar-chipbar" role="group" aria-label="Project track" id="chipbarProjects">
       <button type="button" class="ar-chip" aria-pressed="true" data-eixo="All">All<sup class="ar-sup">(4)</sup></button>
       <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Research">Research<sup class="ar-sup">(1)</sup></button>
       <button type="button" class="ar-chip" aria-pressed="false" data-eixo="Extension">Extension<sup class="ar-sup">(1)</sup></button>
@@ -112,7 +112,7 @@
     </div>
 
     <!-- Projects Grid -->
-    <div class="ar-card-grid" id="gridProjetos">
+    <div class="ar-card-grid" id="gridProjects">
       <article class="ar-card" data-eixo="Research">
         <div class="ar-card-top">
           <span class="ar-tag">Research</span>
@@ -167,7 +167,7 @@
     </div>
 
     <!-- Modal Dialog: Submit Project -->
-    <div class="ar-scrim" id="modalNovoProjeto" style="display:none; z-index:100;">
+    <div class="ar-scrim" id="modalNewProject" style="display:none; z-index:100;">
       <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Submit project proposal">
         <div class="ar-dialog-head">
           <div>
@@ -180,20 +180,20 @@
           </button>
         </div>
 
-        <form id="formNovoProjeto" style="display:flex; flex-direction:column; gap:var(--space-3);">
+        <form id="formNewProject" style="display:flex; flex-direction:column; gap:var(--space-3);">
           <label class="ar-field">
             <span class="ar-field-label">Project title</span>
-            <input type="text" id="projetoTitulo" placeholder="Example: Energy efficiency in data centers" required>
+            <input type="text" id="projectTitle" placeholder="Example: Energy efficiency in data centers" required>
           </label>
 
           <label class="ar-field">
             <span class="ar-field-label">Thematic track</span>
-            <input type="text" id="projetoEixo" placeholder="Example: Applied Research" required>
+            <input type="text" id="projectAxis" placeholder="Example: Applied Research" required>
           </label>
 
           <label class="ar-field">
             <span class="ar-field-label">Proposal abstract</span>
-            <textarea id="projetoResumo" rows="3" placeholder="Outline the main goals, methodology, and expected outcomes..."></textarea>
+            <textarea id="projectSummary" rows="3" placeholder="Outline the main goals, methodology, and expected outcomes..."></textarea>
           </label>
 
           <div class="ar-dialog-foot">
@@ -209,31 +209,31 @@
   <script src="portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var btnNovo = document.getElementById('btnNovoProjeto');
-      var modalNovo = document.getElementById('modalNovoProjeto');
-      if (btnNovo && modalNovo) {
-        btnNovo.addEventListener('click', function () {
-          Arcadia.openDialog(modalNovo);
+      var btnNew = document.getElementById('btnNewProject');
+      var modalNew = document.getElementById('modalNewProject');
+      if (btnNew && modalNew) {
+        btnNew.addEventListener('click', function () {
+          Arcadia.openDialog(modalNew);
         });
       }
 
-      var formNovo = document.getElementById('formNovoProjeto');
-      if (formNovo) {
-        formNovo.addEventListener('submit', function (e) {
+      var formNew = document.getElementById('formNewProject');
+      if (formNew) {
+        formNew.addEventListener('submit', function (e) {
           e.preventDefault();
-          var titulo = document.getElementById('projetoTitulo').value.trim();
-          if (!titulo) return;
+          var title = document.getElementById('projectTitle').value.trim();
+          if (!title) return;
 
-          Arcadia.closeDialog(modalNovo);
-          formNovo.reset();
+          Arcadia.closeDialog(modalNew);
+          formNew.reset();
           Arcadia.showToast('Project proposal submitted for review.', 'Undo', function () {
             // Undo callback
           });
         });
       }
 
-      var chips = document.querySelectorAll('#chipbarProjetos .ar-chip');
-      var cards = document.querySelectorAll('#gridProjetos .ar-card');
+      var chips = document.querySelectorAll('#chipbarProjects .ar-chip');
+      var cards = document.querySelectorAll('#gridProjects .ar-card');
       chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
           chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });

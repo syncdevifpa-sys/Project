@@ -664,8 +664,8 @@
           </div>
 
           <form action="inicio.html" method="get" data-acesso="cadastro" style="display: flex; flex-direction: column; gap: 15px;">
-            <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
-            <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
+            <div class="error-message mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
+            <div class="success-message mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
 
             <!-- Role Selector -->
             <div class="ar-role-group">
@@ -683,19 +683,19 @@
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Staff</span>
                 </button>
-                <input type="hidden" name="vinculo" id="vinculoInput" value="Student">
+                <input type="hidden" name="vinculo" id="affiliationInput" value="Student">
               </div>
             </div>
 
             <!-- Full Name -->
             <div class="ar-input-group">
-              <label class="ar-input-label" for="nome">
+              <label class="ar-input-label" for="name">
                 <span>Full Name</span>
               </label>
               <div class="ar-input-wrap">
                 <input
                   type="text"
-                  id="nome"
+                  id="name"
                   name="nome"
                   placeholder="e.g. John Doe"
                   autocomplete="name"
@@ -724,13 +724,13 @@
 
             <!-- Phone Number -->
             <div class="ar-input-group">
-              <label class="ar-input-label" for="telefone">
+              <label class="ar-input-label" for="phone">
                 <span>Phone number</span>
               </label>
               <div class="ar-input-wrap">
                 <input
                   type="tel"
-                  id="telefone"
+                  id="phone"
                   name="telefone"
                   placeholder="(91) 98888-1234"
                   autocomplete="tel"
@@ -741,12 +741,12 @@
             </div>
 
             <!-- Course Selection -->
-            <div class="ar-input-group" id="campoCursoWrapper">
-              <label class="ar-input-label" for="curso">
+            <div class="ar-input-group" id="fieldCourseWrapper">
+              <label class="ar-input-label" for="course">
                 <span>Academic Course / Major</span>
               </label>
               <div class="ar-input-wrap">
-                <select id="curso" name="curso" required>
+                <select id="course" name="curso" required>
                   <option value="" disabled selected>Select your course at IFPA</option>
                   <optgroup label="Technical Degrees — Belém Campus">
                     <option value="Systems Development">Technical in Systems Development</option>
@@ -782,13 +782,13 @@
 
             <!-- Password -->
             <div class="ar-input-group">
-              <label class="ar-input-label" for="senha">
+              <label class="ar-input-label" for="password">
                 <span>Password</span>
               </label>
               <div class="ar-input-wrap ar-input-wrap--password">
                 <input
                   type="password"
-                  id="senha"
+                  id="password"
                   name="senha"
                   placeholder="Minimum 8 characters"
                   autocomplete="new-password"

@@ -94,7 +94,7 @@
       <div class="ar-hero-side">
         <p class="ar-hero-desc">Academic requests, digitally signed declarations, and useful campus resources.</p>
         <div class="ar-hero-actions">
-          <button type="button" class="ar-btn ar-btn--primary" id="btnNovoDoc">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNewDoc">
             <span>New request</span>
             <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
@@ -126,7 +126,7 @@
         </p>
         <div class="ar-card-signal ar-signal--link">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;" onclick="baixarArquivoDoc('Complete_Transcript_IFPA.txt', 'FEDERAL INSTITUTE OF EDUCATION, SCIENCE AND TECHNOLOGY OF PARÁ - BELÉM CAMPUS\n\nOFFICIAL ACADEMIC TRANSCRIPT\nDigital Authentication: IFPA-2026-0001-AUTH-VALID\nIssue Date: 09/08/2026\nStatus: Regularly Enrolled Student'); return false;">Download document</a>
+          <a href="#" class="ar-link" style="font-size:13px;" onclick="downloadDocFile('Complete_Transcript_IFPA.txt', 'FEDERAL INSTITUTE OF EDUCATION, SCIENCE AND TECHNOLOGY OF PARÁ - BELÉM CAMPUS\n\nOFFICIAL ACADEMIC TRANSCRIPT\nDigital Authentication: IFPA-2026-0001-AUTH-VALID\nIssue Date: 09/08/2026\nStatus: Regularly Enrolled Student'); return false;">Download document</a>
         </div>
       </article>
 
@@ -160,7 +160,7 @@
         </p>
         <div class="ar-card-signal ar-signal--muted">
           <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;" onclick="baixarArquivoDoc('Enrollment_Proof_IFPA.txt', 'FEDERAL INSTITUTE OF EDUCATION, SCIENCE AND TECHNOLOGY OF PARÁ - BELÉM CAMPUS\n\nENROLLMENT CERTIFICATE\nSemester: 2026/2\nStatus: Active Registration Confirmed'); return false;">Awaiting processing (Download preview)</a>
+          <a href="#" class="ar-link" style="font-size:13px;" onclick="downloadDocFile('Enrollment_Proof_IFPA.txt', 'FEDERAL INSTITUTE OF EDUCATION, SCIENCE AND TECHNOLOGY OF PARÁ - BELÉM CAMPUS\n\nENROLLMENT CERTIFICATE\nSemester: 2026/2\nStatus: Active Registration Confirmed'); return false;">Awaiting processing (Download preview)</a>
         </div>
       </article>
 
@@ -239,7 +239,7 @@
     </div>
 
     <!-- Modal Dialog: New Request -->
-    <div class="ar-scrim" id="modalNovoDoc" style="display:none; z-index:100;">
+    <div class="ar-scrim" id="modalNewDoc" style="display:none; z-index:100;">
       <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="New request">
         <div class="ar-dialog-head">
           <div>
@@ -252,15 +252,15 @@
           </button>
         </div>
 
-        <form id="formNovoDoc" style="display:flex; flex-direction:column; gap:var(--space-3);">
+        <form id="formNewDoc" style="display:flex; flex-direction:column; gap:var(--space-3);">
           <label class="ar-field">
             <span class="ar-field-label">Document type</span>
-            <input type="text" id="docTitulo" placeholder="e.g. Module Completion Certificate" required>
+            <input type="text" id="docTitle" placeholder="e.g. Module Completion Certificate" required>
           </label>
 
           <label class="ar-field">
             <span class="ar-field-label">Purpose of request</span>
-            <textarea id="docDescricao" rows="3" placeholder="Briefly describe the purpose of the document..."></textarea>
+            <textarea id="docDescription" rows="3" placeholder="Briefly describe the purpose of the document..."></textarea>
           </label>
 
           <div class="ar-dialog-foot">
@@ -275,45 +275,45 @@
 
   <script src="portal.js"></script>
   <script>
-    function baixarArquivoDoc(nome, texto) {
+    function downloadDocFile(filename, text) {
       try {
-        var blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = nome;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         if (window.Arcadia && Arcadia.showToast) {
-          Arcadia.showToast('Download of ' + nome + ' initiated!');
+          Arcadia.showToast('Download of ' + filename + ' initiated!');
         }
       } catch (err) {
         if (window.Arcadia && Arcadia.showToast) {
-          Arcadia.showToast('Document ready: ' + nome);
+          Arcadia.showToast('Document ready: ' + filename);
         }
       }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      var btnNovo = document.getElementById('btnNovoDoc');
-      var modalNovo = document.getElementById('modalNovoDoc');
-      if (btnNovo && modalNovo) {
-        btnNovo.addEventListener('click', function () {
-          Arcadia.openDialog(modalNovo);
+      var btnNew = document.getElementById('btnNewDoc');
+      var modalNew = document.getElementById('modalNewDoc');
+      if (btnNew && modalNew) {
+        btnNew.addEventListener('click', function () {
+          Arcadia.openDialog(modalNew);
         });
       }
 
-      var formNovo = document.getElementById('formNovoDoc');
-      if (formNovo) {
-        formNovo.addEventListener('submit', function (e) {
+      var formNew = document.getElementById('formNewDoc');
+      if (formNew) {
+        formNew.addEventListener('submit', function (e) {
           e.preventDefault();
-          var titulo = document.getElementById('docTitulo').value.trim();
-          if (!titulo) return;
+          var title = document.getElementById('docTitle').value.trim();
+          if (!title) return;
 
-          Arcadia.closeDialog(modalNovo);
-          formNovo.reset();
+          Arcadia.closeDialog(modalNew);
+          formNew.reset();
           Arcadia.showToast('Request submitted successfully.', 'Undo', function () {});
         });
       }

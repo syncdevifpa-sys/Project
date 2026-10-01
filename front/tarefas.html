@@ -97,7 +97,7 @@
       <div class="ar-hero-side">
         <p class="ar-hero-desc">Track your academic assignments, internship reports, and registrar deadlines.</p>
         <div class="ar-hero-actions">
-          <button type="button" class="ar-btn ar-btn--primary" id="btnNovaTarefa">
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNewTask">
             <span>New task</span>
             <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
@@ -106,7 +106,7 @@
     </section>
 
     <!-- ChipBar Categories -->
-    <div class="ar-chipbar" role="group" aria-label="Task filter" id="chipbarTarefas">
+    <div class="ar-chipbar" role="group" aria-label="Task filter" id="chipbarTasks">
       <button type="button" class="ar-chip" aria-pressed="true" data-status="All">All<sup class="ar-sup">(4)</sup></button>
       <button type="button" class="ar-chip" aria-pressed="false" data-status="Open">Open<sup class="ar-sup">(2)</sup></button>
       <button type="button" class="ar-chip" aria-pressed="false" data-status="In Progress">In Progress<sup class="ar-sup">(1)</sup></button>
@@ -129,7 +129,7 @@
           <span>List</span>
         </button>
       </div>
-      <span class="ar-toolbar-sum" id="tarefasSummary">Showing 4 tasks</span>
+      <span class="ar-toolbar-sum" id="tasksSummary">Showing 4 tasks</span>
     </div>
 
     <!-- Tab Panels Container -->
@@ -151,7 +151,7 @@
               <div class="ar-bcard-meta">Due: Sep 12 · Ana Ribeiro</div>
               <div class="ar-bcard-foot">
                 <span>Pending</span>
-                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
+                <button type="button" class="ar-btn ar-btn--xs btn-complete">Complete</button>
               </div>
             </article>
 
@@ -161,7 +161,7 @@
               <div class="ar-bcard-meta">Due: Sep 18 · Coordination</div>
               <div class="ar-bcard-foot">
                 <span>Awaiting signature</span>
-                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
+                <button type="button" class="ar-btn ar-btn--xs btn-complete">Complete</button>
               </div>
             </article>
           </section>
@@ -178,7 +178,7 @@
               <div class="ar-bcard-meta">Due: Sep 20 · Ana Ribeiro</div>
               <div class="ar-bcard-foot">
                 <span>Semester report</span>
-                <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
+                <button type="button" class="ar-btn ar-btn--xs btn-complete">Complete</button>
               </div>
             </article>
           </section>
@@ -222,7 +222,7 @@
                 <td class="ar-td-mono">Sep 12</td>
                 <td><span class="ar-badge ar-badge--cyan">Open</span></td>
                 <td style="text-align: right;">
-                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
+                  <button type="button" class="ar-btn ar-btn--xs btn-complete">Complete</button>
                 </td>
               </tr>
               <tr>
@@ -231,7 +231,7 @@
                 <td class="ar-td-mono">Sep 18</td>
                 <td><span class="ar-badge ar-badge--cyan">Open</span></td>
                 <td style="text-align: right;">
-                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
+                  <button type="button" class="ar-btn ar-btn--xs btn-complete">Complete</button>
                 </td>
               </tr>
               <tr>
@@ -240,7 +240,7 @@
                 <td class="ar-td-mono">Sep 20</td>
                 <td><span class="ar-badge ar-badge--yellow">In Progress</span></td>
                 <td style="text-align: right;">
-                  <button type="button" class="ar-btn ar-btn--xs btn-concluir">Complete</button>
+                  <button type="button" class="ar-btn ar-btn--xs btn-complete">Complete</button>
                 </td>
               </tr>
               <tr>
@@ -316,7 +316,7 @@
     </div>
 
     <!-- Modal Dialog: New Task -->
-    <div class="ar-scrim" id="modalNovaTarefa" style="display:none; z-index:100;">
+    <div class="ar-scrim" id="modalNewTask" style="display:none; z-index:100;">
       <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="New task">
         <div class="ar-dialog-head">
           <div>
@@ -329,20 +329,20 @@
           </button>
         </div>
 
-        <form id="formNovaTarefa" style="display:flex; flex-direction:column; gap:var(--space-3);">
+        <form id="formNewTask" style="display:flex; flex-direction:column; gap:var(--space-3);">
           <label class="ar-field">
             <span class="ar-field-label">Task title</span>
-            <input type="text" id="tarefaTitulo" placeholder="Example: Submit signed academic history" required>
+            <input type="text" id="taskTitle" placeholder="Example: Submit signed academic history" required>
           </label>
 
           <label class="ar-field">
             <span class="ar-field-label">Due date</span>
-            <input type="text" id="tarefaPrazo" placeholder="Example: Sep 25" required>
+            <input type="text" id="taskDeadline" placeholder="Example: Sep 25" required>
           </label>
 
           <label class="ar-field">
             <span class="ar-field-label">Assignee</span>
-            <input type="text" id="tarefaResponsavel" value="Ana Ribeiro" required>
+            <input type="text" id="taskAssignee" value="Ana Ribeiro" required>
           </label>
 
           <div class="ar-dialog-foot">
@@ -358,30 +358,30 @@
   <script src="portal.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var btnNova = document.getElementById('btnNovaTarefa');
-      var modalNova = document.getElementById('modalNovaTarefa');
-      if (btnNova && modalNova) {
-        btnNova.addEventListener('click', function () {
-          Arcadia.openDialog(modalNova);
+      var btnNew = document.getElementById('btnNewTask');
+      var modalNew = document.getElementById('modalNewTask');
+      if (btnNew && modalNew) {
+        btnNew.addEventListener('click', function () {
+          Arcadia.openDialog(modalNew);
         });
       }
 
-      var formNova = document.getElementById('formNovaTarefa');
-      if (formNova) {
-        formNova.addEventListener('submit', function (e) {
+      var formNew = document.getElementById('formNewTask');
+      if (formNew) {
+        formNew.addEventListener('submit', function (e) {
           e.preventDefault();
-          var titulo = document.getElementById('tarefaTitulo').value.trim();
-          if (!titulo) return;
+          var title = document.getElementById('taskTitle').value.trim();
+          if (!title) return;
 
-          Arcadia.closeDialog(modalNova);
-          formNova.reset();
+          Arcadia.closeDialog(modalNew);
+          formNew.reset();
           Arcadia.showToast('Task recorded on the board.', 'Undo', function () {
             // Undo callback
           });
         });
       }
 
-      document.querySelectorAll('.btn-concluir').forEach(function (btn) {
+      document.querySelectorAll('.btn-complete').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var card = btn.closest('.ar-bcard') || btn.closest('tr');
           if (!card) return;
