@@ -59,7 +59,7 @@ async function registerExternal(req, res) {
         console.error("Error creating external user:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -134,7 +134,7 @@ async function loginExternal(req, res) {
         console.error("External login error:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -157,7 +157,7 @@ async function getExternalProfile(req, res) {
         console.error("External profile error:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }

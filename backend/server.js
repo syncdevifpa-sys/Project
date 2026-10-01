@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const path = require("path");
 
+dotenv.config({ path: path.join(__dirname, '.env') });
 dotenv.config();
 
 const app = express();
@@ -54,7 +56,7 @@ app.use((req, res, next) => {
 // JSON
 // ==============================
 
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 
 // ==============================
 // Main API route
@@ -84,6 +86,7 @@ app.use("/api/external", externalUsersRoutes);
 app.use("/api/read-notices", readNoticesRoutes);
 app.use("/api/sessions", sessionsRoutes);
 app.use("/api/password-recovery", passwordRecoveryRoutes);
+app.use(express.static(path.join(__dirname, '../front')));
 console.log("Application routes configured.");
 
 // ==============================
@@ -92,7 +95,7 @@ console.log("Application routes configured.");
 
 app.use((req, res) => {
     res.status(404).json({
-        error: "Route not found."
+        error: "Página ou recurso não encontrado."
     });
 });
 
@@ -100,6 +103,14 @@ app.use((req, res) => {
 // Start server
 // ==============================
 
-app.listen(PORT, () => {
+app.use((error, req, res, next) => {
+    if (res.headersSent) return next(error);
+    console.error('Request failed:', error);
+    const status = error.status === 413 ? 413 : error.status === 400 ? 400 : 500;
+    res.status(status).json({ error: status === 413 ? 'O arquivo enviado é muito grande.' : status === 400 ? 'Os dados enviados são inválidos.' : 'Não foi possível concluir a operação. Tente novamente.' });
+});
+
+if (require.main === module) app.listen(PORT, () => {
     console.log(`API running at http://localhost:${PORT}`);
 });
+module.exports = app;

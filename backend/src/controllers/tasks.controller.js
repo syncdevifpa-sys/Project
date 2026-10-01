@@ -12,7 +12,7 @@ async function listTasks(req, res) {
         console.error("Erro ao buscar tarefas:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -39,7 +39,7 @@ async function getTaskById(req, res) {
         console.error("Erro ao buscar tarefa:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -69,7 +69,7 @@ async function createTask(req, res) {
         console.error("Erro ao criar tarefa :", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -99,7 +99,7 @@ async function updateTask(req, res) {
         console.error("Erro ao atualizar tarefa:", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -128,7 +128,7 @@ async function deleteTask(req, res) {
         console.error("Erro ao excluir tarefa :", error);
 
         return res.status(500).json({
-            error: error.message
+            error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
