@@ -1708,3 +1708,10 @@ section[id] {
     transform: none !important;
   }
 }
+[hidden] { display: none !important; }
+.public-section { padding-top: 64px; padding-bottom: 48px; scroll-margin-top: 110px; }
+.public-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; margin-top: 28px; }
+.public-card { background: #fff; border: 1px solid #d9ded8; border-radius: 20px; padding: 28px; overflow-wrap: anywhere; }
+.public-card h3 { font-size: 22px; margin: 0 0 16px; }
+.public-card p { line-height: 1.65; white-space: pre-wrap; }
+.public-card summary { cursor: pointer; font-weight: 600; margin-top: 20px; }

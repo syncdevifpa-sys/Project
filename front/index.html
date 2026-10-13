@@ -28,26 +28,28 @@
         </a>
 
         <div class="nav-links">
-          <a href="#features" class="nav-link">Recursos</a>
+          <a href="#public-news" class="nav-link">Notícias</a>
+          <a href="#public-projects" class="nav-link">Projetos</a>
           <a href="#for-whom" class="nav-link">Para quem</a>
           <a href="#how-it-works" class="nav-link">Como funciona</a>
           <a href="#faq" class="nav-link">Dúvidas frequentes</a>
         </div>
 
         <div class="nav-actions">
-          <a href="login.html" class="nav-btn-login">Entrar</a>
+          <a href="inicio.html" class="nav-btn-login">Meu painel</a>
           <a href="cadastro.html" class="btn-pill btn-pill--primary nav-btn-signup">Criar conta &rarr;</a>
           <button type="button" class="nav-toggle-btn" id="navMobileToggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
         </div>
 
         <!-- Mobile Dropdown Panel -->
         <div class="nav-mobile-panel" id="navMobilePanel">
-          <a href="#features" class="nav-link">Recursos</a>
+          <a href="#public-news" class="nav-link">Notícias</a>
+          <a href="#public-projects" class="nav-link">Projetos</a>
           <a href="#for-whom" class="nav-link">Para quem</a>
           <a href="#how-it-works" class="nav-link">Como funciona</a>
           <a href="#faq" class="nav-link">Dúvidas frequentes</a>
           <div class="nav-mobile-ctas">
-            <a href="login.html" class="btn-pill btn-pill--outline" style="width: 100%;">Entrar</a>
+            <a href="inicio.html" class="btn-pill btn-pill--outline" style="width: 100%;">Meu painel</a>
             <a href="cadastro.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
           </div>
         </div>
@@ -95,7 +97,7 @@
 
         <div class="hero-actions reveal-item">
           <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
-          <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar portal</a>
+          <a href="inicio.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar meu painel</a>
         </div>
 
         <p class="hero-note reveal-item">Gratuito para alunos, professores e servidores. Cadastre-se com seu e-mail.</p>
@@ -484,6 +486,17 @@
       <div class="cta-watermark" aria-hidden="true">Arcadia</div>
     </section>
 
+    <section class="public-section container" id="public-news" aria-labelledby="public-news-title">
+      <h2 class="section-title" id="public-news-title">Notícias e avisos do campus</h2>
+      <p>Publicações abertas a toda a comunidade, sem precisar entrar na conta.</p>
+      <div class="public-grid" id="publicNews" aria-live="polite"><p>Carregando notícias…</p></div>
+    </section>
+    <section class="public-section container" id="public-projects" aria-labelledby="public-projects-title">
+      <h2 class="section-title" id="public-projects-title">Projetos da comunidade</h2>
+      <p>Conheça os projetos aprovados do campus. Para participar, acesse seu painel.</p>
+      <div class="public-grid" id="publicProjects" aria-live="polite"><p>Carregando projetos…</p></div>
+    </section>
+
     <!-- 9. Official Footer -->
     <footer class="footer-main">
       <div class="container">
@@ -509,9 +522,9 @@
           <div>
             <div class="footer-col-title">Plataforma</div>
             <ul class="footer-links">
-              <li><a href="avisos.html">Mural de avisos</a></li>
+              <li><a href="#public-news">Notícias e avisos</a></li>
               <li><a href="documentos.html">Central de documentos</a></li>
-              <li><a href="projetos.html">Projetos da comunidade</a></li>
+              <li><a href="#public-projects">Projetos da comunidade</a></li>
               <li><a href="calendario.html">Calendário acadêmico</a></li>
             </ul>
           </div>
@@ -549,6 +562,7 @@
       </div>
     </footer>
 
+    <script src="js/api.js"></script>
     <script src="js/landing.js"></script>
   </body>
 </html>

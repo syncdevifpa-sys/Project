@@ -42,6 +42,13 @@ window.Arcadia = window.Arcadia || {};
         const data = await res.json().catch(() => ({}));
 
         if (res.status === 401 && auth && token) {
+            try {
+                const sess = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
+                if (sess.provider === 'Google' || token.startsWith('google-') || token.startsWith('local-')) {
+                    return { ok: false, status: 401, data };
+                }
+            } catch (e) {}
+
             Token.clear();
             window.location.href = 'login.html';
         }
@@ -49,24 +56,26 @@ window.Arcadia = window.Arcadia || {};
         return { ok: res.ok, status: res.status, data };
     }
 
-    async function expect(promise) {
-        const result = await promise;
+    async function expect(promiseOrResult) {
+        const result = await promiseOrResult;
         if (!result.ok) {
-            const error = new Error(result.data.error || `Erro na requisição (${result.status}).`);
+            const error = new Error((result.data && (result.data.error || result.data.message)) || `Erro na requisição (${result.status}).`);
             error.status = result.status;
+            error.data = result.data;
             throw error;
         }
         return result.data;
     }
 
-    function crud(base) {
+    function crud(basePath) {
         return {
-            list: () => expect(request(base)),
-            get: (id) => expect(request(`${base}/${encodeURIComponent(id)}`)),
-            create: (body) => expect(request(base, { method: 'POST', body })),
-            update: (id, body) => expect(request(`${base}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
-            patch: (id, body) => expect(request(`${base}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
-            remove: (id) => expect(request(`${base}/${encodeURIComponent(id)}`, { method: 'DELETE' }))
+            list: (params) => expect(request(params ? `${basePath}?${new URLSearchParams(params)}` : basePath, { method: 'GET' })),
+            get: (id) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'GET' })),
+            create: (body) => expect(request(basePath, { method: 'POST', body })),
+            update: (id, body) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
+            patch: (id, body) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
+            delete: (id) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'DELETE' })),
+            remove: (id) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'DELETE' }))
         };
     }
 
@@ -75,10 +84,10 @@ window.Arcadia = window.Arcadia || {};
         request,
         expect,
         crud,
-        patch: (path, body, opts) => request(path, { ...opts, method: 'PATCH', body }),
         get: (path, opts) => request(path, { ...opts, method: 'GET' }),
         post: (path, body, opts) => request(path, { ...opts, method: 'POST', body }),
         put: (path, body, opts) => request(path, { ...opts, method: 'PUT', body }),
+        patch: (path, body, opts) => request(path, { ...opts, method: 'PATCH', body }),
         del: (path, opts) => request(path, { ...opts, method: 'DELETE' })
     };
     Arcadia.token = Token;
