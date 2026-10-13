@@ -306,19 +306,8 @@
     // Logout: [data-logout] ou [data-sign-out]
     // ---------------------------------------------------------------
     document.querySelectorAll('[data-logout], [data-sign-out]').forEach((btn) => {
-        btn.addEventListener('click', async (e) => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const token = localStorage.getItem('arcadiaToken');
-
-            try {
-                await fetch(`${API_BASE}/api/auth/logout`, {
-                    method: 'POST',
-                    headers: token ? { Authorization: `Bearer ${token}` } : {}
-                });
-            } catch (err) {
-                console.warn('Não foi possível avisar o servidor sobre o logout:', err.message);
-            }
-
             limparSessao();
             window.location.href = 'login.html';
         });
