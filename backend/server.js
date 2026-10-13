@@ -73,6 +73,7 @@ app.get("/api", (req, res) => {
 // ==============================
 
 app.use("/api/notices", noticesRoutes);
+app.use("/api/public", require('./src/routes/public.routes'));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/courses", coursesRoutes);
