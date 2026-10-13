@@ -12,6 +12,74 @@ const { authenticateToken } = require('../backend/src/middlewares/auth.middlewar
 const root = path.join(__dirname, '..');
 let server, base;
 
+test('início esconde cadastro com sessão e oferece entrada aos visitantes', () => {
+    for (const loggedIn of [true, false]) {
+        const signup = {};
+        const panel = {};
+        const context = vm.createContext({
+            localStorage: { getItem: key => key === 'arcadiaToken' ? (loggedIn ? 'token' : null) : JSON.stringify({ logado: loggedIn }) },
+            window: { addEventListener() {} },
+            document: {
+                readyState: 'complete', getElementById: () => null,
+                querySelectorAll: selector => selector === 'a[href="cadastro.html"]' ? [signup] : selector.includes('login.html') ? [panel] : []
+            }
+        });
+        vm.runInContext(fs.readFileSync(path.join(root, 'front/js/landing.js'), 'utf8'), context);
+        assert.equal(signup.hidden, loggedIn);
+        assert.equal(panel.href, loggedIn ? 'inicio.html' : 'login.html');
+        assert.equal(panel.textContent, loggedIn ? 'Meu painel' : 'Entrar');
+    }
+});
+
+test('página pública carrega conteúdo sem autenticação e trata texto como texto', async () => {
+    const targets = {};
+    const element = () => ({ children: [], append(...nodes) { this.children.push(...nodes); }, replaceChildren() { this.children = []; } });
+    targets.publicNews = element();
+    targets.publicProjects = element();
+    const calls = [];
+    const context = vm.createContext({
+        document: { readyState: 'complete', getElementById: id => targets[id], querySelectorAll: () => [], createElement: element },
+        window: { addEventListener() {}, Arcadia: { api: {
+            get: async (url, options) => { calls.push({ url, options }); return { notices: [{ titulo: '<script>private()</script>', resumo: 'Resumo', descricao: 'Notícia completa' }], projects: [] }; },
+            expect: promise => promise
+        } } }
+    });
+    vm.runInContext(fs.readFileSync(path.join(root, 'front/js/landing.js'), 'utf8'), context);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, '/api/public');
+    assert.equal(calls[0].options.auth, false);
+    assert.equal(targets.publicNews.children[0].children[0].textContent, '<script>private()</script>');
+    assert.equal(targets.publicProjects.textContent, 'Nenhum projeto publicado no momento.');
+});
+
+test('início público usa projeções públicas e independe da sessão', async () => {
+    const original = db.execute;
+    const queries = [];
+    db.execute = async (sql) => {
+        queries.push(sql);
+        return [sql.includes('FROM avisos') ? [{ titulo: 'Notícia pública' }] : [{ titulo: 'Projeto aprovado' }]];
+    };
+    try {
+        const anonymous = await fetch(base + '/api/public');
+        const loggedIn = await fetch(base + '/api/public', { headers: { Authorization: 'Bearer expired-session' } });
+        assert.equal(anonymous.status, 200);
+        assert.equal(loggedIn.status, 200);
+        assert.deepEqual(await anonymous.json(), await loggedIn.json());
+        assert.match(queries[0], /situacao = 'publicado' AND publico_alvo IN \('todos', 'externo'\)/);
+        assert.match(queries[1], /aprovacao = 'aprovado'/);
+        for (const sql of queries) assert.doesNotMatch(sql, /id_usuario|email|aprovado_por|inscricoes/);
+    } finally { db.execute = original; }
+    const home = fs.readFileSync(path.join(root, 'front/index.html'), 'utf8');
+    assert.doesNotMatch(home, /src="js\/(auth|portal|pages)\.js"/);
+    for (const file of fs.readdirSync(path.join(root, 'front')).filter(f => f.endsWith('.html'))) {
+        const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
+        if (!html.includes('class="ar-navpill"')) continue;
+        assert.match(html, /href="index.html">Início<\/a>/, file);
+        assert.match(html, /href="inicio.html"[^>]*>Meu painel<\/a>/, file);
+    }
+});
+
 before(async () => {
     const app = require('../backend/server');
     server = app.listen(0, '127.0.0.1');
