@@ -222,9 +222,11 @@ test('cadastro converte os vínculos em inglês para os valores do banco', () =>
     assert.equal(auth.paraTipoUsuario('Student'), 'discente');
     assert.equal(auth.paraTipoUsuario('Professor'), 'docente');
     assert.equal(auth.paraTipoUsuario('Staff'), 'servidor');
+    assert.equal(auth.paraTipoUsuario('External'), 'externo');
 });
 
 test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios', async t => {
+    t.mock.method(require('../backend/src/models/externalUsers.model'), 'findExternalByEmail', async () => null);
     const bcrypt = require('bcrypt');
     let saved;
     t.mock.method(users, 'createUser', async data => { saved = data; return { insertId: 8 }; });
@@ -278,6 +280,29 @@ test('sessão externa revogada impede reutilizar JWT após redefinição de senh
     const res = response();
     await authenticateExternal({ headers: { authorization: `Bearer ${token}` } }, res, () => assert.fail('Sessão revogada'));
     assert.equal(res.code, 401);
+});
+
+test('rotas administrativas negam visitante/aluno e permitem admin editar conteúdo de outra pessoa', async t => {
+    let administrator=0, updated;
+    t.mock.method(db,'execute',async(sql,params)=>{
+        if(sql.includes('JOIN usuarios u'))return [[{id_token:9,is_admin:administrator}]];
+        if(sql.startsWith('SHOW COLUMNS'))return [[{Field:'titulo',Type:'varchar(150)',Null:'NO',Default:null}]];
+        if(sql.startsWith('UPDATE tarefas')){updated=params;return [{affectedRows:1}];}
+        if(sql.includes('FROM tarefas'))return [[{id_tarefa:42,id_usuario:88,titulo:'Tarefa de outra pessoa'}]];
+        return [[]];
+    });
+    assert.equal((await fetch(base+'/api/admin/content/tasks')).status,401);
+    const token=jwt.sign({id_usuario:4,tipo_usuario:'discente',is_admin:true},process.env.JWT_SECRET);
+    const headers={Authorization:'Bearer '+token,'Content-Type':'application/json'};
+    assert.equal((await fetch(base+'/api/admin/content/tasks',{headers})).status,403);
+    administrator=1;
+    const list=await fetch(base+'/api/admin/content/tasks',{headers});
+    assert.equal(list.status,200);
+    assert.equal((await list.json())[0].id_usuario,88);
+    const saved=await fetch(base+'/api/admin/content/tasks/42',{method:'PATCH',headers,body:JSON.stringify({titulo:'Revisada pelo admin',is_admin:false,senha:'ignorada'})});
+    assert.equal(saved.status,200);
+    assert.deepEqual(updated,['Revisada pelo admin',42]);
+    assert.equal((await fetch(base+'/api/users/4',{method:'DELETE',headers})).status,409);
 });
 
 test('login externo registra sessão revogável sem conceder papel institucional', async t => {

@@ -89,6 +89,7 @@ app.use("/api/external", externalUsersRoutes);
 app.use("/api/read-notices", readNoticesRoutes);
 app.use("/api/sessions", sessionsRoutes);
 app.use("/api/password-recovery", passwordRecoveryRoutes);
+app.use('/api/admin', require('./src/routes/admin.routes'));
 // URLs antigas continuam válidas sem manter cópias das páginas.
 const pageRedirects = require('../page-redirects.json');
 for (const [oldPage, newPage] of Object.entries(pageRedirects)) {

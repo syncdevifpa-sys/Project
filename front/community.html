@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha conta — Comunidade externa</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.6 var(--font-sans); }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 24px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+    a { color: var(--link); }
+    button { padding: 10px 18px; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+    section { margin-top: 32px; padding: 24px; border-radius: 20px; background: var(--surface); }
+    dt { font-weight: 600; margin-top: 16px; } dd { margin: 0; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+<main>
+  <header><a href="index.html">Arcádia · Início</a><button type="button" id="externalLogout">Sair</button></header>
+  <h1>Minha conta</h1>
+  <p>Comunidade externa</p>
+  <p>Sua conta dá acesso ao seu perfil e às publicações abertas do campus. Acompanhe <a href="index.html#public-news">notícias</a> e <a href="index.html#public-projects">projetos públicos</a>.</p>
+  <section aria-labelledby="profileTitle">
+    <h2 id="profileTitle">Seus dados</h2>
+    <p id="externalStatus" role="status" aria-live="polite">Carregando perfil…</p>
+    <dl><dt>Nome</dt><dd id="externalName"></dd><dt>E-mail</dt><dd id="externalEmail"></dd><dt>Organização</dt><dd id="externalOrganization"></dd></dl>
+  </section>
+  <p><a href="reset-password.html">Recuperar senha</a></p>
+</main>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/community.js"></script>
+</body>
+</html>

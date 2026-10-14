@@ -445,12 +445,20 @@
     var sessao = (A.auth && A.auth.getSessao()) || {};
 
     var userName = sessao.nome || 'Usuário';
-    var userRole = sessao.vinculo || (A.auth ? A.auth.paraVinculo(sessao.tipo_usuario) : 'Usuário');
+    var userRole = sessao.is_admin ? 'Administrador' : (sessao.vinculo || (A.auth ? A.auth.paraVinculo(sessao.tipo_usuario) : 'Usuário'));
     var userInitials = userName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || 'US';
 
     document.querySelectorAll('.ar-user-name').forEach(function (el) { el.textContent = userName; });
     document.querySelectorAll('.ar-user-role').forEach(function (el) { el.textContent = userRole; });
     updateUserAvatar(sessao.foto, userName, userInitials);
+    if (sessao.is_admin && !document.getElementById('adminAccess')) {
+      var end = document.querySelector('.ar-nav-end');
+      if (end) {
+        var access = document.createElement('a');
+        access.id = 'adminAccess'; access.href = 'admin.html'; access.className = 'ar-btn ar-btn--sm'; access.textContent = 'Administração';
+        end.prepend(access);
+      }
+    }
 
     if (sessao.nome) {
       var primeiroNome = sessao.nome.split(' ')[0];
