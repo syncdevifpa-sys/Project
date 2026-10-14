@@ -56,7 +56,11 @@ Configure nos ambientes Production e Preview apenas os nomes abaixo, com os valo
 
 Sem SMTP ou `APP_URL` válidos, a recuperação responde 503 antes de procurar a conta. Com o serviço configurado, contas existentes e inexistentes recebem a mesma mensagem genérica. Falhas de entrega são registradas sem token nem detalhes SMTP sensíveis, e o link não confirmado é invalidado; a resposta permanece genérica para evitar revelar contas. O link expira em 30 minutos, usa um fragmento que o navegador remove da barra de endereço e não fica em localStorage. A redefinição consome o token e altera a senha em uma transação, invalidando outros links e sessões da conta. Sessões externas agora também são armazenadas e verificadas; usuários externos com tokens emitidos antes desta atualização precisarão entrar novamente.
 
-O cadastro público aceita e-mails válidos em geral, inclusive Gmail, e cria somente contas de aluno (`discente`). O domínio do e-mail não concede autoridade no campus. Contas de docente/servidor devem ser autorizadas por uma administração confiável; o cadastro público rejeita esses papéis mesmo se o cliente for alterado. Contas existentes mantêm seus papéis e permissões. Login e recuperação usam o e-mail cadastrado sem exigir domínio institucional.
+O cadastro público aceita e-mails válidos em geral, inclusive Gmail, e cria contas de aluno (`discente`) ou comunidade externa (`externo`), conforme a opção escolhida. O domínio do e-mail não concede autoridade no campus. Contas de docente/servidor devem ser autorizadas por uma administração confiável; o cadastro público rejeita esses papéis mesmo se o cliente for alterado. Contas existentes mantêm seus papéis e permissões. Login e recuperação usam o e-mail cadastrado sem exigir domínio institucional.
+
+O seletor do cadastro funciona por clique e teclado para Aluno, Professor, Servidor e Comunidade externa. Aluno exige curso e permite cadastro com Gmail ou outro endereço válido. Para Servidor, curso/formação é opcional; ao trocar de vínculo, a seleção acadêmica anterior é limpa para não ser enviada por engano. Professor e Comunidade externa não exigem curso nesse formulário. Comunidade externa usa a tabela existente `publico_externo`, com acesso apenas ao próprio perfil e publicações abertas. O login usa a mesma tela, encaminha contas externas para `community.html` e registra uma sessão revogável; o logout externo remove essa sessão. Selecionar Professor/Servidor mostra a orientação administrativa e deixa o envio público indisponível, sem cadastrar silenciosamente a pessoa como aluno. Na edição administrativa, curso e período opcionais válidos são preservados, sem limpeza automática de histórico.
+
+Para diferenciar o domínio institucional, o backend compara o domínio completo com `INSTITUTIONAL_EMAIL_DOMAIN` (referência inicial: `ifpa.edu.br`), sem aceitar substrings, sufixos extras ou subdomínios automaticamente. Confirme esse domínio com a instituição antes de mudar a configuração. Mesmo quando corresponde, nenhum cargo é concedido. Ainda não existe fluxo automático de confirmação de posse do endereço nem de aprovação de vínculo: docentes/servidores continuam dependendo de validação pela administração. Não é anunciada confirmação de e-mail após o cadastro. Estas alterações não exigem migração se o esquema atual com `publico_externo` e `tokens` já foi importado.
 
 Provisione um MySQL externo acessível pela Vercel; confirme conectividade, regras de rede, região e limites de conexões. Ative `DB_SSL` quando o provedor exigir TLS; a validação do certificado permanece habilitada. O pool é compartilhado por instância (até 10 conexões) e integrado a `attachDatabasePool` na Vercel. Ajuste os limites do serviço antes de aumentar a escala.
 
@@ -66,7 +70,52 @@ Documentos continuam apontando para URLs de arquivos disponíveis externamente; 
 
 Referências oficiais: [Express e arquivos estáticos](https://vercel.com/docs/frameworks/backend/express), [configuração do projeto](https://vercel.com/docs/project-configuration/vercel-json), [pool de banco](https://vercel.com/docs/functions/functions-api-reference/vercel-functions-package#attachdatabasepool).
 
-### Passos para a publicação
+### Administrador do aplicativo no Aiven
+
+Administrador é o sinalizador `usuarios.is_admin`, independente do vínculo Aluno/Professor/Servidor. Não é uma conta administrativa do servidor MySQL. O cadastro público ignora `is_admin`; uma conta externa não possui esse privilégio.
+
+Para promover exclusivamente `syncdevifpa@gmail.com`, abra **a conexão Aiven** no Workbench e selecione o schema importado do Arcádia. Confirme a conta e seu estado com a consulta abaixo. Se não existir na tabela `usuarios`, cadastre esse e-mail como Aluno no aplicativo, usando uma senha escolhida diretamente no site, e confira novamente. Se estiver somente em `publico_externo`, interrompa: este script não converte contas externas. Se estiver pendente/bloqueada, também interrompa e verifique a situação com a administração.
+
+```sql
+SELECT id_usuario, email, tipo_usuario, situacao, is_admin
+FROM usuarios
+WHERE email = 'syncdevifpa@gmail.com'
+  AND CAST(email AS BINARY) = CAST('syncdevifpa@gmail.com' AS BINARY);
+```
+
+Se uma tentativa anterior falhou com Error 1175, execute `ROLLBACK;` nessa conexão antes de repetir o arquivo completo. A versão atual inicializa o ID como NULL, obtém a chave primária da conta exata ativa com `SELECT ... FOR UPDATE` e usa esse ID no UPDATE, mantendo a comparação exata do e-mail com `CAST(... AS BINARY)` e `LIMIT 1`. Não desative Safe Updates. Conta ausente/inativa deixa o ID nulo e não é alterada; o SELECT INTO pode informar que nenhuma linha foi encontrada.
+
+Com a conta ativa confirmada, execute `backend/admin/promote-owner.sql`. Conforme a autorização específica do proprietário para esse e-mail, o UPDATE define `tipo_usuario='servidor'` e `is_admin=TRUE`, sem alterar senha ou outras contas. Os SELECTs identificados como `antes` e `depois` registram o estado para conferência; o resultado final deve mostrar vínculo Servidor e administração habilitada. Matrícula, curso e período são preservados: esses campos são opcionais no esquema e não impedem o novo vínculo, portanto não há limpeza automática que apague dados anteriores. Uma conta ausente/inativa não é promovida; uma conta já promovida pode apresentar zero linhas alteradas. Saia e entre novamente no site para atualizar o vínculo no JWT e os controles da interface. O backend consulta o sinalizador atual no banco em cada requisição autenticada, evitando manter privilégios revogados apenas porque o JWT antigo ainda existe.
+
+Para o banco já importado, revise e execute separadamente `backend/migrations/allow-app-admin-content.sql` na conexão Aiven. Esta migração altera apenas os triggers de criação de avisos/projetos para reconhecer administradores sem transformá-los em docentes/servidores. Não recrie o schema inteiro: os dados existentes permanecem. É necessária permissão de gerenciamento de triggers na conexão de preparação; preserve suas definições atuais antes de executar, pois DDL MySQL faz commit implícito. O esquema para instalações novas já contém essa regra.
+
+A interface reconhece o administrador nos controles existentes e mostra o acesso **Administração** no cabeçalho do portal, abrindo `admin.html`. A área gerencia pessoas do campus e externas, avisos, calendário, documentos, projetos, inscrições, tarefas, lembretes, cursos e links úteis. Permite criar/editar/excluir conteúdo de outras pessoas; dados são validados no backend e as rotas `/api/admin/*` exigem sessão ativa e `is_admin` atual no banco. Nenhuma lista administrativa retorna hashes de senhas, fotos ou tokens.
+
+Para pessoas, a ação padrão é **Desativar**, preservando histórico e revogando sessões. Exclusão definitiva exige conta desativada e sem relações/histórico; caso contrário, a API recusa a exclusão. As ações pedem confirmação com a pessoa/registro exato na interface. A própria conta não pode ser removida/bloqueada nem perder seu privilégio nessa área; uma transação com bloqueio dos administradores ativos impede remover o último administrador. A API de exclusão antiga também usa essas proteções. Edições de pessoas encerram suas sessões, exigindo novo login. Campos acadêmicos opcionais de Servidor são validados e não impedem salvar quando ausentes.
+
+A atribuição administrativa de Professor/Servidor a outras contas requer domínio institucional exato e confirmação explícita do administrador de que conferiu posse do e-mail e cargo com a instituição. Isso é uma conferência manual, não um sistema automático de confirmação por e-mail. A conta proprietária `syncdevifpa@gmail.com` mantém a exceção específica autorizada pelo proprietário para o vínculo Servidor. A interface não oferece promoção silenciosa pelo domínio ou por cadastro comum.
+
+A gestão atua sobre os dados do aplicativo, não sobre credenciais Aiven/MySQL, variáveis secretas de infraestrutura, deploy ou arquivos estáticos de layout/marca. Fotos e documentos continuam usando os mecanismos/URLs existentes; não foi adicionado armazenamento de uploads. A área administrativa usa o esquema já existente, sem nova tabela; para administradores cujo vínculo não seja Servidor, os dois triggers mencionados acima precisam reconhecer o sinalizador administrativo. Nenhuma promoção ou migração é executada no install/build. A conexão local disponível não aponta para Aiven e nenhuma pessoa real foi alterada neste trabalho. Depois de confirmar o COMMIT da promoção no Workbench, saia e entre novamente para atualizar a sessão e ver o acesso à administração.
+
+### Se o deploy falhar com `Missing script: build`
+
+O projeto deve ser instalado e construído a partir da raiz do repositório. O `package.json` da raiz contém `build`; `backend/package.json` é o manifesto legado para execução isolada e não contém esse comando. Não adicione um build vazio ao backend: isso ocultaria a configuração incorreta e não entregaria o frontend nem as dependências completas da Vercel.
+
+No painel do projeto, abra **Settings → Build and Deployment** e confira:
+
+- **Root Directory:** raiz do repositório, sem `backend` nem `front` (campo vazio ou `.` conforme a tela).
+- **Framework Preset:** Express; **Node.js Version:** 24.x.
+- **Install Command:** `npm ci`, sem `--prefix backend` ou `cd backend`.
+- **Build Command:** `npm run build`, sem prefixo ou mudança de diretório.
+- **Output Directory:** sem override manual; o adaptador Express entrega os arquivos gerados em `public/`.
+
+Salve as configurações e, em **Deployments**, escolha **Redeploy**, desmarcando o reaproveitamento do cache de build. Confira a branch e o SHA do commit no deployment. Alterar Root Directory é uma configuração do projeto Vercel, não uma propriedade suportada pelo nosso `vercel.json`. Preserve as variáveis já cadastradas no mesmo projeto.
+
+Na falha observada no commit `2227ce2`, o GitHub já tinha o build correto. A instalação de 97 pacotes corresponde ao lockfile do backend, e `npm --prefix backend run build` reproduz o erro; `npm run build` na raiz funciona. Portanto, não é necessário um novo commit para recuperar um script ausente nesse SHA: corrija o diretório/comandos do projeto. Se a falha persistir com a raiz correta, confira no log se algum comando sobrescrito ainda muda para `backend/`.
+
+Avisos do `npm audit` são separados do erro fatal de build. A auditoria das dependências atuais identifica Nodemailer como dependência com vulnerabilidades, incluindo parsing de endereços que pode causar negação de serviço. O envio SMTP ainda não configurado limita essa exposição no momento, mas a dependência deve receber uma atualização específica e testada antes de ativar e-mail em produção; não execute `npm audit fix --force` como tentativa de resolver este build.
+
+### Sequência de publicação
 
 1. Revise as alterações locais e envie um commit para o GitHub quando decidir publicar. O remoto atualmente configurado é [syncdevifpa-sys/Project](https://github.com/syncdevifpa-sys/Project). Inclua os arquivos novos de configuração, scripts, páginas e `package-lock.json`; mantenha `.env`, `node_modules`, `public/` gerado e SQL gerado fora do commit. Nenhum push é executado pelos comandos de build/teste.
 2. Prepare um MySQL externo vazio e confirme acesso pela Vercel, TLS e permissões para tabelas, views e triggers. Execute `npm run db:schema`, revise o SQL gerado e importe no banco selecionado. Use uma conta de aplicação com permissões mínimas. Se houver dados existentes, prepare uma migração específica com backup.

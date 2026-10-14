@@ -17,9 +17,8 @@ async function login(req, res) {
         const user = await authModel.findUserByEmail(email);
 
         if (!user) {
-            return res.status(401).json({
-                error: "Email ou senha inválidos."
-            });
+            // A mesma tela de login atende contas externas, mantendo suas permissões mínimas.
+            return require('./externalUsers.controller').loginExternal(req, res);
         }
 
         // 2. Verificar situação da conta

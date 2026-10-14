@@ -16,9 +16,10 @@ async function registerExternal(req, res) {
             organizacao
         } = req.body;
 
-        if (!nome || !email || !senha) {
+        if (typeof nome !== 'string' || !nome.trim() || typeof email !== 'string' || email.length > 150 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || typeof senha !== 'string' || senha.length < 8 || Buffer.byteLength(senha, 'utf8') > 72) {
             return res.status(400).json({
-                error: "Nome, email e senha são obrigatórios."
+                error: "Informe nome, e-mail válido e senha de pelo menos 8 caracteres."
             });
         }
 
@@ -45,11 +46,11 @@ async function registerExternal(req, res) {
         const hashedPassword = await bcrypt.hash(senha, 10);
 
         const result = await externalUsersModel.createExternal({
-            nome,
-            email,
-            telefone,
+            nome: nome.trim(),
+            email: email.trim(),
+            telefone: telefone || null,
             senha: hashedPassword,
-            organizacao
+            organizacao: organizacao || null
         });
 
         return res.status(201).json({
@@ -161,7 +162,8 @@ async function getExternalProfile(req, res) {
             });
         }
 
-        return res.json(user);
+        return res.json({ id_externo: user.id_externo, nome: user.nome, email: user.email,
+            telefone: user.telefone, organizacao: user.organizacao, tipo_usuario: 'externo' });
 
     } catch (error) {
         console.error("External profile error:", error);
@@ -175,5 +177,11 @@ async function getExternalProfile(req, res) {
 module.exports = {
     registerExternal,
     loginExternal,
-    getExternalProfile
+    getExternalProfile,
+    async logoutExternal(req, res) {
+        try {
+            await sessionsModel.deleteExternalSession(req.session.id_token, req.externalUser.id_externo);
+            return res.json({ message: 'Sessão encerrada.' });
+        } catch { return res.status(500).json({ error: 'Não foi possível encerrar a sessão.' }); }
+    }
 };

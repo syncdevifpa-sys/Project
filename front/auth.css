@@ -540,3 +540,6 @@ body {
   border-radius: 50%;
   background-color: var(--color-green);
 }
+
+/* O envio indisponível deve refletir a orientação do vínculo selecionado. */
+.ar-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }

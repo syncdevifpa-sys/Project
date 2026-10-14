@@ -88,14 +88,16 @@
             loggedIn = Boolean(localStorage.getItem('arcadiaToken') && session.logado);
         } catch (error) { /* Sessão indisponível ou inválida utiliza os links de visitante. */ }
         document.querySelectorAll('a[href="signup.html"]').forEach(link => { link.hidden = loggedIn; });
-        document.querySelectorAll('a[href="login.html"], a[href="dashboard.html"]').forEach(link => {
-            link.href = loggedIn ? 'dashboard.html' : 'login.html';
-            link.textContent = loggedIn ? 'Meu painel' : 'Entrar';
+        document.querySelectorAll('a[href="login.html"], a[href="dashboard.html"], a[href="community.html"]').forEach(link => {
+            const external = session.tipo_usuario === 'externo';
+            link.href = loggedIn ? (external ? 'community.html' : 'dashboard.html') : 'login.html';
+            link.textContent = loggedIn ? (external ? 'Minha conta' : 'Meu painel') : 'Entrar';
         });
         const account = document.getElementById('homeAccount');
         const avatar = document.getElementById('homeAccountAvatar');
         if (!account || !avatar) return;
         account.hidden = !loggedIn;
+        account.href = session.tipo_usuario === 'externo' ? 'community.html' : 'settings.html';
         avatar.replaceChildren();
         if (!loggedIn) return;
         const name = typeof session.nome === 'string' && session.nome.trim() ? session.nome : 'Usuário';
