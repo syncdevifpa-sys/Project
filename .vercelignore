@@ -7,5 +7,7 @@ state
 tests
 backend/schema.sql
 backend/schema.generated.sql
+backend/migrations
+backend/admin
 backend/test-database.js
 backend/generate-password.js

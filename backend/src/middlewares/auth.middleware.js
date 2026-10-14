@@ -32,12 +32,13 @@ async function authenticateToken(req, res, next) {
         }
         const hash = crypto.createHash('sha256').update(token).digest('hex');
         const [sessions] = await db.execute(
-            'SELECT id_token FROM tokens WHERE token = ? AND id_usuario = ? AND expiracao > NOW()',
+            "SELECT t.id_token, u.is_admin FROM tokens t JOIN usuarios u ON u.id_usuario = t.id_usuario WHERE t.token = ? AND t.id_usuario = ? AND t.expiracao > NOW() AND u.situacao = 'ativo'",
             [hash, decoded.id_usuario]
         );
         if (!sessions.length) return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
         req.session = sessions[0];
-        req.user = decoded;
+        // O privilégio atual vem do banco, não de uma sessão antiga ou do formulário.
+        req.user = { ...decoded, is_admin: sessions[0].is_admin === 1 || sessions[0].is_admin === true };
 
         next();
     } catch (error) {
@@ -58,7 +59,7 @@ function authorizeRoles(...allowedRoles) {
             });
         }
 
-        if (!allowedRoles.includes(req.user.tipo_usuario)) {
+        if (!req.user.is_admin && !allowedRoles.includes(req.user.tipo_usuario)) {
             return res.status(403).json({
                 error: "Você não tem permissão para acessar este recurso."
             });

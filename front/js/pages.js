@@ -80,7 +80,7 @@
         const grid = $('#noticesCardsGrid');
         const table = $('[data-view-panel="tabela"] tbody');
         const board = $('[data-view-panel="quadro"]');
-        const canManage = ['docente', 'servidor'].includes(A.auth.getSessao().tipo_usuario);
+        const canManage = Boolean(A.auth.getSessao().is_admin) || ['docente', 'servidor'].includes(A.auth.getSessao().tipo_usuario);
         $('#btnNewNotice').style.display = canManage ? '' : 'none';
         $('#btnDeleteSel').style.display = canManage ? '' : 'none';
         const bar = filterBar('#chipbarCategories', categories, () => rows, 'categoria', render);
@@ -183,7 +183,7 @@
     async function calendar() {
         let rows = [];
         const container = $('.ar-panel-body');
-        const canManage = ['docente', 'servidor'].includes(A.auth.getSessao().tipo_usuario);
+        const canManage = Boolean(A.auth.getSessao().is_admin) || ['docente', 'servidor'].includes(A.auth.getSessao().tipo_usuario);
         $('#btnNewEvent').style.display = canManage ? '' : 'none';
         const bar = filterBar('.ar-chipbar', categories, () => rows, 'categoria', render);
         $('.ar-panel-label').textContent = 'Calendário acadêmico';

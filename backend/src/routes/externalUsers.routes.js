@@ -5,7 +5,8 @@ const router = express.Router();
 const {
     registerExternal,
     loginExternal,
-    getExternalProfile
+    getExternalProfile,
+    logoutExternal
 } = require("../controllers/externalUsers.controller");
 
 const {
@@ -28,4 +29,5 @@ router.get(
     getExternalProfile
 );
 
+router.post('/logout', authenticateExternal, logoutExternal);
 module.exports = router;

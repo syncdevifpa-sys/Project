@@ -23,7 +23,7 @@ window.Arcadia = window.Arcadia || {};
 
         list: () => {
             const sessao = (A.auth && A.auth.getSessao()) || {};
-            if (sessao.tipo_usuario === 'servidor') {
+            if (sessao.is_admin || sessao.tipo_usuario === 'servidor') {
                 return crud.list();
             }
             return api.expect(api.get('/api/documents/my'));
