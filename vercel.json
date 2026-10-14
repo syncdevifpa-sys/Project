@@ -1,0 +1,69 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "express",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/aviso.html",
+      "destination": "/notice.html",
+      "permanent": true
+    },
+    {
+      "source": "/avisos.html",
+      "destination": "/notices.html",
+      "permanent": true
+    },
+    {
+      "source": "/cadastro.html",
+      "destination": "/signup.html",
+      "permanent": true
+    },
+    {
+      "source": "/calendario.html",
+      "destination": "/calendar.html",
+      "permanent": true
+    },
+    {
+      "source": "/configuracoes.html",
+      "destination": "/settings.html",
+      "permanent": true
+    },
+    {
+      "source": "/documentos.html",
+      "destination": "/documents.html",
+      "permanent": true
+    },
+    {
+      "source": "/inicio.html",
+      "destination": "/dashboard.html",
+      "permanent": true
+    },
+    {
+      "source": "/perfil.html",
+      "destination": "/profile.html",
+      "permanent": true
+    },
+    {
+      "source": "/pessoas.html",
+      "destination": "/people.html",
+      "permanent": true
+    },
+    {
+      "source": "/projetos.html",
+      "destination": "/projects.html",
+      "permanent": true
+    },
+    {
+      "source": "/recuperar-senha.html",
+      "destination": "/reset-password.html",
+      "permanent": true
+    },
+    {
+      "source": "/tarefas.html",
+      "destination": "/tasks.html",
+      "permanent": true
+    }
+  ]
+}

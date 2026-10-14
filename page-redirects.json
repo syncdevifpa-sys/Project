@@ -1,0 +1,14 @@
+{
+  "aviso.html": "notice.html",
+  "avisos.html": "notices.html",
+  "cadastro.html": "signup.html",
+  "calendario.html": "calendar.html",
+  "configuracoes.html": "settings.html",
+  "documentos.html": "documents.html",
+  "inicio.html": "dashboard.html",
+  "perfil.html": "profile.html",
+  "pessoas.html": "people.html",
+  "projetos.html": "projects.html",
+  "recuperar-senha.html": "reset-password.html",
+  "tarefas.html": "tasks.html"
+}

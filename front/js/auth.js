@@ -55,7 +55,7 @@ window.Arcadia = window.Arcadia || {};
     }
 
     function irParaPortal() {
-        window.location.href = 'inicio.html';
+        window.location.href = 'dashboard.html';
     }
 
     // ------------------------- Envio de E-mail de Boas-vindas -------------------------
@@ -67,7 +67,7 @@ window.Arcadia = window.Arcadia || {};
         if (!user || !user.email) return;
 
         const cfg = window.ARCADIA_CONFIG || {};
-        const backendBase = cfg.backendUrl || (api && api.BASE) || 'http://localhost:3001';
+        const backendBase = (api && api.BASE) || cfg.backendUrl || location.origin;
 
         console.log(`%c[Arcadia Email Service] Enviando mensagem de boas-vindas para: ${user.email}`, 'color: #52b788; font-weight: bold;');
 
@@ -411,7 +411,7 @@ window.Arcadia = window.Arcadia || {};
         if (facebookLoginBtn) {
             facebookLoginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('O login com Facebook estará disponível em breve. Por favor, utilize sua conta Google ou e-mail institucional.');
+                alert('O login com Facebook ainda não está disponível. Entre com o e-mail e a senha da sua conta.');
             });
         }
     }
@@ -462,6 +462,10 @@ window.Arcadia = window.Arcadia || {};
                             ? (roleBtnAtivo.getAttribute('data-vinculo') || roleBtnAtivo.textContent.trim())
                             : 'Aluno';
                     const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
+
+                    if (tipo_usuario !== 'discente') {
+                        return showError('Contas de professor e servidor precisam ser autorizadas pela administração.');
+                    }
 
                     if (!nome || !email || !senha) {
                         return showError('Preencha todos os campos obrigatórios.');

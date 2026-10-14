@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Arcadia — Portal do IFPA Campus Belém</title>
+    <!-- Aplica a preferência de tema antes de carregar os estilos. -->
+    <script src="js/theme.js"></script>
 
-    <!-- Google Fonts: Schibsted Grotesk and IBM Plex Sans -->
+    <!-- Fontes do Google: Schibsted Grotesk e IBM Plex Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,7 +20,7 @@
   </head>
   <body>
 
-    <!-- 1. Floating & Fixed Navbar -->
+    <!-- 1. Barra de navegação fixa -->
     <header class="navbar-wrapper">
       <nav class="navbar" id="mainNavbar" aria-label="Navegação principal">
         <a href="#" class="nav-brand">
@@ -36,12 +38,15 @@
         </div>
 
         <div class="nav-actions">
-          <a href="inicio.html" class="nav-btn-login">Meu painel</a>
-          <a href="cadastro.html" class="btn-pill btn-pill--primary nav-btn-signup">Criar conta &rarr;</a>
+          <a class="nav-account" href="settings.html" id="homeAccount" aria-label="Abrir minha conta" hidden>
+            <span class="nav-account-avatar" id="homeAccountAvatar" aria-hidden="true"></span>
+          </a>
+          <a href="dashboard.html" class="nav-btn-login">Meu painel</a>
+          <a href="signup.html" class="btn-pill btn-pill--primary nav-btn-signup">Criar conta &rarr;</a>
           <button type="button" class="nav-toggle-btn" id="navMobileToggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
         </div>
 
-        <!-- Mobile Dropdown Panel -->
+        <!-- Menu expansível para telas pequenas -->
         <div class="nav-mobile-panel" id="navMobilePanel">
           <a href="#public-news" class="nav-link">Notícias</a>
           <a href="#public-projects" class="nav-link">Projetos</a>
@@ -49,16 +54,16 @@
           <a href="#how-it-works" class="nav-link">Como funciona</a>
           <a href="#faq" class="nav-link">Dúvidas frequentes</a>
           <div class="nav-mobile-ctas">
-            <a href="inicio.html" class="btn-pill btn-pill--outline" style="width: 100%;">Meu painel</a>
-            <a href="cadastro.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
+            <a href="dashboard.html" class="btn-pill btn-pill--outline" style="width: 100%;">Meu painel</a>
+            <a href="signup.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
           </div>
         </div>
       </nav>
     </header>
 
-    <!-- 2. Hero Section -->
+    <!-- 2. Apresentação principal -->
     <section class="hero-card" id="home">
-      <!-- Floating decorative vector shapes -->
+      <!-- Formas vetoriais decorativas -->
       <svg class="hero-deco-shape shape-star-yellow" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
@@ -81,7 +86,7 @@
         <path d="M0,80 A80,80 0 0,1 160,80 Z" fill="#3cc299" opacity="0.8" />
       </svg>
 
-      <!-- Central Hero Content -->
+      <!-- Conteúdo central da apresentação -->
       <div class="hero-content">
         <span class="eyebrow-pill reveal-item">Mural do IFPA Campus Belém</span>
 
@@ -96,14 +101,14 @@
         </p>
 
         <div class="hero-actions reveal-item">
-          <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
-          <a href="inicio.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar meu painel</a>
+          <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
+          <a href="dashboard.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar meu painel</a>
         </div>
 
         <p class="hero-note reveal-item">Gratuito para alunos, professores e servidores. Cadastre-se com seu e-mail.</p>
       </div>
 
-      <!-- 3D Mockup Browser Frame -->
+      <!-- Moldura da prévia do navegador -->
       <div class="hero-browser-wrapper">
         <span class="hero-tag-floating hero-tag-enrollment">Matrícula</span>
         <span class="hero-tag-floating hero-tag-notice">Avisos</span>
@@ -128,7 +133,7 @@
       </div>
     </section>
 
-    <!-- 3. Manifesto Section -->
+    <!-- 3. Manifesto -->
     <section class="manifesto-section">
       <span class="eyebrow-pill reveal-item">O que é a Arcadia?</span>
 
@@ -168,7 +173,7 @@
       </div>
     </section>
 
-    <!-- 4. Inside the Platform (Bento Grid) -->
+    <!-- 4. Recursos da plataforma em cartões -->
     <section class="features-section" id="features">
       <div class="section-header-centered">
         <span class="eyebrow-pill reveal-item">Depois de entrar</span>
@@ -180,7 +185,7 @@
 
       <div class="bento-grid">
         <div class="bento-row">
-          <!-- Card 1: Official Board -->
+          <!-- Cartão 1: Mural oficial -->
           <article class="bento-card bento-card--board reveal-item">
             <div>
               <span class="bento-tag bento-tag--board">Mural oficial</span>
@@ -191,11 +196,11 @@
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-mural.png" alt="Prévia do mural oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-notices.png" alt="Prévia do mural oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
 
-          <!-- Card 2: Role Filtering -->
+          <!-- Cartão 2: Filtros por vínculo -->
           <article class="bento-card bento-card--affiliation reveal-item">
             <svg class="shape-affiliation-star" viewBox="0 0 120 120" aria-hidden="true">
               <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
@@ -220,9 +225,9 @@
           </article>
         </div>
 
-        <!-- Row 2: 3 Cards -->
+        <!-- Segunda linha com três cartões -->
         <div class="bento-row bento-row--tri">
-          <!-- Card 3: Document Center -->
+          <!-- Cartão 3: Central de documentos -->
           <article class="bento-card bento-card--tri reveal-item">
             <div>
               <span class="bento-tag bento-tag--doc">Central de documentos</span>
@@ -233,11 +238,11 @@
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-documentos.png" alt="Central de documentos acadêmicos" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-documents.png" alt="Central de documentos acadêmicos" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
 
-          <!-- Card 4: Academic Calendar -->
+          <!-- Cartão 4: Calendário acadêmico -->
           <article class="bento-card bento-card--tri reveal-item">
             <div>
               <span class="bento-tag bento-tag--cal">Calendário acadêmico</span>
@@ -248,11 +253,11 @@
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-calendario.png" alt="Calendário acadêmico oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-calendar.png" alt="Calendário acadêmico oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
 
-          <!-- Card 5: Research & Outreach -->
+          <!-- Cartão 5: Pesquisa e extensão -->
           <article class="bento-card bento-card--tri reveal-item">
             <div>
               <span class="bento-tag bento-tag--proj">Pesquisa e extensão</span>
@@ -263,14 +268,14 @@
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-projetos.png" alt="Projetos de pesquisa e extensão do campus" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img src="assets/print-projects.png" alt="Projetos de pesquisa e extensão do campus" class="bento-print-img" width="1280" height="800" loading="eager" />
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- 5. For Whom Section -->
+    <!-- 5. Público da plataforma -->
     <section class="for-whom-card reveal-item" id="for-whom">
       <div class="shape-forwhom-circle" aria-hidden="true"></div>
 
@@ -285,7 +290,7 @@
       </div>
 
       <div class="for-whom-grid">
-        <!-- Students -->
+        <!-- Alunos -->
         <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 160 160" aria-hidden="true">
@@ -302,7 +307,7 @@
           </ul>
         </article>
 
-        <!-- Faculty -->
+        <!-- Docentes -->
         <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 180 140" aria-hidden="true">
@@ -319,7 +324,7 @@
           </ul>
         </article>
 
-        <!-- Staff -->
+        <!-- Servidores -->
         <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 200 120" aria-hidden="true">
@@ -338,7 +343,7 @@
       </div>
     </section>
 
-    <!-- 6. How it Works Section -->
+    <!-- 6. Como funciona -->
     <section class="steps-card reveal-item" id="how-it-works">
       <div class="shape-steps-right" aria-hidden="true"></div>
 
@@ -396,7 +401,7 @@
       </ol>
     </section>
 
-    <!-- 7. FAQ Section -->
+    <!-- 7. Perguntas frequentes -->
     <section class="faq-section" id="faq">
       <div class="faq-layout">
         <div class="faq-left">
@@ -460,7 +465,7 @@
       </div>
     </section>
 
-    <!-- 8. Final CTA -->
+    <!-- 8. Convite para entrar -->
     <section class="cta-card reveal-item">
       <svg class="hero-deco-shape shape-star-yellow" style="top: 40px; left: 8%; width: 70px; height: 70px;" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
@@ -479,7 +484,7 @@
       <p class="cta-subtitle">Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.</p>
 
       <div class="cta-actions">
-        <a href="cadastro.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
+        <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
         <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar portal</a>
       </div>
 
@@ -497,7 +502,7 @@
       <div class="public-grid" id="publicProjects" aria-live="polite"><p>Carregando projetos…</p></div>
     </section>
 
-    <!-- 9. Official Footer -->
+    <!-- 9. Rodapé oficial -->
     <footer class="footer-main">
       <div class="container">
         <div class="footer-top">
@@ -523,9 +528,9 @@
             <div class="footer-col-title">Plataforma</div>
             <ul class="footer-links">
               <li><a href="#public-news">Notícias e avisos</a></li>
-              <li><a href="documentos.html">Central de documentos</a></li>
+              <li><a href="documents.html">Central de documentos</a></li>
               <li><a href="#public-projects">Projetos da comunidade</a></li>
-              <li><a href="calendario.html">Calendário acadêmico</a></li>
+              <li><a href="calendar.html">Calendário acadêmico</a></li>
             </ul>
           </div>
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendário</title>
 
-  <!-- Inline theme initialization -->
+  <!-- Inicialização do tema antes da exibição -->
   <script>
     (function () {
       var THEME_KEY = 'arcadia-theme';
@@ -37,7 +37,7 @@
 
   <div class="ar-app">
 
-    <!-- TopNav -->
+    <!-- Navegação superior -->
     <header class="ar-nav">
       <a class="ar-brand" href="index.html">
         <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
@@ -49,14 +49,14 @@
 
       <nav class="ar-navpill" aria-label="Seções do portal">
         <a href="index.html">Início</a>
-        <a href="inicio.html">Meu painel</a>
-        <a href="avisos.html">Avisos</a>
-        <a href="tarefas.html">Tarefas</a>
-        <a href="documentos.html">Documentos</a>
-        <a href="calendario.html" aria-current="page">Calendário<sup class="ar-sup">(4)</sup></a>
+        <a href="dashboard.html">Meu painel</a>
+        <a href="notices.html">Avisos</a>
+        <a href="tasks.html">Tarefas</a>
+        <a href="documents.html">Documentos</a>
+        <a href="calendar.html" aria-current="page">Calendário<sup class="ar-sup">(4)</sup></a>
         <span class="ar-sep" aria-hidden="true"></span>
-        <a href="pessoas.html">Pessoas</a>
-        <a href="projetos.html">Projetos</a>
+        <a href="people.html">Pessoas</a>
+        <a href="projects.html">Projetos</a>
       </nav>
 
       <div class="ar-nav-end">
@@ -64,11 +64,11 @@
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
         </button>
 
-        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+        <a class="ar-iconbtn" href="settings.html" aria-label="Configurações" title="Configurações">
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
         </a>
 
-        <a class="ar-user" href="configuracoes.html">
+        <a class="ar-user" href="settings.html">
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
           <div>
             <div class="ar-user-name">Aluno</div>
@@ -159,7 +159,7 @@
       </div>
     </section>
 
-    <!-- Modal Dialog: Add Event -->
+    <!-- Diálogo para adicionar evento -->
     <div class="ar-scrim" id="modalNewEvent" style="display:none; z-index:100;">
       <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Adicionar evento">
         <div class="ar-dialog-head">
