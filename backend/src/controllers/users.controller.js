@@ -40,13 +40,23 @@ async function getUserById(req, res) {
 async function createUser(req, res) {
     try {
         const { nome, email, senha, tipo_usuario } = req.body;
-        if (!nome || !email || typeof senha !== 'string' || senha.length < 8 || !['discente', 'docente', 'servidor'].includes(tipo_usuario)) {
+        if (typeof nome !== 'string' || !nome.trim() || typeof email !== 'string' || email.length > 254 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || typeof senha !== 'string' || senha.length < 8 ||
+            Buffer.byteLength(senha, 'utf8') > 72 || !['discente', 'docente', 'servidor'].includes(tipo_usuario)) {
             return res.status(400).json({ error: 'Informe nome, e-mail, vínculo e senha de pelo menos 8 caracteres.' });
+        }
+        // O cadastro público não comprova vínculo ou autoridade no campus, qualquer que seja o domínio do e-mail.
+        if (tipo_usuario !== 'discente') {
+            return res.status(403).json({ error: 'Contas de professor e servidor precisam ser autorizadas pela administração.' });
         }
         const hashedPassword = await bcrypt.hash(senha, 10);
 
         const userData = {
-            ...req.body,
+            nome: nome.trim(),
+            email: email.trim(),
+            tipo_usuario: 'discente',
+            telefone: req.body.telefone || null,
+            id_curso: req.body.id_curso || null,
             senha: hashedPassword
         };
         
@@ -60,7 +70,7 @@ async function createUser(req, res) {
     } catch (error) {
         console.error("Erro ao criar usuario:", error);
 
-        res.status(500).json({
+        res.status(error.code === 'ER_DUP_ENTRY' ? 409 : 500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
         });
     }

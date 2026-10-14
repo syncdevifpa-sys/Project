@@ -5,7 +5,8 @@ window.Arcadia = window.Arcadia || {};
     'use strict';
 
     const API_BASE = (window.ARCADIA_API_BASE || (window.ARCADIA_CONFIG || {}).backendUrl ||
-        (location.port === '3001' ? location.origin : 'http://localhost:3001')).replace(/\/$/, '');
+        (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && location.port !== '3001'
+            ? 'http://localhost:3001' : location.origin)).replace(/\/$/, '');
 
     const Token = {
         get() {

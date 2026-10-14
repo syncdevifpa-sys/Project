@@ -7,16 +7,22 @@ Redesign completo baseado nos guias "Arcdia  Template completo" e "Arcdia  Porta
 **Pblico**
 - `index.html`  landing page (hero, nmeros do semestre, produto, feed de avisos, footer)
 - `login.html`  entrar no portal
-- `cadastro.html`  criar conta (com vnculo aluno/professor/servidor)
+- `signup.html`  criar conta de aluno com e-mail válido, inclusive Gmail
+- `reset-password.html`  solicitar link por e-mail e redefinir senha
 
 **Portal (sidebar fixa de 236px)**
-- `inicio.html`  onboarding em trs passos + caixa de avisos + resumo dirio
-- `avisos.html`  feed filtrado por vnculo e categoria
-- `aviso.html`  detalhe do aviso, anexos, prazos e inscrio
-- `documentos.html`  central de documentos e links teis
-- `projetos.html`  portflio e envio de projeto
-- `calendario.html`  viso do ms com eventos por categoria
-- `perfil.html`  dados de vnculo e preferncias de aviso
+- `dashboard.html`  onboarding em trs passos + caixa de avisos + resumo dirio
+- `notices.html`  feed filtrado por vnculo e categoria
+- `notice.html`  detalhe do aviso, anexos, prazos e inscrio
+- `documents.html`  central de documentos e links teis
+- `projects.html`  portflio e envio de projeto
+- `calendar.html`  viso do ms com eventos por categoria
+- `profile.html`  dados de vnculo e preferncias de aviso
+- `settings.html`  configurações da conta, senha e sessões
+- `people.html`  pessoas do campus
+- `tasks.html`  tarefas pessoais
+
+Os nomes dos arquivos estão em inglês e a interface continua em português. URLs antigas redirecionam na Vercel e no servidor Express. Live Server serve somente os arquivos atuais; abra `index.html` ou uma página com o nome novo.
 
 ## Design system
 

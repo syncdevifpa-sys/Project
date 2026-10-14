@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+const emailService = require('../services/email.service');
 
 const recoveryModel =
     require("../models/passwordRecovery.model");
@@ -15,10 +16,15 @@ async function requestRecovery(req, res) {
     try {
         const { email } = req.body;
 
-        if (!email) {
+        if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return res.status(400).json({
                 error: "Email é obrigatório."
             });
+        }
+
+        // Verifique a configuração antes de consultar a conta: a resposta não revela sua existência.
+        if (!emailService.recoveryConfigured()) {
+            return res.status(503).json({ error: 'A recuperação por e-mail está indisponível. Entre em contato com a secretaria.' });
         }
 
         let user =
@@ -54,28 +60,28 @@ async function requestRecovery(req, res) {
             Date.now() + 30 * 60 * 1000
         );
 
-        await recoveryModel.createRecovery({
+        const recovery = await recoveryModel.createRecovery({
             id_usuario,
             id_externo,
             token_hash: tokenHash,
             expiracao: expiration
         });
 
-        /*
-         * TEMPORÁRIO PARA DESENVOLVIMENTO.
-         *
-         * Depois o recoveryToken será enviado por email.
-         * Não devemos retornar esse token em produção.
-         */
+        try {
+            await emailService.sendPasswordRecovery(user.email, recoveryToken);
+        } catch {
+            // Invalide links cuja entrega não foi confirmada; não registre token nem erro SMTP bruto.
+            await recoveryModel.markAsUsed(recovery.insertId);
+            console.error('Password recovery email delivery failed.');
+        }
 
         return res.json({
             message:
-                "Se o email estiver cadastrado, as instruções de recuperação serão enviadas.",
-            developmentToken: recoveryToken
+                "Se o email estiver cadastrado, as instruções de recuperação serão enviadas."
         });
 
     } catch (error) {
-        console.error("Password recovery error:", error);
+        console.error("Password recovery failed.");
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -90,54 +96,33 @@ async function resetPassword(req, res) {
             novaSenha
         } = req.body;
 
-        if (!token || !novaSenha) {
+        if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token) || typeof novaSenha !== 'string') {
             return res.status(400).json({
                 error: "Token e nova senha são obrigatórios."
             });
         }
 
-        if (novaSenha.length < 6) {
+        if (novaSenha.length < 8 || Buffer.byteLength(novaSenha, 'utf8') > 72) {
             return res.status(400).json({
-                error: "A senha deve possuir pelo menos 6 caracteres."
+                error: "A senha deve possuir pelo menos 8 caracteres e no máximo 72 bytes."
             });
         }
 
         const tokenHash = hashToken(token);
 
-        const recovery =
-            await recoveryModel.findValidRecovery(tokenHash);
-
-        if (!recovery) {
+        const passwordHash = await bcrypt.hash(novaSenha, 10);
+        if (!await recoveryModel.consumeRecovery(tokenHash, passwordHash)) {
             return res.status(400).json({
                 error: "Token inválido, expirado ou já utilizado."
             });
         }
-
-        const passwordHash =
-            await bcrypt.hash(novaSenha, 10);
-
-        if (recovery.id_usuario) {
-            await recoveryModel.updateInstitutionalPassword(
-                recovery.id_usuario,
-                passwordHash
-            );
-        } else {
-            await recoveryModel.updateExternalPassword(
-                recovery.id_externo,
-                passwordHash
-            );
-        }
-
-        await recoveryModel.markAsUsed(
-            recovery.id_recuperacao
-        );
 
         return res.json({
             message: "Senha alterada com sucesso."
         });
 
     } catch (error) {
-        console.error("Password reset error:", error);
+        console.error("Password reset failed.");
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'

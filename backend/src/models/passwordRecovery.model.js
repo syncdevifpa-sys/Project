@@ -100,6 +100,36 @@ async function markAsUsed(recoveryId) {
     return result;
 }
 
+async function consumeRecovery(tokenHash, passwordHash) {
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        const [rows] = await connection.execute(`
+            SELECT id_recuperacao, id_usuario, id_externo
+            FROM recuperacao_senha
+            WHERE token_hash = ? AND usado_em IS NULL AND expiracao > NOW()
+            LIMIT 1 FOR UPDATE
+        `, [tokenHash]);
+        const recovery = rows[0];
+        if (!recovery) {
+            await connection.rollback();
+            return false;
+        }
+        const institutional = Boolean(recovery.id_usuario);
+        const table = institutional ? 'usuarios' : 'publico_externo';
+        const column = institutional ? 'id_usuario' : 'id_externo';
+        const id = institutional ? recovery.id_usuario : recovery.id_externo;
+        await connection.execute(`UPDATE ${table} SET senha = ? WHERE ${column} = ?`, [passwordHash, id]);
+        await connection.execute(`DELETE FROM tokens WHERE ${column} = ?`, [id]);
+        await connection.execute(`UPDATE recuperacao_senha SET usado_em = NOW() WHERE ${column} = ? AND usado_em IS NULL`, [id]);
+        await connection.commit();
+        return true;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally { connection.release(); }
+}
+
 module.exports = {
     findInstitutionalByEmail,
     findExternalByEmail,
@@ -107,5 +137,6 @@ module.exports = {
     findValidRecovery,
     updateInstitutionalPassword,
     updateExternalPassword,
-    markAsUsed
+    markAsUsed,
+    consumeRecovery
 };

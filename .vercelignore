@@ -1,0 +1,11 @@
+node_modules
+backend/node_modules
+backend/.env
+.env
+.env.*
+state
+tests
+backend/schema.sql
+backend/schema.generated.sql
+backend/test-database.js
+backend/generate-password.js

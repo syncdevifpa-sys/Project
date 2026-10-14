@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entrar</title>
 
-  <!-- Inline theme initialization -->
+  <!-- Inicialização do tema antes da exibição -->
   <script>
     (function () {
       var THEME_KEY = 'arcadia-theme';
@@ -708,7 +708,7 @@
         </div>
       </a>
       <div class="ar-auth-header-end">
-        <a href="cadastro.html" class="ar-btn ar-btn--sm">Criar conta</a>
+        <a href="signup.html" class="ar-btn ar-btn--sm">Criar conta</a>
       </div>
     </header>
 
@@ -722,11 +722,11 @@
             <p class="ar-auth-desc">Informe os dados da sua conta</p>
           </div>
 
-          <form action="inicio.html" method="get" data-acesso="login" style="display: flex; flex-direction: column; gap: 18px;">
+          <form action="dashboard.html" method="get" data-acesso="login" style="display: flex; flex-direction: column; gap: 18px;">
             <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
             <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
 
-            <!-- Email -->
+            <!-- E-mail -->
             <div class="ar-input-group">
               <label class="ar-input-label" for="email">
                 <span>E-mail</span>
@@ -743,7 +743,7 @@
               </div>
             </div>
 
-            <!-- Password -->
+            <!-- Senha -->
             <div class="ar-input-group">
               <label class="ar-input-label" for="senha">
                 <span>Senha</span>
@@ -763,7 +763,7 @@
               </div>
             </div>
 
-            <!-- Keep me logged in and Forgot Password -->
+            <!-- Manter sessão e recuperar senha -->
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
               <label class="ar-check" style="margin: 0;">
                 <input type="checkbox" checked>
@@ -772,10 +772,10 @@
                 </span>
                 Manter conectado
               </label>
-              <a href="#" class="ar-link ar-link--muted" style="font-size: 13px;" onclick="alert('Entre em contato com a secretaria acadêmica ou a coordenação para recuperar sua senha.'); return false;">Esqueci minha senha</a>
+              <a href="reset-password.html" class="ar-link ar-link--muted" style="font-size: 13px;">Esqueci minha senha</a>
             </div>
 
-            <!-- Sign In Button -->
+            <!-- Botão para entrar -->
             <button type="submit" class="ar-btn-submit">
               <span>Entrar</span>
               <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -803,7 +803,7 @@
           </form>
 
           <p class="ar-switch-text">
-            Ainda não tem uma conta? <a href="cadastro.html">Criar uma conta</a>
+            Ainda não tem uma conta? <a href="signup.html">Criar uma conta</a>
           </p>
         </section>
 
