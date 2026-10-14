@@ -307,11 +307,12 @@
       color: var(--ref-ink-muted);
     }
     .ar-role-selector {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
       background: var(--ref-input-bg);
       padding: 5px;
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-sm);
       border: 1.5px solid var(--ref-input-border);
     }
     .ar-role-btn {
@@ -670,22 +671,26 @@
             <!-- Seleção de vínculo -->
             <div class="ar-role-group">
               <span class="ar-role-label">Vínculo com o campus</span>
-              <div class="ar-role-selector" role="radiogroup" aria-label="Selecione seu vínculo com o campus">
+              <div class="ar-role-selector" role="radiogroup" aria-label="Selecione seu vínculo com o campus" aria-describedby="registrationRoleHelp">
                 <button type="button" role="radio" aria-checked="true" class="ar-role-btn is-active" data-vinculo="Student">
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Aluno</span>
                 </button>
-                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Professor" disabled title="Conta autorizada pela administração">
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Professor">
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Professor</span>
                 </button>
-                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Staff" disabled title="Conta autorizada pela administração">
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Staff">
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Servidor</span>
                 </button>
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="External">
+                  <span class="ar-radio-dot" aria-hidden="true"></span>
+                  <span>Comunidade externa</span>
+                </button>
                 <input type="hidden" name="vinculo" id="vinculoInput" value="Student">
               </div>
-              <span class="ar-field-hint">O cadastro público cria uma conta de aluno. Contas de professor e servidor dependem de autorização da administração.</span>
+              <span class="ar-field-hint" id="registrationRoleHelp" role="status" aria-live="polite">Aluno: preencha seus dados e selecione o curso. Contas de professor e servidor dependem de autorização da administração.</span>
             </div>
 
             <!-- Full Name -->
@@ -744,7 +749,7 @@
             <!-- Course Selection -->
             <div class="ar-input-group" id="campoCursoWrapper">
               <label class="ar-input-label" for="curso">
-                <span>Curso</span>
+                <span id="registrationCourseLabel">Curso</span>
               </label>
               <div class="ar-input-wrap">
                 <select id="curso" name="curso" required>
@@ -812,7 +817,7 @@
             </label>
 
             <!-- Submit Button -->
-            <button type="submit" class="ar-btn-submit">
+            <button type="submit" class="ar-btn-submit" id="signupSubmit" aria-describedby="registrationRoleHelp">
               <span>Criar conta</span>
               <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
             </button>

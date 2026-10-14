@@ -1,5 +1,6 @@
 const usersModel = require("../models/users.model");
 const bcrypt = require("bcrypt");
+const institution = require('../config/institution');
 
 async function listUsers(req, res) {
     try {
@@ -47,7 +48,12 @@ async function createUser(req, res) {
         }
         // O cadastro público não comprova vínculo ou autoridade no campus, qualquer que seja o domínio do e-mail.
         if (tipo_usuario !== 'discente') {
-            return res.status(403).json({ error: 'Contas de professor e servidor precisam ser autorizadas pela administração.' });
+            return res.status(403).json({ error: institution.isInstitutionalEmail(email)
+                ? 'O domínio institucional não comprova posse nem cargo. Contas de professor e servidor precisam de validação administrativa.'
+                : 'Para professor ou servidor, utilize e-mail do domínio ' + institution.institutionalDomain() + ' e solicite validação à administração. O cadastro público não concede esses papéis.' });
+        }
+        if (await require('../models/externalUsers.model').findExternalByEmail(email)) {
+            return res.status(409).json({ error: 'Este e-mail já está cadastrado. Faça login.' });
         }
         const hashedPassword = await bcrypt.hash(senha, 10);
 
@@ -80,6 +86,14 @@ async function updateUser(req, res) {
     try {
         const userId = req.params.id;
         const userData = req.body;
+        if (req.user.is_admin && String(userId) !== String(req.user.id_usuario)) {
+            await require('../services/admin.service').changePerson('users', Number(userId), userData, req.user.id_usuario);
+            return res.json({ message: 'Pessoa atualizada.' });
+        }
+        // Alterações de administração/situação usam somente a área administrativa protegida.
+        delete userData.is_admin;
+        delete userData.situacao;
+        if (userData.tipo_usuario !== req.user.tipo_usuario) delete userData.tipo_usuario;
 
         const result = await usersModel.updateUser(userId, userData);
 
@@ -102,26 +116,11 @@ async function updateUser(req, res) {
 
 async function deleteUser(req, res) {
     try {
-        const userId = req.params.id;
-
-        const result = await usersModel.deleteUser(userId);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                error:"Usuário não encontrado."
-            });
-        }
-
-        res.json({
-            message: "Usuário excluído com sucesso."
-        });
-    } catch (error) {
-        console.error("Erro ao excluir usuario:", error);
-
-        res.status(500).json({
-            error:"Erro ao excluir usuário."
-        });
-    }
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Identificador inválido.' });
+        await require('../services/admin.service').changePerson('users', id, {}, req.user.id_usuario, true);
+        return res.json({ message: 'Pessoa excluída.' });
+    } catch (error) { return res.status(error.status || 500).json({ error: error.status ? error.message : 'Não foi possível excluir a pessoa.' }); }
 }
 
 module.exports = {

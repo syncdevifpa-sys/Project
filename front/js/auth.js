@@ -15,13 +15,16 @@ window.Arcadia = window.Arcadia || {};
         teacher: 'docente',
         docente: 'docente',
         servidor: 'servidor',
-        staff: 'servidor'
+        staff: 'servidor',
+        external: 'externo',
+        externo: 'externo'
     };
 
     const VINCULO_POR_TIPO = {
         discente: 'Aluno',
         docente: 'Professor',
-        servidor: 'Servidor'
+        servidor: 'Servidor',
+        externo: 'Comunidade externa'
     };
 
     function paraTipoUsuario(valor) {
@@ -55,7 +58,7 @@ window.Arcadia = window.Arcadia || {};
     }
 
     function irParaPortal() {
-        window.location.href = 'dashboard.html';
+        window.location.href = getSessao().tipo_usuario === 'externo' ? 'community.html' : 'dashboard.html';
     }
 
     // ------------------------- Envio de E-mail de Boas-vindas -------------------------
@@ -463,7 +466,7 @@ window.Arcadia = window.Arcadia || {};
                             : 'Aluno';
                     const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
 
-                    if (tipo_usuario !== 'discente') {
+                    if (!['discente', 'externo'].includes(tipo_usuario)) {
                         return showError('Contas de professor e servidor precisam ser autorizadas pela administração.');
                     }
 
@@ -476,14 +479,14 @@ window.Arcadia = window.Arcadia || {};
 
                     try {
                         const { ok, status, data } = await api.post(
-                            '/api/users',
+                            tipo_usuario === 'externo' ? '/api/external/register' : '/api/users',
                             {
                                 nome,
                                 email,
                                 senha,
                                 tipo_usuario,
                                 telefone: telefone || (form.querySelector('#telefone')?.value || '').trim() || null,
-                                id_curso: tipo_usuario === 'discente' ? Number(form.querySelector('#curso')?.value) || null : null
+                                id_curso: ['discente', 'servidor'].includes(tipo_usuario) ? Number(form.querySelector('#curso')?.value) || null : null
                             },
                             { auth: false }
                         );
@@ -495,8 +498,7 @@ window.Arcadia = window.Arcadia || {};
                             return showError(data.error || 'Não foi possível realizar o cadastro.');
                         }
 
-                        showSuccess('Conta criada com sucesso! Enviando e-mail de confirmação...');
-                        sendWelcomeEmail({ nome, email, provider: 'Arcadia' });
+                        showSuccess('Conta criada com sucesso! Entre com seu e-mail e senha.');
 
                         setTimeout(() => { window.location.href = 'login.html'; }, 900);
                     } catch (err) {
@@ -553,7 +555,7 @@ window.Arcadia = window.Arcadia || {};
     // ---------------------------- Logout ----------------------------
     async function logout() {
         // Revoga a sessão no servidor antes de descartar o JWT no navegador.
-        try { await api.expect(api.post('/api/auth/logout')); }
+        try { await api.expect(api.post(getSessao().tipo_usuario === 'externo' ? '/api/external/logout' : '/api/auth/logout')); }
         catch (error) {
             if (error.status !== 401) { alert(error.message || 'Não foi possível encerrar a sessão.'); return; }
         }
@@ -585,12 +587,30 @@ window.Arcadia = window.Arcadia || {};
         const vinculoInput = document.getElementById('vinculoInput');
         const cursoWrap = document.getElementById('campoCursoWrapper');
         const cursoSelect = document.getElementById('curso');
+        const roleHelp = document.getElementById('registrationRoleHelp');
+        const signupSubmit = document.getElementById('signupSubmit');
+        const courseLabel = document.getElementById('registrationCourseLabel');
+        let lastRole;
 
         function atualizarCurso(tipo) {
             if (!cursoWrap) return;
             const ehAluno = tipo === 'discente';
-            cursoWrap.style.display = ehAluno ? 'flex' : 'none';
-            if (cursoSelect) cursoSelect.required = ehAluno;
+            const publicRole = ehAluno || tipo === 'externo';
+            const academicVisible = ehAluno || tipo === 'servidor';
+            cursoWrap.style.display = academicVisible ? 'flex' : 'none';
+            if (courseLabel) courseLabel.textContent = ehAluno ? 'Curso' : 'Curso / formação (opcional)';
+            if (cursoSelect) {
+                if (lastRole && lastRole !== tipo) cursoSelect.value = '';
+                cursoSelect.required = ehAluno;
+                cursoSelect.disabled = !academicVisible;
+            }
+            lastRole = tipo;
+            if (signupSubmit) signupSubmit.disabled = !publicRole;
+            if (roleHelp) roleHelp.textContent = ehAluno
+                ? 'Aluno: preencha seus dados e selecione o curso. O cadastro aceita e-mail pessoal, como Gmail.'
+                : tipo === 'externo'
+                    ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
+                    : (tipo === 'docente' ? 'Professor' : 'Servidor') + ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
         }
         atualizarCurso(paraTipoUsuario(vinculoInput?.value || 'Aluno'));
 
@@ -607,6 +627,21 @@ window.Arcadia = window.Arcadia || {};
                 const val = btn.getAttribute('data-vinculo') || btn.textContent.trim();
                 if (vinculoInput) vinculoInput.value = val;
                 atualizarCurso(paraTipoUsuario(val));
+                roleBtns.forEach(b => { b.tabIndex = b === btn ? 0 : -1; });
+            });
+            btn.tabIndex = btn.getAttribute('aria-checked') === 'true' ? 0 : -1;
+            // O grupo permite selecionar os vínculos por teclado, além do clique.
+            btn.addEventListener('keydown', event => {
+                const index = Array.from(roleBtns).indexOf(btn);
+                let target;
+                if (['ArrowRight', 'ArrowDown'].includes(event.key)) target = (index + 1) % roleBtns.length;
+                else if (['ArrowLeft', 'ArrowUp'].includes(event.key)) target = (index + roleBtns.length - 1) % roleBtns.length;
+                else if (event.key === 'Home') target = 0;
+                else if (event.key === 'End') target = roleBtns.length - 1;
+                else return;
+                event.preventDefault();
+                roleBtns[target].click();
+                roleBtns[target].focus();
             });
         });
 
