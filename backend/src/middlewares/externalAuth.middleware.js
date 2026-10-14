@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
+const db = require('../config/database');
 
-function authenticateExternal(req, res, next) {
+async function authenticateExternal(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -37,11 +39,21 @@ function authenticateExternal(req, res, next) {
             });
         }
 
+        const hash = crypto.createHash('sha256').update(token).digest('hex');
+        const [sessions] = await db.execute(
+            'SELECT id_token FROM tokens WHERE token = ? AND id_externo = ? AND expiracao > NOW()',
+            [hash, decoded.id_externo]
+        );
+        if (!sessions.length) return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
+        req.session = sessions[0];
         req.externalUser = decoded;
 
         next();
 
     } catch (error) {
+        if (!['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(error.name)) {
+            return res.status(500).json({ error: 'Não foi possível validar a sessão.' });
+        }
         return res.status(401).json({
             error: "Token inválido ou expirado."
         });

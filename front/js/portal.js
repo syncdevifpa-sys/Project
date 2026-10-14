@@ -1,6 +1,6 @@
 /**
- * Arcadia Portal — Vanilla JS Interface System
- * Based on the Arcadia Design System (IFPA Belém Campus)
+ * Portal Arcádia — interface em JavaScript sem framework
+ * Baseada no sistema visual da Arcádia (IFPA Campus Belém)
  */
 
 (function () {
@@ -9,7 +9,7 @@
   var THEME_KEY = 'arcadia-theme';
   var root = document.documentElement;
 
-  // Portal SVG Icons Dictionary
+  // Catálogo de ícones SVG do portal
   var ICONS = {
     'search': '<path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" />',
     'chevron-right': '<path d="m9 18 6-6-6-6" />',
@@ -135,7 +135,7 @@
     return !!reduced;
   }
 
-  // Toast notification system
+  // Mensagens temporárias de notificação
   var toastTimeout = null;
   function showToast(message, actionLabel, onAction, duration) {
     duration = duration || 5000;
@@ -225,13 +225,13 @@
     }
   });
 
-  // Fast Command Palette Data (Ctrl+K / ⌘K)
+  // Destinos da busca rápida (Ctrl+K / ⌘K)
   var PALETTE_DATA = [
-    { type: 'Notices', title: 'Avisos', meta: 'Mural acadêmico', href: 'avisos.html', icon: 'bell' },
-    { type: 'Tasks', title: 'Tarefas', meta: 'Tarefas pessoais', href: 'tarefas.html', icon: 'check' },
-    { type: 'Documents', title: 'Documentos', meta: 'Solicitações pessoais', href: 'documentos.html', icon: 'file-text' },
-    { type: 'Projects', title: 'Projetos', meta: 'Projetos aprovados', href: 'projetos.html', icon: 'folder-kanban' },
-    { type: 'Calendar', title: 'Calendário', meta: 'Datas e eventos', href: 'calendario.html', icon: 'calendar' }
+    { type: 'Notices', title: 'Avisos', meta: 'Mural acadêmico', href: 'notices.html', icon: 'bell' },
+    { type: 'Tasks', title: 'Tarefas', meta: 'Tarefas pessoais', href: 'tasks.html', icon: 'check' },
+    { type: 'Documents', title: 'Documentos', meta: 'Solicitações pessoais', href: 'documents.html', icon: 'file-text' },
+    { type: 'Projects', title: 'Projetos', meta: 'Projetos aprovados', href: 'projects.html', icon: 'folder-kanban' },
+    { type: 'Calendar', title: 'Calendário', meta: 'Datas e eventos', href: 'calendar.html', icon: 'calendar' }
   ];
   var SCOPE_LABELS = { Notices: 'Avisos', Tasks: 'Tarefas', Documents: 'Documentos', Projects: 'Projetos', Calendar: 'Calendário' };
 

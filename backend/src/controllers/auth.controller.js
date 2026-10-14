@@ -90,6 +90,7 @@ async function login(req, res) {
                 id_usuario: user.id_usuario,
                 nome: user.nome,
                 email: user.email,
+                foto: user.foto || '',
                 tipo_usuario: user.tipo_usuario,
                 is_admin: Boolean(user.is_admin)
             }

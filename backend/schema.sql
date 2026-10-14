@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS arcadia;
-CREATE DATABASE arcadia
+-- Execute apenas em um banco novo. Este esquema não é uma migração incremental.
+CREATE DATABASE IF NOT EXISTS arcadia
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 USE arcadia;
@@ -107,7 +107,7 @@ CREATE TABLE avisos (
     id_usuario      INT NULL,                          -- autor
     titulo          VARCHAR(150) NOT NULL,
     resumo          TEXT NOT NULL,                     -- "Resumo do comunicado" (texto do card)
-    descricao       TEXT,                              -- texto completo (página aviso.html)
+    descricao       TEXT,                              -- texto completo (página notice.html)
     categoria       ENUM('matricula', 'edital', 'evento', 'cancelamento', 'calendario')
                         NOT NULL DEFAULT 'matricula',
     publico_alvo    ENUM('todos', 'discente', 'docente', 'servidor', 'externo') NOT NULL DEFAULT 'todos',

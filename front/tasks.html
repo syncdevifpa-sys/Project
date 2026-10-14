@@ -40,7 +40,7 @@
 
   <div class="ar-app">
 
-    <!-- TopNav -->
+    <!-- Navegação superior -->
     <header class="ar-nav">
       <a class="ar-brand" href="index.html">
         <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
@@ -52,14 +52,14 @@
 
       <nav class="ar-navpill" aria-label="Seções do portal">
         <a href="index.html">Início</a>
-        <a href="inicio.html">Meu painel</a>
-        <a href="avisos.html">Avisos</a>
-        <a href="tarefas.html" aria-current="page">Tarefas<sup class="ar-sup">(4)</sup></a>
-        <a href="documentos.html">Documentos</a>
-        <a href="calendario.html">Calendário</a>
+        <a href="dashboard.html">Meu painel</a>
+        <a href="notices.html">Avisos</a>
+        <a href="tasks.html" aria-current="page">Tarefas<sup class="ar-sup">(4)</sup></a>
+        <a href="documents.html">Documentos</a>
+        <a href="calendar.html">Calendário</a>
         <span class="ar-sep" aria-hidden="true"></span>
-        <a href="pessoas.html">Pessoas</a>
-        <a href="projetos.html">Projetos</a>
+        <a href="people.html">Pessoas</a>
+        <a href="projects.html">Projetos</a>
       </nav>
 
       <div class="ar-nav-end">
@@ -67,11 +67,11 @@
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
         </button>
 
-        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+        <a class="ar-iconbtn" href="settings.html" aria-label="Configurações" title="Configurações">
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
         </a>
 
-        <a class="ar-user" href="configuracoes.html">
+        <a class="ar-user" href="settings.html">
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">AR</span>
           <div>
             <div class="ar-user-name">Ana Ribeiro</div>
@@ -366,7 +366,7 @@
 
       function renderContagens(lista) {
         var total = tarefas.length;
-        document.querySelectorAll('.ar-navpill a[href="tarefas.html"] .ar-sup, .ar-hero-count').forEach(function (el) {
+        document.querySelectorAll('.ar-navpill a[href="tasks.html"] .ar-sup, .ar-hero-count').forEach(function (el) {
           el.textContent = '(' + total + ')';
         });
         document.querySelectorAll('#chipbarTarefas .ar-chip').forEach(function (chip) {

@@ -2,8 +2,10 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 
-dotenv.config({ path: path.join(__dirname, '.env') });
-dotenv.config();
+if (!process.env.VERCEL) {
+    dotenv.config({ path: path.join(__dirname, '.env') });
+    dotenv.config();
+}
 
 const app = express();
 
@@ -87,6 +89,13 @@ app.use("/api/external", externalUsersRoutes);
 app.use("/api/read-notices", readNoticesRoutes);
 app.use("/api/sessions", sessionsRoutes);
 app.use("/api/password-recovery", passwordRecoveryRoutes);
+// URLs antigas continuam válidas sem manter cópias das páginas.
+const pageRedirects = require('../page-redirects.json');
+for (const [oldPage, newPage] of Object.entries(pageRedirects)) {
+    app.get('/' + oldPage, (req, res) => {
+        res.redirect(308, '/' + newPage + req.originalUrl.slice(req.path.length));
+    });
+}
 app.use(express.static(path.join(__dirname, '../front')));
 console.log("Application routes configured.");
 

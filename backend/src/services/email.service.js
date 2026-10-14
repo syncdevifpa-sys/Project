@@ -1,32 +1,35 @@
 /**
- * Arcadia IFPA - Email Service (Backend)
+ * Arcádia IFPA — serviço de e-mail do backend
  * =====================================
- * Sends welcome emails and notifications via Nodemailer (Gmail / SMTP / Resend).
+ * Envia mensagens de boas-vindas e recuperação de senha via Nodemailer/SMTP.
  */
 
 const nodemailer = require('nodemailer');
 
 function createTransporter() {
-    // If environment variables for SMTP are provided
+    // Cria o transporte quando as credenciais SMTP estão configuradas.
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
         return nodemailer.createTransport({
             service: process.env.SMTP_SERVICE || 'gmail',
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 15000,
             auth: {
                 user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS // Gmail App Password (16 characters)
+                pass: process.env.SMTP_PASS // Senha de app do Gmail, quando esse serviço for utilizado.
             }
         });
     }
 
-    // Default test/fallback ethereal transporter
+    // Sem credenciais, não há transporte disponível.
     return null;
 }
 
 /**
- * Send welcome email to newly registered or logged in user
- * @param {string} toEmail - User's destination email
- * @param {string} userName - User's name
- * @param {string} provider - 'Google' or 'Arcadia'
+ * Envia uma mensagem de boas-vindas ao usuário.
+ * @param {string} toEmail - E-mail do destinatário
+ * @param {string} userName - Nome do usuário
+ * @param {string} provider - Provedor informado pelo fluxo de boas-vindas
  */
 async function sendWelcomeEmail(toEmail, userName = 'Usuário', provider = 'Google') {
     const transporter = createTransporter();
@@ -93,6 +96,28 @@ async function sendWelcomeEmail(toEmail, userName = 'Usuário', provider = 'Goog
     }
 }
 
-module.exports = {
-    sendWelcomeEmail
-};
+function recoveryConfigured() {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.APP_URL) return false;
+    try {
+        const url = new URL(process.env.APP_URL);
+        const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+        return !url.username && !url.password && (url.protocol === 'https:' ||
+            (!process.env.VERCEL && process.env.NODE_ENV !== 'production' && local && url.protocol === 'http:'));
+    } catch { return false; }
+}
+
+async function sendPasswordRecovery(toEmail, token) {
+    if (!recoveryConfigured()) throw new Error('PASSWORD_RECOVERY_NOT_CONFIGURED');
+    const url = new URL('/reset-password.html', process.env.APP_URL);
+    // Fragmentos não são enviados ao servidor nem incluídos no Referer.
+    url.hash = new URLSearchParams({ token }).toString();
+    const result = await createTransporter().sendMail({
+        from: `"Arcádia IFPA" <${process.env.SMTP_USER}>`,
+        to: toEmail,
+        subject: 'Redefinição de senha — Arcádia',
+        text: `Para redefinir sua senha, abra ${url.href}\nO link expira em 30 minutos. Se não solicitou a alteração, ignore esta mensagem.`
+    });
+    if (!result.accepted || result.accepted.length === 0) throw new Error('PASSWORD_RECOVERY_DELIVERY_FAILED');
+}
+
+module.exports = { sendWelcomeEmail, recoveryConfigured, sendPasswordRecovery };

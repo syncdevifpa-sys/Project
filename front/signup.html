@@ -663,11 +663,11 @@
             <span>ou continue com seu e-mail</span>
           </div>
 
-          <form action="inicio.html" method="get" data-acesso="cadastro" style="display: flex; flex-direction: column; gap: 15px;">
+          <form action="dashboard.html" method="get" data-acesso="cadastro" style="display: flex; flex-direction: column; gap: 15px;">
             <div class="mensagem-erro ar-field-error" style="display: none; padding: 10px 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); border-left: 3px solid var(--danger);"></div>
             <div class="mensagem-sucesso" style="display: none; color: var(--green-ink); font-size: 13px; font-weight: 500;"></div>
 
-            <!-- Role Selector -->
+            <!-- Seleção de vínculo -->
             <div class="ar-role-group">
               <span class="ar-role-label">Vínculo com o campus</span>
               <div class="ar-role-selector" role="radiogroup" aria-label="Selecione seu vínculo com o campus">
@@ -675,16 +675,17 @@
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Aluno</span>
                 </button>
-                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Professor">
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Professor" disabled title="Conta autorizada pela administração">
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Professor</span>
                 </button>
-                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Staff">
+                <button type="button" role="radio" aria-checked="false" class="ar-role-btn" data-vinculo="Staff" disabled title="Conta autorizada pela administração">
                   <span class="ar-radio-dot" aria-hidden="true"></span>
                   <span>Servidor</span>
                 </button>
                 <input type="hidden" name="vinculo" id="vinculoInput" value="Student">
               </div>
+              <span class="ar-field-hint">O cadastro público cria uma conta de aluno. Contas de professor e servidor dependem de autorização da administração.</span>
             </div>
 
             <!-- Full Name -->
@@ -704,7 +705,7 @@
               </div>
             </div>
 
-            <!-- Email (Standard, accepts Google and personal emails) -->
+            <!-- E-mail válido, incluindo Gmail e outros endereços pessoais -->
             <div class="ar-input-group">
               <label class="ar-input-label" for="email">
                 <span>Endereço de e-mail</span>
@@ -719,7 +720,7 @@
                   required
                 >
               </div>
-              <span class="ar-field-hint">Use seu e-mail pessoal ou institucional.</span>
+              <span class="ar-field-hint">Use um e-mail válido, como Gmail ou outro e-mail pessoal. Não é necessário um e-mail institucional.</span>
             </div>
 
             <!-- Phone Number -->
@@ -780,7 +781,7 @@
               </div>
             </div>
 
-            <!-- Password -->
+            <!-- Senha -->
             <div class="ar-input-group">
               <label class="ar-input-label" for="senha">
                 <span>Senha</span>
