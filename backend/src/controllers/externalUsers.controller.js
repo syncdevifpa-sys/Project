@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
+const sessionsModel = require('../models/sessions.model');
 
 const externalUsersModel =
     require("../models/externalUsers.model");
@@ -117,6 +119,14 @@ async function loginExternal(req, res) {
         await externalUsersModel.updateLastAccess(
             user.id_externo
         );
+
+        await sessionsModel.createSession({
+            id_externo: user.id_externo,
+            token: crypto.createHash('sha256').update(token).digest('hex'),
+            dispositivo: req.headers['user-agent'] || 'Navegador Web',
+            ip: req.ip || null,
+            expiracao: new Date(Date.now() + 8 * 60 * 60 * 1000)
+        });
 
         return res.json({
             message: "Login realizado com sucesso.",

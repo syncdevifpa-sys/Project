@@ -92,12 +92,12 @@
         }
         function noticeCard(r) {
             return card(r.titulo, r.resumo, `${esc(label(categories, r.categoria))} · ${esc(label(audiences, r.publico_alvo))} · ${date(r.data_publicacao)}`,
-                `<a class="ar-link" href="aviso.html?id=${encodeURIComponent(r.id_aviso)}">Abrir aviso</a>`);
+                `<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir aviso</a>`);
         }
         function render() {
             const list = visible();
             grid.innerHTML = list.map(noticeCard).join('') || '<p>Nenhum aviso encontrado.</p>';
-            table.innerHTML = list.map(r => `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso"></td><td><a href="aviso.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(label(audiences, r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${canManage ? `<button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`).join('');
+            table.innerHTML = list.map(r => `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso"></td><td><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(label(audiences, r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${canManage ? `<button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`).join('');
             board.innerHTML = '<div class="ar-card-grid">' + list.map(noticeCard).join('') + '</div>';
             $('#noticesSummary').textContent = `${list.length} avisos`;
             bar.counts();
@@ -279,13 +279,13 @@
         if (results[1].status === 'fulfilled') stats[1].textContent = results[1].value.filter(r => r.status !== 'concluida').length;
         if (results[2].status === 'fulfilled') stats[2].textContent = results[2].value.filter(r => r.status !== 'pronto').length;
         const row = (r, href, when) => `<a class="ar-row ar-row--nav" href="${href}"><span class="ar-row-main"><div class="ar-row-title">${esc(r.titulo)}</div><div class="ar-row-meta">${esc(r.resumo || r.descricao || '')}</div></span><span class="ar-row-trail">${date(when)}</span></a>`;
-        panels[0].innerHTML = results[3].status === 'fulfilled' ? results[3].value.filter(r => String(r.data_evento).slice(0, 10) >= new Date().toLocaleDateString('sv-SE')).slice(0, 5).map(r => row(r, 'calendario.html', r.data_evento)).join('') || '<p>Nenhuma data próxima.</p>' : '<p>Não foi possível carregar o calendário.</p>';
-        panels[1].innerHTML = results[4].status === 'fulfilled' ? results[4].value.slice(0, 5).map(r => row(r, 'aviso.html?id=' + encodeURIComponent(r.id_aviso), r.data_publicacao)).join('') || '<p>Nenhum aviso publicado.</p>' : '<p>Não foi possível carregar os avisos.</p>';
+        panels[0].innerHTML = results[3].status === 'fulfilled' ? results[3].value.filter(r => String(r.data_evento).slice(0, 10) >= new Date().toLocaleDateString('sv-SE')).slice(0, 5).map(r => row(r, 'calendar.html', r.data_evento)).join('') || '<p>Nenhuma data próxima.</p>' : '<p>Não foi possível carregar o calendário.</p>';
+        panels[1].innerHTML = results[4].status === 'fulfilled' ? results[4].value.slice(0, 5).map(r => row(r, 'notice.html?id=' + encodeURIComponent(r.id_aviso), r.data_publicacao)).join('') || '<p>Nenhum aviso publicado.</p>' : '<p>Não foi possível carregar os avisos.</p>';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         const page = location.pathname.split('/').pop();
-        const handler = { 'avisos.html': notices, 'projetos.html': projects, 'calendario.html': calendar, 'documentos.html': documents, 'pessoas.html': people, 'aviso.html': noticeDetail, 'inicio.html': dashboard }[page];
+        const handler = { 'notices.html': notices, 'projects.html': projects, 'calendar.html': calendar, 'documents.html': documents, 'people.html': people, 'notice.html': noticeDetail, 'dashboard.html': dashboard }[page];
         if (handler) handler().catch(e => {
             error(e);
             const target = $('#noticesCardsGrid') || $('#gridProjetos') || $('.ar-card-grid') || $('.ar-panel-body');

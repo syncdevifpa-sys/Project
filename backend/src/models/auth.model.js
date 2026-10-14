@@ -7,6 +7,7 @@ async function findUserByEmail(email) {
             id_usuario,
             nome,
             email,
+            foto,
             senha,
             tipo_usuario,
             is_admin,

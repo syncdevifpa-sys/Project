@@ -1,27 +1,19 @@
 /**
- * Arcadia - Configuration for Real Google Authentication & Real Email Delivery
- * ============================================================================
- * 
- * 1. GOOGLE CLIENT ID (for official Google OAuth popup):
- *    - Project: Arcadia IFPA
- *    - Client ID configured below
- * 
- * 2. EMAILJS (for sending real welcome emails to your inbox for free):
- *    - Go to https://www.emailjs.com/ and create a free account
- *    - Add Email Service: choose "Gmail" and connect your email
- *    - Create an Email Template with variables: {{to_name}}, {{to_email}}, {{message}}
- *    - Paste your Service ID, Template ID, and Public Key below:
+ * Arcádia — configuração pública do navegador.
+ * O login Google permanece indisponível enquanto não houver integração no backend.
+ * Os campos EmailJS opcionais atendem apenas às mensagens de boas-vindas.
+ * A recuperação de senha utiliza SMTP no backend; nunca coloque segredos aqui.
  */
 
 window.ARCADIA_CONFIG = {
-  // Real Google OAuth 2.0 Client ID:
+  // Identificador público do cliente Google; não habilita autenticação sozinho.
   googleClientId: "206457421738-i2um6qk5cs0be9chqe38kcrqbk9edae4.apps.googleusercontent.com",
 
-  // EmailJS Configuration for sending real emails directly to inboxes:
+  // Configuração pública opcional do EmailJS para mensagens de boas-vindas.
   emailJsServiceId: "",
   emailJsTemplateId: "",
   emailJsPublicKey: "",
 
-  // Arcadia Backend API endpoint:
-  backendUrl: "http://localhost:3001"
+  // Endereço público da API; vazio utiliza o padrão definido em api.js.
+  backendUrl: ""
 };

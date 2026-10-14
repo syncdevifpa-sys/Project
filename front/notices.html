@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avisos</title>
 
-  <!-- Inline theme initialization -->
+  <!-- Inicialização do tema antes da exibição -->
   <script>
     (function () {
       var THEME_KEY = 'arcadia-theme';
@@ -37,7 +37,7 @@
 
   <div class="ar-app">
 
-    <!-- TopNav -->
+    <!-- Navegação superior -->
     <header class="ar-nav">
       <a class="ar-brand" href="index.html">
         <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
@@ -49,14 +49,14 @@
 
       <nav class="ar-navpill" aria-label="Seções do portal">
         <a href="index.html">Início</a>
-        <a href="inicio.html">Meu painel</a>
-        <a href="avisos.html" aria-current="page">Avisos<sup class="ar-sup">(5)</sup></a>
-        <a href="tarefas.html">Tarefas</a>
-        <a href="documentos.html">Documentos</a>
-        <a href="calendario.html">Calendário</a>
+        <a href="dashboard.html">Meu painel</a>
+        <a href="notices.html" aria-current="page">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="tasks.html">Tarefas</a>
+        <a href="documents.html">Documentos</a>
+        <a href="calendar.html">Calendário</a>
         <span class="ar-sep" aria-hidden="true"></span>
-        <a href="pessoas.html">Pessoas</a>
-        <a href="projetos.html">Projetos</a>
+        <a href="people.html">Pessoas</a>
+        <a href="projects.html">Projetos</a>
       </nav>
 
       <div class="ar-nav-end">
@@ -64,11 +64,11 @@
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
         </button>
 
-        <a class="ar-iconbtn" href="configuracoes.html" aria-label="Configurações" title="Configurações">
+        <a class="ar-iconbtn" href="settings.html" aria-label="Configurações" title="Configurações">
           <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
         </a>
 
-        <a class="ar-user" href="configuracoes.html">
+        <a class="ar-user" href="settings.html">
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
           <div>
             <div class="ar-user-name">Aluno</div>
@@ -205,7 +205,7 @@
             <div class="ar-card-grid" id="noticesCardsGrid">
 
               <!-- Pinned Card -->
-              <a class="ar-card ar-card--pink ar-card--link" href="aviso.html" data-cat="Enrollment" data-id="1">
+              <a class="ar-card ar-card--pink ar-card--link" href="notice.html" data-cat="Enrollment" data-id="1">
                 <div class="ar-card-top">
                   <span class="ar-tag ar-tag--onfield">Aluno</span>
                   <span class="ar-tag ar-tag--onfield">Matrícula</span>
@@ -241,7 +241,7 @@
               </article>
 
               <!-- Card 3 -->
-              <a class="ar-card ar-card--link" href="aviso.html" data-cat="Calls" data-id="3">
+              <a class="ar-card ar-card--link" href="notice.html" data-cat="Calls" data-id="3">
                 <div class="ar-card-top">
                   <span class="ar-tag">Aluno</span>
                   <span class="ar-tag">Edital 012/2026</span>
@@ -321,7 +321,7 @@
                         <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
                       </label>
                     </td>
-                    <td class="ar-td-strong"><a href="aviso.html" class="ar-link" style="text-decoration:none;">Período de matrícula 2026/2</a></td>
+                    <td class="ar-td-strong"><a href="notice.html" class="ar-link" style="text-decoration:none;">Período de matrícula 2026/2</a></td>
                     <td><span class="ar-badge ar-badge--cyan">Matrícula</span></td>
                     <td>Aluno</td>
                     <td class="ar-td-mono">27 set.</td>
@@ -357,7 +357,7 @@
                         <span class="ar-check-box" aria-hidden="true"><svg class="ar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
                       </label>
                     </td>
-                    <td class="ar-td-strong"><a href="aviso.html" class="ar-link" style="text-decoration:none;">Bolsas de iniciação científica (PIBIC)</a></td>
+                    <td class="ar-td-strong"><a href="notice.html" class="ar-link" style="text-decoration:none;">Bolsas de iniciação científica (PIBIC)</a></td>
                     <td><span class="ar-badge ar-badge--blue">Editais</span></td>
                     <td>Aluno</td>
                     <td class="ar-td-mono">30 set.</td>
@@ -429,7 +429,7 @@
                   <div class="ar-bcard-meta">Prazo: 27 set. · Aluno</div>
                   <div class="ar-bcard-foot">
                     <span>Fixado no mural</span>
-                    <a href="aviso.html">Ver detalhes</a>
+                    <a href="notice.html">Ver detalhes</a>
                   </div>
                 </article>
                 <article class="ar-bcard">
@@ -443,7 +443,7 @@
                   <div class="ar-bcard-meta">Inscrições até 30 set. · 12 vagas</div>
                   <div class="ar-bcard-foot">
                     <span>Novo</span>
-                    <a href="aviso.html">Ver detalhes</a>
+                    <a href="notice.html">Ver detalhes</a>
                   </div>
                 </article>
               </section>
@@ -499,7 +499,7 @@
       </div>
     </div>
 
-    <!-- Modal Dialog: New Notice -->
+    <!-- Diálogo para criar aviso -->
     <div class="ar-scrim" id="modalNewNotice" style="display:none; z-index:100;">
       <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Novo aviso">
         <div class="ar-dialog-head">

@@ -17,7 +17,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
         querySelectorAll(selector) { return selector === '#chipbarProjetos .ar-chip' ? chips : []; },
         getElementById() { return null; }
     };
-    const context = vm.createContext({ document, location: { pathname: '/projetos.html' }, window: { Arcadia: {
+    const context = vm.createContext({ document, location: { pathname: '/projects.html' }, window: { Arcadia: {
         auth: { getSessao: () => ({ tipo_usuario: 'docente' }) },
         showToast: message => assert.fail(message),
         api: { expect: promise => promise, get: async () => [

@@ -2,7 +2,9 @@
 (function () {
     'use strict';
 
-    const API_BASE = 'http://localhost:3001';
+    const API_BASE = (window.ARCADIA_API_BASE || (window.ARCADIA_CONFIG || {}).backendUrl ||
+        (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && location.port !== '3001'
+            ? 'http://localhost:3001' : location.origin)).replace(/\/$/, '');
 
     // ---------------------------------------------------------------
     // Padronização: banco/API usa discente | docente | servidor
@@ -56,7 +58,7 @@
     }
 
     function redirectToPortal() {
-        window.location.href = 'inicio.html';
+        window.location.href = 'dashboard.html';
     }
 
     // ---------------------------------------------------------------

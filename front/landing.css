@@ -60,6 +60,22 @@
   --shadow-hover: 0 16px 36px -6px rgba(16, 20, 26, 0.12);
 }
 
+/* A página pública acompanha o tema salvo no portal. */
+:root { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-page: #0d1117;
+  --color-ink: #f2f4f8;
+  --color-ink-hero: #f2f4f8;
+  --color-text: #d6dce5;
+  --color-text-secondary: #b2bdcc;
+  --color-text-tertiary: #a5b2c4;
+  --color-text-muted: #aab2bf;
+  --color-hero-bg: #14263b;
+  --color-lilac-bg: #211e32;
+  --border-light: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 /* Reset Global */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -309,6 +325,11 @@ section[id] {
   align-items: center;
   gap: 12px;
 }
+
+.nav-account { display: inline-flex; flex: none; border-radius: 50%; }
+.nav-account-avatar { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: var(--color-hero-bg); color: var(--color-ink); font-weight: 700; border: var(--border-light); }
+.nav-account-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.nav-account:focus-visible { outline: 2px solid var(--color-blue); outline-offset: 3px; }
 
 .nav-btn-login {
   font-size: 14.5px;
@@ -1715,3 +1736,31 @@ section[id] {
 .public-card h3 { font-size: 22px; margin: 0 0 16px; }
 .public-card p { line-height: 1.65; white-space: pre-wrap; }
 .public-card summary { cursor: pointer; font-weight: 600; margin-top: 20px; }
+
+/* Superfícies neutras do tema escuro; imagens e destaques mantêm suas cores. */
+[data-theme="dark"] .navbar,
+[data-theme="dark"] .navbar.is-scrolled,
+[data-theme="dark"] #navMobilePanel {
+  background: rgba(20, 25, 32, 0.96);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+[data-theme="dark"] .hero-card { background-image: none; }
+[data-theme="dark"] .eyebrow-pill,
+[data-theme="dark"] .btn-pill--outline,
+[data-theme="dark"] .hero-browser-frame,
+[data-theme="dark"] .browser-header,
+[data-theme="dark"] .browser-address-bar,
+[data-theme="dark"] .bento-card:not(.bento-card--affiliation),
+[data-theme="dark"] .bento-frame-mini,
+[data-theme="dark"] .step-box,
+[data-theme="dark"] .public-card {
+  background: #191f29;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+[data-theme="dark"] .btn-pill--outline:hover,
+[data-theme="dark"] .faq-trigger[aria-expanded="true"] .faq-icon-circle {
+  background: var(--color-ink);
+  color: var(--color-page);
+}
+[data-theme="dark"] .faq-icon-circle { background: #252f3d; color: var(--color-ink); }
+[data-theme="dark"] .faq-item { border-color: rgba(255, 255, 255, 0.12); }

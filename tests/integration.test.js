@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const jwt = require('../backend/node_modules/jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const db = require('../backend/src/config/database');
 const users = require('../backend/src/models/users.model');
 const profile = require('../backend/src/controllers/profile.controller');
@@ -21,12 +21,12 @@ test('início esconde cadastro com sessão e oferece entrada aos visitantes', ()
             window: { addEventListener() {} },
             document: {
                 readyState: 'complete', getElementById: () => null,
-                querySelectorAll: selector => selector === 'a[href="cadastro.html"]' ? [signup] : selector.includes('login.html') ? [panel] : []
+                querySelectorAll: selector => selector === 'a[href="signup.html"]' ? [signup] : selector.includes('login.html') ? [panel] : []
             }
         });
         vm.runInContext(fs.readFileSync(path.join(root, 'front/js/landing.js'), 'utf8'), context);
         assert.equal(signup.hidden, loggedIn);
-        assert.equal(panel.href, loggedIn ? 'inicio.html' : 'login.html');
+        assert.equal(panel.href, loggedIn ? 'dashboard.html' : 'login.html');
         assert.equal(panel.textContent, loggedIn ? 'Meu painel' : 'Entrar');
     }
 });
@@ -76,12 +76,12 @@ test('início público usa projeções públicas e independe da sessão', async 
         const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
         if (!html.includes('class="ar-navpill"')) continue;
         assert.match(html, /href="index.html">Início<\/a>/, file);
-        assert.match(html, /href="inicio.html"[^>]*>Meu painel<\/a>/, file);
+        assert.match(html, /href="dashboard.html"[^>]*>Meu painel<\/a>/, file);
     }
 });
 
 before(async () => {
-    const app = require('../backend/server');
+    const app = require('../server');
     server = app.listen(0, '127.0.0.1');
     await new Promise(resolve => server.once('listening', resolve));
     base = `http://127.0.0.1:${server.address().port}`;
@@ -103,6 +103,38 @@ test('todas as páginas carregam scripts locais existentes e JavaScript válido'
         }
     }
     assert.equal((await fetch(base + '/api')).status, 200);
+});
+
+test('URLs antigas redirecionam para páginas inglesas preservando parâmetros, sem arquivos duplicados', async () => {
+    const redirects = require('../page-redirects.json');
+    const vercel = require('../vercel.json');
+    assert.deepEqual(vercel.redirects, Object.entries(redirects).map(([oldPage, newPage]) => ({
+        source: '/' + oldPage, destination: '/' + newPage, permanent: true
+    })));
+    for (const [oldPage, newPage] of Object.entries(redirects)) {
+        assert.equal(fs.existsSync(path.join(root, 'front', oldPage)), false);
+        const query = '?id=42&filter=urgente%20hoje';
+        const moved = await fetch(base + '/' + oldPage + query, { redirect: 'manual' });
+        assert.equal(moved.status, 308, oldPage);
+        assert.equal(moved.headers.get('location'), '/' + newPage + query);
+        assert.equal((await fetch(base + '/' + newPage)).status, 200, newPage);
+    }
+    const head = await fetch(base + '/recuperar-senha.html', { method: 'HEAD', redirect: 'manual' });
+    assert.equal(head.status, 308);
+    assert.equal(head.headers.get('location'), '/reset-password.html');
+});
+
+test('links HTML locais apontam para páginas existentes e usam nomes ingleses', () => {
+    const oldPages = Object.keys(require('../page-redirects.json'));
+    for (const file of fs.readdirSync(path.join(root, 'front')).filter(f => f.endsWith('.html'))) {
+        const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
+        for (const oldPage of oldPages) assert.ok(!html.includes(oldPage), file + ': ' + oldPage);
+        for (const match of html.matchAll(/(?:href|action)=["']([^"']+\.html(?:[?#][^"']*)?)["']/g)) {
+            if (/^(?:https?:)?\/\//.test(match[1])) continue;
+            const target = match[1].split(/[?#]/)[0].replace(/^\//, '');
+            assert.ok(fs.existsSync(path.join(root, 'front', target)), file + ': ' + target);
+        }
+    }
 });
 
 test('cliente API envia JWT, usa PUT para atualização parcial e propaga erros', async () => {
@@ -192,6 +224,81 @@ test('cadastro converte os vínculos em inglês para os valores do banco', () =>
     assert.equal(auth.paraTipoUsuario('Staff'), 'servidor');
 });
 
+test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios', async t => {
+    const bcrypt = require('bcrypt');
+    let saved;
+    t.mock.method(users, 'createUser', async data => { saved = data; return { insertId: 8 }; });
+    for (const email of ['aluno@gmail.com', 'aluno@example.test']) {
+        const res = await fetch(base + '/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome: 'Aluno', email, senha: 'senha-segura', tipo_usuario: 'discente', is_admin: true, situacao: 'ativo' }) });
+        assert.equal(res.status, 201);
+        assert.equal(saved.email, email);
+        assert.equal(saved.tipo_usuario, 'discente');
+        assert.equal(saved.is_admin, undefined);
+        assert.equal(saved.situacao, undefined);
+        assert.ok(await bcrypt.compare('senha-segura', saved.senha));
+    }
+    t.mock.method(users, 'createUser', () => assert.fail('Cadastro inválido não pode gravar'));
+    for (const tipo_usuario of ['docente', 'servidor']) {
+        const res = await fetch(base + '/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome: 'Aluno', email: 'aluno@gmail.com', senha: 'senha-segura', tipo_usuario }) });
+        assert.equal(res.status, 403);
+    }
+    const invalid = await fetch(base + '/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Aluno', email: 'invalido', senha: 'senha-segura', tipo_usuario: 'discente' }) });
+    assert.equal(invalid.status, 400);
+});
+
+test('login com Gmail preserva papel e cria sessão sem elevar conta comum', async t => {
+    const authModel = require('../backend/src/models/auth.model');
+    const sessions = require('../backend/src/models/sessions.model');
+    t.mock.method(authModel, 'findUserByEmail', async email => {
+        assert.equal(email, 'aluno@gmail.com');
+        return { id_usuario: 8, nome: 'Aluno', email, foto: 'data:image/png;base64,test', senha: 'hash', situacao: 'ativo', tipo_usuario: 'discente', is_admin: 0 };
+    });
+    t.mock.method(authModel, 'comparePassword', async () => true);
+    t.mock.method(sessions, 'createSession', async data => {
+        assert.equal(data.id_usuario, 8);
+        assert.match(data.token, /^[a-f0-9]{64}$/);
+        return { insertId: 4 };
+    });
+    const res = await fetch(base + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'aluno@gmail.com', senha: 'senha-segura', tipo_usuario: 'servidor', is_admin: true }) });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.user.tipo_usuario, 'discente');
+    assert.equal(data.user.is_admin, false);
+    assert.equal(data.user.foto, 'data:image/png;base64,test');
+});
+
+test('sessão externa revogada impede reutilizar JWT após redefinição de senha', async t => {
+    const { authenticateExternal } = require('../backend/src/middlewares/externalAuth.middleware');
+    const token = jwt.sign({ id_externo: 2, tipo_usuario: 'externo' }, process.env.JWT_SECRET);
+    t.mock.method(db, 'execute', async () => [[]]);
+    const res = response();
+    await authenticateExternal({ headers: { authorization: `Bearer ${token}` } }, res, () => assert.fail('Sessão revogada'));
+    assert.equal(res.code, 401);
+});
+
+test('login externo registra sessão revogável sem conceder papel institucional', async t => {
+    const model = require('../backend/src/models/externalUsers.model');
+    const sessions = require('../backend/src/models/sessions.model');
+    const { loginExternal } = require('../backend/src/controllers/externalUsers.controller');
+    const bcrypt = require('bcrypt');
+    const hash = await bcrypt.hash('senha-segura', 10);
+    t.mock.method(model, 'findExternalByEmail', async () => ({ id_externo: 2, nome: 'Visitante', email: 'visitante@gmail.com', senha: hash, situacao: 'ativo' }));
+    t.mock.method(model, 'updateLastAccess', async () => ({}));
+    let session;
+    t.mock.method(sessions, 'createSession', async data => { session = data; return { insertId: 3 }; });
+    const res = response();
+    await loginExternal({ body: { email: 'visitante@gmail.com', senha: 'senha-segura' }, headers: {}, ip: '127.0.0.1' }, res);
+    assert.equal(res.code, 200);
+    assert.equal(res.body.user.tipo_usuario, 'externo');
+    assert.equal(session.id_externo, 2);
+    assert.match(session.token, /^[a-f0-9]{64}$/);
+    assert.ok(session.expiracao > new Date());
+});
+
 test('documentos pessoais usam /my e estados refletem o banco', async () => {
     let requested;
     const context = vm.createContext({ window: { Arcadia: { api: {
@@ -232,7 +339,7 @@ test('formulários criam avisos, eventos, projetos e documentos pelos contratos 
 });
 
 test('senha incorreta não altera a credencial nem revoga sessões', async t => {
-    const bcrypt = require('../backend/node_modules/bcrypt');
+    const bcrypt = require('bcrypt');
     const auth = require('../backend/src/models/auth.model');
     t.mock.method(users, 'findUserById', async () => ({ email: 'test@example.com' }));
     t.mock.method(auth, 'findUserByEmail', async () => ({ senha: await bcrypt.hash('senha-correta', 10) }));
