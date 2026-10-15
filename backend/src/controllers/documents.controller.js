@@ -1,3 +1,4 @@
+const { validateContent, editContent } = require('../services/content-edit.service');
 const documentsModel = require("../models/documents.model");
 
 async function listMyDocuments(req, res) {
@@ -9,6 +10,7 @@ async function listMyDocuments(req, res) {
         return res.json(documents);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error fetching documents:", error);
 
         return res.status(500).json({
@@ -24,6 +26,7 @@ async function listAllDocuments(req, res) {
         return res.json(documents);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error fetching documents:", error);
 
         return res.status(500).json({
@@ -62,6 +65,7 @@ async function getDocumentById(req, res) {
         return res.json(document);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error fetching document:", error);
 
         return res.status(500).json({
@@ -82,7 +86,7 @@ async function createDocument(req, res) {
 
         const result = await documentsModel.createDocument(
             req.user.id_usuario,
-            req.body
+            validateContent('documents', req.body, true)
         );
 
         const protocol =
@@ -100,6 +104,7 @@ async function createDocument(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error creating document:", error);
 
         return res.status(500).json({
@@ -129,6 +134,7 @@ async function updateDocument(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error updating document:", error);
 
         return res.status(500).json({
@@ -155,6 +161,7 @@ async function deleteDocument(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error deleting document:", error);
 
         return res.status(500).json({

@@ -32,6 +32,11 @@
 
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="bundle.css">
+<link rel="stylesheet" href="portal-responsive.css">
+<link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
+<link rel="stylesheet" href="scrollbars.css">
+<link rel="stylesheet" href="navigation.css">
+<link rel="stylesheet" href="brand-logo.css">
 </head>
 <body>
 
@@ -40,7 +45,7 @@
     <!-- Barra de navegação superior -->
     <header class="ar-nav">
       <a class="ar-brand" href="index.html">
-        <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
+        <img src="assets/arcadia-emblem.png" alt="Logo da Arcadia" class="ar-brand-img ar-brand-img--home" width="34" height="34">
         <span>
           <div class="ar-brand-name">Arcadia</div>
           <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
@@ -50,7 +55,7 @@
       <nav class="ar-navpill" aria-label="Seções do portal">
         <a href="index.html">Início</a>
         <a href="dashboard.html" aria-current="page">Meu painel</a>
-        <a href="notices.html">Avisos</a>
+        <a href="notices.html">Avisos e notícias</a>
         <a href="tasks.html">Tarefas</a>
         <a href="documents.html">Documentos</a>
         <a href="calendar.html">Calendário</a>
@@ -71,8 +76,8 @@
         <a class="ar-user" href="settings.html">
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
           <div>
-            <div class="ar-user-name">Aluno</div>
-            <div class="ar-user-role">Aluno</div>
+            <div class="ar-user-name">Minha conta</div>
+            <div class="ar-user-role"></div>
           </div>
         </a>
 
@@ -91,7 +96,7 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting">Aluno</span></h1>
+      <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
       <div class="ar-hero-side">
         <p class="ar-hero-desc">Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.</p>
         <div class="ar-hero-actions">
@@ -107,7 +112,7 @@
     <div class="ar-grid-3">
       <div class="ar-stat">
         <div class="ar-stat-label">Avisos não lidos</div>
-        <div class="ar-stat-value">2</div>
+        <div class="ar-stat-value">—</div>
         <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
         <div class="ar-stat-foot">
           <a href="notices.html" class="ar-link">
@@ -119,7 +124,7 @@
 
       <div class="ar-stat">
         <div class="ar-stat-label">Tarefas em aberto</div>
-        <div class="ar-stat-value">3</div>
+        <div class="ar-stat-value">—</div>
         <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
         <div class="ar-stat-foot">
           <a href="tasks.html" class="ar-link">
@@ -131,7 +136,7 @@
 
       <div class="ar-stat ar-stat--pink">
         <div class="ar-stat-label">Documentos em análise</div>
-        <div class="ar-stat-value">2</div>
+        <div class="ar-stat-value">—</div>
         <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
         <div class="ar-stat-foot">
           <a href="documents.html" class="ar-link">
@@ -154,107 +159,19 @@
             <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </a>
         </div>
-        <div class="ar-panel-body">
-          <a class="ar-row ar-row--nav" href="calendar.html">
-            <span class="ar-row-date"><b>01</b><small>set.</small></span>
-            <span class="ar-row-main">
-              <div class="ar-row-title">Calendário do segundo semestre</div>
-            </span>
-            <span class="ar-row-trail"><span class="ar-badge ar-badge--pink">Calendário</span></span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-
-          <a class="ar-row ar-row--nav" href="documents.html">
-            <span class="ar-row-date"><b>08</b><small>set.</small></span>
-            <span class="ar-row-main">
-              <div class="ar-row-title">Histórico acadêmico completo</div>
-            </span>
-            <span class="ar-row-trail"><span class="ar-badge ar-badge--green">Pronto</span></span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-
-          <a class="ar-row ar-row--nav" href="notices.html">
-            <span class="ar-row-date"><b>09</b><small>set.</small></span>
-            <span class="ar-row-main">
-              <div class="ar-row-title">Aulas suspensas no bloco C</div>
-            </span>
-            <span class="ar-row-trail"><span class="ar-badge ar-badge--orange">Aviso</span></span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-
-          <a class="ar-row ar-row--nav" href="tasks.html">
-            <span class="ar-row-date"><b>12</b><small>set.</small></span>
-            <span class="ar-row-main">
-              <div class="ar-row-title">Confirmar disciplinas do semestre</div>
-            </span>
-            <span class="ar-row-trail"><span class="ar-badge ar-badge--cyan">Aberta</span></span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-        </div>
+        <div class="ar-panel-body"><p role="status">Carregando...</p></div>
       </section>
 
       <!-- Panel: Recently Created -->
       <section class="ar-panel">
         <div class="ar-panel-head">
-          <h3 class="ar-panel-label" style="margin: 0;">Avisos recentes</h3>
+          <h3 class="ar-panel-label" style="margin: 0;">Avisos e notícias recentes</h3>
           <a href="notices.html" class="ar-link">
             <span>Ver avisos</span>
             <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </a>
         </div>
-        <div class="ar-panel-body">
-          <a class="ar-row ar-row--nav" href="projects.html">
-            <span class="ar-row-main">
-              <div class="ar-row-title">Painel de dados abertos do campus</div>
-              <div class="ar-row-meta">Projetos</div>
-            </span>
-            <span class="ar-row-trail">2 set.</span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-
-          <a class="ar-row ar-row--nav" href="documents.html">
-            <span class="ar-row-main">
-              <div class="ar-row-title">Termo de compromisso de estágio</div>
-              <div class="ar-row-meta">Documentos</div>
-            </span>
-            <span class="ar-row-trail">2 set.</span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-
-          <a class="ar-row ar-row--nav" href="notice.html">
-            <span class="ar-row-main">
-              <div class="ar-row-title">Divulgação dos resultados de pesquisa PIBIC</div>
-              <div class="ar-row-meta">Calendário</div>
-            </span>
-            <span class="ar-row-trail">1º set.</span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-
-          <a class="ar-row ar-row--nav" href="notices.html">
-            <span class="ar-row-main">
-              <div class="ar-row-title">Semana de Ciência e Tecnologia</div>
-              <div class="ar-row-meta">Avisos</div>
-            </span>
-            <span class="ar-row-trail">29 ago.</span>
-            <span class="ar-row-chev">
-              <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            </span>
-          </a>
-        </div>
+        <div class="ar-panel-body"><p role="status">Carregando...</p></div>
       </section>
 
     </div>
@@ -265,5 +182,6 @@
   <script src="js/auth.js"></script>
   <script src="js/portal.js"></script>
   <script src="js/pages.js"></script>
+<script src="js/navigation.js"></script>
 </body>
 </html>

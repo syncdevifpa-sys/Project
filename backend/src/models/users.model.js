@@ -22,6 +22,7 @@ async function listUsers() {
             criado_em,
             atualizado_em
         FROM usuarios
+        WHERE situacao = 'ativo'
         ORDER BY nome ASC
     `);
 
@@ -32,7 +33,7 @@ module.exports = {
     listUsers
 };
 
-async function findUserById(Userid) {
+async function findUserById(Userid, includeInactive = false) {
     const [user] = await db.execute(`
         SELECT
             id_usuario, 
@@ -54,7 +55,7 @@ async function findUserById(Userid) {
             criado_em,
             atualizado_em
         FROM usuarios
-        WHERE id_usuario = ?
+        WHERE id_usuario = ? ${includeInactive ? "" : "AND situacao = 'ativo'"}
     `, [Userid]);
 
     return user[0];
@@ -82,13 +83,14 @@ async function listUsers() {
             criado_em,
             atualizado_em
         FROM usuarios
+        WHERE situacao = 'ativo'
         ORDER BY nome ASC
     `);
 
     return users;
 }
 
-async function findUserById(userId) {
+async function findUserById(userId, includeInactive = false) {
     const [users] = await db.execute(`
         SELECT
             id_usuario,
@@ -110,7 +112,7 @@ async function findUserById(userId) {
             criado_em,
             atualizado_em
         FROM usuarios
-        WHERE id_usuario = ?
+        WHERE id_usuario = ? ${includeInactive ? "" : "AND situacao = 'ativo'"}
     `, [userId]);
 
     return users[0];
@@ -173,12 +175,9 @@ async function updateUser(userId, userData) {
 }
 
 async function deleteUser(userId) {
-    const [result] = await db.execute(`
-        DELETE FROM usuarios
-        WHERE id_usuario = ?
-    `, [userId]);
-
-    return result;
+    const error = new Error('Use a gestão de contas com verificação de relações.');
+    error.status = 405;
+    throw error;
 }
 
 module.exports = {

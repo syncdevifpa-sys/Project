@@ -1,3 +1,4 @@
+const { validateContent, editContent } = require('../services/content-edit.service');
 const tasksModel = require("../models/tasks.model");
 
 async function listTasks(req, res) {
@@ -9,6 +10,7 @@ async function listTasks(req, res) {
         return res.json(tasks);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao buscar tarefas:", error);
 
         return res.status(500).json({
@@ -36,6 +38,7 @@ async function getTaskById(req, res) {
         return res.json(task);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao buscar tarefa:", error);
 
         return res.status(500).json({
@@ -57,7 +60,7 @@ async function createTask(req, res) {
 
         const result = await tasksModel.createTask(
             userId,
-            req.body
+            validateContent('tasks', req.body, true)
         );
 
         return res.status(201).json({
@@ -66,6 +69,7 @@ async function createTask(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao criar tarefa :", error);
 
         return res.status(500).json({
@@ -82,7 +86,7 @@ async function updateTask(req, res) {
         const result = await tasksModel.updateTask(
             taskId,
             userId,
-            req.body
+            validateContent('tasks', req.body)
         );
 
         if (!result) {
@@ -96,6 +100,7 @@ async function updateTask(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao atualizar tarefa:", error);
 
         return res.status(500).json({
@@ -125,6 +130,7 @@ async function deleteTask(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao excluir tarefa :", error);
 
         return res.status(500).json({

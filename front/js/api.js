@@ -27,9 +27,9 @@ window.Arcadia = window.Arcadia || {};
      * - Se uma rota protegida responder 401, a sessão expirou: limpa e volta ao login.
      * - Erro de rede (servidor fora do ar) lança exceção: quem chama usa try/catch.
      */
-    async function request(path, { method = 'GET', body, auth = true } = {}) {
+    async function request(path, { method = 'GET', body, auth = true, raw = false, contentType = 'application/pdf' } = {}) {
         const headers = {};
-        if (body !== undefined) headers['Content-Type'] = 'application/json';
+        if (body !== undefined) headers['Content-Type'] = raw ? contentType : 'application/json';
 
         const token = Token.get();
         if (auth && token) headers.Authorization = `Bearer ${token}`;
@@ -37,7 +37,7 @@ window.Arcadia = window.Arcadia || {};
         const res = await fetch(`${API_BASE}${path}`, {
             method,
             headers,
-            body: body !== undefined ? JSON.stringify(body) : undefined
+            body: body !== undefined ? (raw ? body : JSON.stringify(body)) : undefined
         });
 
         const data = await res.json().catch(() => ({}));
