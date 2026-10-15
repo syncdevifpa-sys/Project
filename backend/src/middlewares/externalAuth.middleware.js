@@ -41,7 +41,7 @@ async function authenticateExternal(req, res, next) {
 
         const hash = crypto.createHash('sha256').update(token).digest('hex');
         const [sessions] = await db.execute(
-            'SELECT id_token FROM tokens WHERE token = ? AND id_externo = ? AND expiracao > NOW()',
+            "SELECT t.id_token FROM tokens t JOIN publico_externo p ON p.id_externo = t.id_externo WHERE t.token = ? AND t.id_externo = ? AND t.expiracao > NOW() AND p.situacao = 'ativo'",
             [hash, decoded.id_externo]
         );
         if (!sessions.length) return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });

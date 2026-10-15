@@ -2,7 +2,7 @@ const db = require('../config/database');
 function fail(status, message) { const error = new Error(message); error.status = status; throw error; }
 // Identificadores SQL vêm apenas deste catálogo fixo, nunca do cliente.
 const resources = {
-    notices: ['avisos', 'id_aviso', 'Avisos', 'id_usuario titulo resumo descricao categoria publico_alvo situacao urgente fixado referencia data_prazo data_evento vagas'],
+    notices: ['avisos', 'id_aviso', 'Avisos e notícias', 'id_usuario tipo_publicacao titulo resumo descricao categoria publico_alvo situacao urgente fixado referencia data_prazo data_evento vagas'],
     calendar: ['calendario', 'id_evento', 'Calendário', 'id_usuario titulo descricao categoria periodo_letivo data_evento data_fim hora_inicio hora_fim local'],
     documents: ['documentos', 'id_documento', 'Documentos', 'id_usuario id_responsavel titulo motivo descricao tipo status observacao previsao data_emissao arquivo'],
     projects: ['projetos', 'id_projeto', 'Projetos', 'id_usuario titulo descricao eixo responsavel_nome rotulo_responsavel vagas unidade_vaga link situacao aprovacao aprovado_por data_inicio data_fim'],
@@ -11,7 +11,7 @@ const resources = {
     links: ['links_uteis', 'id_link', 'Links úteis', 'id_usuario titulo descricao url categoria ordem'],
     courses: ['cursos', 'id_curso', 'Cursos', 'nome nivel ativo']
 };
-const labels = { titulo:'Título', nome:'Nome', resumo:'Resumo', descricao:'Descrição', categoria:'Categoria', situacao:'Situação', status:'Situação', urgente:'Urgente', fixado:'Fixado', referencia:'Referência', vagas:'Vagas', motivo:'Motivo', tipo:'Tipo', observacao:'Observação', previsao:'Previsão', arquivo:'URL do arquivo', local:'Local', eixo:'Área temática', link:'Link', aprovacao:'Aprovação', responsavel:'Responsável', prioridade:'Prioridade', ativo:'Ativo', url:'URL', ordem:'Ordem', nivel:'Nível', id_usuario: 'Pessoa responsável (ID)', id_responsavel: 'Responsável pelo documento (ID)', id_evento: 'Evento (ID)', aprovado_por: 'Aprovado por (ID)', publico_alvo: 'Público', data_prazo: 'Prazo', data_evento: 'Data do evento', data_fim: 'Data final', hora_inicio: 'Horário inicial', hora_fim: 'Horário final', responsavel_nome: 'Responsável', rotulo_responsavel: 'Rótulo do responsável', unidade_vaga: 'Unidade de vagas', data_inicio: 'Data inicial', data_lembrete: 'Data do lembrete', concluida_em: 'Concluída em', data_emissao: 'Emissão', periodo_letivo: 'Período letivo' };
+const labels = { tipo_publicacao:'Tipo de publicação', titulo:'Título', nome:'Nome', resumo:'Resumo', descricao:'Descrição', categoria:'Categoria', situacao:'Situação', status:'Situação', urgente:'Urgente', fixado:'Fixado', referencia:'Referência', vagas:'Vagas', motivo:'Motivo', tipo:'Tipo', observacao:'Observação', previsao:'Previsão', arquivo:'URL do arquivo', local:'Local', eixo:'Área temática', link:'Link', aprovacao:'Aprovação', responsavel:'Responsável', prioridade:'Prioridade', ativo:'Ativo', url:'URL', ordem:'Ordem', nivel:'Nível', id_usuario: 'Pessoa responsável (ID)', id_responsavel: 'Responsável pelo documento (ID)', id_evento: 'Evento (ID)', aprovado_por: 'Aprovado por (ID)', publico_alvo: 'Público', data_prazo: 'Prazo', data_evento: 'Data do evento', data_fim: 'Data final', hora_inicio: 'Horário inicial', hora_fim: 'Horário final', responsavel_nome: 'Responsável', rotulo_responsavel: 'Rótulo do responsável', unidade_vaga: 'Unidade de vagas', data_inicio: 'Data inicial', data_lembrete: 'Data do lembrete', concluida_em: 'Concluída em', data_emissao: 'Emissão', periodo_letivo: 'Período letivo' };
 function config(key) { if (!Object.hasOwn(resources, key)) fail(404, 'Recurso inexistente.'); return resources[key]; }
 async function fields(key) {
     const [table, , , names] = config(key);
@@ -23,7 +23,13 @@ async function fields(key) {
     }));
 }
 async function catalog() { return Promise.all(Object.keys(resources).map(async key => ({ key, label: resources[key][2], id: resources[key][1], fields: await fields(key) }))); }
-async function list(key) { const [table, id, , names] = config(key); const [rows] = await db.execute(`SELECT ${id}, ${names.split(' ').join(', ')} FROM ${table} ORDER BY ${id} DESC`); return rows; }
+async function list(key) {
+    const [table, id, , names] = config(key);
+    let selected = names.split(' ');
+    if (key === 'notices' && !await require('./notice-schema.service').hasNoticeType()) selected = selected.filter(name => name !== 'tipo_publicacao');
+    const [rows] = await db.execute('SELECT '+id+', '+selected.join(', ')+' FROM '+table+' ORDER BY '+id+' DESC');
+    return rows;
+}
 async function save(key, id, body, actor) {
     const [table, primary] = config(key);
     const metadata = await fields(key);
@@ -63,26 +69,33 @@ async function people(kind) {
     const columns = kind === 'users' ? 'id_usuario, nome, email, tipo_usuario, situacao, is_admin, id_curso, periodo, setor' : 'id_externo, nome, email, situacao, organizacao';
     const [rows] = await db.execute(`SELECT ${columns} FROM ${table} ORDER BY nome`); return rows;
 }
-async function changePerson(kind, id, body, actor, deletion = false) {
+async function changePerson(kind, id, body, actor, deletion = false, selfRemoval = false) {
     actor = Number(actor);
     if (!['users', 'external-users'].includes(kind)) fail(404, 'Grupo inexistente.');
     const institutional = kind === 'users';
-    if (institutional && id === actor && (deletion || body.situacao && body.situacao !== 'ativo' || body.is_admin === false)) fail(409, 'Não é permitido remover, bloquear ou retirar a própria administração.');
+    if (selfRemoval && id !== actor) fail(403, 'A exclusão própria só permite a conta autenticada.');
+    if (institutional && id === actor && (deletion && !selfRemoval || body.situacao && body.situacao !== 'ativo' || body.is_admin === false)) fail(409, 'Use a opção de exclusão própria nas configurações; não bloqueie nem retire a própria administração.');
     const table = institutional ? 'usuarios' : 'publico_externo', primary = institutional ? 'id_usuario' : 'id_externo';
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
         // Todos os caminhos de gestão de pessoas usam esta trava para proteger o último admin.
         const [admins] = await connection.execute("SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE");
-        const [rows] = await connection.execute(`SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`, [id]);
+        const [rows] = await connection.execute(`SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario' : ''}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`, [id]);
         const person = rows[0]; if (!person) fail(404, 'Pessoa não encontrada.');
         if (institutional && person.is_admin && person.situacao === 'ativo' && admins.length <= 1 && (deletion || body.is_admin === false || body.situacao && body.situacao !== 'ativo')) fail(409, 'Não é permitido remover o último administrador ativo.');
         if (deletion) {
-            if (person.situacao !== 'bloqueado') fail(409, 'Desative a pessoa antes de solicitar exclusão definitiva.');
+            if (selfRemoval) {
+                if (body.confirmacao !== 'EXCLUIR' || typeof body.senha !== 'string' || !body.senha || Buffer.byteLength(body.senha,'utf8')>72) fail(400,'Confirme EXCLUIR e informe sua senha atual.');
+                if (!await require('bcrypt').compare(body.senha,person.senha)) fail(403,'Senha atual incorreta.');
+            } else if (person.situacao !== 'bloqueado') fail(409,'Desative a pessoa antes da exclusão definitiva.');
             const relations = institutional ? [['avisos','id_usuario'],['avisos_lidos','id_usuario'],['tarefas','id_usuario'],['documentos','id_usuario'],['documentos','id_responsavel'],['calendario','id_usuario'],['projetos','id_usuario'],['projetos','aprovado_por'],['projeto_inscricoes','id_usuario'],['lembretes','id_usuario'],['links_uteis','id_usuario'],['recuperacao_senha','id_usuario']] : [['recuperacao_senha','id_externo']];
-            for (const [relation, column] of relations) { const [used] = await connection.execute(`SELECT 1 FROM ${relation} WHERE ${column} = ? LIMIT 1`, [id]); if (used.length) fail(409, 'Há histórico vinculado. A pessoa permanecerá desativada; exclusão definitiva indisponível.'); }
-            await connection.execute(`DELETE FROM tokens WHERE ${primary} = ?`, [id]);
-            await connection.execute(`DELETE FROM ${table} WHERE ${primary} = ?`, [id]);
+            for (const [relation,column] of relations) {
+                const [used]=await connection.execute(`SELECT 1 FROM ${relation} WHERE ${column} = ? LIMIT 1`,[id]);
+                if(used.length)fail(409,'Esta conta possui ligações ou histórico. A exclusão não é permitida; use desativação pela administração.');
+            }
+            await connection.execute(`DELETE FROM tokens WHERE ${primary} = ?`,[id]);
+            await connection.execute(`DELETE FROM ${table} WHERE ${primary} = ?`,[id]);
         } else {
             const allowed = institutional ? ['nome','email','tipo_usuario','situacao','is_admin','id_curso','periodo','setor'] : ['nome','email','situacao','organizacao'];
             const data = Object.fromEntries(Object.entries(body).filter(([key]) => allowed.includes(key)));

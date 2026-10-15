@@ -227,12 +227,13 @@ test('cadastro converte os vínculos em inglês para os valores do banco', () =>
 
 test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios', async t => {
     t.mock.method(require('../backend/src/models/externalUsers.model'), 'findExternalByEmail', async () => null);
+    t.mock.method(require('../backend/src/models/courses.model'), 'findCourseById', async () => ({id_curso:1,ativo:1}));
     const bcrypt = require('bcrypt');
     let saved;
     t.mock.method(users, 'createUser', async data => { saved = data; return { insertId: 8 }; });
     for (const email of ['aluno@gmail.com', 'aluno@example.test']) {
         const res = await fetch(base + '/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome: 'Aluno', email, senha: 'senha-segura', tipo_usuario: 'discente', is_admin: true, situacao: 'ativo' }) });
+            body: JSON.stringify({ nome: 'Aluno', email, senha: 'senha-segura', tipo_usuario: 'discente', id_curso:1, is_admin: true, situacao: 'ativo' }) });
         assert.equal(res.status, 201);
         assert.equal(saved.email, email);
         assert.equal(saved.tipo_usuario, 'discente');

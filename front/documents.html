@@ -32,6 +32,12 @@
 
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="bundle.css">
+<link rel="stylesheet" href="portal-responsive.css">
+<link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
+<link rel="stylesheet" href="scrollbars.css">
+<link rel="stylesheet" href="navigation.css">
+<link rel="stylesheet" href="notice-editor.css">
+<link rel="stylesheet" href="brand-logo.css">
 </head>
 <body>
 
@@ -40,7 +46,7 @@
     <!-- Navegação superior -->
     <header class="ar-nav">
       <a class="ar-brand" href="index.html">
-        <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
+        <img src="assets/arcadia-emblem.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
         <span>
           <div class="ar-brand-name">Arcadia</div>
           <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
@@ -50,9 +56,9 @@
       <nav class="ar-navpill" aria-label="Seções do portal">
         <a href="index.html">Início</a>
         <a href="dashboard.html">Meu painel</a>
-        <a href="notices.html">Avisos</a>
+        <a href="notices.html">Avisos e notícias</a>
         <a href="tasks.html">Tarefas</a>
-        <a href="documents.html" aria-current="page">Documentos<sup class="ar-sup">(4)</sup></a>
+        <a href="documents.html" aria-current="page">Documentos<sup class="ar-sup">(0)</sup></a>
         <a href="calendar.html">Calendário</a>
         <span class="ar-sep" aria-hidden="true"></span>
         <a href="people.html">Pessoas</a>
@@ -71,8 +77,8 @@
         <a class="ar-user" href="settings.html">
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
           <div>
-            <div class="ar-user-name">Aluno</div>
-            <div class="ar-user-role">Aluno</div>
+            <div class="ar-user-name">Minha conta</div>
+            <div class="ar-user-role"></div>
           </div>
         </a>
 
@@ -91,7 +97,7 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <h1 class="ar-hero-title">Documentos<sup class="ar-hero-count">(4)</sup></h1>
+      <h1 class="ar-hero-title">Documentos<sup class="ar-hero-count">(0)</sup></h1>
       <div class="ar-hero-side">
         <p class="ar-hero-desc">Solicitações acadêmicas, declarações assinadas digitalmente e recursos úteis do campus.</p>
         <div class="ar-hero-actions">
@@ -105,83 +111,15 @@
 
     <!-- ChipBar Status -->
     <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
-      <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">Todos<sup class="ar-sup">(4)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready">Pronto<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review">Em análise<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested">Solicitado<sup class="ar-sup">(1)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending">Pendente<sup class="ar-sup">(1)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">Todos<sup class="ar-sup">(0)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready">Pronto<sup class="ar-sup">(0)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review">Em análise<sup class="ar-sup">(0)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested">Solicitado<sup class="ar-sup">(0)</sup></button>
+      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending">Pendente<sup class="ar-sup">(0)</sup></button>
     </div>
 
     <!-- Documents Grid -->
-    <div class="ar-card-grid">
-      <article class="ar-card" data-status="ready">
-        <div class="ar-card-top">
-          <span class="ar-tag">PDF</span>
-          <span class="ar-badge ar-badge--green">Pronto</span>
-        </div>
-        <h3 class="ar-card-title">Histórico acadêmico completo</h3>
-        <p class="ar-card-desc">Histórico acadêmico completo emitido com verificação digital.</p>
-        <p class="ar-card-meta">
-          <span>Protocolo: <b>2026-0001</b></span>
-          <span>Data de emissão: <b>8 set.</b></span>
-        </p>
-        <div class="ar-card-signal ar-signal--link">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;">Baixar documento</a>
-        </div>
-      </article>
-
-      <article class="ar-card" data-status="in review">
-        <div class="ar-card-top">
-          <span class="ar-tag">Solicitação</span>
-          <span class="ar-badge ar-badge--yellow">Em análise</span>
-        </div>
-        <h3 class="ar-card-title">Declaração de matrícula</h3>
-        <p class="ar-card-desc">Declaração para passe estudantil e documentação de estágio.</p>
-        <p class="ar-card-meta">
-          <span>Protocolo: <b>2026-0002</b></span>
-          <span>Previsão de resposta: <b>15 set.</b></span>
-        </p>
-        <div class="ar-card-signal ar-signal--muted">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;">Em análise pela secretaria</a>
-        </div>
-      </article>
-
-      <article class="ar-card" data-status="requested">
-        <div class="ar-card-top">
-          <span class="ar-tag">PDF</span>
-          <span class="ar-badge ar-badge--neutral">Aguardando</span>
-        </div>
-        <h3 class="ar-card-title">Comprovante de matrícula em disciplinas</h3>
-        <p class="ar-card-desc">Comprovante das disciplinas matriculadas no semestre 2026/2.</p>
-        <p class="ar-card-meta">
-          <span>Protocolo: <b>2026-0003</b></span>
-          <span>Previsão: <b>19 set.</b></span>
-        </p>
-        <div class="ar-card-signal ar-signal--muted">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;">Aguardando processamento (baixar prévia)</a>
-        </div>
-      </article>
-
-      <article class="ar-card" data-status="pending">
-        <div class="ar-card-top">
-          <span class="ar-tag">Assinatura</span>
-          <span class="ar-badge ar-badge--neutral">Pendente</span>
-        </div>
-        <h3 class="ar-card-title">Termo de compromisso de estágio</h3>
-        <p class="ar-card-desc">Termo entre o IFPA, a empresa concedente e o aluno.</p>
-        <p class="ar-card-meta">
-          <span>Protocolo: <b>2026-0004</b></span>
-          <span>Prazo para assinatura: <b>11 set.</b></span>
-        </p>
-        <div class="ar-card-signal ar-signal--orange">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          <a href="#" class="ar-link" style="font-size:13px;">Aguardando assinatura do orientador</a>
-        </div>
-      </article>
-    </div>
+    <div class="ar-card-grid"><p role="status">Carregando solicitações...</p></div>
 
     <!-- Academic Systems Panel -->
     <h2 class="ar-h2">Sistemas e portais acadêmicos</h2>
@@ -240,43 +178,18 @@
     </div>
 
     <!-- Diálogo para nova solicitação -->
-    <div class="ar-scrim" id="modalNovoDoc" style="display:none; z-index:100;">
-      <div class="ar-dialog" role="dialog" aria-modal="true" aria-label="Nova solicitação">
-        <div class="ar-dialog-head">
-          <div>
-            <div class="ar-field-label">Secretaria acadêmica</div>
-            <h2 class="ar-dialog-title">Nova solicitação</h2>
-            <p class="ar-dialog-desc">Solicite documentos acadêmicos oficiais ou aproveitamento de estudos.</p>
-          </div>
-          <button type="button" class="ar-iconbtn ar-iconbtn--sm" aria-label="Fechar" data-close-dialog>
-            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-          </button>
-        </div>
 
-        <form id="formNovoDoc" style="display:flex; flex-direction:column; gap:var(--space-3);">
-          <label class="ar-field">
-            <span class="ar-field-label">Tipo de documento</span>
-            <input type="text" id="docTitulo" placeholder="Exemplo: Declaração de conclusão de módulo" required>
-          </label>
-
-          <label class="ar-field">
-            <span class="ar-field-label">Motivo da solicitação</span>
-            <textarea id="docDescricao" rows="3" placeholder="Descreva brevemente o motivo da solicitação..."></textarea>
-          </label>
-
-          <div class="ar-dialog-foot">
-            <button type="submit" class="ar-btn ar-btn--primary">Enviar solicitação</button>
-            <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
 
   </div>
 
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/portal.js"></script>
+  <script src="js/content-fields.js"></script>
+  <script src="js/notice-actions.js"></script>
+  <script src="js/notice-editor.js"></script>
+  <script src="js/notice-text.js"></script>
   <script src="js/pages.js"></script>
+<script src="js/navigation.js"></script>
 </body>
 </html>

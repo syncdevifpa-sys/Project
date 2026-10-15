@@ -20,7 +20,7 @@ async function getUserById(req, res) {
     try {
         const userId = req.params.id;
 
-        const user = await usersModel.findUserById(userId);
+        const user = await usersModel.findUserById(userId, Boolean(req.user.is_admin));
 
         if (!user) {
             return res.status(404).json({
@@ -55,6 +55,7 @@ async function createUser(req, res) {
         if (await require('../models/externalUsers.model').findExternalByEmail(email)) {
             return res.status(409).json({ error: 'Este e-mail já está cadastrado. Faça login.' });
         }
+        await require('../services/profile-course.service').validateCourseSelection(req.body.id_curso, true);
         const hashedPassword = await bcrypt.hash(senha, 10);
 
         const userData = {
@@ -74,10 +75,10 @@ async function createUser(req, res) {
             userId: result.insertId
         });
     } catch (error) {
-        console.error("Erro ao criar usuario:", error);
+        if (!error.status) console.error("Erro ao criar usuario:", error);
 
-        res.status(error.code === 'ER_DUP_ENTRY' ? 409 : 500).json({
-            error: 'Não foi possível concluir a operação. Tente novamente.'
+        res.status(error.status || (error.code === 'ER_DUP_ENTRY' ? 409 : 500)).json({
+            error: error.status ? error.message : 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -94,6 +95,12 @@ async function updateUser(req, res) {
         delete userData.is_admin;
         delete userData.situacao;
         if (userData.tipo_usuario !== req.user.tipo_usuario) delete userData.tipo_usuario;
+        require('../services/profile-photo.service').validateProfilePhoto(userData);
+        if (Object.hasOwn(userData, 'id_curso')) {
+            const current = await usersModel.findUserById(req.user.id_usuario);
+            if (!current) return res.status(404).json({ error: 'Usuário não encontrado.' });
+            await require('../services/profile-course.service').validateProfileCourse(current, userData);
+        }
 
         const result = await usersModel.updateUser(userId, userData);
 
@@ -106,10 +113,10 @@ async function updateUser(req, res) {
             message: "Usuário atualizado com sucesso."
         });
     } catch (error) {
-        console.error("Erro ao atualizar usuario:", error);
+        if (!error.status) console.error("Erro ao atualizar usuario:", error);
 
-        res.status(500).json({
-            error: 'Não foi possível concluir a operação. Tente novamente.'
+        res.status(error.status || 500).json({
+            error: error.status ? error.message : 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -130,4 +137,3 @@ module.exports = {
     updateUser,
     deleteUser
 };
-

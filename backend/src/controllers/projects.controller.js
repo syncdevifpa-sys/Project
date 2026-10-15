@@ -1,3 +1,4 @@
+const { validateContent, editContent } = require('../services/content-edit.service');
 const projectsModel = require("../models/projects.model");
 
 async function listProjects(req, res) {
@@ -6,6 +7,7 @@ async function listProjects(req, res) {
 
         return res.json(projects);
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao listar projetos:", error);
 
         return res.status(500).json({
@@ -28,6 +30,7 @@ async function getProjectById(req, res) {
 
         return res.json(project);
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao buscar projeto:", error);
 
         return res.status(500).json({
@@ -48,7 +51,7 @@ async function createProject(req, res) {
 
         const result = await projectsModel.createProject(
             req.user.id_usuario,
-            req.body
+            validateContent('projects', req.body, true)
         );
 
         return res.status(201).json({
@@ -56,6 +59,7 @@ async function createProject(req, res) {
             projectId: result.insertId
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao criar projeto:", error);
 
         return res.status(500).json({
@@ -66,10 +70,7 @@ async function createProject(req, res) {
 
 async function updateProject(req, res) {
     try {
-        const result = await projectsModel.updateProject(
-            req.params.id,
-            req.body
-        );
+        const result = await editContent('projects', req.params.id, req.body, req.user.id_usuario);
 
         if (!result) {
             return res.status(404).json({
@@ -81,6 +82,7 @@ async function updateProject(req, res) {
             message: "Projeto atualizado com sucesso."
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao atualizar projeto:", error);
 
         return res.status(500).json({
@@ -105,6 +107,7 @@ async function deleteProject(req, res) {
             message: "Projeto excluído com sucesso."
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao excluir projeto:", error);
 
         return res.status(500).json({
@@ -130,6 +133,7 @@ async function approveProject(req, res) {
             message: "Projeto aprovado com sucesso."
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao aprovar projeto:", error);
 
         return res.status(500).json({
@@ -155,6 +159,7 @@ async function rejectProject(req, res) {
             message: "Projeto recusado com sucesso."
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao recusar projeto:", error);
 
         return res.status(500).json({
@@ -191,6 +196,7 @@ async function registerForProject(req, res) {
             affectedRows: result.affectedRows
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao se inscrever para o projeto:", error);
 
         if (error.code === "ER_DUP_ENTRY") {
@@ -222,6 +228,7 @@ async function cancelRegistration(req, res) {
             message: "Inscrição cancelada com sucesso."
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao cancelar inscrição:", error);
 
         return res.status(500).json({
@@ -239,6 +246,7 @@ async function listProjectRegistrations(req, res) {
 
         return res.json(registrations);
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao buscar inscrições:", error);
 
         return res.status(500).json({

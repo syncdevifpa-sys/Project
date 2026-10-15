@@ -1,3 +1,4 @@
+const { validateContent, editContent } = require('../services/content-edit.service');
 const calendarModel = require("../models/calendar.model");
 
 async function listEvents(req, res) {
@@ -7,6 +8,7 @@ async function listEvents(req, res) {
         return res.json(events);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao buscar eventos do calendário:", error);
 
         return res.status(500).json({
@@ -30,6 +32,7 @@ async function getEventById(req, res) {
         return res.json(event);
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao buscar evento do calendário:", error);
 
         return res.status(500).json({
@@ -55,7 +58,7 @@ async function createEvent(req, res) {
 
         const result = await calendarModel.createEvent(
             userId,
-            req.body
+            validateContent('calendar', req.body, true)
         );
 
         return res.status(201).json({
@@ -64,6 +67,7 @@ async function createEvent(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao criar evento do calendário:", error);
 
         return res.status(500).json({
@@ -76,10 +80,7 @@ async function updateEvent(req, res) {
     try {
         const eventId = req.params.id;
 
-        const result = await calendarModel.updateEvent(
-            eventId,
-            req.body
-        );
+        const result = await editContent('calendar', req.params.id, req.body, req.user.id_usuario);
 
         if (!result) {
             return res.status(404).json({
@@ -92,6 +93,7 @@ async function updateEvent(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao atualizar evento do calendário:", error);
 
         return res.status(500).json({
@@ -117,6 +119,7 @@ async function deleteEvent(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Erro ao excluir evento do calendário:", error);
 
         return res.status(500).json({
