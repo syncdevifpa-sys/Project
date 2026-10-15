@@ -1,5 +1,6 @@
 const path=require('path');
 const crypto=require('crypto');
+const colors=require('./calendar-colors.service');
 const MONTHS=['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const normalize=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 function fail(status,message){throw Object.assign(new Error(message),{status});}
@@ -64,11 +65,11 @@ async function extractCalendarPdf(buffer,metadata){
     if(!Buffer.isBuffer(buffer)||buffer.length>4*1024*1024||buffer.length<8||buffer.subarray(0,5).toString()!=='%PDF-')fail(400,'Envie um PDF válido de até 4 MB.');
     const pdfjs=await import('pdfjs-dist/legacy/build/pdf.mjs');
     const fonts=path.join(path.dirname(require.resolve('pdfjs-dist/package.json')),'standard_fonts').replace(/\\/g,'/')+'/';
-    const task=pdfjs.getDocument({data:new Uint8Array(buffer),isEvalSupported:false,disableFontFace:true,useSystemFonts:false,disableAutoFetch:true,disableStream:true,stopAtErrors:true,standardFontDataUrl:fonts,maxImageSize:0,verbosity:0});
+    const task=pdfjs.getDocument({data:new Uint8Array(buffer),isEvalSupported:false,disableFontFace:true,useSystemFonts:false,disableAutoFetch:true,disableStream:true,stopAtErrors:false,standardFontDataUrl:fonts,maxImageSize:0,verbosity:0});
     let timer;try{
         const doc=await Promise.race([task.promise,new Promise((_,reject)=>{timer=setTimeout(()=>{task.destroy();reject(Object.assign(new Error('O PDF demorou demais para ser lido. Divida o arquivo.'),{status:422}));},15000);})]);
         if(doc.numPages>30)fail(422,'Limite de 30 páginas. Divida o PDF por calendário.');const pages=[];let count=0;
-        for(let n=1;n<=doc.numPages;n++){const page=await doc.getPage(n),content=await page.getTextContent();const items=content.items.filter(item=>typeof item.str==='string').map(item=>({text:item.str,x:item.transform[4],y:item.transform[5],width:item.width}));count+=items.reduce((sum,item)=>sum+item.text.length,0);if(count>500000)fail(422,'Texto muito extenso. Divida o PDF.');pages.push({number:n,items});}
+        for(let n=1;n<=doc.numPages;n++){const page=await doc.getPage(n),content=await page.getTextContent();const items=content.items.filter(item=>typeof item.str==='string').map(item=>({text:item.str,x:item.transform[4],y:item.transform[5],width:item.width,height:Math.abs(item.transform[3])}));count+=items.reduce((sum,item)=>sum+item.text.length,0);if(count>500000)fail(422,'Texto muito extenso. Divida o PDF.');const fills=colors.filledRectangles(await page.getOperatorList(),pdfjs.OPS);pages.push({number:n,items,fills});}
         if(count<40)fail(422,'PDF sem texto selecionável. OCR não está disponível: use uma versão com texto ou cadastre os eventos manualmente.');
         const text=pages.flatMap(page=>lines(page.items)).join(' ');
         const years=[...new Set([...normalize(text).matchAll(/calendarios? academicos?\s+(?:de\s+)?(20\d{2})/g)].map(match=>Number(match[1])))];
@@ -76,6 +77,8 @@ async function extractCalendarPdf(buffer,metadata){
         if(years.length===1&&years[0]!==metadata.year)fail(400,`O PDF identifica calendário acadêmico ${years[0]}. Confirme esse ano no formulário; as datas não foram convertidas para ${metadata.year}.`);
         const reference=(text.match(/RESOLU[ÇC][ÃA]O\s+CONSUP\/IFPA\s+N[º°O]?\s*\d+,?\s+DE\s+\d{1,2}\s+DE\s+[a-zÀ-ÿ]+\s+DE\s+\d{4}/i)||text.match(/RESOLU[ÇC][ÃA]O\s+CONSUP\/IFPA\s+N[º°O]?\s*\d+/i))?.[0]?.trim()||'';
         const parsed=candidatesFromPages(pages,metadata);
+        parsed.colorAnalysis=colors.extractColoredDays(pages,metadata);
+        colors.mergeColorCandidates(parsed,parsed.colorAnalysis);
         if(!years.length)parsed.warnings.push('Ano do calendário não reconhecido no cabeçalho. Confirme o ano escolhido diretamente no PDF.');
         if(!normalize(text).includes('campus belem'))parsed.warnings.push('Campus Belém não identificado no texto: confirme a origem do documento.');
         return {...parsed,detected:{years,reference,campus:normalize(text).includes('campus belem')?'Belém':null},pages:pages.length,hash:crypto.createHash('sha256').update(buffer).digest('hex')};
@@ -83,3 +86,4 @@ async function extractCalendarPdf(buffer,metadata){
     finally{clearTimeout(timer);await task.destroy();}
 }
 module.exports={extractCalendarPdf,candidatesFromPages,parseLine,normalize};
+

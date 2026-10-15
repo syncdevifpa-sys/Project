@@ -1,0 +1,3782 @@
+{
+  "candidates": [
+    {
+      "titulo": "Confraternização Universal",
+      "data_evento": "2025-01-01",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "1 – Confraternização Universal | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Aplicação dos formulários de autoavaliação sobre os procedimentos definidos pela CPA do IFPA/Campus Belém",
+      "data_evento": "2025-01-02",
+      "data_fim": "2025-01-30",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "2 a 30 – Aplicação dos formulários de autoavaliação sobre os procedimentos definidos pela CPA do IFPA/Campus Belém",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-01-04",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "4 - Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-01-11",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "11 - Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-01-18",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "18 - Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-01-25",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "25 – Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Fórum da Assistência Estudantil 2025",
+      "data_evento": "2025-01-28",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "28 - Fórum da Assistência Estudantil 2025",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-02-01",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "1 - Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-02-08",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "8 - Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Culminância da 4ª Bimestral para cursos Integrados e 2ª Bimestral para cursos Subsequentes",
+      "data_evento": "2025-02-10",
+      "data_fim": "2025-02-15",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "10 a 15 – Culminância da 4ª Bimestral para cursos Integrados e 2ª Bimestral para cursos Subsequentes",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Término das aulas do semestre 2024.2",
+      "data_evento": "2025-02-15",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "15 – Término das aulas do semestre 2024.2",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Aplicação de provas finais",
+      "data_evento": "2025-02-17",
+      "data_fim": "2025-02-19",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "17 a 19 – Aplicação de provas finais",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Lançamento de notas e consolidação de turmas no SIGAA",
+      "data_evento": "2025-02-17",
+      "data_fim": "2025-02-20",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "17 a 20 – Lançamento de notas e consolidação de turmas no SIGAA",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Férias Acadêmicas",
+      "data_evento": "2025-02-21",
+      "data_fim": "2025-03-07",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "21 a 28 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda. | 1 a 7 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Renovação de matrícula on-line para o semestre 2025.1",
+      "data_evento": "2025-02-21",
+      "data_fim": "2025-02-28",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "21 a 28 –Renovação de matrícula on-line para o semestre 2025.1 | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Período de Letivo Especial – PLE",
+      "data_evento": "2025-02-21",
+      "data_fim": "2025-03-07",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "21 a 28 – Período de Letivo Especial – PLE | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda. | 1 a 7 –Período de Letivo Especial – PLE | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Carnaval",
+      "data_evento": "2025-03-04",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "4 – Carnaval | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Dia Internacional da Mulher",
+      "data_evento": "2025-03-08",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "8 – Dia Internacional da Mulher",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Planejamento Pedagógico 2025.1",
+      "data_evento": "2025-03-10",
+      "data_fim": "2025-03-11",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "10 a 11– Planejamento Pedagógico 2025.1 | Legenda de cor: Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus (#ffff00). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ffff00",
+      "natureza": "evento",
+      "legenda": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Preenchimento dos planos de disciplinas no SIGAA",
+      "data_evento": "2025-03-10",
+      "data_fim": "2025-03-15",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "10 a 15 – Preenchimento dos planos de disciplinas no SIGAA",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Início das aulas do semestre 2025.1",
+      "data_evento": "2025-03-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "12 - Início das aulas do semestre 2025.1 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Acolhida aos alunos Ingressantes do Integrado",
+      "data_evento": "2025-03-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "12 –Acolhida aos alunos Ingressantes do Integrado | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Início do período de Submissão de Projetos de Ensino 2025.1",
+      "data_evento": "2025-03-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "12 – Início do período de Submissão de Projetos de Ensino 2025.1 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Preenchimento, aprovação e homologação do PIT 2025.1 e RAD 2024.2",
+      "data_evento": "2025-03-12",
+      "data_fim": "2025-03-31",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "12 a 31 – Preenchimento, aprovação e homologação do PIT 2025.1 e RAD 2024.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de aproveitamento de estudos e experiências anteriores",
+      "data_evento": "2025-03-12",
+      "data_fim": "2025-03-31",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "12 a 31 - Solicitação de aproveitamento de estudos e experiências anteriores",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de trancamento de matrícula no semestre 2025.1",
+      "data_evento": "2025-03-12",
+      "data_fim": "2025-03-31",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "12 a 31 – Solicitação de trancamento de matrícula no semestre 2025.1",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Acolhida aos alunos Ingressantes do Subsequente",
+      "data_evento": "2025-03-13",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "13 –Acolhida aos alunos Ingressantes do Subsequente",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Acolhida aos pais de alunos Ingressantes do Integrado",
+      "data_evento": "2025-03-14",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "14 - Acolhida aos pais de alunos Ingressantes do Integrado",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-03-15",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "15 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-03-22",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "22 - Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-03-29",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "29 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Preenchimento, aprovação e homologação do PIT 2025.1 e RAD 2024.2",
+      "data_evento": "2025-04-01",
+      "data_fim": "2025-04-30",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "1 a 30 – Preenchimento, aprovação e homologação do PIT 2025.1 e RAD 2024.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-04-05",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "5 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "X SETECI- Semana Técnico Científica do IFPA Campus Belém",
+      "data_evento": "2025-04-09",
+      "data_fim": "2025-04-11",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "09 a 11 – X SETECI- Semana Técnico Científica do IFPA Campus Belém",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-04-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "12 - Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sexta-Feira Santa",
+      "data_evento": "2025-04-18",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "18 – Sexta-Feira Santa | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Dia dos Povos Indígenas",
+      "data_evento": "2025-04-19",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "19 – Dia dos Povos Indígenas",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Páscoa",
+      "data_evento": "2025-04-20",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "20 - Páscoa",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Tiradentes",
+      "data_evento": "2025-04-21",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "21 – Tiradentes | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Descobrimento do Brasil",
+      "data_evento": "2025-04-22",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "22 – Descobrimento do Brasil",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-04-26",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "26 - Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Dia do Trabalho",
+      "data_evento": "2025-05-01",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "1 – Dia do Trabalho | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Preenchimento, aprovação e homologação do PIT 2025.1 e RAD 2024.2",
+      "data_evento": "2025-05-01",
+      "data_fim": "2025-05-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "1 a 17 – Preenchimento, aprovação e homologação do PIT 2025.1 e RAD 2024.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-05-03",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "3 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Solicitação de retorno acadêmico para o período letivo 2025.2",
+      "data_evento": "2025-05-05",
+      "data_fim": "2025-05-30",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "5 a 30 – Solicitação de retorno acadêmico para o período letivo 2025.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-05-10",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "10 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Culminância da 1ª Bimestral para cursos Integrados e Subsequentes",
+      "data_evento": "2025-05-12",
+      "data_fim": "2025-05-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "12 a 17– Culminância da 1ª Bimestral para cursos Integrados e Subsequentes",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Período de Culminância de Avaliações Bimestrais",
+      "data_evento": "2025-05-12",
+      "data_fim": "2025-05-16",
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 2,
+      "sourceText": "Legenda de cor: Período de Culminância de Avaliações Bimestrais (#00b0f0). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#00b0f0",
+      "natureza": "avaliacao",
+      "legenda": "Período de Culminância de Avaliações Bimestrais",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-05-17",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "17 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Dia Nacional de Combate ao Abuso e Exploração Sexual de Crianças e Adolescentes",
+      "data_evento": "2025-05-18",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "18 – Dia Nacional de Combate ao Abuso e Exploração Sexual de Crianças e Adolescentes",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Semana de Enfrentamento à Violência no IFPA campus Belém",
+      "data_evento": "2025-05-19",
+      "data_fim": "2025-05-24",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "19 a 24 – Semana de Enfrentamento à Violência no IFPA campus Belém | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Lançamento de notas no SIGAA",
+      "data_evento": "2025-05-19",
+      "data_fim": "2025-05-24",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "19 a 24 – Lançamento de notas no SIGAA | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-05-24",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "24 - Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-05-31",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "31 - Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "JIF's Etapa Estadual",
+      "data_evento": "2025-06-01",
+      "data_fim": "2025-06-06",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "1 a 6 – JIF's Etapa Estadual",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Formatura dos discentes concluintes em 2024.2",
+      "data_evento": "2025-06-02",
+      "data_fim": "2025-06-27",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 2,
+      "sourceText": "2 a 27 – Formatura dos discentes concluintes em 2024.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-06-07",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "7 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Dia do Meio Ambiente",
+      "data_evento": "2025-06-11",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "11 - Dia do Meio Ambiente",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-06-14",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "14 - Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Semana do Químico",
+      "data_evento": "2025-06-16",
+      "data_fim": "2025-06-18",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "16 a 18 - Semana do Químico",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Corpus Christi (Facultado)",
+      "data_evento": "2025-06-19",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "19 - Corpus Christi (Facultado) | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Facultado",
+      "data_evento": "2025-06-20",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "20 – Facultado | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-06-28",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "28 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Festa Junina do campus Belém",
+      "data_evento": "2025-06-30",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 2,
+      "sourceText": "30 - Festa Junina do campus Belém",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-07-05",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "5 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Culminância da 2ª Bimestral para cursos Integrados e Subsequentes",
+      "data_evento": "2025-07-08",
+      "data_fim": "2025-07-14",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "8 a 14 – Culminância da 2ª Bimestral para cursos Integrados e Subsequentes",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Período de Culminância de Avaliações Bimestrais",
+      "data_evento": "2025-07-08",
+      "data_fim": "2025-07-11",
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 3,
+      "sourceText": "Legenda de cor: Período de Culminância de Avaliações Bimestrais (#00b0f0). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#00b0f0",
+      "natureza": "avaliacao",
+      "legenda": "Período de Culminância de Avaliações Bimestrais",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Jogos Internos do campus Belém",
+      "data_evento": "2025-07-12",
+      "data_fim": "2025-07-16",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "12 a 16 – Jogos Internos do campus Belém",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábados letivos",
+      "data_evento": "2025-07-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 3,
+      "sourceText": "Legenda de cor: Sábados letivos (#8db3e2). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Término das aulas do semestre 2025.1",
+      "data_evento": "2025-07-14",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "14 – Término das aulas do semestre 2025.1 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Aplicação de provas finais para os cursos semestrais",
+      "data_evento": "2025-07-15",
+      "data_fim": "2025-07-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "15 a 17 – Aplicação de provas finais para os cursos semestrais",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Lançamento de notas e consolidação de turmas no SIGAA",
+      "data_evento": "2025-07-15",
+      "data_fim": "2025-07-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "15 a 17 – Lançamento de notas e consolidação de turmas no SIGAA",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Férias Acadêmicas",
+      "data_evento": "2025-07-18",
+      "data_fim": "2025-08-01",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "18 a 31 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda. | 1 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Período de Letivo Especial – PLE",
+      "data_evento": "2025-07-18",
+      "data_fim": "2025-08-01",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "18 a 31 – Período de Letivo Especial – PLE | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda. | 1 – Período de Letivo Especial – PLE | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Renovação de matrícula on-line para o semestre 2025.2",
+      "data_evento": "2025-07-18",
+      "data_fim": "2025-08-01",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "18 a 31 – Renovação de matrícula on-line para o semestre 2025.2 | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda. | 1 – Renovação de matrícula on-line para o semestre 2025.2 | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Planejamento Pedagógico 2025.2",
+      "data_evento": "2025-08-04",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "4 – Planejamento Pedagógico 2025.2 | Legenda de cor: Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus (#ffff00). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ffff00",
+      "natureza": "evento",
+      "legenda": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Início das aulas do semestre 2025.2",
+      "data_evento": "2025-08-05",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "5 – Início das aulas do semestre 2025.2 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Acolhida aos alunos Ingressantes",
+      "data_evento": "2025-08-05",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "5 - Acolhida aos alunos Ingressantes | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Início do período de Submissão de Projetos de Ensino 2025.2",
+      "data_evento": "2025-08-05",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "5 – Início do período de Submissão de Projetos de Ensino 2025.2 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Preenchimento dos planos de disciplina docentes no SIGAA",
+      "data_evento": "2025-08-05",
+      "data_fim": "2025-08-14",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "5 a 14 – Preenchimento dos planos de disciplina docentes no SIGAA",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Preenchimento, aprovação e homologação do PIT 2025.2 e RAD 2025.1",
+      "data_evento": "2025-08-05",
+      "data_fim": "2025-08-30",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "5 a 30 – Preenchimento, aprovação e homologação do PIT 2025.2 e RAD 2025.1",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de aproveitamento de estudos e experiências anteriores",
+      "data_evento": "2025-08-05",
+      "data_fim": "2025-08-29",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "5 a 29 – Solicitação de aproveitamento de estudos e experiências anteriores",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de trancamento de matrícula no semestre 2025.2",
+      "data_evento": "2025-08-05",
+      "data_fim": "2025-08-29",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "5 a 29 – Solicitação de trancamento de matrícula no semestre 2025.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-08-09",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "9 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Dia do Estudante",
+      "data_evento": "2025-08-11",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "11 – Dia do Estudante",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Adesão do Pará",
+      "data_evento": "2025-08-15",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "15 – Adesão do Pará | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-08-16",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "16 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-08-23",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "23 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-08-30",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "30 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Preenchimento dos planos de disciplina docentes no SIGAA",
+      "data_evento": "2025-09-01",
+      "data_fim": "2025-09-30",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "1 a 30 – Preenchimento dos planos de disciplina docentes no SIGAA",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Preenchimento, aprovação e homologação do PIT 2025.2 e RAD 2025.1",
+      "data_evento": "2025-09-01",
+      "data_fim": "2025-09-30",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "1 a 30 – Preenchimento, aprovação e homologação do PIT 2025.2 e RAD 2025.1",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de aproveitamento de estudos e experiências anteriores",
+      "data_evento": "2025-09-01",
+      "data_fim": "2025-09-12",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "1 a 12 – Solicitação de aproveitamento de estudos e experiências anteriores",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de trancamento de matrícula no semestre 2025.2",
+      "data_evento": "2025-09-01",
+      "data_fim": "2025-09-12",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 3,
+      "sourceText": "1 a 12 – Solicitação de trancamento de matrícula no semestre 2025.2",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Reunião com os pais/responsáveis dos alunos dos cursos integrados",
+      "data_evento": "2025-09-03",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "03 - Reunião com os pais/responsáveis dos alunos dos cursos integrados",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Dia da Amazônia",
+      "data_evento": "2025-09-05",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "5 - Dia da Amazônia",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-09-06",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "6– Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Independência do Brasil",
+      "data_evento": "2025-09-07",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "7 – Independência do Brasil | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-09-13",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "13 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Jornada do Cuidado (Setembro Amarelo)",
+      "data_evento": "2025-09-17",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "17 – Jornada do Cuidado (Setembro Amarelo)",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Comemoração dos 50 anos do Curso Técnico em Mineração",
+      "data_evento": "2025-09-18",
+      "data_fim": "2025-09-19",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "18 a 19 – Comemoração dos 50 anos do Curso Técnico em Mineração",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo (Feira de Cursos do",
+      "data_evento": "2025-09-20",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "20 – Sábado Letivo (Feira de Cursos do | Legenda de cor: Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus (#ffff00). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ffff00",
+      "natureza": "evento",
+      "legenda": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Aniversário histórico do IFPA (116 anos de tradição)",
+      "data_evento": "2025-09-23",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "23 – Aniversário histórico do IFPA (116 anos de tradição) | Legenda de cor: Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus (#ffff00). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ffff00",
+      "natureza": "evento",
+      "legenda": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado letivo",
+      "data_evento": "2025-09-27",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 3,
+      "sourceText": "27 – Sábado letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Período de Culminância de Avaliações Bimestrais",
+      "data_evento": "2025-09-29",
+      "data_fim": "2025-10-03",
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 3,
+      "sourceText": "Legenda de cor: Período de Culminância de Avaliações Bimestrais (#00b0f0). Esta marcação não implica suspensão das aulas. | Legenda de cor: Período de Culminância de Avaliações Bimestrais (#00b0f0). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#00b0f0",
+      "natureza": "avaliacao",
+      "legenda": "Período de Culminância de Avaliações Bimestrais",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Culminância da 3ª Bimestral para cursos Integrados e 1ª Bimestral para cursos Subsequentes",
+      "data_evento": "2025-10-01",
+      "data_fim": "2025-10-03",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 4,
+      "sourceText": "1 a 3 – Culminância da 3ª Bimestral para cursos Integrados e 1ª Bimestral para cursos Subsequentes",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Solicitação de retorno acadêmico para o período letivo 2026.1",
+      "data_evento": "2025-10-01",
+      "data_fim": "2025-10-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 4,
+      "sourceText": "1 a 17 – Solicitação de retorno acadêmico para o período letivo 2026.1",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábados letivos",
+      "data_evento": "2025-10-01",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 4,
+      "sourceText": "Legenda de cor: Sábados letivos (#8db3e2). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-10-04",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "4 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Lançamento de notas no SIGAA",
+      "data_evento": "2025-10-06",
+      "data_fim": "2025-10-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 4,
+      "sourceText": "6 a 17 – Lançamento de notas no SIGAA",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Formatura dos discentes concluintes em 2025.1",
+      "data_evento": "2025-10-06",
+      "data_fim": "2025-10-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 4,
+      "sourceText": "6 a 17 – Formatura dos discentes concluintes em 2025.1",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Sábados letivos",
+      "data_evento": "2025-10-08",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 4,
+      "sourceText": "Legenda de cor: Sábados letivos (#8db3e2). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Festividades do Círio",
+      "data_evento": "2025-10-10",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "10 – Festividades do Círio | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Nossa Senhora de Aparecida",
+      "data_evento": "2025-10-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "12 – Nossa Senhora de Aparecida | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Pós-Círio (facultado)",
+      "data_evento": "2025-10-13",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "13 - Pós-Círio (facultado) | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Dia do Professor (facultado)",
+      "data_evento": "2025-10-15",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "15 – Dia do Professor (facultado) | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-10-18",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "18 – Sábado Letivo",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Dia Internacional contra a Violência e o Bullying na Escola",
+      "data_evento": "2025-10-20",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "20 – Dia Internacional contra a Violência e o Bullying na Escola",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Interrupção das aulas presenciais em função da COP 30",
+      "data_evento": "2025-10-20",
+      "data_fim": "2025-10-31",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "20 a 31 – Interrupção das aulas presenciais em função da COP 30",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Recírio",
+      "data_evento": "2025-10-27",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "27 – Recírio",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Dia do Servidor Público",
+      "data_evento": "2025-10-28",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "28 – Dia do Servidor Público",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Interrupção das aulas presenciais em função da COP 30",
+      "data_evento": "2025-11-01",
+      "data_fim": "2025-11-04",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "1 a 4 – Interrupção das aulas presenciais em função da COP 30 | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Finados",
+      "data_evento": "2025-11-02",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "2 – Finados | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Férias Acadêmicas",
+      "data_evento": "2025-11-05",
+      "data_fim": "2025-11-19",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "5 a 19 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "COP 30",
+      "data_evento": "2025-11-10",
+      "data_fim": "2025-11-21",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 4,
+      "sourceText": "10 a 21 – COP 30",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Proclamação da República",
+      "data_evento": "2025-11-15",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "15 – Proclamação da República | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Dia da Bandeira",
+      "data_evento": "2025-11-19",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "19 – Dia da Bandeira | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Dia Nacional da Consciência Negra",
+      "data_evento": "2025-11-20",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "20 – Dia Nacional da Consciência Negra | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Facultado",
+      "data_evento": "2025-11-21",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "21 – Facultado | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Retorno das aulas do semestre 2025.2",
+      "data_evento": "2025-11-24",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "24 – Retorno das aulas do semestre 2025.2 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-11-29",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "29 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Semana de Enfrentamento à Violência no IFPA campus Belém",
+      "data_evento": "2025-12-01",
+      "data_fim": "2025-12-05",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "01 a 05 – Semana de Enfrentamento à Violência no IFPA campus Belém",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-12-06",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "6 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Imaculada Conceição",
+      "data_evento": "2025-12-08",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "8 – Imaculada Conceição | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "IV Encontro de Setores Produtivos e Educação Profissional",
+      "data_evento": "2025-12-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "12 - IV Encontro de Setores Produtivos e Educação Profissional",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-12-13",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "13 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-12-20",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "20 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Véspera de Natal",
+      "data_evento": "2025-12-24",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "24 – Véspera de Natal | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Natal",
+      "data_evento": "2025-12-25",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "25 – Natal | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2025-12-27",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "27 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Aniversário de criação do IFPA (17 anos)",
+      "data_evento": "2025-12-29",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "29 - Aniversário de criação do IFPA (17 anos)",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Véspera de Réveillon",
+      "data_evento": "2025-12-31",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF."
+      ],
+      "page": 4,
+      "sourceText": "31 – Véspera de Réveillon | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Confraternização Universal",
+      "data_evento": "2026-01-01",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "1 – Confraternização Universal | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2026-01-03",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "3 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Sábado Letivo",
+      "data_evento": "2026-01-10",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "10 – Sábado Letivo | Legenda de cor: Sábados letivos (#8db3e2). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#8db3e2",
+      "natureza": "letivo",
+      "legenda": "Sábados letivos",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Culminância da 4ª Bimestral para cursos Integrados e 2ª Bimestral para cursos Subsequentes",
+      "data_evento": "2026-01-12",
+      "data_fim": "2026-01-17",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano.",
+        "O período contém cores diferentes. Confira o evento individualmente."
+      ],
+      "page": 4,
+      "sourceText": "12 a 17 – Culminância da 4ª Bimestral para cursos Integrados e 2ª Bimestral para cursos Subsequentes",
+      "level": "basica",
+      "reviewed": false,
+      "needsIndividualReview": true
+    },
+    {
+      "titulo": "Período de Culminância de Avaliações Bimestrais",
+      "data_evento": "2026-01-12",
+      "data_fim": "2026-01-16",
+      "requiresEnd": false,
+      "warning": [
+        "Datas identificadas pela cor das células e pela legenda. Confira o PDF."
+      ],
+      "page": 4,
+      "sourceText": "Legenda de cor: Período de Culminância de Avaliações Bimestrais (#00b0f0). Esta marcação não implica suspensão das aulas.",
+      "reviewed": false,
+      "cor": "#00b0f0",
+      "natureza": "avaliacao",
+      "legenda": "Período de Culminância de Avaliações Bimestrais",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Término das aulas do semestre 2025.2",
+      "data_evento": "2026-01-17",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "17 – Término das aulas do semestre 2025.2 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Férias Acadêmicas",
+      "data_evento": "2026-01-23",
+      "data_fim": "2026-02-06",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "23 a 31 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda. | 1 a 6 – Férias Acadêmicas | Legenda de cor: Férias Acadêmicas (#e36c0a). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#e36c0a",
+      "natureza": "sem_aula",
+      "legenda": "Férias Acadêmicas",
+      "categoria": "cancelamento"
+    },
+    {
+      "titulo": "Planejamento Pedagógico 2026.1",
+      "data_evento": "2026-02-09",
+      "data_fim": "2026-02-11",
+      "requiresEnd": true,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "9 a 11 – Planejamento Pedagógico 2026.1 | Legenda de cor: Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus (#ffff00). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ffff00",
+      "natureza": "evento",
+      "legenda": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Início das aulas do semestre 2026.1",
+      "data_evento": "2026-02-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "12 – Início das aulas do semestre 2026.1 | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Acolhidas dos alunos Ingressantes",
+      "data_evento": "2026-02-12",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "12 – Acolhidas dos alunos Ingressantes | Legenda de cor: Datas de início e de término das aulas (#92d050). A cor não indica suspensão das aulas.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#92d050",
+      "natureza": "limite_letivo",
+      "legenda": "Datas de início e de término das aulas",
+      "categoria": "evento"
+    },
+    {
+      "titulo": "Facultado",
+      "data_evento": "2026-02-16",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "16 – Facultado | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Carnaval (feriado)",
+      "data_evento": "2026-02-17",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "17 – Carnaval (feriado) | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "Cinzas",
+      "data_evento": "2026-02-18",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Data fora do ano escolhido: confira a transição de ano."
+      ],
+      "page": 4,
+      "sourceText": "18 – Cinzas | Legenda de cor: Feriados/pontos facultativos (#ff0000). Dia/período sem aula conforme a legenda.",
+      "level": "basica",
+      "reviewed": false,
+      "cor": "#ff0000",
+      "natureza": "sem_aula",
+      "legenda": "Feriados/pontos facultativos",
+      "categoria": "feriado"
+    },
+    {
+      "titulo": "VII Encontro do Dia Nacional de Luta da Pessoa com Deficiência",
+      "data_evento": "",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Datas distintas, não um intervalo: crie eventos separados após conferir.",
+        "Data inicial inválida ou incompleta."
+      ],
+      "page": 3,
+      "sourceText": "24 e 25 - VII Encontro do Dia Nacional de Luta da Pessoa com Deficiência",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Culminância da 3ª Bimestral para cursos Integrados e 1ª Bimestral para cursos Subsequentes",
+      "data_evento": "",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Datas distintas, não um intervalo: crie eventos separados após conferir.",
+        "Data inicial inválida ou incompleta."
+      ],
+      "page": 3,
+      "sourceText": "29 e 30 – Culminância da 3ª Bimestral para cursos Integrados e 1ª Bimestral para cursos Subsequentes",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Encontro de Egressos",
+      "data_evento": "",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Datas distintas, não um intervalo: crie eventos separados após conferir.",
+        "Data inicial inválida ou incompleta."
+      ],
+      "page": 4,
+      "sourceText": "3 e 4 - Encontro de Egressos",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Aplicação de provas finais",
+      "data_evento": "",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Datas distintas, não um intervalo: crie eventos separados após conferir.",
+        "Data inicial inválida ou incompleta."
+      ],
+      "page": 4,
+      "sourceText": "19 e 21 – Aplicação de provas finais",
+      "level": "basica",
+      "reviewed": false
+    },
+    {
+      "titulo": "Lançamento de notas e consolidação de turmas no SIGAA",
+      "data_evento": "",
+      "data_fim": null,
+      "requiresEnd": false,
+      "warning": [
+        "Mês obtido do cabeçalho da coluna; confira no PDF.",
+        "Datas distintas, não um intervalo: crie eventos separados após conferir.",
+        "Data inicial inválida ou incompleta."
+      ],
+      "page": 4,
+      "sourceText": "21 e 22 - Lançamento de notas e consolidação de turmas no SIGAA",
+      "level": "basica",
+      "reviewed": false
+    }
+  ],
+  "unparsed": [
+    {
+      "page": 1,
+      "text": "e considerando o disposto no processo administrativo nº 23051.016222/2025-02,"
+    },
+    {
+      "page": 1,
+      "text": "a. Início e término do semestre 2025.1: 21/02/2025 a 17/07/2025."
+    },
+    {
+      "page": 1,
+      "text": "b. Início e término do semestre 2025.2: 18/07/2025 a 22/01/2026."
+    },
+    {
+      "page": 1,
+      "text": "a. Início e término do semestre 2025.1: 21/02/2025 a 17/07/2025."
+    },
+    {
+      "page": 1,
+      "text": "b. Início e término do semestre 2025.2: 18/07/2025 a 22/01/2026."
+    },
+    {
+      "page": 1,
+      "text": "a. Início e término do semestre 2025.1: 21/02/2025 a 17/07/2025."
+    },
+    {
+      "page": 1,
+      "text": "b. Início e término do semestre 2025.2: 18/07/2025 a 22/01/2026."
+    },
+    {
+      "page": 1,
+      "text": "a. 21/02/2025 a 07/03/2025; 18/07/2025 a 01/08/2025 e 05/11/2025 a 19/11/2025."
+    }
+  ],
+  "warnings": [
+    "Cores lidas da legenda do próprio PDF. Apenas feriados/pontos facultativos e férias foram classificados como sem aula; eventos e avaliações não implicam suspensão."
+  ],
+  "colorAnalysis": {
+    "days": [
+      {
+        "date": "2025-01-01",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 2
+      },
+      {
+        "date": "2025-02-21",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-22",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-23",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-24",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-25",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-26",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-27",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-02-28",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-01",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-02",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-03",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-04",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-05",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-06",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-07",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-10",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-11",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-12",
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-15",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-22",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-03-29",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-04-05",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-04-12",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-04-18",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 2
+      },
+      {
+        "date": "2025-04-21",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 2
+      },
+      {
+        "date": "2025-04-26",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-01",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 2
+      },
+      {
+        "date": "2025-05-03",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-10",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-12",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-13",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-14",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-15",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-16",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-17",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-24",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-05-31",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-06-07",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-06-14",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-06-19",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 2
+      },
+      {
+        "date": "2025-06-20",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 2
+      },
+      {
+        "date": "2025-06-28",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 2
+      },
+      {
+        "date": "2025-07-05",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-08",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-09",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-10",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-11",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-12",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-14",
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-18",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-19",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-20",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-21",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-22",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-23",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-24",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-25",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-26",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-27",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-28",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-29",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-30",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-07-31",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-01",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-04",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-05",
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-09",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-15",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 3
+      },
+      {
+        "date": "2025-08-16",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-23",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-08-30",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-06",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-07",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 3
+      },
+      {
+        "date": "2025-09-13",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-20",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-23",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-27",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-29",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-09-30",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 3
+      },
+      {
+        "date": "2025-10-01",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-10-01",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-10-02",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-10-03",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-10-04",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-10-08",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-10-10",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-10-12",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-10-13",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-10-15",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-11-02",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-11-05",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-06",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-07",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-08",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-09",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-10",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-11",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-12",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-13",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-14",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-15",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-16",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-17",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-18",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-19",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-20",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-11-21",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-11-24",
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-11-29",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-12-06",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-12-08",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-12-13",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-12-20",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-12-24",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-12-25",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2025-12-27",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2025-12-31",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2026-01-01",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2026-01-03",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-10",
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-12",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-13",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-14",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-15",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-16",
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-17",
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-23",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-24",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-25",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-26",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-27",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-28",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-29",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-30",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-01-31",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-01",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-02",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-03",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-04",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-05",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-06",
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-09",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-10",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-11",
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-12",
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "date": "2026-02-16",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2026-02-17",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "date": "2026-02-18",
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      }
+    ],
+    "legend": [
+      {
+        "color": "#ff0000",
+        "text": "Feriados/pontos facultativos",
+        "kind": "sem_aula",
+        "categoria": "feriado",
+        "page": 4
+      },
+      {
+        "color": "#8db3e2",
+        "text": "Sábados letivos",
+        "kind": "letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "color": "#92d050",
+        "text": "Datas de início e de término das aulas",
+        "kind": "limite_letivo",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "color": "#e36c0a",
+        "text": "Férias Acadêmicas",
+        "kind": "sem_aula",
+        "categoria": "cancelamento",
+        "page": 4
+      },
+      {
+        "color": "#ffff00",
+        "text": "Encontros pedagógicos, eventos acadêmicos, científico, artístico-culturais, desportivos e outras atividades do Campus",
+        "kind": "evento",
+        "categoria": "evento",
+        "page": 4
+      },
+      {
+        "color": "#00b0f0",
+        "text": "Período de Culminância de Avaliações Bimestrais",
+        "kind": "avaliacao",
+        "categoria": "evento",
+        "page": 4
+      }
+    ]
+  },
+  "detected": {
+    "years": [
+      2025
+    ],
+    "reference": "RESOLUÇÃO CONSUP/IFPA Nº 1544, DE 10 DE SETEMBRO DE 2025",
+    "campus": "Belém"
+  },
+  "pages": 12,
+  "hash": "053d3e6961ee9857685fc3e96c5a10536e622ce42b31b507fb5c79ebda663709"
+}

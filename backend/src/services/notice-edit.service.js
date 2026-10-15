@@ -33,12 +33,19 @@ function validateNotice(body, creation = false) {
         if (value!==null && value!=='' && (!Number.isInteger(value)||value<0||value>4294967295)) fail(400,'Número de vagas inválido.');
         values.vagas=value===''?null:value;
     }
+    if (Object.hasOwn(body, 'capa')) {
+        if (body.capa !== null && typeof body.capa !== 'string') fail(400,'Imagem de capa inválida.');
+        const cover = body.capa || '';
+        require('./profile-photo.service').validateProfilePhoto({ foto: cover });
+        values.capa = cover || null;
+    }
     return values;
 }
 async function editNotice(id, body, actorId) {
     if (!/^[1-9]\d*$/.test(String(id)) || !Number.isSafeInteger(Number(id))) fail(400,'Identificador de publicação inválido.');
     const values=validateNotice(body);
     if (Object.hasOwn(values,'tipo_publicacao') && !await require('./notice-schema.service').writableType(values.tipo_publicacao)) delete values.tipo_publicacao;
+    if (Object.hasOwn(values,'capa') && !await require('./notice-schema.service').writableCover(values.capa)) delete values.capa;
     const keys=Object.keys(values);
     if (!keys.length) fail(400,'Nenhum campo para salvar.');
     const connection=await db.getConnection();
