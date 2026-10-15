@@ -1,0 +1,21 @@
+/* O degradê integra a fotografia à superfície, acompanhando o tema. */
+.ar-notice-with-cover { position: relative; isolation: isolate; overflow: hidden; --cover-surface: var(--surface, #fff); }
+.ar-notice-with-cover > :not(.ar-notice-cover) { position: relative; z-index: 1; }
+.ar-notice-with-cover > .ar-card-title, .ar-notice-with-cover.public-card > h3 { margin-top: 155px; }
+.ar-notice-cover { height: 225px; overflow: hidden; pointer-events: none; }
+.ar-notice-with-cover > .ar-notice-cover { position: absolute; inset: 0 0 auto; z-index: 0; }
+.ar-notice-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ar-notice-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 25%, var(--cover-surface, var(--surface, #fff)) 100%); }
+.ar-cover-editor { min-width: 0; display: grid; gap: 12px; }
+.ar-cover-editor label { display: grid; gap: 10px; }
+.ar-cover-editor input { max-width: 100%; width: 100%; }
+.ar-cover-editor p { margin: 0; line-height: 1.5; }
+.ar-cover-preview { position: relative; border-radius: 16px; overflow: hidden; background: var(--surface); }
+.ar-cover-preview[hidden] { display: none; }
+.ar-detail > .ar-notice-cover { position: relative; border-radius: 16px; margin-bottom: 20px; height: clamp(180px, 30vw, 380px); }
+.public-card.ar-notice-with-cover { --cover-surface: var(--surface, #fff); }
+@media(max-width:600px) { .ar-notice-cover { height: 190px; } .ar-notice-with-cover > .ar-card-title, .ar-notice-with-cover.public-card > h3 { margin-top: 125px; } }
+
+.public-card.ar-notice-with-cover { --cover-surface: #fff; }
+[data-theme="dark"] .public-card.ar-notice-with-cover { --cover-surface: #191f29; }
+.ar-detail--pink { --cover-surface: var(--pink); }
