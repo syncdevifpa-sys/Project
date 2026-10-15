@@ -105,6 +105,7 @@ CREATE TABLE recuperacao_senha (                       -- link "Esqueceu a senha
 CREATE TABLE avisos (
     id_aviso        INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario      INT NULL,                          -- autor
+    tipo_publicacao ENUM('aviso', 'noticia') NOT NULL DEFAULT 'aviso',
     titulo          VARCHAR(150) NOT NULL,
     resumo          TEXT NOT NULL,                     -- "Resumo do comunicado" (texto do card)
     descricao       TEXT,                              -- texto completo (página notice.html)
@@ -410,10 +411,56 @@ DELIMITER ;
 -- ---------------------------------------------------------------------
 -- DADOS INICIAIS
 -- ---------------------------------------------------------------------
+-- Oferta de Belém comprovada em 2026; fontes em catalog/belem-courses-2026.json.
 INSERT INTO cursos (nome, nivel) VALUES
-('Técnico em Informática',        'tecnico'),
-('Bacharelado em Agroecologia',   'graduacao');
--- Acrescente aqui os demais cursos do campus para o <select> do cadastro.
+('Técnico em Agrimensura (Integrado)', 'tecnico'),
+('Técnico em Desenvolvimento de Sistemas (Integrado)', 'tecnico'),
+('Técnico em Design de Interiores (Integrado)', 'tecnico'),
+('Técnico em Edificações (Integrado)', 'tecnico'),
+('Técnico em Eletrônica (Integrado)', 'tecnico'),
+('Técnico em Eletrotécnica (Integrado)', 'tecnico'),
+('Técnico em Estradas (Integrado)', 'tecnico'),
+('Técnico em Eventos (Integrado)', 'tecnico'),
+('Técnico em Mecânica (Integrado)', 'tecnico'),
+('Técnico em Metalurgia (Integrado)', 'tecnico'),
+('Técnico em Mineração (Integrado)', 'tecnico'),
+('Técnico em Química (Integrado)', 'tecnico'),
+('Técnico em Recursos Pesqueiros (Integrado)', 'tecnico'),
+('Técnico em Saneamento (Integrado)', 'tecnico'),
+('Técnico em Telecomunicações (Integrado)', 'tecnico'),
+('Técnico em Agente Comunitário de Saúde (Subsequente)', 'tecnico'),
+('Técnico em Aquicultura (Subsequente)', 'tecnico'),
+('Técnico em Edificações (Subsequente)', 'tecnico'),
+('Técnico em Eletrônica (Subsequente)', 'tecnico'),
+('Técnico em Eletrotécnica (Subsequente)', 'tecnico'),
+('Técnico em Eventos (Subsequente)', 'tecnico'),
+('Técnico em Geodésia e Cartografia (Subsequente)', 'tecnico'),
+('Técnico em Guia de Turismo (Subsequente)', 'tecnico'),
+('Técnico em Hospedagem (Subsequente)', 'tecnico'),
+('Técnico em Mecânica (Subsequente)', 'tecnico'),
+('Técnico em Mineração (Subsequente)', 'tecnico'),
+('Técnico em Química (Subsequente)', 'tecnico'),
+('Técnico em Saneamento (Subsequente)', 'tecnico'),
+('Técnico em Segurança do Trabalho (Subsequente)', 'tecnico'),
+('Técnico em Telecomunicações (Subsequente)', 'tecnico'),
+('Técnico em Vigilância em Saúde (Subsequente)', 'tecnico'),
+('Bacharelado em Engenharia de Controle e Automação', 'graduacao'),
+('Bacharelado em Engenharia de Materiais', 'graduacao'),
+('Bacharelado em Engenharia Elétrica', 'graduacao'),
+('Licenciatura em Ciências Biológicas', 'graduacao'),
+('Licenciatura em Geografia', 'graduacao'),
+('Licenciatura em História', 'graduacao'),
+('Licenciatura em Letras - Língua Portuguesa', 'graduacao'),
+('Licenciatura em Matemática', 'graduacao'),
+('Licenciatura em Pedagogia', 'graduacao'),
+('Licenciatura em Química', 'graduacao'),
+('Tecnologia em Análise e Desenvolvimento de Sistemas', 'graduacao'),
+('Tecnologia em Gestão Hospitalar', 'graduacao'),
+('Tecnologia em Gestão Pública', 'graduacao'),
+('Tecnologia em Saneamento Ambiental', 'graduacao'),
+('Especialização em Linguagens e Artes na Formação Docente', 'pos_graduacao'),
+('Especialização em Tecnologia Social em Saneamento, Saúde e Ambiente na Amazônia', 'pos_graduacao'),
+('Mestrado Profissional em Engenharia de Materiais', 'pos_graduacao');
 
 INSERT INTO links_uteis (titulo, descricao, url, categoria, ordem) VALUES
 ('SIGAA · Sistema Integrado de Gestão Acadêmica', 'Notas, faltas e turmas virtuais',

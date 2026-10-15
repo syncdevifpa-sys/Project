@@ -52,6 +52,21 @@ test('Início acompanha outra aba e mudanças do sistema somente no modo automá
     ctx.handlers.storage({ key: null });
     assert.equal(ctx.attrs['data-theme'], 'light');
 });
+test('painel acompanha preferências de outra aba e sistema em Automático sem recarregar',()=>{
+    const ctx=context('auto',false);
+    ctx.sandbox.document.addEventListener=()=>{};
+    ctx.sandbox.window.Arcadia={};
+    ctx.sandbox.localStorage.setItem=(_,value)=>{ctx.storage.mode=value;};
+    vm.runInNewContext(fs.readFileSync(path.join(root,'front/js/portal.js'),'utf8'),ctx.sandbox);
+    ctx.sandbox.window.Arcadia.applyTheme();
+    assert.equal(ctx.attrs['data-theme'],'light');
+    ctx.system.matches=true;ctx.handlers.system();assert.equal(ctx.attrs['data-theme'],'dark');
+    ctx.storage.mode='light';ctx.handlers.storage({key:'arcadia-theme'});assert.equal(ctx.attrs['data-theme'],'light');
+    ctx.handlers.system();assert.equal(ctx.attrs['data-theme'],'light');
+    ctx.storage.mode='dark';ctx.handlers.storage({key:'arcadia-theme'});assert.equal(ctx.attrs['data-theme'],'dark');
+    const index=fs.readFileSync(path.join(root,'front/index.html'),'utf8'),dashboard=fs.readFileSync(path.join(root,'front/dashboard.html'),'utf8');
+    for(const html of [index,dashboard]){assert.match(html,/assets\/arcadia-emblem\.png/);assert.match(html,/brand-logo\.css/);}
+});
 
 test('armazenamento bloqueado ou preferência inválida não impede renderização', () => {
     for (const ctx of [context('dark', false, true), context('invalido', true)]) {
@@ -78,4 +93,10 @@ test('conteúdo do Início fica visível com observador e no modo de compatibili
         vm.runInNewContext(landing, sandbox);
         assert.deepEqual(classes, ['is-revealed']);
     }
+});
+
+test('todos os cabeçalhos usam emblema transparente compartilhado sem fundo branco',()=>{
+ const root=path.resolve(__dirname,'..');
+ for(const name of fs.readdirSync(path.join(root,'front')).filter(name=>name.endsWith('.html'))){const html=fs.readFileSync(path.join(root,'front',name),'utf8');if(!html.includes('ar-brand-img'))continue;assert.match(html,/brand-logo\.css/,name);assert.doesNotMatch(html,/src="public\/arcadia-logo-128\.png"/,name);assert.match(html,/src="assets\/arcadia-emblem\.png"/,name);}
+ const css=fs.readFileSync(path.join(root,'front/brand-logo.css'),'utf8');assert.match(css,/background:transparent/);assert.match(css,/data-theme="dark"/);assert.doesNotMatch(css,/blend-mode/);
 });

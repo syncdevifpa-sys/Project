@@ -24,10 +24,14 @@ async function updateProfile(req, res) {
         if (!current) return res.status(404).json({ error: 'Usuário não encontrado.' });
         // O vínculo não é editável pelo formulário de perfil.
         delete body.tipo_usuario;
+        delete body.is_admin;
+        delete body.situacao;
+        await require('../services/profile-course.service').validateProfileCourse(current, body);
+        require('../services/profile-photo.service').validateProfilePhoto(body);
         await users.updateUser(req.user.id_usuario, body);
         return res.json({ usuario: await users.findUserById(req.user.id_usuario) });
     } catch (error) {
-        return res.status(error.code === 'ER_DUP_ENTRY' ? 409 : 500).json({ error: 'Não foi possível salvar o perfil.' });
+        return res.status(error.status || (error.code === 'ER_DUP_ENTRY' ? 409 : 500)).json({ error: error.status ? error.message : 'Não foi possível salvar o perfil.' });
     }
 }
 

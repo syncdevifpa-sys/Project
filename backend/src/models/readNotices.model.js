@@ -42,7 +42,10 @@ async function listReadNotices(userId) {
         FROM avisos_lidos al
         INNER JOIN avisos a
             ON a.id_aviso = al.id_aviso
+        INNER JOIN usuarios u ON u.id_usuario = al.id_usuario AND u.situacao = 'ativo'
         WHERE al.id_usuario = ?
+          AND (u.is_admin = 1 OR a.id_usuario = u.id_usuario OR
+               (a.situacao = 'publicado' AND a.publico_alvo IN ('todos', 'externo', u.tipo_usuario)))
         ORDER BY al.lido_em DESC
     `, [userId]);
 
@@ -53,14 +56,16 @@ async function countUnreadNotices(userId) {
     const [rows] = await db.execute(`
         SELECT COUNT(*) AS nao_lidos
         FROM avisos a
+        INNER JOIN usuarios u ON u.id_usuario = ? AND u.situacao = 'ativo'
         WHERE a.situacao = 'publicado'
+        AND (u.is_admin = 1 OR a.id_usuario = u.id_usuario OR a.publico_alvo IN ('todos', 'externo', u.tipo_usuario))
         AND NOT EXISTS (
             SELECT 1
             FROM avisos_lidos al
             WHERE al.id_aviso = a.id_aviso
             AND al.id_usuario = ?
         )
-    `, [userId]);
+    `, [userId, userId]);
 
     return rows[0].nao_lidos;
 }

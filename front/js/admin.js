@@ -7,14 +7,14 @@
     if (!session.is_admin || session.tipo_usuario === 'externo') { status.textContent = 'Esta área exige administração do aplicativo.'; select.disabled = true; return; }
     $('adminLogout').addEventListener('click', () => A.auth.logout());
     const labels = { id_usuario:'ID',id_externo:'ID',nome:'Nome',email:'E-mail',tipo_usuario:'Vínculo',situacao:'Situação',is_admin:'Administrador',id_curso:'Curso (opcional para Servidor)',periodo:'Período (opcional)',setor:'Setor',organizacao:'Organização' };
-    const human = {discente:'Aluno',docente:'Professor',servidor:'Servidor',externo:'Comunidade externa',ativo:'Ativo',pendente:'Pendente',bloqueado:'Desativado',publicado:'Publicado',rascunho:'Rascunho',arquivado:'Arquivado',aprovado:'Aprovado',recusado:'Recusado'};
+    const human = {aviso:'Aviso',noticia:'Notícia',discente:'Aluno',docente:'Professor',servidor:'Servidor',externo:'Comunidade externa',ativo:'Ativo',pendente:'Pendente',bloqueado:'Desativada',publicado:'Publicado',rascunho:'Rascunho',arquivado:'Arquivado',aprovado:'Aprovado',recusado:'Recusado'};
     let catalog, rows = [], editing, editorMetadata = [];
     const people = () => ['users','external-users'].includes(select.value);
     const endpoint = () => select.value==='registrations'?'/api/admin/registrations':'/api/admin/' + (people() ? 'people/' : 'content/') + select.value;
     const rowId = row => select.value==='registrations'?row.id_projeto+'/'+row.id_usuario:row[metadata().id];
     const request = (path, method, body) => A.api.expect(A.api.request(path, { method, body }));
     function node(tag, text) { const el = document.createElement(tag); if (text !== undefined) el.textContent = text; return el; }
-    function button(text, callback, disabled = false) { const el = node('button',text); el.type='button'; el.disabled=disabled; el.addEventListener('click',callback); return el; }
+    function button(text, callback, disabled = false, quiet = false) { const el = node('button',text); el.type='button'; el.className='ar-btn ar-btn--sm ' + (quiet ? 'ar-btn--quiet' : 'ar-btn--secondary'); el.disabled=disabled; el.addEventListener('click',callback); return el; }
     function metadata() {
         if(select.value==='registrations')return {id:'id_projeto',fields:[{name:'id_projeto',label:'Projeto (ID)',type:'int',required:true},{name:'id_usuario',label:'Pessoa (ID)',type:'int',required:true},{name:'status',label:'Situação da inscrição',type:'enum',options:['inscrito','aprovado','recusado','cancelado']}]};
         if (!people()) return catalog.find(resource => resource.key === select.value);
@@ -33,20 +33,20 @@
         status.textContent='Carregando…'; $('adminNew').hidden=people();
         try {
             rows = await request(endpoint(),'GET');
-            const meta=metadata(), keys=people()?Object.keys(rows[0]||{[meta.id]:null,nome:null,email:null,situacao:null}):[...new Set([meta.id,...meta.fields.map(field=>field.name)])];
+            const meta=metadata(), keys=people()?[meta.id,'nome','email',...(select.value==='users'?['tipo_usuario','is_admin']:['organizacao']),'situacao']:[...new Set([meta.id,...meta.fields.map(field=>field.name)])];
             const head=node('tr'); keys.forEach(key=>head.append(node('th',key===meta.id?'ID':labels[key]||meta.fields.find(field=>field.name===key)?.label||key))); head.append(node('th','Ações')); $('adminHead').replaceChildren(head); $('adminRows').replaceChildren();
             rows.forEach(row=>{
-                const tr=node('tr'); keys.forEach(key=>tr.append(node('td',key==='is_admin'?(row[key]?'Sim':'Não'):human[row[key]] || (row[key]===null?'—':String(row[key]??'')))));
+                const tr=node('tr'); keys.forEach(key=>{const cell=node('td',key==='is_admin'?(row[key]?'Sim':'Não'):human[row[key]] || (row[key]===null?'—':String(row[key]??'')));cell.dataset.label=key===meta.id?'ID':labels[key]||meta.fields.find(field=>field.name===key)?.label||key;if(!people()&&['descricao','observacao','url','link','resumo'].includes(key))A.noticeText.render(cell,cell.textContent);tr.append(cell);});
                 const actions=node('td'), id=rowId(row), self=select.value==='users'&&Number(id)===Number(session.id_usuario);
-                actions.append(button('Editar',()=>openEditor(row)));
+                actions.dataset.label='Ações'; actions.append(button('Editar',()=>openEditor(row)));
                 if(people()) actions.append(button(row.situacao==='bloqueado'?'Reativar':'Desativar',async()=>{
                     if(!confirm(`${row.situacao==='bloqueado'?'Reativar':'Desativar'} ${row.nome} (${row.email})? A desativação preserva o histórico e encerra as sessões.`))return;
                     await mutate(()=>request(endpoint()+'/'+id,'PATCH',{situacao:row.situacao==='bloqueado'?'ativo':'bloqueado'}));
                 },self));
-                actions.append(button('Excluir definitivamente',async()=>{
+                if (!people() || row.situacao==='bloqueado' && !self) actions.append(button('Excluir definitivamente',async()=>{
                     if(!confirm(`Excluir definitivamente ${row.nome||row.titulo||row[meta.id]} (ID ${id})? Esta ação não pode ser desfeita. Pessoas com histórico não serão excluídas.`))return;
                     await mutate(()=>request(endpoint()+'/'+id,'DELETE'));
-                },self || people()&&row.situacao!=='bloqueado'));
+                },false,true));
                 tr.append(actions); $('adminRows').append(tr);
             });
             status.textContent=rows.length?'':'Nenhum registro nesta área.';

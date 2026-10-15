@@ -3,6 +3,15 @@
     'use strict';
 
     function iniciar() {
+        document.querySelectorAll('.faq-trigger').forEach((trigger,index) => {
+            const panel=trigger.nextElementSibling;
+            if (!panel || !panel.classList.contains('faq-panel')) return;
+            trigger.id=trigger.id||'faq-question-'+index;panel.id=panel.id||'faq-answer-'+index;
+            trigger.setAttribute('aria-controls',panel.id);panel.setAttribute('role','region');panel.setAttribute('aria-labelledby',trigger.id);
+            panel.hidden=trigger.getAttribute('aria-expanded')!=='true';
+            trigger.addEventListener('click',()=>{const open=trigger.getAttribute('aria-expanded')==='true';trigger.setAttribute('aria-expanded',String(!open));panel.hidden=open;});
+            const icon=trigger.querySelector('.faq-icon-circle');if(icon)icon.setAttribute('aria-hidden','true');
+        });
         updateAccountActions();
         loadAccountProfile();
         window.addEventListener('storage', updateAccountActions);
@@ -66,13 +75,15 @@
             title.textContent = item.titulo;
             const description = document.createElement('p');
             description.textContent = news ? (item.resumo || item.descricao || '') : (item.descricao || '');
+            if (window.Arcadia?.noticeText) window.Arcadia.noticeText.render(description, description.textContent);
             card.append(title, description);
             if (news && item.resumo && item.descricao) {
                 const details = document.createElement('details');
                 const summary = document.createElement('summary');
-                summary.textContent = 'Ler notícia completa';
+                summary.textContent = 'Ler publicação completa';
                 const body = document.createElement('p');
                 body.textContent = item.descricao;
+                if (window.Arcadia?.noticeText) window.Arcadia.noticeText.render(body, body.textContent);
                 details.append(summary, body);
                 card.append(details);
             }

@@ -21,6 +21,11 @@ const {
     authorizeAdmin
 } = require("../middlewares/auth.middleware");
 
+router.get('/my', authenticateToken, async (req,res) => {
+    try { const [rows] = await require('../config/database').execute('SELECT * FROM projetos WHERE id_usuario = ? ORDER BY criado_em DESC', [req.user.id_usuario]); res.json(rows); }
+    catch { res.status(500).json({error:'Não foi possível carregar seus projetos.'}); }
+});
+
 // Public
 router.get("/", listProjects);
 router.get("/:id", getProjectById);
@@ -36,7 +41,6 @@ router.post(
 router.put(
     "/:id",
     authenticateToken,
-    authorizeRoles("docente", "servidor"),
     updateProject
 );
 
