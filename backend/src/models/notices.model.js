@@ -1,9 +1,12 @@
 const db = require("../config/database");
+const { hasNoticeType, writableType } = require('../services/notice-schema.service');
 
 async function listNotices() {
+    const typeColumn = await hasNoticeType() ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
     const [notices] = await db.execute(`
         SELECT
             id_aviso,
+            ${typeColumn},
             id_usuario,
             titulo,
             resumo,
@@ -29,9 +32,11 @@ async function listNotices() {
 }
 
 async function findNoticeById(noticeId) {
+    const typeColumn = await hasNoticeType() ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
     const [notices] = await db.execute(`
         SELECT
             id_aviso,
+            ${typeColumn},
             id_usuario,
             titulo,
             resumo,
@@ -57,6 +62,7 @@ async function findNoticeById(noticeId) {
 }
 
 async function createNotice(noticeData) {
+    const typeAvailable = await writableType(noticeData.tipo_publicacao || 'aviso');
     const {
         id_usuario,
         titulo,
@@ -90,8 +96,9 @@ async function createNotice(noticeData) {
             data_evento,
             vagas,
             detalhes
+            ${typeAvailable ? ', tipo_publicacao' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${typeAvailable ? ', ?' : ''})
     `, [
         id_usuario,
         titulo,
@@ -106,79 +113,41 @@ async function createNotice(noticeData) {
         data_prazo,
         data_evento,
         vagas,
-        detalhes
-    ]);
-
-    return result;
-}
-
-async function updateNotice(noticeId, noticeData) {
-    const currentNotice = await findNoticeById(noticeId);
-
-    if (!currentNotice) {
-        return null;
-    }
-
-    const {
-        titulo = currentNotice.titulo,
-        resumo = currentNotice.resumo,
-        descricao = currentNotice.descricao,
-        categoria = currentNotice.categoria,
-        publico_alvo = currentNotice.publico_alvo,
-        situacao = currentNotice.situacao,
-        urgente = currentNotice.urgente,
-        fixado = currentNotice.fixado,
-        referencia = currentNotice.referencia,
-        data_prazo = currentNotice.data_prazo,
-        data_evento = currentNotice.data_evento,
-        vagas = currentNotice.vagas,
-        detalhes = currentNotice.detalhes
-    } = noticeData;
-
-    const [result] = await db.execute(`
-        UPDATE avisos
-        SET
-            titulo = ?,
-            resumo = ?,
-            descricao = ?,
-            categoria = ?,
-            publico_alvo = ?,
-            situacao = ?,
-            urgente = ?,
-            fixado = ?,
-            referencia = ?,
-            data_prazo = ?,
-            data_evento = ?,
-            vagas = ?,
-            detalhes = ?
-        WHERE id_aviso = ?
-    `, [
-        titulo,
-        resumo,
-        descricao,
-        categoria,
-        publico_alvo,
-        situacao,
-        urgente,
-        fixado,
-        referencia,
-        data_prazo,
-        data_evento,
-        vagas,
         detalhes,
-        noticeId
+        ...(typeAvailable ? [noticeData.tipo_publicacao || 'aviso'] : [])
     ]);
 
     return result;
 }
 
-async function deleteNotice(noticeId) {
-    const [result] = await db.execute(`
-        DELETE FROM avisos
-        WHERE id_aviso = ?
-    `, [noticeId]);
+async function updateNotice(noticeId, noticeData, actorId) {
+    return require('../services/notice-edit.service').editNotice(noticeId, noticeData, actorId);
+}
 
-    return result;
+async function deleteNotice(noticeId, actorId) {
+    if (!/^[1-9]\d*$/.test(String(noticeId)) || !Number.isSafeInteger(Number(noticeId))) {
+        throw Object.assign(new Error('Identificador de publicação inválido.'), { status: 400 });
+    }
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        const [actors] = await connection.execute("SELECT id_usuario, is_admin FROM usuarios WHERE id_usuario = ? AND situacao = 'ativo' FOR UPDATE", [actorId]);
+        if (!actors.length) throw Object.assign(new Error('Sessão institucional necessária.'), { status: 403 });
+        const [notices] = await connection.execute('SELECT id_usuario FROM avisos WHERE id_aviso = ? FOR UPDATE', [noticeId]);
+        if (!notices.length) throw Object.assign(new Error('Aviso não encontrado.'), { status: 404 });
+        const actor = actors[0];
+        if (actor.is_admin !== 1 && actor.is_admin !== true && Number(notices[0].id_usuario) !== Number(actor.id_usuario)) {
+            throw Object.assign(new Error('Somente o autor ou um administrador pode excluir esta publicação.'), { status: 403 });
+        }
+        // Leituras são dependências da publicação; outros registros não são removidos.
+        await connection.execute('DELETE FROM avisos_lidos WHERE id_aviso = ?', [noticeId]);
+        const [result] = await connection.execute('DELETE FROM avisos WHERE id_aviso = ?', [noticeId]);
+        await connection.commit();
+        return result;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally { connection.release(); }
 }
 
 module.exports = {

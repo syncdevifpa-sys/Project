@@ -17,7 +17,9 @@
 
     <link rel="icon" type="image/png" href="public/arcadia-logo-64.png" />
     <link rel="stylesheet" href="landing.css" />
-  </head>
+  <link rel="stylesheet" href="scrollbars.css">
+<link rel="stylesheet" href="brand-logo.css">
+</head>
   <body>
 
     <!-- 1. Barra de navegação fixa -->
@@ -91,9 +93,9 @@
         <span class="eyebrow-pill reveal-item">Mural do IFPA Campus Belém</span>
 
         <h1 class="hero-title reveal-item">
-          Tudo o que a<br />
-          secretaria<br />
-          publica
+          Todas as<br />
+          notícias e projetos estudantis!<br />
+          num só lugar!
         </h1>
 
         <p class="hero-subtitle reveal-item">
@@ -380,7 +382,7 @@
           </div>
           <div class="step-body">
             <h3 class="step-title">Informe seu vínculo</h3>
-            <p class="step-desc">Selecione seu vínculo com o campus: aluno, professor ou servidor.</p>
+            <p class="step-desc">Selecione seu vínculo com o campus: aluno, professor, servidor ou comunidade.</p>
           </div>
         </li>
 
@@ -408,7 +410,7 @@
           <span class="eyebrow-pill">Dúvidas frequentes</span>
           <h2 class="faq-main-title">Dúvidas frequentes</h2>
           <p class="faq-support-text">Não encontrou o que procura? Entre em contato com a equipe:</p>
-          <a href="mailto:arcadia.ifpa@gmail.com" class="faq-email-link">arcadia.ifpa@gmail.com</a>
+          <a href="mailto:syncdevifpa@gmail.com" class="faq-email-link">syncdevifpa@gmail.com</a>
         </div>
 
         <div class="faq-accordion">
@@ -418,7 +420,8 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Alunos, professores e servidores do IFPA Campus Belém podem criar uma conta com seu e-mail.</p>
+              <p>Qualquer pessoa pode consultar as publicações públicas. Alunos podem criar uma conta com e-mail, senha e um curso cadastrado. Quem não tem vínculo com o campus pode escolher Comunidade externa; essa conta não dá acesso às funções institucionais. Contas de professor e servidor dependem de validação administrativa.</p>
+              <p>A entrada é por e-mail e senha; o login com Google ainda não está disponível. A recuperação de senha depende do serviço de envio de e-mail configurado. Se ele estiver indisponível, a tela informa o problema.</p>
             </div>
           </div>
 
@@ -428,7 +431,7 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Não. A Arcadia é gratuita e foi desenvolvida para atender à comunidade do campus.</p>
+              <p>Não. O uso da Arcadia é gratuito. Este é um projeto acadêmico; não há plano de assinatura nem cobrança para criar conta ou usar os recursos disponíveis.</p>
             </div>
           </div>
 
@@ -438,7 +441,7 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>No cadastro, você informa seu vínculo e, quando necessário, seu curso. A secretaria mantém as informações acadêmicas oficiais.</p>
+              <p>Selecionar um vínculo no formulário não concede permissões de professor ou servidor. Esses perfis precisam de autorização da administração do projeto; usar um e-mail institucional, por si só, não comprova o cargo. O cadastro público permite as opções Aluno e Comunidade externa. Não há verificação automática de vínculo com sistemas do IFPA nem confirmação automática por e-mail.</p>
             </div>
           </div>
 
@@ -448,7 +451,7 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Não. O SIGAA continua sendo o sistema oficial para notas e registros acadêmicos. A Arcadia centraliza avisos, comunicados e solicitações da comunidade.</p>
+              <p>Não. A Arcadia é um projeto acadêmico para organizar publicações, tarefas, projetos e solicitações. Não consulta nem altera automaticamente notas, matrículas ou registros no SIGAA. Na aba Documentos, você acompanha solicitações; isso não gera um documento oficial automaticamente. O download fica disponível quando um arquivo é cadastrado na solicitação pela equipe responsável.</p>
             </div>
           </div>
 
@@ -458,7 +461,7 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Sim. O portal se adapta ao celular e pode ser acessado pelo navegador, sem instalar aplicativos.</p>
+              <p>Sim. Você pode acessar pelo navegador do celular, com conexão à internet, sem instalar um aplicativo. A navegação lateral e os filtros se recolhem em telas menores para dar espaço ao conteúdo. O tema claro, escuro ou automático pode ser escolhido nas Configurações.</p>
             </div>
           </div>
         </div>
@@ -548,9 +551,9 @@
           <div>
             <div class="footer-col-title">Secretaria e contato</div>
             <div class="footer-contact-info">
-              <p><a href="mailto:arcadia.ifpa@gmail.com">arcadia.ifpa@gmail.com</a></p>
+              <p><a href="mailto:syncdevifpa@gmail.com">syncdevifpa@gmail.com</a></p>
               <p style="margin: 8px 0;">Atendimento: das 8h às 17h</p>
-              <p>Bloco administrativo, IFPA Campus Belém</p>
+              <p>Bloco C - Análise e Desenvolvimento de Sistemas - IFPA Campus Belém</p>
             </div>
           </div>
         </div>
@@ -568,6 +571,7 @@
     </footer>
 
     <script src="js/api.js"></script>
-    <script src="js/landing.js"></script>
+    <script src="js/notice-text.js"></script>
+  <script src="js/landing.js"></script>
   </body>
 </html>

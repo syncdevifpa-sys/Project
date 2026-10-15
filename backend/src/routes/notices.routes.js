@@ -15,9 +15,9 @@ const {
     authorizeRoles
 } = require("../middlewares/auth.middleware");
 
-// Public routes
-router.get("/", listNotices);
-router.get("/:id", getNoticeById);
+const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
+router.get("/", optionalNoticeViewer, listNotices);
+router.get("/:id", optionalNoticeViewer, getNoticeById);
 
 // Teacher/staff routes
 router.post(
@@ -30,14 +30,12 @@ router.post(
 router.put(
     "/:id",
     authenticateToken,
-    authorizeRoles("docente", "servidor"),
     updateNotice
 );
 
 router.delete(
     "/:id",
     authenticateToken,
-    authorizeRoles("docente", "servidor"),
     deleteNotice
 );
 
