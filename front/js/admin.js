@@ -36,7 +36,7 @@
             const meta=metadata(), keys=people()?[meta.id,'nome','email',...(select.value==='users'?['tipo_usuario','is_admin']:['organizacao']),'situacao']:[...new Set([meta.id,...meta.fields.map(field=>field.name)])];
             const head=node('tr'); keys.forEach(key=>head.append(node('th',key===meta.id?'ID':labels[key]||meta.fields.find(field=>field.name===key)?.label||key))); head.append(node('th','Ações')); $('adminHead').replaceChildren(head); $('adminRows').replaceChildren();
             rows.forEach(row=>{
-                const tr=node('tr'); keys.forEach(key=>{const cell=node('td',key==='is_admin'?(row[key]?'Sim':'Não'):human[row[key]] || (row[key]===null?'—':String(row[key]??'')));cell.dataset.label=key===meta.id?'ID':labels[key]||meta.fields.find(field=>field.name===key)?.label||key;if(!people()&&['descricao','observacao','url','link','resumo'].includes(key))A.noticeText.render(cell,cell.textContent);tr.append(cell);});
+                const tr=node('tr'); keys.forEach(key=>{const cell=node('td',key==='capa'?(row[key]?'Com imagem':'Sem imagem'):key==='is_admin'?(row[key]?'Sim':'Não'):human[row[key]] || (row[key]===null?'—':String(row[key]??'')));cell.dataset.label=key===meta.id?'ID':labels[key]||meta.fields.find(field=>field.name===key)?.label||key;if(!people()&&['descricao','observacao','url','link','resumo'].includes(key))A.noticeText.render(cell,cell.textContent);tr.append(cell);});
                 const actions=node('td'), id=rowId(row), self=select.value==='users'&&Number(id)===Number(session.id_usuario);
                 actions.dataset.label='Ações'; actions.append(button('Editar',()=>openEditor(row)));
                 if(people()) actions.append(button(row.situacao==='bloqueado'?'Reativar':'Desativar',async()=>{
@@ -53,10 +53,13 @@
         }catch(error){status.textContent=error.message;}
     }
     async function mutate(action){try{await action();await load();}catch(error){status.textContent=error.message;}}
+    let coverState;
     function openEditor(row) {
+        coverState=null;
         editing=row; editorMetadata=metadata().fields; $('editorFields').replaceChildren(); $('editorError').textContent=''; $('editorTitle').textContent=row?'Editar registro':'Criar registro';
         $('editorHint').hidden=select.value!=='users';
         editorMetadata.forEach(field=>{
+            if(select.value==='notices' && field.name==='capa'){coverState=A.noticeCover.editor($('editorFields'),row?.capa);return;}
             const label=node('label',field.label), input=node(field.options?'select':/text/.test(field.type)?'textarea':'input'); input.name=field.name;
             if(field.options){if(!field.required && field.nullable!==false)input.append(new Option('Não informado',''));field.options.forEach(value=>input.append(new Option(human[value]||value,value)));}
             else if(input.tagName==='INPUT')input.type=field.name==='is_admin'||field.type==='tinyint(1)'?'checkbox':/^(int|smallint|tinyint)/.test(field.type)?'number':field.type==='date'?'date':field.type==='datetime'?'datetime-local':field.type==='time'?'time':field.name==='email'?'email':'text';
@@ -77,9 +80,9 @@
     $('editorCancel').addEventListener('click',()=>$('adminEditor').close());
     $('adminNew').addEventListener('click',()=>openEditor(null));
     $('adminForm').addEventListener('submit',async event=>{
-        event.preventDefault(); const body={};
+        event.preventDefault(); if(coverState?.busy){$('editorError').textContent='Aguarde a imagem terminar de carregar.';return;} const body={};
         const submit=event.target.querySelector('button[type="submit"]'); submit.disabled=true;
-        editorMetadata.forEach(field=>{const input=event.target.elements[field.name];body[field.name]=input.type==='checkbox'?input.checked:input.value===''?null:input.type==='number'?Number(input.value):input.value;});
+        editorMetadata.forEach(field=>{if(field.name==='capa' && coverState){if(coverState.changed)body.capa=coverState.value;return;}const input=event.target.elements[field.name];body[field.name]=input.type==='checkbox'?input.checked:input.value===''?null:input.type==='number'?Number(input.value):input.value;});
         if(event.target.elements.institutional_confirmation)body.institutional_confirmation=event.target.elements.institutional_confirmation.checked;
         try{await request(endpoint()+(editing?'/'+rowId(editing):''),people()||editing?'PATCH':'POST',body);$('adminEditor').close();await load();}catch(error){$('editorError').textContent=error.message;}finally{submit.disabled=false;}
     });

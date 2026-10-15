@@ -66,8 +66,9 @@ test('início público usa projeções públicas e independe da sessão', async 
         assert.equal(anonymous.status, 200);
         assert.equal(loggedIn.status, 200);
         assert.deepEqual(await anonymous.json(), await loggedIn.json());
-        assert.match(queries[0], /situacao = 'publicado' AND publico_alvo IN \('todos', 'externo'\)/);
-        assert.match(queries[1], /aprovacao = 'aprovado'/);
+        const contentQueries = queries.filter(sql => !sql.startsWith('SHOW COLUMNS'));
+        assert.match(contentQueries[0], /situacao = 'publicado' AND publico_alvo IN \('todos', 'externo'\)/);
+        assert.match(contentQueries[1], /aprovacao = 'aprovado'/);
         for (const sql of queries) assert.doesNotMatch(sql, /id_usuario|email|aprovado_por|inscricoes/);
     } finally { db.execute = original; }
     const home = fs.readFileSync(path.join(root, 'front/index.html'), 'utf8');

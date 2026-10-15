@@ -24,10 +24,14 @@
         function addRow(candidate={titulo:'',data_evento:'',data_fim:null,page:'manual',sourceText:'Adicionado após conferência do PDF.',warning:['Evento manual: confira a data e a descrição.']}){
             const card=make('article');card.className='ar-calendar-import-row';const row={candidate};
             const origin=make('p','Página '+candidate.page+' · '+(candidate.warning||[]).join(' '));origin.className='notice-filter-hint';card.append(origin);
+            if(candidate.cor&&/^#[0-9a-f]{6}$/i.test(candidate.cor)){const badge=make('p',(candidate.natureza==='sem_aula'?'Sem aula · ':'')+(candidate.legenda||'Cor identificada no PDF'));badge.setAttribute('style','border-inline-start: 6px solid '+candidate.cor+'; padding-inline-start: 10px');card.append(badge);}
+            else if(candidate.natureza){card.append(make('p',candidate.natureza==='interrupcao_presencial'?'Interrupção presencial: não implica suspensão de todas as atividades.':candidate.natureza==='ferias_docentes'?'Férias de docentes: confira o alcance; não implica suspensão geral das aulas.':candidate.natureza==='sem_aula'?'Sem aula conforme o texto; confira o alcance e as datas.':'Classificação a conferir no PDF.'));}
+            if(candidate.needsIndividualReview)card.append(make('p','Revisão individual obrigatória: este evento não é marcado pela seleção em lote.'));
+            if(candidate.sourcePages?.length>1)card.append(make('p','Páginas de origem: '+candidate.sourcePages.join(', ')));
             const quote=make('details'),summary=make('summary','Ver trecho extraído');quote.append(summary,make('p',candidate.sourceText));card.append(quote);
             function input(name,text,type,value){const wrap=make('label',text);wrap.className='ar-field';const node=make('input');node.type=type;node.value=value||'';if(name==='titulo')node.maxLength=150;wrap.append(node);card.append(wrap);row[name]=node;}
             input('titulo','Título revisado','text',candidate.titulo);input('data_evento','Data inicial','date',candidate.data_evento);input('data_fim','Data final (opcional)','date',candidate.data_fim);
-            const categoryWrap=make('label','Categoria');categoryWrap.className='ar-field';const category=make('select');for(const [value,text] of Object.entries({evento:'Evento',matricula:'Matrícula',edital:'Edital',cancelamento:'Cancelamento',feriado:'Feriado'})){const option=make('option',text);option.value=value;category.append(option);}categoryWrap.append(category);card.append(categoryWrap);row.categoria=category;
+            const categoryWrap=make('label','Categoria');categoryWrap.className='ar-field';const category=make('select');for(const [value,text] of Object.entries({evento:'Evento',matricula:'Matrícula',edital:'Edital',cancelamento:'Cancelamento',feriado:'Feriado'})){const option=make('option',text);option.value=value;category.append(option);}categoryWrap.append(category);card.append(categoryWrap);row.categoria=category;if(candidate.categoria)category.value=candidate.categoria;
             input('reviewed','Conferi o trecho, o título e as datas no PDF','checkbox');input('selected','Importar este evento','checkbox');row.selected.disabled=true;
             row.reviewed.addEventListener('change',()=>{row.selected.disabled=!row.reviewed.checked;if(!row.reviewed.checked)row.selected.checked=false;});
             result.append(card);rows.push(row);
@@ -35,9 +39,28 @@
         function render(data){
             clear();preview=data;status.textContent=`${data.candidates.length} candidatos em ${data.pages} páginas. Confira cada linha; itens ambíguos precisam de correção. Nenhum evento gravado.`;
             for(const warning of data.warnings)result.append(make('p',warning));
+            if(data.colorAnalysis?.legend?.length){const legend=make('details');legend.append(make('summary','Legenda de cores reconhecida nesta modalidade'));for(const item of data.colorAnalysis.legend){const line=make('p',item.text+(item.kind==='sem_aula'?' · sem aula conforme legenda':' · não implica suspensão das aulas'));if(/^#[0-9a-f]{6}$/i.test(item.color))line.setAttribute('style','border-inline-start:6px solid '+item.color+';padding-inline-start:10px');legend.append(line);}result.append(legend);}
             if(data.detected)result.append(make('p',`Identificação no texto: ${data.detected.reference||'Resolução não reconhecida'} · ${data.detected.campus||'Campus a conferir'} · ano ${data.detected.years.join(', ')||'a conferir'}`));
             if(blobUrl)URL.revokeObjectURL(blobUrl);blobUrl=URL.createObjectURL(file.files[0]);const original=make('a','Abrir o PDF selecionado para conferência');original.href=blobUrl;original.target='_blank';original.rel='noopener noreferrer';result.append(original);
             if(data.unparsed.length){const unresolved=make('details');unresolved.append(make('summary',`${data.unparsed.length} trechos sem reconhecimento seguro`));for(const line of data.unparsed)unresolved.append(make('p',`Página ${line.page}: ${line.text}`));result.append(unresolved);}
+            const bulk=make('div');bulk.className='ar-profile-actions';
+            const batchLabel=make('label','Conferi no PDF os títulos e as datas dos eventos que vou selecionar em lote');batchLabel.className='ar-field';
+            const batchConfirmed=make('input');batchConfirmed.type='checkbox';batchLabel.append(batchConfirmed);result.append(batchLabel);
+            const selectAll=make('button','Marcar todos os eventos válidos');selectAll.type='button';selectAll.className='ar-btn ar-btn--secondary';
+            const clearAll=make('button','Desmarcar todos');clearAll.type='button';clearAll.className='ar-btn ar-btn--quiet';
+            selectAll.addEventListener('click',()=>{
+                if(!batchConfirmed.checked){status.textContent='Confirme a conferência do PDF antes de marcar em lote.';return;}
+                const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value;
+                let count=0;
+                for(const row of rows){
+                    const start=row.data_evento.value,end=row.data_fim.value;
+                    const valid=!row.candidate.needsIndividualReview&&row.titulo.value.trim().length>0&&row.titulo.value.trim().length<=150&&validDate(start)&&(!end||validDate(end)&&end>=start)&&(!row.candidate.requiresEnd||Boolean(end));
+                    row.reviewed.checked=valid;row.selected.disabled=!valid;row.selected.checked=valid;if(valid)count++;
+                }
+                status.textContent=`${count} eventos marcados. ${rows.length-count} precisam de correção. Nada foi importado; confirme a publicação e clique em importar.`;
+            });
+            clearAll.addEventListener('click',()=>{for(const row of rows){row.reviewed.checked=false;row.selected.checked=false;row.selected.disabled=true;}batchConfirmed.checked=false;status.textContent='Todos os eventos foram desmarcados. Nenhum evento gravado.';});
+            bulk.append(selectAll,clearAll);result.append(bulk);
             for(const candidate of data.candidates)addRow(candidate);
             const manual=make('button','Adicionar evento manual à prévia');manual.type='button';manual.className='ar-btn ar-btn--secondary';manual.addEventListener('click',()=>addRow());result.append(manual);
             const publishLabel=make('label','Confirmo a publicação dos eventos selecionados no calendário público');publishLabel.className='ar-field';const publish=make('input');publish.type='checkbox';publishLabel.append(publish);result.append(publishLabel);

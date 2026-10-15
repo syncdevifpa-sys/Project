@@ -1730,6 +1730,34 @@ section[id] {
   }
 }
 [hidden] { display: none !important; }
+[data-home-view="connected"] [data-home-intro],
+[data-home-view="about"] #homeWelcome,
+[data-home-view="about"] .public-section { display: none !important; }
+.home-return { display: none; }
+[data-home-view="about"] .home-return { display: block; padding-block: 24px; }
+.home-about-link { position: relative; z-index: 3; margin-top: 24px; color: var(--color-ink); text-underline-offset: 4px; }
+#homeWelcomeTitle > span { display: block; }
+@media (max-width: 600px) {
+  #homeWelcome #homeWelcomeTitle { font-size: clamp(22px, 7.2vw, 32px); line-height: 1.08; }
+}
+[data-home-view="connected"] .cta-card { margin: 110px auto 0; width: calc(100% - 48px); max-width: 1200px; padding: 64px 90px 80px; }
+[data-home-view="connected"] .cta-title { font-size: clamp(32px, 5vw, 56px); margin-bottom: 16px; }
+[data-home-view="connected"] .cta-subtitle { margin: 0 auto 24px; max-width: 640px; }
+[data-home-view="connected"] .cta-title,
+[data-home-view="connected"] .cta-subtitle { position: relative; z-index: 3; }
+[data-home-view="connected"] .cta-card .hero-deco-shape { pointer-events: none; opacity: .8; }
+[data-home-view="connected"] .cta-watermark { bottom: -16px; opacity: .3; font-size: clamp(90px, 17vw, 220px); }
+[data-theme="dark"][data-home-view="connected"] .cta-watermark { opacity: .08; }
+[data-home-view="connected"] .public-section { padding-top: 40px; padding-bottom: 24px; }
+@media (max-width: 600px) {
+  [data-home-view="connected"] .cta-card { width: calc(100% - 28px); margin-top: 96px; padding: 64px 20px 72px; }
+  [data-home-view="connected"] .cta-card .hero-deco-shape { max-width: 36px; max-height: 36px; }
+  [data-home-view="connected"] .cta-card .shape-star-yellow,
+  [data-home-view="connected"] .cta-card .shape-quad-red { top: 18px !important; }
+  [data-home-view="connected"] .cta-card .shape-zigzag-lime,
+  [data-home-view="connected"] .cta-card .shape-star-pink { bottom: 22px !important; }
+  .home-about-link { line-height: 1.6; }
+}
 .public-section { padding-top: 64px; padding-bottom: 48px; scroll-margin-top: 110px; }
 .public-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; margin-top: 28px; }
 .public-card { background: #fff; border: 1px solid #d9ded8; border-radius: 20px; padding: 28px; overflow-wrap: anywhere; }

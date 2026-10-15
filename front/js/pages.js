@@ -78,8 +78,9 @@
             return bar.visible().filter(r => (!type || (r.tipo_publicacao||'aviso')===type) && (!text || `${r.titulo} ${r.resumo}`.toLowerCase().includes(text)) && A.noticeFilters.audienceMatches(r, audience) && status.includes(r.situacao));
         }
         function noticeCard(r) {
-            return card(r.titulo, r.resumo, `${r.tipo_publicacao==='noticia'?'Notícia':'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(label(audiences, r.publico_alvo))} · ${date(r.data_publicacao)}`,
+            const html = card(r.titulo, r.resumo, `${r.tipo_publicacao==='noticia'?'Notícia':'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(label(audiences, r.publico_alvo))} · ${date(r.data_publicacao)}`,
                 `<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--secondary btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button><button type="button" class="ar-btn ar-btn--quiet btn-delete" data-id="${esc(r.id_aviso)}">Excluir publicação</button>` : ''}`);
+            return A.noticeCover?.valid(r.capa) ? html.replace('class="ar-card"', 'class="ar-card ar-notice-with-cover"').replace('<h3', A.noticeCover.markup(r.capa)+'<h3') : html;
         }
         function render() {
             const all = $('[data-filter-publico="All"]').checked;
@@ -174,18 +175,35 @@
         $('#btnNewEvent').style.display = canManage ? '' : 'none';
         $('#btnImportCalendar').style.display = canManage ? '' : 'none';
         $('#btnImportCalendar').addEventListener('click',()=>A.calendarImport.open(reload));
+        const canDelete=Boolean(A.calendarActions?.canDelete()),selectedEvents=new Set();
+        let deleting=false;
+        if(canDelete){
+            const controls=document.createElement('div');controls.className='ar-profile-actions';
+            for(const [text,action] of [['Marcar todos visíveis',()=>{for(const row of bar.visible())selectedEvents.add(String(row.id_evento));syncSelection();}],['Desmarcar todos',()=>{selectedEvents.clear();syncSelection();}],['Apagar selecionados',()=>removeEvents([...selectedEvents])]]){
+                const button=document.createElement('button');button.type='button';button.className='ar-btn ar-btn--quiet ar-btn--sm';button.textContent=text;button.addEventListener('click',()=>{if(!deleting)action();});controls.append(button);
+            }
+            $('.ar-panel-head').append(controls);
+            container.addEventListener('change',event=>{const id=event.target.dataset.calendarSelect;if(id){if(event.target.checked)selectedEvents.add(id);else selectedEvents.delete(id);}});
+            container.addEventListener('click',event=>{const button=event.target.closest('[data-calendar-delete]');if(button)removeEvents([button.dataset.calendarDelete]);});
+        }
+        function syncSelection(){container.querySelectorAll('[data-calendar-select]').forEach(input=>{input.checked=selectedEvents.has(input.dataset.calendarSelect);});}
+        async function removeEvents(ids){
+            if(deleting)return;deleting=true;
+            try{await A.calendarActions.remove(rows.filter(row=>ids.includes(String(row.id_evento))),reload);}catch(failure){error(failure);}finally{deleting=false;}
+        }
         const sourcePicker=$('#calendarSourceFilter');
         const scoped=()=>rows.filter(row=>!sourcePicker.value||(row.periodo_letivo||'__avulsos__')===sourcePicker.value);
         const bar = filterBar('.ar-chipbar', categories, scoped, 'categoria', render);
         sourcePicker.addEventListener('change',render);
         $('.ar-panel-label').textContent = 'Calendário acadêmico';
         function render() {
+            selectedEvents.clear();
             container.innerHTML = bar.visible().map(r => {
                 const iso=String(r.data_evento||'').slice(0,10),month=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'][Number(iso.slice(5,7))-1]||'—';
                 const dates=date(r.data_evento)+(r.data_fim?' a '+date(r.data_fim):'')+(r.hora_inicio?' · '+String(r.hora_inicio).slice(0,5):'')+(r.hora_fim?'–'+String(r.hora_fim).slice(0,5):'');
                 const description=esc(r.descricao||'')+' '+esc(r.local||'');
                 const details=(r.descricao||'').includes('PDF SHA-256:')?'<details><summary>Descrição e fonte</summary><div class="ar-row-meta">'+description+'</div></details>':'<div class="ar-row-meta">'+description+'</div>';
-                return '<div class="ar-row"><span class="ar-row-date" aria-label="'+esc(date(r.data_evento))+'"><b>'+esc(iso.slice(8,10))+'</b><small>'+month+'</small></span><span class="ar-row-main"><div class="ar-row-title">'+esc(r.titulo)+'</div><div class="ar-row-meta">'+esc(dates)+' · '+esc(r.periodo_letivo||'Evento avulso')+'</div>'+details+'</span><span class="ar-badge">'+esc(label(categories,r.categoria))+'</span>'+editAction('calendar',r,r.id_evento)+'</div>';
+                return '<div class="ar-row">'+(canDelete?'<input type="checkbox" data-calendar-select="'+esc(r.id_evento)+'" aria-label="Selecionar '+esc(r.titulo)+'">':'')+'<span class="ar-row-date" aria-label="'+esc(date(r.data_evento))+'"><b>'+esc(iso.slice(8,10))+'</b><small>'+month+'</small></span><span class="ar-row-main"><div class="ar-row-title">'+esc(r.titulo)+'</div><div class="ar-row-meta">'+esc(dates)+' · '+esc(r.periodo_letivo||'Evento avulso')+'</div>'+details+'</span><span class="ar-badge">'+esc(label(categories,r.categoria))+'</span>'+editAction('calendar',r,r.id_evento)+(canDelete?'<button type="button" class="ar-btn ar-btn--quiet ar-btn--sm" data-calendar-delete="'+esc(r.id_evento)+'">Apagar</button>':'')+'</div>';
             }).join('') || '<p>Nenhum evento encontrado.</p>';
             linkDescriptions('.ar-panel-body .ar-row-meta');
             bar.counts();
@@ -234,7 +252,9 @@
         const grid = $('#gridPessoas');
         const bar = filterBar('#chipbarPessoas', audiences, () => rows, 'tipo_usuario', render);
         function render() {
-            grid.innerHTML = bar.visible().map(r => card(r.nome_social || r.nome, r.sobre || r.setor || '', esc(label(audiences, r.tipo_usuario)))).join('') || '<p>Nenhuma pessoa encontrada.</p>';
+            const people = bar.visible();
+            grid.replaceChildren(...people.map(r => A.personCard(r, label(audiences, r.tipo_usuario))));
+            if (!people.length) grid.textContent = 'Nenhuma pessoa encontrada.';
             bar.counts();
         }
         grid.innerHTML = '<p>Carregando pessoas...</p>';
@@ -269,6 +289,9 @@
             });
             actions.append(button);
         }
+        const detail = title.closest('.ar-detail');
+        detail?.querySelector('.ar-notice-cover')?.remove();
+        if (detail && A.noticeCover?.valid(r.capa)) detail.insertAdjacentHTML('afterbegin', A.noticeCover.markup(r.capa));
         title.textContent = r.titulo;
         document.title = r.titulo;
         A.noticeText.render(desc, r.resumo);
@@ -298,7 +321,7 @@
         if (results[0].status === 'fulfilled') stats[0].textContent = results[0].value.unread;
         if (results[1].status === 'fulfilled') stats[1].textContent = results[1].value.filter(r => r.status !== 'concluida').length;
         if (results[2].status === 'fulfilled') stats[2].textContent = results[2].value.filter(r => r.status !== 'pronto').length;
-        const row = (r, href, when) => `<a class="ar-row ar-row--nav" href="${href}"><span class="ar-row-main"><div class="ar-row-title">${esc(r.titulo)}</div><div class="ar-row-meta">${esc(r.resumo || r.descricao || '')}</div></span><span class="ar-row-trail">${date(when)}</span></a>`;
+        const row = (r, href, when) => `<a class="ar-row ar-row--nav ar-dashboard-row" href="${href}"><span class="ar-row-main"><div class="ar-row-title">${esc(r.titulo)}</div><div class="ar-row-meta">${esc(r.resumo || r.descricao || '')}</div></span><span class="ar-row-trail">${date(when)}</span></a>`;
         panels[0].innerHTML = results[3].status === 'fulfilled' ? results[3].value.filter(r => String(r.data_evento).slice(0, 10) >= new Date().toLocaleDateString('sv-SE')).slice(0, 5).map(r => row(r, 'calendar.html', r.data_evento)).join('') || '<p>Nenhuma data próxima.</p>' : '<p>Não foi possível carregar o calendário.</p>';
         panels[1].innerHTML = results[4].status === 'fulfilled' ? results[4].value.slice(0, 5).map(r => row(r, 'notice.html?id=' + encodeURIComponent(r.id_aviso), r.data_publicacao)).join('') || '<p>Nenhum aviso publicado.</p>' : '<p>Não foi possível carregar os avisos.</p>';
     }

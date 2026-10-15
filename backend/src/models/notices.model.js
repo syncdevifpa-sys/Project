@@ -1,12 +1,14 @@
 const db = require("../config/database");
-const { hasNoticeType, writableType } = require('../services/notice-schema.service');
+const { hasNoticeType, writableType, hasNoticeCover, writableCover } = require('../services/notice-schema.service');
 
 async function listNotices() {
+    const coverColumn = await hasNoticeCover() ? 'capa' : 'NULL AS capa';
     const typeColumn = await hasNoticeType() ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
     const [notices] = await db.execute(`
         SELECT
             id_aviso,
             ${typeColumn},
+            ${coverColumn},
             id_usuario,
             titulo,
             resumo,
@@ -32,11 +34,13 @@ async function listNotices() {
 }
 
 async function findNoticeById(noticeId) {
+    const coverColumn = await hasNoticeCover() ? 'capa' : 'NULL AS capa';
     const typeColumn = await hasNoticeType() ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
     const [notices] = await db.execute(`
         SELECT
             id_aviso,
             ${typeColumn},
+            ${coverColumn},
             id_usuario,
             titulo,
             resumo,
@@ -62,6 +66,7 @@ async function findNoticeById(noticeId) {
 }
 
 async function createNotice(noticeData) {
+    const coverAvailable = await writableCover(noticeData.capa);
     const typeAvailable = await writableType(noticeData.tipo_publicacao || 'aviso');
     const {
         id_usuario,
@@ -97,8 +102,9 @@ async function createNotice(noticeData) {
             vagas,
             detalhes
             ${typeAvailable ? ', tipo_publicacao' : ''}
+            ${coverAvailable ? ', capa' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${typeAvailable ? ', ?' : ''})
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${typeAvailable ? ', ?' : ''}${coverAvailable ? ', ?' : ''})
     `, [
         id_usuario,
         titulo,
@@ -114,7 +120,8 @@ async function createNotice(noticeData) {
         data_evento,
         vagas,
         detalhes,
-        ...(typeAvailable ? [noticeData.tipo_publicacao || 'aviso'] : [])
+        ...(typeAvailable ? [noticeData.tipo_publicacao || 'aviso'] : []),
+        ...(coverAvailable ? [noticeData.capa || null] : [])
     ]);
 
     return result;
