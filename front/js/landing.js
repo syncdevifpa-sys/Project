@@ -77,6 +77,7 @@
             description.textContent = news ? (item.resumo || item.descricao || '') : (item.descricao || '');
             if (window.Arcadia?.noticeText) window.Arcadia.noticeText.render(description, description.textContent);
             card.append(title, description);
+            if(news)window.Arcadia?.noticeCover?.decorate(card,item.capa);
             if (news && item.resumo && item.descricao) {
                 const details = document.createElement('details');
                 const summary = document.createElement('summary');
@@ -92,12 +93,19 @@
     }
 
     function updateAccountActions() {
+        if (window.ArcadiaHomeView) window.ArcadiaHomeView();
         let loggedIn = false;
         let session = {};
         try {
             session = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
             loggedIn = Boolean(localStorage.getItem('arcadiaToken') && session.logado);
         } catch (error) { /* Sessão indisponível ou inválida utiliza os links de visitante. */ }
+        const welcome = document.getElementById('homeWelcomeDescription');
+        if (welcome) welcome.textContent = loggedIn
+            ? 'Acompanhe as publicações do campus e os projetos da comunidade. Seu próximo acesso começa aqui.'
+            : 'Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.';
+        const welcomeTitle = document.getElementById('homeWelcomeTitle');
+        if (welcomeTitle) welcomeTitle.setAttribute('aria-level', loggedIn ? '1' : '2');
         document.querySelectorAll('a[href="signup.html"]').forEach(link => { link.hidden = loggedIn; });
         document.querySelectorAll('a[href="login.html"], a[href="dashboard.html"], a[href="community.html"]').forEach(link => {
             const external = session.tipo_usuario === 'externo';

@@ -6,7 +6,7 @@ async function listUsers(req, res) {
     try {
         const users = await usersModel.listUsers();
 
-        res.json(users);
+        res.json(await require('../services/profile-sharing.service').publicPeople(users));
     } catch (error) {
         console.error("Error fetching users:", error);
 
@@ -28,7 +28,10 @@ async function getUserById(req, res) {
             });
         }
 
-        res.json(user);
+        if (String(req.user.id_usuario) === String(userId)) return res.json(user);
+        const visible = await require('../services/profile-sharing.service').publicPeople([user]);
+        if (!visible.length) return res.status(404).json({ error: 'Usuário não encontrado.' });
+        res.json(visible[0]);
     } catch (error) {
         console.error("Error fetching user:", error);
 

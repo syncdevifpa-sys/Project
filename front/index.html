@@ -6,6 +6,7 @@
     <title>Arcadia — Portal do IFPA Campus Belém</title>
     <!-- Aplica a preferência de tema antes de carregar os estilos. -->
     <script src="js/theme.js"></script>
+    <script src="js/home-view.js"></script>
 
     <!-- Fontes do Google: Schibsted Grotesk e IBM Plex Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,6 +20,7 @@
     <link rel="stylesheet" href="landing.css" />
   <link rel="stylesheet" href="scrollbars.css">
 <link rel="stylesheet" href="brand-logo.css">
+<link rel="stylesheet" href="notice-cover.css">
 </head>
   <body>
 
@@ -32,11 +34,11 @@
         </a>
 
         <div class="nav-links">
-          <a href="#public-news" class="nav-link">Notícias</a>
-          <a href="#public-projects" class="nav-link">Projetos</a>
-          <a href="#for-whom" class="nav-link">Para quem</a>
-          <a href="#how-it-works" class="nav-link">Como funciona</a>
-          <a href="#faq" class="nav-link">Dúvidas frequentes</a>
+          <a href="index.html#public-news" class="nav-link">Notícias</a>
+          <a href="index.html#public-projects" class="nav-link">Projetos</a>
+          <a href="index.html?sobre=1" class="nav-link">Sobre a Arcadia</a>
+          <a href="#how-it-works" class="nav-link" data-home-intro>Como funciona</a>
+          <a href="index.html?sobre=1#faq" class="nav-link">Ajuda</a>
         </div>
 
         <div class="nav-actions">
@@ -50,11 +52,11 @@
 
         <!-- Menu expansível para telas pequenas -->
         <div class="nav-mobile-panel" id="navMobilePanel">
-          <a href="#public-news" class="nav-link">Notícias</a>
-          <a href="#public-projects" class="nav-link">Projetos</a>
-          <a href="#for-whom" class="nav-link">Para quem</a>
-          <a href="#how-it-works" class="nav-link">Como funciona</a>
-          <a href="#faq" class="nav-link">Dúvidas frequentes</a>
+          <a href="index.html#public-news" class="nav-link">Notícias</a>
+          <a href="index.html#public-projects" class="nav-link">Projetos</a>
+          <a href="index.html?sobre=1" class="nav-link">Sobre a Arcadia</a>
+          <a href="#how-it-works" class="nav-link" data-home-intro>Como funciona</a>
+          <a href="index.html?sobre=1#faq" class="nav-link">Ajuda</a>
           <div class="nav-mobile-ctas">
             <a href="dashboard.html" class="btn-pill btn-pill--outline" style="width: 100%;">Meu painel</a>
             <a href="signup.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
@@ -64,7 +66,7 @@
     </header>
 
     <!-- 2. Apresentação principal -->
-    <section class="hero-card" id="home">
+    <section data-home-intro class="hero-card" id="home">
       <!-- Formas vetoriais decorativas -->
       <svg class="hero-deco-shape shape-star-yellow" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
@@ -136,7 +138,7 @@
     </section>
 
     <!-- 3. Manifesto -->
-    <section class="manifesto-section">
+    <section data-home-intro class="manifesto-section">
       <span class="eyebrow-pill reveal-item">O que é a Arcadia?</span>
 
       <h2 class="manifesto-quote reveal-item">
@@ -176,7 +178,7 @@
     </section>
 
     <!-- 4. Recursos da plataforma em cartões -->
-    <section class="features-section" id="features">
+    <section data-home-intro class="features-section" id="features">
       <div class="section-header-centered">
         <span class="eyebrow-pill reveal-item">Depois de entrar</span>
         <h2 class="section-title reveal-item">Dentro da plataforma</h2>
@@ -278,7 +280,7 @@
     </section>
 
     <!-- 5. Público da plataforma -->
-    <section class="for-whom-card reveal-item" id="for-whom">
+    <section data-home-intro class="for-whom-card reveal-item" id="for-whom">
       <div class="shape-forwhom-circle" aria-hidden="true"></div>
 
       <div class="for-whom-header">
@@ -346,7 +348,7 @@
     </section>
 
     <!-- 6. Como funciona -->
-    <section class="steps-card reveal-item" id="how-it-works">
+    <section data-home-intro class="steps-card reveal-item" id="how-it-works">
       <div class="shape-steps-right" aria-hidden="true"></div>
 
       <div class="section-header-centered">
@@ -404,7 +406,7 @@
     </section>
 
     <!-- 7. Perguntas frequentes -->
-    <section class="faq-section" id="faq">
+    <section data-home-intro class="faq-section" id="faq">
       <div class="faq-layout">
         <div class="faq-left">
           <span class="eyebrow-pill">Dúvidas frequentes</span>
@@ -469,7 +471,7 @@
     </section>
 
     <!-- 8. Convite para entrar -->
-    <section class="cta-card reveal-item">
+    <section class="cta-card reveal-item" id="homeWelcome">
       <svg class="hero-deco-shape shape-star-yellow" style="top: 40px; left: 8%; width: 70px; height: 70px;" viewBox="0 0 160 160" aria-hidden="true">
         <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
       </svg>
@@ -483,20 +485,21 @@
         <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
       </svg>
 
-      <h2 class="cta-title">Comece pelo mural</h2>
-      <p class="cta-subtitle">Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.</p>
+      <h2 class="cta-title" id="homeWelcomeTitle" role="heading" aria-level="2"><span>Acompanhe o que</span> <span>acontece no campus</span></h2>
+      <p class="cta-subtitle" id="homeWelcomeDescription">Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.</p>
 
       <div class="cta-actions">
         <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
         <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar portal</a>
       </div>
 
+      <a class="home-about-link" href="index.html?sobre=1">Conheça a Arcadia e veja como usar o portal &rarr;</a>
       <div class="cta-watermark" aria-hidden="true">Arcadia</div>
     </section>
 
     <section class="public-section container" id="public-news" aria-labelledby="public-news-title">
       <h2 class="section-title" id="public-news-title">Notícias e avisos do campus</h2>
-      <p>Publicações abertas a toda a comunidade, sem precisar entrar na conta.</p>
+      <p>Informações e novidades compartilhadas com toda a comunidade.</p>
       <div class="public-grid" id="publicNews" aria-live="polite"><p>Carregando notícias…</p></div>
     </section>
     <section class="public-section container" id="public-projects" aria-labelledby="public-projects-title">
@@ -504,6 +507,8 @@
       <p>Conheça os projetos aprovados do campus. Para participar, acesse seu painel.</p>
       <div class="public-grid" id="publicProjects" aria-live="polite"><p>Carregando projetos…</p></div>
     </section>
+
+    <a class="home-return container" href="index.html">&larr; Voltar ao início</a>
 
     <!-- 9. Rodapé oficial -->
     <footer class="footer-main">
@@ -530,9 +535,9 @@
           <div>
             <div class="footer-col-title">Plataforma</div>
             <ul class="footer-links">
-              <li><a href="#public-news">Notícias e avisos</a></li>
+              <li><a href="index.html#public-news">Notícias e avisos</a></li>
               <li><a href="documents.html">Central de documentos</a></li>
-              <li><a href="#public-projects">Projetos da comunidade</a></li>
+              <li><a href="index.html#public-projects">Projetos da comunidade</a></li>
               <li><a href="calendar.html">Calendário acadêmico</a></li>
             </ul>
           </div>
@@ -572,6 +577,7 @@
 
     <script src="js/api.js"></script>
     <script src="js/notice-text.js"></script>
+  <script src="js/notice-cover.js"></script>
   <script src="js/landing.js"></script>
   </body>
 </html>

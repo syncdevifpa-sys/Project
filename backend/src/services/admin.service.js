@@ -2,7 +2,7 @@ const db = require('../config/database');
 function fail(status, message) { const error = new Error(message); error.status = status; throw error; }
 // Identificadores SQL vêm apenas deste catálogo fixo, nunca do cliente.
 const resources = {
-    notices: ['avisos', 'id_aviso', 'Avisos e notícias', 'id_usuario tipo_publicacao titulo resumo descricao categoria publico_alvo situacao urgente fixado referencia data_prazo data_evento vagas'],
+    notices: ['avisos', 'id_aviso', 'Avisos e notícias', 'id_usuario tipo_publicacao capa titulo resumo descricao categoria publico_alvo situacao urgente fixado referencia data_prazo data_evento vagas'],
     calendar: ['calendario', 'id_evento', 'Calendário', 'id_usuario titulo descricao categoria periodo_letivo data_evento data_fim hora_inicio hora_fim local'],
     documents: ['documentos', 'id_documento', 'Documentos', 'id_usuario id_responsavel titulo motivo descricao tipo status observacao previsao data_emissao arquivo'],
     projects: ['projetos', 'id_projeto', 'Projetos', 'id_usuario titulo descricao eixo responsavel_nome rotulo_responsavel vagas unidade_vaga link situacao aprovacao aprovado_por data_inicio data_fim'],
@@ -11,7 +11,7 @@ const resources = {
     links: ['links_uteis', 'id_link', 'Links úteis', 'id_usuario titulo descricao url categoria ordem'],
     courses: ['cursos', 'id_curso', 'Cursos', 'nome nivel ativo']
 };
-const labels = { tipo_publicacao:'Tipo de publicação', titulo:'Título', nome:'Nome', resumo:'Resumo', descricao:'Descrição', categoria:'Categoria', situacao:'Situação', status:'Situação', urgente:'Urgente', fixado:'Fixado', referencia:'Referência', vagas:'Vagas', motivo:'Motivo', tipo:'Tipo', observacao:'Observação', previsao:'Previsão', arquivo:'URL do arquivo', local:'Local', eixo:'Área temática', link:'Link', aprovacao:'Aprovação', responsavel:'Responsável', prioridade:'Prioridade', ativo:'Ativo', url:'URL', ordem:'Ordem', nivel:'Nível', id_usuario: 'Pessoa responsável (ID)', id_responsavel: 'Responsável pelo documento (ID)', id_evento: 'Evento (ID)', aprovado_por: 'Aprovado por (ID)', publico_alvo: 'Público', data_prazo: 'Prazo', data_evento: 'Data do evento', data_fim: 'Data final', hora_inicio: 'Horário inicial', hora_fim: 'Horário final', responsavel_nome: 'Responsável', rotulo_responsavel: 'Rótulo do responsável', unidade_vaga: 'Unidade de vagas', data_inicio: 'Data inicial', data_lembrete: 'Data do lembrete', concluida_em: 'Concluída em', data_emissao: 'Emissão', periodo_letivo: 'Período letivo' };
+const labels = { capa:'Imagem de capa', tipo_publicacao:'Tipo de publicação', titulo:'Título', nome:'Nome', resumo:'Resumo', descricao:'Descrição', categoria:'Categoria', situacao:'Situação', status:'Situação', urgente:'Urgente', fixado:'Fixado', referencia:'Referência', vagas:'Vagas', motivo:'Motivo', tipo:'Tipo', observacao:'Observação', previsao:'Previsão', arquivo:'URL do arquivo', local:'Local', eixo:'Área temática', link:'Link', aprovacao:'Aprovação', responsavel:'Responsável', prioridade:'Prioridade', ativo:'Ativo', url:'URL', ordem:'Ordem', nivel:'Nível', id_usuario: 'Pessoa responsável (ID)', id_responsavel: 'Responsável pelo documento (ID)', id_evento: 'Evento (ID)', aprovado_por: 'Aprovado por (ID)', publico_alvo: 'Público', data_prazo: 'Prazo', data_evento: 'Data do evento', data_fim: 'Data final', hora_inicio: 'Horário inicial', hora_fim: 'Horário final', responsavel_nome: 'Responsável', rotulo_responsavel: 'Rótulo do responsável', unidade_vaga: 'Unidade de vagas', data_inicio: 'Data inicial', data_lembrete: 'Data do lembrete', concluida_em: 'Concluída em', data_emissao: 'Emissão', periodo_letivo: 'Período letivo' };
 function config(key) { if (!Object.hasOwn(resources, key)) fail(404, 'Recurso inexistente.'); return resources[key]; }
 async function fields(key) {
     const [table, , , names] = config(key);
@@ -27,6 +27,7 @@ async function list(key) {
     const [table, id, , names] = config(key);
     let selected = names.split(' ');
     if (key === 'notices' && !await require('./notice-schema.service').hasNoticeType()) selected = selected.filter(name => name !== 'tipo_publicacao');
+    if (key === 'notices' && !await require('./notice-schema.service').hasNoticeCover()) selected = selected.filter(name => name !== 'capa');
     const [rows] = await db.execute('SELECT '+id+', '+selected.join(', ')+' FROM '+table+' ORDER BY '+id+' DESC');
     return rows;
 }
@@ -39,6 +40,7 @@ async function save(key, id, body, actor) {
         if (value === undefined) { if (!id && field.name === 'id_usuario') value = actor; else if (!id && field.required) fail(400, 'Preencha ' + field.label + '.'); else continue; }
         if (value === '') value = null;
         if (!field.nullable && value === null) fail(400, 'Preencha ' + field.label + '.');
+        if (field.name === 'capa') require('./profile-photo.service').validateProfilePhoto({foto:value || ''});
         if (value !== null) {
             if (field.options && !field.options.includes(value)) fail(400, 'Opção inválida em ' + field.label + '.');
             if (/^(?:int|smallint|tinyint)/.test(field.type)) { value = Number(value); if (!Number.isInteger(value) || (field.type.includes('unsigned') && value < 0) || field.type === 'tinyint(1)' && ![0,1].includes(value)) fail(400, 'Número inválido em ' + field.label + '.'); }

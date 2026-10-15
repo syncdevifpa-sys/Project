@@ -10,6 +10,15 @@
 .ar-content-scope { width:100%; max-width:520px; min-height:44px; padding:9px 14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--surface); color:var(--ink); font:inherit; }
 .ar-row-date { flex-shrink:0; }
 .ar-row-main details summary { cursor:pointer; font-size:13px; color:var(--ink-muted); }
+.ar-dashboard-row { grid-template-columns: minmax(0, 1fr) auto; }
+.ar-dashboard-row .ar-row-meta { overflow-wrap: anywhere; }
+.ar-dashboard-row .ar-row-trail { min-width: 0; overflow-wrap: anywhere; }
+.ar-dashboard-summaries .ar-panel-head { flex-wrap: wrap; gap: 12px; }
+.ar-dashboard-summaries .ar-panel-head .ar-link { white-space: nowrap; flex-shrink: 0; }
+@media (max-width: 600px) {
+  .ar-dashboard-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .ar-dashboard-row .ar-row-trail { text-align: left; }
+}
 #accountRemoval input { width: 100%; box-sizing: border-box; padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-sunken); color: var(--ink); font: inherit; }
 #accountRemoval button { white-space: normal; }
 #campoCursoServidor { width: 100%; min-width: 0; padding: 9px 16px; border: 1px solid var(--line); border-radius: var(--radius-full); background: var(--surface-sunken); color: var(--ink); font: inherit; }
