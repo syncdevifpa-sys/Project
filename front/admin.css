@@ -1,0 +1,39 @@
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.5 var(--font-sans); }
+.admin-intro { padding: var(--space-6); border-radius: var(--radius-lg); background: var(--cyan); color: var(--on-field); }
+.admin-intro h1 { margin: 0 0 var(--space-2); }
+.admin-intro p { margin: 0; max-width: 75ch; color: var(--on-field-muted); }
+.admin-panel { padding: var(--space-5); background: var(--surface); border-radius: var(--radius-lg); min-width: 0; }
+.actions { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-3); }
+button, input, select, textarea { font: inherit; }
+label { display: grid; gap: var(--space-2); }
+input:not([type=checkbox]), select, textarea { padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-sunken); color: var(--ink); width: 100%; box-sizing: border-box; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.table-wrap { overflow: auto; margin-top: var(--space-4); }
+.table-wrap:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: var(--radius-xs); }
+table { width: 100%; min-width: 920px; border-collapse: collapse; }
+th, td { text-align: left; padding: var(--space-3); border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--ink-muted); font-weight: 500; }
+td { overflow-wrap: anywhere; max-width: 300px; min-width: 90px; }
+td:first-child { min-width: 40px; }
+td[data-label="Nome"], td[data-label="E-mail"] { min-width: 180px; }
+td:last-child { min-width: 180px; }
+td:last-child button { margin: 0 var(--space-1) var(--space-2) 0; }
+dialog { width: min(960px, calc(100vw - 32px)); max-height: 85vh; overflow: auto; box-sizing: border-box; padding: var(--space-6); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+dialog::backdrop { background: var(--scrim); }
+#editorFields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-4); margin: var(--space-6) 0; }
+textarea { min-height: 100px; }
+#adminStatus { min-height: 24px; }
+@media(max-width:760px) {
+  .admin-intro, .admin-panel { padding: var(--space-4); }
+  h1 { font-size: 26px; }
+  #editorFields { grid-template-columns: 1fr; }
+  .table-wrap { overflow: visible; }
+  table, tbody, tr, td { display: block; max-width: none; min-width: 0; }
+  thead { display: none; }
+  tr { padding: var(--space-3); margin-bottom: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-md); }
+  td { padding: var(--space-2) 0; border: 0; }
+  td:first-child, td[data-label="Nome"], td[data-label="E-mail"], td:last-child { min-width: 0; }
+  td::before { content: attr(data-label); display: block; color: var(--ink-muted); font-size: 12px; }
+}
+
+dialog .ar-dialog-foot { position:sticky; bottom:-24px; padding:12px 0; background:var(--surface); }

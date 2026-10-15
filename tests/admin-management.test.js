@@ -47,6 +47,26 @@ test('exclusão definitiva exige bloqueio e ausência de relações',async t=>{
     await service.changePerson('users',8,{},4,true);
     assert.ok(calls.some(call=>call.sql?.startsWith('DELETE FROM usuarios')&&call.params[0]===8));
 });
+test('pessoa ativa pode excluir a própria conta sem relações com senha e confirmação', async t => {
+    const senha = await require('bcrypt').hash('senha-teste', 4);
+    const calls = transaction(t, { id_usuario:8, situacao:'ativo', is_admin:0, senha }, [{id_usuario:4}]);
+    await service.changePerson('users',8,{senha:'senha-teste',confirmacao:'EXCLUIR'},8,true,true);
+    assert.ok(calls.some(call=>call.sql?.startsWith('DELETE FROM usuarios')));
+    assert.equal(calls.at(-2),'commit');
+});
+test('exclusão própria recusa senha incorreta, confirmação ausente e histórico', async t => {
+    const senha = await require('bcrypt').hash('senha-teste', 4);
+    const calls = transaction(t, {id_externo:8,situacao:'ativo',senha}, [{id_usuario:4}],true);
+    await assert.rejects(service.changePerson('external-users',8,{senha:'errada',confirmacao:'EXCLUIR'},8,true,true),e=>e.status===403);
+    await assert.rejects(service.changePerson('external-users',8,{senha:'senha-teste'},8,true,true),e=>e.status===400);
+    await assert.rejects(service.changePerson('external-users',8,{senha:'senha-teste',confirmacao:'EXCLUIR'},8,true,true),e=>e.status===409);
+    assert.ok(!calls.some(call=>call.sql?.startsWith('DELETE')));
+});
+test('último administrador e conta de outra pessoa não podem ser excluídos pela opção própria', async t => {
+    transaction(t,{id_usuario:8,situacao:'ativo',is_admin:1},[{id_usuario:8}]);
+    await assert.rejects(service.changePerson('users',8,{},8,true,true),e=>e.status===409);
+    await assert.rejects(service.changePerson('users',8,{},4,true,true),e=>e.status===403);
+});
 test('curso opcional válido de servidor é preservado e valor inválido é recusado',async t=>{
     const calls=transaction(t,{id_usuario:8,email:'pessoa@ifpa.edu.br',situacao:'ativo',is_admin:0,tipo_usuario:'servidor'},[{id_usuario:4}]);
     await service.changePerson('users',8,{id_curso:2,periodo:null},4);

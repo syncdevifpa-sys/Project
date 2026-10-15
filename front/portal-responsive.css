@@ -1,0 +1,27 @@
+[hidden] { display: none !important; }
+.ar-navpill { min-width: 0; }
+.ar-nav-end { flex-shrink: 0; }
+.ar-brand { flex-shrink: 0; }
+.ar-brand img { background: transparent; border-radius: var(--radius-xs); }
+.ar-brand img.ar-brand-img--home { background: transparent; }
+.ar-profile-text, .ar-srow-text, .ar-main { min-width: 0; }
+.ar-profile-name, .ar-profile-meta, .ar-row-title { overflow-wrap: anywhere; }
+.ar-profile-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ar-content-scope { width:100%; max-width:520px; min-height:44px; padding:9px 14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--surface); color:var(--ink); font:inherit; }
+.ar-row-date { flex-shrink:0; }
+.ar-row-main details summary { cursor:pointer; font-size:13px; color:var(--ink-muted); }
+#accountRemoval input { width: 100%; box-sizing: border-box; padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-sunken); color: var(--ink); font: inherit; }
+#accountRemoval button { white-space: normal; }
+#campoCursoServidor { width: 100%; min-width: 0; padding: 9px 16px; border: 1px solid var(--line); border-radius: var(--radius-full); background: var(--surface-sunken); color: var(--ink); font: inherit; }
+@media (min-width: 761px) and (max-width: 1024px) {
+  .ar-navpill { flex: 1; }
+  .ar-split { grid-template-columns: 200px minmax(0, 1fr); }
+  .ar-form-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .ar-profile { flex-wrap: wrap; gap: var(--space-3); }
+  .ar-srow { flex-wrap: wrap; gap: var(--space-3); }
+  .ar-srow-control { max-width: 100%; }
+  .ar-srow-control .ar-btn { white-space: normal; }
+  .ar-nav-end { gap: var(--space-1); }
+}

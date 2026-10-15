@@ -104,6 +104,9 @@
       }
     });
   }
+  window.addEventListener('storage', function (event) {
+    if (event.key === THEME_KEY || event.key === null) applyTheme();
+  });
 
   function applyAccent(tone) {
     if (tone) {
@@ -227,13 +230,13 @@
 
   // Destinos da busca rápida (Ctrl+K / ⌘K)
   var PALETTE_DATA = [
-    { type: 'Notices', title: 'Avisos', meta: 'Mural acadêmico', href: 'notices.html', icon: 'bell' },
+    { type: 'Notices', title: 'Avisos e notícias', meta: 'Mural acadêmico', href: 'notices.html', icon: 'bell' },
     { type: 'Tasks', title: 'Tarefas', meta: 'Tarefas pessoais', href: 'tasks.html', icon: 'check' },
     { type: 'Documents', title: 'Documentos', meta: 'Solicitações pessoais', href: 'documents.html', icon: 'file-text' },
     { type: 'Projects', title: 'Projetos', meta: 'Projetos aprovados', href: 'projects.html', icon: 'folder-kanban' },
     { type: 'Calendar', title: 'Calendário', meta: 'Datas e eventos', href: 'calendar.html', icon: 'calendar' }
   ];
-  var SCOPE_LABELS = { Notices: 'Avisos', Tasks: 'Tarefas', Documents: 'Documentos', Projects: 'Projetos', Calendar: 'Calendário' };
+  var SCOPE_LABELS = { Notices: 'Avisos e notícias', Tasks: 'Tarefas', Documents: 'Documentos', Projects: 'Projetos', Calendar: 'Calendário' };
 
   function buildCommandPalette() {
     var scrim = document.getElementById('ar-command-palette-scrim');
@@ -256,7 +259,7 @@
           '<p class="ar-pal-hint">Busque uma seção, como Avisos, Tarefas ou Documentos.</p>' +
           '<div class="ar-chipbar" id="ar-pal-scopes" role="group" aria-label="Seções da busca">' +
             '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos e notícias</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tarefas</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
@@ -265,7 +268,7 @@
         '<div class="ar-pal-body">' +
           '<div class="ar-pal-list" id="ar-pal-results" role="listbox"></div>' +
           '<div class="ar-pal-preview" id="ar-pal-preview">' +
-            '<div class="ar-field-label" style="color:var(--on-field)" id="ar-pal-prev-eyebrow">Avisos</div>' +
+            '<div class="ar-field-label" style="color:var(--on-field)" id="ar-pal-prev-eyebrow">Avisos e notícias</div>' +
             '<h4 id="ar-pal-prev-title">Selecione um item</h4>' +
             '<p id="ar-pal-prev-meta" style="margin-top:4px;">Use as setas para navegar</p>' +
             '<p id="ar-pal-prev-desc" style="margin-top:8px;"></p>' +
@@ -452,11 +455,11 @@
     document.querySelectorAll('.ar-user-role').forEach(function (el) { el.textContent = userRole; });
     updateUserAvatar(sessao.foto, userName, userInitials);
     if (sessao.is_admin && !document.getElementById('adminAccess')) {
-      var end = document.querySelector('.ar-nav-end');
+      var end = document.querySelector('.ar-navpill') || document.querySelector('.ar-nav-end');
       if (end) {
         var access = document.createElement('a');
         access.id = 'adminAccess'; access.href = 'admin.html'; access.className = 'ar-btn ar-btn--sm'; access.textContent = 'Administração';
-        end.prepend(access);
+        end.append(access);
       }
     }
 

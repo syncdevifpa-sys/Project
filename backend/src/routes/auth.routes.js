@@ -13,6 +13,10 @@ router.post('/logout', authenticateToken, profile.logout);
 router.post('/logout-outros', authenticateToken, profile.logoutOthers);
 router.post('/alterar-senha', authenticateToken, profile.changePassword);
 router.get('/sessoes', authenticateToken, listSessions);
+router.delete('/account', authenticateToken, async (req,res) => {
+    try { await require('../services/admin.service').changePerson('users',Number(req.user.id_usuario),req.body,Number(req.user.id_usuario),true,true);res.json({message:'Conta excluída.'}); }
+    catch(error){res.status(error.status||500).json({error:error.status?error.message:'Não foi possível excluir a conta.'});}
+});
 
 // POST /api/auth/send-welcome
 router.post("/send-welcome", async (req, res) => {

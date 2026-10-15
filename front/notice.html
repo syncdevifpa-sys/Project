@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bolsas de iniciação científica</title>
+  <title>Publicação</title>
 
   <!-- Inicialização do tema antes da exibição -->
   <script>
@@ -32,6 +32,12 @@
 
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="bundle.css">
+<link rel="stylesheet" href="portal-responsive.css">
+<link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
+<link rel="stylesheet" href="scrollbars.css">
+<link rel="stylesheet" href="navigation.css">
+<link rel="stylesheet" href="notice-editor.css">
+<link rel="stylesheet" href="brand-logo.css">
 </head>
 <body>
 
@@ -40,7 +46,7 @@
     <!-- Navegação superior -->
     <header class="ar-nav">
       <a class="ar-brand" href="index.html">
-        <img src="public/arcadia-logo-128.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
+        <img src="assets/arcadia-emblem.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
         <span>
           <div class="ar-brand-name">Arcadia</div>
           <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
@@ -50,7 +56,7 @@
       <nav class="ar-navpill" aria-label="Seções do portal">
         <a href="index.html">Início</a>
         <a href="dashboard.html">Meu painel</a>
-        <a href="notices.html" aria-current="page">Avisos<sup class="ar-sup">(5)</sup></a>
+        <a href="notices.html" aria-current="page">Avisos e notícias<sup class="ar-sup">(0)</sup></a>
         <a href="tasks.html">Tarefas</a>
         <a href="documents.html">Documentos</a>
         <a href="calendar.html">Calendário</a>
@@ -71,8 +77,8 @@
         <a class="ar-user" href="settings.html">
           <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
           <div>
-            <div class="ar-user-name">Aluno</div>
-            <div class="ar-user-role">Aluno</div>
+            <div class="ar-user-name">Minha conta</div>
+            <div class="ar-user-role"></div>
           </div>
         </a>
 
@@ -83,9 +89,9 @@
     <!-- Breadcrumb -->
     <nav class="ar-crumbs" aria-label="Caminho de navegação">
       <ol>
-        <li><a href="notices.html">Avisos</a><svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></li>
-        <li><a href="notices.html">Editais e bolsas</a><svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></li>
-        <li><span aria-current="page">Bolsas de iniciação científica</span></li>
+        <li><a href="notices.html">Avisos e notícias</a><svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></li>
+
+        <li><span aria-current="page">Publicação</span></li>
       </ol>
     </nav>
 
@@ -100,88 +106,20 @@
         <circle class="d" cx="752" cy="133" r="5"></circle>
         <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
       </svg>
-      <div class="ar-detail-eyebrow">
-        <span class="ar-tag ar-tag--onfield">Edital 012/2026</span>
-        <span class="ar-tag ar-tag--onfield">Aluno</span>
-      </div>
-      <h1 class="ar-detail-title">Bolsas de iniciação científica (PIBIC)</h1>
-      <p class="ar-detail-desc">Seleção de alunos para projetos de pesquisa do campus, com bolsa mensal durante 12 meses.</p>
-      <div class="ar-detail-actions">
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--lg" id="btnApply">
-          <span>Inscrever-se</span>
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-        </button>
-        <button type="button" class="ar-btn ar-btn--ghost" id="btnDownloadNotice">
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
-          <span>Baixar aviso (PDF)</span>
-        </button>
-      </div>
-      <span class="ar-detail-status">Inscrições abertas</span>
+      <div class="ar-detail-eyebrow"></div>
+      <h1 class="ar-detail-title">Carregando publicação...</h1>
+      <p class="ar-detail-desc"></p>
+      <div class="ar-detail-actions"></div>
+      <span class="ar-detail-status"></span>
     </section>
 
     <!-- InfoStrip -->
-    <div class="ar-info">
-      <div class="ar-info-item">
-        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-        <div><span>Duração da bolsa: </span><b>12 meses</b></div>
-      </div>
-      <div class="ar-info-item">
-        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v3"></path><path d="M16 2v3"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path></svg>
-        <div><span>Prazo: </span><b>30 set.</b></div>
-      </div>
-      <div class="ar-info-item">
-        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>
-        <div><span>Vagas: </span><b>12</b></div>
-      </div>
-      <div class="ar-info-item">
-        <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg>
-        <div><span>Público-alvo: </span><b>Aluno</b></div>
-      </div>
-    </div>
+    <div class="ar-info"></div>
 
     <!-- Descrição -->
-    <h2 class="ar-h2">Sobre este aviso</h2>
-    <p class="body" style="margin: 0; max-width: 720px;">
-      O programa seleciona alunos regularmente matriculados para pesquisas orientadas por professores do campus. A bolsa exige dedicação de 20 horas semanais.
-    </p>
+    <h2 class="ar-h2">Sobre esta publicação</h2>
+    <p class="body" style="margin: 0; max-width: 720px;"></p>
 
-    <!-- Etapas -->
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <h2 class="ar-h2">Etapas da inscrição</h2>
-      <div style="display: flex; gap: 6px; margin-top: 24px;">
-        <span class="ar-tag">3 etapas</span>
-        <span class="ar-tag">2 documentos</span>
-      </div>
-    </div>
-
-    <ol class="ar-steps">
-      <li class="ar-step">
-        <span class="ar-step-n">1</span>
-        <div>
-          <h4 class="ar-step-title">Inscrição on-line</h4>
-          <p class="ar-step-desc">Envie sua inscrição e o histórico acadêmico oficial em PDF.</p>
-        </div>
-        <span class="ar-step-when">até 30 set.</span>
-      </li>
-
-      <li class="ar-step">
-        <span class="ar-step-n">2</span>
-        <div>
-          <h4 class="ar-step-title">Análise de currículo e histórico</h4>
-          <p class="ar-step-desc">A comissão de pesquisa avalia os candidatos e o histórico acadêmico.</p>
-        </div>
-        <span class="ar-step-when">1º a 8 out.</span>
-      </li>
-
-      <li class="ar-step">
-        <span class="ar-step-n">3</span>
-        <div>
-          <h4 class="ar-step-title">Divulgação do resultado preliminar</h4>
-          <p class="ar-step-desc">Publicado no mural do campus, com prazo de 48 horas para recurso.</p>
-        </div>
-        <span class="ar-step-when">10 out.</span>
-      </li>
-    </ol>
 
   </div>
 
@@ -189,6 +127,11 @@
   <script src="js/auth.js"></script>
   <script src="js/portal.js"></script>
   <script src="js/notices.js"></script>
+  <script src="js/notice-actions.js"></script>
+  <script src="js/content-fields.js"></script>
+  <script src="js/notice-editor.js"></script>
+  <script src="js/notice-text.js"></script>
   <script src="js/pages.js"></script>
+<script src="js/navigation.js"></script>
 </body>
 </html>

@@ -1,10 +1,12 @@
 const noticesModel = require("../models/notices.model");
+const { canReadNotice } = require('../services/notice-visibility.service');
+const { editNotice, validateNotice } = require('../services/notice-edit.service');
 
 async function listNotices(req, res) {
     try {
         const notices = await noticesModel.listNotices();
 
-        return res.json(notices);
+        return res.json(notices.filter(notice => canReadNotice(notice, req.noticeViewer)));
 
     } catch (error) {
         console.error("Error fetching notices:", error);
@@ -27,6 +29,7 @@ async function getNoticeById(req, res) {
             });
         }
 
+        if (!canReadNotice(notice, req.noticeViewer)) return res.status(403).json({ error: 'Esta publicação não está disponível para seu público.' });
         return res.json(notice);
 
     } catch (error) {
@@ -41,7 +44,7 @@ async function getNoticeById(req, res) {
 async function createNotice(req, res) {
     try {
         const noticeData = {
-            ...req.body,
+            ...validateNotice(req.body, true),
             id_usuario: req.user.id_usuario
         };
 
@@ -53,6 +56,7 @@ async function createNotice(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error creating notice:", error);
 
         return res.status(500).json({
@@ -65,18 +69,7 @@ async function updateNotice(req, res) {
     try {
         const noticeId = req.params.id;
 
-        const notice = await noticesModel.findNoticeById(noticeId);
-
-        if (!notice) {
-            return res.status(404).json({
-                error: "Aviso não encontrado."
-            });
-        }
-
-        const result = await noticesModel.updateNotice(
-            noticeId,
-            req.body
-        );
+        const result = await editNotice(noticeId, req.body, req.user.id_usuario);
 
         return res.json({
             message: "Aviso atualizado com sucesso.",
@@ -84,6 +77,7 @@ async function updateNotice(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error updating notice:", error);
 
         return res.status(500).json({
@@ -96,7 +90,7 @@ async function deleteNotice(req, res) {
     try {
         const noticeId = req.params.id;
 
-        const result = await noticesModel.deleteNotice(noticeId);
+        const result = await noticesModel.deleteNotice(noticeId, req.user.id_usuario);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
@@ -109,6 +103,7 @@ async function deleteNotice(req, res) {
         });
 
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
         console.error("Error deleting notice:", error);
 
         return res.status(500).json({

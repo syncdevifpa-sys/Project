@@ -69,9 +69,10 @@ async function createTask(userId, taskData) {
             data_entrega,
             prioridade,
             status,
-            observacao
+            observacao,
+            concluida_em
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
         userId,
         titulo,
@@ -80,7 +81,8 @@ async function createTask(userId, taskData) {
         data_entrega,
         prioridade,
         status,
-        observacao
+        observacao,
+        status === 'concluida' ? new Date() : null
     ]);
 
     return result;
