@@ -22,6 +22,7 @@
                 else input.value=type==='date'?String(notice[name]||'').slice(0,10):String(notice[name]??'');
                 inputs[name]=input;label.append(input);form.append(label);
             }
+            const cover=resource==='notices'?A.noticeCover?.editor(form,notice.capa):null;
             const error=document.createElement('p');error.className='ar-notice-editor-error ar-span-2';error.setAttribute('role','alert');form.append(error);
             const hint=document.createElement('p');hint.className='notice-filter-hint ar-span-2';hint.textContent='Links completos http:// ou https:// ficam clicáveis no conteúdo.'+(resource==='notices'?' Todos inclui a comunidade externa.':resource==='documents'?' A secretaria mantém protocolo, processamento e entrega.':'');form.append(hint);
             const actions=document.createElement('div');actions.className='ar-profile-actions ar-span-2';
@@ -31,8 +32,9 @@
             dialog.addEventListener('cancel',event=>{if(saving)event.preventDefault();});
             dialog.addEventListener('close',()=>dialog.remove(),{once:true});
             form.addEventListener('submit',async event=>{
-                event.preventDefault();if(saving)return;saving=true;save.disabled=true;cancel.disabled=true;error.textContent='';
+                event.preventDefault();if(cover?.busy){error.textContent='Aguarde a imagem terminar de carregar.';return;}if(saving)return;saving=true;save.disabled=true;cancel.disabled=true;error.textContent='';
                 const payload={};for(const [name,,type] of fields)payload[name]=type==='checkbox'?inputs[name].checked:type==='number'?(inputs[name].value===''?null:Number(inputs[name].value)):['date','time','datetime-local'].includes(type)?(inputs[name].value||null):inputs[name].value;
+                if(cover?.changed)payload.capa=cover.value;
                 try {
                     await A.api.expect(editing?(resource==='notices'?A.api.put(config.endpoint+'/'+encodeURIComponent(notice[config.id]),payload):A.api.patch('/api/content/'+resource+'/'+encodeURIComponent(notice[config.id]),payload)):A.api.post(config.endpoint,payload));
                     dialog.close();A.showToast(editing?'Registro atualizado.':'Registro criado.');

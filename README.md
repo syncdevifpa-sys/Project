@@ -166,3 +166,20 @@ Em **Avisos e notícias**, os filtros Público/Situação começam recolhidos at
 O autor também pode **Editar publicação** na lista, tabela, quadro e detalhe. O editor pré-carrega título, resumo, texto, categoria, público, situação, referência, prazo, evento, vagas e indicadores; Cancelar não envia alterações e falhas preservam o texto. PUT /api/notices/:id usa o autor autenticado e o administrador ativo do banco numa transação, valida uma lista fixa de campos e ignora autoria/privilégios do payload. Somente o autor ou administrador pode alterar. Criação valida o mesmo contrato de conteúdo.
 
 A API de leitura filtra publicações por situação e público: visitantes/externos recebem publicados para todos/externo, institucionais recebem também seu vínculo atual; autor e administrador podem consultar seus rascunhos/registro autorizado. Token inválido ou sessão revogada não se tornam visita anônima. Detalhe restrito retorna 403. Contagens de não lidos e histórico de leituras usam o público e o vínculo atuais no banco. Filtros de interface não concedem acesso.
+# Página inicial e importação do calendário
+
+## Compartilhamento opcional em Pessoas
+
+Em **Configurações → Compartilhamento**, cada pessoa pode informar e-mail de contato, @ com o nome da rede e telefone, e marcar separadamente o que deseja publicar. O e-mail de contato é independente do login. A foto pode ficar oculta para terceiros sem ser removida da própria conta. Todos os campos começam privados, inclusive em contas antigas; o diretório e os detalhes de terceiros recebem apenas contatos autorizados e omitem a foto quando oculta. Contas desativadas continuam fora da lista. O @ é texto, sem link ou plataforma presumida.
+
+Para habilitar a gravação, revise e execute **o arquivo inteiro `backend/admin/add-profile-sharing.sql` no banco correto**. A migração cria `perfil_compartilhamento` de forma idempotente, sem publicar ou copiar dados antigos. DDL no MySQL faz COMMIT implícito. Não execute `schema.sql` em banco existente. A migração não foi aplicada ao Aiven neste trabalho. Sem a tabela, a API mantém os dados privados e a interface informa que falta habilitar o recurso; as demais configurações continuam funcionando. Preferências são removidas por cascata junto da conta e não constituem histórico impeditivo de exclusão.
+
+Contas externas encontram os mesmos controles na própria página **Minha conta**, inclusive foto opcional com o editor de recorte existente. O diretório Pessoas continua com o público institucional que já listava; salvar preferências não adiciona contas externas à lista. O endpoint externo usa sua própria identidade autenticada, separada da numeração institucional.
+
+O auxiliar `tools/final-ui-preview.cjs` usa somente dados fictícios e preferências em memória, para conferência visual local. Não representa gravação no banco real.
+
+Ao entrar na conta, o Início destaca o acesso ao painel, notícias e projetos. As seções de apresentação continuam disponíveis em **Sobre a Arcadia** (`index.html?sobre=1`), e as dúvidas em **Ajuda**. Visitantes continuam vendo a apresentação completa. A identificação local de sessão altera apenas a apresentação; a autorização continua sendo validada pela API.
+
+Em **Calendário → Importar PDF**, docentes, servidores e administradores podem selecionar um PDF com texto de até 4 MB, informar o ano e o nível de ensino e extrair uma prévia. É necessário conferir títulos e datas, marcar os eventos desejados e confirmar a publicação no calendário público. Datas ambíguas exigem correção; arquivos escaneados sem texto não têm reconhecimento automático. A importação evita duplicatas e não altera eventos existentes. Não requer alteração no esquema do calendário.
+
+Para publicar as alterações do frontend, execute `npm run build`; a saída gerada fica em `public/`. A leitura de PDFs foi verificada com os dois arquivos de referência, e os testes de gravação utilizam banco simulado. A gravação e a execução na Vercel devem ser conferidas no ambiente de destino.

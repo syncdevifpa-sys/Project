@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="scrollbars.css">
 <link rel="stylesheet" href="navigation.css">
 <link rel="stylesheet" href="avatar-editor.css">
+<link rel="stylesheet" href="profile-sharing.css">
 <link rel="stylesheet" href="brand-logo.css">
 </head>
 <body>
@@ -115,6 +116,7 @@
             <small>Nome, contato e foto</small>
           </span>
         </a>
+        <a href="#profileSharing" data-nav-target="profileSharing"><span><b>Compartilhamento</b><small>Contatos e foto em Pessoas</small></span></a>
         <a href="#aparencia" data-nav-target="aparencia">
           <svg class="ar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"></path><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>
           <span>
@@ -145,7 +147,7 @@
         <section class="ar-sset" id="dados" aria-labelledby="dados-t">
           <header class="ar-sset-head">
             <h2 id="dados-t">Seus dados</h2>
-            <p>Estas informações aparecem para a comunidade na seção Pessoas. Os campos bloqueados são mantidos pela secretaria acadêmica.</p>
+            <p>Seu nome, apresentação e vínculo aparecem em Pessoas. E-mail de login, telefone da conta e foto não são publicados automaticamente. Escolha os contatos e a visibilidade da foto em Compartilhamento.</p>
           </header>
 
           <div class="ar-sset-body">
@@ -215,6 +217,8 @@
             </div>
           </div>
         </section>
+
+        <section id="profileSharing" aria-label="Compartilhamento do perfil"></section>
 
         <!-- 2. Appearance -->
         <section class="ar-sset" id="aparencia" aria-labelledby="aparencia-t">
@@ -542,6 +546,7 @@
   <script src="js/account-removal.js"></script>
   <script src="js/portal.js"></script>
   <script src="js/avatar-editor.js"></script>
+  <script src="js/profile-sharing.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async function () {
       if (!Arcadia.auth.exigirLogin()) return;
