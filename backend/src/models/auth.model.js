@@ -1,8 +1,9 @@
-const db = require("../config/database");
-const bcrypt = require("bcrypt");
+const db = require('../config/database');
+const bcrypt = require('bcrypt');
 
 async function findUserByEmail(email) {
-    const [users] = await db.execute(`
+    const [users] = await db.execute(
+        `
         SELECT
             id_usuario,
             nome,
@@ -14,7 +15,9 @@ async function findUserByEmail(email) {
             situacao
         FROM usuarios
         WHERE email = ?
-    `, [email]);
+    `,
+        [email]
+    );
 
     return users[0];
 }

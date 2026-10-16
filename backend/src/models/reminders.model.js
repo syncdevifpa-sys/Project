@@ -1,7 +1,8 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listReminders(userId) {
-    const [reminders] = await db.execute(`
+    const [reminders] = await db.execute(
+        `
         SELECT
             id_lembrete,
             id_usuario,
@@ -15,13 +16,16 @@ async function listReminders(userId) {
         FROM lembretes
         WHERE id_usuario = ?
         ORDER BY data_lembrete ASC
-    `, [userId]);
+    `,
+        [userId]
+    );
 
     return reminders;
 }
 
 async function findReminderById(reminderId, userId) {
-    const [reminders] = await db.execute(`
+    const [reminders] = await db.execute(
+        `
         SELECT
             id_lembrete,
             id_usuario,
@@ -35,10 +39,9 @@ async function findReminderById(reminderId, userId) {
         FROM lembretes
         WHERE id_lembrete = ?
         AND id_usuario = ?
-    `, [
-        reminderId,
-        userId
-    ]);
+    `,
+        [reminderId, userId]
+    );
 
     return reminders[0];
 }
@@ -48,12 +51,13 @@ async function createReminder(userId, reminderData) {
         id_evento = null,
         titulo,
         descricao = null,
-        tipo = "prazo",
+        tipo = 'prazo',
         data_lembrete,
         ativo = true
     } = reminderData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO lembretes (
             id_usuario,
             id_evento,
@@ -64,24 +68,15 @@ async function createReminder(userId, reminderData) {
             ativo
         )
         VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [
-        userId,
-        id_evento,
-        titulo,
-        descricao,
-        tipo,
-        data_lembrete,
-        ativo
-    ]);
+    `,
+        [userId, id_evento, titulo, descricao, tipo, data_lembrete, ativo]
+    );
 
     return result;
 }
 
 async function updateReminder(reminderId, userId, reminderData) {
-    const currentReminder = await findReminderById(
-        reminderId,
-        userId
-    );
+    const currentReminder = await findReminderById(reminderId, userId);
 
     if (!currentReminder) {
         return null;
@@ -96,7 +91,8 @@ async function updateReminder(reminderId, userId, reminderData) {
         ativo = currentReminder.ativo
     } = reminderData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE lembretes
         SET
             id_evento = ?,
@@ -107,29 +103,22 @@ async function updateReminder(reminderId, userId, reminderData) {
             ativo = ?
         WHERE id_lembrete = ?
         AND id_usuario = ?
-    `, [
-        id_evento,
-        titulo,
-        descricao,
-        tipo,
-        data_lembrete,
-        ativo,
-        reminderId,
-        userId
-    ]);
+    `,
+        [id_evento, titulo, descricao, tipo, data_lembrete, ativo, reminderId, userId]
+    );
 
     return result;
 }
 
 async function deleteReminder(reminderId, userId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM lembretes
         WHERE id_lembrete = ?
         AND id_usuario = ?
-    `, [
-        reminderId,
-        userId
-    ]);
+    `,
+        [reminderId, userId]
+    );
 
     return result;
 }

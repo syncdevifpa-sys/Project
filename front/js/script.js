@@ -2,9 +2,13 @@
 (function () {
     'use strict';
 
-    const API_BASE = (window.ARCADIA_API_BASE || (window.ARCADIA_CONFIG || {}).backendUrl ||
+    const API_BASE = (
+        window.ARCADIA_API_BASE ||
+        (window.ARCADIA_CONFIG || {}).backendUrl ||
         (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && location.port !== '3001'
-            ? 'http://localhost:3001' : location.origin)).replace(/\/$/, '');
+            ? 'http://localhost:3001'
+            : location.origin)
+    ).replace(/\/$/, '');
 
     // ---------------------------------------------------------------
     // Padronização: banco/API usa discente | docente | servidor
@@ -26,7 +30,13 @@
     };
 
     function paraTipoUsuario(valor) {
-        return TIPO_POR_VINCULO[String(valor || '').trim().toLowerCase()] || 'discente';
+        return (
+            TIPO_POR_VINCULO[
+                String(valor || '')
+                    .trim()
+                    .toLowerCase()
+            ] || 'discente'
+        );
     }
 
     function paraVinculo(tipo) {
@@ -221,11 +231,13 @@
                     '.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo'
                 );
 
-                const vinculoSelecionado = vinculoInput && vinculoInput.value
-                    ? vinculoInput.value
-                    : roleBtnAtivo
-                        ? (roleBtnAtivo.getAttribute('data-vinculo') || roleBtnAtivo.textContent.trim())
-                        : 'Aluno';
+                const vinculoSelecionado =
+                    vinculoInput && vinculoInput.value
+                        ? vinculoInput.value
+                        : roleBtnAtivo
+                          ? roleBtnAtivo.getAttribute('data-vinculo') ||
+                            roleBtnAtivo.textContent.trim()
+                          : 'Aluno';
 
                 const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
                 if (!nome || !email || !senha) {
@@ -254,7 +266,9 @@
                     // Cadastro criado no MySQL (senha com hash bcrypt no backend).
                     // Não guardamos nada no navegador: o usuário entra pelo login.
                     showSuccess('Conta criada com sucesso! Redirecionando para o login...');
-                    setTimeout(() => { window.location.href = 'login.html'; }, 800);
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 800);
                 } catch (err) {
                     console.error('Erro ao conectar com a API:', err);
                     showError('Não foi possível conectar ao servidor.');
@@ -280,9 +294,9 @@
                     if (!res.ok) {
                         return showError(
                             data.error ||
-                            (res.status === 401
-                                ? 'E-mail ou senha incorretos.'
-                                : 'Erro ao efetuar login.')
+                                (res.status === 401
+                                    ? 'E-mail ou senha incorretos.'
+                                    : 'Erro ao efetuar login.')
                         );
                     }
 
@@ -357,14 +371,17 @@
     // ---------------------------------------------------------------
     const illustrations = document.querySelectorAll('.ilu');
     if (illustrations.length) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-in');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { rootMargin: '0px 0px -10% 0px' });
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { rootMargin: '0px 0px -10% 0px' }
+        );
         illustrations.forEach((el) => observer.observe(el));
     }
 })();

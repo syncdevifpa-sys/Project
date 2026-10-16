@@ -1,391 +1,680 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarefas
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tarefas </title>
 
+    <!-- Inline script to apply theme and accessibility before first paint without flicker -->
+    <script>
+      (function () {
+        var THEME_KEY = 'arcadia-theme';
+        var root = document.documentElement;
+        var mode = 'light';
+        try {
+          mode = localStorage.getItem(THEME_KEY) || 'light';
+        } catch (e) {}
+        var dark =
+          mode === 'auto'
+            ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            : mode === 'dark';
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        root.setAttribute('data-theme-mode', mode);
 
-  </title>
+        try {
+          var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+          root.setAttribute('data-accent', accent);
+        } catch (e) {}
 
-  <!-- Inline script to apply theme and accessibility before first paint without flicker -->
-  <script>
-    (function () {
-      var THEME_KEY = 'arcadia-theme';
-      var root = document.documentElement;
-      var mode = 'light';
-      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
-      var dark = (mode === 'auto')
-        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-        : (mode === 'dark');
-      root.setAttribute('data-theme', dark ? 'dark' : 'light');
-      root.setAttribute('data-theme-mode', mode);
+        try {
+          if (localStorage.getItem(THEME_KEY + '-text') === 'large')
+            root.setAttribute('data-text', 'large');
+          if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced')
+            root.setAttribute('data-motion', 'reduced');
+        } catch (e) {}
+      })();
+    </script>
 
-      try {
-        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
-        root.setAttribute('data-accent', accent);
-      } catch(e) {}
-
-      try {
-        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
-        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
-      } catch(e) {}
-    })();
-  </script>
-
-  <link rel="stylesheet" href="tokens.css">
-  <link rel="stylesheet" href="bundle.css">
-<link rel="stylesheet" href="portal-responsive.css">
-<link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
-<link rel="stylesheet" href="scrollbars.css">
-<link rel="stylesheet" href="navigation.css">
-<link rel="stylesheet" href="notice-editor.css">
-<link rel="stylesheet" href="brand-logo.css">
-</head>
-<body>
-
-  <div class="ar-app">
-
-    <!-- Navegação superior -->
-    <header class="ar-nav">
-      <a class="ar-brand" href="index.html">
-        <img src="assets/arcadia-emblem.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
-        <span>
-          <div class="ar-brand-name">Arcadia</div>
-          <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
-        </span>
-      </a>
-
-      <nav class="ar-navpill" aria-label="Seções do portal">
-        <a href="index.html">Início</a>
-        <a href="dashboard.html">Meu painel</a>
-        <a href="notices.html">Avisos e notícias</a>
-        <a href="tasks.html" aria-current="page">Tarefas<sup class="ar-sup">(0)</sup></a>
-        <a href="documents.html">Documentos</a>
-        <a href="calendar.html">Calendário</a>
-        <span class="ar-sep" aria-hidden="true"></span>
-        <a href="people.html">Pessoas</a>
-        <a href="projects.html">Projetos</a>
-      </nav>
-
-      <div class="ar-nav-end">
-        <button type="button" class="ar-iconbtn" aria-label="Buscar (Ctrl+K)" title="Buscar (Ctrl+K)" data-search-trigger>
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
-        </button>
-
-        <a class="ar-iconbtn" href="settings.html" aria-label="Configurações" title="Configurações">
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" />
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="notice-editor.css" />
+    <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="content-views.css" />
+  </head>
+  <body>
+    <div class="ar-app">
+      <!-- Navegação superior -->
+      <header class="ar-nav">
+        <a class="ar-brand" href="index.html">
+          <img
+            src="assets/arcadia-emblem.png"
+            alt="Logo da Arcadia"
+            class="ar-brand-img"
+            width="34"
+            height="34"
+          />
+          <span>
+            <div class="ar-brand-name">Arcadia</div>
+            <div class="ar-brand-sub">IFPA CAMPUS BELÉM</div>
+          </span>
         </a>
 
-        <a class="ar-user" href="settings.html">
-          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">—</span>
-          <div>
-            <div class="ar-user-name">Minha conta</div>
-            <div class="ar-user-role"></div>
+        <nav class="ar-navpill" aria-label="Seções do portal">
+          <a href="index.html">Início</a>
+          <a href="dashboard.html">Meu painel</a>
+          <a href="notices.html">Avisos e notícias</a>
+          <a href="tasks.html" aria-current="page">Tarefas<sup class="ar-sup">(0)</sup></a>
+          <a href="documents.html">Documentos</a>
+          <a href="calendar.html">Calendário</a>
+          <span class="ar-sep" aria-hidden="true"></span>
+          <a href="people.html">Pessoas</a>
+          <a href="projects.html">Projetos</a>
+        </nav>
+
+        <div class="ar-nav-end">
+          <button
+            type="button"
+            class="ar-iconbtn"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            data-search-trigger
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
+          </button>
+
+          <a
+            class="ar-iconbtn"
+            href="settings.html"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M14 17H5"></path>
+              <path d="M19 7h-9"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </a>
+
+          <a class="ar-user" href="settings.html">
+            <span
+              class="ar-avatar ar-avatar--cyan"
+              style="width: 34px; height: 34px; font-size: 13px"
+              >—</span
+            >
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
+            >Sair</button
+          >
+        </div>
+      </header>
+
+      <!-- PageHero Compact in Yellow -->
+      <section class="ar-hero ar-hero--yellow ar-hero--compact">
+        <svg
+          class="ar-hero-art"
+          viewBox="0 0 1000 220"
+          preserveAspectRatio="xMaxYMax meet"
+          aria-hidden="true"
+        >
+          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+          <rect
+            class="s"
+            x="770"
+            y="116"
+            width="180"
+            height="52"
+            rx="26"
+            opacity="0.75"
+            transform="rotate(-16 860 142)"
+          ></rect>
+          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+          <circle class="d" cx="752" cy="133" r="5"></circle>
+          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+        </svg>
+        <h1 class="ar-hero-title">Tarefas<sup class="ar-hero-count">(0)</sup></h1>
+        <div class="ar-hero-side">
+          <p class="ar-hero-desc"
+            >Acompanhe atividades acadêmicas, relatórios de estágio e prazos da secretaria.</p
+          >
+          <div class="ar-hero-actions">
+            <button type="button" class="ar-btn ar-btn--primary" id="btnNovaTarefa">
+              <span>Nova tarefa</span>
+              <svg
+                class="ar-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </button>
           </div>
-        </a>
+        </div>
+      </section>
 
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
+      <!-- ChipBar Categories -->
+      <div class="ar-chipbar" role="group" aria-label="Filtrar tarefas" id="chipbarTarefas">
+        <button
+          type="button"
+          class="ar-chip"
+          aria-pressed="true"
+          data-status="All"
+          data-filter-key="All"
+          >Todos<sup class="ar-sup">(0)</sup></button
+        >
+        <button
+          type="button"
+          class="ar-chip"
+          aria-pressed="false"
+          data-status="Open"
+          data-filter-key="Open"
+          >Aberta<sup class="ar-sup">(0)</sup></button
+        >
+        <button
+          type="button"
+          class="ar-chip"
+          aria-pressed="false"
+          data-status="In Progress"
+          data-filter-key="In Progress"
+          >Em andamento<sup class="ar-sup">(0)</sup></button
+        >
+        <button
+          type="button"
+          class="ar-chip"
+          aria-pressed="false"
+          data-status="Completed"
+          data-filter-key="Completed"
+          >Concluída<sup class="ar-sup">(0)</sup></button
+        >
       </div>
-    </header>
 
-    <!-- PageHero Compact in Yellow -->
-    <section class="ar-hero ar-hero--yellow ar-hero--compact">
-      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
-        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
-        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-        <circle class="d" cx="752" cy="133" r="5"></circle>
-        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-      </svg>
-      <h1 class="ar-hero-title">Tarefas<sup class="ar-hero-count">(0)</sup></h1>
-      <div class="ar-hero-side">
-        <p class="ar-hero-desc">Acompanhe atividades acadêmicas, relatórios de estágio e prazos da secretaria.</p>
-        <div class="ar-hero-actions">
-          <button type="button" class="ar-btn ar-btn--primary" id="btnNovaTarefa">
-            <span>Nova tarefa</span>
-            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+      <!-- ViewToolbar -->
+      <div class="ar-toolbar">
+        <div class="ar-seg" role="group" aria-label="Escolher visualização">
+          <button type="button" aria-pressed="true" data-view="board">
+            <svg
+              class="ar-icon"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+              <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+              <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+              <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+            </svg>
+            <span>Quadro</span>
+          </button>
+          <button type="button" aria-pressed="false" data-view="table">
+            <svg
+              class="ar-icon"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 9h18"></path>
+              <path d="M9 3v18"></path>
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            </svg>
+            <span>Tabela</span>
+          </button>
+          <button type="button" aria-pressed="false" data-view="list">
+            <svg
+              class="ar-icon"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 5h.01"></path>
+              <path d="M3 12h.01"></path>
+              <path d="M3 19h.01"></path>
+              <path d="M8 5h13"></path>
+              <path d="M8 12h13"></path>
+              <path d="M8 19h13"></path>
+            </svg>
+            <span>Lista</span>
           </button>
         </div>
+        <span class="ar-toolbar-sum" id="tarefasSummary">Carregando tarefas...</span>
       </div>
-    </section>
 
-    <!-- ChipBar Categories -->
-    <div class="ar-chipbar" role="group" aria-label="Filtrar tarefas" id="chipbarTarefas">
-      <button type="button" class="ar-chip" aria-pressed="true" data-status="All" data-filter-key="All">Todos<sup class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-status="Open" data-filter-key="Open">Aberta<sup class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-status="In Progress" data-filter-key="In Progress">Em andamento<sup class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-status="Completed" data-filter-key="Completed">Concluída<sup class="ar-sup">(0)</sup></button>
-    </div>
+      <!-- Tab Panels Container -->
+      <div id="view-container">
+        <!-- 1. KANBAN BOARD (renderizado por JS a partir de GET /api/tasks) -->
+        <div data-view-panel="board">
+          <div
+            id="kanbanGrid"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+              gap: var(--space-3);
+              align-items: start;
+            "
+          >
+            <p class="ar-card-meta">Carregando tarefas...</p>
+          </div>
+        </div>
 
-    <!-- ViewToolbar -->
-    <div class="ar-toolbar">
-      <div class="ar-seg" role="group" aria-label="Escolher visualização">
-        <button type="button" aria-pressed="true" data-view="board">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
-          <span>Quadro</span>
-        </button>
-        <button type="button" aria-pressed="false" data-view="table">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"></path><path d="M9 3v18"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
-          <span>Tabela</span>
-        </button>
-        <button type="button" aria-pressed="false" data-view="list">
-          <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h.01"></path><path d="M3 12h.01"></path><path d="M3 19h.01"></path><path d="M8 5h13"></path><path d="M8 12h13"></path><path d="M8 19h13"></path></svg>
-          <span>Lista</span>
-        </button>
-      </div>
-      <span class="ar-toolbar-sum" id="tarefasSummary">Carregando tarefas...</span>
-    </div>
+        <!-- 2. TABLE (DataTable) -->
+        <div data-view-panel="table" style="display: none">
+          <div class="ar-table-wrap">
+            <table class="ar-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Responsável</th>
+                  <th>Prazo</th>
+                  <th>Situação</th>
+                  <th style="text-align: right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tarefasTbody"></tbody>
+            </table>
+          </div>
+        </div>
 
-    <!-- Tab Panels Container -->
-    <div id="view-container">
-
-      <!-- 1. KANBAN BOARD (renderizado por JS a partir de GET /api/tasks) -->
-      <div data-view-panel="board">
-        <div id="kanbanGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); align-items: start;">
-          <p class="ar-card-meta">Carregando tarefas...</p>
+        <!-- 3. LIST (RecordCards) -->
+        <div data-view-panel="list" style="display: none">
+          <div class="ar-card-grid" id="tarefasCards"></div>
         </div>
       </div>
 
-      <!-- 2. TABLE (DataTable) -->
-      <div data-view-panel="table" style="display: none;">
-        <div class="ar-table-wrap">
-          <table class="ar-table">
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Responsável</th>
-                <th>Prazo</th>
-                <th>Situação</th>
-                <th style="text-align: right;">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="tarefasTbody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 3. LIST (RecordCards) -->
-      <div data-view-panel="list" style="display: none;">
-        <div class="ar-card-grid" id="tarefasCards"></div>
-      </div>
-
+      <!-- Modal Dialog: New Task -->
     </div>
 
-    <!-- Modal Dialog: New Task -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/content-fields.js"></script>
+    <script src="js/notice-actions.js"></script>
+    <script src="js/notice-editor.js"></script>
+    <script src="js/notice-text.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/portal.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var A = window.Arcadia;
+        if (!A.auth.exigirLogin()) return;
 
+        // ---- Tabelas de apoio: valores do banco -> texto/cores da interface ----
+        var STATUS_UI = {
+          aberta: { label: 'Aberta', badge: 'cyan' },
+          em_andamento: { label: 'Em andamento', badge: 'yellow' },
+          concluida: { label: 'Concluída', badge: 'green' }
+        };
+        var FILTRO_STATUS = {
+          'All': null,
+          'Open': 'aberta',
+          'In Progress': 'em_andamento',
+          'Completed': 'concluida'
+        };
+        var PRIORIDADE_UI = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
 
-  </div>
+        var tarefas = [];
+        var filtro = 'All';
 
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/content-fields.js"></script>
-  <script src="js/notice-actions.js"></script>
-  <script src="js/notice-editor.js"></script>
-  <script src="js/notice-text.js"></script>
-  <script src="js/tasks.js"></script>
-  <script src="js/portal.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var A = window.Arcadia;
-      if (!A.auth.exigirLogin()) return;
+        var kanban = document.getElementById('kanbanGrid');
+        var tbody = document.getElementById('tarefasTbody');
+        var cards = document.getElementById('tarefasCards');
 
-      // ---- Tabelas de apoio: valores do banco -> texto/cores da interface ----
-      var STATUS_UI = {
-        aberta:       { label: 'Aberta',        badge: 'cyan' },
-        em_andamento: { label: 'Em andamento', badge: 'yellow' },
-        concluida:    { label: 'Concluída',   badge: 'green' }
-      };
-      var FILTRO_STATUS = { 'All': null, 'Open': 'aberta', 'In Progress': 'em_andamento', 'Completed': 'concluida' };
-      var PRIORIDADE_UI = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
-
-      var tarefas = [];
-      var filtro = 'All';
-
-      var kanban = document.getElementById('kanbanGrid');
-      var tbody = document.getElementById('tarefasTbody');
-      var cards = document.getElementById('tarefasCards');
-
-
-
-      // ---- Utilitários ----
-      function esc(valor) {
-        return String(valor == null ? '' : valor)
-          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-      }
-
-      function fmtData(valor) {
-        var m = String(valor || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
-        if (!m) return valor ? esc(valor) : '—';
-        return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' });
-      }
-
-      function listaDe(resp) {
-        if (Array.isArray(resp)) return resp;
-        return (resp && (resp.tasks || resp.tarefas || resp.data)) || [];
-      }
-
-      function erro(err) {
-        console.error(err);
-        A.showToast(err && err.status ? err.message : 'Não foi possível conectar ao servidor.');
-      }
-
-      function visiveis() {
-        var status = FILTRO_STATUS[filtro];
-        var lista = status ? tarefas.filter(function (t) { return t.status === status; }) : tarefas.slice();
-        return lista.sort(function (a, b) {
-          return String(a.data_entrega || '').localeCompare(String(b.data_entrega || ''));
-        });
-      }
-
-      function statusUi(t) {
-        return STATUS_UI[t.status] || { label: esc(t.status), badge: 'neutral' };
-      }
-
-      function botoes(t) {
-        var id = esc(t.id_tarefa);
-        var editar = '<button type="button" class="ar-btn ar-btn--xs ar-btn--secondary" data-action="editar" data-id="' + id + '">Editar</button> ';
-        if (t.status === 'concluida') return editar + '<span class="ar-badge ar-badge--neutral">Concluída</span>';
-        var html = editar;
-        if (t.status === 'aberta') {
-          html += '<button type="button" class="ar-btn ar-btn--xs ar-btn--ghost" data-action="iniciar" data-id="' + id + '">Iniciar</button> ';
+        // ---- Utilitários ----
+        function esc(valor) {
+          return String(valor == null ? '' : valor)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
         }
-        html += '<button type="button" class="ar-btn ar-btn--xs btn-concluir" data-action="concluir" data-id="' + id + '">Concluir</button>';
-        return html;
-      }
 
-      // ---- Renderização (um único array alimenta as 3 visões) ----
-      function renderBoard(lista) {
-        var colunas = ['aberta', 'em_andamento', 'concluida'];
-        kanban.innerHTML = colunas.map(function (status) {
-          var ui = STATUS_UI[status];
-          var itens = lista.filter(function (t) { return t.status === status; });
-          var corpo = itens.map(function (t) {
-            var meta = status === 'concluida'
-              ? 'Concluída em ' + fmtData(t.concluida_em || t.data_entrega)
-              : 'Prazo: ' + fmtData(t.data_entrega) + ' · ' + esc(t.responsavel);
-            var nota = t.observacao ? esc(String(t.observacao).slice(0, 40)) : 'Prioridade: ' + (PRIORIDADE_UI[t.prioridade] || '—');
-            var rodape = status === 'concluida'
-              ? '<span>' + botoes(t) + '</span>'
-              : '<span>' + nota + '</span><span>' + botoes(t) + '</span>';
-            return '<article class="ar-bcard" data-id="' + esc(t.id_tarefa) + '">' +
-              '<div><span class="ar-badge ar-badge--neutral">' + esc(t.categoria || 'Geral') + '</span></div>' +
-              '<div class="ar-bcard-title">' + esc(t.titulo) + '</div>' +
-              '<div class="ar-bcard-meta">' + meta + '</div>' +
-              '<div class="ar-bcard-foot">' + rodape + '</div>' +
-            '</article>';
-          }).join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
-
-          return '<section class="ar-col">' +
-            '<div class="ar-col-head"><span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span>' +
-            '<span class="ar-col-count">' + itens.length + (itens.length === 1 ? ' item' : ' itens') + '</span></div>' +
-            corpo + '</section>';
-        }).join('');
-      }
-
-      function renderTabela(lista) {
-        tbody.innerHTML = lista.map(function (t) {
-          var ui = statusUi(t);
-          return '<tr>' +
-            '<td class="ar-td-strong">' + esc(t.titulo) + '</td>' +
-            '<td>' + esc(t.responsavel) + '</td>' +
-            '<td class="ar-td-mono">' + fmtData(t.data_entrega) + '</td>' +
-            '<td><span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span></td>' +
-            '<td style="text-align: right;">' + botoes(t) + '</td>' +
-          '</tr>';
-        }).join('') || '<tr><td colspan="5">Nenhuma tarefa</td></tr>';
-      }
-
-      function renderCards(lista) {
-        cards.innerHTML = lista.map(function (t) {
-          var ui = statusUi(t);
-          var meta = t.status === 'concluida'
-            ? '<span>Concluída em: <b>' + fmtData(t.concluida_em || t.data_entrega) + '</b></span>'
-            : '<span>Prazo: <b>' + fmtData(t.data_entrega) + '</b></span><span>Responsável: <b>' + esc(t.responsavel) + '</b></span>';
-          var desc = t.observacao ? esc(t.observacao) : 'Prioridade: ' + (PRIORIDADE_UI[t.prioridade] || '—');
-          return '<article class="ar-card">' +
-            '<div class="ar-card-top"><span class="ar-tag">' + esc(t.categoria || 'Geral') + '</span>' +
-            '<span class="ar-badge ar-badge--' + ui.badge + '">' + ui.label + '</span></div>' +
-            '<h3 class="ar-card-title">' + esc(t.titulo) + '</h3>' +
-            '<p class="ar-card-desc">' + desc + '</p>' +
-            '<p class="ar-card-meta">' + meta + '</p>' + botoes(t) +
-          '</article>';
-        }).join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
-      }
-
-      function renderContagens(lista) {
-        var total = tarefas.length;
-        document.querySelectorAll('.ar-navpill a[href="tasks.html"] .ar-sup, .ar-hero-count').forEach(function (el) {
-          el.textContent = '(' + total + ')';
-        });
-        document.querySelectorAll('#chipbarTarefas .ar-chip').forEach(function (chip) {
-          var status = FILTRO_STATUS[chip.getAttribute('data-status')];
-          var n = status ? tarefas.filter(function (t) { return t.status === status; }).length : total;
-          var sup = chip.querySelector('.ar-sup');
-          if (sup) sup.textContent = '(' + n + ')';
-        });
-        document.getElementById('tarefasSummary').textContent =
-          'Exibindo ' + lista.length + (lista.length === 1 ? ' tarefa' : ' tarefas');
-      }
-
-      function render() {
-        var lista = visiveis();
-        renderBoard(lista);
-        renderTabela(lista);
-        renderCards(lista);
-        renderContagens(lista);
-        document.querySelectorAll('#tarefasCards .ar-card-desc').forEach(function (element) { A.noticeText.render(element, element.textContent); });
-      }
-
-      function carregar() {
-        return A.tasks.list().then(function (resp) {
-          tarefas = listaDe(resp);
-          render();
-        }).catch(erro);
-      }
-
-      // ---- Interações ----
-      document.getElementById('btnNovaTarefa').addEventListener('click', function () { A.contentEditor.open('tasks', null, carregar); });
-
-      document.getElementById('view-container').addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-action]');
-        if (!btn) return;
-        var tarefa = tarefas.filter(function (t) { return String(t.id_tarefa) === btn.getAttribute('data-id'); })[0];
-        if (!tarefa) return;
-        if (btn.getAttribute('data-action') === 'editar') { A.contentEditor.open('tasks', tarefa, carregar); return; }
-
-        var novo = btn.getAttribute('data-action') === 'concluir' ? 'concluida' : 'em_andamento';
-        var anterior = tarefa.status;
-        var mensagem = novo === 'concluida' ? 'Tarefa concluída.' : 'Tarefa iniciada.';
-
-        btn.disabled = true;
-        A.tasks.patch(tarefa.id_tarefa, { status: novo }).then(function () {
-          return carregar();
-        }).then(function () {
-          A.showToast(mensagem, 'Desfazer', function () {
-            A.tasks.patch(tarefa.id_tarefa, { status: anterior }).then(carregar).catch(erro);
+        function fmtData(valor) {
+          var m = String(valor || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+          if (!m) return valor ? esc(valor) : '—';
+          return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('pt-BR', {
+            month: 'short',
+            day: 'numeric'
           });
-        }).catch(function (err) {
-          btn.disabled = false;
-          erro(err);
-        });
-      });
+        }
 
-      var chips = document.querySelectorAll('#chipbarTarefas .ar-chip');
-      chips.forEach(function (chip) {
-        chip.addEventListener('click', function () {
-          filtro = chip.getAttribute('data-status');
-          chips.forEach(function (c) { c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
-          render();
-        });
-      });
+        function listaDe(resp) {
+          if (Array.isArray(resp)) return resp;
+          return (resp && (resp.tasks || resp.tarefas || resp.data)) || [];
+        }
 
-      carregar();
-    });
-  </script>
-<script src="js/navigation.js"></script>
-</body>
+        function erro(err) {
+          console.error(err);
+          A.showToast(err && err.status ? err.message : 'Não foi possível conectar ao servidor.');
+        }
+
+        function visiveis() {
+          var status = FILTRO_STATUS[filtro];
+          var lista = status
+            ? tarefas.filter(function (t) {
+                return t.status === status;
+              })
+            : tarefas.slice();
+          return lista.sort(function (a, b) {
+            return String(a.data_entrega || '').localeCompare(String(b.data_entrega || ''));
+          });
+        }
+
+        function statusUi(t) {
+          return STATUS_UI[t.status] || { label: esc(t.status), badge: 'neutral' };
+        }
+
+        function botoes(t) {
+          var id = esc(t.id_tarefa);
+          var editar =
+            '<button type="button" class="ar-btn ar-btn--xs ar-btn--secondary" data-action="editar" data-id="' +
+            id +
+            '">Editar</button> ';
+          if (t.status === 'concluida')
+            return editar + '<span class="ar-badge ar-badge--neutral">Concluída</span>';
+          var html = editar;
+          if (t.status === 'aberta') {
+            html +=
+              '<button type="button" class="ar-btn ar-btn--xs ar-btn--ghost" data-action="iniciar" data-id="' +
+              id +
+              '">Iniciar</button> ';
+          }
+          html +=
+            '<button type="button" class="ar-btn ar-btn--xs btn-concluir" data-action="concluir" data-id="' +
+            id +
+            '">Concluir</button>';
+          return html;
+        }
+
+        // ---- Renderização (um único array alimenta as 3 visões) ----
+        function renderBoard(lista) {
+          var colunas = ['aberta', 'em_andamento', 'concluida'];
+          kanban.innerHTML = colunas
+            .map(function (status) {
+              var ui = STATUS_UI[status];
+              var itens = lista.filter(function (t) {
+                return t.status === status;
+              });
+              var corpo =
+                itens
+                  .map(function (t) {
+                    var meta =
+                      status === 'concluida'
+                        ? 'Concluída em ' + fmtData(t.concluida_em || t.data_entrega)
+                        : 'Prazo: ' + fmtData(t.data_entrega) + ' · ' + esc(t.responsavel);
+                    var nota = t.observacao
+                      ? esc(String(t.observacao).slice(0, 40))
+                      : 'Prioridade: ' + (PRIORIDADE_UI[t.prioridade] || '—');
+                    var rodape =
+                      status === 'concluida'
+                        ? '<span>' + botoes(t) + '</span>'
+                        : '<span>' + nota + '</span><span>' + botoes(t) + '</span>';
+                    return (
+                      '<article class="ar-bcard" data-id="' +
+                      esc(t.id_tarefa) +
+                      '">' +
+                      '<div><span class="ar-badge ar-badge--neutral">' +
+                      esc(t.categoria || 'Geral') +
+                      '</span></div>' +
+                      '<div class="ar-bcard-title">' +
+                      esc(t.titulo) +
+                      '</div>' +
+                      '<div class="ar-bcard-meta">' +
+                      meta +
+                      '</div>' +
+                      '<div class="ar-bcard-foot">' +
+                      rodape +
+                      '</div>' +
+                      '</article>'
+                    );
+                  })
+                  .join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
+
+              return (
+                '<section class="ar-col">' +
+                '<div class="ar-col-head"><span class="ar-badge ar-badge--' +
+                ui.badge +
+                '">' +
+                ui.label +
+                '</span>' +
+                '<span class="ar-col-count">' +
+                itens.length +
+                (itens.length === 1 ? ' item' : ' itens') +
+                '</span></div>' +
+                corpo +
+                '</section>'
+              );
+            })
+            .join('');
+        }
+
+        function renderTabela(lista) {
+          tbody.innerHTML =
+            lista
+              .map(function (t) {
+                var ui = statusUi(t);
+                return (
+                  '<tr>' +
+                  '<td class="ar-td-strong">' +
+                  esc(t.titulo) +
+                  '</td>' +
+                  '<td>' +
+                  esc(t.responsavel) +
+                  '</td>' +
+                  '<td class="ar-td-mono">' +
+                  fmtData(t.data_entrega) +
+                  '</td>' +
+                  '<td><span class="ar-badge ar-badge--' +
+                  ui.badge +
+                  '">' +
+                  ui.label +
+                  '</span></td>' +
+                  '<td style="text-align: right;">' +
+                  botoes(t) +
+                  '</td>' +
+                  '</tr>'
+                );
+              })
+              .join('') || '<tr><td colspan="5">Nenhuma tarefa</td></tr>';
+        }
+
+        function renderCards(lista) {
+          cards.innerHTML =
+            lista
+              .map(function (t) {
+                var ui = statusUi(t);
+                var meta =
+                  t.status === 'concluida'
+                    ? '<span>Concluída em: <b>' +
+                      fmtData(t.concluida_em || t.data_entrega) +
+                      '</b></span>'
+                    : '<span>Prazo: <b>' +
+                      fmtData(t.data_entrega) +
+                      '</b></span><span>Responsável: <b>' +
+                      esc(t.responsavel) +
+                      '</b></span>';
+                var desc = t.observacao
+                  ? esc(t.observacao)
+                  : 'Prioridade: ' + (PRIORIDADE_UI[t.prioridade] || '—');
+                return (
+                  '<article class="ar-card">' +
+                  '<div class="ar-card-top"><span class="ar-tag">' +
+                  esc(t.categoria || 'Geral') +
+                  '</span>' +
+                  '<span class="ar-badge ar-badge--' +
+                  ui.badge +
+                  '">' +
+                  ui.label +
+                  '</span></div>' +
+                  '<h3 class="ar-card-title">' +
+                  esc(t.titulo) +
+                  '</h3>' +
+                  '<p class="ar-card-desc">' +
+                  desc +
+                  '</p>' +
+                  '<p class="ar-card-meta">' +
+                  meta +
+                  '</p>' +
+                  botoes(t) +
+                  '</article>'
+                );
+              })
+              .join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
+        }
+
+        function renderContagens(lista) {
+          var total = tarefas.length;
+          document
+            .querySelectorAll('.ar-navpill a[href="tasks.html"] .ar-sup, .ar-hero-count')
+            .forEach(function (el) {
+              el.textContent = '(' + total + ')';
+            });
+          document.querySelectorAll('#chipbarTarefas .ar-chip').forEach(function (chip) {
+            var status = FILTRO_STATUS[chip.getAttribute('data-status')];
+            var n = status
+              ? tarefas.filter(function (t) {
+                  return t.status === status;
+                }).length
+              : total;
+            var sup = chip.querySelector('.ar-sup');
+            if (sup) sup.textContent = '(' + n + ')';
+          });
+          document.getElementById('tarefasSummary').textContent =
+            'Exibindo ' + lista.length + (lista.length === 1 ? ' tarefa' : ' tarefas');
+        }
+
+        function render() {
+          var lista = visiveis();
+          renderBoard(lista);
+          renderTabela(lista);
+          renderCards(lista);
+          renderContagens(lista);
+          document.querySelectorAll('#tarefasCards .ar-card-desc').forEach(function (element) {
+            A.noticeText.render(element, element.textContent);
+          });
+        }
+
+        function carregar() {
+          return A.tasks
+            .list()
+            .then(function (resp) {
+              tarefas = listaDe(resp);
+              render();
+            })
+            .catch(erro);
+        }
+
+        // ---- Interações ----
+        document.getElementById('btnNovaTarefa').addEventListener('click', function () {
+          A.contentEditor.open('tasks', null, carregar);
+        });
+
+        document.getElementById('view-container').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-action]');
+          if (!btn) return;
+          var tarefa = tarefas.filter(function (t) {
+            return String(t.id_tarefa) === btn.getAttribute('data-id');
+          })[0];
+          if (!tarefa) return;
+          if (btn.getAttribute('data-action') === 'editar') {
+            A.contentEditor.open('tasks', tarefa, carregar);
+            return;
+          }
+
+          var novo = btn.getAttribute('data-action') === 'concluir' ? 'concluida' : 'em_andamento';
+          var anterior = tarefa.status;
+          var mensagem = novo === 'concluida' ? 'Tarefa concluída.' : 'Tarefa iniciada.';
+
+          btn.disabled = true;
+          A.tasks
+            .patch(tarefa.id_tarefa, { status: novo })
+            .then(function () {
+              return carregar();
+            })
+            .then(function () {
+              A.showToast(mensagem, 'Desfazer', function () {
+                A.tasks.patch(tarefa.id_tarefa, { status: anterior }).then(carregar).catch(erro);
+              });
+            })
+            .catch(function (err) {
+              btn.disabled = false;
+              erro(err);
+            });
+        });
+
+        var chips = document.querySelectorAll('#chipbarTarefas .ar-chip');
+        chips.forEach(function (chip) {
+          chip.addEventListener('click', function () {
+            filtro = chip.getAttribute('data-status');
+            chips.forEach(function (c) {
+              c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+            });
+            render();
+          });
+        });
+
+        carregar();
+      });
+    </script>
+    <script src="js/navigation.js"></script>
+  </body>
 </html>

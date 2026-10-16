@@ -1,17 +1,14 @@
 const { validateContent, editContent } = require('../services/content-edit.service');
-const documentsModel = require("../models/documents.model");
+const documentsModel = require('../models/documents.model');
 
 async function listMyDocuments(req, res) {
     try {
-        const documents = await documentsModel.listUserDocuments(
-            req.user.id_usuario
-        );
+        const documents = await documentsModel.listUserDocuments(req.user.id_usuario);
 
         return res.json(documents);
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Error fetching documents:", error);
+        console.error('Error fetching documents:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -24,10 +21,9 @@ async function listAllDocuments(req, res) {
         const documents = await documentsModel.listAllDocuments();
 
         return res.json(documents);
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Error fetching documents:", error);
+        console.error('Error fetching documents:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -37,36 +33,30 @@ async function listAllDocuments(req, res) {
 
 async function getDocumentById(req, res) {
     try {
-        const document = await documentsModel.findDocumentById(
-            req.params.id
-        );
+        const document = await documentsModel.findDocumentById(req.params.id);
 
         if (!document) {
             return res.status(404).json({
-                error: "Documento não encontrado."
+                error: 'Documento não encontrado.'
             });
         }
 
-        const isOwner =
-            document.id_usuario === req.user.id_usuario;
+        const isOwner = document.id_usuario === req.user.id_usuario;
 
-        const isStaff =
-            req.user.tipo_usuario === "servidor";
+        const isStaff = req.user.tipo_usuario === 'servidor';
 
-        const isAdmin =
-            req.user.is_admin === true;
+        const isAdmin = req.user.is_admin === true;
 
         if (!isOwner && !isStaff && !isAdmin) {
             return res.status(403).json({
-                error: "Você não tem permissão para acessar este documento."
+                error: 'Você não tem permissão para acessar este documento.'
             });
         }
 
         return res.json(document);
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Error fetching document:", error);
+        console.error('Error fetching document:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -80,7 +70,7 @@ async function createDocument(req, res) {
 
         if (!titulo) {
             return res.status(400).json({
-                error: "O título do documento é obrigatório."
+                error: 'O título do documento é obrigatório.'
             });
         }
 
@@ -89,23 +79,18 @@ async function createDocument(req, res) {
             validateContent('documents', req.body, true)
         );
 
-        const protocol =
-            `ARC-${new Date().getFullYear()}-${String(result.insertId).padStart(6, "0")}`;
+        const protocol = `ARC-${new Date().getFullYear()}-${String(result.insertId).padStart(6, '0')}`;
 
-        await documentsModel.setProtocol(
-            result.insertId,
-            protocol
-        );
+        await documentsModel.setProtocol(result.insertId, protocol);
 
         return res.status(201).json({
-            message: "Solicitação de documento criada com sucesso.",
+            message: 'Solicitação de documento criada com sucesso.',
             documentId: result.insertId,
             protocol
         });
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Error creating document:", error);
+        console.error('Error creating document:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -125,17 +110,16 @@ async function updateDocument(req, res) {
 
         if (!result) {
             return res.status(404).json({
-                error: "Documento não encontrado."
+                error: 'Documento não encontrado.'
             });
         }
 
         return res.json({
-            message: "Documento atualizado com sucesso."
+            message: 'Documento atualizado com sucesso.'
         });
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Error updating document:", error);
+        console.error('Error updating document:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -145,24 +129,20 @@ async function updateDocument(req, res) {
 
 async function deleteDocument(req, res) {
     try {
-        const result = await documentsModel.deleteDocument(
-            req.params.id,
-            req.user.id_usuario
-        );
+        const result = await documentsModel.deleteDocument(req.params.id, req.user.id_usuario);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Documento não encontrado ou não pode mais ser cancelado."
+                error: 'Documento não encontrado ou não pode mais ser cancelado.'
             });
         }
 
         return res.json({
-            message: "Solicitação de documento cancelada com sucesso."
+            message: 'Solicitação de documento cancelada com sucesso.'
         });
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Error deleting document:", error);
+        console.error('Error deleting document:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'

@@ -1,123 +1,65 @@
-/**
- * Arcádia IFPA — serviço de e-mail do backend
- * =====================================
- * Envia mensagens de boas-vindas e recuperação de senha via Nodemailer/SMTP.
- */
-
+/* Somente mensagens transacionais iniciadas pelo servidor. Não há relay de boas-vindas. */
 const nodemailer = require('nodemailer');
-
-function createTransporter() {
-    // Cria o transporte quando as credenciais SMTP estão configuradas.
-    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-        return nodemailer.createTransport({
-            service: process.env.SMTP_SERVICE || 'gmail',
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 15000,
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS // Senha de app do Gmail, quando esse serviço for utilizado.
-            }
-        });
-    }
-
-    // Sem credenciais, não há transporte disponível.
-    return null;
-}
-
-/**
- * Envia uma mensagem de boas-vindas ao usuário.
- * @param {string} toEmail - E-mail do destinatário
- * @param {string} userName - Nome do usuário
- * @param {string} provider - Provedor informado pelo fluxo de boas-vindas
- */
-async function sendWelcomeEmail(toEmail, userName = 'Usuário', provider = 'Google') {
-    const transporter = createTransporter();
-
-    const subject = `🎉 Boas-vindas à Arcadia IFPA, ${userName}!`;
-    const htmlContent = `
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #0b1a13; color: #f0fdf4; margin: 0; padding: 24px; }
-        .card { max-width: 520px; margin: 0 auto; background-color: #151d18; border-radius: 16px; border: 1px solid #28382f; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-        .brand-title { font-size: 22px; font-weight: 700; color: #52b788; letter-spacing: -0.5px; }
-        .brand-sub { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #95d5b2; }
-        .title { font-size: 20px; font-weight: 600; color: #ffffff; margin-top: 0; }
-        .desc { font-size: 14px; line-height: 1.6; color: #b7e4c7; }
-        .badge { display: inline-block; background-color: rgba(82, 183, 136, 0.15); border: 1px solid #52b788; color: #52b788; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; margin: 16px 0; }
-        .btn { display: inline-block; background-color: #2d6a4f; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; margin-top: 16px; }
-        .footer { margin-top: 32px; font-size: 12px; color: #74c69d; border-top: 1px solid #28382f; padding-top: 16px; text-align: center; }
-      </style>
-    </head>
-    <body>
-      <div class="card">
-        <div class="brand">
-          <div>
-            <div class="brand-title">Arcadia</div>
-            <div class="brand-sub">IFPA Campus Belém</div>
-          </div>
-        </div>
-        <h1 class="title">Sua conta está pronta!</h1>
-        <p class="desc">Olá, <strong>${userName}</strong>!</p>
-        <p class="desc">Sua conta foi vinculada a <strong>${provider}</strong> com o e-mail <strong>${toEmail}</strong>.</p>
-        <div class="badge">✓ Conta verificada com ${provider}</div>
-        <p class="desc">Acesse os avisos, o calendário acadêmico e os recursos da comunidade do seu campus.</p>
-        <div class="footer">
-          Portal Arcadia · IFPA Campus Belém · Projeto acadêmico de Desenvolvimento de Sistemas
-        </div>
-      </div>
-    </body>
-    </html>
-    `;
-
-    if (!transporter) {
-        console.log(`[Email Service Simulation] Welcome email simulated for ${toEmail}:`);
-        console.log(`Subject: ${subject}`);
-        console.log(`To configure real sending via Gmail: set SMTP_USER and SMTP_PASS in backend/.env`);
-        return { success: true, simulated: true };
-    }
-
-    try {
-        const info = await transporter.sendMail({
-            from: `"Arcadia IFPA" <${process.env.SMTP_USER}>`,
-            to: toEmail,
-            subject: subject,
-            html: htmlContent
-        });
-        console.log('[Email Service] Welcome email delivered:', info.messageId);
-        return { success: true, messageId: info.messageId };
-    } catch (err) {
-        console.error('[Email Service] Error sending email:', err);
-        throw err;
-    }
-}
+const { emailAddress } = require('./email-address.service');
 
 function recoveryConfigured() {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.APP_URL) return false;
     try {
+        emailAddress(process.env.SMTP_USER);
+        const service = process.env.SMTP_SERVICE || 'gmail';
+        if (!/^[a-z0-9.-]{1,60}$/i.test(service)) return false;
         const url = new URL(process.env.APP_URL);
         const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
-        return !url.username && !url.password && (url.protocol === 'https:' ||
-            (!process.env.VERCEL && process.env.NODE_ENV !== 'production' && local && url.protocol === 'http:'));
+        return !url.username && !url.password &&
+            (url.protocol === 'https:' ||
+                (!process.env.VERCEL && process.env.NODE_ENV !== 'production' &&
+                    local && url.protocol === 'http:'));
     } catch { return false; }
 }
 
-async function sendPasswordRecovery(toEmail, token) {
+async function sendLink(toEmail, token, verification = false) {
+    // Valida antes de construir transporte ou entregar dados ao analisador de endereços.
+    const recipient = emailAddress(toEmail);
+    if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token))
+        throw new Error('INVALID_RECOVERY_TOKEN');
     if (!recoveryConfigured()) throw new Error('PASSWORD_RECOVERY_NOT_CONFIGURED');
-    const url = new URL('/reset-password.html', process.env.APP_URL);
-    // Fragmentos não são enviados ao servidor nem incluídos no Referer.
+    const sender = emailAddress(process.env.SMTP_USER);
+    const url = new URL(verification ? '/verify-email.html' : '/reset-password.html', process.env.APP_URL);
     url.hash = new URLSearchParams({ token }).toString();
-    const result = await createTransporter().sendMail({
-        from: `"Arcádia IFPA" <${process.env.SMTP_USER}>`,
-        to: toEmail,
-        subject: 'Redefinição de senha — Arcádia',
-        text: `Para redefinir sua senha, abra ${url.href}\nO link expira em 30 minutos. Se não solicitou a alteração, ignore esta mensagem.`
+    const transporter = nodemailer.createTransport({
+        service: process.env.SMTP_SERVICE || 'gmail',
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
+        requireTLS: true,
+        tls: { rejectUnauthorized: true },
+        disableFileAccess: true,
+        disableUrlAccess: true,
+        maxRecipients: 1,
+        logger: false,
+        debug: false,
+        auth: { user: sender, pass: process.env.SMTP_PASS }
     });
-    if (!result.accepted || result.accepted.length === 0) throw new Error('PASSWORD_RECOVERY_DELIVERY_FAILED');
+    try {
+        // Texto simples: nenhum nome, provedor ou HTML fornecido pelo navegador é interpolado.
+        const result = await transporter.sendMail({
+            from: { name: 'Arcádia IFPA', address: sender },
+            to: recipient,
+            envelope: { from: sender, to: [recipient] },
+            subject: verification ? 'Confirme seu e-mail — Arcádia' : 'Redefinição de senha — Arcádia',
+            text: verification
+                ? `Para confirmar a posse deste e-mail na Arcádia, abra ${url.href}\nNa página, clique em Confirmar e-mail. O link expira em 30 minutos. Isso não confirma vínculo institucional. Se não solicitou, ignore esta mensagem.`
+                : `Para redefinir sua senha, abra ${url.href}\nO link expira em 30 minutos. Se não solicitou a alteração, ignore esta mensagem.`,
+            disableFileAccess: true,
+            disableUrlAccess: true
+        });
+        if (!result.accepted || result.accepted.length !== 1)
+            throw new Error('PASSWORD_RECOVERY_DELIVERY_FAILED');
+    } catch {
+        // Não propaga mensagens do provedor, destinatário, conteúdo nem credenciais.
+        throw new Error('PASSWORD_RECOVERY_DELIVERY_FAILED');
+    } finally { transporter.close?.(); }
 }
-
-module.exports = { sendWelcomeEmail, recoveryConfigured, sendPasswordRecovery };
+const sendPasswordRecovery = (email, token) => sendLink(email, token);
+const sendEmailVerification = (email, token) => sendLink(email, token, true);
+module.exports = { recoveryConfigured, sendPasswordRecovery, sendEmailVerification };

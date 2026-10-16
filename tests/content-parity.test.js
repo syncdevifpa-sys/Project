@@ -1,12 +1,164 @@
-const {test,after}=require('node:test'),assert=require('node:assert/strict');
-const db=require('../backend/src/config/database'),{editContent,validateContent}=require('../backend/src/services/content-edit.service'),definitions=require('../front/js/content-fields');after(()=>db.end());
-function tx(t,kind,{owner=4,admin=false,status='solicitado',role='servidor',fail=false}={}){const calls=[];t.mock.method(db,'getConnection',async()=>({beginTransaction:async()=>calls.push('begin'),commit:async()=>calls.push('commit'),rollback:async()=>calls.push('rollback'),release:()=>calls.push('release'),execute:async(sql,params)=>{calls.push({sql,params});if(sql.startsWith('SELECT id_usuario,'))return [[{id_usuario:4,is_admin:admin?1:0,tipo_usuario:role}]];if(sql.startsWith('SELECT *'))return [[{id_usuario:owner,status,data_evento:'2026-10-20',aprovacao:'aprovado'}]];if(fail)throw Error('falha');return [{affectedRows:1}];}}));return calls;}
-test('edição de conteúdo é limitada ao dono/admin em cada módulo; sem transferir autoria',async t=>{for(const kind of ['tasks','documents','projects','calendar']){let calls=tx(t,kind);await editContent(kind,7,{titulo:'Alterado',id_usuario:99,is_admin:true},4);let update=calls.find(c=>c.sql?.startsWith('UPDATE'));assert.doesNotMatch(update.sql,/id_usuario|is_admin/);assert.equal(calls.at(-2),'commit');calls=tx(t,kind,{owner:9});await assert.rejects(editContent(kind,7,{titulo:'Alterado'},4),e=>e.status===403);assert.equal(calls.some(c=>c.sql?.startsWith('UPDATE')),false);assert.equal(calls.at(-2),'rollback');calls=tx(t,kind,{owner:9,admin:true});await editContent(kind,7,{titulo:'Alterado'},4);assert.equal(calls.at(-2),'commit');}});
-test('solicitação em processamento é protegida; aluno não aprova projeto pelo conteúdo',async t=>{tx(t,'documents',{status:'em_analise'});await assert.rejects(editContent('documents',7,{titulo:'Novo'},4),e=>e.status===409);assert.deepEqual(validateContent('documents',{titulo:'t',status:'pronto',arquivo:'https://x.test',protocolo:'p'}),{titulo:'t'});const calls=tx(t,'projects',{role:'discente'});await editContent('projects',7,{titulo:'Novo',aprovacao:'aprovado',aprovado_por:4},4);const update=calls.find(c=>c.sql?.startsWith('UPDATE'));assert.match(update.sql,/aprovacao = \?/);assert.equal(update.params.includes('pendente'),true);assert.equal(update.params.includes('aprovado'),false);});
-test('validações compartilhadas aceitam campos da criação/edição e recusam links/datas/opções inválidos',()=>{for(const [kind,body] of [['projects',{titulo:'Projeto',descricao:'Descrição',link:'https://example.test',eixo:'extensao',vagas:4,data_inicio:'2026-10-15'}],['documents',{titulo:'Solicitação',motivo:'Motivo',descricao:'Descrição',tipo:'assinatura'}],['tasks',{titulo:'Tarefa',prioridade:'alta',status:'em_andamento',observacao:'Texto',data_entrega:'2026-10-20'}],['calendar',{titulo:'Evento',data_evento:'2026-10-20',local:'Local',hora_inicio:'09:30',periodo_letivo:'2026/2'}]]){assert.deepEqual(validateContent(kind,body,true),validateContent(kind,body));assert.ok(definitions[kind].fields.every(f=>!['is_admin','id_usuario','aprovacao'].includes(f[0])));}for(const [kind,body] of [['projects',{link:'javascript:alert(1)'}],['calendar',{data_evento:'2026-02-30'}],['tasks',{prioridade:'admin'}],['documents',{tipo:'noticia'}]])assert.throws(()=>validateContent(kind,body),e=>e.status===400);});
-test('falha de edição faz rollback sem confirmação e ID adulterado é rejeitado',async t=>{const calls=tx(t,'calendar',{fail:true});await assert.rejects(editContent('calendar',7,{titulo:'Novo'},4),/falha/);assert.equal(calls.at(-2),'rollback');await assert.rejects(editContent('calendar','7x',{titulo:'Novo'},4),e=>e.status===400);});
+const { test, after } = require('node:test'),
+    assert = require('node:assert/strict');
+const db = require('../backend/src/config/database'),
+    { editContent, validateContent } = require('../backend/src/services/content-edit.service'),
+    definitions = require('../front/js/content-fields');
+after(() => db.end());
+function tx(
+    t,
+    kind,
+    { owner = 4, admin = false, status = 'solicitado', role = 'servidor', fail = false } = {}
+) {
+    const calls = [];
+    t.mock.method(db, 'getConnection', async () => ({
+        beginTransaction: async () => calls.push('begin'),
+        commit: async () => calls.push('commit'),
+        rollback: async () => calls.push('rollback'),
+        release: () => calls.push('release'),
+        execute: async (sql, params) => {
+            calls.push({ sql, params });
+            if (sql.startsWith('SELECT id_usuario,'))
+                return [[{ id_usuario: 4, is_admin: admin ? 1 : 0, tipo_usuario: role }]];
+            if (sql.startsWith('SELECT *'))
+                return [
+                    [
+                        {
+                            id_usuario: owner,
+                            status,
+                            data_evento: '2026-10-20',
+                            aprovacao: 'aprovado'
+                        }
+                    ]
+                ];
+            if (fail) throw Error('falha');
+            return [{ affectedRows: 1 }];
+        }
+    }));
+    return calls;
+}
+test('edição de conteúdo é limitada ao dono/admin em cada módulo; sem transferir autoria', async (t) => {
+    for (const kind of ['tasks', 'documents', 'projects', 'calendar']) {
+        let calls = tx(t, kind);
+        await editContent(kind, 7, { titulo: 'Alterado', id_usuario: 99, is_admin: true }, 4);
+        let update = calls.find((c) => c.sql?.startsWith('UPDATE'));
+        assert.doesNotMatch(update.sql, /id_usuario|is_admin/);
+        assert.equal(calls.at(-2), 'commit');
+        calls = tx(t, kind, { owner: 9 });
+        await assert.rejects(
+            editContent(kind, 7, { titulo: 'Alterado' }, 4),
+            (e) => e.status === 403
+        );
+        assert.equal(
+            calls.some((c) => c.sql?.startsWith('UPDATE')),
+            false
+        );
+        assert.equal(calls.at(-2), 'rollback');
+        calls = tx(t, kind, { owner: 9, admin: true });
+        await editContent(kind, 7, { titulo: 'Alterado' }, 4);
+        assert.equal(calls.at(-2), 'commit');
+    }
+});
+test('solicitação em processamento é protegida; aluno não aprova projeto pelo conteúdo', async (t) => {
+    tx(t, 'documents', { status: 'em_analise' });
+    await assert.rejects(
+        editContent('documents', 7, { titulo: 'Novo' }, 4),
+        (e) => e.status === 409
+    );
+    assert.deepEqual(
+        validateContent('documents', {
+            titulo: 't',
+            status: 'pronto',
+            arquivo: 'https://x.test',
+            protocolo: 'p'
+        }),
+        { titulo: 't' }
+    );
+    const calls = tx(t, 'projects', { role: 'discente' });
+    await editContent('projects', 7, { titulo: 'Novo', aprovacao: 'aprovado', aprovado_por: 4 }, 4);
+    const update = calls.find((c) => c.sql?.startsWith('UPDATE'));
+    assert.match(update.sql, /aprovacao = \?/);
+    assert.equal(update.params.includes('pendente'), true);
+    assert.equal(update.params.includes('aprovado'), false);
+});
+test('validações compartilhadas aceitam campos da criação/edição e recusam links/datas/opções inválidos', () => {
+    for (const [kind, body] of [
+        [
+            'projects',
+            {
+                titulo: 'Projeto',
+                descricao: 'Descrição',
+                link: 'https://example.test',
+                eixo: 'extensao',
+                vagas: 4,
+                data_inicio: '2026-10-15'
+            }
+        ],
+        [
+            'documents',
+            { titulo: 'Solicitação', motivo: 'Motivo', descricao: 'Descrição', tipo: 'assinatura' }
+        ],
+        [
+            'tasks',
+            {
+                titulo: 'Tarefa',
+                prioridade: 'alta',
+                status: 'em_andamento',
+                observacao: 'Texto',
+                data_entrega: '2026-10-20'
+            }
+        ],
+        [
+            'calendar',
+            {
+                titulo: 'Evento',
+                data_evento: '2026-10-20',
+                local: 'Local',
+                hora_inicio: '09:30',
+                periodo_letivo: '2026/2'
+            }
+        ]
+    ]) {
+        assert.deepEqual(validateContent(kind, body, true), validateContent(kind, body));
+        assert.ok(
+            definitions[kind].fields.every(
+                (f) => !['is_admin', 'id_usuario', 'aprovacao'].includes(f[0])
+            )
+        );
+    }
+    for (const [kind, body] of [
+        ['projects', { link: 'javascript:alert(1)' }],
+        ['calendar', { data_evento: '2026-02-30' }],
+        ['tasks', { prioridade: 'admin' }],
+        ['documents', { tipo: 'noticia' }]
+    ])
+        assert.throws(
+            () => validateContent(kind, body),
+            (e) => e.status === 400
+        );
+});
+test('falha de edição faz rollback sem confirmação e ID adulterado é rejeitado', async (t) => {
+    const calls = tx(t, 'calendar', { fail: true });
+    await assert.rejects(editContent('calendar', 7, { titulo: 'Novo' }, 4), /falha/);
+    assert.equal(calls.at(-2), 'rollback');
+    await assert.rejects(
+        editContent('calendar', '7x', { titulo: 'Novo' }, 4),
+        (e) => e.status === 400
+    );
+});
 
-test('datas parciais são comparadas ao registro atual e tarefa criada concluída recebe data derivada',async t=>{
- tx(t,'calendar');await assert.rejects(editContent('calendar',7,{data_fim:'2026-10-10'},4),e=>e.status===400);
- const model=require('../backend/src/models/tasks.model');let saved;t.mock.method(db,'execute',async(sql,params)=>{saved={sql,params};return [{insertId:7}];});await model.createTask(4,{titulo:'Concluída',status:'concluida'});assert.match(saved.sql,/concluida_em/);assert.equal(saved.params.at(-1) instanceof Date,true);
+test('datas parciais são comparadas ao registro atual e tarefa criada concluída recebe data derivada', async (t) => {
+    tx(t, 'calendar');
+    await assert.rejects(
+        editContent('calendar', 7, { data_fim: '2026-10-10' }, 4),
+        (e) => e.status === 400
+    );
+    const model = require('../backend/src/models/tasks.model');
+    let saved;
+    t.mock.method(db, 'execute', async (sql, params) => {
+        saved = { sql, params };
+        return [{ insertId: 7 }];
+    });
+    await model.createTask(4, { titulo: 'Concluída', status: 'concluida' });
+    assert.match(saved.sql, /concluida_em/);
+    assert.equal(saved.params.at(-1) instanceof Date, true);
 });

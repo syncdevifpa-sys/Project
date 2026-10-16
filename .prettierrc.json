@@ -1,0 +1,19 @@
+{
+  "singleQuote": true,
+  "quoteProps": "preserve",
+  "tabWidth": 4,
+  "printWidth": 100,
+  "trailingComma": "none",
+  "endOfLine": "lf",
+  "embeddedLanguageFormatting": "off",
+  "overrides": [
+    {
+      "files": ["*.html", "*.css", "*.json", "*.md"],
+      "options": { "tabWidth": 2 }
+    },
+    {
+      "files": "*.html",
+      "options": { "htmlWhitespaceSensitivity": "strict", "embeddedLanguageFormatting": "auto" }
+    }
+  ]
+}

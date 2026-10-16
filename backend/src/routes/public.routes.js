@@ -4,7 +4,9 @@ const db = require('../config/database');
 // Public projections deliberately exclude account and registration information.
 router.get('/', async (req, res, next) => {
     try {
-        const coverColumn = await require('../services/notice-schema.service').hasNoticeCover() ? 'capa' : 'NULL AS capa';
+        const coverColumn = (await require('../services/notice-schema.service').hasNoticeCover())
+            ? 'capa'
+            : 'NULL AS capa';
         const [[notices], [projects]] = await Promise.all([
             db.execute(`SELECT id_aviso, titulo, resumo, descricao, data_publicacao, ${coverColumn}
                 FROM avisos WHERE situacao = 'publicado' AND publico_alvo IN ('todos', 'externo')
@@ -13,7 +15,9 @@ router.get('/', async (req, res, next) => {
                 FROM projetos WHERE aprovacao = 'aprovado' ORDER BY criado_em DESC`)
         ]);
         res.json({ notices, projects });
-    } catch (error) { next(error); }
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

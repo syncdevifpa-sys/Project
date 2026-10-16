@@ -1,0 +1,23 @@
+# Dependências, configurações locais e metadados não são código-fonte do projeto.
+node_modules/
+backend/node_modules/
+.git/
+.env*
+backend/.env*
+.codex/
+.agents/
+.aws/
+.codex-remote-attachments/
+
+# Saídas geradas, arquivos temporários e recursos visuais devem ser preservados.
+public/
+tmp/
+output/
+package-lock.json
+backend/package-lock.json
+front/assets/
+front/illustrations/
+front/public/
+**/*.svg
+**/*.woff2
+**/*.png

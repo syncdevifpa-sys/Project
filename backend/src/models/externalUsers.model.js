@@ -1,27 +1,34 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function findExternalByEmail(email) {
-    const [users] = await db.execute(`
+    const [users] = await db.execute(
+        `
         SELECT *
         FROM publico_externo
         WHERE email = ?
-    `, [email]);
+    `,
+        [email]
+    );
 
     return users[0];
 }
 
 async function findInstitutionalByEmail(email) {
-    const [users] = await db.execute(`
+    const [users] = await db.execute(
+        `
         SELECT id_usuario
         FROM usuarios
         WHERE email = ?
-    `, [email]);
+    `,
+        [email]
+    );
 
     return users[0];
 }
 
 async function findExternalById(id) {
-    const [users] = await db.execute(`
+    const [users] = await db.execute(
+        `
         SELECT
             id_externo,
             nome,
@@ -34,21 +41,18 @@ async function findExternalById(id) {
             atualizado_em
         FROM publico_externo
         WHERE id_externo = ?
-    `, [id]);
+    `,
+        [id]
+    );
 
     return users[0];
 }
 
 async function createExternal(data) {
-    const {
-        nome,
-        email,
-        telefone = null,
-        senha,
-        organizacao = null
-    } = data;
+    const { nome, email, telefone = null, senha, organizacao = null } = data;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO publico_externo (
             nome,
             email,
@@ -57,23 +61,22 @@ async function createExternal(data) {
             organizacao
         )
         VALUES (?, ?, ?, ?, ?)
-    `, [
-        nome,
-        email,
-        telefone,
-        senha,
-        organizacao
-    ]);
+    `,
+        [nome, email, telefone, senha, organizacao]
+    );
 
     return result;
 }
 
 async function updateLastAccess(id) {
-    await db.execute(`
+    await db.execute(
+        `
         UPDATE publico_externo
         SET ultimo_acesso = NOW()
         WHERE id_externo = ?
-    `, [id]);
+    `,
+        [id]
+    );
 }
 
 module.exports = {

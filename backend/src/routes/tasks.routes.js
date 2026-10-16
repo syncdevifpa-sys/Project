@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
@@ -8,40 +8,18 @@ const {
     createTask,
     updateTask,
     deleteTask
-} = require("../controllers/tasks.controller");
+} = require('../controllers/tasks.controller');
 
-const {
-    authenticateToken
-} = require("../middlewares/auth.middleware");
+const { authenticateToken } = require('../middlewares/auth.middleware');
 
-router.get(
-    "/",
-    authenticateToken,
-    listTasks
-);
+router.get('/', authenticateToken, listTasks);
 
-router.get(
-    "/:id",
-    authenticateToken,
-    getTaskById
-);
+router.get('/:id', authenticateToken, getTaskById);
 
-router.post(
-    "/",
-    authenticateToken,
-    createTask
-);
+router.post('/', authenticateToken, createTask);
 
-router.put(
-    "/:id",
-    authenticateToken,
-    updateTask
-);
+router.put('/:id', authenticateToken, updateTask);
 
-router.delete(
-    "/:id",
-    authenticateToken,
-    deleteTask
-);
+router.delete('/:id', authenticateToken, deleteTask);
 
 module.exports = router;
