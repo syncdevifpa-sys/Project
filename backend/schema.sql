@@ -118,6 +118,15 @@ CREATE TABLE recuperacao_senha (                       -- link "Esqueceu a senha
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- Limites distribuídos: não contém e-mails, IPs ou tokens em texto puro.
+CREATE TABLE seguranca_limites (
+    chave CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+    janela BIGINT UNSIGNED NOT NULL,
+    tentativas INT UNSIGNED NOT NULL DEFAULT 0,
+    expira_em DATETIME NOT NULL,
+    INDEX idx_limites_expiracao (expira_em)
+) ENGINE=InnoDB;
+
 -- 4. AVISOS (mural)
 -- ---------------------------------------------------------------------
 CREATE TABLE avisos (
@@ -221,7 +230,7 @@ CREATE TABLE calendario (
     id_usuario      INT NULL,
     titulo          VARCHAR(150) NOT NULL,
     descricao       TEXT,                              -- "Portal do estudante, a partir das 08:00"
-    categoria       ENUM('matricula', 'cancelamento', 'evento', 'edital', 'feriado')
+    categoria       ENUM('matricula', 'cancelamento', 'evento', 'edital', 'feriado', 'ferias', 'aniversario')
                         NOT NULL DEFAULT 'evento',
     periodo_letivo  VARCHAR(60),                       -- "2º semestre letivo · 2026" (agrupamento)
     data_evento     DATE NOT NULL,

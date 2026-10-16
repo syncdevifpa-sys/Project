@@ -1,13 +1,12 @@
-const coursesModel = require("../models/courses.model");
+const coursesModel = require('../models/courses.model');
 
 async function listCourses(req, res) {
     try {
         const courses = await coursesModel.listCourses();
 
         return res.json(courses);
-
     } catch (error) {
-        console.error("Erro ao buscar cursos:", error);
+        console.error('Erro ao buscar cursos:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -23,14 +22,13 @@ async function getCourseById(req, res) {
 
         if (!course) {
             return res.status(404).json({
-                error: "Curso não encontrado."
+                error: 'Curso não encontrado.'
             });
         }
 
         return res.json(course);
-
     } catch (error) {
-        console.error("Erro ao buscar curso:", error);
+        console.error('Erro ao buscar curso:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -44,7 +42,7 @@ async function createCourse(req, res) {
 
         if (!nome) {
             return res.status(400).json({
-                error: "Nome do curso é obrigatório."
+                error: 'Nome do curso é obrigatório.'
             });
         }
 
@@ -55,12 +53,11 @@ async function createCourse(req, res) {
         });
 
         return res.status(201).json({
-            message: "Curso criado com sucesso.",
+            message: 'Curso criado com sucesso.',
             courseId: result.insertId
         });
-
     } catch (error) {
-        console.error("Erro ao criar curso:", error);
+        console.error('Erro ao criar curso:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -72,23 +69,19 @@ async function updateCourse(req, res) {
     try {
         const courseId = req.params.id;
 
-        const result = await coursesModel.updateCourse(
-            courseId,
-            req.body
-        );
+        const result = await coursesModel.updateCourse(courseId, req.body);
 
         if (!result) {
             return res.status(404).json({
-                error: "Curso não encontrado."
+                error: 'Curso não encontrado.'
             });
         }
 
         return res.json({
-            message: "Curso atualizado com sucesso."
+            message: 'Curso atualizado com sucesso.'
         });
-
     } catch (error) {
-        console.error("Erro ao atualizar curso:", error);
+        console.error('Erro ao atualizar curso:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -104,16 +97,15 @@ async function deleteCourse(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Curso não encontrado."
+                error: 'Curso não encontrado.'
             });
         }
 
         return res.json({
-            message: "Curso excluído com sucesso."
+            message: 'Curso excluído com sucesso.'
         });
-
     } catch (error) {
-        console.error("Erro ao excluir curso:", error);
+        console.error('Erro ao excluir curso:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'

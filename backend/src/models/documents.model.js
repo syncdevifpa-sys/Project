@@ -1,7 +1,8 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listUserDocuments(userId) {
-    const [documents] = await db.execute(`
+    const [documents] = await db.execute(
+        `
         SELECT
             id_documento,
             id_usuario,
@@ -21,7 +22,9 @@ async function listUserDocuments(userId) {
         FROM documentos
         WHERE id_usuario = ?
         ORDER BY criado_em DESC
-    `, [userId]);
+    `,
+        [userId]
+    );
 
     return documents;
 }
@@ -55,7 +58,8 @@ async function listAllDocuments() {
 }
 
 async function findDocumentById(documentId) {
-    const [documents] = await db.execute(`
+    const [documents] = await db.execute(
+        `
         SELECT
             id_documento,
             id_usuario,
@@ -74,20 +78,18 @@ async function findDocumentById(documentId) {
             atualizado_em
         FROM documentos
         WHERE id_documento = ?
-    `, [documentId]);
+    `,
+        [documentId]
+    );
 
     return documents[0];
 }
 
 async function createDocument(userId, documentData) {
-    const {
-        titulo,
-        motivo = null,
-        descricao = null,
-        tipo = "requerimento"
-    } = documentData;
+    const { titulo, motivo = null, descricao = null, tipo = 'requerimento' } = documentData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO documentos (
             id_usuario,
             titulo,
@@ -96,26 +98,22 @@ async function createDocument(userId, documentData) {
             tipo
         )
         VALUES (?, ?, ?, ?, ?)
-    `, [
-        userId,
-        titulo,
-        motivo,
-        descricao,
-        tipo
-    ]);
+    `,
+        [userId, titulo, motivo, descricao, tipo]
+    );
 
     return result;
 }
 
 async function setProtocol(documentId, protocol) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE documentos
         SET protocolo = ?
         WHERE id_documento = ?
-    `, [
-        protocol,
-        documentId
-    ]);
+    `,
+        [protocol, documentId]
+    );
 
     return result;
 }
@@ -135,7 +133,8 @@ async function updateDocument(documentId, responsibleId, documentData) {
         arquivo = currentDocument.arquivo
     } = documentData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE documentos
         SET
             id_responsavel = ?,
@@ -145,29 +144,23 @@ async function updateDocument(documentId, responsibleId, documentData) {
             data_emissao = ?,
             arquivo = ?
         WHERE id_documento = ?
-    `, [
-        responsibleId,
-        status,
-        observacao,
-        previsao,
-        data_emissao,
-        arquivo,
-        documentId
-    ]);
+    `,
+        [responsibleId, status, observacao, previsao, data_emissao, arquivo, documentId]
+    );
 
     return result;
 }
 
 async function deleteDocument(documentId, userId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM documentos
         WHERE id_documento = ?
           AND id_usuario = ?
           AND status = 'solicitado'
-    `, [
-        documentId,
-        userId
-    ]);
+    `,
+        [documentId, userId]
+    );
 
     return result;
 }

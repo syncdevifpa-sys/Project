@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
@@ -7,34 +7,16 @@ const {
     markAsUnread,
     listReadNotices,
     countUnreadNotices
-} = require("../controllers/readNotices.controller");
+} = require('../controllers/readNotices.controller');
 
-const {
-    authenticateToken
-} = require("../middlewares/auth.middleware");
+const { authenticateToken } = require('../middlewares/auth.middleware');
 
-router.get(
-    "/",
-    authenticateToken,
-    listReadNotices
-);
+router.get('/', authenticateToken, listReadNotices);
 
-router.get(
-    "/unread/count",
-    authenticateToken,
-    countUnreadNotices
-);
+router.get('/unread/count', authenticateToken, countUnreadNotices);
 
-router.post(
-    "/:id",
-    authenticateToken,
-    markAsRead
-);
+router.post('/:id', authenticateToken, markAsRead);
 
-router.delete(
-    "/:id",
-    authenticateToken,
-    markAsUnread
-);
+router.delete('/:id', authenticateToken, markAsUnread);
 
 module.exports = router;

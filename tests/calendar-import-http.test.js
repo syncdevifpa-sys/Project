@@ -1,6 +1,130 @@
-const {test,before,after}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),jwt=require('../backend/node_modules/jsonwebtoken'),express=require('../backend/node_modules/express');
-const db=require('../backend/src/config/database');let server,base;const previous=process.env.JWT_SECRET;process.env.JWT_SECRET='pdf-http-test';before(async()=>{const app=express();app.use(express.json({limit:'2mb'}));app.use('/api/calendar-import',require('../backend/src/routes/calendarImport.routes'));server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));base='http://127.0.0.1:'+server.address().port;});after(async()=>{await new Promise(r=>server.close(r));await db.end();if(previous===undefined)delete process.env.JWT_SECRET;else process.env.JWT_SECRET=previous;});
-function headers(external=false){return {Authorization:'Bearer '+jwt.sign(external?{id_externo:4,tipo_usuario:'externo'}:{id_usuario:4,tipo_usuario:'servidor'},process.env.JWT_SECRET),'Content-Type':'application/pdf'};}
-function mock(t,role='servidor'){t.mock.method(db,'execute',async sql=>[sql.includes('JOIN usuarios')?[{id_token:1,is_admin:0}]:[{id_usuario:4,tipo_usuario:role,is_admin:0}]]);}
-test('upload exige autenticação e papel atual antes de extrair; tipo/tamanho são validados',async t=>{mock(t,'discente');let url=base+'/api/calendar-import/preview?year=2025&level=basica&label=Teste';assert.equal((await fetch(url,{method:'POST',body:'bad'})).status,401);assert.equal((await fetch(url,{method:'POST',headers:headers(),body:'bad'})).status,403);assert.equal((await fetch(url,{method:'POST',headers:headers(true),body:'bad'})).status,403);mock(t);assert.equal((await fetch(url,{method:'POST',headers:headers(),body:'bad'})).status,400);assert.equal((await fetch(url,{method:'POST',headers:headers(),body:Buffer.alloc(4*1024*1024+1)})).status,413);});
-test('PDF real atravessa upload bruto e gera prévia; confirmação usa apenas eventos selecionados e ignora replay duplicado',{skip:!process.env.ARCADIA_CALENDAR_PDF_FIXTURE},async t=>{mock(t);const original=fs.readFileSync(process.env.ARCADIA_CALENDAR_PDF_FIXTURE);const response=await fetch(base+'/api/calendar-import/preview?year=2025&level=basica&label=Res1544',{method:'POST',headers:headers(),body:original});assert.equal(response.status,200);const preview=await response.json();assert.match(preview.detected.reference,/1544/);assert.ok(preview.previewToken);let inserts=0,existing=[];t.mock.method(db,'getConnection',async()=>({beginTransaction:async()=>{},commit:async()=>{},rollback:async()=>{},release(){},execute:async(sql,params)=>{if(sql.startsWith('SELECT id_usuario, tipo_usuario'))return [[{id_usuario:4,tipo_usuario:'servidor',is_admin:0}]];if(sql.startsWith('SELECT titulo,'))return [existing];if(sql.startsWith('INSERT')){inserts++;existing.push({titulo:params[1],periodo_letivo:params[4],data_evento:params[5],data_fim:params[6]});}return [{affectedRows:1}];}}));const selected=preview.candidates.find(c=>c.data_evento&&!c.requiresEnd);const payload={previewToken:preview.previewToken,events:[{...selected,reviewed:true}],confirmed:true,publicCalendarConfirmed:true};const auth={...headers(),'Content-Type':'application/json'};const submit=()=>fetch(base+'/api/calendar-import/commit',{method:'POST',headers:auth,body:JSON.stringify(payload)});let saved=await(await submit()).json();assert.equal(saved.imported,1);saved=await(await submit()).json();assert.equal(saved.imported,0);assert.equal(saved.skipped,1);assert.equal(inserts,1);});
+const { test, before, after } = require('node:test'),
+    assert = require('node:assert/strict'),
+    fs = require('node:fs'),
+    jwt = require('../backend/node_modules/jsonwebtoken'),
+    express = require('../backend/node_modules/express');
+const db = require('../backend/src/config/database');
+let server, base;
+const previous = process.env.JWT_SECRET;
+process.env.JWT_SECRET = 'pdf-http-test';
+before(async () => {
+    const app = express();
+    app.use(express.json({ limit: '2mb' }));
+    app.use('/api/calendar-import', require('../backend/src/routes/calendarImport.routes'));
+    server = app.listen(0, '127.0.0.1');
+    await new Promise((r) => server.once('listening', r));
+    base = 'http://127.0.0.1:' + server.address().port;
+});
+after(async () => {
+    await new Promise((r) => server.close(r));
+    await db.end();
+    if (previous === undefined) delete process.env.JWT_SECRET;
+    else process.env.JWT_SECRET = previous;
+});
+function headers(external = false) {
+    return {
+        Authorization:
+            'Bearer ' +
+            jwt.sign(
+                external
+                    ? { id_externo: 4, tipo_usuario: 'externo' }
+                    : { id_usuario: 4, tipo_usuario: 'servidor' },
+                process.env.JWT_SECRET
+            ),
+        'Content-Type': 'application/pdf'
+    };
+}
+function mock(t, role = 'servidor') {
+    t.mock.method(db, 'execute', async (sql) => [
+        sql.includes('JOIN usuarios')
+            ? [{ id_token: 1, is_admin: 0 }]
+            : [{ id_usuario: 4, tipo_usuario: role, is_admin: 0 }]
+    ]);
+}
+test('upload exige autenticação e papel atual antes de extrair; tipo/tamanho são validados', async (t) => {
+    mock(t, 'discente');
+    let url = base + '/api/calendar-import/preview?year=2025&level=basica&label=Teste';
+    assert.equal((await fetch(url, { method: 'POST', body: 'bad' })).status, 401);
+    assert.equal(
+        (await fetch(url, { method: 'POST', headers: headers(), body: 'bad' })).status,
+        403
+    );
+    assert.equal(
+        (await fetch(url, { method: 'POST', headers: headers(true), body: 'bad' })).status,
+        403
+    );
+    mock(t);
+    assert.equal(
+        (await fetch(url, { method: 'POST', headers: headers(), body: 'bad' })).status,
+        400
+    );
+    assert.equal(
+        (
+            await fetch(url, {
+                method: 'POST',
+                headers: headers(),
+                body: Buffer.alloc(4 * 1024 * 1024 + 1)
+            })
+        ).status,
+        413
+    );
+});
+test(
+    'PDF real atravessa upload bruto e gera prévia; confirmação usa apenas eventos selecionados e ignora replay duplicado',
+    { skip: !process.env.ARCADIA_CALENDAR_PDF_FIXTURE },
+    async (t) => {
+        mock(t);
+        const original = fs.readFileSync(process.env.ARCADIA_CALENDAR_PDF_FIXTURE);
+        const response = await fetch(
+            base + '/api/calendar-import/preview?year=2025&level=basica&label=Res1544',
+            { method: 'POST', headers: headers(), body: original }
+        );
+        assert.equal(response.status, 200);
+        const preview = await response.json();
+        assert.match(preview.detected.reference, /1544/);
+        assert.ok(preview.previewToken);
+        let inserts = 0,
+            existing = [];
+        t.mock.method(db, 'getConnection', async () => ({
+            beginTransaction: async () => {},
+            commit: async () => {},
+            rollback: async () => {},
+            release() {},
+            execute: async (sql, params) => {
+                if (sql.startsWith('SELECT id_usuario, tipo_usuario'))
+                    return [[{ id_usuario: 4, tipo_usuario: 'servidor', is_admin: 0 }]];
+                if (sql.startsWith('SELECT titulo,')) return [existing];
+                if (sql.startsWith('INSERT')) {
+                    inserts++;
+                    existing.push({
+                        titulo: params[1],
+                        periodo_letivo: params[4],
+                        data_evento: params[5],
+                        data_fim: params[6]
+                    });
+                }
+                return [{ affectedRows: 1 }];
+            }
+        }));
+        const selected = preview.candidates.find((c) => c.data_evento && !c.requiresEnd);
+        const payload = {
+            previewToken: preview.previewToken,
+            events: [{ ...selected, reviewed: true }],
+            confirmed: true,
+            publicCalendarConfirmed: true
+        };
+        const auth = { ...headers(), 'Content-Type': 'application/json' };
+        const submit = () =>
+            fetch(base + '/api/calendar-import/commit', {
+                method: 'POST',
+                headers: auth,
+                body: JSON.stringify(payload)
+            });
+        let saved = await (await submit()).json();
+        assert.equal(saved.imported, 1);
+        saved = await (await submit()).json();
+        assert.equal(saved.imported, 0);
+        assert.equal(saved.skipped, 1);
+        assert.equal(inserts, 1);
+    }
+);

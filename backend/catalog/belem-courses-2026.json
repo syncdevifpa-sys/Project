@@ -42,385 +42,289 @@
   "courses": [
     {
       "nome": "Técnico em Agrimensura (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Desenvolvimento de Sistemas (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Design de Interiores (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Edificações (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Eletrônica (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Eletrotécnica (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Estradas (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Eventos (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Mecânica (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Metalurgia (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Mineração (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Química (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Recursos Pesqueiros (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Saneamento (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Telecomunicações (Integrado)",
-      "sources": [
-        "integrated"
-      ],
+      "sources": ["integrated"],
       "modalidade": "integrado",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Agente Comunitário de Saúde (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Aquicultura (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Edificações (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Eletrônica (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Eletrotécnica (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Eventos (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Geodésia e Cartografia (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Guia de Turismo (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Hospedagem (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Mecânica (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Mineração (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Química (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Saneamento (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Segurança do Trabalho (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Telecomunicações (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Técnico em Vigilância em Saúde (Subsequente)",
-      "sources": [
-        "subsequent"
-      ],
+      "sources": ["subsequent"],
       "modalidade": "subsequente",
       "nivel": "tecnico"
     },
     {
       "nome": "Bacharelado em Engenharia de Controle e Automação",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "bacharelado",
       "nivel": "graduacao"
     },
     {
       "nome": "Bacharelado em Engenharia de Materiais",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "bacharelado",
       "nivel": "graduacao"
     },
     {
       "nome": "Bacharelado em Engenharia Elétrica",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "bacharelado",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em Ciências Biológicas",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em Geografia",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em História",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em Letras - Língua Portuguesa",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em Matemática",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em Pedagogia",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Licenciatura em Química",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "licenciatura",
       "nivel": "graduacao"
     },
     {
       "nome": "Tecnologia em Análise e Desenvolvimento de Sistemas",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "tecnologia",
       "nivel": "graduacao"
     },
     {
       "nome": "Tecnologia em Gestão Hospitalar",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "tecnologia",
       "nivel": "graduacao"
     },
     {
       "nome": "Tecnologia em Gestão Pública",
-      "sources": [
-        "undergraduate_pse"
-      ],
+      "sources": ["undergraduate_pse"],
       "modalidade": "tecnologia",
       "nivel": "graduacao"
     },
     {
       "nome": "Tecnologia em Saneamento Ambiental",
-      "sources": [
-        "undergraduate_psu"
-      ],
+      "sources": ["undergraduate_psu"],
       "modalidade": "tecnologia",
       "nivel": "graduacao"
     },
     {
       "nome": "Especialização em Linguagens e Artes na Formação Docente",
-      "sources": [
-        "post_languages"
-      ],
+      "sources": ["post_languages"],
       "modalidade": "especializacao",
       "nivel": "pos_graduacao"
     },
     {
       "nome": "Especialização em Tecnologia Social em Saneamento, Saúde e Ambiente na Amazônia",
-      "sources": [
-        "post_sanitation"
-      ],
+      "sources": ["post_sanitation"],
       "modalidade": "especializacao",
       "nivel": "pos_graduacao"
     },
     {
       "nome": "Mestrado Profissional em Engenharia de Materiais",
-      "sources": [
-        "post_materials"
-      ],
+      "sources": ["post_materials"],
       "modalidade": "mestrado",
       "nivel": "pos_graduacao"
     }

@@ -10,14 +10,17 @@
         requestForm.hidden = true;
         resetForm.hidden = false;
         document.getElementById('recoveryTitle').textContent = 'Redefinir senha';
-        document.getElementById('recoveryHelp').textContent = 'Escolha uma senha com pelo menos 8 caracteres.';
+        document.getElementById('recoveryHelp').textContent =
+            'Escolha uma senha com pelo menos 8 caracteres.';
     }
     async function submit(form, path, body) {
         const button = form.querySelector('button');
         button.disabled = true;
         status.textContent = 'Aguarde…';
         try {
-            const data = await window.Arcadia.api.expect(window.Arcadia.api.post(path, body, { auth: false }));
+            const data = await window.Arcadia.api.expect(
+                window.Arcadia.api.post(path, body, { auth: false })
+            );
             status.textContent = data.message;
             if (form === resetForm) {
                 window.Arcadia.token.clear();
@@ -25,13 +28,17 @@
             }
         } catch (error) {
             status.textContent = error.message || 'Não foi possível conectar ao servidor.';
-        } finally { button.disabled = false; }
+        } finally {
+            button.disabled = false;
+        }
     }
-    requestForm.addEventListener('submit', event => {
+    requestForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        submit(requestForm, '/api/password-recovery/request', { email: requestForm.elements.email.value.trim() });
+        submit(requestForm, '/api/password-recovery/request', {
+            email: requestForm.elements.email.value.trim()
+        });
     });
-    resetForm.addEventListener('submit', event => {
+    resetForm.addEventListener('submit', (event) => {
         event.preventDefault();
         const novaSenha = resetForm.elements.novaSenha.value;
         if (novaSenha !== resetForm.elements.confirmacao.value) {

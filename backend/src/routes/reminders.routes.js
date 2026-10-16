@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
@@ -8,40 +8,18 @@ const {
     createReminder,
     updateReminder,
     deleteReminder
-} = require("../controllers/reminders.controller");
+} = require('../controllers/reminders.controller');
 
-const {
-    authenticateToken
-} = require("../middlewares/auth.middleware");
+const { authenticateToken } = require('../middlewares/auth.middleware');
 
-router.get(
-    "/",
-    authenticateToken,
-    listReminders
-);
+router.get('/', authenticateToken, listReminders);
 
-router.get(
-    "/:id",
-    authenticateToken,
-    getReminderById
-);
+router.get('/:id', authenticateToken, getReminderById);
 
-router.post(
-    "/",
-    authenticateToken,
-    createReminder
-);
+router.post('/', authenticateToken, createReminder);
 
-router.put(
-    "/:id",
-    authenticateToken,
-    updateReminder
-);
+router.put('/:id', authenticateToken, updateReminder);
 
-router.delete(
-    "/:id",
-    authenticateToken,
-    deleteReminder
-);
+router.delete('/:id', authenticateToken, deleteReminder);
 
 module.exports = router;

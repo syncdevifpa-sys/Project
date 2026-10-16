@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
@@ -6,28 +6,14 @@ const {
     listSessions,
     deleteSession,
     deleteAllSessions
-} = require("../controllers/sessions.controller");
+} = require('../controllers/sessions.controller');
 
-const {
-    authenticateToken
-} = require("../middlewares/auth.middleware");
+const { authenticateToken } = require('../middlewares/auth.middleware');
 
-router.get(
-    "/",
-    authenticateToken,
-    listSessions
-);
+router.get('/', authenticateToken, listSessions);
 
-router.delete(
-    "/all",
-    authenticateToken,
-    deleteAllSessions
-);
+router.delete('/all', authenticateToken, deleteAllSessions);
 
-router.delete(
-    "/:id",
-    authenticateToken,
-    deleteSession
-);
+router.delete('/:id', authenticateToken, deleteSession);
 
 module.exports = router;

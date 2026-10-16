@@ -1,4 +1,4 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listCourses() {
     const [courses] = await db.execute(`
@@ -15,7 +15,8 @@ async function listCourses() {
 }
 
 async function findCourseById(courseId) {
-    const [courses] = await db.execute(`
+    const [courses] = await db.execute(
+        `
         SELECT
             id_curso,
             nome,
@@ -23,30 +24,27 @@ async function findCourseById(courseId) {
             ativo
         FROM cursos
         WHERE id_curso = ?
-    `, [courseId]);
+    `,
+        [courseId]
+    );
 
     return courses[0];
 }
 
 async function createCourse(courseData) {
-    const {
-        nome,
-        nivel = "tecnico",
-        ativo = true
-    } = courseData;
+    const { nome, nivel = 'tecnico', ativo = true } = courseData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO cursos (
             nome,
             nivel,
             ativo
         )
         VALUES (?, ?, ?)
-    `, [
-        nome,
-        nivel,
-        ativo
-    ]);
+    `,
+        [nome, nivel, ativo]
+    );
 
     return result;
 }
@@ -64,28 +62,29 @@ async function updateCourse(courseId, courseData) {
         ativo = currentCourse.ativo
     } = courseData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE cursos
         SET
             nome = ?,
             nivel = ?,
             ativo = ?
         WHERE id_curso = ?
-    `, [
-        nome,
-        nivel,
-        ativo,
-        courseId
-    ]);
+    `,
+        [nome, nivel, ativo, courseId]
+    );
 
     return result;
 }
 
 async function deleteCourse(courseId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM cursos
         WHERE id_curso = ?
-    `, [courseId]);
+    `,
+        [courseId]
+    );
 
     return result;
 }

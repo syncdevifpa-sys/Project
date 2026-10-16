@@ -1,34 +1,34 @@
-const crypto = require("crypto");
-const bcrypt = require("bcrypt");
+const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const emailService = require('../services/email.service');
+const { emailAddress } = require('../services/email-address.service');
+const limits = require('../services/security-limits.service');
 
-const recoveryModel =
-    require("../models/passwordRecovery.model");
+const recoveryModel = require('../models/passwordRecovery.model');
 
 function hashToken(token) {
-    return crypto
-        .createHash("sha256")
-        .update(token)
-        .digest("hex");
+    return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 async function requestRecovery(req, res) {
     try {
-        const { email } = req.body;
-
-        if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        let email;
+        try { email = emailAddress(req.body.email); } catch {
             return res.status(400).json({
-                error: "Email é obrigatório."
+                error: 'Informe um único endereço de e-mail válido.'
             });
         }
 
         // Verifique a configuração antes de consultar a conta: a resposta não revela sua existência.
         if (!emailService.recoveryConfigured()) {
-            return res.status(503).json({ error: 'A recuperação por e-mail está indisponível. Entre em contato com a secretaria.' });
+            return res.status(503).json({
+                error: 'A recuperação por e-mail está indisponível. Entre em contato com a secretaria.'
+            });
         }
 
-        let user =
-            await recoveryModel.findInstitutionalByEmail(email);
+        // A cota por endereço é aplicada inclusive a contas inexistentes.
+        await limits.requestRecovery(req, email);
+        let user = await recoveryModel.findInstitutionalByEmail(email);
 
         let id_usuario = null;
         let id_externo = null;
@@ -47,18 +47,21 @@ async function requestRecovery(req, res) {
         if (!user) {
             return res.json({
                 message:
-                    "Se o email estiver cadastrado, as instruções de recuperação serão enviadas."
+                    'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.'
             });
         }
 
-        const recoveryToken =
-            crypto.randomBytes(32).toString("hex");
+        try { await limits.delivery(); } catch {
+            // Cota global ou proteção indisponível não revela a existência desta conta.
+            return res.json({
+                message: 'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.'
+            });
+        }
+        const recoveryToken = crypto.randomBytes(32).toString('hex');
 
         const tokenHash = hashToken(recoveryToken);
 
-        const expiration = new Date(
-            Date.now() + 30 * 60 * 1000
-        );
+        const expiration = new Date(Date.now() + 30 * 60 * 1000);
 
         const recovery = await recoveryModel.createRecovery({
             id_usuario,
@@ -76,12 +79,18 @@ async function requestRecovery(req, res) {
         }
 
         return res.json({
-            message:
-                "Se o email estiver cadastrado, as instruções de recuperação serão enviadas."
+            message: 'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.'
         });
-
     } catch (error) {
-        console.error("Password recovery failed.");
+        if ([429, 503].includes(error.status)) {
+            if (error.status === 429) res.set?.('Retry-After', '3600');
+            return res.status(error.status).json({
+                error: error.status === 429
+                    ? 'Muitas solicitações. Aguarde e tente novamente.'
+                    : 'A recuperação está temporariamente indisponível.'
+            });
+        }
+        console.error('Password recovery failed.');
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -91,38 +100,47 @@ async function requestRecovery(req, res) {
 
 async function resetPassword(req, res) {
     try {
-        const {
-            token,
-            novaSenha
-        } = req.body;
+        const { token, novaSenha } = req.body;
 
-        if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token) || typeof novaSenha !== 'string') {
+        if (
+            typeof token !== 'string' ||
+            !/^[a-f0-9]{64}$/.test(token) ||
+            typeof novaSenha !== 'string'
+        ) {
             return res.status(400).json({
-                error: "Token e nova senha são obrigatórios."
+                error: 'Token e nova senha são obrigatórios.'
             });
         }
 
         if (novaSenha.length < 8 || Buffer.byteLength(novaSenha, 'utf8') > 72) {
             return res.status(400).json({
-                error: "A senha deve possuir pelo menos 8 caracteres e no máximo 72 bytes."
+                error: 'A senha deve possuir pelo menos 8 caracteres e no máximo 72 bytes.'
             });
         }
 
+        await limits.reset(req, token);
         const tokenHash = hashToken(token);
 
         const passwordHash = await bcrypt.hash(novaSenha, 10);
-        if (!await recoveryModel.consumeRecovery(tokenHash, passwordHash)) {
+        if (!(await recoveryModel.consumeRecovery(tokenHash, passwordHash))) {
             return res.status(400).json({
-                error: "Token inválido, expirado ou já utilizado."
+                error: 'Token inválido, expirado ou já utilizado.'
             });
         }
 
         return res.json({
-            message: "Senha alterada com sucesso."
+            message: 'Senha alterada com sucesso.'
         });
-
     } catch (error) {
-        console.error("Password reset failed.");
+        if ([429, 503].includes(error.status)) {
+            if (error.status === 429) res.set?.('Retry-After', '900');
+            return res.status(error.status).json({
+                error: error.status === 429
+                    ? 'Muitas solicitações. Aguarde e tente novamente.'
+                    : 'A recuperação está temporariamente indisponível.'
+            });
+        }
+        console.error('Password reset failed.');
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
