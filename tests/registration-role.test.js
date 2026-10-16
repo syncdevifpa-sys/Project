@@ -5,24 +5,68 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function registration() {
-    const input = { value: 'Student' }, wrapper = { style: {} }, course = {}, help = {}, submit = {};
+    const input = { value: 'Student' },
+        wrapper = { style: {} },
+        course = {},
+        help = {},
+        submit = {};
     const buttons = ['Student', 'Professor', 'Staff', 'External'].map((value, index) => {
-        const attributes = { 'data-vinculo': value, 'aria-checked': index === 0 ? 'true' : 'false' };
-        const handlers = {}, classes = new Set(index === 0 ? ['is-active'] : []);
-        return { attributes, handlers, classList: { add: (...names) => names.forEach(name => classes.add(name)), remove: (...names) => names.forEach(name => classes.delete(name)) },
-            getAttribute: key => attributes[key], setAttribute: (key, value) => { attributes[key] = value; },
-            addEventListener: (key, handler) => { handlers[key] = handler; },
-            click() { handlers.click({ preventDefault() {} }); }, focus() { this.focused = true; } };
+        const attributes = {
+            'data-vinculo': value,
+            'aria-checked': index === 0 ? 'true' : 'false'
+        };
+        const handlers = {},
+            classes = new Set(index === 0 ? ['is-active'] : []);
+        return {
+            attributes,
+            handlers,
+            classList: {
+                add: (...names) => names.forEach((name) => classes.add(name)),
+                remove: (...names) => names.forEach((name) => classes.delete(name))
+            },
+            getAttribute: (key) => attributes[key],
+            setAttribute: (key, value) => {
+                attributes[key] = value;
+            },
+            addEventListener: (key, handler) => {
+                handlers[key] = handler;
+            },
+            click() {
+                handlers.click({ preventDefault() {} });
+            },
+            focus() {
+                this.focused = true;
+            }
+        };
     });
     let ready;
     const context = {
-        window: { Arcadia: { api: { get: async () => [], expect: promise => promise }, token: {} }, addEventListener() {} },
+        window: {
+            Arcadia: { api: { get: async () => [], expect: (promise) => promise }, token: {} },
+            addEventListener() {}
+        },
         localStorage: { getItem: () => null },
-        document: { readyState: 'loading', addEventListener: (_, callback) => { ready = callback; },
-            getElementById: id => ({ vinculoInput: input, campoCursoWrapper: wrapper, curso: course, registrationRoleHelp: help, signupSubmit: submit })[id] || null,
-            querySelector: () => null, querySelectorAll: selector => selector === '.ar-role-btn' ? buttons : [] }
+        document: {
+            readyState: 'loading',
+            addEventListener: (_, callback) => {
+                ready = callback;
+            },
+            getElementById: (id) =>
+                ({
+                    vinculoInput: input,
+                    campoCursoWrapper: wrapper,
+                    curso: course,
+                    registrationRoleHelp: help,
+                    signupSubmit: submit
+                })[id] || null,
+            querySelector: () => null,
+            querySelectorAll: (selector) => (selector === '.ar-role-btn' ? buttons : [])
+        }
     };
-    vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../front/js/auth.js'), 'utf8'), context);
+    vm.runInNewContext(
+        fs.readFileSync(path.join(__dirname, '../front/js/auth.js'), 'utf8'),
+        context
+    );
     ready();
     return { buttons, input, wrapper, course, help, submit };
 }
@@ -69,21 +113,56 @@ test('setas e extremos do teclado selecionam e movem foco no grupo de vínculos'
 });
 
 test('formulário real envia comunidade externa ao endpoint externo e aluno ao endpoint institucional', async () => {
-    for (const [value, route, role] of [['External', '/api/external/register', 'externo'], ['Student', '/api/users', 'discente']]) {
-        const fields = { '#nome, #name': { value: 'Pessoa de teste' }, '#email': { value: 'pessoa@gmail.com' },
-            '#senha, #password': { value: 'senha-de-teste' }, '#telefone, #phone': { value: '' },
-            '#vinculoInput, #affiliationInput': { value }, '#curso': { value: '1' } };
+    for (const [value, route, role] of [
+        ['External', '/api/external/register', 'externo'],
+        ['Student', '/api/users', 'discente']
+    ]) {
+        const fields = {
+            '#nome, #name': { value: 'Pessoa de teste' },
+            '#email': { value: 'pessoa@gmail.com' },
+            '#senha, #password': { value: 'senha-de-teste' },
+            '#telefone, #phone': { value: '' },
+            '#vinculoInput, #affiliationInput': { value },
+            '#curso': { value: '1' }
+        };
         let submit, request;
-        const form = { getAttribute: () => 'cadastro', querySelector: selector => fields[selector] || null,
-            addEventListener: (_, callback) => { submit = callback; } };
+        const form = {
+            getAttribute: () => 'cadastro',
+            querySelector: (selector) => fields[selector] || null,
+            addEventListener: (_, callback) => {
+                submit = callback;
+            }
+        };
         let ready;
         const context = {
-            window: { Arcadia: { api: { post: async (path, body) => { request = { path, body }; return { ok: true, status: 201, data: {} }; } }, token: {} }, addEventListener() {} },
-            localStorage: { getItem: () => null }, setTimeout() {}, alert() {},
-            document: { readyState: 'loading', addEventListener: (_, callback) => { ready = callback; }, getElementById: () => null,
-                querySelectorAll: selector => selector === 'form[data-acesso]' ? [form] : [] }
+            window: {
+                Arcadia: {
+                    api: {
+                        post: async (path, body) => {
+                            request = { path, body };
+                            return { ok: true, status: 201, data: {} };
+                        }
+                    },
+                    token: {}
+                },
+                addEventListener() {}
+            },
+            localStorage: { getItem: () => null },
+            setTimeout() {},
+            alert() {},
+            document: {
+                readyState: 'loading',
+                addEventListener: (_, callback) => {
+                    ready = callback;
+                },
+                getElementById: () => null,
+                querySelectorAll: (selector) => (selector === 'form[data-acesso]' ? [form] : [])
+            }
         };
-        vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../front/js/auth.js'), 'utf8'), context);
+        vm.runInNewContext(
+            fs.readFileSync(path.join(__dirname, '../front/js/auth.js'), 'utf8'),
+            context
+        );
         ready();
         await submit({ preventDefault() {} });
         assert.equal(request.path, route);

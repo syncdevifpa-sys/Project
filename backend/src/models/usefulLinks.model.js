@@ -1,4 +1,4 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listUsefulLinks() {
     const [links] = await db.execute(`
@@ -19,7 +19,8 @@ async function listUsefulLinks() {
 }
 
 async function findUsefulLinkById(linkId) {
-    const [links] = await db.execute(`
+    const [links] = await db.execute(
+        `
         SELECT
             id_link,
             id_usuario,
@@ -31,21 +32,18 @@ async function findUsefulLinkById(linkId) {
             criado_em
         FROM links_uteis
         WHERE id_link = ?
-    `, [linkId]);
+    `,
+        [linkId]
+    );
 
     return links[0];
 }
 
 async function createUsefulLink(userId, linkData) {
-    const {
-        titulo,
-        descricao = null,
-        url,
-        categoria = "Institucional",
-        ordem = 0
-    } = linkData;
+    const { titulo, descricao = null, url, categoria = 'Institucional', ordem = 0 } = linkData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO links_uteis (
             id_usuario,
             titulo,
@@ -55,14 +53,9 @@ async function createUsefulLink(userId, linkData) {
             ordem
         )
         VALUES (?, ?, ?, ?, ?, ?)
-    `, [
-        userId,
-        titulo,
-        descricao,
-        url,
-        categoria,
-        ordem
-    ]);
+    `,
+        [userId, titulo, descricao, url, categoria, ordem]
+    );
 
     return result;
 }
@@ -82,7 +75,8 @@ async function updateUsefulLink(linkId, linkData) {
         ordem = currentLink.ordem
     } = linkData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE links_uteis
         SET
             titulo = ?,
@@ -91,23 +85,21 @@ async function updateUsefulLink(linkId, linkData) {
             categoria = ?,
             ordem = ?
         WHERE id_link = ?
-    `, [
-        titulo,
-        descricao,
-        url,
-        categoria,
-        ordem,
-        linkId
-    ]);
+    `,
+        [titulo, descricao, url, categoria, ordem, linkId]
+    );
 
     return result;
 }
 
 async function deleteUsefulLink(linkId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM links_uteis
         WHERE id_link = ?
-    `, [linkId]);
+    `,
+        [linkId]
+    );
 
     return result;
 }

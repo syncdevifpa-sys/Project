@@ -1,85 +1,105 @@
 <!doctype html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Administração — Arcádia</title>
 
     <script src="js/theme.js"></script>
 
-    <link rel="stylesheet" href="tokens.css">
-    <link rel="stylesheet" href="bundle.css">
-    <link rel="stylesheet" href="portal-responsive.css">
-    <link rel="stylesheet" href="admin.css">
-    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
-    <link rel="stylesheet" href="scrollbars.css">
-    <link rel="stylesheet" href="navigation.css">
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="navigation.css" />
 
-<link rel="stylesheet" href="brand-logo.css">
-<link rel="stylesheet" href="notice-cover.css">
-</head>
+    <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="notice-cover.css" />
+  </head>
 
-<body>
+  <body>
     <main class="ar-app">
-        <nav class="ar-nav" aria-label="Navegação principal">
-            <a class="ar-brand" href="index.html">
-                <img class="ar-brand-img" src="assets/arcadia-emblem.png" width="34" height="34"
-                    alt="Logo da Arcádia">
-                <span>
-                    <span class="ar-brand-name">Arcádia</span>
-                    <span class="ar-brand-sub" style="display:block">IFPA CAMPUS BELÉM</span>
-                </span>
-            </a>
+      <nav class="ar-nav" aria-label="Navegação principal">
+        <a class="ar-brand" href="index.html">
+          <img
+            class="ar-brand-img"
+            src="assets/arcadia-emblem.png"
+            width="34"
+            height="34"
+            alt="Logo da Arcádia"
+          />
+          <span>
+            <span class="ar-brand-name">Arcádia</span>
+            <span class="ar-brand-sub" style="display: block">IFPA CAMPUS BELÉM</span>
+          </span>
+        </a>
 
-            <div class="ar-navpill"><a href="index.html">Início</a>
-                <a href="dashboard.html">Meu painel</a>
-                <a href="settings.html">Minha conta</a>
-                <a href="admin.html" aria-current="page">Administração</a>
-            </div>
-            <div class="ar-nav-end">
-                <button class="ar-btn ar-btn--secondary ar-btn--sm" id="adminLogout" type="button">Sair</button>
-            </div>
-        </nav>
-        <section class="admin-intro">
-            <h1>Administração do aplicativo</h1>
-            <p>Gerencie pessoas e conteúdo do portal. Desativar uma pessoa preserva o histórico e encerra suas sessões.
-                Exclusão definitiva só é permitida sem histórico vinculado.</p>
-        </section>
-        <section class="admin-panel">
-            <div class="actions"><label>Área <select id="adminResource">
-                        <option value="users">Pessoas do campus</option>
-                        <option value="external-users">Comunidade externa</option>
-                        <option value="registrations">Inscrições em projetos</option>
-                    </select></label><button class="ar-btn ar-btn--primary" id="adminNew" type="button" hidden>Criar
-                    registro</button></div>
-            <p id="adminStatus" role="status" aria-live="polite"></p>
-            <div class="table-wrap" tabindex="0" role="region" aria-label="Registros administrativos">
-                <table>
-                    <thead id="adminHead"></thead>
-                    <tbody id="adminRows"></tbody>
-                </table>
-            </div>
-        </section>
-        <dialog id="adminEditor">
-            <form id="adminForm">
-                <h2 id="editorTitle">Editar registro</h2>
-                <p id="editorHint">Alterar vínculo institucional exige conferência administrativa de posse do e-mail e
-                    cargo. Nenhuma confirmação automática é anunciada.</p>
-                <div id="editorFields"></div>
-                <p id="editorError" role="alert"></p>
-                <div class="actions"><button class="ar-btn ar-btn--secondary" id="editorCancel"
-                        type="button">Cancelar</button><button class="ar-btn ar-btn--primary" type="submit">Salvar
-                        alterações</button></div>
-            </form>
-        </dialog>
+        <div class="ar-navpill"
+          ><a href="index.html">Início</a>
+          <a href="dashboard.html">Meu painel</a>
+          <a href="settings.html">Minha conta</a>
+          <a href="admin.html" aria-current="page">Administração</a>
+        </div>
+        <div class="ar-nav-end">
+          <button class="ar-btn ar-btn--secondary ar-btn--sm" id="adminLogout" type="button"
+            >Sair</button
+          >
+        </div>
+      </nav>
+      <section class="admin-intro">
+        <h1>Administração do aplicativo</h1>
+        <p
+          >Gerencie pessoas e conteúdo do portal. Desativar uma pessoa preserva o histórico e
+          encerra suas sessões. Exclusão definitiva só é permitida sem histórico vinculado.</p
+        >
+      </section>
+      <section class="admin-panel">
+        <div class="actions"
+          ><label
+            >Área
+            <select id="adminResource">
+              <option value="users">Pessoas do campus</option>
+              <option value="external-users">Comunidade externa</option>
+              <option value="registrations">Inscrições em projetos</option>
+            </select></label
+          ><button class="ar-btn ar-btn--primary" id="adminNew" type="button" hidden
+            >Criar registro</button
+          ></div
+        >
+        <p id="adminStatus" role="status" aria-live="polite"></p>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Registros administrativos">
+          <table>
+            <thead id="adminHead"></thead>
+            <tbody id="adminRows"></tbody>
+          </table>
+        </div>
+      </section>
+      <dialog id="adminEditor">
+        <form id="adminForm">
+          <h2 id="editorTitle">Editar registro</h2>
+          <p id="editorHint"
+            >Alterar vínculo institucional exige conferência administrativa de posse do e-mail e
+            cargo. Nenhuma confirmação automática é anunciada.</p
+          >
+          <div id="editorFields"></div>
+          <p id="editorError" role="alert"></p>
+          <div class="actions"
+            ><button class="ar-btn ar-btn--secondary" id="editorCancel" type="button"
+              >Cancelar</button
+            ><button class="ar-btn ar-btn--primary" type="submit">Salvar alterações</button></div
+          >
+        </form>
+      </dialog>
     </main>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/notice-text.js"></script>
-  <script src="js/notice-cover.js"></script>
-  <script src="js/admin.js"></script>
+    <link rel="stylesheet" href="avatar-editor.css" />
+    <script src="js/avatar-editor.js"></script>
+    <script src="js/notice-cover.js"></script>
+    <script src="js/admin.js"></script>
     <script src="js/navigation.js"></script>
-</body>
-
+  </body>
 </html>

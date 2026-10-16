@@ -1,45 +1,44 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const sessionsModel = require('../models/sessions.model');
 
-const externalUsersModel =
-    require("../models/externalUsers.model");
+const externalUsersModel = require('../models/externalUsers.model');
 
 async function registerExternal(req, res) {
     try {
-        const {
-            nome,
-            email,
-            senha,
-            telefone,
-            organizacao
-        } = req.body;
+        const { nome, email, senha, telefone, organizacao } = req.body;
 
-        if (typeof nome !== 'string' || !nome.trim() || typeof email !== 'string' || email.length > 150 ||
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || typeof senha !== 'string' || senha.length < 8 || Buffer.byteLength(senha, 'utf8') > 72) {
+        if (
+            typeof nome !== 'string' ||
+            !nome.trim() ||
+            typeof email !== 'string' ||
+            email.length > 150 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+            typeof senha !== 'string' ||
+            senha.length < 8 ||
+            Buffer.byteLength(senha, 'utf8') > 72
+        ) {
             return res.status(400).json({
-                error: "Informe nome, e-mail válido e senha de pelo menos 8 caracteres."
+                error: 'Informe nome, e-mail válido e senha de pelo menos 8 caracteres.'
             });
         }
 
         // Confere primeiro a tabela usuarios
-        const institutionalUser =
-            await externalUsersModel.findInstitutionalByEmail(email);
+        const institutionalUser = await externalUsersModel.findInstitutionalByEmail(email);
 
         if (institutionalUser) {
             return res.status(409).json({
-                error: "Este email já está cadastrado."
+                error: 'Este email já está cadastrado.'
             });
         }
 
         // Depois publico_externo
-        const externalUser =
-            await externalUsersModel.findExternalByEmail(email);
+        const externalUser = await externalUsersModel.findExternalByEmail(email);
 
         if (externalUser) {
             return res.status(409).json({
-                error: "Este email já está cadastrado."
+                error: 'Este email já está cadastrado.'
             });
         }
 
@@ -54,12 +53,11 @@ async function registerExternal(req, res) {
         });
 
         return res.status(201).json({
-            message: "Usuário externo criado com sucesso.",
+            message: 'Usuário externo criado com sucesso.',
             externalId: result.insertId
         });
-
     } catch (error) {
-        console.error("Error creating external user:", error);
+        console.error('Error creating external user:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -69,38 +67,33 @@ async function registerExternal(req, res) {
 
 async function loginExternal(req, res) {
     try {
-        const {
-            email,
-            senha
-        } = req.body;
+        const { email, senha } = req.body;
 
         if (!email || !senha) {
             return res.status(400).json({
-                error: "Email e senha são obrigatórios."
+                error: 'Email e senha são obrigatórios.'
             });
         }
 
-        const user =
-            await externalUsersModel.findExternalByEmail(email);
+        const user = await externalUsersModel.findExternalByEmail(email);
 
         if (!user) {
             return res.status(401).json({
-                error: "Email ou senha incorretos."
+                error: 'Email ou senha incorretos.'
             });
         }
 
-        if (user.situacao !== "ativo") {
+        if (user.situacao !== 'ativo') {
             return res.status(403).json({
-                error: "Usuário bloqueado."
+                error: 'Usuário bloqueado.'
             });
         }
 
-        const passwordMatches =
-            await bcrypt.compare(senha, user.senha);
+        const passwordMatches = await bcrypt.compare(senha, user.senha);
 
         if (!passwordMatches) {
             return res.status(401).json({
-                error: "Email ou senha incorretos."
+                error: 'Email ou senha incorretos.'
             });
         }
 
@@ -109,17 +102,15 @@ async function loginExternal(req, res) {
                 id_externo: user.id_externo,
                 nome: user.nome,
                 email: user.email,
-                tipo_usuario: "externo"
+                tipo_usuario: 'externo'
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "8h"
+                expiresIn: '8h'
             }
         );
 
-        await externalUsersModel.updateLastAccess(
-            user.id_externo
-        );
+        await externalUsersModel.updateLastAccess(user.id_externo);
 
         await sessionsModel.createSession({
             id_externo: user.id_externo,
@@ -130,19 +121,18 @@ async function loginExternal(req, res) {
         });
 
         return res.json({
-            message: "Login realizado com sucesso.",
+            message: 'Login realizado com sucesso.',
             token,
             user: {
                 id_externo: user.id_externo,
                 nome: user.nome,
                 email: user.email,
-                tipo_usuario: "externo",
+                tipo_usuario: 'externo',
                 organizacao: user.organizacao
             }
         });
-
     } catch (error) {
-        console.error("External login error:", error);
+        console.error('External login error:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -152,21 +142,24 @@ async function loginExternal(req, res) {
 
 async function getExternalProfile(req, res) {
     try {
-        const user = await externalUsersModel.findExternalById(
-            req.externalUser.id_externo
-        );
+        const user = await externalUsersModel.findExternalById(req.externalUser.id_externo);
 
         if (!user) {
             return res.status(404).json({
-                error: "Usuário externo não encontrado."
+                error: 'Usuário externo não encontrado.'
             });
         }
 
-        return res.json({ id_externo: user.id_externo, nome: user.nome, email: user.email,
-            telefone: user.telefone, organizacao: user.organizacao, tipo_usuario: 'externo' });
-
+        return res.json({
+            id_externo: user.id_externo,
+            nome: user.nome,
+            email: user.email,
+            telefone: user.telefone,
+            organizacao: user.organizacao,
+            tipo_usuario: 'externo'
+        });
     } catch (error) {
-        console.error("External profile error:", error);
+        console.error('External profile error:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -180,8 +173,13 @@ module.exports = {
     getExternalProfile,
     async logoutExternal(req, res) {
         try {
-            await sessionsModel.deleteExternalSession(req.session.id_token, req.externalUser.id_externo);
+            await sessionsModel.deleteExternalSession(
+                req.session.id_token,
+                req.externalUser.id_externo
+            );
             return res.json({ message: 'Sessão encerrada.' });
-        } catch { return res.status(500).json({ error: 'Não foi possível encerrar a sessão.' }); }
+        } catch {
+            return res.status(500).json({ error: 'Não foi possível encerrar a sessão.' });
+        }
     }
 };

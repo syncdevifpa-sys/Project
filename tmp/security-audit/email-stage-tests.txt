@@ -1,0 +1,27 @@
+◇ injected env (0) from .env
+✔ endereço aceita só um destinatário simples e rejeita listas, HTML e controles antes de SMTP (8.8654ms)
+✔ rota antiga retorna 410 sem autenticação e nunca entrega payloads a um transporte (5643.7787ms)
+✔ transporte restringe destinatários, rede, arquivos e TLS; erro SMTP é substituído (5.9081ms)
+✔ limite ou indisponibilidade bloqueia antes de procurar conta e não cria token nem envia mensagem (1.6436ms)
+✔ cota global mantém resposta genérica e não cria link para envio negado (0.802ms)
+✔ navegador não envia boas-vindas nem cria sessão Google fictícia (8.8256ms)
+◇ injected env (0) from .env
+Password recovery email delivery failed.
+✔ recuperação sem serviço responde 503 sem consultar contas nem criar links (3.3947ms)
+✔ serviço exige URL confiável e envia token apenas no fragmento do link de e-mail (2.7595ms)
+✔ link entregue apenas por e-mail, banco armazena hash e resposta não revela conta (3.45ms)
+✔ falha SMTP invalida link sem expor token ou existência de conta (1.3671ms)
+✔ redefinição envia hash da senha e do token ao consumo atômico; rejeita link usado (412.8333ms)
+✔ transação bloqueia link, altera senha, revoga sessões e links; faz rollback em falha (1.292ms)
+◇ injected env (0) from .env
+✔ instâncias simultâneas compartilham cota e rollback não consome parcialmente outras dimensões (23.5761ms)
+✔ tabela ausente ou banco indisponível falham fechado e liberam conexão sem expor erro SQL (3.4216ms)
+✔ segredo inadequado recusa antes de acessar banco (0.8858ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15812.4034

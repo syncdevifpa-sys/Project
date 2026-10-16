@@ -1,0 +1,35 @@
+{
+  "draftWithoutAuthentication": {
+    "status": 200,
+    "approval": "pendente"
+  },
+  "changeEmailWithoutReauthentication": {
+    "status": 200,
+    "changed": true
+  },
+  "anonymousMailerAcceptsRecipientArray": {
+    "status": 200,
+    "recipientCount": 2,
+    "externalMailSent": false
+  },
+  "loginEnumeration": {
+    "existingStatus": 401,
+    "absentStatus": 401,
+    "messagesDiffer": true
+  },
+  "otherProjectRegistrations": {
+    "status": 200,
+    "privateEmailReturned": true,
+    "policyNeedsReview": true
+  },
+  "localHeaders": {
+    "content-security-policy": null,
+    "strict-transport-security": null,
+    "x-frame-options": null,
+    "x-content-type-options": null,
+    "referrer-policy": null,
+    "cache-control": null,
+    "access-control-allow-origin": "*",
+    "x-powered-by": "Express"
+  }
+}

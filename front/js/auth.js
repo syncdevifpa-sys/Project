@@ -28,7 +28,13 @@ window.Arcadia = window.Arcadia || {};
     };
 
     function paraTipoUsuario(valor) {
-        return TIPO_POR_VINCULO[String(valor || '').trim().toLowerCase()] || 'discente';
+        return (
+            TIPO_POR_VINCULO[
+                String(valor || '')
+                    .trim()
+                    .toLowerCase()
+            ] || 'discente'
+        );
     }
 
     function paraVinculo(tipo) {
@@ -44,12 +50,15 @@ window.Arcadia = window.Arcadia || {};
     }
 
     function salvarSessao(usuario, token) {
-        localStorage.setItem('arcadiaSessao', JSON.stringify({
-            ...usuario,
-            vinculo: paraVinculo(usuario.tipo_usuario),
-            token,
-            logado: true
-        }));
+        localStorage.setItem(
+            'arcadiaSessao',
+            JSON.stringify({
+                ...usuario,
+                vinculo: paraVinculo(usuario.tipo_usuario),
+                token,
+                logado: true
+            })
+        );
         Token.set(token);
     }
 
@@ -58,129 +67,16 @@ window.Arcadia = window.Arcadia || {};
     }
 
     function irParaPortal() {
-        window.location.href = getSessao().tipo_usuario === 'externo' ? 'community.html' : 'dashboard.html';
+        window.location.href =
+            getSessao().tipo_usuario === 'externo' ? 'community.html' : 'dashboard.html';
     }
 
-    // ------------------------- Envio de E-mail de Boas-vindas -------------------------
-    /**
-     * Envia o e-mail de confirmação/boas-vindas para a caixa de entrada do usuário.
-     * Funciona tanto com o backend Node.js (/api/auth/send-welcome) quanto com o EmailJS direto no navegador.
-     */
-    async function sendWelcomeEmail(user) {
-        if (!user || !user.email) return;
-
-        const cfg = window.ARCADIA_CONFIG || {};
-        const backendBase = (api && api.BASE) || cfg.backendUrl || location.origin;
-
-        console.log(`%c[Arcadia Email Service] Enviando mensagem de boas-vindas para: ${user.email}`, 'color: #52b788; font-weight: bold;');
-
-        // 1. Enviar via EmailJS se o usuário configurou as chaves no auth-config.js
-        if (typeof emailjs !== 'undefined' && cfg.emailJsPublicKey && cfg.emailJsServiceId && cfg.emailJsTemplateId) {
-            try {
-                emailjs.init({ publicKey: cfg.emailJsPublicKey });
-                const templateParams = {
-                    to_name: user.nome || 'Aluno(a)',
-                    to_email: user.email,
-                    user_email: user.email,
-                    user_name: user.nome || 'Aluno(a)',
-                    login_provider: user.provider || 'Google Account',
-                    login_date: new Date().toLocaleDateString('pt-BR', { dateStyle: 'full' }),
-                    message: `Sua conta (${user.email}) foi conectada com sucesso ao portal Arcádia IFPA Belém.`
-                };
-                const res = await emailjs.send(cfg.emailJsServiceId, cfg.emailJsTemplateId, templateParams);
-                console.log('[Arcadia Email Service] E-mail entregue com sucesso via EmailJS:', res);
-                return { success: true, provider: 'emailjs', response: res };
-            } catch (err) {
-                console.warn('[Arcadia Email Service] Erro no envio via EmailJS:', err);
-            }
-        }
-
-        // 2. Enviar via Backend API (/api/auth/send-welcome)
-        try {
-            const res = await fetch(`${backendBase}/api/auth/send-welcome`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: user.email,
-                    nome: user.nome || 'Aluno(a)',
-                    provider: user.provider || 'Google'
-                })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                console.log('[Arcadia Email Service] E-mail entregue/simulado pelo backend:', data);
-                return { success: true, provider: 'backend', data };
-            }
-        } catch (err) {
-            console.warn('[Arcadia Email Service] Backend indisponível ou offline para envio de e-mail:', err.message);
-        }
-
-        console.info(
-            '%c[Arcadia Email Service] Para envio real via Gmail SMTP: configure SMTP_PASS no backend/.env (ou chaves EmailJS em front/auth-config.js).',
-            'color: #f4a261;'
-        );
-        return { success: false, reason: 'unconfigured' };
+    // O navegador não envia e-mails nem simula autenticação de um provedor.
+    async function sendWelcomeEmail() {
+        return { success: false, reason: 'disabled' };
     }
-
-    // ------------------------- Autenticação Google -------------------------
-    /**
-     * Finaliza o login ou cadastro via Google, salvando a sessão e disparando o e-mail de boas-vindas.
-     */
-    async function completeGoogleAuth(realName, realEmail, realPhoto, provider = 'Google') {
-        realEmail = (realEmail || '').trim().toLowerCase();
-        if (!realEmail || !realEmail.includes('@')) {
-            alert('Por favor, informe um endereço de e-mail válido.');
-            return;
-        }
-
-        realName = (realName || '').trim();
-        if (!realName) {
-            const handle = realEmail.split('@')[0].replace(/[._-]/g, ' ');
-            realName = handle.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        }
-
-        const initials = realName.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || 'G';
-
-        const user = {
-            id_usuario: Date.now(),
-            id: Date.now(),
-            nome: realName,
-            email: realEmail,
-            tipo_usuario: 'discente',
-            vinculo: 'Aluno',
-            matricula: String(Math.floor(10000000 + Math.random() * 90000000)),
-            curso: 'Análise e Desenvolvimento de Sistemas (TADS)',
-            provider: provider,
-            avatar: initials,
-            foto: realPhoto || '',
-            logado: true,
-            token: 'google-oauth-' + Date.now()
-        };
-
-        salvarSessao(user, user.token);
-
-        // Salva dados da conta Google para o One-Tap Prompt
-        localStorage.setItem('arcadiaLastGoogleAccount', JSON.stringify({
-            nome: realName,
-            email: realEmail,
-            avatar: initials,
-            foto: realPhoto || ''
-        }));
-
-        const form = document.querySelector('form[data-acesso]');
-        const msgSucesso = form ? form.querySelector('.mensagem-sucesso, .success-message') : null;
-        if (msgSucesso) {
-            msgSucesso.textContent = `Conectado com o Google (${realEmail})! Enviando e-mail de confirmação...`;
-            msgSucesso.style.display = 'block';
-        }
-
-        // Dispara o envio de e-mail em segundo plano (não trava a navegação)
-        sendWelcomeEmail(user).catch(err => {
-            console.warn('[Arcadia Google Auth] Aviso ao disparar e-mail:', err);
-        });
-
-        setTimeout(irParaPortal, 300);
+    async function completeGoogleAuth() {
+        alert('O acesso com o Google ainda não está disponível. Use e-mail e senha.');
     }
 
     // Google Identity Services (GIS) Callback Global
@@ -189,12 +85,22 @@ window.Arcadia = window.Arcadia || {};
         try {
             const base64Url = response.credential.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
+            const jsonPayload = decodeURIComponent(
+                atob(base64)
+                    .split('')
+                    .map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    })
+                    .join('')
+            );
             const payload = JSON.parse(jsonPayload);
             if (payload && payload.email) {
-                completeGoogleAuth(payload.name || '', payload.email, payload.picture || '', 'Google');
+                completeGoogleAuth(
+                    payload.name || '',
+                    payload.email,
+                    payload.picture || '',
+                    'Google'
+                );
             }
         } catch (err) {
             console.error('[Arcadia Google Auth] Erro ao processar credencial Google:', err);
@@ -282,40 +188,66 @@ window.Arcadia = window.Arcadia || {};
 
         // 1. Google OAuth requer protocolo HTTP ou HTTPS. Se executado via file://, abre o modal direto
         if (window.location.protocol === 'file:') {
-            console.info('[Arcadia Google Auth] Executando sob file:// (Google OAuth oficial requer servidor HTTP). Abrindo modal de acesso.');
+            console.info(
+                '[Arcadia Google Auth] Executando sob file:// (Google OAuth oficial requer servidor HTTP). Abrindo modal de acesso.'
+            );
             openGoogleAuthModal(mode);
             return;
         }
 
         // 2. Se a biblioteca oficial do Google estiver pronta e o client_id estiver definido
-        if (cfg.googleClientId && typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+        if (
+            cfg.googleClientId &&
+            typeof google !== 'undefined' &&
+            google.accounts &&
+            google.accounts.oauth2
+        ) {
             try {
                 const tokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: cfg.googleClientId,
                     scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
                     callback: async (tokenResponse) => {
                         if (tokenResponse.error) {
-                            console.error('[Arcadia Google Auth] Erro no token OAuth:', tokenResponse);
+                            console.error(
+                                '[Arcadia Google Auth] Erro no token OAuth:',
+                                tokenResponse
+                            );
                             openGoogleAuthModal(mode);
                             return;
                         }
                         try {
-                            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-                            });
+                            const res = await fetch(
+                                'https://www.googleapis.com/oauth2/v3/userinfo',
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${tokenResponse.access_token}`
+                                    }
+                                }
+                            );
                             const profile = await res.json();
                             if (profile && profile.email) {
-                                await completeGoogleAuth(profile.name || '', profile.email, profile.picture || '', 'Google');
+                                await completeGoogleAuth(
+                                    profile.name || '',
+                                    profile.email,
+                                    profile.picture || '',
+                                    'Google'
+                                );
                             } else {
                                 openGoogleAuthModal(mode);
                             }
                         } catch (fetchErr) {
-                            console.error('[Arcadia Google Auth] Erro ao obter dados do usuário do Google:', fetchErr);
+                            console.error(
+                                '[Arcadia Google Auth] Erro ao obter dados do usuário do Google:',
+                                fetchErr
+                            );
                             openGoogleAuthModal(mode);
                         }
                     },
                     error_callback: (err) => {
-                        console.warn('[Arcadia Google Auth] Erro retornado pelo cliente Google:', err);
+                        console.warn(
+                            '[Arcadia Google Auth] Erro retornado pelo cliente Google:',
+                            err
+                        );
                         openGoogleAuthModal(mode);
                     }
                 });
@@ -323,7 +255,10 @@ window.Arcadia = window.Arcadia || {};
                 tokenClient.requestAccessToken({ prompt: 'select_account' });
                 return;
             } catch (e) {
-                console.warn('[Arcadia Google Auth] Erro ao disparar tokenClient do Google, abrindo modal:', e);
+                console.warn(
+                    '[Arcadia Google Auth] Erro ao disparar tokenClient do Google, abrindo modal:',
+                    e
+                );
             }
         }
 
@@ -363,7 +298,11 @@ window.Arcadia = window.Arcadia || {};
             if (lastGoogle.foto) {
                 avatarEl.innerHTML = `<img src="${lastGoogle.foto}" alt="${lastGoogle.nome}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
             } else {
-                avatarEl.textContent = (lastGoogle.avatar || lastGoogle.nome.charAt(0) || 'G').toUpperCase();
+                avatarEl.textContent = (
+                    lastGoogle.avatar ||
+                    lastGoogle.nome.charAt(0) ||
+                    'G'
+                ).toUpperCase();
             }
         }
         if (continueText) continueText.textContent = `Continuar como ${firstName}`;
@@ -414,7 +353,9 @@ window.Arcadia = window.Arcadia || {};
         if (facebookLoginBtn) {
             facebookLoginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('O login com Facebook ainda não está disponível. Entre com o e-mail e a senha da sua conta.');
+                alert(
+                    'O login com Facebook ainda não está disponível. Entre com o e-mail e a senha da sua conta.'
+                );
             });
         }
     }
@@ -454,20 +395,25 @@ window.Arcadia = window.Arcadia || {};
 
                 if (tipoAcesso === 'cadastro') {
                     const nome = (form.querySelector('#nome, #name')?.value || '').trim();
-                    const telefone = (form.querySelector('#telefone, #phone')?.value || '').trim() || null;
+                    const telefone =
+                        (form.querySelector('#telefone, #phone')?.value || '').trim() || null;
                     const vinculoInput = form.querySelector('#vinculoInput, #affiliationInput');
                     const roleBtnAtivo = form.querySelector(
                         '.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo'
                     );
-                    const vinculoSelecionado = vinculoInput && vinculoInput.value
-                        ? vinculoInput.value
-                        : roleBtnAtivo
-                            ? (roleBtnAtivo.getAttribute('data-vinculo') || roleBtnAtivo.textContent.trim())
-                            : 'Aluno';
+                    const vinculoSelecionado =
+                        vinculoInput && vinculoInput.value
+                            ? vinculoInput.value
+                            : roleBtnAtivo
+                              ? roleBtnAtivo.getAttribute('data-vinculo') ||
+                                roleBtnAtivo.textContent.trim()
+                              : 'Aluno';
                     const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
 
                     if (!['discente', 'externo'].includes(tipo_usuario)) {
-                        return showError('Contas de professor e servidor precisam ser autorizadas pela administração.');
+                        return showError(
+                            'Contas de professor e servidor precisam ser autorizadas pela administração.'
+                        );
                     }
 
                     if (!nome || !email || !senha) {
@@ -485,8 +431,13 @@ window.Arcadia = window.Arcadia || {};
                                 email,
                                 senha,
                                 tipo_usuario,
-                                telefone: telefone || (form.querySelector('#telefone')?.value || '').trim() || null,
-                                id_curso: ['discente', 'servidor'].includes(tipo_usuario) ? Number(form.querySelector('#curso')?.value) || null : null
+                                telefone:
+                                    telefone ||
+                                    (form.querySelector('#telefone')?.value || '').trim() ||
+                                    null,
+                                id_curso: ['discente', 'servidor'].includes(tipo_usuario)
+                                    ? Number(form.querySelector('#curso')?.value) || null
+                                    : null
                             },
                             { auth: false }
                         );
@@ -500,7 +451,9 @@ window.Arcadia = window.Arcadia || {};
 
                         showSuccess('Conta criada com sucesso! Entre com seu e-mail e senha.');
 
-                        setTimeout(() => { window.location.href = 'login.html'; }, 900);
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 900);
                     } catch (err) {
                         console.error('Erro ao conectar com a API:', err);
                         showError('Não foi possível conectar ao servidor.');
@@ -523,7 +476,9 @@ window.Arcadia = window.Arcadia || {};
                         if (!ok) {
                             return showError(
                                 data.error ||
-                                (status === 401 ? 'E-mail ou senha incorretos.' : 'Erro ao efetuar login.')
+                                    (status === 401
+                                        ? 'E-mail ou senha incorretos.'
+                                        : 'Erro ao efetuar login.')
                             );
                         }
 
@@ -534,11 +489,14 @@ window.Arcadia = window.Arcadia || {};
                         salvarSessao(data.user, data.token);
 
                         if (email.includes('@gmail.com') || email.includes('@googlemail.com')) {
-                            localStorage.setItem('arcadiaLastGoogleAccount', JSON.stringify({
-                                nome: data.user.nome || 'Usuário Google',
-                                email: data.user.email || email,
-                                avatar: (data.user.nome || 'G').charAt(0).toUpperCase()
-                            }));
+                            localStorage.setItem(
+                                'arcadiaLastGoogleAccount',
+                                JSON.stringify({
+                                    nome: data.user.nome || 'Usuário Google',
+                                    email: data.user.email || email,
+                                    avatar: (data.user.nome || 'G').charAt(0).toUpperCase()
+                                })
+                            );
                         }
 
                         showSuccess('Login realizado! Redirecionando...');
@@ -555,9 +513,19 @@ window.Arcadia = window.Arcadia || {};
     // ---------------------------- Logout ----------------------------
     async function logout() {
         // Revoga a sessão no servidor antes de descartar o JWT no navegador.
-        try { await api.expect(api.post(getSessao().tipo_usuario === 'externo' ? '/api/external/logout' : '/api/auth/logout')); }
-        catch (error) {
-            if (error.status !== 401) { alert(error.message || 'Não foi possível encerrar a sessão.'); return; }
+        try {
+            await api.expect(
+                api.post(
+                    getSessao().tipo_usuario === 'externo'
+                        ? '/api/external/logout'
+                        : '/api/auth/logout'
+                )
+            );
+        } catch (error) {
+            if (error.status !== 401) {
+                alert(error.message || 'Não foi possível encerrar a sessão.');
+                return;
+            }
         }
         Token.clear();
         window.location.href = 'login.html';
@@ -598,7 +566,8 @@ window.Arcadia = window.Arcadia || {};
             const publicRole = ehAluno || tipo === 'externo';
             const academicVisible = ehAluno || tipo === 'servidor';
             cursoWrap.style.display = academicVisible ? 'flex' : 'none';
-            if (courseLabel) courseLabel.textContent = ehAluno ? 'Curso' : 'Curso / formação (opcional)';
+            if (courseLabel)
+                courseLabel.textContent = ehAluno ? 'Curso' : 'Curso / formação (opcional)';
             if (cursoSelect) {
                 if (lastRole && lastRole !== tipo) cursoSelect.value = '';
                 cursoSelect.required = ehAluno;
@@ -606,11 +575,13 @@ window.Arcadia = window.Arcadia || {};
             }
             lastRole = tipo;
             if (signupSubmit) signupSubmit.disabled = !publicRole;
-            if (roleHelp) roleHelp.textContent = ehAluno
-                ? 'Aluno: preencha seus dados e selecione o curso. O cadastro aceita e-mail pessoal, como Gmail.'
-                : tipo === 'externo'
-                    ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
-                    : (tipo === 'docente' ? 'Professor' : 'Servidor') + ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
+            if (roleHelp)
+                roleHelp.textContent = ehAluno
+                    ? 'Aluno: preencha seus dados e selecione o curso. O cadastro aceita e-mail pessoal, como Gmail.'
+                    : tipo === 'externo'
+                      ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
+                      : (tipo === 'docente' ? 'Professor' : 'Servidor') +
+                        ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
         }
         atualizarCurso(paraTipoUsuario(vinculoInput?.value || 'Aluno'));
 
@@ -627,15 +598,19 @@ window.Arcadia = window.Arcadia || {};
                 const val = btn.getAttribute('data-vinculo') || btn.textContent.trim();
                 if (vinculoInput) vinculoInput.value = val;
                 atualizarCurso(paraTipoUsuario(val));
-                roleBtns.forEach(b => { b.tabIndex = b === btn ? 0 : -1; });
+                roleBtns.forEach((b) => {
+                    b.tabIndex = b === btn ? 0 : -1;
+                });
             });
             btn.tabIndex = btn.getAttribute('aria-checked') === 'true' ? 0 : -1;
             // O grupo permite selecionar os vínculos por teclado, além do clique.
-            btn.addEventListener('keydown', event => {
+            btn.addEventListener('keydown', (event) => {
                 const index = Array.from(roleBtns).indexOf(btn);
                 let target;
-                if (['ArrowRight', 'ArrowDown'].includes(event.key)) target = (index + 1) % roleBtns.length;
-                else if (['ArrowLeft', 'ArrowUp'].includes(event.key)) target = (index + roleBtns.length - 1) % roleBtns.length;
+                if (['ArrowRight', 'ArrowDown'].includes(event.key))
+                    target = (index + 1) % roleBtns.length;
+                else if (['ArrowLeft', 'ArrowUp'].includes(event.key))
+                    target = (index + roleBtns.length - 1) % roleBtns.length;
                 else if (event.key === 'Home') target = 0;
                 else if (event.key === 'End') target = roleBtns.length - 1;
                 else return;
@@ -671,7 +646,8 @@ window.Arcadia = window.Arcadia || {};
             if (v.length === 0) e.target.value = '';
             else if (v.length <= 2) e.target.value = '(' + v;
             else if (v.length <= 6) e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2);
-            else if (v.length <= 10) e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2, 6) + '-' + v.slice(6);
+            else if (v.length <= 10)
+                e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2, 6) + '-' + v.slice(6);
             else e.target.value = '(' + v.slice(0, 2) + ') ' + v.slice(2, 7) + '-' + v.slice(7);
         });
     }
@@ -702,13 +678,17 @@ window.Arcadia = window.Arcadia || {};
         try {
             const cursos = await api.expect(api.get('/api/courses', { auth: false }));
             select.innerHTML = '<option value="">Selecione seu curso</option>';
-            cursos.filter(c => c.ativo).forEach(c => {
-                const option = document.createElement('option');
-                option.value = c.id_curso;
-                option.textContent = c.nome;
-                select.appendChild(option);
-            });
-        } catch (error) { select.innerHTML = '<option value="">Não foi possível carregar os cursos</option>'; }
+            cursos
+                .filter((c) => c.ativo)
+                .forEach((c) => {
+                    const option = document.createElement('option');
+                    option.value = c.id_curso;
+                    option.textContent = c.nome;
+                    select.appendChild(option);
+                });
+        } catch (error) {
+            select.innerHTML = '<option value="">Não foi possível carregar os cursos</option>';
+        }
     }
 
     function iniciar() {

@@ -1,5 +1,5 @@
 const { validateContent, editContent } = require('../services/content-edit.service');
-const tasksModel = require("../models/tasks.model");
+const tasksModel = require('../models/tasks.model');
 
 async function listTasks(req, res) {
     try {
@@ -8,10 +8,9 @@ async function listTasks(req, res) {
         const tasks = await tasksModel.listTasks(userId);
 
         return res.json(tasks);
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao buscar tarefas:", error);
+        console.error('Erro ao buscar tarefas:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -24,22 +23,18 @@ async function getTaskById(req, res) {
         const taskId = req.params.id;
         const userId = req.user.id_usuario;
 
-        const task = await tasksModel.findTaskById(
-            taskId,
-            userId
-        );
+        const task = await tasksModel.findTaskById(taskId, userId);
 
         if (!task) {
             return res.status(404).json({
-                error: "Tarefa não encontrada."
+                error: 'Tarefa não encontrada.'
             });
         }
 
         return res.json(task);
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao buscar tarefa:", error);
+        console.error('Erro ao buscar tarefa:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -54,7 +49,7 @@ async function createTask(req, res) {
 
         if (!titulo) {
             return res.status(400).json({
-                error: "Título da tarefa é obrigatório."
+                error: 'Título da tarefa é obrigatório.'
             });
         }
 
@@ -64,13 +59,12 @@ async function createTask(req, res) {
         );
 
         return res.status(201).json({
-            message: "Tarefa criada com sucesso.",
+            message: 'Tarefa criada com sucesso.',
             taskId: result.insertId
         });
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao criar tarefa :", error);
+        console.error('Erro ao criar tarefa :', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -91,17 +85,16 @@ async function updateTask(req, res) {
 
         if (!result) {
             return res.status(404).json({
-                error: "Tarefa não encontrada."
+                error: 'Tarefa não encontrada.'
             });
         }
 
         return res.json({
-            message: "Tarefa atualizada com sucesso."
+            message: 'Tarefa atualizada com sucesso.'
         });
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao atualizar tarefa:", error);
+        console.error('Erro ao atualizar tarefa:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -114,24 +107,20 @@ async function deleteTask(req, res) {
         const taskId = req.params.id;
         const userId = req.user.id_usuario;
 
-        const result = await tasksModel.deleteTask(
-            taskId,
-            userId
-        );
+        const result = await tasksModel.deleteTask(taskId, userId);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Tarefa não encontrada."
+                error: 'Tarefa não encontrada.'
             });
         }
 
         return res.json({
-            message: "Tarefa excluída com sucesso."
+            message: 'Tarefa excluída com sucesso.'
         });
-
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao excluir tarefa :", error);
+        console.error('Erro ao excluir tarefa :', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'

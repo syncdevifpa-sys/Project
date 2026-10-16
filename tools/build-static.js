@@ -5,13 +5,18 @@ const root = path.resolve(__dirname, '..');
 const redirects = require('../page-redirects.json');
 const vercel = require('../vercel.json');
 const expected = Object.entries(redirects).map(([oldPage, newPage]) => ({
-    source: '/' + oldPage, destination: '/' + newPage, permanent: true
+    source: '/' + oldPage,
+    destination: '/' + newPage,
+    permanent: true
 }));
 if (JSON.stringify(vercel.redirects) !== JSON.stringify(expected)) {
     throw new Error('Redirects da Vercel divergem de page-redirects.json.');
 }
 for (const [oldPage, newPage] of Object.entries(redirects)) {
-    if (fs.existsSync(path.join(root, 'front', oldPage)) || !fs.existsSync(path.join(root, 'front', newPage))) {
+    if (
+        fs.existsSync(path.join(root, 'front', oldPage)) ||
+        !fs.existsSync(path.join(root, 'front', newPage))
+    ) {
         throw new Error('Página antiga duplicada ou nova página ausente: ' + newPage);
     }
 }
@@ -21,8 +26,13 @@ if (path.dirname(target) !== root || path.basename(target) !== 'public') {
     throw new Error('Diretório de saída inválido.');
 }
 if (fs.existsSync(target)) {
-    if (fs.lstatSync(target).isSymbolicLink() || !fs.existsSync(path.join(target, '.arcadia-generated'))) {
-        throw new Error('public/ já existe e não pertence ao build. Preserve seu conteúdo antes de continuar.');
+    if (
+        fs.lstatSync(target).isSymbolicLink() ||
+        !fs.existsSync(path.join(target, '.arcadia-generated'))
+    ) {
+        throw new Error(
+            'public/ já existe e não pertence ao build. Preserve seu conteúdo antes de continuar.'
+        );
     }
     fs.rmSync(target, { recursive: true });
 }

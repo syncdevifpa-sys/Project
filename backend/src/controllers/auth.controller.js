@@ -1,7 +1,7 @@
-const authModel = require("../models/auth.model");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const sessionsModel = require("../models/sessions.model");
+const authModel = require('../models/auth.model');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const sessionsModel = require('../models/sessions.model');
 
 async function login(req, res) {
     try {
@@ -9,7 +9,7 @@ async function login(req, res) {
 
         if (!email || !senha) {
             return res.status(400).json({
-                error: "Email e senha são obrigatórios."
+                error: 'Email e senha são obrigatórios.'
             });
         }
 
@@ -22,21 +22,18 @@ async function login(req, res) {
         }
 
         // 2. Verificar situação da conta
-        if (user.situacao !== "ativo") {
+        if (user.situacao !== 'ativo') {
             return res.status(403).json({
-                error: "Conta do usuário não está ativa."
+                error: 'Conta do usuário não está ativa.'
             });
         }
 
         // 3. Verificar senha
-        const passwordValid = await authModel.comparePassword(
-            senha,
-            user.senha
-        );
+        const passwordValid = await authModel.comparePassword(senha, user.senha);
 
         if (!passwordValid) {
             return res.status(401).json({
-                error: "Senha incorreta."
+                error: 'Senha incorreta.'
             });
         }
 
@@ -49,41 +46,32 @@ async function login(req, res) {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "8h",
+                expiresIn: '8h',
                 jwtid: crypto.randomUUID()
             }
         );
 
         // 5. Gerar hash do JWT para armazenar no banco
-        const tokenHash = crypto
-            .createHash("sha256")
-            .update(token)
-            .digest("hex");
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
         // Mesma duração do JWT: 8 horas
-        const expiration = new Date(
-            Date.now() + 8 * 60 * 60 * 1000
-        );
+        const expiration = new Date(Date.now() + 8 * 60 * 60 * 1000);
 
         // 6. Registrar sessão
         const sessionResult = await sessionsModel.createSession({
             id_usuario: user.id_usuario,
             id_externo: null,
             token: tokenHash,
-            dispositivo:
-                req.headers["user-agent"] || "Navegador Web",
+            dispositivo: req.headers['user-agent'] || 'Navegador Web',
             ip: req.ip || null,
             expiracao: expiration
         });
 
-        console.log(
-            "Sessão criada:",
-            sessionResult.insertId
-        );
+        console.log('Sessão criada:', sessionResult.insertId);
 
         // 7. Resposta
         return res.json({
-            message: "Login realizado com sucesso.",
+            message: 'Login realizado com sucesso.',
             token,
             user: {
                 id_usuario: user.id_usuario,
@@ -94,9 +82,8 @@ async function login(req, res) {
                 is_admin: Boolean(user.is_admin)
             }
         });
-
     } catch (error) {
-        console.error("Erro durante o login:", error);
+        console.error('Erro durante o login:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'

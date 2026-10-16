@@ -4,9 +4,13 @@ window.Arcadia = window.Arcadia || {};
 (function (Arcadia) {
     'use strict';
 
-    const API_BASE = (window.ARCADIA_API_BASE || (window.ARCADIA_CONFIG || {}).backendUrl ||
+    const API_BASE = (
+        window.ARCADIA_API_BASE ||
+        (window.ARCADIA_CONFIG || {}).backendUrl ||
         (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && location.port !== '3001'
-            ? 'http://localhost:3001' : location.origin)).replace(/\/$/, '');
+            ? 'http://localhost:3001'
+            : location.origin)
+    ).replace(/\/$/, '');
 
     const Token = {
         get() {
@@ -27,7 +31,10 @@ window.Arcadia = window.Arcadia || {};
      * - Se uma rota protegida responder 401, a sessão expirou: limpa e volta ao login.
      * - Erro de rede (servidor fora do ar) lança exceção: quem chama usa try/catch.
      */
-    async function request(path, { method = 'GET', body, auth = true, raw = false, contentType = 'application/pdf' } = {}) {
+    async function request(
+        path,
+        { method = 'GET', body, auth = true, raw = false, contentType = 'application/pdf' } = {}
+    ) {
         const headers = {};
         if (body !== undefined) headers['Content-Type'] = raw ? contentType : 'application/json';
 
@@ -45,7 +52,11 @@ window.Arcadia = window.Arcadia || {};
         if (res.status === 401 && auth && token) {
             try {
                 const sess = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
-                if (sess.provider === 'Google' || token.startsWith('google-') || token.startsWith('local-')) {
+                if (
+                    sess.provider === 'Google' ||
+                    token.startsWith('google-') ||
+                    token.startsWith('local-')
+                ) {
                     return { ok: false, status: 401, data };
                 }
             } catch (e) {}
@@ -60,7 +71,10 @@ window.Arcadia = window.Arcadia || {};
     async function expect(promiseOrResult) {
         const result = await promiseOrResult;
         if (!result.ok) {
-            const error = new Error((result.data && (result.data.error || result.data.message)) || `Erro na requisição (${result.status}).`);
+            const error = new Error(
+                (result.data && (result.data.error || result.data.message)) ||
+                    `Erro na requisição (${result.status}).`
+            );
             error.status = result.status;
             error.data = result.data;
             throw error;
@@ -70,13 +84,23 @@ window.Arcadia = window.Arcadia || {};
 
     function crud(basePath) {
         return {
-            list: (params) => expect(request(params ? `${basePath}?${new URLSearchParams(params)}` : basePath, { method: 'GET' })),
-            get: (id) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'GET' })),
+            list: (params) =>
+                expect(
+                    request(params ? `${basePath}?${new URLSearchParams(params)}` : basePath, {
+                        method: 'GET'
+                    })
+                ),
+            get: (id) =>
+                expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'GET' })),
             create: (body) => expect(request(basePath, { method: 'POST', body })),
-            update: (id, body) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
-            patch: (id, body) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
-            delete: (id) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'DELETE' })),
-            remove: (id) => expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'DELETE' }))
+            update: (id, body) =>
+                expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
+            patch: (id, body) =>
+                expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'PUT', body })),
+            delete: (id) =>
+                expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'DELETE' })),
+            remove: (id) =>
+                expect(request(`${basePath}/${encodeURIComponent(id)}`, { method: 'DELETE' }))
         };
     }
 

@@ -1,6 +1,6 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const path = require("path");
+const express = require('express');
+const dotenv = require('dotenv');
+const path = require('path');
 
 if (!process.env.VERCEL) {
     dotenv.config({ path: path.join(__dirname, '.env') });
@@ -15,39 +15,36 @@ const PORT = process.env.PORT || 3001;
 // Routes
 // ==============================
 
-const noticesRoutes = require("./src/routes/notices.routes");
-const authRoutes = require("./src/routes/auth.routes");
-const usersRoutes = require("./src/routes/users.routes");
-const coursesRoutes = require("./src/routes/courses.routes");
-const tasksRoutes = require("./src/routes/tasks.routes");
-const calendarRoutes = require("./src/routes/calendar.routes");
-const projectsRoutes = require("./src/routes/projects.routes");
-const documentsRoutes = require("./src/routes/documents.routes");
-const remindersRoutes = require("./src/routes/reminders.routes");
-const usefulLinksRoutes = require("./src/routes/usefulLinks.routes");
-const externalUsersRoutes = require("./src/routes/externalUsers.routes");
-const readNoticesRoutes = require("./src/routes/readNotices.routes");
-const sessionsRoutes = require("./src/routes/sessions.routes");
-const passwordRecoveryRoutes = require("./src/routes/passwordRecovery.routes");
+const noticesRoutes = require('./src/routes/notices.routes');
+const authRoutes = require('./src/routes/auth.routes');
+const usersRoutes = require('./src/routes/users.routes');
+const coursesRoutes = require('./src/routes/courses.routes');
+const tasksRoutes = require('./src/routes/tasks.routes');
+const calendarRoutes = require('./src/routes/calendar.routes');
+const projectsRoutes = require('./src/routes/projects.routes');
+const documentsRoutes = require('./src/routes/documents.routes');
+const remindersRoutes = require('./src/routes/reminders.routes');
+const usefulLinksRoutes = require('./src/routes/usefulLinks.routes');
+const externalUsersRoutes = require('./src/routes/externalUsers.routes');
+const readNoticesRoutes = require('./src/routes/readNotices.routes');
+const sessionsRoutes = require('./src/routes/sessions.routes');
+const passwordRecoveryRoutes = require('./src/routes/passwordRecovery.routes');
 
 // ==============================
 // CORS
 // ==============================
 
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Origin', '*');
+
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
 
     res.header(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
 
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-
-    if (req.method === "OPTIONS") {
+    if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
     }
 
@@ -64,9 +61,9 @@ app.use(express.json({ limit: '2mb' }));
 // Main API route
 // ==============================
 
-app.get("/api", (req, res) => {
+app.get('/api', (req, res) => {
     res.json({
-        message: "API Arcádia funcionando!"
+        message: 'API Arcádia funcionando!'
     });
 });
 
@@ -74,23 +71,23 @@ app.get("/api", (req, res) => {
 // Application routes
 // ==============================
 
-app.use("/api/notices", noticesRoutes);
-app.use("/api/public", require('./src/routes/public.routes'));
-app.use("/api/auth", authRoutes);
-app.use("/api/users", usersRoutes);
-app.use("/api/courses", coursesRoutes);
-app.use("/api/tasks", tasksRoutes);
-app.use("/api/content", require("./src/routes/content.routes"));
-app.use("/api/calendar", calendarRoutes);
+app.use('/api/notices', noticesRoutes);
+app.use('/api/public', require('./src/routes/public.routes'));
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/courses', coursesRoutes);
+app.use('/api/tasks', tasksRoutes);
+app.use('/api/content', require('./src/routes/content.routes'));
+app.use('/api/calendar', calendarRoutes);
 app.use('/api/calendar-import', require('./src/routes/calendarImport.routes'));
-app.use("/api/projects", projectsRoutes);
-app.use("/api/documents", documentsRoutes);
-app.use("/api/reminders", remindersRoutes);
-app.use("/api/useful-links", usefulLinksRoutes);
-app.use("/api/external", externalUsersRoutes);
-app.use("/api/read-notices", readNoticesRoutes);
-app.use("/api/sessions", sessionsRoutes);
-app.use("/api/password-recovery", passwordRecoveryRoutes);
+app.use('/api/projects', projectsRoutes);
+app.use('/api/documents', documentsRoutes);
+app.use('/api/reminders', remindersRoutes);
+app.use('/api/useful-links', usefulLinksRoutes);
+app.use('/api/external', externalUsersRoutes);
+app.use('/api/read-notices', readNoticesRoutes);
+app.use('/api/sessions', sessionsRoutes);
+app.use('/api/password-recovery', passwordRecoveryRoutes);
 app.use('/api/admin', require('./src/routes/admin.routes'));
 // URLs antigas continuam válidas sem manter cópias das páginas.
 const pageRedirects = require('../page-redirects.json');
@@ -100,7 +97,7 @@ for (const [oldPage, newPage] of Object.entries(pageRedirects)) {
     });
 }
 app.use(express.static(path.join(__dirname, '../front')));
-console.log("Application routes configured.");
+console.log('Application routes configured.');
 
 // ==============================
 // 404
@@ -108,7 +105,7 @@ console.log("Application routes configured.");
 
 app.use((req, res) => {
     res.status(404).json({
-        error: "Página ou recurso não encontrado."
+        error: 'Página ou recurso não encontrado.'
     });
 });
 
@@ -120,10 +117,18 @@ app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);
     console.error('Request failed:', error);
     const status = error.status === 413 ? 413 : error.status === 400 ? 400 : 500;
-    res.status(status).json({ error: status === 413 ? 'O arquivo enviado é muito grande.' : status === 400 ? 'Os dados enviados são inválidos.' : 'Não foi possível concluir a operação. Tente novamente.' });
+    res.status(status).json({
+        error:
+            status === 413
+                ? 'O arquivo enviado é muito grande.'
+                : status === 400
+                  ? 'Os dados enviados são inválidos.'
+                  : 'Não foi possível concluir a operação. Tente novamente.'
+    });
 });
 
-if (require.main === module) app.listen(PORT, () => {
-    console.log(`API running at http://localhost:${PORT}`);
-});
+if (require.main === module)
+    app.listen(PORT, () => {
+        console.log(`API running at http://localhost:${PORT}`);
+    });
 module.exports = app;

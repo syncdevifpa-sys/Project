@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
@@ -8,39 +8,24 @@ const {
     createEvent,
     updateEvent,
     deleteEvent
-} = require("../controllers/calendar.controller");
+} = require('../controllers/calendar.controller');
 
 const {
     authenticateToken,
     authorizeRoles,
     authorizeAdmin
-} = require("../middlewares/auth.middleware");
+} = require('../middlewares/auth.middleware');
 
 // Public routes
-router.get("/", listEvents);
-router.get("/:id", getEventById);
+router.get('/', listEvents);
+router.get('/:id', getEventById);
 
 // Teacher and staff routes
-router.post(
-    "/",
-    authenticateToken,
-    authorizeRoles("docente", "servidor"),
-    createEvent
-);
+router.post('/', authenticateToken, authorizeRoles('docente', 'servidor'), createEvent);
 
-router.put(
-    "/:id",
-    authenticateToken,
-    authorizeRoles("docente", "servidor"),
-    updateEvent
-);
+router.put('/:id', authenticateToken, authorizeRoles('docente', 'servidor'), updateEvent);
 
 // Administrator route
-router.delete(
-    "/:id",
-    authenticateToken,
-    authorizeAdmin,
-    deleteEvent
-);
+router.delete('/:id', authenticateToken, authorizeAdmin, deleteEvent);
 
 module.exports = router;

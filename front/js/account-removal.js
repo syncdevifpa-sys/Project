@@ -11,10 +11,14 @@
         try {
             const result = await Arcadia.api.request(form.dataset.endpoint, {
                 method: 'DELETE',
-                body: { senha: form.elements.senha.value, confirmacao: form.elements.confirmacao.value }
+                body: {
+                    senha: form.elements.senha.value,
+                    confirmacao: form.elements.confirmacao.value
+                }
             });
             form.elements.senha.value = '';
-            if (!result.ok) throw new Error(result.data.error || 'Não foi possível excluir sua conta.');
+            if (!result.ok)
+                throw new Error(result.data.error || 'Não foi possível excluir sua conta.');
             Arcadia.token.clear();
             location.href = 'index.html';
         } catch (error) {

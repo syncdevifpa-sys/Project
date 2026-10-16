@@ -1,7 +1,8 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function markAsRead(noticeId, userId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO avisos_lidos (
             id_aviso,
             id_usuario
@@ -9,29 +10,29 @@ async function markAsRead(noticeId, userId) {
         VALUES (?, ?)
         ON DUPLICATE KEY UPDATE
             lido_em = lido_em
-    `, [
-        noticeId,
-        userId
-    ]);
+    `,
+        [noticeId, userId]
+    );
 
     return result;
 }
 
 async function markAsUnread(noticeId, userId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM avisos_lidos
         WHERE id_aviso = ?
           AND id_usuario = ?
-    `, [
-        noticeId,
-        userId
-    ]);
+    `,
+        [noticeId, userId]
+    );
 
     return result;
 }
 
 async function listReadNotices(userId) {
-    const [notices] = await db.execute(`
+    const [notices] = await db.execute(
+        `
         SELECT
             al.id_aviso,
             al.id_usuario,
@@ -47,13 +48,16 @@ async function listReadNotices(userId) {
           AND (u.is_admin = 1 OR a.id_usuario = u.id_usuario OR
                (a.situacao = 'publicado' AND a.publico_alvo IN ('todos', 'externo', u.tipo_usuario)))
         ORDER BY al.lido_em DESC
-    `, [userId]);
+    `,
+        [userId]
+    );
 
     return notices;
 }
 
 async function countUnreadNotices(userId) {
-    const [rows] = await db.execute(`
+    const [rows] = await db.execute(
+        `
         SELECT COUNT(*) AS nao_lidos
         FROM avisos a
         INNER JOIN usuarios u ON u.id_usuario = ? AND u.situacao = 'ativo'
@@ -65,7 +69,9 @@ async function countUnreadNotices(userId) {
             WHERE al.id_aviso = a.id_aviso
             AND al.id_usuario = ?
         )
-    `, [userId, userId]);
+    `,
+        [userId, userId]
+    );
 
     return rows[0].nao_lidos;
 }
