@@ -1,9 +1,14 @@
-const db = require("../config/database");
-const { hasNoticeType, writableType, hasNoticeCover, writableCover } = require('../services/notice-schema.service');
+const db = require('../config/database');
+const {
+    hasNoticeType,
+    writableType,
+    hasNoticeCover,
+    writableCover
+} = require('../services/notice-schema.service');
 
 async function listNotices() {
-    const coverColumn = await hasNoticeCover() ? 'capa' : 'NULL AS capa';
-    const typeColumn = await hasNoticeType() ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
+    const coverColumn = (await hasNoticeCover()) ? 'capa' : 'NULL AS capa';
+    const typeColumn = (await hasNoticeType()) ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
     const [notices] = await db.execute(`
         SELECT
             id_aviso,
@@ -34,9 +39,10 @@ async function listNotices() {
 }
 
 async function findNoticeById(noticeId) {
-    const coverColumn = await hasNoticeCover() ? 'capa' : 'NULL AS capa';
-    const typeColumn = await hasNoticeType() ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
-    const [notices] = await db.execute(`
+    const coverColumn = (await hasNoticeCover()) ? 'capa' : 'NULL AS capa';
+    const typeColumn = (await hasNoticeType()) ? 'tipo_publicacao' : "'aviso' AS tipo_publicacao";
+    const [notices] = await db.execute(
+        `
         SELECT
             id_aviso,
             ${typeColumn},
@@ -60,7 +66,9 @@ async function findNoticeById(noticeId) {
             atualizado_em
         FROM avisos
         WHERE id_aviso = ?
-    `, [noticeId]);
+    `,
+        [noticeId]
+    );
 
     return notices[0];
 }
@@ -73,9 +81,9 @@ async function createNotice(noticeData) {
         titulo,
         resumo,
         descricao = null,
-        categoria = "matricula",
-        publico_alvo = "todos",
-        situacao = "publicado",
+        categoria = 'matricula',
+        publico_alvo = 'todos',
+        situacao = 'publicado',
         urgente = false,
         fixado = false,
         referencia = null,
@@ -85,7 +93,8 @@ async function createNotice(noticeData) {
         detalhes = null
     } = noticeData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO avisos (
             id_usuario,
             titulo,
@@ -105,24 +114,26 @@ async function createNotice(noticeData) {
             ${coverAvailable ? ', capa' : ''}
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${typeAvailable ? ', ?' : ''}${coverAvailable ? ', ?' : ''})
-    `, [
-        id_usuario,
-        titulo,
-        resumo,
-        descricao,
-        categoria,
-        publico_alvo,
-        situacao,
-        urgente,
-        fixado,
-        referencia,
-        data_prazo,
-        data_evento,
-        vagas,
-        detalhes,
-        ...(typeAvailable ? [noticeData.tipo_publicacao || 'aviso'] : []),
-        ...(coverAvailable ? [noticeData.capa || null] : [])
-    ]);
+    `,
+        [
+            id_usuario,
+            titulo,
+            resumo,
+            descricao,
+            categoria,
+            publico_alvo,
+            situacao,
+            urgente,
+            fixado,
+            referencia,
+            data_prazo,
+            data_evento,
+            vagas,
+            detalhes,
+            ...(typeAvailable ? [noticeData.tipo_publicacao || 'aviso'] : []),
+            ...(coverAvailable ? [noticeData.capa || null] : [])
+        ]
+    );
 
     return result;
 }
@@ -138,23 +149,42 @@ async function deleteNotice(noticeId, actorId) {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
-        const [actors] = await connection.execute("SELECT id_usuario, is_admin FROM usuarios WHERE id_usuario = ? AND situacao = 'ativo' FOR UPDATE", [actorId]);
-        if (!actors.length) throw Object.assign(new Error('Sessão institucional necessária.'), { status: 403 });
-        const [notices] = await connection.execute('SELECT id_usuario FROM avisos WHERE id_aviso = ? FOR UPDATE', [noticeId]);
-        if (!notices.length) throw Object.assign(new Error('Aviso não encontrado.'), { status: 404 });
+        const [actors] = await connection.execute(
+            "SELECT id_usuario, is_admin FROM usuarios WHERE id_usuario = ? AND situacao = 'ativo' FOR UPDATE",
+            [actorId]
+        );
+        if (!actors.length)
+            throw Object.assign(new Error('Sessão institucional necessária.'), { status: 403 });
+        const [notices] = await connection.execute(
+            'SELECT id_usuario FROM avisos WHERE id_aviso = ? FOR UPDATE',
+            [noticeId]
+        );
+        if (!notices.length)
+            throw Object.assign(new Error('Aviso não encontrado.'), { status: 404 });
         const actor = actors[0];
-        if (actor.is_admin !== 1 && actor.is_admin !== true && Number(notices[0].id_usuario) !== Number(actor.id_usuario)) {
-            throw Object.assign(new Error('Somente o autor ou um administrador pode excluir esta publicação.'), { status: 403 });
+        if (
+            actor.is_admin !== 1 &&
+            actor.is_admin !== true &&
+            Number(notices[0].id_usuario) !== Number(actor.id_usuario)
+        ) {
+            throw Object.assign(
+                new Error('Somente o autor ou um administrador pode excluir esta publicação.'),
+                { status: 403 }
+            );
         }
         // Leituras são dependências da publicação; outros registros não são removidos.
         await connection.execute('DELETE FROM avisos_lidos WHERE id_aviso = ?', [noticeId]);
-        const [result] = await connection.execute('DELETE FROM avisos WHERE id_aviso = ?', [noticeId]);
+        const [result] = await connection.execute('DELETE FROM avisos WHERE id_aviso = ?', [
+            noticeId
+        ]);
         await connection.commit();
         return result;
     } catch (error) {
         await connection.rollback();
         throw error;
-    } finally { connection.release(); }
+    } finally {
+        connection.release();
+    }
 }
 
 module.exports = {

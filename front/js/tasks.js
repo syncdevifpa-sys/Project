@@ -26,7 +26,8 @@ window.Arcadia = window.Arcadia || {};
     // (o backend não aceita campos faltando: evita "undefined" no mysql2).
     async function patch(id, dados) {
         const r = await crud.get(id);
-        const atual = r && r.data && typeof r.data === 'object' && !Array.isArray(r.data) ? r.data : r;
+        const atual =
+            r && r.data && typeof r.data === 'object' && !Array.isArray(r.data) ? r.data : r;
         const corpo = { ...atual, ...dados };
 
         corpo.data_entrega = soData(corpo.data_entrega);

@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const db = require('../config/database');
 
@@ -7,35 +7,26 @@ async function authenticateExternal(req, res, next) {
 
     if (!authHeader) {
         return res.status(401).json({
-            error: "Token não fornecido."
+            error: 'Token não fornecido.'
         });
     }
 
-    const parts = authHeader.split(" ");
+    const parts = authHeader.split(' ');
 
-    if (
-        parts.length !== 2 ||
-        parts[0] !== "Bearer"
-    ) {
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
         return res.status(401).json({
-            error: "Formato de token inválido."
+            error: 'Formato de token inválido.'
         });
     }
 
     const token = parts[1];
 
     try {
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (
-            decoded.tipo_usuario !== "externo" ||
-            !decoded.id_externo
-        ) {
+        if (decoded.tipo_usuario !== 'externo' || !decoded.id_externo) {
             return res.status(403).json({
-                error: "Token não pertence a um usuário externo."
+                error: 'Token não pertence a um usuário externo.'
             });
         }
 
@@ -44,18 +35,18 @@ async function authenticateExternal(req, res, next) {
             "SELECT t.id_token FROM tokens t JOIN publico_externo p ON p.id_externo = t.id_externo WHERE t.token = ? AND t.id_externo = ? AND t.expiracao > NOW() AND p.situacao = 'ativo'",
             [hash, decoded.id_externo]
         );
-        if (!sessions.length) return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
+        if (!sessions.length)
+            return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
         req.session = sessions[0];
         req.externalUser = decoded;
 
         next();
-
     } catch (error) {
         if (!['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(error.name)) {
             return res.status(500).json({ error: 'Não foi possível validar a sessão.' });
         }
         return res.status(401).json({
-            error: "Token inválido ou expirado."
+            error: 'Token inválido ou expirado.'
         });
     }
 }

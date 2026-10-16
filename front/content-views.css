@@ -1,0 +1,133 @@
+/* Quadros agrupam o fluxo; tabelas alinham os campos para comparação. */
+.ar-content-views {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.ar-content-views [aria-pressed='true'] {
+  outline: 2px solid var(--action);
+}
+.ar-content-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 4px 16px;
+}
+.ar-board-column {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--action);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.ar-board-column > h3 {
+  font-size: 16px;
+  margin: 0 0 16px;
+}
+.ar-board-column > .ar-card {
+  margin-bottom: 12px;
+}
+.ar-table-scroll {
+  max-width: 100%;
+  overflow: auto;
+}
+.ar-view-content {
+  min-width: 0;
+}
+.ar-view-content td .ar-card {
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+@media (max-width: 640px) {
+  .ar-content-board {
+    grid-template-columns: repeat(3, minmax(230px, 85vw));
+  }
+}
+
+/* A cor complementa o nome da categoria, nunca substitui o texto. */
+:root {
+  --event-evento: #176b9a;
+  --event-matricula: #3766c0;
+  --event-edital: #7854a1;
+  --event-cancelamento: #b52f46;
+  --event-feriado: #ae4628;
+  --event-ferias: #32814a;
+  --event-aniversario: #a23980;
+}
+.ar-calendar-color-settings {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.ar-color-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.ar-color-fields label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ar-color-fields input {
+  width: 44px;
+  min-height: 36px;
+  padding: 2px;
+}
+[data-event-category='evento'] {
+  border-inline-start: 4px solid var(--event-evento);
+  padding-inline-start: 8px;
+}
+[data-event-category='matricula'] {
+  border-inline-start: 4px solid var(--event-matricula);
+  padding-inline-start: 8px;
+}
+[data-event-category='edital'] {
+  border-inline-start: 4px solid var(--event-edital);
+  padding-inline-start: 8px;
+}
+[data-event-category='cancelamento'] {
+  border-inline-start: 4px solid var(--event-cancelamento);
+  padding-inline-start: 8px;
+}
+[data-event-category='feriado'] {
+  border-inline-start: 4px solid var(--event-feriado);
+  padding-inline-start: 8px;
+}
+[data-event-category='ferias'] {
+  border-inline-start: 4px solid var(--event-ferias);
+  padding-inline-start: 8px;
+}
+[data-event-category='aniversario'] {
+  border-inline-start: 4px solid var(--event-aniversario);
+  padding-inline-start: 8px;
+}
+
+#kanbanGrid {
+  grid-template-columns: repeat(3, minmax(240px, 1fr)) !important;
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+#kanbanGrid > .ar-col {
+  border-top: 4px solid var(--action);
+  min-width: 0;
+}
+#kanbanGrid > .ar-col:nth-child(2) {
+  border-top-color: #b77b20;
+}
+#kanbanGrid > .ar-col:nth-child(3) {
+  border-top-color: #32814a;
+}
+.ar-board-column[data-status='rascunho'] {
+  border-top-color: #b77b20;
+}
+.ar-board-column[data-status='arquivado'] {
+  border-top-color: #7854a1;
+}

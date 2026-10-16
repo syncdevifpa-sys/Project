@@ -2,7 +2,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap');
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -181,7 +183,7 @@ body {
 }
 
 .eyebrow::before {
-  content: "";
+  content: '';
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -258,7 +260,9 @@ body {
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .form-input:focus {
@@ -326,7 +330,7 @@ body {
   user-select: none;
 }
 
-.checkbox-label input[type="checkbox"] {
+.checkbox-label input[type='checkbox'] {
   accent-color: var(--color-blue);
   width: 16px;
   height: 16px;
@@ -359,7 +363,9 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
 }
 
 .btn-submit:hover {
@@ -542,4 +548,8 @@ body {
 }
 
 /* O envio indisponível deve refletir a orientação do vínculo selecionado. */
-.ar-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.ar-btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}

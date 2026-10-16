@@ -1,34 +1,36 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function findInstitutionalByEmail(email) {
-    const [rows] = await db.execute(`
+    const [rows] = await db.execute(
+        `
         SELECT id_usuario, nome, email
         FROM usuarios
         WHERE email = ?
-    `, [email]);
+    `,
+        [email]
+    );
 
     return rows[0];
 }
 
 async function findExternalByEmail(email) {
-    const [rows] = await db.execute(`
+    const [rows] = await db.execute(
+        `
         SELECT id_externo, nome, email
         FROM publico_externo
         WHERE email = ?
-    `, [email]);
+    `,
+        [email]
+    );
 
     return rows[0];
 }
 
 async function createRecovery(data) {
-    const {
-        id_usuario = null,
-        id_externo = null,
-        token_hash,
-        expiracao
-    } = data;
+    const { id_usuario = null, id_externo = null, token_hash, expiracao } = data;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO recuperacao_senha (
             id_usuario,
             id_externo,
@@ -36,18 +38,16 @@ async function createRecovery(data) {
             expiracao
         )
         VALUES (?, ?, ?, ?)
-    `, [
-        id_usuario,
-        id_externo,
-        token_hash,
-        expiracao
-    ]);
+    `,
+        [id_usuario, id_externo, token_hash, expiracao]
+    );
 
     return result;
 }
 
 async function findValidRecovery(tokenHash) {
-    const [rows] = await db.execute(`
+    const [rows] = await db.execute(
+        `
         SELECT
             id_recuperacao,
             id_usuario,
@@ -59,43 +59,48 @@ async function findValidRecovery(tokenHash) {
           AND usado_em IS NULL
           AND expiracao > NOW()
         LIMIT 1
-    `, [tokenHash]);
+    `,
+        [tokenHash]
+    );
 
     return rows[0];
 }
 
 async function updateInstitutionalPassword(userId, passwordHash) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE usuarios
         SET senha = ?
         WHERE id_usuario = ?
-    `, [
-        passwordHash,
-        userId
-    ]);
+    `,
+        [passwordHash, userId]
+    );
 
     return result;
 }
 
 async function updateExternalPassword(externalId, passwordHash) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE publico_externo
         SET senha = ?
         WHERE id_externo = ?
-    `, [
-        passwordHash,
-        externalId
-    ]);
+    `,
+        [passwordHash, externalId]
+    );
 
     return result;
 }
 
 async function markAsUsed(recoveryId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE recuperacao_senha
         SET usado_em = NOW()
         WHERE id_recuperacao = ?
-    `, [recoveryId]);
+    `,
+        [recoveryId]
+    );
 
     return result;
 }
@@ -104,12 +109,15 @@ async function consumeRecovery(tokenHash, passwordHash) {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
-        const [rows] = await connection.execute(`
+        const [rows] = await connection.execute(
+            `
             SELECT id_recuperacao, id_usuario, id_externo
             FROM recuperacao_senha
             WHERE token_hash = ? AND usado_em IS NULL AND expiracao > NOW()
             LIMIT 1 FOR UPDATE
-        `, [tokenHash]);
+        `,
+            [tokenHash]
+        );
         const recovery = rows[0];
         if (!recovery) {
             await connection.rollback();
@@ -119,15 +127,23 @@ async function consumeRecovery(tokenHash, passwordHash) {
         const table = institutional ? 'usuarios' : 'publico_externo';
         const column = institutional ? 'id_usuario' : 'id_externo';
         const id = institutional ? recovery.id_usuario : recovery.id_externo;
-        await connection.execute(`UPDATE ${table} SET senha = ? WHERE ${column} = ?`, [passwordHash, id]);
+        await connection.execute(`UPDATE ${table} SET senha = ? WHERE ${column} = ?`, [
+            passwordHash,
+            id
+        ]);
         await connection.execute(`DELETE FROM tokens WHERE ${column} = ?`, [id]);
-        await connection.execute(`UPDATE recuperacao_senha SET usado_em = NOW() WHERE ${column} = ? AND usado_em IS NULL`, [id]);
+        await connection.execute(
+            `UPDATE recuperacao_senha SET usado_em = NOW() WHERE ${column} = ? AND usado_em IS NULL`,
+            [id]
+        );
         await connection.commit();
         return true;
     } catch (error) {
         await connection.rollback();
         throw error;
-    } finally { connection.release(); }
+    } finally {
+        connection.release();
+    }
 }
 
 module.exports = {

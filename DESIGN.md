@@ -2,6 +2,7 @@ Leia DESIGN.md antes de começar. Ele é a fonte de verdade de espaçamento,
 tipografia e cor. Não invente valores fora dele.
 
 === ESCOPO (regras rígidas) ===
+
 - Edite SOMENTE: src/components/sections/Numbers.tsx (+ o CSS exclusivo dele)
 - PROIBIDO tocar em: globals.css, tailwind.config, layout raiz, hero,
   qualquer outra seção, package.json
@@ -16,6 +17,7 @@ container e sem grid. Reconstruir o layout dela, mantendo 100% do texto
 atual (não reescreva copy).
 
 === SPEC ===
+
 - Container: max-width 1120px, centralizado, padding lateral 24px (mobile)
   e 48px (>=768px). Padding vertical da seção: 96px mobile / 128px desktop.
 - Eyebrow "SEMESTRE": 11px, uppercase, letter-spacing .12em, cor muted.
@@ -33,6 +35,7 @@ atual (não reescreva copy).
   UMA linha abaixo do grid, em 14px, itens separados por hairline vertical.
 
 === DEFINITION OF DONE ===
+
 1. Build passa sem erro nem warning novo.
 2. Nenhuma classe usada que não exista/não seja gerada.
 3. Testado em 375px, 768px e 1440px sem overflow horizontal.

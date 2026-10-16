@@ -9,9 +9,17 @@ test('início distingue visitante, sessão conectada, apresentação e saída em
     const events = {};
     const root = { dataset: {} };
     const location = { search: '' };
-    const context = { document: { documentElement: root }, location, URLSearchParams,
-        localStorage: { getItem: key => storage[key] },
-        window: { addEventListener: (name, fn) => { events[name] = fn; } } };
+    const context = {
+        document: { documentElement: root },
+        location,
+        URLSearchParams,
+        localStorage: { getItem: (key) => storage[key] },
+        window: {
+            addEventListener: (name, fn) => {
+                events[name] = fn;
+            }
+        }
+    };
     vm.runInNewContext(source, context);
     assert.equal(root.dataset.homeView, 'visitor');
     storage.arcadiaSessao = JSON.stringify({ logado: true, tipo_usuario: 'externo' });

@@ -1,187 +1,340 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meu painel</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu painel</title>
 
-  <!-- Inicialização do tema antes da exibição -->
-  <script>
-    (function () {
-      var THEME_KEY = 'arcadia-theme';
-      var root = document.documentElement;
-      var mode = 'light';
-      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch(e) {}
-      var dark = (mode === 'auto')
-        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-        : (mode === 'dark');
-      root.setAttribute('data-theme', dark ? 'dark' : 'light');
-      root.setAttribute('data-theme-mode', mode);
+    <!-- Inicialização do tema antes da exibição -->
+    <script>
+      (function () {
+        var THEME_KEY = 'arcadia-theme';
+        var root = document.documentElement;
+        var mode = 'light';
+        try {
+          mode = localStorage.getItem(THEME_KEY) || 'light';
+        } catch (e) {}
+        var dark =
+          mode === 'auto'
+            ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            : mode === 'dark';
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        root.setAttribute('data-theme-mode', mode);
 
-      try {
-        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
-        root.setAttribute('data-accent', accent);
-      } catch(e) {}
+        try {
+          var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+          root.setAttribute('data-accent', accent);
+        } catch (e) {}
 
-      try {
-        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
-        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
-      } catch(e) {}
-    })();
-  </script>
+        try {
+          if (localStorage.getItem(THEME_KEY + '-text') === 'large')
+            root.setAttribute('data-text', 'large');
+          if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced')
+            root.setAttribute('data-motion', 'reduced');
+        } catch (e) {}
+      })();
+    </script>
 
-  <link rel="stylesheet" href="tokens.css">
-  <link rel="stylesheet" href="bundle.css">
-<link rel="stylesheet" href="portal-responsive.css">
-<link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
-<link rel="stylesheet" href="scrollbars.css">
-<link rel="stylesheet" href="navigation.css">
-<link rel="stylesheet" href="brand-logo.css">
-</head>
-<body>
-
-  <div class="ar-app">
-
-    <!-- Barra de navegação superior -->
-    <header class="ar-nav">
-      <a class="ar-brand" href="index.html">
-        <img src="assets/arcadia-emblem.png" alt="Logo da Arcadia" class="ar-brand-img ar-brand-img--home" width="34" height="34">
-        <span>
-          <div class="ar-brand-name">Arcadia</div>
-          <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
-        </span>
-      </a>
-
-      <nav class="ar-navpill" aria-label="Seções do portal">
-        <a href="index.html">Início</a>
-        <a href="dashboard.html" aria-current="page">Meu painel</a>
-        <a href="notices.html">Avisos e notícias</a>
-        <a href="tasks.html">Tarefas</a>
-        <a href="documents.html">Documentos</a>
-        <a href="calendar.html">Calendário</a>
-        <span class="ar-sep" aria-hidden="true"></span>
-        <a href="people.html">Pessoas</a>
-        <a href="projects.html">Projetos</a>
-      </nav>
-
-      <div class="ar-nav-end">
-        <button type="button" class="ar-iconbtn" aria-label="Buscar (Ctrl+K)" title="Buscar (Ctrl+K)" data-search-trigger>
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
-        </button>
-
-        <a class="ar-iconbtn" href="settings.html" aria-label="Configurações" title="Configurações">
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" />
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="brand-logo.css" />
+  </head>
+  <body>
+    <div class="ar-app">
+      <!-- Barra de navegação superior -->
+      <header class="ar-nav">
+        <a class="ar-brand" href="index.html">
+          <img
+            src="assets/arcadia-emblem.png"
+            alt="Logo da Arcadia"
+            class="ar-brand-img ar-brand-img--home"
+            width="34"
+            height="34"
+          />
+          <span>
+            <div class="ar-brand-name">Arcadia</div>
+            <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
+          </span>
         </a>
 
-        <a class="ar-user" href="settings.html">
-          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
-          <div>
-            <div class="ar-user-name">Minha conta</div>
-            <div class="ar-user-role"></div>
+        <nav class="ar-navpill" aria-label="Seções do portal">
+          <a href="index.html">Início</a>
+          <a href="dashboard.html" aria-current="page">Meu painel</a>
+          <a href="notices.html">Avisos e notícias</a>
+          <a href="tasks.html">Tarefas</a>
+          <a href="documents.html">Documentos</a>
+          <a href="calendar.html">Calendário</a>
+          <span class="ar-sep" aria-hidden="true"></span>
+          <a href="people.html">Pessoas</a>
+          <a href="projects.html">Projetos</a>
+        </nav>
+
+        <div class="ar-nav-end">
+          <button
+            type="button"
+            class="ar-iconbtn"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            data-search-trigger
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
+          </button>
+
+          <a
+            class="ar-iconbtn"
+            href="settings.html"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M14 17H5"></path>
+              <path d="M19 7h-9"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </a>
+
+          <a class="ar-user" href="settings.html">
+            <span
+              class="ar-avatar ar-avatar--cyan"
+              style="width: 34px; height: 34px; font-size: 13px"
+              >ST</span
+            >
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
+            >Sair</button
+          >
+        </div>
+      </header>
+
+      <!-- Page Hero Banner -->
+      <section class="ar-hero ar-hero--lime ar-hero--large">
+        <svg
+          class="ar-hero-art"
+          viewBox="0 0 1000 220"
+          preserveAspectRatio="xMaxYMax meet"
+          aria-hidden="true"
+        >
+          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+          <rect
+            class="s"
+            x="770"
+            y="116"
+            width="180"
+            height="52"
+            rx="26"
+            opacity="0.75"
+            transform="rotate(-16 860 142)"
+          ></rect>
+          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+          <circle class="d" cx="752" cy="133" r="5"></circle>
+          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+        </svg>
+        <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
+        <div class="ar-hero-side">
+          <p class="ar-hero-desc"
+            >Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.</p
+          >
+          <div class="ar-hero-actions">
+            <a href="tasks.html" class="ar-btn ar-btn--primary">
+              <span>Ver tarefas</span>
+              <svg
+                class="ar-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
           </div>
-        </a>
+        </div>
+      </section>
 
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
-      </div>
-    </header>
+      <!-- StatCard Grid (3 columns) -->
+      <div class="ar-grid-3">
+        <div class="ar-stat">
+          <div class="ar-stat-label">Avisos não lidos</div>
+          <div class="ar-stat-value">—</div>
+          <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
+          <div class="ar-stat-foot">
+            <a href="notices.html" class="ar-link">
+              <span>Ver avisos</span>
+              <svg
+                class="ar-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
 
-    <!-- Page Hero Banner -->
-    <section class="ar-hero ar-hero--lime ar-hero--large">
-      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
-        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)"></rect>
-        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-        <circle class="d" cx="752" cy="133" r="5"></circle>
-        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-      </svg>
-      <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
-      <div class="ar-hero-side">
-        <p class="ar-hero-desc">Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.</p>
-        <div class="ar-hero-actions">
-          <a href="tasks.html" class="ar-btn ar-btn--primary">
-            <span>Ver tarefas</span>
-            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </a>
+        <div class="ar-stat">
+          <div class="ar-stat-label">Tarefas em aberto</div>
+          <div class="ar-stat-value">—</div>
+          <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
+          <div class="ar-stat-foot">
+            <a href="tasks.html" class="ar-link">
+              <span>Ver tarefas</span>
+              <svg
+                class="ar-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="ar-stat ar-stat--pink">
+          <div class="ar-stat-label">Documentos em análise</div>
+          <div class="ar-stat-value">—</div>
+          <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
+          <div class="ar-stat-foot">
+            <a href="documents.html" class="ar-link">
+              <span>Ver documentos</span>
+              <svg
+                class="ar-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
-    </section>
 
-    <!-- StatCard Grid (3 columns) -->
-    <div class="ar-grid-3">
-      <div class="ar-stat">
-        <div class="ar-stat-label">Avisos não lidos</div>
-        <div class="ar-stat-value">—</div>
-        <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
-        <div class="ar-stat-foot">
-          <a href="notices.html" class="ar-link">
-            <span>Ver avisos</span>
-            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </a>
-        </div>
-      </div>
+      <!-- 2 Column List Panels -->
+      <div class="ar-grid-2 ar-dashboard-summaries">
+        <!-- Panel: Upcoming Dates -->
+        <section class="ar-panel">
+          <div class="ar-panel-head">
+            <h3 class="ar-panel-label" style="margin: 0">Próximas datas</h3>
+            <a href="calendar.html" class="ar-link">
+              <span>Abrir calendário</span>
+              <svg
+                class="ar-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="ar-panel-body"><p role="status">Carregando...</p></div>
+        </section>
 
-      <div class="ar-stat">
-        <div class="ar-stat-label">Tarefas em aberto</div>
-        <div class="ar-stat-value">—</div>
-        <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
-        <div class="ar-stat-foot">
-          <a href="tasks.html" class="ar-link">
-            <span>Ver tarefas</span>
-            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="ar-stat ar-stat--pink">
-        <div class="ar-stat-label">Documentos em análise</div>
-        <div class="ar-stat-value">—</div>
-        <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
-        <div class="ar-stat-foot">
-          <a href="documents.html" class="ar-link">
-            <span>Ver documentos</span>
-            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </a>
-        </div>
+        <!-- Panel: Recently Created -->
+        <section class="ar-panel">
+          <div class="ar-panel-head">
+            <h3 class="ar-panel-label" style="margin: 0">Avisos e notícias recentes</h3>
+            <a href="notices.html" class="ar-link">
+              <span>Ver avisos</span>
+              <svg
+                class="ar-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="ar-panel-body"><p role="status">Carregando...</p></div>
+        </section>
       </div>
     </div>
 
-    <!-- 2 Column List Panels -->
-    <div class="ar-grid-2 ar-dashboard-summaries">
-
-      <!-- Panel: Upcoming Dates -->
-      <section class="ar-panel">
-        <div class="ar-panel-head">
-          <h3 class="ar-panel-label" style="margin: 0;">Próximas datas</h3>
-          <a href="calendar.html" class="ar-link">
-            <span>Abrir calendário</span>
-            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </a>
-        </div>
-        <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-      </section>
-
-      <!-- Panel: Recently Created -->
-      <section class="ar-panel">
-        <div class="ar-panel-head">
-          <h3 class="ar-panel-label" style="margin: 0;">Avisos e notícias recentes</h3>
-          <a href="notices.html" class="ar-link">
-            <span>Ver avisos</span>
-            <svg class="ar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </a>
-        </div>
-        <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-      </section>
-
-    </div>
-
-  </div>
-
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/portal.js"></script>
-  <script src="js/pages.js"></script>
-<script src="js/navigation.js"></script>
-</body>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/portal.js"></script>
+    <script src="js/pages.js"></script>
+    <script src="js/navigation.js"></script>
+  </body>
 </html>

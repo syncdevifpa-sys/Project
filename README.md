@@ -18,19 +18,19 @@ Em produção, o endereço padrão da API é o próprio domínio HTTPS. Em local
 
 As páginas HTML usam nomes em inglês; os textos e rótulos da interface continuam em português:
 
-| URL antiga | Página atual |
-|---|---|
-| `inicio.html` | `dashboard.html` |
-| `cadastro.html` | `signup.html` |
-| `avisos.html` | `notices.html` |
-| `aviso.html` | `notice.html` |
-| `calendario.html` | `calendar.html` |
-| `configuracoes.html` | `settings.html` |
-| `documentos.html` | `documents.html` |
-| `perfil.html` | `profile.html` |
-| `pessoas.html` | `people.html` |
-| `projetos.html` | `projects.html` |
-| `tarefas.html` | `tasks.html` |
+| URL antiga             | Página atual          |
+| ---------------------- | --------------------- |
+| `inicio.html`          | `dashboard.html`      |
+| `cadastro.html`        | `signup.html`         |
+| `avisos.html`          | `notices.html`        |
+| `aviso.html`           | `notice.html`         |
+| `calendario.html`      | `calendar.html`       |
+| `configuracoes.html`   | `settings.html`       |
+| `documentos.html`      | `documents.html`      |
+| `perfil.html`          | `profile.html`        |
+| `pessoas.html`         | `people.html`         |
+| `projetos.html`        | `projects.html`       |
+| `tarefas.html`         | `tasks.html`          |
 | `recuperar-senha.html` | `reset-password.html` |
 
 `index.html` e `login.html` mantêm os nomes. Não existem cópias das páginas antigas: redirects permanentes 308 preservam parâmetros de consulta no Express e na Vercel. `page-redirects.json` define o mapa usado pelo Express; o build verifica que `vercel.json` contém os mesmos redirects. O link de recuperação enviado por e-mail já aponta para `reset-password.html`. Live Server não executa os redirects do Express; nele, abra diretamente as páginas novas.
@@ -45,12 +45,12 @@ O `package-lock.json` da raiz é a fonte de instalação para desenvolvimento, t
 
 Configure nos ambientes Production e Preview apenas os nomes abaixo, com os valores fornecidos pelos respectivos serviços:
 
-| Finalidade | Variáveis |
-|---|---|
-| MySQL e autenticação | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET` |
-| TLS do MySQL | `DB_SSL`, `DB_SSL_CA` (certificado CA, quando exigido pelo provedor) |
-| Recuperação por e-mail | `SMTP_USER`, `SMTP_PASS`, `SMTP_SERVICE`, `APP_URL` |
-| Execução | `NODE_ENV`, `PORT` (porta para execução local) |
+| Finalidade             | Variáveis                                                               |
+| ---------------------- | ----------------------------------------------------------------------- |
+| MySQL e autenticação   | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET` |
+| TLS do MySQL           | `DB_SSL`, `DB_SSL_CA` (certificado CA, quando exigido pelo provedor)    |
+| Recuperação por e-mail | `SMTP_USER`, `SMTP_PASS`, `SMTP_SERVICE`, `APP_URL`                     |
+| Execução               | `NODE_ENV`, `PORT` (porta para execução local)                          |
 
 `APP_URL` deve ser a origem HTTPS confiável do portal que receberá o link, configurada explicitamente para cada ambiente. Não é derivada de cabeçalhos enviados pelo cliente. HTTP só é aceito em localhost durante desenvolvimento. `SMTP_SERVICE` identifica um serviço suportado pelo Nodemailer; a implementação atual usa autenticação de serviço SMTP, não um endpoint HTTP de envio. Não use credenciais de produção em previews não confiáveis. Não coloque segredos em `front/auth-config.js`.
 
@@ -166,7 +166,20 @@ Em **Avisos e notícias**, os filtros Público/Situação começam recolhidos at
 O autor também pode **Editar publicação** na lista, tabela, quadro e detalhe. O editor pré-carrega título, resumo, texto, categoria, público, situação, referência, prazo, evento, vagas e indicadores; Cancelar não envia alterações e falhas preservam o texto. PUT /api/notices/:id usa o autor autenticado e o administrador ativo do banco numa transação, valida uma lista fixa de campos e ignora autoria/privilégios do payload. Somente o autor ou administrador pode alterar. Criação valida o mesmo contrato de conteúdo.
 
 A API de leitura filtra publicações por situação e público: visitantes/externos recebem publicados para todos/externo, institucionais recebem também seu vínculo atual; autor e administrador podem consultar seus rascunhos/registro autorizado. Token inválido ou sessão revogada não se tornam visita anônima. Detalhe restrito retorna 403. Contagens de não lidos e histórico de leituras usam o público e o vínculo atuais no banco. Filtros de interface não concedem acesso.
+
 # Página inicial e importação do calendário
+
+### Cores e períodos do PDF
+
+Em **Calendário → Visualização**, alterne entre **Lista** e **Calendário mensal**. A grade mostra eventos em cada dia do período, inclusive quando atravessam meses, e os detalhes completos aparecem ao selecionar o dia. O filtro Calendário/período continua separando anos e modalidades.
+
+Administradores podem escolher um calendário/período e clicar em **Selecionar calendário inteiro** para marcar todos os seus eventos, inclusive de outros meses e categorias. Sem um período escolhido, essa opção fica desabilitada. **Marcar todos visíveis** considera os filtros e o mês da grade. **Apagar selecionados** exige confirmação com quantidade e período, mantém a permissão no backend e informa falhas parciais. Selecionar ou alternar a visualização não apaga dados.
+
+A extração cruza as células vetoriais com a legenda da modalidade selecionada. Uma cor só classifica um período inteiro quando todos os seus dias têm a mesma cor reconhecida; uma única data colorida não classifica o intervalo todo. Quadros estatísticos não são tratados como legenda. Cores desconhecidas, legendas conflitantes, divergência entre texto e cor e datas incompletas exigem revisão individual e ficam fora da seleção em lote.
+
+Feriados e férias indicados pela legenda ou descrição são distinguidos de eventos, avaliações e interrupções apenas presenciais. Férias de docentes não são interpretadas como suspensão geral das aulas. O mesmo evento em datas consecutivas pode ser agrupado, inclusive ao cruzar mês ou ano explícito; lacunas, eventos e modalidades diferentes permanecem separados. A descrição importada preserva a classificação, o trecho e as páginas de origem. A cor ajuda a revisão, mas não é o único sinal exibido.
+
+Para cada novo calendário anual, envie o PDF no próprio Arcadia, confirme ano/modalidade e revise a prévia antes de publicar. Uma versão revisada não altera automaticamente eventos anteriores: duplicatas idênticas são ignoradas, mas correções de título ou datas precisam ser reconciliadas com o calendário existente. Esta melhoria não exige migração do banco e não importou eventos reais.
 
 ## Compartilhamento opcional em Pessoas
 
@@ -180,6 +193,16 @@ O auxiliar `tools/final-ui-preview.cjs` usa somente dados fictícios e preferên
 
 Ao entrar na conta, o Início destaca o acesso ao painel, notícias e projetos. As seções de apresentação continuam disponíveis em **Sobre a Arcadia** (`index.html?sobre=1`), e as dúvidas em **Ajuda**. Visitantes continuam vendo a apresentação completa. A identificação local de sessão altera apenas a apresentação; a autorização continua sendo validada pela API.
 
-Em **Calendário → Importar PDF**, docentes, servidores e administradores podem selecionar um PDF com texto de até 4 MB, informar o ano e o nível de ensino e extrair uma prévia. É necessário conferir títulos e datas, marcar os eventos desejados e confirmar a publicação no calendário público. Datas ambíguas exigem correção; arquivos escaneados sem texto não têm reconhecimento automático. A importação evita duplicatas e não altera eventos existentes. Não requer alteração no esquema do calendário.
+Em **Calendário → Importar PDF**, docentes, servidores e administradores podem selecionar um PDF com texto de até 4 MB, informar o ano e o nível de ensino e extrair uma prévia. É necessário conferir títulos e datas, marcar os eventos desejados e confirmar a publicação no calendário público. Datas ambíguas exigem correção; arquivos escaneados sem texto não têm reconhecimento automático. A importação evita duplicatas e não altera eventos existentes. A importação com as categorias anteriores usa o esquema existente; férias e aniversários exigem a atualização incremental descrita abaixo.
 
 Para publicar as alterações do frontend, execute `npm run build`; a saída gerada fica em `public/`. A leitura de PDFs foi verificada com os dois arquivos de referência, e os testes de gravação utilizam banco simulado. A gravação e a execução na Vercel devem ser conferidas no ambiente de destino.
+
+### Calendário público, imagens e apresentações
+
+- A consulta do calendário dispensa login e está disponível na navegação pública. Criação, edição e exclusão mantêm as permissões atuais.
+- No PDF, cada descrição usa o mês do cabeçalho de sua coluna, inclusive quando a tabela continua na página seguinte; o número inicial representa o dia. Datas incompletas ou ambíguas continuam exigindo revisão.
+- Férias e aniversários têm categorias e cores próprias. Antes de usar essas categorias em banco existente, execute o arquivo incremental backend/admin/add-calendar-categories.sql no banco correto; não execute o esquema completo. Nenhuma migração é executada automaticamente.
+- As cores das categorias podem ser personalizadas em Configurações > Aparência, por usuário neste navegador, com restauração dos padrões. O texto da categoria acompanha a cor.
+- Notícias preservam a proporção das capas, com opções Original, Paisagem (16:9) e Retrato (4:5) no enquadramento. O editor oferece zoom e posição na prévia, cancelamento e edição da imagem existente; a publicação precisa ser salva para gravar a alteração.
+- Notícias têm quadro por situação. Projetos e documentos oferecem lista, tabela e quadro agrupado; tarefas mantêm três colunas de andamento. Os controles de edição continuam no conteúdo.
+- Configurações permite editar nome, nome social, e-mail, telefone, apresentação e foto, além de preferências visuais e compartilhamento. Curso e vínculo seguem as regras institucionais existentes.

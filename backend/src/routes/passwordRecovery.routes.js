@@ -1,20 +1,11 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
 
-const {
-    requestRecovery,
-    resetPassword
-} = require("../controllers/passwordRecovery.controller");
+const { requestRecovery, resetPassword } = require('../controllers/passwordRecovery.controller');
 
-router.post(
-    "/request",
-    requestRecovery
-);
+router.post('/request', requestRecovery);
 
-router.post(
-    "/reset",
-    resetPassword
-);
+router.post('/reset', resetPassword);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listUsers() {
     const [users] = await db.execute(`
@@ -34,7 +34,8 @@ module.exports = {
 };
 
 async function findUserById(Userid, includeInactive = false) {
-    const [user] = await db.execute(`
+    const [user] = await db.execute(
+        `
         SELECT
             id_usuario, 
             nome,
@@ -55,8 +56,10 @@ async function findUserById(Userid, includeInactive = false) {
             criado_em,
             atualizado_em
         FROM usuarios
-        WHERE id_usuario = ? ${includeInactive ? "" : "AND situacao = 'ativo'"}
-    `, [Userid]);
+        WHERE id_usuario = ? ${includeInactive ? '' : "AND situacao = 'ativo'"}
+    `,
+        [Userid]
+    );
 
     return user[0];
 }
@@ -91,7 +94,8 @@ async function listUsers() {
 }
 
 async function findUserById(userId, includeInactive = false) {
-    const [users] = await db.execute(`
+    const [users] = await db.execute(
+        `
         SELECT
             id_usuario,
             nome,
@@ -112,8 +116,10 @@ async function findUserById(userId, includeInactive = false) {
             criado_em,
             atualizado_em
         FROM usuarios
-        WHERE id_usuario = ? ${includeInactive ? "" : "AND situacao = 'ativo'"}
-    `, [userId]);
+        WHERE id_usuario = ? ${includeInactive ? '' : "AND situacao = 'ativo'"}
+    `,
+        [userId]
+    );
 
     return users[0];
 }
@@ -133,7 +139,8 @@ async function createUser(userData) {
         sobre = null
     } = userData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO usuarios (
             nome,
             nome_social,
@@ -148,29 +155,53 @@ async function createUser(userData) {
             sobre
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-        nome,
-        nome_social,
-        email,
-        telefone,
-        senha,
-        tipo_usuario,
-        matricula,
-        id_curso,
-        periodo,
-        setor,
-        sobre
-    ]);
+    `,
+        [
+            nome,
+            nome_social,
+            email,
+            telefone,
+            senha,
+            tipo_usuario,
+            matricula,
+            id_curso,
+            periodo,
+            setor,
+            sobre
+        ]
+    );
 
     return result;
 }
 
 async function updateUser(userId, userData) {
-    const allowed = ['nome', 'nome_social', 'email', 'telefone', 'tipo_usuario', 'matricula', 'id_curso', 'periodo', 'setor', 'sobre', 'foto', 'preferencias'];
-    const fields = allowed.filter(field => Object.prototype.hasOwnProperty.call(userData, field));
+    const allowed = [
+        'nome',
+        'nome_social',
+        'email',
+        'telefone',
+        'tipo_usuario',
+        'matricula',
+        'id_curso',
+        'periodo',
+        'setor',
+        'sobre',
+        'foto',
+        'preferencias'
+    ];
+    const fields = allowed.filter((field) => Object.prototype.hasOwnProperty.call(userData, field));
     if (!fields.length) return { affectedRows: 1 };
-    const values = fields.map(field => field === 'preferencias' && typeof userData[field] === 'object' ? JSON.stringify(userData[field]) : userData[field]);
-    const [result] = await db.execute('UPDATE usuarios SET ' + fields.map(field => field + ' = ?').join(', ') + ' WHERE id_usuario = ?', [...values, userId]);
+    const values = fields.map((field) =>
+        field === 'preferencias' && typeof userData[field] === 'object'
+            ? JSON.stringify(userData[field])
+            : userData[field]
+    );
+    const [result] = await db.execute(
+        'UPDATE usuarios SET ' +
+            fields.map((field) => field + ' = ?').join(', ') +
+            ' WHERE id_usuario = ?',
+        [...values, userId]
+    );
     return result;
 }
 

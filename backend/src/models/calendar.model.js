@@ -1,4 +1,4 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listEvents() {
     const [events] = await db.execute(`
@@ -24,7 +24,8 @@ async function listEvents() {
 }
 
 async function findEventById(eventId) {
-    const [events] = await db.execute(`
+    const [events] = await db.execute(
+        `
         SELECT
             id_evento,
             id_usuario,
@@ -41,7 +42,9 @@ async function findEventById(eventId) {
             atualizado_em
         FROM calendario
         WHERE id_evento = ?
-    `, [eventId]);
+    `,
+        [eventId]
+    );
 
     return events[0];
 }
@@ -50,7 +53,7 @@ async function createEvent(userId, eventData) {
     const {
         titulo,
         descricao = null,
-        categoria = "evento",
+        categoria = 'evento',
         periodo_letivo = null,
         data_evento,
         data_fim = null,
@@ -59,7 +62,8 @@ async function createEvent(userId, eventData) {
         local = null
     } = eventData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO calendario (
             id_usuario,
             titulo,
@@ -73,18 +77,20 @@ async function createEvent(userId, eventData) {
             local
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-        userId,
-        titulo,
-        descricao,
-        categoria,
-        periodo_letivo,
-        data_evento,
-        data_fim,
-        hora_inicio,
-        hora_fim,
-        local
-    ]);
+    `,
+        [
+            userId,
+            titulo,
+            descricao,
+            categoria,
+            periodo_letivo,
+            data_evento,
+            data_fim,
+            hora_inicio,
+            hora_fim,
+            local
+        ]
+    );
 
     return result;
 }
@@ -108,7 +114,8 @@ async function updateEvent(eventId, eventData) {
         local = currentEvent.local
     } = eventData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE calendario
         SET
             titulo = ?,
@@ -121,27 +128,32 @@ async function updateEvent(eventId, eventData) {
             hora_fim = ?,
             local = ?
         WHERE id_evento = ?
-    `, [
-        titulo,
-        descricao,
-        categoria,
-        periodo_letivo,
-        data_evento,
-        data_fim,
-        hora_inicio,
-        hora_fim,
-        local,
-        eventId
-    ]);
+    `,
+        [
+            titulo,
+            descricao,
+            categoria,
+            periodo_letivo,
+            data_evento,
+            data_fim,
+            hora_inicio,
+            hora_fim,
+            local,
+            eventId
+        ]
+    );
 
     return result;
 }
 
 async function deleteEvent(eventId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM calendario
         WHERE id_evento = ?
-    `, [eventId]);
+    `,
+        [eventId]
+    );
 
     return result;
 }
