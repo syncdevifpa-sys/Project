@@ -1,0 +1,6 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const nodes=new Map();const element=()=>({style:{},setAttribute(){},querySelector(){return null;},appendChild(node){nodes.set(node.id,node);},remove(){}});
+const sandbox={window:{addEventListener(){}},document:{documentElement:{},addEventListener(){},getElementById:id=>nodes.get(id)||null,createElement:element,body:{appendChild(node){nodes.set(node.id,node);}}},setTimeout:()=>1,clearTimeout(){},localStorage:{getItem:()=>null},console};
+vm.runInNewContext(fs.readFileSync('front/js/portal.js','utf8'),sandbox);sandbox.window.Arcadia.showToast('<b data-audit>texto fictício</b>');
+const unescaped=nodes.get('ar-toast-global').innerHTML.includes('<b data-audit>texto fictício</b>');assert.equal(unescaped,true);
+(async()=>{const bcrypt=require('../../node_modules/bcrypt');const first='a'.repeat(72)+'x',second='a'.repeat(72)+'y';const hash=await bcrypt.hash(first,10);const collision=await bcrypt.compare(second,hash);assert.equal(collision,true);const result={toastInsertsHtmlWithoutEscaping:unescaped,remoteXssExploitConfirmed:false,bcryptLongPasswordsShareFirst72Bytes:collision};fs.writeFileSync('tmp/security-audit/unit-probes.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));})();

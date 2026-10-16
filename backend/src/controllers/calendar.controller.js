@@ -1,15 +1,18 @@
 const { validateContent, editContent } = require('../services/content-edit.service');
-const calendarModel = require("../models/calendar.model");
+const calendarModel = require('../models/calendar.model');
 
 async function listEvents(req, res) {
     try {
         const events = await calendarModel.listEvents();
 
         return res.json(events);
-
     } catch (error) {
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
+            return res.status(409).json({
+                error: 'O banco precisa da atualização de categorias do calendário antes de salvar férias ou aniversários.'
+            });
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao buscar eventos do calendário:", error);
+        console.error('Erro ao buscar eventos do calendário:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -25,15 +28,18 @@ async function getEventById(req, res) {
 
         if (!event) {
             return res.status(404).json({
-                error: "Evento do calendário não encontrado."
+                error: 'Evento do calendário não encontrado.'
             });
         }
 
         return res.json(event);
-
     } catch (error) {
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
+            return res.status(409).json({
+                error: 'O banco precisa da atualização de categorias do calendário antes de salvar férias ou aniversários.'
+            });
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao buscar evento do calendário:", error);
+        console.error('Erro ao buscar evento do calendário:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -45,14 +51,11 @@ async function createEvent(req, res) {
     try {
         const userId = req.user.id_usuario;
 
-        const {
-            titulo,
-            data_evento
-        } = req.body;
+        const { titulo, data_evento } = req.body;
 
         if (!titulo || !data_evento) {
             return res.status(400).json({
-                error: "Título e data do evento são obrigatórios."
+                error: 'Título e data do evento são obrigatórios.'
             });
         }
 
@@ -62,13 +65,16 @@ async function createEvent(req, res) {
         );
 
         return res.status(201).json({
-            message: "Evento do calendário criado com sucesso.",
+            message: 'Evento do calendário criado com sucesso.',
             eventId: result.insertId
         });
-
     } catch (error) {
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
+            return res.status(409).json({
+                error: 'O banco precisa da atualização de categorias do calendário antes de salvar férias ou aniversários.'
+            });
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao criar evento do calendário:", error);
+        console.error('Erro ao criar evento do calendário:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -84,17 +90,20 @@ async function updateEvent(req, res) {
 
         if (!result) {
             return res.status(404).json({
-                error: "Evento do calendário não encontrado."
+                error: 'Evento do calendário não encontrado.'
             });
         }
 
         return res.json({
-            message: "Evento do calendário atualizado com sucesso."
+            message: 'Evento do calendário atualizado com sucesso.'
         });
-
     } catch (error) {
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
+            return res.status(409).json({
+                error: 'O banco precisa da atualização de categorias do calendário antes de salvar férias ou aniversários.'
+            });
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao atualizar evento do calendário:", error);
+        console.error('Erro ao atualizar evento do calendário:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'
@@ -110,17 +119,20 @@ async function deleteEvent(req, res) {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                error: "Evento do calendário não encontrado."
+                error: 'Evento do calendário não encontrado.'
             });
         }
 
         return res.json({
-            message: "Evento do calendário excluído com sucesso."
+            message: 'Evento do calendário excluído com sucesso.'
         });
-
     } catch (error) {
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
+            return res.status(409).json({
+                error: 'O banco precisa da atualização de categorias do calendário antes de salvar férias ou aniversários.'
+            });
         if (error.status) return res.status(error.status).json({ error: error.message });
-        console.error("Erro ao excluir evento do calendário:", error);
+        console.error('Erro ao excluir evento do calendário:', error);
 
         return res.status(500).json({
             error: 'Não foi possível concluir a operação. Tente novamente.'

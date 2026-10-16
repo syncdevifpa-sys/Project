@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -18,17 +18,22 @@
 
     <link rel="icon" type="image/png" href="public/arcadia-logo-64.png" />
     <link rel="stylesheet" href="landing.css" />
-  <link rel="stylesheet" href="scrollbars.css">
-<link rel="stylesheet" href="brand-logo.css">
-<link rel="stylesheet" href="notice-cover.css">
-</head>
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="notice-cover.css" />
+  </head>
   <body>
-
     <!-- 1. Barra de navegação fixa -->
     <header class="navbar-wrapper">
       <nav class="navbar" id="mainNavbar" aria-label="Navegação principal">
         <a href="#" class="nav-brand">
-          <img src="assets/arcadia-emblem.png" alt="Emblema da Arcadia" class="nav-brand-logo" width="34" height="34" />
+          <img
+            src="assets/arcadia-emblem.png"
+            alt="Emblema da Arcadia"
+            class="nav-brand-logo"
+            width="34"
+            height="34"
+          />
           <span class="nav-brand-title">Arcadia</span>
           <span class="nav-brand-tag">IFPA Belém</span>
         </a>
@@ -36,30 +41,51 @@
         <div class="nav-links">
           <a href="index.html#public-news" class="nav-link">Notícias</a>
           <a href="index.html#public-projects" class="nav-link">Projetos</a>
+          <a href="calendar.html" class="nav-link">Calendário</a>
           <a href="index.html?sobre=1" class="nav-link">Sobre a Arcadia</a>
           <a href="#how-it-works" class="nav-link" data-home-intro>Como funciona</a>
           <a href="index.html?sobre=1#faq" class="nav-link">Ajuda</a>
         </div>
 
         <div class="nav-actions">
-          <a class="nav-account" href="settings.html" id="homeAccount" aria-label="Abrir minha conta" hidden>
+          <a
+            class="nav-account"
+            href="settings.html"
+            id="homeAccount"
+            aria-label="Abrir minha conta"
+            hidden
+          >
             <span class="nav-account-avatar" id="homeAccountAvatar" aria-hidden="true"></span>
           </a>
           <a href="dashboard.html" class="nav-btn-login">Meu painel</a>
-          <a href="signup.html" class="btn-pill btn-pill--primary nav-btn-signup">Criar conta &rarr;</a>
-          <button type="button" class="nav-toggle-btn" id="navMobileToggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+          <a href="signup.html" class="btn-pill btn-pill--primary nav-btn-signup"
+            >Criar conta &rarr;</a
+          >
+          <button
+            type="button"
+            class="nav-toggle-btn"
+            id="navMobileToggle"
+            aria-label="Abrir menu"
+            aria-expanded="false"
+            >&#9776;</button
+          >
         </div>
 
         <!-- Menu expansível para telas pequenas -->
         <div class="nav-mobile-panel" id="navMobilePanel">
           <a href="index.html#public-news" class="nav-link">Notícias</a>
           <a href="index.html#public-projects" class="nav-link">Projetos</a>
+          <a href="calendar.html" class="nav-link">Calendário</a>
           <a href="index.html?sobre=1" class="nav-link">Sobre a Arcadia</a>
           <a href="#how-it-works" class="nav-link" data-home-intro>Como funciona</a>
           <a href="index.html?sobre=1#faq" class="nav-link">Ajuda</a>
           <div class="nav-mobile-ctas">
-            <a href="dashboard.html" class="btn-pill btn-pill--outline" style="width: 100%;">Meu painel</a>
-            <a href="signup.html" class="btn-pill btn-pill--primary" style="width: 100%;">Criar conta &rarr;</a>
+            <a href="dashboard.html" class="btn-pill btn-pill--outline" style="width: 100%"
+              >Meu painel</a
+            >
+            <a href="signup.html" class="btn-pill btn-pill--primary" style="width: 100%"
+              >Criar conta &rarr;</a
+            >
           </div>
         </div>
       </nav>
@@ -69,7 +95,10 @@
     <section data-home-intro class="hero-card" id="home">
       <!-- Formas vetoriais decorativas -->
       <svg class="hero-deco-shape shape-star-yellow" viewBox="0 0 160 160" aria-hidden="true">
-        <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+        <polygon
+          points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40"
+          fill="#ffd000"
+        />
       </svg>
       <svg class="hero-deco-shape shape-quad-red" viewBox="0 0 180 140" aria-hidden="true">
         <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
@@ -78,10 +107,20 @@
         <path d="M10,10 C90,30 130,90 90,160 C50,130 50,70 10,10 Z" fill="#ffd000" opacity="0.9" />
       </svg>
       <svg class="hero-deco-shape shape-zigzag-lime" viewBox="0 0 140 50" aria-hidden="true">
-        <path d="M10,40 L40,10 L70,40 L100,10 L130,40" fill="none" stroke="#bef264" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+        <path
+          d="M10,40 L40,10 L70,40 L100,10 L130,40"
+          fill="none"
+          stroke="#bef264"
+          stroke-width="12"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </svg>
       <svg class="hero-deco-shape shape-star-pink" viewBox="0 0 120 120" aria-hidden="true">
-        <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
+        <path
+          d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z"
+          fill="#fbb6ce"
+        />
       </svg>
       <svg class="hero-deco-shape shape-wave-cyan" viewBox="0 0 200 120" aria-hidden="true">
         <path d="M0,60 Q50,0 100,60 T200,60 L200,120 L0,120 Z" fill="#8be4f9" opacity="0.75" />
@@ -101,15 +140,22 @@
         </h1>
 
         <p class="hero-subtitle reveal-item">
-          Avisos, matrículas, calendário, documentos e projetos de pesquisa do seu campus, organizados por data, categoria e público-alvo. Tudo em um só lugar.
+          Avisos, matrículas, calendário, documentos e projetos de pesquisa do seu campus,
+          organizados por data, categoria e público-alvo. Tudo em um só lugar.
         </p>
 
         <div class="hero-actions reveal-item">
-          <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
-          <a href="dashboard.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar meu painel</a>
+          <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero"
+            >Criar conta &rarr;</a
+          >
+          <a href="dashboard.html" class="btn-pill btn-pill--outline btn-pill--hero"
+            >Acessar meu painel</a
+          >
         </div>
 
-        <p class="hero-note reveal-item">Gratuito para alunos, professores e servidores. Cadastre-se com seu e-mail.</p>
+        <p class="hero-note reveal-item"
+          >Gratuito para alunos, professores e servidores. Cadastre-se com seu e-mail.</p
+        >
       </div>
 
       <!-- Moldura da prévia do navegador -->
@@ -126,12 +172,31 @@
               <span class="browser-dot browser-dot--green"></span>
             </div>
             <div class="browser-address-bar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
               <span>arcadia.app/portal</span>
             </div>
           </div>
           <div class="browser-content">
-            <img src="assets/print-hero.png" alt="Prévia do painel da Arcadia" class="browser-image" width="1280" height="800" />
+            <img
+              src="assets/print-hero.png"
+              alt="Prévia do painel da Arcadia"
+              class="browser-image"
+              width="1280"
+              height="800"
+            />
           </div>
         </div>
       </div>
@@ -144,13 +209,23 @@
       <h2 class="manifesto-quote reveal-item">
         A Arcadia é o mural digital
         <span class="inline-badge inline-badge--black" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 160 160"><polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" /></svg>
+          <svg width="22" height="22" viewBox="0 0 160 160">
+            <polygon
+              points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40"
+              fill="#ffd000"
+            />
+          </svg>
         </span>
         do IFPA Campus Belém.
         <span class="text-muted">
           Avisos, prazos e documentos acadêmicos
           <span class="inline-badge inline-badge--red" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 120 120"><path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#ffffff" /></svg>
+            <svg width="20" height="20" viewBox="0 0 120 120">
+              <path
+                d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z"
+                fill="#ffffff"
+              />
+            </svg>
           </span>
           para você acompanhar com clareza e praticidade.
         </span>
@@ -160,7 +235,9 @@
         <div class="stat-item reveal-item">
           <span class="stat-label">Alcance</span>
           <div class="stat-value">1,284</div>
-          <p class="stat-desc">avisos organizados, sem depender de mensagens espalhadas em grupos.</p>
+          <p class="stat-desc"
+            >avisos organizados, sem depender de mensagens espalhadas em grupos.</p
+          >
         </div>
 
         <div class="stat-item reveal-item">
@@ -195,19 +272,30 @@
               <span class="bento-tag bento-tag--board">Mural oficial</span>
               <h3 class="bento-card-title">Avisos e comunicados atualizados</h3>
               <p class="bento-card-desc">
-                Atualizações da coordenação acadêmica: horários de aula, cancelamentos urgentes e prazos de matrícula.
+                Atualizações da coordenação acadêmica: horários de aula, cancelamentos urgentes e
+                prazos de matrícula.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-notices.png" alt="Prévia do mural oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img
+                src="assets/print-notices.png"
+                alt="Prévia do mural oficial"
+                class="bento-print-img"
+                width="1280"
+                height="800"
+                loading="eager"
+              />
             </div>
           </article>
 
           <!-- Cartão 2: Filtros por vínculo -->
           <article class="bento-card bento-card--affiliation reveal-item">
             <svg class="shape-affiliation-star" viewBox="0 0 120 120" aria-hidden="true">
-              <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
+              <path
+                d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z"
+                fill="#fbb6ce"
+              />
             </svg>
             <div class="shape-affiliation-circle" aria-hidden="true"></div>
 
@@ -222,7 +310,14 @@
             <div class="phone-mockup-wrap">
               <div class="phone-mockup">
                 <div class="phone-mockup-screen">
-                  <img src="assets/print-mobile.png" alt="Prévia do portal no celular" class="phone-mockup-img" width="390" height="844" loading="eager" />
+                  <img
+                    src="assets/print-mobile.png"
+                    alt="Prévia do portal no celular"
+                    class="phone-mockup-img"
+                    width="390"
+                    height="844"
+                    loading="eager"
+                  />
                 </div>
               </div>
             </div>
@@ -237,12 +332,20 @@
               <span class="bento-tag bento-tag--doc">Central de documentos</span>
               <h3 class="bento-card-title">Formulários e documentos acadêmicos</h3>
               <p class="bento-card-desc">
-                Acompanhe solicitações de certificados, comprovantes de matrícula, declarações e históricos.
+                Acompanhe solicitações de certificados, comprovantes de matrícula, declarações e
+                históricos.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-documents.png" alt="Central de documentos acadêmicos" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img
+                src="assets/print-documents.png"
+                alt="Central de documentos acadêmicos"
+                class="bento-print-img"
+                width="1280"
+                height="800"
+                loading="eager"
+              />
             </div>
           </article>
 
@@ -252,12 +355,20 @@
               <span class="bento-tag bento-tag--cal">Calendário acadêmico</span>
               <h3 class="bento-card-title">Datas acadêmicas em um só lugar</h3>
               <p class="bento-card-desc">
-                Provas, reposições, feriados e eventos do semestre publicados pela secretaria acadêmica.
+                Provas, reposições, feriados e eventos do semestre publicados pela secretaria
+                acadêmica.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-calendar.png" alt="Calendário acadêmico oficial" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img
+                src="assets/print-calendar.png"
+                alt="Calendário acadêmico oficial"
+                class="bento-print-img"
+                width="1280"
+                height="800"
+                loading="eager"
+              />
             </div>
           </article>
 
@@ -267,12 +378,20 @@
               <span class="bento-tag bento-tag--proj">Pesquisa e extensão</span>
               <h3 class="bento-card-title">Projetos da comunidade acadêmica</h3>
               <p class="bento-card-desc">
-                Bolsas PIBIC, feiras de robótica, laboratórios de pesquisa e iniciativas de extensão.
+                Bolsas PIBIC, feiras de robótica, laboratórios de pesquisa e iniciativas de
+                extensão.
               </p>
             </div>
             <div class="bento-frame-mini">
               <div class="bento-frame-bar"><span></span><span></span><span></span></div>
-              <img src="assets/print-projects.png" alt="Projetos de pesquisa e extensão do campus" class="bento-print-img" width="1280" height="800" loading="eager" />
+              <img
+                src="assets/print-projects.png"
+                alt="Projetos de pesquisa e extensão do campus"
+                class="bento-print-img"
+                width="1280"
+                height="800"
+                loading="eager"
+              />
             </div>
           </article>
         </div>
@@ -298,15 +417,26 @@
         <article class="for-whom-box">
           <div class="box-top-deco">
             <svg class="box-icon" viewBox="0 0 160 160" aria-hidden="true">
-              <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+              <polygon
+                points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40"
+                fill="#ffd000"
+              />
             </svg>
             <span class="box-tag">Alunos</span>
           </div>
           <h3 class="box-title">Graduação e cursos técnicos</h3>
-          <p class="box-desc">Prazos, bolsas e atualizações do curso sem depender de mensagens espalhadas em grupos.</p>
+          <p class="box-desc"
+            >Prazos, bolsas e atualizações do curso sem depender de mensagens espalhadas em
+            grupos.</p
+          >
           <ul class="box-list">
-            <li><span class="box-dot box-dot--yellow"></span>Períodos de matrícula e rematrícula</li>
-            <li><span class="box-dot box-dot--yellow"></span>Editais de iniciação científica (PIBIC)</li>
+            <li
+              ><span class="box-dot box-dot--yellow"></span>Períodos de matrícula e rematrícula</li
+            >
+            <li
+              ><span class="box-dot box-dot--yellow"></span>Editais de iniciação científica
+              (PIBIC)</li
+            >
             <li><span class="box-dot box-dot--yellow"></span>Calendários de provas e reposições</li>
           </ul>
         </article>
@@ -320,9 +450,13 @@
             <span class="box-tag">Docentes</span>
           </div>
           <h3 class="box-title">Professores e instrutores</h3>
-          <p class="box-desc">Editais, prazos de entrega e mudanças no calendário das suas turmas.</p>
+          <p class="box-desc"
+            >Editais, prazos de entrega e mudanças no calendário das suas turmas.</p
+          >
           <ul class="box-list">
-            <li><span class="box-dot box-dot--red"></span>Editais internos de extensão e pesquisa</li>
+            <li
+              ><span class="box-dot box-dot--red"></span>Editais internos de extensão e pesquisa</li
+            >
             <li><span class="box-dot box-dot--red"></span>Prazos para lançamento de notas</li>
             <li><span class="box-dot box-dot--red"></span>Atualizações do calendário acadêmico</li>
           </ul>
@@ -337,9 +471,14 @@
             <span class="box-tag">Servidores e administração</span>
           </div>
           <h3 class="box-title">Equipe administrativa</h3>
-          <p class="box-desc">Fluxos internos, comunicados e documentos de gestão em um só lugar.</p>
+          <p class="box-desc"
+            >Fluxos internos, comunicados e documentos de gestão em um só lugar.</p
+          >
           <ul class="box-list">
-            <li><span class="box-dot box-dot--cyan"></span>Formulários oficiais e processos administrativos</li>
+            <li
+              ><span class="box-dot box-dot--cyan"></span>Formulários oficiais e processos
+              administrativos</li
+            >
             <li><span class="box-dot box-dot--cyan"></span>Documentos internos do campus</li>
             <li><span class="box-dot box-dot--cyan"></span>Comunicados da direção e da gestão</li>
           </ul>
@@ -362,7 +501,10 @@
           <div class="step-banner step-banner--blue">
             <div class="step-shape-wrap">
               <svg viewBox="0 0 160 160" aria-hidden="true">
-                <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+                <polygon
+                  points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40"
+                  fill="#ffd000"
+                />
               </svg>
               <span class="step-number">1</span>
             </div>
@@ -384,7 +526,9 @@
           </div>
           <div class="step-body">
             <h3 class="step-title">Informe seu vínculo</h3>
-            <p class="step-desc">Selecione seu vínculo com o campus: aluno, professor, servidor ou comunidade.</p>
+            <p class="step-desc"
+              >Selecione seu vínculo com o campus: aluno, professor, servidor ou comunidade.</p
+            >
           </div>
         </li>
 
@@ -392,7 +536,10 @@
           <div class="step-banner step-banner--green">
             <div class="step-shape-wrap">
               <svg viewBox="0 0 120 120" aria-hidden="true">
-                <path d="M60,4 L73,21 L94,14 L99,35 L120,38 L114,59 L129,74 L114,89 L120,110 L99,113 L94,134 L73,127 L60,144 L47,127 L26,134 L21,113 L0,110 L6,89 L-9,74 L6,59 L0,38 L21,35 L26,14 L47,21 Z" fill="#3cc299" />
+                <path
+                  d="M60,4 L73,21 L94,14 L99,35 L120,38 L114,59 L129,74 L114,89 L120,110 L99,113 L94,134 L73,127 L60,144 L47,127 L26,134 L21,113 L0,110 L6,89 L-9,74 L6,59 L0,38 L21,35 L26,14 L47,21 Z"
+                  fill="#3cc299"
+                />
               </svg>
               <span class="step-number">3</span>
             </div>
@@ -411,7 +558,9 @@
         <div class="faq-left">
           <span class="eyebrow-pill">Dúvidas frequentes</span>
           <h2 class="faq-main-title">Dúvidas frequentes</h2>
-          <p class="faq-support-text">Não encontrou o que procura? Entre em contato com a equipe:</p>
+          <p class="faq-support-text"
+            >Não encontrou o que procura? Entre em contato com a equipe:</p
+          >
           <a href="mailto:syncdevifpa@gmail.com" class="faq-email-link">syncdevifpa@gmail.com</a>
         </div>
 
@@ -422,8 +571,18 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Qualquer pessoa pode consultar as publicações públicas. Alunos podem criar uma conta com e-mail, senha e um curso cadastrado. Quem não tem vínculo com o campus pode escolher Comunidade externa; essa conta não dá acesso às funções institucionais. Contas de professor e servidor dependem de validação administrativa.</p>
-              <p>A entrada é por e-mail e senha; o login com Google ainda não está disponível. A recuperação de senha depende do serviço de envio de e-mail configurado. Se ele estiver indisponível, a tela informa o problema.</p>
+              <p
+                >Qualquer pessoa pode consultar as publicações públicas. Alunos podem criar uma
+                conta com e-mail, senha e um curso cadastrado. Quem não tem vínculo com o campus
+                pode escolher Comunidade externa; essa conta não dá acesso às funções
+                institucionais. Contas de professor e servidor dependem de validação
+                administrativa.</p
+              >
+              <p
+                >A entrada é por e-mail e senha; o login com Google ainda não está disponível. A
+                recuperação de senha depende do serviço de envio de e-mail configurado. Se ele
+                estiver indisponível, a tela informa o problema.</p
+              >
             </div>
           </div>
 
@@ -433,7 +592,10 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Não. O uso da Arcadia é gratuito. Este é um projeto acadêmico; não há plano de assinatura nem cobrança para criar conta ou usar os recursos disponíveis.</p>
+              <p
+                >Não. O uso da Arcadia é gratuito. Este é um projeto acadêmico; não há plano de
+                assinatura nem cobrança para criar conta ou usar os recursos disponíveis.</p
+              >
             </div>
           </div>
 
@@ -443,7 +605,13 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Selecionar um vínculo no formulário não concede permissões de professor ou servidor. Esses perfis precisam de autorização da administração do projeto; usar um e-mail institucional, por si só, não comprova o cargo. O cadastro público permite as opções Aluno e Comunidade externa. Não há verificação automática de vínculo com sistemas do IFPA nem confirmação automática por e-mail.</p>
+              <p
+                >Selecionar um vínculo no formulário não concede permissões de professor ou
+                servidor. Esses perfis precisam de autorização da administração do projeto; usar um
+                e-mail institucional, por si só, não comprova o cargo. O cadastro público permite as
+                opções Aluno e Comunidade externa. Não há verificação automática de vínculo com
+                sistemas do IFPA nem confirmação automática por e-mail.</p
+              >
             </div>
           </div>
 
@@ -453,7 +621,13 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Não. A Arcadia é um projeto acadêmico para organizar publicações, tarefas, projetos e solicitações. Não consulta nem altera automaticamente notas, matrículas ou registros no SIGAA. Na aba Documentos, você acompanha solicitações; isso não gera um documento oficial automaticamente. O download fica disponível quando um arquivo é cadastrado na solicitação pela equipe responsável.</p>
+              <p
+                >Não. A Arcadia é um projeto acadêmico para organizar publicações, tarefas, projetos
+                e solicitações. Não consulta nem altera automaticamente notas, matrículas ou
+                registros no SIGAA. Na aba Documentos, você acompanha solicitações; isso não gera um
+                documento oficial automaticamente. O download fica disponível quando um arquivo é
+                cadastrado na solicitação pela equipe responsável.</p
+              >
             </div>
           </div>
 
@@ -463,7 +637,12 @@
               <span class="faq-icon-circle">+</span>
             </button>
             <div class="faq-panel">
-              <p>Sim. Você pode acessar pelo navegador do celular, com conexão à internet, sem instalar um aplicativo. A navegação lateral e os filtros se recolhem em telas menores para dar espaço ao conteúdo. O tema claro, escuro ou automático pode ser escolhido nas Configurações.</p>
+              <p
+                >Sim. Você pode acessar pelo navegador do celular, com conexão à internet, sem
+                instalar um aplicativo. A navegação lateral e os filtros se recolhem em telas
+                menores para dar espaço ao conteúdo. O tema claro, escuro ou automático pode ser
+                escolhido nas Configurações.</p
+              >
             </div>
           </div>
         </div>
@@ -472,28 +651,69 @@
 
     <!-- 8. Convite para entrar -->
     <section class="cta-card reveal-item" id="homeWelcome">
-      <svg class="hero-deco-shape shape-star-yellow" style="top: 40px; left: 8%; width: 70px; height: 70px;" viewBox="0 0 160 160" aria-hidden="true">
-        <polygon points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40" fill="#ffd000" />
+      <svg
+        class="hero-deco-shape shape-star-yellow"
+        style="top: 40px; left: 8%; width: 70px; height: 70px"
+        viewBox="0 0 160 160"
+        aria-hidden="true"
+      >
+        <polygon
+          points="80,0 98,48 148,30 120,74 160,98 112,118 130,168 86,140 62,180 42,132 -8,150 20,106 -20,82 28,62 10,12 54,40"
+          fill="#ffd000"
+        />
       </svg>
-      <svg class="hero-deco-shape shape-quad-red" style="top: 40px; right: 8%; width: 76px; height: 60px;" viewBox="0 0 180 140" aria-hidden="true">
+      <svg
+        class="hero-deco-shape shape-quad-red"
+        style="top: 40px; right: 8%; width: 76px; height: 60px"
+        viewBox="0 0 180 140"
+        aria-hidden="true"
+      >
         <polygon points="40,10 170,30 150,130 10,100" fill="#ff5c5c" />
       </svg>
-      <svg class="hero-deco-shape shape-zigzag-lime" style="bottom: 90px; left: 10%; width: 80px; height: 40px;" viewBox="0 0 140 50" aria-hidden="true">
-        <path d="M10,40 L40,10 L70,40 L100,10 L130,40" fill="none" stroke="#bef264" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+      <svg
+        class="hero-deco-shape shape-zigzag-lime"
+        style="bottom: 90px; left: 10%; width: 80px; height: 40px"
+        viewBox="0 0 140 50"
+        aria-hidden="true"
+      >
+        <path
+          d="M10,40 L40,10 L70,40 L100,10 L130,40"
+          fill="none"
+          stroke="#bef264"
+          stroke-width="12"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </svg>
-      <svg class="hero-deco-shape shape-star-pink" style="bottom: 90px; right: 10%; width: 66px; height: 66px;" viewBox="0 0 120 120" aria-hidden="true">
-        <path d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z" fill="#fbb6ce" />
+      <svg
+        class="hero-deco-shape shape-star-pink"
+        style="bottom: 90px; right: 10%; width: 66px; height: 66px"
+        viewBox="0 0 120 120"
+        aria-hidden="true"
+      >
+        <path
+          d="M60,0 L72,40 L112,32 L84,60 L112,88 L72,80 L60,120 L48,80 L8,88 L36,60 L8,32 L48,40 Z"
+          fill="#fbb6ce"
+        />
       </svg>
 
-      <h2 class="cta-title" id="homeWelcomeTitle" role="heading" aria-level="2"><span>Acompanhe o que</span> <span>acontece no campus</span></h2>
-      <p class="cta-subtitle" id="homeWelcomeDescription">Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.</p>
+      <h2 class="cta-title" id="homeWelcomeTitle" role="heading" aria-level="2"
+        ><span>Acompanhe o que</span> <span>acontece no campus</span></h2
+      >
+      <p class="cta-subtitle" id="homeWelcomeDescription"
+        >Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.</p
+      >
 
       <div class="cta-actions">
-        <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero">Criar conta &rarr;</a>
+        <a href="signup.html" class="btn-pill btn-pill--primary btn-pill--hero"
+          >Criar conta &rarr;</a
+        >
         <a href="login.html" class="btn-pill btn-pill--outline btn-pill--hero">Acessar portal</a>
       </div>
 
-      <a class="home-about-link" href="index.html?sobre=1">Conheça a Arcadia e veja como usar o portal &rarr;</a>
+      <a class="home-about-link" href="index.html?sobre=1"
+        >Conheça a Arcadia e veja como usar o portal &rarr;</a
+      >
       <div class="cta-watermark" aria-hidden="true">Arcadia</div>
     </section>
 
@@ -502,10 +722,16 @@
       <p>Informações e novidades compartilhadas com toda a comunidade.</p>
       <div class="public-grid" id="publicNews" aria-live="polite"><p>Carregando notícias…</p></div>
     </section>
-    <section class="public-section container" id="public-projects" aria-labelledby="public-projects-title">
+    <section
+      class="public-section container"
+      id="public-projects"
+      aria-labelledby="public-projects-title"
+    >
       <h2 class="section-title" id="public-projects-title">Projetos da comunidade</h2>
       <p>Conheça os projetos aprovados do campus. Para participar, acesse seu painel.</p>
-      <div class="public-grid" id="publicProjects" aria-live="polite"><p>Carregando projetos…</p></div>
+      <div class="public-grid" id="publicProjects" aria-live="polite"
+        ><p>Carregando projetos…</p></div
+      >
     </section>
 
     <a class="home-return container" href="index.html">&larr; Voltar ao início</a>
@@ -515,7 +741,13 @@
       <div class="container">
         <div class="footer-top">
           <div class="footer-brand">
-            <img src="assets/arcadia-emblem-dark.png" alt="Emblema da Arcadia" class="nav-brand-logo" width="36" height="36" />
+            <img
+              src="assets/arcadia-emblem-dark.png"
+              alt="Emblema da Arcadia"
+              class="nav-brand-logo"
+              width="36"
+              height="36"
+            />
             <div>
               <div class="footer-brand-title">Arcadia</div>
               <div class="footer-brand-sub">IFPA Campus Belém</div>
@@ -528,7 +760,8 @@
           <div>
             <div class="footer-col-title">Sobre o portal</div>
             <p class="footer-desc">
-              O mural do campus reúne avisos, matrículas, calendário, documentos e projetos da comunidade, organizados por data, categoria e público-alvo.
+              O mural do campus reúne avisos, matrículas, calendário, documentos e projetos da
+              comunidade, organizados por data, categoria e público-alvo.
             </p>
           </div>
 
@@ -545,11 +778,31 @@
           <div>
             <div class="footer-col-title">Recursos do campus</div>
             <ul class="footer-links">
-              <li><a href="https://sigaa.ifpa.edu.br" target="_blank" rel="noopener">SIGAA IFPA</a></li>
-              <li><a href="https://biblioteca.ifpa.edu.br" target="_blank" rel="noopener">Biblioteca virtual</a></li>
-              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Assistência estudantil</a></li>
-              <li><a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener">Ouvidoria do campus</a></li>
-              <li><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener">Portal de professores e servidores</a></li>
+              <li
+                ><a href="https://sigaa.ifpa.edu.br" target="_blank" rel="noopener"
+                  >SIGAA IFPA</a
+                ></li
+              >
+              <li
+                ><a href="https://biblioteca.ifpa.edu.br" target="_blank" rel="noopener"
+                  >Biblioteca virtual</a
+                ></li
+              >
+              <li
+                ><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener"
+                  >Assistência estudantil</a
+                ></li
+              >
+              <li
+                ><a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener"
+                  >Ouvidoria do campus</a
+                ></li
+              >
+              <li
+                ><a href="https://belem.ifpa.edu.br" target="_blank" rel="noopener"
+                  >Portal de professores e servidores</a
+                ></li
+              >
             </ul>
           </div>
 
@@ -557,7 +810,7 @@
             <div class="footer-col-title">Secretaria e contato</div>
             <div class="footer-contact-info">
               <p><a href="mailto:syncdevifpa@gmail.com">syncdevifpa@gmail.com</a></p>
-              <p style="margin: 8px 0;">Atendimento: das 8h às 17h</p>
+              <p style="margin: 8px 0">Atendimento: das 8h às 17h</p>
               <p>Bloco C - Análise e Desenvolvimento de Sistemas - IFPA Campus Belém</p>
             </div>
           </div>
@@ -577,7 +830,9 @@
 
     <script src="js/api.js"></script>
     <script src="js/notice-text.js"></script>
-  <script src="js/notice-cover.js"></script>
-  <script src="js/landing.js"></script>
+    <link rel="stylesheet" href="avatar-editor.css" />
+    <script src="js/avatar-editor.js"></script>
+    <script src="js/notice-cover.js"></script>
+    <script src="js/landing.js"></script>
   </body>
 </html>

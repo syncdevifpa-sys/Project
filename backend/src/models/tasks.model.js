@@ -1,7 +1,8 @@
-const db = require("../config/database");
+const db = require('../config/database');
 
 async function listTasks(userId) {
-    const [tasks] = await db.execute(`
+    const [tasks] = await db.execute(
+        `
         SELECT
             id_tarefa,
             id_usuario,
@@ -21,13 +22,16 @@ async function listTasks(userId) {
             status ASC,
             data_entrega ASC,
             criado_em DESC
-    `, [userId]);
+    `,
+        [userId]
+    );
 
     return tasks;
 }
 
 async function findTaskById(taskId, userId) {
-    const [tasks] = await db.execute(`
+    const [tasks] = await db.execute(
+        `
         SELECT
             id_tarefa,
             id_usuario,
@@ -44,7 +48,9 @@ async function findTaskById(taskId, userId) {
         FROM tarefas
         WHERE id_tarefa = ?
         AND id_usuario = ?
-    `, [taskId, userId]);
+    `,
+        [taskId, userId]
+    );
 
     return tasks[0];
 }
@@ -52,15 +58,16 @@ async function findTaskById(taskId, userId) {
 async function createTask(userId, taskData) {
     const {
         titulo,
-        categoria = "Acadêmico",
+        categoria = 'Acadêmico',
         responsavel = null,
         data_entrega = null,
-        prioridade = "media",
-        status = "aberta",
+        prioridade = 'media',
+        status = 'aberta',
         observacao = null
     } = taskData;
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         INSERT INTO tarefas (
             id_usuario,
             titulo,
@@ -73,17 +80,19 @@ async function createTask(userId, taskData) {
             concluida_em
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-        userId,
-        titulo,
-        categoria,
-        responsavel,
-        data_entrega,
-        prioridade,
-        status,
-        observacao,
-        status === 'concluida' ? new Date() : null
-    ]);
+    `,
+        [
+            userId,
+            titulo,
+            categoria,
+            responsavel,
+            data_entrega,
+            prioridade,
+            status,
+            observacao,
+            status === 'concluida' ? new Date() : null
+        ]
+    );
 
     return result;
 }
@@ -107,18 +116,16 @@ async function updateTask(taskId, userId, taskData) {
 
     let completedAt = currentTask.concluida_em;
 
-    if (
-        status === "concluida" &&
-        currentTask.status !== "concluida"
-    ) {
+    if (status === 'concluida' && currentTask.status !== 'concluida') {
         completedAt = new Date();
     }
 
-    if (status !== "concluida") {
+    if (status !== 'concluida') {
         completedAt = null;
     }
 
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         UPDATE tarefas
         SET
             titulo = ?,
@@ -131,31 +138,33 @@ async function updateTask(taskId, userId, taskData) {
             concluida_em = ?
         WHERE id_tarefa = ?
         AND id_usuario = ?
-    `, [
-        titulo,
-        categoria,
-        responsavel,
-        data_entrega,
-        prioridade,
-        status,
-        observacao,
-        completedAt,
-        taskId,
-        userId
-    ]);
+    `,
+        [
+            titulo,
+            categoria,
+            responsavel,
+            data_entrega,
+            prioridade,
+            status,
+            observacao,
+            completedAt,
+            taskId,
+            userId
+        ]
+    );
 
     return result;
 }
 
 async function deleteTask(taskId, userId) {
-    const [result] = await db.execute(`
+    const [result] = await db.execute(
+        `
         DELETE FROM tarefas
         WHERE id_tarefa = ? 
         AND id_usuario = ?
-    `, [
-        taskId,
-        userId
-    ]);
+    `,
+        [taskId, userId]
+    );
 
     return result;
 }

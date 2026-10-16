@@ -1,174 +1,273 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendário</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendário</title>
+    <!-- Inicialização do tema antes da exibição -->
+    <script>
+      (function () {
+        var THEME_KEY = 'arcadia-theme';
+        var root = document.documentElement;
+        var mode = 'light';
+        try {
+          mode = localStorage.getItem(THEME_KEY) || 'light';
+        } catch (e) {}
+        var dark =
+          mode === 'auto'
+            ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            : mode === 'dark';
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        root.setAttribute('data-theme-mode', mode);
 
-  <!-- Inicialização do tema antes da exibição -->
-  <script>
-    (function () {
-      var THEME_KEY = 'arcadia-theme';
-      var root = document.documentElement;
-      var mode = 'light';
-      try { mode = localStorage.getItem(THEME_KEY) || 'light'; } catch (e) { }
-      var dark = (mode === 'auto')
-        ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-        : (mode === 'dark');
-      root.setAttribute('data-theme', dark ? 'dark' : 'light');
-      root.setAttribute('data-theme-mode', mode);
+        try {
+          var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+          root.setAttribute('data-accent', accent);
+        } catch (e) {}
 
-      try {
-        var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
-        root.setAttribute('data-accent', accent);
-      } catch (e) { }
+        try {
+          if (localStorage.getItem(THEME_KEY + '-text') === 'large')
+            root.setAttribute('data-text', 'large');
+          if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced')
+            root.setAttribute('data-motion', 'reduced');
+        } catch (e) {}
+      })();
+    </script>
 
-      try {
-        if (localStorage.getItem(THEME_KEY + '-text') === 'large') root.setAttribute('data-text', 'large');
-        if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced') root.setAttribute('data-motion', 'reduced');
-      } catch (e) { }
-    })();
-  </script>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" />
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="notice-editor.css" />
+    <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="content-views.css" />
+    <link rel="stylesheet" href="calendar-view.css" />
+  </head>
 
-  <link rel="stylesheet" href="tokens.css">
-  <link rel="stylesheet" href="bundle.css">
-  <link rel="stylesheet" href="portal-responsive.css">
-  <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
-  <link rel="stylesheet" href="scrollbars.css">
-  <link rel="stylesheet" href="navigation.css">
-<link rel="stylesheet" href="notice-editor.css">
-<link rel="stylesheet" href="brand-logo.css">
-</head>
-
-<body>
-
-  <div class="ar-app">
-
-    <!-- Navegação superior -->
-    <header class="ar-nav">
-      <a class="ar-brand" href="index.html">
-        <img src="assets/arcadia-emblem.png" alt="Logo da Arcadia" class="ar-brand-img" width="34" height="34">
-        <span>
-          <div class="ar-brand-name">Arcadia</div>
-          <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
-        </span>
-      </a>
-
-      <nav class="ar-navpill" aria-label="Seções do portal">
-        <a href="index.html">Início</a>
-        <a href="dashboard.html">Meu painel</a>
-        <a href="notices.html">Avisos e notícias</a>
-        <a href="tasks.html">Tarefas</a>
-        <a href="documents.html">Documentos</a>
-        <a href="calendar.html" aria-current="page">Calendário<sup class="ar-sup">(0)</sup></a>
-        <span class="ar-sep" aria-hidden="true"></span>
-        <a href="people.html">Pessoas</a>
-        <a href="projects.html">Projetos</a>
-      </nav>
-
-      <div class="ar-nav-end">
-        <button type="button" class="ar-iconbtn" aria-label="Buscar (Ctrl+K)" title="Buscar (Ctrl+K)"
-          data-search-trigger>
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m21 21-4.34-4.34"></path>
-            <circle cx="11" cy="11" r="8"></circle>
-          </svg>
-        </button>
-
-        <a class="ar-iconbtn" href="settings.html" aria-label="Configurações" title="Configurações">
-          <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M14 17H5"></path>
-            <path d="M19 7h-9"></path>
-            <circle cx="17" cy="17" r="3"></circle>
-            <circle cx="7" cy="7" r="3"></circle>
-          </svg>
+  <body>
+    <div class="ar-app">
+      <!-- Navegação superior -->
+      <header class="ar-nav">
+        <a class="ar-brand" href="index.html">
+          <img
+            src="assets/arcadia-emblem.png"
+            alt="Logo da Arcadia"
+            class="ar-brand-img"
+            width="34"
+            height="34"
+          />
+          <span>
+            <div class="ar-brand-name">Arcadia</div>
+            <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
+          </span>
         </a>
 
-        <a class="ar-user" href="settings.html">
-          <span class="ar-avatar ar-avatar--cyan" style="width: 34px; height: 34px; font-size: 13px;">ST</span>
-          <div>
-            <div class="ar-user-name">Minha conta</div>
-            <div class="ar-user-role"></div>
-          </div>
-        </a>
+        <nav class="ar-navpill" aria-label="Seções do portal">
+          <a href="index.html">Início</a>
+          <a href="dashboard.html">Meu painel</a>
+          <a href="notices.html">Avisos e notícias</a>
+          <a href="tasks.html">Tarefas</a>
+          <a href="documents.html">Documentos</a>
+          <a href="calendar.html" aria-current="page">Calendário<sup class="ar-sup">(0)</sup></a>
+          <span class="ar-sep" aria-hidden="true"></span>
+          <a href="people.html">Pessoas</a>
+          <a href="projects.html">Projetos</a>
+        </nav>
 
-        <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>Sair</button>
-      </div>
-    </header>
-
-    <!-- Compact Page Hero in Cyan -->
-    <section class="ar-hero ar-hero--cyan ar-hero--compact">
-      <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
-        <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-        <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-        <rect class="s" x="770" y="116" width="180" height="52" rx="26" opacity="0.75" transform="rotate(-16 860 142)">
-        </rect>
-        <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-        <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-        <circle class="d" cx="752" cy="133" r="5"></circle>
-        <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-      </svg>
-      <h1 class="ar-hero-title">Calendário<sup class="ar-hero-count">(0)</sup></h1>
-      <div class="ar-hero-side">
-        <p class="ar-hero-desc">Datas do semestre letivo, feriados do campus e prazos de matrícula em um só lugar.</p>
-        <div class="ar-hero-actions">
-          <button type="button" class="ar-btn ar-btn--secondary" id="btnImportCalendar">Importar PDF</button>
-          <button type="button" class="ar-btn ar-btn--primary" id="btnNewEvent">
-            <span>Adicionar evento</span>
-            <svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
+        <div class="ar-nav-end">
+          <button
+            type="button"
+            class="ar-iconbtn"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            data-search-trigger
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
             </svg>
           </button>
-        </div>
-      </div>
-    </section>
 
-    <!-- ChipBar Categories -->
-    <div class="ar-chipbar" role="group" aria-label="Filtrar categorias do calendário">
-      <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">Todos<sup
-          class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Enrollment">Matrícula<sup
-          class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Cancellations">Cancelamentos<sup
-          class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Events">Eventos<sup
-          class="ar-sup">(0)</sup></button>
-      <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Calls">Editais<sup
-          class="ar-sup">(0)</sup></button>
+          <a
+            class="ar-iconbtn"
+            href="settings.html"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M14 17H5"></path>
+              <path d="M19 7h-9"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </a>
+
+          <a class="ar-user" href="settings.html">
+            <span
+              class="ar-avatar ar-avatar--cyan"
+              style="width: 34px; height: 34px; font-size: 13px"
+              >ST</span
+            >
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
+            >Sair</button
+          >
+        </div>
+      </header>
+
+      <!-- Compact Page Hero in Cyan -->
+      <section class="ar-hero ar-hero--cyan ar-hero--compact">
+        <svg
+          class="ar-hero-art"
+          viewBox="0 0 1000 220"
+          preserveAspectRatio="xMaxYMax meet"
+          aria-hidden="true"
+        >
+          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+          <rect
+            class="s"
+            x="770"
+            y="116"
+            width="180"
+            height="52"
+            rx="26"
+            opacity="0.75"
+            transform="rotate(-16 860 142)"
+          ></rect>
+          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+          <circle class="d" cx="752" cy="133" r="5"></circle>
+          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+        </svg>
+        <h1 class="ar-hero-title">Calendário<sup class="ar-hero-count">(0)</sup></h1>
+        <div class="ar-hero-side">
+          <p class="ar-hero-desc"
+            >Datas do semestre letivo, feriados do campus e prazos de matrícula em um só lugar.</p
+          >
+          <div class="ar-hero-actions">
+            <button type="button" class="ar-btn ar-btn--secondary" id="btnImportCalendar"
+              >Importar PDF</button
+            >
+            <button type="button" class="ar-btn ar-btn--primary" id="btnNewEvent">
+              <span>Adicionar evento</span>
+              <svg
+                class="ar-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ChipBar Categories -->
+      <div class="ar-chipbar" role="group" aria-label="Filtrar categorias do calendário">
+        <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
+          >Todos<sup class="ar-sup">(0)</sup></button
+        >
+        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Enrollment"
+          >Matrícula<sup class="ar-sup">(0)</sup></button
+        >
+        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Cancellations"
+          >Cancelamentos<sup class="ar-sup">(0)</sup></button
+        >
+        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Events"
+          >Eventos<sup class="ar-sup">(0)</sup></button
+        >
+        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Calls"
+          >Editais<sup class="ar-sup">(0)</sup></button
+        >
+        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Vacation"
+          >Férias<sup class="ar-sup">(0)</sup></button
+        >
+        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Birthday"
+          >Aniversários<sup class="ar-sup">(0)</sup></button
+        >
+      </div>
+
+      <p
+        >Calendário público: qualquer pessoa pode consultar estas datas. A publicação e a edição
+        seguem as permissões da conta.</p
+      >
+      <label class="ar-field"
+        >Calendário / período<select id="calendarSourceFilter" class="ar-content-scope"
+          ><option value="">Todos os calendários</option></select
+        ></label
+      >
+      <label class="ar-calendar-view-picker"
+        >Visualização<select id="calendarViewMode"
+          ><option value="list">Lista</option
+          ><option value="month">Calendário mensal</option></select
+        ></label
+      >
+
+      <!-- Dates and Deadlines Panel -->
+      <section class="ar-panel" style="padding: var(--space-4) var(--space-3)">
+        <div class="ar-panel-head">
+          <h3 class="ar-panel-label" style="margin: 0">Calendário acadêmico</h3>
+          <span class="small" style="color: var(--ink-muted)"
+            >Datas cadastradas; confira a fonte de cada evento.</span
+          >
+        </div>
+        <div class="ar-panel-body"><p role="status">Carregando calendário...</p></div>
+      </section>
+
+      <!-- Diálogo para adicionar evento -->
     </div>
 
-    <label class="ar-field">Calendário / período<select id="calendarSourceFilter" class="ar-content-scope"><option value="">Todos os calendários</option></select></label>
-
-    <!-- Dates and Deadlines Panel -->
-    <section class="ar-panel" style="padding: var(--space-4) var(--space-3);">
-      <div class="ar-panel-head">
-        <h3 class="ar-panel-label" style="margin: 0;">Calendário acadêmico</h3>
-        <span class="small" style="color: var(--ink-muted);">Datas cadastradas; confira a fonte de cada evento.</span>
-      </div>
-      <div class="ar-panel-body"><p role="status">Carregando calendário...</p></div>
-    </section>
-
-    <!-- Diálogo para adicionar evento -->
-
-
-  </div>
-
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/portal.js"></script>
-  <script src="js/content-fields.js"></script>
-  <script src="js/notice-actions.js"></script>
-  <script src="js/notice-editor.js"></script>
-  <script src="js/notice-text.js"></script>
-  <script src="js/calendar-import.js"></script>
-  <script src="js/calendar-actions.js"></script>
-  <script src="js/pages.js"></script>
-  <script src="js/navigation.js"></script>
-</body>
-
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/portal.js"></script>
+    <script src="js/calendar-colors.js"></script>
+    <script src="js/content-fields.js"></script>
+    <script src="js/notice-actions.js"></script>
+    <script src="js/notice-editor.js"></script>
+    <script src="js/notice-text.js"></script>
+    <script src="js/calendar-import.js"></script>
+    <script src="js/calendar-actions.js"></script>
+    <script src="js/calendar-view.js"></script>
+    <script src="js/pages.js"></script>
+    <script src="js/navigation.js"></script>
+  </body>
 </html>

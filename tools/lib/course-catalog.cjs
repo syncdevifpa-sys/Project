@@ -1,28 +1,61 @@
-function aliases(course){
-    const names=[course.nome];
-    const degree=course.nome.match(/^(Bacharelado|Licenciatura|Tecnologia) em (.+)$/);
-    if(degree)names.push(degree[2],degree[2]+' ('+degree[1]+')');
-    const technical=course.nome.match(/^(Técnico em .+) \((Integrado|Subsequente)\)$/);
-    if(technical)names.push(technical[1]+' - '+technical[2],technical[1]+' '+technical[2]+' ao Ensino Médio');
+function aliases(course) {
+    const names = [course.nome];
+    const degree = course.nome.match(/^(Bacharelado|Licenciatura|Tecnologia) em (.+)$/);
+    if (degree) names.push(degree[2], degree[2] + ' (' + degree[1] + ')');
+    const technical = course.nome.match(/^(Técnico em .+) \((Integrado|Subsequente)\)$/);
+    if (technical)
+        names.push(
+            technical[1] + ' - ' + technical[2],
+            technical[1] + ' ' + technical[2] + ' ao Ensino Médio'
+        );
     return names;
 }
-const normalize=name=>name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
-function plan(existing,catalog){
-    const missing=[],preserved=[],conflicts=[];
-    for(const course of catalog.courses){
-        const names=aliases(course).map(normalize);
-        const found=existing.find(row=>names.includes(normalize(row.nome)));
-        if(!found)missing.push(course);
-        else {preserved.push(found);if(found.nivel!==course.nivel)conflicts.push({id_curso:found.id_curso,nome:found.nome,actual:found.nivel,expected:course.nivel});}
+const normalize = (name) =>
+    name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+function plan(existing, catalog) {
+    const missing = [],
+        preserved = [],
+        conflicts = [];
+    for (const course of catalog.courses) {
+        const names = aliases(course).map(normalize);
+        const found = existing.find((row) => names.includes(normalize(row.nome)));
+        if (!found) missing.push(course);
+        else {
+            preserved.push(found);
+            if (found.nivel !== course.nivel)
+                conflicts.push({
+                    id_curso: found.id_curso,
+                    nome: found.nome,
+                    actual: found.nivel,
+                    expected: course.nivel
+                });
+        }
     }
-    return {missing,preserved,conflicts};
+    return { missing, preserved, conflicts };
 }
-function sql(catalog){
-    const quote=value=>value===undefined?'NULL':"'"+value.replace(/'/g,"''")+"'";
-    const rows=catalog.courses.map((course,index)=>{
-        const names=aliases(course);
-        return 'SELECT '+[quote(course.nome)+(index?'':' AS nome'),quote(course.nivel)+(index?'':' AS nivel'),...Array.from({length:3},(_,i)=>quote(names[i])+(index?'':' AS alias'+i))].join(', ');
-    }).join('\nUNION ALL\n');
+function sql(catalog) {
+    const quote = (value) => (value === undefined ? 'NULL' : "'" + value.replace(/'/g, "''") + "'");
+    const rows = catalog.courses
+        .map((course, index) => {
+            const names = aliases(course);
+            return (
+                'SELECT ' +
+                [
+                    quote(course.nome) + (index ? '' : ' AS nome'),
+                    quote(course.nivel) + (index ? '' : ' AS nivel'),
+                    ...Array.from(
+                        { length: 3 },
+                        (_, i) => quote(names[i]) + (index ? '' : ' AS alias' + i)
+                    )
+                ].join(', ')
+            );
+        })
+        .join('\nUNION ALL\n');
     return `-- Catálogo com oferta comprovada em Belém em 2026. Fontes: backend/catalog/belem-courses-2026.json.
 -- 1. Confira o banco selecionado e a lista real antes de autorizar a etapa de inclusão.
 SELECT DATABASE() AS banco_selecionado;
@@ -45,4 +78,4 @@ SELECT id_curso, nome, nivel, ativo FROM cursos ORDER BY nome;
 ROLLBACK;
 `;
 }
-module.exports={aliases,plan,sql};
+module.exports = { aliases, plan, sql };

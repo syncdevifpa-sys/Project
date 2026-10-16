@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const db = require('../config/database');
 
@@ -7,25 +7,22 @@ async function authenticateToken(req, res, next) {
 
     if (!authHeader) {
         return res.status(401).json({
-            error: "Faça login para continuar."
+            error: 'Faça login para continuar.'
         });
     }
 
-    const parts = authHeader.split(" ");
+    const parts = authHeader.split(' ');
 
-    if (parts.length !== 2 || parts[0] !== "Bearer") {
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
         return res.status(401).json({
-            error: "Formato de token inválido."
+            error: 'Formato de token inválido.'
         });
     }
 
     const token = parts[1];
 
     try {
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         if (!decoded.id_usuario || decoded.tipo_usuario === 'externo') {
             return res.status(403).json({ error: 'É necessário um usuário institucional.' });
@@ -35,10 +32,14 @@ async function authenticateToken(req, res, next) {
             "SELECT t.id_token, u.is_admin FROM tokens t JOIN usuarios u ON u.id_usuario = t.id_usuario WHERE t.token = ? AND t.id_usuario = ? AND t.expiracao > NOW() AND u.situacao = 'ativo'",
             [hash, decoded.id_usuario]
         );
-        if (!sessions.length) return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
+        if (!sessions.length)
+            return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
         req.session = sessions[0];
         // O privilégio atual vem do banco, não de uma sessão antiga ou do formulário.
-        req.user = { ...decoded, is_admin: sessions[0].is_admin === 1 || sessions[0].is_admin === true };
+        req.user = {
+            ...decoded,
+            is_admin: sessions[0].is_admin === 1 || sessions[0].is_admin === true
+        };
 
         next();
     } catch (error) {
@@ -46,7 +47,7 @@ async function authenticateToken(req, res, next) {
             return res.status(500).json({ error: 'Não foi possível validar a sessão.' });
         }
         return res.status(401).json({
-            error: "Token inválido ou expirado."
+            error: 'Token inválido ou expirado.'
         });
     }
 }
@@ -55,13 +56,13 @@ function authorizeRoles(...allowedRoles) {
     return (req, res, next) => {
         if (!req.user) {
             return res.status(401).json({
-                error: "Autenticação necessária."
+                error: 'Autenticação necessária.'
             });
         }
 
         if (!req.user.is_admin && !allowedRoles.includes(req.user.tipo_usuario)) {
             return res.status(403).json({
-                error: "Você não tem permissão para acessar este recurso."
+                error: 'Você não tem permissão para acessar este recurso.'
             });
         }
 
@@ -72,13 +73,13 @@ function authorizeRoles(...allowedRoles) {
 function authorizeAdmin(req, res, next) {
     if (!req.user) {
         return res.status(401).json({
-            error: "Autenticação necessária."
+            error: 'Autenticação necessária.'
         });
     }
 
     if (!req.user.is_admin) {
         return res.status(403).json({
-            error: "Permissão de administrador necessária."
+            error: 'Permissão de administrador necessária.'
         });
     }
 
