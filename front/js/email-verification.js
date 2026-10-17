@@ -10,7 +10,18 @@
     try {
         const email = window.sessionStorage.getItem('arcadia.pendingEmail');
         if (email && email.length <= 150) resend.elements.email.value = email;
-    } catch { /* O formulário continua disponível se o armazenamento estiver bloqueado. */ }
+        const notice = window.sessionStorage.getItem('arcadia.signupNotice');
+        if (!token && notice === 'sent') {
+            status.textContent =
+                'Sua conta foi criada. Abra o link enviado ao seu e-mail e clique em Confirmar e-mail. Confira também o spam.';
+        } else if (!token && notice === 'failed') {
+            status.textContent =
+                'Sua conta foi criada e permanece pendente de confirmação. Não foi possível enviar a mensagem. Você pode solicitar outro link abaixo, sem se cadastrar novamente.';
+        }
+        window.sessionStorage.removeItem('arcadia.signupNotice');
+    } catch {
+        /* O formulário continua disponível se o armazenamento estiver bloqueado. */
+    }
     form.hidden = !token;
     if (token && !/^[a-f0-9]{64}$/.test(token)) {
         status.textContent = 'Link inválido. Solicite outro link abaixo.';
@@ -29,7 +40,9 @@
             if (form === document.getElementById('confirmEmailForm')) {
                 form.hidden = true;
                 token = null;
-                try { window.sessionStorage.removeItem('arcadia.pendingEmail'); } catch {}
+                try {
+                    window.sessionStorage.removeItem('arcadia.pendingEmail');
+                } catch {}
                 if (data.reauthenticate) window.Arcadia.token.clear();
             }
         } catch (error) {

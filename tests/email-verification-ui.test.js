@@ -31,7 +31,7 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
         URLSearchParams,
         window: {
             sessionStorage: {
-                getItem: () => "signup@example.test",
+                getItem: () => 'signup@example.test',
                 removeItem: () => {}
             },
             Arcadia: {
@@ -50,7 +50,7 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
             }
         }
     });
-    assert.equal(nodes.resendEmailForm.elements.email.value, "signup@example.test");
+    assert.equal(nodes.resendEmailForm.elements.email.value, 'signup@example.test');
     assert.equal(removed, true);
     assert.equal(calls.length, 0);
     assert.equal(nodes.confirmEmailForm.hidden, false);
@@ -63,4 +63,39 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
     assert.equal(cleared, true);
     nodes.confirmEmailForm.events.submit({ preventDefault() {} });
     assert.equal(calls.length, 1);
+});
+
+test('cadastro abre confirmação com destinatário preenchido e aviso de envio sem disparar mensagem', () => {
+    for (const notice of ['sent', 'failed']) {
+        const fields = {
+            confirmEmailForm: { hidden: false, addEventListener() {} },
+            resendEmailForm: { elements: { email: { value: '' } }, addEventListener() {} },
+            emailVerificationStatus: { textContent: '' }
+        };
+        const session = new Map([
+            ['arcadia.pendingEmail', 'signup@example.test'],
+            ['arcadia.signupNotice', notice]
+        ]);
+        vm.runInNewContext(fs.readFileSync('front/js/email-verification.js', 'utf8'), {
+            document: { getElementById: (id) => fields[id] },
+            location: { hash: '', pathname: '/verify-email.html' },
+            URLSearchParams,
+            window: {
+                sessionStorage: {
+                    getItem: (key) => session.get(key),
+                    removeItem: (key) => session.delete(key)
+                },
+                Arcadia: { api: { post: () => assert.fail('Não enviar automaticamente') } }
+            }
+        });
+        assert.equal(fields.resendEmailForm.elements.email.value, 'signup@example.test');
+        assert.equal(fields.confirmEmailForm.hidden, true);
+        assert.match(fields.emailVerificationStatus.textContent, /conta foi criada/);
+        assert.match(
+            fields.emailVerificationStatus.textContent,
+            notice === 'sent' ? /Abra o link/ : /solicitar outro link/
+        );
+        assert.equal(session.has('arcadia.signupNotice'), false);
+        assert.equal(session.get('arcadia.pendingEmail'), 'signup@example.test');
+    }
 });

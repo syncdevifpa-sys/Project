@@ -464,12 +464,16 @@ for (const delivery of [
             assert.equal(client.error.textContent, '');
             assert.equal(client.help.hidden, false);
             assert.match(client.success.textContent, /conta.*criada/i);
-            assert.equal(client.timers.length, 1);
-            client.timers[0]();
-            assert.equal(client.window.location.href, 'login.html');
+            assert.equal(client.timers.length, 0);
+            assert.equal(client.window.location.href, 'verify-email.html');
+            assert.equal(client.session.get('arcadia.pendingEmail'), email);
+            assert.equal(
+                client.session.get('arcadia.signupNotice'),
+                delivery === 'success' ? 'sent' : 'failed'
+            );
             if (delivery !== 'success') {
                 assert.match(client.success.textContent, /envio falhou/);
-                assert.equal(client.window.location.href, 'login.html');
+                assert.equal(client.window.location.href, 'verify-email.html');
             }
             if (delivery === 'smtp-failure') {
                 smtpRecovered = true;

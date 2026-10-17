@@ -324,14 +324,20 @@ window.Arcadia = window.Arcadia || {};
                 try {
                     const notice = window.sessionStorage.getItem('arcadia.signupNotice');
                     if (notice) {
-                        showSuccess(notice === 'sent'
-                            ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
-                            : 'Conta criada. O envio do e-mail falhou. Solicite outro link de confirmação abaixo antes de entrar.');
+                        showSuccess(
+                            notice === 'sent'
+                                ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
+                                : 'Conta criada. O envio do e-mail falhou. Solicite outro link de confirmação abaixo antes de entrar.'
+                        );
                         window.sessionStorage.removeItem('arcadia.signupNotice');
                         const field = form.querySelector('#email');
-                        if (field) field.value = window.sessionStorage.getItem('arcadia.pendingEmail') || '';
+                        if (field)
+                            field.value =
+                                window.sessionStorage.getItem('arcadia.pendingEmail') || '';
                     }
-                } catch { /* O login funciona mesmo sem armazenamento nesta aba. */ }
+                } catch {
+                    /* O login funciona mesmo sem armazenamento nesta aba. */
+                }
             }
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -392,7 +398,9 @@ window.Arcadia = window.Arcadia || {};
 
                         // Mantém apenas o destinatário nesta aba; nunca coloca dados na URL.
                         if (status === 409 || (ok && status === 201)) {
-                            try { window.sessionStorage.setItem('arcadia.pendingEmail', email); } catch {}
+                            try {
+                                window.sessionStorage.setItem('arcadia.pendingEmail', email);
+                            } catch {}
                         }
                         if (status === 409) {
                             const help = form.querySelector('[data-signup-verification]');
@@ -428,9 +436,12 @@ window.Arcadia = window.Arcadia || {};
                         );
 
                         try {
-                            window.sessionStorage.setItem('arcadia.signupNotice', data.verificationSent ? 'sent' : 'failed');
+                            window.sessionStorage.setItem(
+                                'arcadia.signupNotice',
+                                data.verificationSent ? 'sent' : 'failed'
+                            );
                         } catch {}
-                        setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+                        window.location.href = 'verify-email.html';
                     } catch (err) {
                         console.error('Erro ao conectar com a API:', err);
                         showError('Não foi possível conectar ao servidor.');
