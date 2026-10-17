@@ -90,3 +90,7 @@ Nodemailer foi fixado em 10.1.2 nos dois manifests/locks, compatível com Node 2
 As migrações estão preparadas, mas não aplicadas a bancos reais. Configurações SMTP, chave de cotas e ativação na Vercel dependem do ambiente privado do responsável. A validação concorrente foi feita com modelo transacional simulado, não com um ensaio de carga no MySQL real. Entrega SMTP e políticas reais do provedor precisam de um teste autorizado de implantação.
 
 A conclusão geral da auditoria continua pendente: limites de login/PDF, exposição de projetos pendentes, cabeçalhos, configuração criptográfica de produção e demais políticas devem ser acompanhados no relatório. E-mail confirmado prova acesso à caixa de entrada; não valida vínculo institucional.
+
+### Configuração do Preview
+
+As variáveis de Production não são herdadas automaticamente pelo Preview. Defina `EMAIL_VERIFICATION_ENABLED=true`, SMTP, banco e segredo de cotas também no ambiente Preview. Use o endereço do Preview em `APP_URL` para manter os links no teste. Refaça o deploy após salvar as variáveis. O código não ativa a confirmação se a variável estiver ausente.
