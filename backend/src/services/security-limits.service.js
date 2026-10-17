@@ -73,21 +73,9 @@ function reset(req, token) {
         { subject: 'global', limit: 200, seconds: 900 }
     ]);
 }
-function verification(req, email) {
-    const until = Date.parse(process.env.EMAIL_VERIFICATION_ADDRESS_LIMIT_BYPASS_UNTIL || '');
-    const localBypass =
-        !process.env.VERCEL &&
-        process.env.NODE_ENV !== 'production' &&
-        ['localhost', '127.0.0.1', '::1'].includes(process.env.DB_HOST) &&
-        ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.ip) &&
-        Number.isFinite(until) &&
-        until > Date.now();
-    return consume('email-verification', [
-        ...(localBypass
-            ? []
-            : [{ subject: 'email:' + email.toLowerCase(), limit: 3, seconds: 3600 }]),
-        { subject: 'ip:' + (req.ip || 'unknown'), limit: 10, seconds: 900 }
-    ]);
+async function verification() {
+    // Cadastro, reenvio e troca de e-mail não exigem espera por endereço ou IP.
+    // As cotas globais do transporte permanecem em delivery().
 }
 function confirmation(req) {
     return consume('email-confirmation', [

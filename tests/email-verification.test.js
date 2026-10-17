@@ -464,10 +464,12 @@ for (const delivery of [
             assert.equal(client.error.textContent, '');
             assert.equal(client.help.hidden, false);
             assert.match(client.success.textContent, /conta.*criada/i);
-            assert.equal(client.timers.length, delivery === 'success' ? 1 : 0);
+            assert.equal(client.timers.length, 1);
+            client.timers[0]();
+            assert.equal(client.window.location.href, 'login.html');
             if (delivery !== 'success') {
                 assert.match(client.success.textContent, /envio falhou/);
-                assert.equal(client.window.location.href, 'signup.html');
+                assert.equal(client.window.location.href, 'login.html');
             }
             if (delivery === 'smtp-failure') {
                 smtpRecovered = true;
