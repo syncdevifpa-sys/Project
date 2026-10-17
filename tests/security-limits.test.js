@@ -118,43 +118,7 @@ test('segredo inadequado recusa antes de acessar banco', async (t) => {
     );
 });
 
-test('liberação temporária de endereço funciona só localmente, expira e mantém cota por IP', async (t) => {
-    secret(t);
-    const keys = ['EMAIL_VERIFICATION_ADDRESS_LIMIT_BYPASS_UNTIL', 'DB_HOST', 'NODE_ENV', 'VERCEL'];
-    const previous = Object.fromEntries(keys.map((k) => [k, process.env[k]]));
-    t.after(() => {
-        for (const k of keys)
-            if (previous[k] === undefined) delete process.env[k];
-            else process.env[k] = previous[k];
-    });
-    process.env.DB_HOST = 'localhost';
-    process.env.NODE_ENV = 'development';
-    delete process.env.VERCEL;
-    process.env.EMAIL_VERIFICATION_ADDRESS_LIMIT_BYPASS_UNTIL = new Date(
-        Date.now() + 3600000
-    ).toISOString();
-    const storage = store(t);
-    for (let n = 0; n < 10; n++) await limits.verification({ ip: '127.0.0.1' }, 'one@example.test');
-    await assert.rejects(
-        limits.verification({ ip: '127.0.0.1' }, 'one@example.test'),
-        (e) => e.status === 429
-    );
-    assert.equal(storage.records().size, 1);
-    process.env.EMAIL_VERIFICATION_ADDRESS_LIMIT_BYPASS_UNTIL = new Date(
-        Date.now() - 1
-    ).toISOString();
-    for (let n = 0; n < 3; n++) await limits.verification({ ip: '::1' }, 'expired@example.test');
-    await assert.rejects(
-        limits.verification({ ip: '::1' }, 'expired@example.test'),
-        (e) => e.status === 429
-    );
-    process.env.EMAIL_VERIFICATION_ADDRESS_LIMIT_BYPASS_UNTIL = new Date(
-        Date.now() + 3600000
-    ).toISOString();
-    process.env.VERCEL = '1';
-    for (let n = 0; n < 3; n++) await limits.verification({ ip: '::1' }, 'production@example.test');
-    await assert.rejects(
-        limits.verification({ ip: '::1' }, 'production@example.test'),
-        (e) => e.status === 429
-    );
+test('cadastro e reenvio não impõem espera por endereço ou IP, inclusive em produção', async (t) => {
+    t.mock.method(db, 'getConnection', () => assert.fail('Não consultar cotas por endereço'));
+    for (let n = 0; n < 100; n++) await limits.verification({ ip: '203.0.113.1' }, 'one@example.test');
 });
