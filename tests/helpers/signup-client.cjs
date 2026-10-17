@@ -40,7 +40,11 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
             api: { post },
             token: {
                 set: (value) => storage.set('arcadiaToken', value),
-                get: () => storage.get('arcadiaToken')
+                get: () => storage.get('arcadiaToken'),
+                clear: () => {
+                    storage.delete('arcadiaToken');
+                    storage.delete('arcadiaSessao');
+                }
             }
         }
     };
@@ -48,7 +52,8 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
         window,
         localStorage: {
             getItem: (key) => storage.get(key) || null,
-            setItem: (key, value) => storage.set(key, value)
+            setItem: (key, value) => storage.set(key, value),
+            removeItem: (key) => storage.delete(key)
         },
         alert() {},
         setTimeout: (fn) => timers.push(fn),

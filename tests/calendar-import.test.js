@@ -394,6 +394,23 @@ test(
             assert.equal(found.data_evento, date, name);
         }
         assert.deepEqual(
+            result.candidates
+                .filter((c) => c.data_evento?.startsWith('2026-11-'))
+                .map((c) => [c.data_evento, c.data_fim || null]),
+            [
+                ['2026-11-02', null],
+                ['2026-11-03', '2026-11-06'],
+                ['2026-11-03', '2026-11-19'],
+                ['2026-11-07', null],
+                ['2026-11-09', '2026-11-14'],
+                ['2026-11-14', null],
+                ['2026-11-15', null],
+                ['2026-11-20', null],
+                ['2026-11-25', null],
+                ['2026-11-28', null]
+            ]
+        );
+        assert.deepEqual(
             result.candidates.find((c) => c.titulo.includes('Projeto OIKOS')).sourcePages,
             [3, 4]
         );

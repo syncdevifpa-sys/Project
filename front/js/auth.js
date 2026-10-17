@@ -50,16 +50,27 @@ window.Arcadia = window.Arcadia || {};
     }
 
     function salvarSessao(usuario, token) {
-        localStorage.setItem(
-            'arcadiaSessao',
-            JSON.stringify({
-                ...usuario,
-                vinculo: paraVinculo(usuario.tipo_usuario),
-                token,
-                logado: true
-            })
-        );
-        Token.set(token);
+        try {
+            localStorage.setItem(
+                'arcadiaSessao',
+                JSON.stringify({
+                    ...usuario,
+                    vinculo: paraVinculo(usuario.tipo_usuario),
+                    token,
+                    logado: true
+                })
+            );
+            Token.set(token);
+        } catch {
+            // Uma gravação parcial não pode combinar dados novos com um token antigo.
+            try {
+                Token.clear();
+                localStorage.removeItem('arcadiaSessao');
+            } catch {}
+            throw Object.assign(new Error('O navegador não permitiu salvar a sessão.'), {
+                code: 'AUTH_STORAGE_UNAVAILABLE'
+            });
+        }
     }
 
     function estaLogado() {
@@ -489,7 +500,11 @@ window.Arcadia = window.Arcadia || {};
                         irParaPortal();
                     } catch (err) {
                         console.error('Erro ao conectar com a API:', err);
-                        showError('Não foi possível conectar ao servidor.');
+                        showError(
+                            err.code === 'AUTH_STORAGE_UNAVAILABLE'
+                                ? 'O login foi validado, mas o navegador bloqueou o armazenamento da sessão. Permita os dados deste site e tente novamente.'
+                                : 'Não foi possível conectar ao servidor.'
+                        );
                     }
                 }
             });

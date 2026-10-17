@@ -101,3 +101,62 @@ test('cadastro abre confirmação com destinatário preenchido e aviso de envio 
         assert.equal(session.get('arcadia.pendingEmail'), 'signup@example.test');
     }
 });
+
+for (const storedEmail of ['signup@example.test', null, 'invalid']) {
+    test('reenvio usa destinatário original sem digitação: ' + storedEmail, async () => {
+        const calls = [];
+        const nodes = {};
+        for (const id of ['confirmEmailForm', 'resendEmailForm', 'emailVerificationStatus']) {
+            nodes[id] = {
+                events: {},
+                button: {},
+                elements: { email: { value: '' } },
+                querySelector() {
+                    return this.button;
+                },
+                addEventListener(name, fn) {
+                    this.events[name] = fn;
+                }
+            };
+        }
+        vm.runInNewContext(fs.readFileSync('front/js/email-verification.js', 'utf8'), {
+            document: { getElementById: (id) => nodes[id] },
+            location: { hash: '', pathname: '/verify-email.html' },
+            URLSearchParams,
+            window: {
+                sessionStorage: {
+                    getItem: (key) => (key === 'arcadia.pendingEmail' ? storedEmail : null),
+                    removeItem() {}
+                },
+                Arcadia: {
+                    api: {
+                        post: (path, body) => {
+                            calls.push({ path, body });
+                            return { message: 'Solicitação recebida.' };
+                        },
+                        expect: async (value) => value
+                    }
+                }
+            }
+        });
+        const resend = nodes.resendEmailForm;
+        assert.equal(calls.length, 0);
+        assert.equal(resend.elements.email.readOnly, true);
+        if (storedEmail === 'signup@example.test') {
+            assert.equal(resend.hidden, false);
+            await resend.events.submit({ preventDefault() {} });
+            await new Promise((resolve) => setImmediate(resolve));
+            assert.equal(calls[0].body.email, storedEmail);
+            // Alterar a exibição não muda o destinatário capturado do cadastro/login.
+            resend.elements.email.value = 'other@example.test';
+            await resend.events.submit({ preventDefault() {} });
+            await new Promise((resolve) => setImmediate(resolve));
+            assert.equal(calls[1].body.email, storedEmail);
+        } else {
+            assert.equal(resend.hidden, true);
+            resend.events.submit({ preventDefault() {} });
+            assert.equal(calls.length, 0);
+            assert.match(nodes.emailVerificationStatus.textContent, /Volte ao login/);
+        }
+    });
+}

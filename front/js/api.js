@@ -14,7 +14,11 @@ window.Arcadia = window.Arcadia || {};
 
     const Token = {
         get() {
-            return localStorage.getItem('arcadiaToken');
+            try {
+                return localStorage.getItem('arcadiaToken');
+            } catch {
+                return null;
+            }
         },
         set(token) {
             localStorage.setItem('arcadiaToken', token);
@@ -38,7 +42,7 @@ window.Arcadia = window.Arcadia || {};
         const headers = {};
         if (body !== undefined) headers['Content-Type'] = raw ? contentType : 'application/json';
 
-        const token = Token.get();
+        const token = auth ? Token.get() : null;
         if (auth && token) headers.Authorization = `Bearer ${token}`;
 
         const res = await fetch(`${API_BASE}${path}`, {
@@ -49,18 +53,8 @@ window.Arcadia = window.Arcadia || {};
 
         const data = await res.json().catch(() => ({}));
 
-        if (res.status === 401 && auth && token) {
-            try {
-                const sess = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
-                if (
-                    sess.provider === 'Google' ||
-                    token.startsWith('google-') ||
-                    token.startsWith('local-')
-                ) {
-                    return { ok: false, status: 401, data };
-                }
-            } catch (e) {}
-
+        // Uma resposta antiga não pode encerrar um login concluído enquanto ela aguardava.
+        if (res.status === 401 && auth && token && Token.get() === token) {
             Token.clear();
             window.location.href = 'login.html';
         }
