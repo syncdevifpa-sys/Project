@@ -8,8 +8,9 @@ const controller = require('../backend/src/controllers/passwordRecovery.controll
 const db = require('../backend/src/config/database');
 const limits = require('../backend/src/services/security-limits.service');
 // Estes testes isolam a recuperação; a persistência distribuída tem testes próprios.
-beforeEach(t => {
-    for (const name of ['requestRecovery', 'delivery', 'reset']) t.mock.method(limits, name, async () => {});
+beforeEach((t) => {
+    for (const name of ['requestRecovery', 'delivery', 'reset'])
+        t.mock.method(limits, name, async () => {});
 });
 after(() => db.end());
 function response() {

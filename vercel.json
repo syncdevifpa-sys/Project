@@ -68,7 +68,8 @@
   ],
   "functions": {
     "server.js": {
-      "includeFiles": "node_modules/pdfjs-dist/{standard_fonts/**,legacy/build/pdf.worker.mjs}"
+      "includeFiles": "node_modules/{pdfjs-dist/{standard_fonts/**,legacy/build/pdf.mjs,legacy/build/pdf.worker.mjs},@napi-rs/canvas/**,@napi-rs/canvas-linux-x64-gnu/**}",
+      "maxDuration": 60
     }
   }
 }

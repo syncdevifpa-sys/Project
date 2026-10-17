@@ -69,7 +69,9 @@ async function createUser(req, res) {
                       ' e solicite validação à administração. O cadastro público não concede esses papéis.'
             });
         }
-        if (await require('../models/externalUsers.model').findExternalByEmail(email)) {
+        const normalizedEmail = require('../services/email-verification.service').address(email);
+        await require('../services/security-limits.service').verification(req, normalizedEmail);
+        if (await require('../models/externalUsers.model').findExternalByEmail(normalizedEmail)) {
             return res.status(409).json({ error: 'Este e-mail já está cadastrado. Faça login.' });
         }
         await require('../services/profile-course.service').validateCourseSelection(
@@ -80,7 +82,7 @@ async function createUser(req, res) {
 
         const userData = {
             nome: nome.trim(),
-            email: email.trim(),
+            email: normalizedEmail,
             tipo_usuario: 'discente',
             telefone: req.body.telefone || null,
             id_curso: req.body.id_curso || null,
@@ -91,7 +93,9 @@ async function createUser(req, res) {
 
         res.status(201).json({
             message: 'Usuário criado com sucesso.',
-            userId: result.insertId
+            userId: result.insertId,
+            verificationRequired: true,
+            verificationSent: result.verificationSent === true
         });
     } catch (error) {
         if (!error.status) console.error('Erro ao criar usuario:', error);

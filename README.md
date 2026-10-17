@@ -206,3 +206,17 @@ Para publicar as alterações do frontend, execute `npm run build`; a saída ger
 - Notícias preservam a proporção das capas, com opções Original, Paisagem (16:9) e Retrato (4:5) no enquadramento. O editor oferece zoom e posição na prévia, cancelamento e edição da imagem existente; a publicação precisa ser salva para gravar a alteração.
 - Notícias têm quadro por situação. Projetos e documentos oferecem lista, tabela e quadro agrupado; tarefas mantêm três colunas de andamento. Os controles de edição continuam no conteúdo.
 - Configurações permite editar nome, nome social, e-mail, telefone, apresentação e foto, além de preferências visuais e compartilhamento. Curso e vínculo seguem as regras institucionais existentes.
+
+### Importação de PDF no ambiente publicado
+
+O leitor inclui explicitamente o worker do PDF.js e sua dependência nativa no pacote da Vercel. Publique o frontend e o backend da mesma revisão da `main`; depois de atualizar o código local, reinicie o processo do servidor antes de extrair uma nova prévia. Reiniciar somente a página não recarrega os módulos do backend.
+
+Descrições que continuam na página seguinte mantêm o mês da coluna anterior. Dias enumerados, como “27 e 30”, geram ocorrências separadas; períodos como “23 a 29” preservam início e fim. A correção vale para novas prévias e não modifica eventos já publicados.
+
+Se a preparação do leitor falhar, a resposta identifica `PDF_RUNTIME_UNAVAILABLE`. Uma resposta 404 indica rota ou versão publicada incorreta; uma resposta 401 exige sessão válida. A presença da rota, consultada sem login, não comprova a extração autenticada no ambiente publicado. Consulte também a [orientação da Vercel sobre inclusão de arquivos nas funções](https://vercel.com/kb/guide/how-can-i-use-files-in-serverless-functions).
+
+### Segurança do envio e confirmação de e-mail
+
+O envio público de boas-vindas foi desativado. Novos cadastros usam confirmação por link antes do acesso pleno; contas antigas permanecem legadas e não verificadas até prova de posse do endereço. Trocas de e-mail exigem senha atual e confirmação do novo endereço.
+
+Antes de ativar, aplique as migrações de limites e confirmação no banco correto e configure SMTP, APP_URL, segredo das cotas e EMAIL_VERIFICATION_ENABLED conforme [o guia de ativação](docs/confirmacao-email.md). As migrações foram preparadas, mas não executadas em bancos reais nesta etapa. Nunca coloque credenciais no navegador ou em commits. A auditoria geral e suas pendências estão em [docs/auditoria-seguranca-2026-10-16.md](docs/auditoria-seguranca-2026-10-16.md).

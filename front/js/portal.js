@@ -663,8 +663,76 @@
         // Logout: tratado pelo auth.js ([data-logout] e [data-sign-out])
     }
 
+    function styleViewSwitcher(seg) {
+        if (seg.dataset.viewSwitcherReady) return;
+        seg.dataset.viewSwitcherReady = 'true';
+        seg.classList.add('ar-seg');
+        seg.setAttribute('role', 'group');
+        seg.setAttribute('aria-label', 'Modo de exibição');
+        var modes = {
+            board: [0, 'layout-grid', 'Quadro'],
+            quadro: [0, 'layout-grid', 'Quadro'],
+            table: [1, 'table-2', 'Tabela'],
+            tabela: [1, 'table-2', 'Tabela'],
+            list: [2, 'list', 'Lista'],
+            lista: [2, 'list', 'Lista'],
+            month: [0, 'calendar', 'Mês']
+        };
+        var buttons = Array.from(seg.querySelectorAll('button'));
+        buttons.sort(function (a, b) {
+            return (
+                (modes[a.dataset.view || a.dataset.mode]?.[0] ?? 9) -
+                (modes[b.dataset.view || b.dataset.mode]?.[0] ?? 9)
+            );
+        });
+        buttons.forEach(function (button) {
+            var mode = modes[button.dataset.view || button.dataset.mode];
+            if (mode) {
+                button.innerHTML = getIconSvg(mode[1], 16) + '<span>' + mode[2] + '</span>';
+                button.querySelector('svg')?.setAttribute('aria-hidden', 'true');
+            }
+            button.type = 'button';
+            seg.append(button);
+            button.addEventListener('keydown', function (event) {
+                var index = buttons.indexOf(button),
+                    target;
+                if (event.key === 'ArrowRight') target = buttons[(index + 1) % buttons.length];
+                if (event.key === 'ArrowLeft')
+                    target = buttons[(index + buttons.length - 1) % buttons.length];
+                if (event.key === 'Home') target = buttons[0];
+                if (event.key === 'End') target = buttons[buttons.length - 1];
+                if (!target) return;
+                event.preventDefault();
+                target.click();
+                target.focus();
+            });
+        });
+    }
+
     function setupViewToolbar() {
+        var picker = document.getElementById('calendarViewMode');
+        if (picker) {
+            var group = document.createElement('div');
+            group.className = 'ar-calendar-view-picker';
+            Array.from(picker.options).forEach(function (option) {
+                var button = document.createElement('button');
+                button.dataset.view = option.value;
+                button.setAttribute('aria-pressed', String(picker.value === option.value));
+                button.addEventListener('click', function () {
+                    picker.value = option.value;
+                    picker.dispatchEvent(new Event('change', { bubbles: true }));
+                    group.querySelectorAll('button').forEach(function (item) {
+                        item.setAttribute('aria-pressed', String(item === button));
+                    });
+                });
+                group.append(button);
+            });
+            picker.closest('label').hidden = true;
+            picker.closest('label').before(group);
+            styleViewSwitcher(group);
+        }
         document.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
+            styleViewSwitcher(seg);
             var buttons = seg.querySelectorAll('button');
             buttons.forEach(function (btn) {
                 btn.addEventListener('click', function () {
@@ -708,6 +776,7 @@
         closeDialog: closeDialog,
         openCommandPalette: openCommandPalette,
         updateUserAvatar: updateUserAvatar,
-        hydrateTopNav: hydrateTopNav
+        hydrateTopNav: hydrateTopNav,
+        styleViewSwitcher: styleViewSwitcher
     });
 })();

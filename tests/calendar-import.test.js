@@ -264,6 +264,61 @@ test('continuação em outra página mantém mês, coluna e ano sem misturar des
     );
 });
 
+test('dias enumerados mantêm o mês da coluna sem incluir dias intermediários', () => {
+    const item = (text, x, y, width = 120) => ({ text, x, y, width });
+    const result = pdf.candidatesFromPages(
+        [
+            {
+                number: 1,
+                items: [item('OUTUBRO', 60, 700), item('27 e 30 – Lançamento de notas', 20, 100)]
+            },
+            { number: 2, items: [item('no SIGAA', 20, 680)] }
+        ],
+        { year: 2026, level: 'basica' }
+    );
+    assert.deepEqual(
+        result.candidates.map((row) => row.data_evento),
+        ['2026-10-27', '2026-10-30']
+    );
+    assert.ok(result.candidates.every((row) => row.titulo === 'Lançamento de notas no SIGAA'));
+    assert.ok(result.candidates.every((row) => row.data_fim === null));
+});
+
+test('largura da descrição não desloca eventos para o mês vizinho', () => {
+    const item = (text, x, y, width = 80) => ({ text, x, y, width });
+    const result = pdf.candidatesFromPages(
+        [
+            {
+                number: 1,
+                items: [
+                    item('OUTUBRO', 60, 700),
+                    item('NOVEMBRO', 260, 700),
+                    item('DEZEMBRO', 460, 700),
+                    item('21 - Outubro Rosa', 20, 100, 450),
+                    item('20 - Consciência Negra', 220, 100, 450),
+                    item('18 - Projeto', 420, 100, 450)
+                ]
+            },
+            {
+                number: 2,
+                items: [item('23 - Halloween', 20, 680, 450), item('31 - Réveillon', 420, 680, 450)]
+            }
+        ],
+        { year: 2026, level: 'basica' }
+    );
+    for (const [name, expected] of [
+        ['Outubro Rosa', '2026-10-21'],
+        ['Consciência Negra', '2026-11-20'],
+        ['Projeto', '2026-12-18'],
+        ['Halloween', '2026-10-23'],
+        ['Réveillon', '2026-12-31']
+    ]) {
+        const row = result.candidates.find((c) => c.titulo === name);
+        assert.equal(row.data_evento, expected);
+        assert.equal(row.sourceMonth, Number(expected.slice(5, 7)));
+    }
+});
+
 test('continuação não herda mês de outra modalidade', () => {
     const item = (text, x, y, width = 120) => ({ text, x, y, width });
     const result = pdf.candidatesFromPages(
@@ -321,17 +376,70 @@ test(
         for (const [name, date] of [
             ['Outubro Rosa', '2026-10-21'],
             ['Evento de Halloween', '2026-10-23'],
+            ['Recírio', '2026-10-26'],
+            ['Facultado', '2026-10-27'],
+            ['Dia do Servidor Público', '2026-10-28'],
+            ['Projeta: Ciclo de palestras', '2026-10-31'],
             ['Projeto OIKOS', '2026-12-18'],
             ['Término das aulas do semestre 2026.2', '2026-12-22'],
+            ['Aplicação de provas finais', '2026-12-23'],
+            ['Véspera de Natal', '2026-12-24'],
+            ['Aniversário de criação do IFPA', '2026-12-29'],
             ['Véspera de Réveillon', '2026-12-31']
         ]) {
-            const found = result.candidates.find((c) => c.titulo.includes(name));
+            const found = result.candidates.find(
+                (c) => c.titulo.includes(name) && (c.page === 4 || c.sourcePages?.includes(4))
+            );
             assert.ok(found, name);
             assert.equal(found.data_evento, date, name);
         }
         assert.deepEqual(
             result.candidates.find((c) => c.titulo.includes('Projeto OIKOS')).sourcePages,
             [3, 4]
+        );
+        assert.ok(
+            result.candidates.some((c) => c.titulo === 'Homologação do PIT 2026.1 e RAD 2025.2')
+        );
+        assert.ok(
+            result.candidates.some((c) =>
+                /Sábado Letivo: Feira de Cursos do IFPA campus Belém/i.test(c.titulo)
+            )
+        );
+        assert.ok(
+            result.candidates.some((c) => /cultura da Inovação no Campus Belém/i.test(c.titulo))
+        );
+        assert.ok(
+            result.candidates.every(
+                (c) =>
+                    c.data_evento &&
+                    c.titulo.length <= 150 &&
+                    (!c.needsIndividualReview || c.reviewReason === 'color')
+            )
+        );
+        assert.equal(
+            result.candidates.find((c) => c.titulo === 'Aplicação de provas finais').data_fim,
+            '2026-12-29'
+        );
+        assert.equal(
+            result.candidates.find(
+                (c) => c.titulo.includes('consolidação de turmas') && c.data_evento === '2026-12-28'
+            ).data_fim,
+            '2026-12-30'
+        );
+        assert.ok(
+            result.candidates.some(
+                (c) => c.titulo === 'Sábado Letivo' && c.data_evento === '2026-10-24'
+            )
+        );
+        assert.ok(
+            result.candidates.some(
+                (c) => c.titulo === 'Sábado Letivo' && c.data_evento === '2026-10-31'
+            )
+        );
+        assert.ok(
+            result.candidates.some(
+                (c) => c.titulo === 'Sábado Letivo' && c.data_evento === '2026-12-19'
+            )
         );
     }
 );

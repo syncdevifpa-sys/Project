@@ -635,6 +635,7 @@
     <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
     <link rel="stylesheet" href="scrollbars.css" />
     <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="email-verification.css" />
   </head>
   <body>
     <!-- Floating Google Sign In Prompt Box (Appears ONLY when the user has actually used their real Google email) -->
@@ -757,8 +758,8 @@
             />
           </div>
           <div class="ar-google-modal-consent">
-            ✓ O Google verificará sua conta e compartilhará seu nome e e-mail com a Arcadia IFPA.<br />
-            ✉ Você receberá um e-mail de boas-vindas.
+            O acesso pelo Google ainda não está disponível.<br />
+            Use o cadastro com senha e confirme o link enviado ao seu e-mail.
           </div>
           <div class="ar-google-modal-actions">
             <button type="button" class="ar-google-modal-cancel" id="cancelGoogleModal"
@@ -1037,7 +1038,10 @@
                   </svg>
                 </button>
               </div>
-            </form>
+              <p class="ar-email-help"
+                ><a href="verify-email.html">Confirmar e-mail ou reenviar link</a></p
+              ></form
+            >
 
             <p class="ar-switch-text">
               Ainda não tem uma conta? <a href="signup.html">Criar uma conta</a>

@@ -4,6 +4,7 @@ node_modules/
 # Ambiente e Logs
 .env
 .env.*
+!.env.example
 *.log
 
 # Sistema Operacional

@@ -128,3 +128,85 @@ test(
         assert.equal(inserts, 1);
     }
 );
+
+test(
+    'PDF exato2026: todos os eventos selecionados atravessam prévia e gravação sem cortar títulos ou datas',
+    { skip: !process.env.ARCADIA_SECOND_CALENDAR_PDF_FIXTURE },
+    async (t) => {
+        mock(t);
+        const response = await fetch(
+            base + '/api/calendar-import/preview?year=2026&level=basica&label=Res1591',
+            {
+                method: 'POST',
+                headers: headers(),
+                body: fs.readFileSync(process.env.ARCADIA_SECOND_CALENDAR_PDF_FIXTURE)
+            }
+        );
+        assert.equal(response.status, 200);
+        const preview = await response.json();
+        assert.equal(preview.readerVersion, 'colunas-2026-10-16-v3');
+        const selected = preview.candidates.filter(
+            (event) =>
+                event.data_evento &&
+                event.titulo.length <= 150 &&
+                (!event.needsIndividualReview || event.reviewReason === 'color')
+        );
+        assert.equal(selected.length, preview.candidates.length);
+        assert.ok(selected.length > 100 && selected.length <= 250);
+        let stored = [],
+            commits = 0;
+        t.mock.method(db, 'getConnection', async () => ({
+            beginTransaction: async () => {},
+            commit: async () => {
+                commits++;
+            },
+            rollback: async () => {},
+            release() {},
+            execute: async (sql, params) => {
+                if (sql.startsWith('SELECT id_usuario, tipo_usuario'))
+                    return [[{ id_usuario: 4, tipo_usuario: 'servidor', is_admin: 0 }]];
+                if (sql.startsWith('SELECT titulo,')) return [stored];
+                if (sql.startsWith('INSERT INTO calendario')) {
+                    assert.equal(params.length % 7, 0);
+                    for (let i = 0; i < params.length; i += 7)
+                        stored.push({
+                            titulo: params[i + 1],
+                            descricao: params[i + 2],
+                            categoria: params[i + 3],
+                            periodo_letivo: params[i + 4],
+                            data_evento: params[i + 5],
+                            data_fim: params[i + 6]
+                        });
+                }
+                return [{ affectedRows: 1 }];
+            }
+        }));
+        const payload = {
+            previewToken: preview.previewToken,
+            events: selected.map((event) => ({ ...event, reviewed: true })),
+            confirmed: true,
+            publicCalendarConfirmed: true
+        };
+        const submit = () =>
+            fetch(base + '/api/calendar-import/commit', {
+                method: 'POST',
+                headers: { ...headers(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        const saved = await submit();
+        assert.equal(saved.status, 200);
+        assert.equal((await saved.json()).imported, selected.length);
+        assert.deepEqual(
+            stored.map(({ titulo, data_evento, data_fim }) => ({ titulo, data_evento, data_fim })),
+            selected.map(({ titulo, data_evento, data_fim }) => ({ titulo, data_evento, data_fim }))
+        );
+        assert.ok(
+            stored.some(
+                (e) => e.titulo === 'Véspera de Réveillon' && e.data_evento === '2026-12-31'
+            )
+        );
+        assert.equal((await (await submit()).json()).imported, 0);
+        assert.equal(stored.length, selected.length);
+        assert.equal(commits, 2);
+    }
+);

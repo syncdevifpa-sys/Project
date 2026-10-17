@@ -7,10 +7,20 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
 const profile = require('../controllers/profile.controller');
 const { listSessions } = require('../controllers/sessions.controller');
 router.get('/perfil', authenticateToken, profile.getProfile);
+router.get(
+    '/email-status',
+    authenticateToken,
+    require('./emailVerification.routes').status('users')
+);
 const sharing = require('../services/profile-sharing.service').handlers('users');
 router.get('/compartilhamento', authenticateToken, sharing.get);
 router.put('/compartilhamento', authenticateToken, sharing.put);
 router.put('/perfil', authenticateToken, profile.updateProfile);
+router.post(
+    '/email-change',
+    authenticateToken,
+    require('./emailVerification.routes').change('users')
+);
 router.post('/logout', authenticateToken, profile.logout);
 router.post('/logout-outros', authenticateToken, profile.logoutOthers);
 router.post('/alterar-senha', authenticateToken, profile.changePassword);

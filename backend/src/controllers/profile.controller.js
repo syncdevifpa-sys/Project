@@ -64,12 +64,15 @@ async function logoutOthers(req, res) {
 }
 
 async function changePassword(req, res) {
+    let connection;
     try {
         const { senhaAtual, novaSenha } = req.body;
         if (
             typeof senhaAtual !== 'string' ||
             typeof novaSenha !== 'string' ||
-            novaSenha.length < 8
+            novaSenha.length < 8 ||
+            Buffer.byteLength(novaSenha, 'utf8') > 72 ||
+            Buffer.byteLength(senhaAtual, 'utf8') > 72
         ) {
             return res.status(400).json({
                 error: 'Informe a senha atual e uma nova senha de pelo menos 8 caracteres.'
@@ -80,17 +83,45 @@ async function changePassword(req, res) {
         if (!user || !(await bcrypt.compare(senhaAtual, user.senha))) {
             return res.status(400).json({ error: 'Senha atual incorreta.' });
         }
-        await db.execute('UPDATE usuarios SET senha = ? WHERE id_usuario = ?', [
-            await bcrypt.hash(novaSenha, 10),
+        const passwordHash = await bcrypt.hash(novaSenha, 10);
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+        await require('../services/email-verification.service').lock(connection);
+        const [current] = await connection.execute(
+            "SELECT senha FROM usuarios WHERE id_usuario = ? AND situacao = 'ativo' FOR UPDATE",
+            [req.user.id_usuario]
+        );
+        if (!current.length || current[0].senha !== user.senha)
+            throw Object.assign(
+                new Error('A conta foi alterada. Confirme novamente sua senha atual.'),
+                { status: 409 }
+            );
+        await connection.execute('UPDATE usuarios SET senha = ? WHERE id_usuario = ?', [
+            passwordHash,
             req.user.id_usuario
         ]);
-        await db.execute('DELETE FROM tokens WHERE id_usuario = ? AND id_token <> ?', [
+        await connection.execute('DELETE FROM tokens WHERE id_usuario = ? AND id_token <> ?', [
             req.user.id_usuario,
             req.session.id_token
         ]);
+        await connection.execute(
+            'UPDATE recuperacao_senha SET usado_em = NOW() WHERE id_usuario = ? AND usado_em IS NULL',
+            [req.user.id_usuario]
+        );
+        await require('../services/email-verification.service').invalidate(
+            connection,
+            'users',
+            req.user.id_usuario
+        );
+        await connection.commit();
         return res.json({ message: 'Senha alterada.' });
     } catch (error) {
-        return res.status(500).json({ error: 'Não foi possível alterar a senha.' });
+        if (connection) await connection.rollback().catch(() => {});
+        return res
+            .status(error.status || 500)
+            .json({ error: error.status ? error.message : 'Não foi possível alterar a senha.' });
+    } finally {
+        connection?.release();
     }
 }
 

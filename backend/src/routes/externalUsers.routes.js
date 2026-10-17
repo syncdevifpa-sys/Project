@@ -16,6 +16,16 @@ router.post('/register', registerExternal);
 router.post('/login', loginExternal);
 
 router.get('/me', authenticateExternal, getExternalProfile);
+router.get(
+    '/email-status',
+    authenticateExternal,
+    require('./emailVerification.routes').status('external')
+);
+router.post(
+    '/email-change',
+    authenticateExternal,
+    require('./emailVerification.routes').change('external')
+);
 
 router.post('/logout', authenticateExternal, logoutExternal);
 const sharing = require('../services/profile-sharing.service').handlers('external');
