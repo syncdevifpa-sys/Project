@@ -37,6 +37,16 @@ async function login(req, res) {
             });
         }
 
+        const emailState = await require('../services/email-verification.service').loginStatus(
+            'users',
+            user.id_usuario,
+            user.email
+        );
+        if (!emailState.allowed)
+            return res.status(403).json({
+                error: 'Confirme seu e-mail antes de entrar. Você pode reenviar o link na página de confirmação.',
+                emailVerificationRequired: true
+            });
         // 4. Gerar JWT
         const token = jwt.sign(
             {
@@ -59,6 +69,9 @@ async function login(req, res) {
 
         // 6. Registrar sessão
         const sessionResult = await sessionsModel.createSession({
+            expectedEmail: user.email,
+            expectedPasswordHash: user.senha,
+            expectedType: user.tipo_usuario,
             id_usuario: user.id_usuario,
             id_externo: null,
             token: tokenHash,
@@ -79,7 +92,9 @@ async function login(req, res) {
                 email: user.email,
                 foto: user.foto || '',
                 tipo_usuario: user.tipo_usuario,
-                is_admin: Boolean(user.is_admin)
+                is_admin: Boolean(user.is_admin),
+                email_verificado: emailState.verified,
+                email_status: emailState.status
             }
         });
     } catch (error) {

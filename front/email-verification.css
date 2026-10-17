@@ -1,0 +1,215 @@
+/* Confirmação de e-mail e credenciais seguem o mesmo sistema visual do portal. */
+.ar-email-body {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  box-sizing: border-box;
+}
+.ar-email-page {
+  width: min(100%, 520px);
+  box-sizing: border-box;
+  padding: clamp(24px, 5vw, 40px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 12px 40px #0000000a;
+}
+.ar-email-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 650;
+  margin-bottom: 28px;
+}
+.ar-email-brand img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 50%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+.ar-email-page h1 {
+  font-size: clamp(26px, 6vw, 34px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  margin: 0 0 16px;
+}
+.ar-email-page h2,
+.ar-account-email h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+.ar-email-page p,
+.ar-account-email p,
+.ar-email-dialog p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  color: var(--ink-muted);
+  margin: 0 0 16px;
+}
+.ar-email-page form {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0 0;
+}
+.ar-email-page form p {
+  margin: 0;
+}
+#resendEmailForm {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+.ar-email-page label,
+.ar-email-dialog label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 550;
+}
+.ar-email-page input,
+.ar-email-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+.ar-email-page input:focus-visible,
+.ar-email-dialog input:focus-visible {
+  outline: 2px solid var(--action);
+  outline-offset: 2px;
+}
+.ar-email-page button,
+.ar-email-dialog button,
+.ar-account-email button {
+  min-height: 44px;
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+  line-height: 1.4;
+}
+.ar-email-page button {
+  width: 100%;
+}
+.ar-email-page button:disabled,
+.ar-email-dialog button:disabled,
+.ar-account-email button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.ar-email-page [role='status'],
+.ar-account-email [role='status'],
+.ar-email-dialog [role='status'] {
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 20px 0 0;
+  color: var(--ink);
+  font-size: 14px;
+}
+.ar-email-page [role='status']:empty,
+.ar-email-dialog [role='status']:empty {
+  display: none;
+}
+.ar-email-footer {
+  margin: 24px 0 0 !important;
+  text-align: center;
+}
+.ar-email-page a:not(.ar-email-brand),
+.ar-email-help a {
+  color: var(--ink);
+  text-underline-offset: 4px;
+}
+.ar-email-help {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 20px 0 0;
+}
+.ar-email-help a {
+  display: inline-block;
+  padding: 8px 4px;
+}
+.ar-account-email {
+  margin: 24px 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 20px;
+  min-width: 0;
+}
+.ar-email-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+.ar-email-controls button {
+  margin: 0;
+}
+.ar-email-dialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100svh - 32px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: clamp(20px, 5vw, 32px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.ar-email-dialog h2 {
+  font-size: 24px;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+.ar-email-dialog label {
+  margin-top: 20px;
+}
+.ar-email-dialog::backdrop {
+  background: #0009;
+  backdrop-filter: blur(3px);
+}
+.ar-email-dialog form > button {
+  margin-top: 16px;
+  margin-right: 8px;
+}
+.ar-email-page [hidden],
+.ar-account-email [hidden] {
+  display: none !important;
+}
+@media (max-width: 480px) {
+  .ar-email-body {
+    padding: 20px 12px;
+    align-items: start;
+  }
+  .ar-email-page {
+    border-radius: 20px;
+  }
+  .ar-account-email {
+    padding: 20px;
+  }
+  .ar-email-controls {
+    flex-direction: column;
+  }
+  .ar-email-controls button {
+    width: 100%;
+  }
+  .ar-email-dialog form > button {
+    width: 100%;
+    margin-right: 0;
+  }
+}

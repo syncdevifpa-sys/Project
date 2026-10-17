@@ -329,9 +329,10 @@ function mergeColorCandidates(parsed, analysis) {
     const note = (candidate, message) => {
         candidate.sourceText = `${message} | ${candidate.sourceText || ''}`;
     };
-    const warn = (candidate, message) => {
+    const warn = (candidate, message, reason = 'classification') => {
         candidate.warning.push(message);
         candidate.needsIndividualReview = true;
+        if (candidate.reviewReason !== 'classification') candidate.reviewReason = reason;
     };
     for (const candidate of candidates) {
         candidate.warning = candidate.warning || [];
@@ -352,6 +353,7 @@ function mergeColorCandidates(parsed, analysis) {
         const range = validRange(candidate);
         if (!range) {
             candidate.needsIndividualReview = true;
+            candidate.reviewReason = 'date';
             continue;
         }
         const matching = analysis.days.filter(
@@ -396,7 +398,10 @@ function mergeColorCandidates(parsed, analysis) {
                 candidate,
                 conflict
                     ? 'A cor conflita com a descrição. Confira o evento individualmente.'
-                    : 'Cores diferentes, ausentes ou sem legenda em parte do período. Não foi aplicada uma cor ao evento inteiro; confira individualmente.'
+                    : 'Cores diferentes, ausentes ou sem legenda em parte do período. Não foi aplicada uma cor ao evento inteiro; confira a cor separadamente.',
+                conflict || ['interrupcao_presencial', 'ferias_docentes'].includes(meaning?.kind)
+                    ? 'classification'
+                    : 'color'
             );
         }
     }
@@ -468,6 +473,8 @@ function mergeColorCandidates(parsed, analysis) {
             prior.sourceText += ' | ' + item.sourceText;
             prior.warning = [...new Set([...prior.warning, ...item.warning])];
             prior.needsIndividualReview = prior.needsIndividualReview || item.needsIndividualReview;
+            if (item.reviewReason === 'classification' || !prior.reviewReason)
+                prior.reviewReason = item.reviewReason;
             if (prior.cor !== item.cor) {
                 delete prior.cor;
                 delete prior.legenda;
@@ -487,8 +494,16 @@ function mergeColorCandidates(parsed, analysis) {
             'Mais de 300 candidatos após a leitura das cores. Divida o PDF por modalidade ou período.'
         );
     for (const candidate of merged) {
-        if (candidate.titulo.length > 150)
-            warn(candidate, 'Título longo: revise e reduza antes de importar.');
+        if (candidate.titulo.length > 150) {
+            candidate.fullTitle = candidate.titulo;
+            candidate.titulo = candidate.titulo.slice(0, 147).replace(/\s+\S*$/, '') + '…';
+            candidate.warning = candidate.warning.filter(
+                (message) => !message.startsWith('Título longo:')
+            );
+            candidate.warning.push(
+                'Título abreviado automaticamente; a descrição completa permanece no trecho de origem.'
+            );
+        }
         if (/^ferias academicas\s+\d{1,2}$/.test(norm(candidate.titulo)))
             warn(
                 candidate,

@@ -140,6 +140,15 @@
                 const card = make('article');
                 card.className = 'ar-calendar-import-row';
                 const row = { candidate };
+                if (candidate.sourceMonth && candidate.sourceYear) {
+                    const month = new Intl.DateTimeFormat('pt-BR', {
+                        month: 'long',
+                        timeZone: 'UTC'
+                    }).format(
+                        new Date(Date.UTC(candidate.sourceYear, candidate.sourceMonth - 1, 1))
+                    );
+                    card.append(make('h3', month + ' de ' + candidate.sourceYear));
+                }
                 const origin = make(
                     'p',
                     'Página ' + candidate.page + ' · ' + (candidate.warning || []).join(' ')
@@ -177,7 +186,9 @@
                     card.append(
                         make(
                             'p',
-                            'Revisão individual obrigatória: este evento não é marcado pela seleção em lote.'
+                            candidate.reviewReason === 'color'
+                                ? 'A data foi identificada. A cor não é uniforme; o evento pode ser selecionado sem aplicar uma cor ao período inteiro.'
+                                : 'Revisão individual obrigatória: este evento não é marcado pela seleção em lote.'
                         )
                     );
                 if (candidate.sourcePages?.length > 1)
@@ -317,7 +328,8 @@
                         const start = row.data_evento.value,
                             end = row.data_fim.value;
                         const valid =
-                            !row.candidate.needsIndividualReview &&
+                            (!row.candidate.needsIndividualReview ||
+                                row.candidate.reviewReason === 'color') &&
                             row.titulo.value.trim().length > 0 &&
                             row.titulo.value.trim().length <= 150 &&
                             validDate(start) &&
@@ -460,6 +472,11 @@
                         status.textContent =
                             'Dados alterados durante a leitura. Extraia novamente.';
                         return;
+                    }
+                    if (data.readerVersion !== 'colunas-2026-10-16-v3') {
+                        throw new Error(
+                            'O servidor ainda está usando uma versão anterior do leitor de PDF. Reinicie o backend local ou publique o deploy atualizado antes de importar.'
+                        );
                     }
                     render(data);
                 } catch (error) {

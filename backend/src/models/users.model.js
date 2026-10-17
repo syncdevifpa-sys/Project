@@ -125,56 +125,23 @@ async function findUserById(userId, includeInactive = false) {
 }
 
 async function createUser(userData) {
-    const {
-        nome,
-        nome_social = null,
-        email,
-        telefone = null,
-        senha,
-        tipo_usuario,
-        matricula = null,
-        id_curso = null,
-        periodo = null,
-        setor = null,
-        sobre = null
-    } = userData;
-
-    const [result] = await db.execute(
-        `
-        INSERT INTO usuarios (
-            nome,
-            nome_social,
-            email,
-            telefone,
-            senha,
-            tipo_usuario,
-            matricula,
-            id_curso,
-            periodo,
-            setor,
-            sobre
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-        [
-            nome,
-            nome_social,
-            email,
-            telefone,
-            senha,
-            tipo_usuario,
-            matricula,
-            id_curso,
-            periodo,
-            setor,
-            sobre
-        ]
-    );
-
-    return result;
+    return require('../services/email-verification.service').register('users', userData);
 }
 
 async function updateUser(userId, userData) {
+    if (Object.hasOwn(userData, 'email')) {
+        const current = await findUserById(userId, true);
+        if (
+            !current ||
+            require('../services/email-verification.service').address(userData.email) !==
+                require('../services/email-verification.service').address(current.email)
+        )
+            throw Object.assign(new Error('Use Alterar e-mail e confirme o novo endereço.'), {
+                status: 409
+            });
+        userData = { ...userData };
+        delete userData.email;
+    }
     const allowed = [
         'nome',
         'nome_social',

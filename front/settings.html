@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="navigation.css" />
     <link rel="stylesheet" href="avatar-editor.css" />
     <link rel="stylesheet" href="profile-sharing.css" />
+    <link rel="stylesheet" href="email-verification.css" />
     <link rel="stylesheet" href="brand-logo.css" />
     <link rel="stylesheet" href="content-views.css" />
   </head>
@@ -387,7 +388,12 @@
 
                 <label class="ar-field" id="campoEmailPessoalWrap">
                   <span class="ar-field-label">E-mail da conta</span>
-                  <input type="email" id="campoEmailPessoal" placeholder="seu.email@gmail.com" />
+                  <input
+                    type="email"
+                    id="campoEmailPessoal"
+                    readonly
+                    placeholder="seu.email@gmail.com"
+                  />
                   <span
                     class="ar-field-error"
                     id="emailPessoalError"
@@ -413,7 +419,8 @@
                     <span>Falta o símbolo @. Exemplo: usuario@gmail.com</span>
                   </span>
                   <span class="ar-field-hint" id="emailPessoalHint"
-                    >E-mail usado para entrar na conta e receber notificações.</span
+                    >E-mail atual de acesso. Para trocar, use Alterar e-mail e confirme o novo
+                    endereço.</span
                   >
                 </label>
 
@@ -472,6 +479,11 @@
             </div>
           </section>
 
+          <section
+            id="accountEmail"
+            class="ar-account-email"
+            aria-label="Confirmação do e-mail de acesso"
+          ></section>
           <section id="profileSharing" aria-label="Compartilhamento do perfil"></section>
 
           <!-- 2. Appearance -->
@@ -689,6 +701,7 @@
                     <button
                       type="button"
                       role="radio"
+                      border-radius=""
                       aria-checked="false"
                       class="ar-accent"
                       data-accent-btn="yellow"
@@ -1114,6 +1127,7 @@
     <script src="js/calendar-colors.js"></script>
     <script src="js/avatar-editor.js"></script>
     <script src="js/profile-sharing.js"></script>
+    <script src="js/account-email.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
         if (!Arcadia.auth.exigirLogin()) return;
