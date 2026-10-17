@@ -1,3 +1,4 @@
+const { verificationEnabled } = require('./email-config.service');
 /* Posse do endereço é independente de vínculo e permissão. Dados antigos permanecem legados. */
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
@@ -13,8 +14,10 @@ function fail(status, message) {
     throw Object.assign(new Error(message), { status });
 }
 function enabled() {
-    if (process.env.EMAIL_VERIFICATION_ENABLED !== 'true')
-        fail(503, 'A confirmação de e-mail ainda não foi habilitada. Tente novamente mais tarde.');
+    if (!verificationEnabled())
+        fail(503, process.env.VERCEL_ENV === 'preview'
+            ? 'A confirmação de e-mail não está habilitada neste Preview. Configure EMAIL_VERIFICATION_ENABLED=true para Preview na Vercel e refaça o deploy.'
+            : 'A confirmação de e-mail ainda não foi habilitada neste ambiente. Entre em contato com a administração.');
 }
 function address(value) {
     const email = emailAddress(value).toLowerCase();
@@ -166,7 +169,7 @@ async function loginStatus(kind, id, email) {
         };
     } catch (error) {
         // Antes da migração, nenhuma conta antiga é promovida nem bloqueada silenciosamente.
-        if (error.code === 'ER_NO_SUCH_TABLE' && process.env.EMAIL_VERIFICATION_ENABLED !== 'true')
+        if (error.code === 'ER_NO_SUCH_TABLE' && !verificationEnabled())
             return { allowed: true, verified: false, status: 'legado' };
         unavailable(error);
     }
@@ -279,7 +282,7 @@ async function invalidate(connection, kind, id) {
     }
 }
 async function lock(connection) {
-    if (process.env.EMAIL_VERIFICATION_ENABLED !== 'true') return;
+    if (!verificationEnabled()) return;
     const [rows] = await connection.execute(
         'SELECT chave FROM seguranca_email_lock WHERE chave = 1 FOR UPDATE'
     );
