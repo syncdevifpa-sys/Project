@@ -377,6 +377,10 @@ window.Arcadia = window.Arcadia || {};
                             { auth: false }
                         );
 
+                        // Mantém apenas o destinatário nesta aba; nunca coloca dados na URL.
+                        if (status === 409 || (ok && status === 201)) {
+                            try { window.sessionStorage.setItem('arcadia.pendingEmail', email); } catch {}
+                        }
                         if (status === 409) {
                             const help = form.querySelector('[data-signup-verification]');
                             if (help) help.hidden = false;
