@@ -166,19 +166,6 @@ window.Arcadia = window.Arcadia || {};
         }
 
         if (form) {
-            if (tipoAcesso === 'login') {
-                try {
-                    const notice = window.sessionStorage.getItem('arcadia.signupNotice');
-                    if (notice) {
-                        showSuccess(notice === 'sent'
-                            ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
-                            : 'Conta criada. O envio do e-mail falhou. Solicite outro link de confirmação abaixo antes de entrar.');
-                        window.sessionStorage.removeItem('arcadia.signupNotice');
-                        const field = form.querySelector('#email');
-                        if (field) field.value = window.sessionStorage.getItem('arcadia.pendingEmail') || '';
-                    }
-                } catch { /* O login funciona mesmo sem armazenamento nesta aba. */ }
-            }
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const emailVal = (realGoogleEmail ? realGoogleEmail.value : '').trim();
@@ -314,6 +301,7 @@ window.Arcadia = window.Arcadia || {};
             const tipoAcesso = form.getAttribute('data-acesso');
             const msgErro = form.querySelector('.mensagem-erro, .error-message');
             const msgSucesso = form.querySelector('.mensagem-sucesso, .success-message');
+            const confirmationHelp = form.querySelector('[data-email-verification-help]');
 
             const showError = (text) => {
                 if (msgErro) {
@@ -333,6 +321,26 @@ window.Arcadia = window.Arcadia || {};
                 if (msgErro) msgErro.style.display = 'none';
             };
 
+            if (tipoAcesso === 'login') {
+                try {
+                    const notice = window.sessionStorage.getItem('arcadia.signupNotice');
+                    if (notice) {
+                        if (confirmationHelp) confirmationHelp.hidden = false;
+                        showSuccess(
+                            notice === 'sent'
+                                ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
+                                : 'Conta criada. O envio do e-mail falhou. Solicite outro link de confirmação abaixo antes de entrar.'
+                        );
+                        window.sessionStorage.removeItem('arcadia.signupNotice');
+                        const field = form.querySelector('#email');
+                        if (field)
+                            field.value =
+                                window.sessionStorage.getItem('arcadia.pendingEmail') || '';
+                    }
+                } catch {
+                    /* O login funciona mesmo sem armazenamento nesta aba. */
+                }
+            }
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (msgErro) msgErro.style.display = 'none';
@@ -392,7 +400,9 @@ window.Arcadia = window.Arcadia || {};
 
                         // Mantém apenas o destinatário nesta aba; nunca coloca dados na URL.
                         if (status === 409 || (ok && status === 201)) {
-                            try { window.sessionStorage.setItem('arcadia.pendingEmail', email); } catch {}
+                            try {
+                                window.sessionStorage.setItem('arcadia.pendingEmail', email);
+                            } catch {}
                         }
                         if (status === 409) {
                             const help = form.querySelector('[data-signup-verification]');
@@ -428,9 +438,12 @@ window.Arcadia = window.Arcadia || {};
                         );
 
                         try {
-                            window.sessionStorage.setItem('arcadia.signupNotice', data.verificationSent ? 'sent' : 'failed');
+                            window.sessionStorage.setItem(
+                                'arcadia.signupNotice',
+                                data.verificationSent ? 'sent' : 'failed'
+                            );
                         } catch {}
-                        setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+                        window.location.href = 'verify-email.html';
                     } catch (err) {
                         console.error('Erro ao conectar com a API:', err);
                         showError('Não foi possível conectar ao servidor.');
@@ -439,6 +452,7 @@ window.Arcadia = window.Arcadia || {};
                 }
 
                 if (tipoAcesso === 'login') {
+                    if (confirmationHelp) confirmationHelp.hidden = true;
                     if (!email || !senha) {
                         return showError('Por favor, informe seu e-mail e senha.');
                     }
@@ -451,6 +465,12 @@ window.Arcadia = window.Arcadia || {};
                         );
 
                         if (!ok) {
+                            if (data.emailVerificationRequired === true && confirmationHelp) {
+                                confirmationHelp.hidden = false;
+                                try {
+                                    window.sessionStorage.setItem('arcadia.pendingEmail', email);
+                                } catch {}
+                            }
                             return showError(
                                 data.error ||
                                     (status === 401

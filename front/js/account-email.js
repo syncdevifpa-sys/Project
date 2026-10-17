@@ -87,7 +87,8 @@
         });
         const controls = document.createElement('div');
         controls.className = 'ar-email-controls';
-        controls.append(resend, change);
+        if (!current.verified) controls.append(resend);
+        controls.append(change);
         host.append(controls);
     });
 })((window.Arcadia = window.Arcadia || {}));
