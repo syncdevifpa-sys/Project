@@ -68,7 +68,13 @@ async function sendLink(toEmail, token, verification = false) {
         });
         if (!result.accepted || result.accepted.length !== 1)
             throw new Error('PASSWORD_RECOVERY_DELIVERY_FAILED');
-    } catch {
+    } catch (error) {
+        // Diagnóstico privado: nunca registra destinatário, senha ou conteúdo do link.
+        const codes = ['EAUTH', 'ETIMEDOUT', 'ECONNECTION', 'ESOCKET', 'EENVELOPE', 'EMESSAGE'];
+        console.error('[email] Falha de envio', {
+            code: codes.includes(error.code) ? error.code : 'DELIVERY_FAILED',
+            responseCode: Number.isInteger(error.responseCode) ? error.responseCode : null
+        });
         // Não propaga mensagens do provedor, destinatário, conteúdo nem credenciais.
         throw new Error('PASSWORD_RECOVERY_DELIVERY_FAILED');
     } finally {
