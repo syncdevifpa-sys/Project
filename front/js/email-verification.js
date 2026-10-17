@@ -7,10 +7,18 @@
     const resend = document.getElementById('resendEmailForm');
     const status = document.getElementById('emailVerificationStatus');
     let confirmed = false;
+    let pendingEmail = null;
     // O cadastro preenche o destinatário sem expô-lo no endereço da página.
     try {
         const email = window.sessionStorage.getItem('arcadia.pendingEmail');
-        if (email && email.length <= 150) resend.elements.email.value = email;
+        if (
+            typeof email === 'string' &&
+            email.trim().length <= 150 &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+        ) {
+            pendingEmail = email.trim();
+            resend.elements.email.value = pendingEmail;
+        }
         const notice = window.sessionStorage.getItem('arcadia.signupNotice');
         if (!token && notice === 'sent') {
             status.textContent =
@@ -21,11 +29,19 @@
         }
         window.sessionStorage.removeItem('arcadia.signupNotice');
     } catch {
-        /* O formulário continua disponível se o armazenamento estiver bloqueado. */
+        /* Sem destinatário desta aba, solicite novamente pelo login. */
+    }
+    resend.elements.email.readOnly = true;
+    resend.hidden = !pendingEmail;
+    if (!pendingEmail && !token) {
+        status.textContent =
+            'Volte ao login e informe o e-mail da sua conta para solicitar a confirmação.';
     }
     form.hidden = !token;
     if (token && !/^[a-f0-9]{64}$/.test(token)) {
-        status.textContent = 'Link inválido. Solicite outro link abaixo.';
+        status.textContent = pendingEmail
+            ? 'Link inválido. Solicite outro link abaixo.'
+            : 'Link inválido. Volte ao login para solicitar outro link.';
         form.hidden = true;
         token = null;
     }
@@ -61,9 +77,10 @@
     });
     resend.addEventListener('submit', (event) => {
         event.preventDefault();
-        if (confirmed) return;
+        if (confirmed || !pendingEmail || resend.querySelector('button').disabled) return;
         submit(resend, '/api/email-verification/request', {
-            email: resend.elements.email.value.trim()
+            // O campo é somente uma exibição; o envio usa o destinatário do cadastro/login.
+            email: pendingEmail
         });
     });
 })();

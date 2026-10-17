@@ -53,3 +53,24 @@ test('confirmação aparece no login apenas para conta pendente e some no acesso
     assert.equal(c.confirmationHelp.hidden, true);
     assert.equal(c.window.location.href, 'dashboard.html');
 });
+
+test('falha ao salvar token não deixa sessão parcial nem parece falha de conexão', async () => {
+    const c = client(
+        'users',
+        'person@example.test',
+        async () => ({
+            ok: true,
+            status: 200,
+            data: { user: { id_usuario: 4, tipo_usuario: 'discente' }, token: 'new-token' }
+        }),
+        'login'
+    );
+    c.window.Arcadia.token.set = () => {
+        throw new Error('storage blocked');
+    };
+    await c.submit();
+    assert.equal(c.storage.has('arcadiaSessao'), false);
+    assert.equal(c.storage.has('arcadiaToken'), false);
+    assert.match(c.error.textContent, /navegador bloqueou o armazenamento/);
+    assert.equal(c.window.location.href, 'signup.html');
+});

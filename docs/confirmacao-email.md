@@ -94,3 +94,9 @@ A conclusão geral da auditoria continua pendente: limites de login/PDF, exposi�
 ### Configuração do Preview
 
 As variáveis de Production não são herdadas automaticamente pelo Preview. Defina `EMAIL_VERIFICATION_ENABLED=true`, SMTP, banco e segredo de cotas também no ambiente Preview. Use o endereço do Preview em `APP_URL` para manter os links no teste. Refaça o deploy após salvar as variáveis. O código não ativa a confirmação se a variável estiver ausente.
+
+### Aviso de confirmação desabilitada na Vercel
+
+O aviso é emitido quando `EMAIL_VERIFICATION_ENABLED` não resulta em `true` no servidor. `APP_URL` define o endereço dos links; não ativa o serviço. Em Settings → Environment Variables do projeto Vercel, configure `EMAIL_VERIFICATION_ENABLED=true` no ambiente correspondente: Production para o domínio oficial, Preview para a implantação da branch. Salve e gere um novo deploy; uma implantação já criada continua usando sua configuração anterior. Configuração do arquivo `.env` local não substitui a configuração da Vercel.
+
+Antes de ativar, confira as migrações e demais variáveis descritas acima. Não publique credenciais ou links de confirmação em logs ou capturas. A ativação não prova entrega SMTP; essa etapa depende de teste autorizado no ambiente real.
