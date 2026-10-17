@@ -6,6 +6,11 @@
     const form = document.getElementById('confirmEmailForm');
     const resend = document.getElementById('resendEmailForm');
     const status = document.getElementById('emailVerificationStatus');
+    // O cadastro preenche o destinatário sem expô-lo no endereço da página.
+    try {
+        const email = window.sessionStorage.getItem('arcadia.pendingEmail');
+        if (email && email.length <= 150) resend.elements.email.value = email;
+    } catch { /* O formulário continua disponível se o armazenamento estiver bloqueado. */ }
     form.hidden = !token;
     if (token && !/^[a-f0-9]{64}$/.test(token)) {
         status.textContent = 'Link inválido. Solicite outro link abaixo.';
@@ -24,6 +29,7 @@
             if (form === document.getElementById('confirmEmailForm')) {
                 form.hidden = true;
                 token = null;
+                try { window.sessionStorage.removeItem('arcadia.pendingEmail'); } catch {}
                 if (data.reauthenticate) window.Arcadia.token.clear();
             }
         } catch (error) {
