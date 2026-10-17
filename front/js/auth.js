@@ -166,19 +166,6 @@ window.Arcadia = window.Arcadia || {};
         }
 
         if (form) {
-            if (tipoAcesso === 'login') {
-                try {
-                    const notice = window.sessionStorage.getItem('arcadia.signupNotice');
-                    if (notice) {
-                        showSuccess(notice === 'sent'
-                            ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
-                            : 'Conta criada. O envio do e-mail falhou. Solicite outro link de confirmação abaixo antes de entrar.');
-                        window.sessionStorage.removeItem('arcadia.signupNotice');
-                        const field = form.querySelector('#email');
-                        if (field) field.value = window.sessionStorage.getItem('arcadia.pendingEmail') || '';
-                    }
-                } catch { /* O login funciona mesmo sem armazenamento nesta aba. */ }
-            }
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const emailVal = (realGoogleEmail ? realGoogleEmail.value : '').trim();
@@ -333,6 +320,19 @@ window.Arcadia = window.Arcadia || {};
                 if (msgErro) msgErro.style.display = 'none';
             };
 
+            if (tipoAcesso === 'login') {
+                try {
+                    const notice = window.sessionStorage.getItem('arcadia.signupNotice');
+                    if (notice) {
+                        showSuccess(notice === 'sent'
+                            ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
+                            : 'Conta criada. O envio do e-mail falhou. Solicite outro link de confirmação abaixo antes de entrar.');
+                        window.sessionStorage.removeItem('arcadia.signupNotice');
+                        const field = form.querySelector('#email');
+                        if (field) field.value = window.sessionStorage.getItem('arcadia.pendingEmail') || '';
+                    }
+                } catch { /* O login funciona mesmo sem armazenamento nesta aba. */ }
+            }
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (msgErro) msgErro.style.display = 'none';

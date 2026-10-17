@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
-module.exports = function signupClient(role, email, post) {
+module.exports = function signupClient(role, email, post, access = 'cadastro') {
     const error = { textContent: '', style: {} },
         success = { textContent: '', style: {} },
         help = { hidden: true };
@@ -18,20 +18,21 @@ module.exports = function signupClient(role, email, post) {
     let submit, ready;
     const timers = [];
     const form = {
-        getAttribute: () => 'cadastro',
+        getAttribute: () => access,
         querySelector: (selector) => fields[selector] || null,
         addEventListener: (_, fn) => {
             submit = fn;
         }
     };
+    const storage = new Map();
     const window = {
         location: { href: 'signup.html' },
         addEventListener() {},
-        Arcadia: { api: { post }, token: {} }
+        Arcadia: { api: { post }, token: { set: value => storage.set('arcadiaToken', value), get: () => storage.get('arcadiaToken') } }
     };
     vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), {
         window,
-        localStorage: { getItem: () => null },
+        localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) },
         alert() {},
         setTimeout: (fn) => timers.push(fn),
         document: {
@@ -39,10 +40,10 @@ module.exports = function signupClient(role, email, post) {
             addEventListener: (_, fn) => {
                 ready = fn;
             },
-            getElementById: () => null,
+            getElementById: id => id === 'googleAuthForm' ? { addEventListener() {} } : null,
             querySelectorAll: (selector) => (selector === 'form[data-acesso]' ? [form] : [])
         }
     });
     ready();
-    return { submit: () => submit({ preventDefault() {} }), error, success, help, timers, window };
+    return { submit: () => submit({ preventDefault() {} }), error, success, help, timers, window, storage };
 };
