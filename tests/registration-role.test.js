@@ -140,7 +140,15 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
                     api: {
                         post: async (path, body) => {
                             request = { path, body };
-                            return { ok: true, status: 201, data: {} };
+                            return {
+                                ok: true,
+                                status: 201,
+                                data: {
+                                    [role === 'externo' ? 'externalId' : 'userId']: 10,
+                                    verificationRequired: true,
+                                    verificationSent: true
+                                }
+                            };
                         }
                     },
                     token: {}

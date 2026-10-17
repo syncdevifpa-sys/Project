@@ -24,8 +24,11 @@ async function registerExternal(req, res) {
             });
         }
 
+        const normalizedEmail = require('../services/email-verification.service').address(email);
+        await require('../services/security-limits.service').verification(req, normalizedEmail);
         // Confere primeiro a tabela usuarios
-        const institutionalUser = await externalUsersModel.findInstitutionalByEmail(email);
+        const institutionalUser =
+            await externalUsersModel.findInstitutionalByEmail(normalizedEmail);
 
         if (institutionalUser) {
             return res.status(409).json({
@@ -34,7 +37,7 @@ async function registerExternal(req, res) {
         }
 
         // Depois publico_externo
-        const externalUser = await externalUsersModel.findExternalByEmail(email);
+        const externalUser = await externalUsersModel.findExternalByEmail(normalizedEmail);
 
         if (externalUser) {
             return res.status(409).json({
@@ -46,7 +49,7 @@ async function registerExternal(req, res) {
 
         const result = await externalUsersModel.createExternal({
             nome: nome.trim(),
-            email: email.trim(),
+            email: normalizedEmail,
             telefone: telefone || null,
             senha: hashedPassword,
             organizacao: organizacao || null
@@ -54,13 +57,17 @@ async function registerExternal(req, res) {
 
         return res.status(201).json({
             message: 'Usuário externo criado com sucesso.',
-            externalId: result.insertId
+            externalId: result.insertId,
+            verificationRequired: true,
+            verificationSent: result.verificationSent === true
         });
     } catch (error) {
-        console.error('Error creating external user:', error);
+        if (!error.status) console.error('External registration failed.');
 
-        return res.status(500).json({
-            error: 'Não foi possível concluir a operação. Tente novamente.'
+        return res.status(error.status || 500).json({
+            error: error.status
+                ? error.message
+                : 'Não foi possível concluir a operação. Tente novamente.'
         });
     }
 }
@@ -97,6 +104,16 @@ async function loginExternal(req, res) {
             });
         }
 
+        const emailState = await require('../services/email-verification.service').loginStatus(
+            'external',
+            user.id_externo,
+            user.email
+        );
+        if (!emailState.allowed)
+            return res.status(403).json({
+                error: 'Confirme seu e-mail antes de entrar. Você pode reenviar o link na página de confirmação.',
+                emailVerificationRequired: true
+            });
         const token = jwt.sign(
             {
                 id_externo: user.id_externo,
@@ -113,6 +130,9 @@ async function loginExternal(req, res) {
         await externalUsersModel.updateLastAccess(user.id_externo);
 
         await sessionsModel.createSession({
+            expectedEmail: user.email,
+            expectedPasswordHash: user.senha,
+            expectedType: user.tipo_usuario,
             id_externo: user.id_externo,
             token: crypto.createHash('sha256').update(token).digest('hex'),
             dispositivo: req.headers['user-agent'] || 'Navegador Web',
@@ -128,7 +148,9 @@ async function loginExternal(req, res) {
                 nome: user.nome,
                 email: user.email,
                 tipo_usuario: 'externo',
-                organizacao: user.organizacao
+                organizacao: user.organizacao,
+                email_verificado: emailState.verified,
+                email_status: emailState.status
             }
         });
     } catch (error) {

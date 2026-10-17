@@ -13,7 +13,9 @@ function hashToken(token) {
 async function requestRecovery(req, res) {
     try {
         let email;
-        try { email = emailAddress(req.body.email); } catch {
+        try {
+            email = emailAddress(req.body.email);
+        } catch {
             return res.status(400).json({
                 error: 'Informe um único endereço de e-mail válido.'
             });
@@ -51,10 +53,13 @@ async function requestRecovery(req, res) {
             });
         }
 
-        try { await limits.delivery(); } catch {
+        try {
+            await limits.delivery();
+        } catch {
             // Cota global ou proteção indisponível não revela a existência desta conta.
             return res.json({
-                message: 'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.'
+                message:
+                    'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.'
             });
         }
         const recoveryToken = crypto.randomBytes(32).toString('hex');
@@ -85,9 +90,10 @@ async function requestRecovery(req, res) {
         if ([429, 503].includes(error.status)) {
             if (error.status === 429) res.set?.('Retry-After', '3600');
             return res.status(error.status).json({
-                error: error.status === 429
-                    ? 'Muitas solicitações. Aguarde e tente novamente.'
-                    : 'A recuperação está temporariamente indisponível.'
+                error:
+                    error.status === 429
+                        ? 'Muitas solicitações. Aguarde e tente novamente.'
+                        : 'A recuperação está temporariamente indisponível.'
             });
         }
         console.error('Password recovery failed.');
@@ -135,9 +141,10 @@ async function resetPassword(req, res) {
         if ([429, 503].includes(error.status)) {
             if (error.status === 429) res.set?.('Retry-After', '900');
             return res.status(error.status).json({
-                error: error.status === 429
-                    ? 'Muitas solicitações. Aguarde e tente novamente.'
-                    : 'A recuperação está temporariamente indisponível.'
+                error:
+                    error.status === 429
+                        ? 'Muitas solicitações. Aguarde e tente novamente.'
+                        : 'A recuperação está temporariamente indisponível.'
             });
         }
         console.error('Password reset failed.');

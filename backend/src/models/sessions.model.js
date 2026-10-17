@@ -10,8 +10,9 @@ async function createSession(data) {
         expiracao
     } = data;
 
-    const [result] = await db.execute(
-        `
+    const insert = (connection) =>
+        connection.execute(
+            `
         INSERT INTO tokens (
             id_usuario,
             id_externo,
@@ -23,10 +24,58 @@ async function createSession(data) {
         )
         VALUES (?, ?, ?, ?, ?, NOW(), ?)
     `,
-        [id_usuario, id_externo, token, dispositivo, ip, expiracao]
-    );
+            [id_usuario, id_externo, token, dispositivo, ip, expiracao]
+        );
 
-    return result;
+    if (process.env.EMAIL_VERIFICATION_ENABLED !== 'true') {
+        const [result] = await insert(db);
+        return result;
+    }
+    const verification = require('../services/email-verification.service');
+    const institutional = Boolean(id_usuario);
+    const table = institutional ? 'usuarios' : 'publico_externo';
+    const column = institutional ? 'id_usuario' : 'id_externo';
+    const kind = institutional ? 'users' : 'external';
+    const id = id_usuario || id_externo;
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        await verification.lock(connection);
+        const [rows] = await connection.execute(
+            `SELECT email, senha, situacao${institutional ? ', tipo_usuario' : ''} FROM ${table} WHERE ${column} = ? FOR UPDATE`,
+            [id]
+        );
+        const user = rows[0];
+        if (
+            !user ||
+            user.situacao !== 'ativo' ||
+            verification.address(user.email) !== verification.address(data.expectedEmail) ||
+            user.senha !== data.expectedPasswordHash ||
+            (institutional && user.tipo_usuario !== data.expectedType)
+        )
+            throw Object.assign(new Error('A conta foi alterada. Entre novamente.'), {
+                status: 401
+            });
+        const [states] = await connection.execute(
+            'SELECT email, regime, confirmado_em FROM email_estado WHERE tipo = ? AND identidade = ?',
+            [kind, id]
+        );
+        const state = states[0];
+        if (
+            state &&
+            state.regime !== 'legado' &&
+            (!state.confirmado_em || state.email !== verification.address(user.email))
+        )
+            throw Object.assign(new Error('Confirme seu e-mail antes de entrar.'), { status: 403 });
+        const [result] = await insert(connection);
+        await connection.commit();
+        return result;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
 }
 
 async function listUserSessions(userId) {

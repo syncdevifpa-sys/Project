@@ -1,12 +1,6 @@
 /* Quadros agrupam o fluxo; tabelas alinham os campos para comparação. */
 .ar-content-views {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   margin: 16px 0;
-}
-.ar-content-views [aria-pressed='true'] {
-  outline: 2px solid var(--action);
 }
 .ar-content-board {
   display: grid;
