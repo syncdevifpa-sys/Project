@@ -1,9 +1,10 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
-module.exports = function signupClient(role, email, post) {
+module.exports = function signupClient(role, email, post, access = 'cadastro') {
     const error = { textContent: '', style: {} },
         success = { textContent: '', style: {} },
-        help = { hidden: true };
+        help = { hidden: true },
+        confirmationHelp = { hidden: true };
     const fields = {
         '#nome, #name': { value: 'Pessoa de teste' },
         '#email': { value: email },
@@ -13,25 +14,42 @@ module.exports = function signupClient(role, email, post) {
         '#curso': { value: '1' },
         '.mensagem-erro, .error-message': error,
         '.mensagem-sucesso, .success-message': success,
-        '[data-signup-verification]': help
+        '[data-signup-verification]': help,
+        '[data-email-verification-help]': confirmationHelp
     };
     let submit, ready;
     const timers = [];
     const form = {
-        getAttribute: () => 'cadastro',
+        getAttribute: () => access,
         querySelector: (selector) => fields[selector] || null,
         addEventListener: (_, fn) => {
             submit = fn;
         }
     };
+    const storage = new Map();
+    const session = new Map();
     const window = {
         location: { href: 'signup.html' },
         addEventListener() {},
-        Arcadia: { api: { post }, token: {} }
+        sessionStorage: {
+            getItem: (key) => session.get(key) || null,
+            setItem: (key, value) => session.set(key, value),
+            removeItem: (key) => session.delete(key)
+        },
+        Arcadia: {
+            api: { post },
+            token: {
+                set: (value) => storage.set('arcadiaToken', value),
+                get: () => storage.get('arcadiaToken')
+            }
+        }
     };
     vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), {
         window,
-        localStorage: { getItem: () => null },
+        localStorage: {
+            getItem: (key) => storage.get(key) || null,
+            setItem: (key, value) => storage.set(key, value)
+        },
         alert() {},
         setTimeout: (fn) => timers.push(fn),
         document: {
@@ -39,10 +57,20 @@ module.exports = function signupClient(role, email, post) {
             addEventListener: (_, fn) => {
                 ready = fn;
             },
-            getElementById: () => null,
+            getElementById: (id) => (id === 'googleAuthForm' ? { addEventListener() {} } : null),
             querySelectorAll: (selector) => (selector === 'form[data-acesso]' ? [form] : [])
         }
     });
     ready();
-    return { submit: () => submit({ preventDefault() {} }), error, success, help, timers, window };
+    return {
+        submit: () => submit({ preventDefault() {} }),
+        error,
+        success,
+        help,
+        confirmationHelp,
+        timers,
+        window,
+        storage,
+        session
+    };
 };

@@ -1,3 +1,4 @@
+const { verificationEnabled } = require('../services/email-config.service');
 const db = require('../config/database');
 
 async function createSession(data) {
@@ -27,7 +28,7 @@ async function createSession(data) {
             [id_usuario, id_externo, token, dispositivo, ip, expiracao]
         );
 
-    if (process.env.EMAIL_VERIFICATION_ENABLED !== 'true') {
+    if (!verificationEnabled()) {
         const [result] = await insert(db);
         return result;
     }
