@@ -30,6 +30,10 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
         },
         URLSearchParams,
         window: {
+            sessionStorage: {
+                getItem: () => "signup@example.test",
+                removeItem: () => {}
+            },
             Arcadia: {
                 api: {
                     post: (path, body, options) => {
@@ -46,6 +50,7 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
             }
         }
     });
+    assert.equal(nodes.resendEmailForm.elements.email.value, "signup@example.test");
     assert.equal(removed, true);
     assert.equal(calls.length, 0);
     assert.equal(nodes.confirmEmailForm.hidden, false);
