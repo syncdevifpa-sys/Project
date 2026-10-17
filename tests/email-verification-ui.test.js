@@ -60,8 +60,10 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
     assert.equal(calls[0].path, '/api/email-verification/confirm');
     assert.equal(calls[0].options.auth, false);
     assert.equal(nodes.confirmEmailForm.hidden, true);
+    assert.equal(nodes.resendEmailForm.hidden, true);
     assert.equal(cleared, true);
     nodes.confirmEmailForm.events.submit({ preventDefault() {} });
+    nodes.resendEmailForm.events.submit({ preventDefault() {} });
     assert.equal(calls.length, 1);
 });
 

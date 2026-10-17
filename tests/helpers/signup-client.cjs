@@ -3,7 +3,8 @@ const vm = require('node:vm');
 module.exports = function signupClient(role, email, post, access = 'cadastro') {
     const error = { textContent: '', style: {} },
         success = { textContent: '', style: {} },
-        help = { hidden: true };
+        help = { hidden: true },
+        confirmationHelp = { hidden: true };
     const fields = {
         '#nome, #name': { value: 'Pessoa de teste' },
         '#email': { value: email },
@@ -13,7 +14,8 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
         '#curso': { value: '1' },
         '.mensagem-erro, .error-message': error,
         '.mensagem-sucesso, .success-message': success,
-        '[data-signup-verification]': help
+        '[data-signup-verification]': help,
+        '[data-email-verification-help]': confirmationHelp
     };
     let submit, ready;
     const timers = [];
@@ -65,6 +67,7 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
         error,
         success,
         help,
+        confirmationHelp,
         timers,
         window,
         storage,

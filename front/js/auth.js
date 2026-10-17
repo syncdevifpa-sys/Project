@@ -301,6 +301,7 @@ window.Arcadia = window.Arcadia || {};
             const tipoAcesso = form.getAttribute('data-acesso');
             const msgErro = form.querySelector('.mensagem-erro, .error-message');
             const msgSucesso = form.querySelector('.mensagem-sucesso, .success-message');
+            const confirmationHelp = form.querySelector('[data-email-verification-help]');
 
             const showError = (text) => {
                 if (msgErro) {
@@ -324,6 +325,7 @@ window.Arcadia = window.Arcadia || {};
                 try {
                     const notice = window.sessionStorage.getItem('arcadia.signupNotice');
                     if (notice) {
+                        if (confirmationHelp) confirmationHelp.hidden = false;
                         showSuccess(
                             notice === 'sent'
                                 ? 'Conta criada. Confirme o link enviado ao seu e-mail antes de entrar.'
@@ -450,6 +452,7 @@ window.Arcadia = window.Arcadia || {};
                 }
 
                 if (tipoAcesso === 'login') {
+                    if (confirmationHelp) confirmationHelp.hidden = true;
                     if (!email || !senha) {
                         return showError('Por favor, informe seu e-mail e senha.');
                     }
@@ -462,6 +465,12 @@ window.Arcadia = window.Arcadia || {};
                         );
 
                         if (!ok) {
+                            if (data.emailVerificationRequired === true && confirmationHelp) {
+                                confirmationHelp.hidden = false;
+                                try {
+                                    window.sessionStorage.setItem('arcadia.pendingEmail', email);
+                                } catch {}
+                            }
                             return showError(
                                 data.error ||
                                     (status === 401

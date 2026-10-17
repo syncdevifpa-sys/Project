@@ -6,6 +6,7 @@
     const form = document.getElementById('confirmEmailForm');
     const resend = document.getElementById('resendEmailForm');
     const status = document.getElementById('emailVerificationStatus');
+    let confirmed = false;
     // O cadastro preenche o destinatário sem expô-lo no endereço da página.
     try {
         const email = window.sessionStorage.getItem('arcadia.pendingEmail');
@@ -39,6 +40,8 @@
             status.textContent = data.message;
             if (form === document.getElementById('confirmEmailForm')) {
                 form.hidden = true;
+                resend.hidden = true;
+                confirmed = true;
                 token = null;
                 try {
                     window.sessionStorage.removeItem('arcadia.pendingEmail');
@@ -58,6 +61,7 @@
     });
     resend.addEventListener('submit', (event) => {
         event.preventDefault();
+        if (confirmed) return;
         submit(resend, '/api/email-verification/request', {
             email: resend.elements.email.value.trim()
         });
