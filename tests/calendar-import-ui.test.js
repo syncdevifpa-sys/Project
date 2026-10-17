@@ -2,7 +2,12 @@ const { test } = require('node:test'),
     assert = require('node:assert/strict'),
     fs = require('node:fs'),
     vm = require('node:vm');
-function fixture(fail = false, ambiguous = false) {
+function fixture(
+    fail = false,
+    ambiguous = false,
+    readerVersion = 'colunas-2026-10-16-v3',
+    reviewReason
+) {
     const nodes = [],
         calls = [];
     let refreshed = 0,
@@ -45,6 +50,7 @@ function fixture(fail = false, ambiguous = false) {
         return node;
     }
     const preview = {
+        readerVersion,
         pages: 2,
         candidates: [
             {
@@ -52,6 +58,8 @@ function fixture(fail = false, ambiguous = false) {
                 data_evento: '2025-03-12',
                 data_fim: null,
                 page: 2,
+                sourceMonth: 3,
+                sourceYear: 2025,
                 sourceText: '12 – Evento',
                 warning: [],
                 requiresEnd: false
@@ -65,6 +73,7 @@ function fixture(fail = false, ambiguous = false) {
     if (ambiguous) {
         Object.assign(preview.candidates[0], {
             needsIndividualReview: true,
+            reviewReason,
             natureza: 'interrupcao_presencial',
             categoria: 'evento',
             sourcePages: [1, 2]
@@ -121,6 +130,29 @@ test('abrir e cancelar importador não envia arquivo nem grava eventos', () => {
     assert.equal(f.dialog.removed, true);
     assert.equal(f.calls.length, 0);
 });
+
+test('prévia de servidor antigo é recusada antes de permitir importação', async () => {
+    const old = fixture(false, false, 'leitor-anterior');
+    old.nodes.find((n) => n.name === 'file').files = [
+        {
+            name: 'calendar.pdf',
+            size: 100,
+            slice: () => ({ arrayBuffer: async () => new TextEncoder().encode('%PDF-').buffer })
+        }
+    ];
+    old.nodes.find((n) => n.name === 'metadataConfirmed').checked = true;
+    await old.nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });
+    assert.ok(
+        old.nodes.some((n) =>
+            /servidor ainda está usando uma versão anterior/.test(n.textContent || '')
+        )
+    );
+    assert.equal(
+        old.nodes.some((n) => n.textContent === 'Importar eventos selecionados'),
+        false
+    );
+    assert.equal(old.calls.length, 1);
+});
 test('upload prepara só prévia; gravação exige revisão e confirmação pública; erro preserva valores', async () => {
     for (const fail of [false, true]) {
         const f = fixture(fail);
@@ -138,6 +170,7 @@ test('upload prepara só prévia; gravação exige revisão e confirmação púb
         await f.nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });
         assert.equal(f.calls.length, 1);
         assert.equal(f.calls[0].opts.raw, true);
+        assert.ok(f.nodes.some((n) => n.tag === 'h3' && n.textContent === 'março de 2025'));
         const commit = f.nodes.find((n) => n.textContent === 'Importar eventos selecionados');
         await commit.events.click();
         assert.equal(f.calls.length, 1);
@@ -234,5 +267,25 @@ test('cores ambíguas ficam fora do lote e só podem ser marcadas após revisão
     reviewed.checked = true;
     reviewed.events.change();
     assert.equal(selected.disabled, false);
+    assert.equal(f.calls.length, 1);
+});
+
+test('data válida com aviso apenas de cor pode ser marcada em lote', async () => {
+    const f = fixture(false, true, 'colunas-2026-10-16-v3', 'color');
+    f.nodes.find((n) => n.name === 'file').files = [
+        {
+            name: 'calendar.pdf',
+            size: 100,
+            slice: () => ({ arrayBuffer: async () => new TextEncoder().encode('%PDF-').buffer })
+        }
+    ];
+    f.nodes.find((n) => n.name === 'metadataConfirmed').checked = true;
+    await f.nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });
+    f.findLabel(
+        'Conferi no PDF os títulos e as datas dos eventos que vou selecionar em lote'
+    ).checked = true;
+    f.nodes.find((n) => n.textContent === 'Marcar todos os eventos válidos').events.click();
+    assert.equal(f.findLabel('Importar este evento').checked, true);
+    assert.equal(f.findLabel('Conferi o trecho, o título e as datas no PDF').checked, true);
     assert.equal(f.calls.length, 1);
 });

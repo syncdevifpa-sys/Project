@@ -49,23 +49,7 @@ async function findExternalById(id) {
 }
 
 async function createExternal(data) {
-    const { nome, email, telefone = null, senha, organizacao = null } = data;
-
-    const [result] = await db.execute(
-        `
-        INSERT INTO publico_externo (
-            nome,
-            email,
-            telefone,
-            senha,
-            organizacao
-        )
-        VALUES (?, ?, ?, ?, ?)
-    `,
-        [nome, email, telefone, senha, organizacao]
-    );
-
-    return result;
+    return require('../services/email-verification.service').register('external', data);
 }
 
 async function updateLastAccess(id) {

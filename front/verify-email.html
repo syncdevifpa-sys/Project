@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Confirmar e-mail — Arcádia</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="email-verification.css" />
+    <script src="js/theme.js"></script>
+  </head>
+  <body class="ar-email-body">
+    <main class="ar-email-page">
+      <a class="ar-email-brand" href="index.html"
+        ><img src="public/arcadia-logo-64.png" alt="" />Arcádia</a
+      >
+      <h1>Confirmar e-mail</h1>
+      <p
+        >Confirme que você tem acesso à caixa de entrada. Isso não comprova matrícula, cargo ou
+        vínculo com o campus.</p
+      >
+      <form id="confirmEmailForm" hidden>
+        <p
+          >Para concluir, clique no botão abaixo. Abrir este link não confirma seu e-mail
+          automaticamente.</p
+        >
+        <button class="ar-btn ar-btn--primary" type="submit">Confirmar e-mail</button>
+      </form>
+      <p id="emailVerificationStatus" role="status" aria-live="polite"></p>
+      <form id="resendEmailForm">
+        <h2>Receber outro link</h2>
+        <p
+          >Esta página é para contas já criadas. Use o e-mail do seu cadastro e confira também o
+          spam. Links anteriores serão substituídos.</p
+        >
+        <label
+          >E-mail<input name="email" type="email" maxlength="150" autocomplete="email" required
+        /></label>
+        <button class="ar-btn ar-btn--primary" type="submit">Reenviar link de confirmação</button>
+      </form>
+      <p class="ar-email-footer"><a href="login.html">Voltar para entrar na conta</a></p>
+      <p class="ar-email-footer"
+        >Ainda não criou sua conta? <a href="signup.html">Criar cadastro</a></p
+      >
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/email-verification.js"></script>
+  </body>
+</html>

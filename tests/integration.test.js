@@ -165,7 +165,7 @@ test('todas as páginas carregam scripts locais existentes e JavaScript válido'
                 continue;
             }
             if (/^https?:/.test(src[1])) continue;
-            const script = path.join(root, 'front', src[1]);
+            const script = path.join(root, 'front', src[1].split(/[?#]/)[0]);
             assert.ok(fs.existsSync(script), `${file}: ${src[1]}`);
             new vm.Script(fs.readFileSync(script, 'utf8'), { filename: script });
             assert.equal((await fetch(base + '/' + src[1])).status, 200);
@@ -644,4 +644,17 @@ test('senha incorreta não altera a credencial nem revoga sessões', async (t) =
         res
     );
     assert.equal(res.code, 400);
+});
+
+require('node:test').beforeEach((t) => {
+    t.mock.method(
+        require('../backend/src/services/security-limits.service'),
+        'verification',
+        async () => {}
+    );
+    t.mock.method(
+        require('../backend/src/services/email-verification.service'),
+        'loginStatus',
+        async () => ({ allowed: true, verified: false, status: 'legado' })
+    );
 });

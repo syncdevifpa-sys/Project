@@ -212,3 +212,16 @@ test('página de comunidade carrega apenas perfil externo e vincula logout', asy
     nodes.externalLogout.click();
     assert.equal(exited, true);
 });
+
+require('node:test').beforeEach((t) => {
+    t.mock.method(
+        require('../backend/src/services/security-limits.service'),
+        'verification',
+        async () => {}
+    );
+    t.mock.method(
+        require('../backend/src/services/email-verification.service'),
+        'loginStatus',
+        async () => ({ allowed: true, verified: false, status: 'legado' })
+    );
+});

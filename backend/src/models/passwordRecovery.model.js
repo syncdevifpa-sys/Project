@@ -109,6 +109,7 @@ async function consumeRecovery(tokenHash, passwordHash) {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
+        await require('../services/email-verification.service').lock(connection);
         const [rows] = await connection.execute(
             `
             SELECT id_recuperacao, id_usuario, id_externo
@@ -135,6 +136,11 @@ async function consumeRecovery(tokenHash, passwordHash) {
         await connection.execute(
             `UPDATE recuperacao_senha SET usado_em = NOW() WHERE ${column} = ? AND usado_em IS NULL`,
             [id]
+        );
+        await require('../services/email-verification.service').invalidate(
+            connection,
+            institutional ? 'users' : 'external',
+            id
         );
         await connection.commit();
         return true;

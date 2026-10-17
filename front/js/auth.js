@@ -266,71 +266,6 @@ window.Arcadia = window.Arcadia || {};
         openGoogleAuthModal(mode);
     }
 
-    // ------------------------- Google One-Tap Prompt Flutuante -------------------------
-    function initGoogleOneTap() {
-        const googlePromptBox = document.getElementById('googlePromptBox');
-        if (!googlePromptBox) return;
-
-        let lastGoogle = null;
-        try {
-            lastGoogle = JSON.parse(localStorage.getItem('arcadiaLastGoogleAccount') || 'null');
-        } catch (e) {}
-
-        if (!lastGoogle || !lastGoogle.email || !lastGoogle.nome) {
-            googlePromptBox.style.display = 'none';
-            return;
-        }
-
-        const nameEl = document.getElementById('googleUserName');
-        const emailEl = document.getElementById('googleUserEmail');
-        const avatarEl = document.getElementById('googleUserAvatar');
-        const continueText = document.getElementById('googleContinueText');
-        const continueBtn = document.getElementById('googleContinueBtn');
-        const pillAction = document.getElementById('googlePillAction');
-        const closeBtn = document.getElementById('closeGooglePrompt');
-        const switchBtn = document.getElementById('googleSwitchAccountBtn');
-
-        const firstName = lastGoogle.nome.split(' ')[0] || 'Usuário';
-
-        if (nameEl) nameEl.textContent = lastGoogle.nome;
-        if (emailEl) emailEl.textContent = lastGoogle.email;
-        if (avatarEl) {
-            if (lastGoogle.foto) {
-                avatarEl.innerHTML = `<img src="${lastGoogle.foto}" alt="${lastGoogle.nome}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-            } else {
-                avatarEl.textContent = (
-                    lastGoogle.avatar ||
-                    lastGoogle.nome.charAt(0) ||
-                    'G'
-                ).toUpperCase();
-            }
-        }
-        if (continueText) continueText.textContent = `Continuar como ${firstName}`;
-
-        const entrarComUltimaConta = (e) => {
-            if (e && typeof e.preventDefault === 'function') e.preventDefault();
-            completeGoogleAuth(lastGoogle.nome, lastGoogle.email, lastGoogle.foto, 'Google');
-        };
-
-        if (continueBtn) continueBtn.onclick = entrarComUltimaConta;
-        if (pillAction) pillAction.onclick = entrarComUltimaConta;
-
-        if (closeBtn) {
-            closeBtn.onclick = () => {
-                googlePromptBox.style.display = 'none';
-            };
-        }
-
-        if (switchBtn) {
-            switchBtn.onclick = () => {
-                googlePromptBox.style.display = 'none';
-                openGoogleAuthModal('login');
-            };
-        }
-
-        googlePromptBox.style.display = 'block';
-    }
-
     // ------------------------- Botões Sociais (Google / Facebook) -------------------------
     function initSocialButtons() {
         const googleLoginBtn = document.getElementById('googleLoginBtn');
@@ -443,17 +378,43 @@ window.Arcadia = window.Arcadia || {};
                         );
 
                         if (status === 409) {
-                            return showError('Este e-mail já está cadastrado. Faça login.');
+                            const help = form.querySelector('[data-signup-verification]');
+                            if (help) help.hidden = false;
+                            return showError(
+                                'Este e-mail já tem um cadastro. Se ainda não o confirmou, use o link de confirmação abaixo; se já confirmou, faça login.'
+                            );
                         }
                         if (!ok) {
                             return showError(data.error || 'Não foi possível realizar o cadastro.');
                         }
 
-                        showSuccess('Conta criada com sucesso! Entre com seu e-mail e senha.');
+                        const createdId =
+                            tipo_usuario === 'externo' ? data?.externalId : data?.userId;
+                        if (
+                            status !== 201 ||
+                            !Number.isInteger(createdId) ||
+                            createdId <= 0 ||
+                            data.verificationRequired !== true ||
+                            typeof data.verificationSent !== 'boolean'
+                        ) {
+                            return showError(
+                                'O servidor não confirmou a criação da conta pendente. Não prossiga para a confirmação; atualize a página e confira o cadastro.'
+                            );
+                        }
+                        const help = form.querySelector('[data-signup-verification]');
+                        if (help) help.hidden = false;
 
-                        setTimeout(() => {
-                            window.location.href = 'login.html';
-                        }, 900);
+                        showSuccess(
+                            data.verificationSent
+                                ? 'Conta criada. Confira seu e-mail e confirme o link antes de entrar.'
+                                : 'Sua conta foi criada e está pendente de confirmação. O envio falhou; não é preciso se cadastrar novamente. Depois que o serviço de e-mail estiver disponível, use o link abaixo para solicitar outra mensagem.'
+                        );
+
+                        if (data.verificationSent) {
+                            setTimeout(() => {
+                                window.location.href = 'verify-email.html';
+                            }, 1200);
+                        }
                     } catch (err) {
                         console.error('Erro ao conectar com a API:', err);
                         showError('Não foi possível conectar ao servidor.');
@@ -487,17 +448,6 @@ window.Arcadia = window.Arcadia || {};
                         }
 
                         salvarSessao(data.user, data.token);
-
-                        if (email.includes('@gmail.com') || email.includes('@googlemail.com')) {
-                            localStorage.setItem(
-                                'arcadiaLastGoogleAccount',
-                                JSON.stringify({
-                                    nome: data.user.nome || 'Usuário Google',
-                                    email: data.user.email || email,
-                                    avatar: (data.user.nome || 'G').charAt(0).toUpperCase()
-                                })
-                            );
-                        }
 
                         showSuccess('Login realizado! Redirecionando...');
                         irParaPortal();
@@ -698,7 +648,6 @@ window.Arcadia = window.Arcadia || {};
         carregarCursos();
         initGoogleModal();
         initSocialButtons();
-        initGoogleOneTap();
         initForms();
         initLogout();
     }

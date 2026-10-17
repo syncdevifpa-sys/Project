@@ -253,6 +253,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
+        await require('./email-verification.service').lock(connection);
         // Todos os caminhos de gestão de pessoas usam esta trava para proteger o último admin.
         const [admins] = await connection.execute(
             "SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE"
@@ -312,6 +313,11 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                     );
             }
             await connection.execute(`DELETE FROM tokens WHERE ${primary} = ?`, [id]);
+            await require('./email-verification.service').removeAccountState(
+                connection,
+                institutional ? 'users' : 'external',
+                id
+            );
             await connection.execute(`DELETE FROM ${table} WHERE ${primary} = ?`, [id]);
         } else {
             const allowed = institutional
@@ -365,6 +371,15 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 !['discente', 'docente', 'servidor'].includes(data.tipo_usuario)
             )
                 fail(400, 'Vínculo inválido.');
+            if (
+                data.email !== undefined &&
+                data.email.trim().toLowerCase() !== person.email.trim().toLowerCase()
+            )
+                fail(
+                    409,
+                    'A troca do e-mail de acesso exige senha atual e confirmação pelo próprio usuário.'
+                );
+            delete data.email;
             const targetRole = data.tipo_usuario || person.tipo_usuario;
             const targetEmail = data.email || person.email;
             if (

@@ -30,6 +30,7 @@
                 toolbar.append(button);
             }
             root.before(toolbar);
+            A.styleViewSwitcher?.(toolbar);
             states.set(root, state);
         }
         Object.assign(state, { rows, groupKey, labels, cards: Array.from(root.children) });
@@ -71,9 +72,7 @@
                     )
                 );
                 const actions = make('td');
-                const clone = card.cloneNode(true);
-                clone.querySelector('.ar-card-title')?.remove();
-                actions.append(clone);
+                actions.append(card);
                 line.append(actions);
                 body.append(line);
             });
@@ -97,7 +96,7 @@
             column.append(
                 make('h3', (state.labels[group] || group || 'Sem situação') + ' · ' + items.length)
             );
-            if (items.length) column.append(...items.map((card) => card.cloneNode(true)));
+            if (items.length) column.append(...items);
             else column.append(make('p', 'Nenhum item.'));
             board.append(column);
         }

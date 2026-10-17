@@ -554,6 +554,10 @@ body {
   gap: 2px;
   border-radius: var(--radius-full);
   background: var(--surface-sunken);
+  max-width: 100%;
+  width: fit-content;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 .ar-seg button {
   font: inherit;
@@ -563,12 +567,33 @@ body {
   border: 0;
   background: transparent;
   color: var(--ink-muted);
-  padding: 6px 14px;
+  padding: 8px 16px;
+  min-height: 36px;
+  white-space: nowrap;
   border-radius: var(--radius-full);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 18px;
   font-weight: 500;
   cursor: pointer;
+}
+.ar-seg button:focus-visible {
+  outline: 2px solid var(--action);
+  outline-offset: 2px;
+}
+.ar-seg button:hover {
+  color: var(--ink);
+}
+.ar-seg button svg {
+  flex: none;
+}
+@media (max-width: 480px) {
+  .ar-seg {
+    gap: 0;
+  }
+  .ar-seg button {
+    padding: 10px 12px;
+    min-height: 44px;
+  }
 }
 .ar-seg button[aria-pressed='true'] {
   background: var(--surface);
