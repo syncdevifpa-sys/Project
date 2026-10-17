@@ -98,11 +98,19 @@ async function issue(connection, kind, id, destination, current, purpose) {
 }
 async function deliver(ticket) {
     try {
-        if (!mail.recoveryConfigured()) throw Error('UNAVAILABLE');
+        if (!mail.recoveryConfigured()) {
+            console.error('[email] Envio não iniciado', { reason: 'CONFIGURATION_INVALID' });
+            throw Error('UNAVAILABLE');
+        }
         await limits.delivery();
         await mail.sendEmailVerification(ticket.email, ticket.token);
         return true;
-    } catch {
+    } catch (error) {
+        if (error.status === 429 || error.status === 503) {
+            console.error('[email] Envio não iniciado', {
+                reason: error.status === 429 ? 'DELIVERY_QUOTA' : 'DELIVERY_LIMIT_STORAGE_UNAVAILABLE'
+            });
+        }
         // Uma falha de envio não publica tokens nem bloqueia o reenvio posterior.
         await db
             .execute('UPDATE email_tokens SET usado_em = NOW() WHERE id_token_email = ?', [
@@ -185,6 +193,7 @@ async function resend(email) {
         }
     });
     if (ticket) await deliver(ticket);
+    else console.info('[email] Reenvio sem entrega', { reason: 'NO_ELIGIBLE_PENDING_ACCOUNT' });
 }
 async function requestChange(kind, id, email, password) {
     enabled();
