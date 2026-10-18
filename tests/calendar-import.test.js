@@ -410,6 +410,10 @@ test(
                 ['2026-11-28', null]
             ]
         );
+        assert.equal(
+            result.candidates.find((c) => c.titulo.includes('Projeto OIKOS')).sourceColumn,
+            3
+        );
         assert.deepEqual(
             result.candidates.find((c) => c.titulo.includes('Projeto OIKOS')).sourcePages,
             [3, 4]
@@ -460,3 +464,156 @@ test(
         );
     }
 );
+
+test('totais encerram a coluna e não se tornam eventos nem continuam na página seguinte', () => {
+    const item = (text, x, y, width = 150) => ({ text, x, y, width });
+    const result = pdf.candidatesFromPages(
+        [
+            {
+                number: 1,
+                items: [
+                    item('EDUCAÇÃO BÁSICA', 20, 790),
+                    item('AGOSTO', 60, 700),
+                    item('30 - Evento válido', 20, 500),
+                    item('Dias Letivos: 22 dias', 20, 100),
+                    item('2 dias', 20, 90)
+                ]
+            },
+            { number: 2, items: [item('PÓS-GRADUAÇÃO', 20, 790)] }
+        ],
+        { year: 2025, level: 'basica' }
+    );
+    assert.equal(result.candidates.length, 1);
+    assert.equal(result.candidates[0].titulo, 'Evento válido');
+});
+
+test('preambulo com artigo numérico não vira candidato; cabeçalho inteiro é excluído antes de separar colunas', () => {
+    const item = (text, x, y, width = 150) => ({ text, x, y, width });
+    const result = pdf.candidatesFromPages(
+        [
+            { number: 1, items: [item('15 do Estatuto, artigos 2 e 16', 20, 700)] },
+            {
+                number: 2,
+                items: [
+                    item('EDUCAÇÃO BÁSICA', 20, 790),
+                    item('OUTUBRO', 60, 700, 80),
+                    item('NOVEMBRO', 260, 700, 80),
+                    item('DEZEMBRO', 460, 700, 80),
+                    item('18 - Projeto', 420, 100)
+                ]
+            },
+            {
+                number: 3,
+                items: [
+                    item('INSTITUTO FEDERAL', 20, 790),
+                    item('DO PARÁ', 420, 790),
+                    item('OIKOS', 420, 680)
+                ]
+            }
+        ],
+        { year: 2026, level: 'basica' }
+    );
+    assert.equal(result.candidates.length, 1);
+    assert.equal(result.candidates[0].titulo, 'Projeto OIKOS');
+    assert.equal(result.candidates[0].data_evento, '2026-12-18');
+});
+
+test(
+    'PDF de2025 não apresenta falso rodapé nem preâmbulo como eventos',
+    { skip: !process.env.ARCADIA_CALENDAR_PDF_FIXTURE },
+    async () => {
+        const r = await pdf.extractCalendarPdf(
+            fs.readFileSync(process.env.ARCADIA_CALENDAR_PDF_FIXTURE),
+            { year: 2025, level: 'pos' }
+        );
+        assert.ok(!r.candidates.some((e) => /Estatuto|^dias PÓS-GRADUAÇÃO$/i.test(e.titulo)));
+    }
+);
+
+test(
+    'Superior identifica campus e modalidade sem assumir Belém',
+    { skip: !process.env.ARCADIA_SUPERIOR_CALENDAR_PDF_FIXTURE },
+    async () => {
+        const r = await pdf.extractCalendarPdf(
+            fs.readFileSync(process.env.ARCADIA_SUPERIOR_CALENDAR_PDF_FIXTURE),
+            { year: 2026, level: 'graduacao' }
+        );
+        assert.equal(r.detected.campus, 'CONCEIÇÃO DO ARAGUAIA');
+        const event = r.candidates.find((e) =>
+            e.titulo.includes('Semana Acadêmica do Curso de Agronomia')
+        );
+        assert.equal(event.level, 'graduacao');
+        assert.equal(event.data_evento, '2026-10-06');
+        assert.equal(event.data_fim, '2026-10-08');
+    }
+);
+
+test('campus assinado na prévia define o período e não pode ser trocado pelo corpo do pedido', async (t) => {
+    const calls = transaction(t);
+    const claims = jwt.verify(token(), process.env.JWT_SECRET, { audience: 'calendar-import' });
+    delete claims.iat;
+    delete claims.exp;
+    delete claims.aud;
+    const previewToken = jwt.sign(
+        { ...claims, campus: 'CONCEIÇÃO DO ARAGUAIA' },
+        process.env.JWT_SECRET,
+        { audience: 'calendar-import', expiresIn: '15m' }
+    );
+    await service.commit({ ...body([event]), previewToken, campus: 'Belém' }, 4);
+    const insert = calls.find((c) => c.sql?.startsWith('INSERT'));
+    assert.equal(insert.params[4], 'CONCEIÇÃO DO ARAGUAIA · 2025 · Educação básica');
+});
+
+test('campus extenso não provoca truncamento silencioso do período no banco', async (t) => {
+    const calls = transaction(t);
+    const claims = jwt.verify(token(), process.env.JWT_SECRET, { audience: 'calendar-import' });
+    delete claims.iat;
+    delete claims.exp;
+    delete claims.aud;
+    const previewToken = jwt.sign(
+        { ...claims, campus: 'Campus de nome muito extenso '.repeat(4) },
+        process.env.JWT_SECRET,
+        { audience: 'calendar-import', expiresIn: '15m' }
+    );
+    await assert.rejects(
+        service.commit({ ...body([event]), previewToken }, 4),
+        (e) => e.status === 400 && /60 caracteres/.test(e.message)
+    );
+    assert.equal(
+        calls.some((c) => c.sql?.startsWith('INSERT')),
+        false
+    );
+});
+
+test('resolução das fontes é protegida e não expõe caminhos em falha de implantação', async (t) => {
+    const moduleApi = require('node:module'),
+        original = moduleApi._resolveFilename;
+    await import('pdfjs-dist/legacy/build/pdf.mjs');
+    const logs = [];
+    t.mock.method(console, 'error', (...args) => logs.push(args));
+    t.mock.method(moduleApi, '_resolveFilename', function (request, ...args) {
+        if (request === 'pdfjs-dist/legacy/build/pdf.mjs')
+            throw Object.assign(new Error('/private/path secret-token'), {
+                code: 'MODULE_NOT_FOUND'
+            });
+        return original.call(this, request, ...args);
+    });
+    await assert.rejects(
+        pdf.extractCalendarPdf(Buffer.from('%PDF-test-document'), { year: 2026, level: 'basica' }),
+        (e) => e.status === 503 && /PDF_ASSETS_UNAVAILABLE/.test(e.message)
+    );
+    assert.equal(logs[0][1].stage, 'pdf-assets');
+    assert.equal(logs[0][1].code, 'MODULE_NOT_FOUND');
+    assert.doesNotMatch(JSON.stringify(logs), /private|secret-token/);
+});
+
+test('evento pessoal não interfere na deduplicação de uma importação pública', async (t) => {
+    transaction(t, {
+        existing: [
+            { ...event, periodo_letivo: 'Belém · 2025 · Educação básica', visibilidade: 'pessoal' }
+        ]
+    });
+    const result = await service.commit(body([event]), 4);
+    assert.equal(result.imported, 1);
+    assert.equal(result.skipped, 0);
+});

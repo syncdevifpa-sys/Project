@@ -3,6 +3,7 @@ const db = require('../config/database');
 const jwt = require('jsonwebtoken');
 const { validateContent } = require('./content-edit.service');
 const { extractCalendarPdf, normalize } = require('./calendar-pdf.service');
+const { atStage } = require('./calendar-diagnostics.service');
 const LEVELS = { basica: 'Educação básica', graduacao: 'Graduação', pos: 'Pós-graduação' };
 function fail(status, message) {
     throw Object.assign(new Error(message), { status });
@@ -50,19 +51,22 @@ async function actorForImport(id, connection = db) {
     return rows[0];
 }
 async function preview(buffer, input, actorId) {
-    await actorForImport(actorId);
-    const meta = metadata(input),
-        result = await extractCalendarPdf(buffer, meta);
-    const token = jwt.sign(
-        {
-            scope: 'calendar-pdf-preview',
-            actor: actorId,
-            ...meta,
-            hash: result.hash,
-            reference: result.detected.reference
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '2h', audience: 'calendar-import' }
+    await atStage('authorization', () => actorForImport(actorId));
+    const meta = await atStage('metadata', () => metadata(input)),
+        result = await atStage('pdf-read', () => extractCalendarPdf(buffer, meta));
+    const token = await atStage('preview-sign', () =>
+        jwt.sign(
+            {
+                scope: 'calendar-pdf-preview',
+                actor: actorId,
+                ...meta,
+                hash: result.hash,
+                reference: result.detected.reference,
+                campus: result.detected.campus || 'Campus não identificado'
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h', audience: 'calendar-import' }
+        )
     );
     return {
         ...result,
@@ -104,7 +108,12 @@ async function commit(body, actorId) {
     if (claims.scope !== 'calendar-pdf-preview' || Number(claims.actor) !== Number(actorId))
         fail(403, 'A prévia pertence a outra sessão.');
     const meta = metadata(claims),
-        period = `Belém · ${meta.year} · ${LEVELS[meta.level]}`;
+        period = `${claims.campus || 'Belém'} · ${meta.year} · ${LEVELS[meta.level]}`;
+    if (period.length > 60)
+        fail(
+            400,
+            'Identificação do calendário excede o limite de 60 caracteres. Confira o campus na fonte.'
+        );
     const events = body.events.map((event, index) => {
         if (event.reviewed !== true) fail(400, 'Confirme a revisão do evento ' + (index + 1) + '.');
         if (event.requiresEnd === true && !event.data_fim)
@@ -138,10 +147,22 @@ async function commit(body, actorId) {
             "SELECT id_usuario FROM usuarios WHERE situacao = 'ativo' AND (tipo_usuario IN ('docente','servidor') OR is_admin = 1) ORDER BY id_usuario FOR UPDATE"
         );
         await actorForImport(actorId, connection);
-        const [existing] = await connection.execute(
-            'SELECT titulo, data_evento, data_fim, periodo_letivo FROM calendario FOR UPDATE'
-        );
-        const seen = new Set(existing.map(key)),
+        let existing;
+        try {
+            [existing] = await connection.execute(
+                'SELECT titulo, data_evento, data_fim, periodo_letivo, visibilidade FROM calendario FOR UPDATE'
+            );
+        } catch (error) {
+            if (
+                error.code !== 'ER_BAD_FIELD_ERROR' ||
+                !/visibilidade/.test(error.sqlMessage || error.message || '')
+            )
+                throw error;
+            [existing] = await connection.execute(
+                'SELECT titulo, data_evento, data_fim, periodo_letivo FROM calendario FOR UPDATE'
+            );
+        }
+        const seen = new Set(existing.filter((event) => event.visibilidade !== 'pessoal').map(key)),
             pending = [];
         let skipped = 0;
         for (const event of events) {
@@ -184,7 +205,7 @@ async function commit(body, actorId) {
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             fail(
                 409,
-                'Atualize as categorias do calendário no banco antes de importar férias ou aniversários.'
+                'Atualize as categorias do calendário no banco antes de importar esta categoria.'
             );
         throw error;
     } finally {

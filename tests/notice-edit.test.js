@@ -136,7 +136,7 @@ function fixture(fail = false, role = 'discente') {
     };
     const document = { body: element('body'), createElement: element };
     const context = { window: { Arcadia: A }, document };
-    for (const p of ['content-fields', 'notice-actions', 'notice-editor'])
+    for (const p of ['calendar-categories', 'content-fields', 'notice-actions', 'notice-editor'])
         vm.runInNewContext(fs.readFileSync('front/js/' + p + '.js', 'utf8'), context);
     const notice = {
         id_aviso: 7,

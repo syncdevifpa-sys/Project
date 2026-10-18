@@ -49,8 +49,8 @@
   --event-matricula: #3766c0;
   --event-edital: #7854a1;
   --event-cancelamento: #b52f46;
-  --event-feriado: #ae4628;
-  --event-ferias: #32814a;
+  --event-feriado: #c43b3b;
+  --event-ferias: #ce7927;
   --event-aniversario: #a23980;
 }
 .ar-calendar-color-settings {
@@ -148,4 +148,86 @@
 }
 .ar-board-column[data-status='arquivado'] {
   border-top-color: #7854a1;
+}
+
+/* Categorias da legenda e registros acadêmicos, com cores personalizáveis. */
+[data-event-category='atividades_campus'] {
+  border-inline-start: 4px solid var(--event-atividades_campus, #c99a16);
+}
+[data-event-category='sabado_letivo'] {
+  border-inline-start: 4px solid var(--event-sabado_letivo, #247ab5);
+}
+[data-event-category='periodo_academico'] {
+  border-inline-start: 4px solid var(--event-periodo_academico, #368249);
+}
+[data-event-category='culminancia_bimestral'] {
+  border-inline-start: 4px solid var(--event-culminancia_bimestral, #1697a6);
+}
+[data-event-category='recesso'] {
+  border-inline-start: 4px solid var(--event-recesso, #ce7927);
+}
+[data-event-category='registro_academico'] {
+  border-inline-start: 4px solid var(--event-registro_academico, #8652b3);
+}
+
+.ar-event-color-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ar-color-swatch {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 1rem;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+}
+.ar-calendar-legend {
+  margin-block: 1rem;
+}
+.ar-calendar-legend summary {
+  cursor: pointer;
+}
+[data-event-category] {
+  padding-inline-start: 8px;
+}
+
+[data-event-category='ponto_facultativo'] {
+  border-inline-start: 4px solid var(--event-ponto_facultativo, #b84a52);
+}
+[data-event-category='avaliacao'] {
+  border-inline-start: 4px solid var(--event-avaliacao, #b86b2f);
+}
+[data-event-category='interrupcao_presencial'] {
+  border-inline-start: 4px solid var(--event-interrupcao_presencial, #65778d);
+}
+[data-event-category='ferias_docentes'] {
+  border-inline-start: 4px solid var(--event-ferias_docentes, #b7812d);
+}
+.ar-calendar-color-settings .ar-color-fields {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+.ar-calendar-color-settings .ar-color-fields label {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.ar-color-setting-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.ar-color-setting-copy strong {
+  font-size: 14px;
+}
+.ar-color-setting-copy small {
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.ar-calendar-color-settings input[type='color'] {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
 }

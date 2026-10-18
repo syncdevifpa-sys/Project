@@ -110,7 +110,7 @@ async function editNotice(id, body, actorId) {
         )
             fail(403, 'Somente o autor ou um administrador pode editar esta publicação.');
         const [result] = await connection.execute(
-            `UPDATE avisos SET ${keys.map((key) => key + ' = ?').join(', ')} WHERE id_aviso = ?`,
+            `UPDATE avisos SET ${values.situacao === 'publicado' ? "data_publicacao = CASE WHEN situacao = 'rascunho' OR data_publicacao IS NULL THEN CURRENT_TIMESTAMP ELSE data_publicacao END, " : ''}${keys.map((key) => key + ' = ?').join(', ')} WHERE id_aviso = ?`,
             [...Object.values(values), id]
         );
         await connection.commit();
