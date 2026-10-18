@@ -90,6 +90,8 @@ app.use('/api/sessions', sessionsRoutes);
 app.use('/api/password-recovery', passwordRecoveryRoutes);
 app.use('/api/email-verification', require('./src/routes/emailVerification.routes').router);
 app.use('/api/admin', require('./src/routes/admin.routes'));
+app.use('/api/upload', require('./src/routes/upload.routes'));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // URLs antigas continuam válidas sem manter cópias das páginas.
 const pageRedirects = require('../page-redirects.json');
 for (const [oldPage, newPage] of Object.entries(pageRedirects)) {

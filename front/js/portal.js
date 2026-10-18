@@ -575,7 +575,14 @@
         var A = window.Arcadia;
         var sessao = (A.auth && A.auth.getSessao()) || {};
 
-        if (!sessao.id_usuario && sessao.tipo_usuario !== 'externo') {
+        var hasValidSession = Boolean(
+            sessao.id_usuario ||
+            sessao.tipo_usuario === 'externo' ||
+            (A.auth && A.auth.estaLogado()) ||
+            (A.token && A.token.get())
+        );
+
+        if (!hasValidSession) {
             document.querySelectorAll('[data-logout], [data-sign-out]').forEach(function (button) {
                 button.hidden = true;
             });
