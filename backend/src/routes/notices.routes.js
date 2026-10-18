@@ -23,4 +23,11 @@ router.put('/:id', authenticateToken, updateNotice);
 
 router.delete('/:id', authenticateToken, deleteNotice);
 
+// Notice applications
+const applications = require('../controllers/noticeApplications.controller');
+router.post('/:id/apply', authenticateToken, applications.apply);
+router.get('/:id/applications', authenticateToken, authorizeRoles('docente', 'servidor'), applications.listByNotice);
+router.get('/my/applications', authenticateToken, applications.listMy);
+router.patch('/applications/:idInscricao', authenticateToken, authorizeRoles('docente', 'servidor'), applications.updateStatus);
+
 module.exports = router;
