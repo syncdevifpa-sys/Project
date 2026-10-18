@@ -259,8 +259,10 @@ CREATE TABLE calendario (
     id_usuario      INT NULL,
     titulo          VARCHAR(150) NOT NULL,
     descricao       TEXT,                              -- "Portal do estudante, a partir das 08:00"
-    categoria       ENUM('matricula', 'cancelamento', 'evento', 'edital', 'feriado', 'ferias', 'aniversario')
+    categoria       ENUM('matricula', 'cancelamento', 'evento', 'edital', 'feriado', 'ferias', 'aniversario', 'atividades_campus', 'sabado_letivo', 'periodo_academico', 'culminancia_bimestral', 'recesso', 'registro_academico', 'ponto_facultativo', 'avaliacao', 'interrupcao_presencial', 'ferias_docentes')
                         NOT NULL DEFAULT 'evento',
+    oculto         TINYINT(1) NOT NULL DEFAULT 0,
+    visibilidade   ENUM('publico','pessoal') NOT NULL DEFAULT 'publico',
     periodo_letivo  VARCHAR(60),                       -- "2º semestre letivo · 2026" (agrupamento)
     data_evento     DATE NOT NULL,
     data_fim        DATE NULL,
@@ -376,7 +378,7 @@ WHERE u.situacao = 'ativo';
 CREATE VIEW vw_proximas_datas AS
     SELECT 'calendario' AS origem, id_evento AS id_origem, titulo,
            data_evento AS data, categoria AS rotulo, NULL AS id_usuario
-      FROM calendario
+      FROM calendario WHERE oculto = 0 AND visibilidade = 'publico'
     UNION ALL
     SELECT 'aviso', id_aviso, titulo,
            COALESCE(data_evento, data_prazo), categoria, NULL
@@ -401,7 +403,7 @@ CREATE VIEW vw_criados_recentemente AS
       FROM avisos WHERE situacao = 'publicado'
     UNION ALL
     SELECT 'calendario', id_evento, titulo, criado_em, NULL
-      FROM calendario
+      FROM calendario WHERE oculto = 0 AND visibilidade = 'publico'
     UNION ALL
     SELECT 'documento', id_documento, titulo, criado_em, id_usuario
       FROM documentos;

@@ -38,3 +38,6 @@ Thumbs.db
 /tokens.css
 /backend/schema.generated.sql
 /.vercel/
+
+# Experimentos, ambientes isolados e saídas locais reproduzíveis
+/tmp/

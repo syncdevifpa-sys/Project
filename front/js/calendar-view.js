@@ -105,11 +105,7 @@
             root.querySelector('[data-day="' + today + '"]')?.focus();
         });
         controls.append(now);
-        root.append(
-            heading,
-            controls,
-            make('p', 'Selecione um dia para ver títulos completos, períodos e fontes abaixo.')
-        );
+        root.append(heading, controls);
         const grid = make('div');
         grid.className = 'ar-month-grid';
         grid.setAttribute('role', 'group');
@@ -166,7 +162,9 @@
             });
             grid.append(button);
         }
-        root.append(grid);
+        const hint = make('p', 'Selecione um dia para consultar os eventos e suas fontes.');
+        hint.className = 'ar-month-hint';
+        root.append(grid, hint);
         const selected = make('h3', 'Eventos de ' + state.day.split('-').reverse().join('/'));
         selected.className = 'ar-month-agenda-title';
         root.append(selected);

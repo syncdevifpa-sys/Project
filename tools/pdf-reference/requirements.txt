@@ -1,0 +1,2 @@
+# Dependência exclusiva da ferramenta local; não adicionar ao runtime do portal.
+pdfplumber==0.11.9
