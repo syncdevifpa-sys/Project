@@ -97,3 +97,26 @@ dialog.ar-notice-editor {
     bottom: -16px;
   }
 }
+.ar-calendar-category-feedback {
+  margin: 0;
+  font-weight: 600;
+}
+.ar-calendar-import-row > h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.ar-calendar-import-row > p.notice-filter-hint {
+  margin: 0;
+}
+.ar-calendar-import-row details {
+  font-size: 14px;
+}
+.ar-calendar-import-row summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding-block: 10px;
+  box-sizing: border-box;
+}
+.ar-calendar-import-row select {
+  max-width: 100%;
+}

@@ -139,7 +139,7 @@
             label: 'Evento',
             id: 'id_evento',
             endpoint: '/api/calendar',
-            defaults: { categoria: 'evento' },
+            defaults: { categoria: 'evento', oculto: false, visibilidade: 'publico' },
             fields: [
                 title,
                 description,
@@ -153,7 +153,19 @@
                         edital: 'Edital',
                         feriado: 'Feriado',
                         ferias: 'Férias',
-                        aniversario: 'Aniversário'
+                        aniversario: 'Aniversário',
+                        ponto_facultativo: 'Ponto facultativo',
+                        avaliacao: 'Avaliações e exames',
+                        interrupcao_presencial: 'Interrupção de aulas presenciais',
+                        ferias_docentes: 'Férias de docentes',
+                        atividades_campus:
+                            'Encontros pedagógicos, eventos acadêmicos, científicos, artístico-culturais e desportivos e outras atividades do Campus',
+                        sabado_letivo: 'Sábado letivo',
+                        periodo_academico: 'Início e término do período letivo',
+                        culminancia_bimestral: 'Culminância bimestral',
+                        recesso: 'Recesso',
+                        registro_academico:
+                            'Cadastro de disciplinas, notas e outras informações acadêmicas'
                     }
                 ],
                 ['periodo_letivo', 'Período letivo', 'text', 60],
@@ -161,7 +173,16 @@
                 ['data_fim', 'Data final', 'date'],
                 ['hora_inicio', 'Horário inicial', 'time'],
                 ['hora_fim', 'Horário final', 'time'],
-                ['local', 'Local', 'text', 150]
+                ['local', 'Local', 'text', 150],
+                [
+                    'visibilidade',
+                    'Visibilidade',
+                    {
+                        publico: 'Público · todos podem consultar',
+                        pessoal: 'Pessoal · apenas o autor'
+                    }
+                ],
+                ['oculto', 'Ocultar evento do calendário', 'checkbox']
             ]
         }
     };

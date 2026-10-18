@@ -606,3 +606,14 @@ test('resolução das fontes é protegida e não expõe caminhos em falha de imp
     assert.equal(logs[0][1].code, 'MODULE_NOT_FOUND');
     assert.doesNotMatch(JSON.stringify(logs), /private|secret-token/);
 });
+
+test('evento pessoal não interfere na deduplicação de uma importação pública', async (t) => {
+    transaction(t, {
+        existing: [
+            { ...event, periodo_letivo: 'Belém · 2025 · Educação básica', visibilidade: 'pessoal' }
+        ]
+    });
+    const result = await service.commit(body([event]), 4);
+    assert.equal(result.imported, 1);
+    assert.equal(result.skipped, 0);
+});

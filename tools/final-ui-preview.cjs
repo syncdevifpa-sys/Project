@@ -1,4 +1,4 @@
-// Prévia local: dados fictícios em memória; não grava em banco ou envia mensagens.
+// Prévia local: dados fictícios; edição do calendário somente em memória, sem banco ou mensagens.
 const express = require('../node_modules/express');
 const fs = require('fs'),
     path = require('path');
@@ -7,6 +7,7 @@ const sharing = require('../backend/src/services/profile-sharing.service');
 const photo =
     'data:image/png;base64,' +
     fs.readFileSync(path.join(__dirname, '../front/public/arcadia-logo-64.png')).toString('base64');
+const demoPublishedAt = new Date().toISOString();
 const user = {
     id_usuario: 4,
     nome: 'Pessoa de demonstração',
@@ -124,52 +125,100 @@ app.get('/api/notices', (_req, res) =>
             categoria: 'evento',
             publico_alvo: 'todos',
             situacao: 'publicado',
-            data_publicacao: '2026-10-15'
+            data_publicacao: demoPublishedAt
         }
     ])
 );
+const calendarDemoEvents = [
+    {
+        id_evento: 1,
+        id_usuario: 4,
+        titulo: 'Evento de demonstração',
+        data_evento: '2026-10-20',
+        categoria: 'evento',
+        descricao: 'Mais informações em https://example.test'
+    },
+    {
+        id_evento: 2,
+        id_usuario: 4,
+        titulo: 'Férias acadêmicas — demonstração',
+        data_evento: '2026-10-18',
+        data_fim: '2026-11-02',
+        periodo_letivo: 'Belém · 2026 · Educação básica',
+        categoria: 'ferias',
+        descricao: 'Período fictício para conferir a visualização mensal; não consta do PDF.'
+    },
+    {
+        id_evento: 3,
+        id_usuario: 4,
+        titulo: 'Encontro da comunidade — demonstração',
+        data_evento: '2026-12-01',
+        periodo_letivo: 'Belém · 2026 · Educação básica',
+        categoria: 'evento',
+        descricao: 'Evento fictício em outro mês, para conferir a seleção do calendário inteiro.'
+    },
+    {
+        id_evento: 4,
+        id_usuario: 4,
+        titulo: 'Atividade de outro calendário — demonstração',
+        data_evento: '2027-01-10',
+        periodo_letivo: 'Belém · 2027 · Graduação',
+        categoria: 'evento',
+        descricao:
+            'Dado fictício de outro calendário, que não deve ser incluído na seleção da Educação básica.'
+    }
+].map((event) => ({ ...event, criado_em: demoPublishedAt, atualizado_em: demoPublishedAt }));
 app.get('/api/calendar', (_req, res) =>
-    res.json([
-        {
-            id_evento: 1,
-            id_usuario: 4,
-            titulo: 'Evento de demonstração',
-            data_evento: '2026-10-20',
-            categoria: 'evento',
-            descricao: 'Mais informações em https://example.test'
-        },
-        {
-            id_evento: 2,
-            id_usuario: 4,
-            titulo: 'Férias acadêmicas — demonstração',
-            data_evento: '2026-10-18',
-            data_fim: '2026-11-02',
-            periodo_letivo: 'Belém · 2026 · Educação básica',
-            categoria: 'ferias',
-            descricao: 'Período fictício para conferir a visualização mensal; não consta do PDF.'
-        },
-        {
-            id_evento: 3,
-            id_usuario: 4,
-            titulo: 'Encontro da comunidade — demonstração',
-            data_evento: '2026-12-01',
-            periodo_letivo: 'Belém · 2026 · Educação básica',
-            categoria: 'evento',
-            descricao:
-                'Evento fictício em outro mês, para conferir a seleção do calendário inteiro.'
-        },
-        {
-            id_evento: 4,
-            id_usuario: 4,
-            titulo: 'Atividade de outro calendário — demonstração',
-            data_evento: '2027-01-10',
-            periodo_letivo: 'Belém · 2027 · Graduação',
-            categoria: 'evento',
-            descricao:
-                'Dado fictício de outro calendário, que não deve ser incluído na seleção da Educação básica.'
-        }
-    ])
+    res.json(
+        calendarDemoEvents.filter((event) => !event.oculto && event.visibilidade !== 'pessoal')
+    )
 );
+app.get('/api/calendar/manage', (_req, res) => res.json(calendarDemoEvents));
+app.post('/api/calendar', (req, res) => {
+    try {
+        const values = require('../backend/src/services/content-edit.service').validateContent(
+            'calendar',
+            req.body,
+            true
+        );
+        const id = Math.max(0, ...calendarDemoEvents.map((event) => event.id_evento)) + 1;
+        calendarDemoEvents.push({
+            criado_em: new Date().toISOString(),
+            atualizado_em: new Date().toISOString(),
+            id_evento: id,
+            id_usuario: 4,
+            categoria: 'evento',
+            oculto: false,
+            visibilidade: 'publico',
+            ...values
+        });
+        res.status(201).json({
+            eventId: id,
+            message: 'Evento fictício criado somente na memória.'
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({
+            error: error.status ? error.message : 'Não foi possível criar o evento de demonstração.'
+        });
+    }
+});
+app.patch('/api/content/calendar/:id', (req, res) => {
+    const event = calendarDemoEvents.find((item) => String(item.id_evento) === req.params.id);
+    if (!event) return res.status(404).json({ error: 'Evento não encontrado na demonstração.' });
+    try {
+        const values = require('../backend/src/services/content-edit.service').validateContent(
+            'calendar',
+            { ...event, ...req.body },
+            true
+        );
+        Object.assign(event, values, { atualizado_em: new Date().toISOString() });
+        res.json({ message: 'Evento de demonstração atualizado somente na memória.' });
+    } catch (error) {
+        res.status(error.status || 500).json({
+            error: error.status ? error.message : 'Não foi possível salvar a demonstração.'
+        });
+    }
+});
 app.get('/api/projects', (_req, res) =>
     res.json([
         {

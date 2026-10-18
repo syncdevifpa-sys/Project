@@ -147,10 +147,22 @@ async function commit(body, actorId) {
             "SELECT id_usuario FROM usuarios WHERE situacao = 'ativo' AND (tipo_usuario IN ('docente','servidor') OR is_admin = 1) ORDER BY id_usuario FOR UPDATE"
         );
         await actorForImport(actorId, connection);
-        const [existing] = await connection.execute(
-            'SELECT titulo, data_evento, data_fim, periodo_letivo FROM calendario FOR UPDATE'
-        );
-        const seen = new Set(existing.map(key)),
+        let existing;
+        try {
+            [existing] = await connection.execute(
+                'SELECT titulo, data_evento, data_fim, periodo_letivo, visibilidade FROM calendario FOR UPDATE'
+            );
+        } catch (error) {
+            if (
+                error.code !== 'ER_BAD_FIELD_ERROR' ||
+                !/visibilidade/.test(error.sqlMessage || error.message || '')
+            )
+                throw error;
+            [existing] = await connection.execute(
+                'SELECT titulo, data_evento, data_fim, periodo_letivo FROM calendario FOR UPDATE'
+            );
+        }
+        const seen = new Set(existing.filter((event) => event.visibilidade !== 'pessoal').map(key)),
             pending = [];
         let skipped = 0;
         for (const event of events) {
@@ -193,7 +205,7 @@ async function commit(body, actorId) {
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             fail(
                 409,
-                'Atualize as categorias do calendário no banco antes de importar férias ou aniversários.'
+                'Atualize as categorias do calendário no banco antes de importar esta categoria.'
             );
         throw error;
     } finally {

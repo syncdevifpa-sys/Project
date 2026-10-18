@@ -119,6 +119,23 @@ async function editContent(kind, id, body, actorId) {
         );
         if (!rows.length) fail(404, 'Registro não encontrado.');
         const row = rows[0];
+        if (kind === 'calendar') {
+            const owner = Number(row.id_usuario) === Number(actorId);
+            if ((row.visibilidade === 'pessoal' || values.visibilidade === 'pessoal') && !owner)
+                fail(403, 'Somente o autor pode acessar um evento pessoal.');
+            if (
+                row.visibilidade === 'pessoal' &&
+                values.visibilidade === 'publico' &&
+                !admin &&
+                !['docente', 'servidor'].includes(actor.tipo_usuario)
+            )
+                fail(
+                    403,
+                    'Esta conta pode manter eventos pessoais; a publicação pública é restrita.'
+                );
+            if (row.visibilidade === undefined && values.visibilidade === 'publico')
+                delete values.visibilidade;
+        }
         if (kind === 'links' ? !admin : !admin && Number(row.id_usuario) !== Number(actorId))
             fail(403, 'Somente o autor ou administrador pode editar este conteúdo.');
         if (kind === 'documents' && !admin && row.status !== 'solicitado')
@@ -147,6 +164,8 @@ async function editContent(kind, id, body, actorId) {
             values.aprovacao = 'pendente';
             values.aprovado_por = null;
         }
+        if (kind === 'calendar' && row.oculto === undefined && values.oculto === false)
+            delete values.oculto;
         const keys = Object.keys(values);
         const [result] = await connection.execute(
             `UPDATE ${tables[kind]} SET ${keys.map((key) => key + ' = ?').join(', ')} WHERE ${config.id} = ?`,
@@ -158,11 +177,17 @@ async function editContent(kind, id, body, actorId) {
         await connection.rollback();
         if (
             kind === 'calendar' &&
+            error.code === 'ER_BAD_FIELD_ERROR' &&
+            /oculto|visibilidade/.test(error.sqlMessage || error.message || '')
+        )
+            fail(409, 'Atualize o banco para habilitar a visibilidade do calendário.');
+        if (
+            kind === 'calendar' &&
             ['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code)
         )
             fail(
                 409,
-                'Atualize as categorias do calendário no banco antes de salvar férias ou aniversários.'
+                'Atualize as categorias do calendário no banco antes de salvar esta categoria.'
             );
         throw error;
     } finally {

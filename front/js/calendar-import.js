@@ -155,10 +155,17 @@
                 );
                 origin.className = 'notice-filter-hint';
                 card.append(origin);
+                let sourceBadge;
+                const feedback = make('p');
+                feedback.className = 'ar-calendar-category-feedback';
+                feedback.setAttribute('role', 'status');
+                feedback.setAttribute('aria-live', 'polite');
+                card.append(feedback);
                 if (candidate.cor && /^#[0-9a-f]{6}$/i.test(candidate.cor)) {
                     const badge = make(
                         'p',
-                        (candidate.natureza === 'sem_aula' ? 'Sem aula · ' : '') +
+                        'No PDF: ' +
+                            (candidate.natureza === 'sem_aula' ? 'Sem aula · ' : '') +
                             (candidate.legenda || 'Cor identificada no PDF')
                     );
                     badge.setAttribute(
@@ -167,7 +174,7 @@
                             candidate.cor +
                             '; padding-inline-start: 10px'
                     );
-                    card.append(badge);
+                    sourceBadge = badge;
                 } else if (candidate.natureza) {
                     card.append(
                         make(
@@ -198,6 +205,7 @@
                 const quote = make('details'),
                     summary = make('summary', 'Ver trecho extraído');
                 quote.append(summary, make('p', candidate.sourceText));
+                if (sourceBadge) quote.append(sourceBadge);
                 card.append(quote);
                 function input(name, text, type, value) {
                     const wrap = make('label', text);
@@ -216,15 +224,8 @@
                 const categoryWrap = make('label', 'Categoria');
                 categoryWrap.className = 'ar-field';
                 const category = make('select');
-                for (const [value, text] of Object.entries({
-                    evento: 'Evento',
-                    matricula: 'Matrícula',
-                    edital: 'Edital',
-                    cancelamento: 'Cancelamento',
-                    feriado: 'Feriado',
-                    ferias: 'Férias',
-                    aniversario: 'Aniversário'
-                })) {
+                const categories = A.calendarCategories.options;
+                for (const [value, text] of Object.entries(categories)) {
                     const option = make('option', text);
                     option.value = value;
                     category.append(option);
@@ -232,10 +233,26 @@
                 categoryWrap.append(category);
                 card.append(categoryWrap);
                 row.categoria = category;
-                if (candidate.categoria)
-                    category.value = /f[eé]rias/i.test(candidate.titulo)
-                        ? 'ferias'
-                        : candidate.categoria;
+                const initialCategory = /f[eé]rias.*docent/i.test(candidate.titulo)
+                    ? 'ferias_docentes'
+                    : /f[eé]rias/i.test(candidate.titulo)
+                      ? 'ferias'
+                      : /ponto facultativo|facultado/i.test(candidate.titulo)
+                        ? 'ponto_facultativo'
+                        : candidate.natureza === 'interrupcao_presencial'
+                          ? 'interrupcao_presencial'
+                          : candidate.categoria;
+                category.value = A.calendarCategories.canonical(initialCategory);
+                function updateCategory() {
+                    const name = category.value;
+                    const color = A.calendarColors.read()[name];
+                    feedback.textContent = 'Categoria para importar: ' + categories[name];
+                    feedback.style.borderInlineStart = '6px solid ' + color;
+                    feedback.style.paddingInlineStart = '10px';
+                    category.style.borderInlineStart = '6px solid ' + color;
+                    card.style.borderInlineStart = '4px solid ' + color;
+                }
+                updateCategory();
                 input('reviewed', 'Conferi o trecho, o título e as datas no PDF', 'checkbox');
                 input('selected', 'Importar este evento', 'checkbox');
                 row.selected.disabled = true;
@@ -243,6 +260,17 @@
                     row.selected.disabled = !row.reviewed.checked;
                     if (!row.reviewed.checked) row.selected.checked = false;
                 });
+                const invalidateReview = () => {
+                    row.reviewed.checked = false;
+                    row.selected.checked = false;
+                    row.selected.disabled = true;
+                };
+                category.addEventListener('change', () => {
+                    updateCategory();
+                    invalidateReview();
+                });
+                for (const name of ['titulo', 'data_evento', 'data_fim'])
+                    row[name].addEventListener('input', invalidateReview);
                 result.append(card);
                 rows.push(row);
             }

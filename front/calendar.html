@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="calendar-view.css" />
   </head>
 
-  <body>
+  <body class="ar-calendar-page">
     <div class="ar-app">
       <!-- Navegação superior -->
       <header class="ar-nav">
@@ -201,53 +201,122 @@
         </div>
       </section>
 
-      <!-- ChipBar Categories -->
-      <div class="ar-chipbar" role="group" aria-label="Filtrar categorias do calendário">
-        <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
-          >Todos<sup class="ar-sup">(0)</sup></button
+      <div class="ar-calendar-toolbar" aria-label="Controles do calendário">
+        <label class="ar-field ar-calendar-audience"
+          >Modo<select id="calendarAudience" aria-label="Calendário público ou pessoal"
+            ><option value="publico">Público · campus</option
+            ><option value="pessoal">Pessoal · meus eventos</option></select
+          ></label
         >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Enrollment"
-          >Matrícula<sup class="ar-sup">(0)</sup></button
+        <label class="ar-field"
+          >Calendário / período<select id="calendarSourceFilter" class="ar-content-scope"
+            ><option value="">Todos os calendários</option></select
+          ></label
         >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Cancellations"
-          >Cancelamentos<sup class="ar-sup">(0)</sup></button
+        <label class="ar-field"
+          >Visualização<select id="calendarViewMode"
+            ><option value="month" selected>Calendário mensal</option
+            ><option value="list">Lista</option></select
+          ></label
         >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Events"
-          >Eventos<sup class="ar-sup">(0)</sup></button
+        <button type="button" class="ar-btn ar-btn--secondary" id="btnEditEvents" hidden
+          >Editar eventos</button
         >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Calls"
-          >Editais<sup class="ar-sup">(0)</sup></button
-        >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Vacation"
-          >Férias<sup class="ar-sup">(0)</sup></button
-        >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Birthday"
-          >Aniversários<sup class="ar-sup">(0)</sup></button
-        >
+        <details class="ar-calendar-options" id="calendarOptions">
+          <summary>Filtros e opções</summary>
+          <div class="ar-calendar-options-body">
+            <p id="calendarFilterStatus" role="status">Todas as categorias</p>
+            <fieldset class="ar-calendar-filter-group"
+              ><legend>Categorias</legend>
+              <div class="ar-chipbar" role="group" aria-label="Filtrar categorias do calendário">
+                <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
+                  >Todos<sup class="ar-sup">(0)</sup></button
+                >
+                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="evento"
+                  >Atividades do Campus<sup class="ar-sup">(0)</sup></button
+                >
+                <button
+                  type="button"
+                  class="ar-chip"
+                  aria-pressed="false"
+                  data-filter-key="matricula"
+                  >Matrículas<sup class="ar-sup">(0)</sup></button
+                >
+                <button
+                  type="button"
+                  class="ar-chip"
+                  aria-pressed="false"
+                  data-filter-key="registro_academico"
+                  >Prazos e registros acadêmicos<sup class="ar-sup">(0)</sup></button
+                >
+                <button
+                  type="button"
+                  class="ar-chip"
+                  aria-pressed="false"
+                  data-filter-key="avaliacao"
+                  >Avaliações<sup class="ar-sup">(0)</sup></button
+                >
+                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="feriado"
+                  >Feriados<sup class="ar-sup">(0)</sup></button
+                >
+                <button
+                  type="button"
+                  class="ar-chip"
+                  aria-pressed="false"
+                  data-filter-key="ponto_facultativo"
+                  >Pontos facultativos<sup class="ar-sup">(0)</sup></button
+                >
+                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="ferias"
+                  >Férias e recessos<sup class="ar-sup">(0)</sup></button
+                >
+                <button
+                  type="button"
+                  class="ar-chip"
+                  aria-pressed="false"
+                  data-filter-key="cancelamento"
+                  >Alterações e cancelamentos<sup class="ar-sup">(0)</sup></button
+                >
+              </div>
+            </fieldset>
+            <div class="ar-calendar-holiday-options">
+              <label class="ar-field" id="holidayYearField"
+                >Ano dos feriados na lista<input
+                  id="holidayYear"
+                  type="number"
+                  min="2024"
+                  max="2099"
+                  step="1"
+              /></label>
+              <label class="ar-field"
+                >Abrangência dos feriados<select id="holidayRegion"
+                  ><option value="brasil">Brasil</option
+                  ><option value="para">Brasil e Pará</option
+                  ><option value="belem" selected>Brasil, Pará e Belém</option></select
+                ></label
+              >
+            </div>
+            <p class="small"
+              >Os feriados se repetem automaticamente. No modo mensal, use o campo Mês exibido para
+              mudar mês e ano. Carnaval, pontos facultativos, férias e atividades acadêmicas seguem
+              o calendário aprovado pelo IFPA.</p
+            >
+            <details class="ar-calendar-legend"
+              ><summary>Legenda das cores</summary
+              ><p
+                >Cor e nome identificam a categoria. Você pode personalizar as cores nas
+                <a href="settings.html">configurações</a>. A cor do PDF é uma referência da fonte; a
+                cor escolhida identifica o evento no portal.</p
+              ><div id="calendarColorLegend" class="ar-color-fields"></div
+            ></details>
+          </div>
+        </details>
       </div>
-
-      <p
-        >Calendário público: qualquer pessoa pode consultar estas datas. A publicação e a edição
-        seguem as permissões da conta.</p
-      >
-      <label class="ar-field"
-        >Calendário / período<select id="calendarSourceFilter" class="ar-content-scope"
-          ><option value="">Todos os calendários</option></select
-        ></label
-      >
-      <label class="ar-calendar-view-picker"
-        >Visualização<select id="calendarViewMode"
-          ><option value="list">Lista</option
-          ><option value="month">Calendário mensal</option></select
-        ></label
-      >
-
       <!-- Dates and Deadlines Panel -->
       <section class="ar-panel" style="padding: var(--space-4) var(--space-3)">
         <div class="ar-panel-head">
           <h3 class="ar-panel-label" style="margin: 0">Calendário acadêmico</h3>
-          <span class="small" style="color: var(--ink-muted)"
-            >Datas cadastradas; confira a fonte de cada evento.</span
+          <span class="small ar-calendar-public-label" style="color: var(--ink-muted)"
+            >Público</span
           >
         </div>
         <div class="ar-panel-body"><p role="status">Carregando calendário...</p></div>
@@ -259,14 +328,17 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/calendar-categories.js"></script>
     <script src="js/calendar-colors.js"></script>
     <script src="js/content-fields.js"></script>
     <script src="js/notice-actions.js"></script>
     <script src="js/notice-editor.js"></script>
     <script src="js/notice-text.js"></script>
-    <script src="js/calendar-import.js?v=colunas-2026-10-16-v3"></script>
+    <script src="js/calendar-import.js?v=categorias-2026-10-18-v5"></script>
     <script src="js/calendar-actions.js"></script>
+    <script src="js/calendar-holidays.js"></script>
     <script src="js/calendar-view.js"></script>
+    <script src="js/calendar-event-editor.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/navigation.js"></script>
   </body>
