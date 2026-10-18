@@ -306,6 +306,95 @@ window.Arcadia = window.Arcadia || {};
         }
     }
 
+    function showTopAlert(mensagem, detalhe) {
+        const textoPrincipal = 'Não foi possível realizar o cadastro ou login';
+
+        if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof CustomEvent !== 'undefined') {
+            try {
+                window.dispatchEvent(
+                    new CustomEvent('arcadia:auth-error', {
+                        detail: {
+                            mensagem: textoPrincipal,
+                            erro: detalhe || null,
+                            timestamp: Date.now()
+                        },
+                        bubbles: true,
+                        cancelable: true
+                    })
+                );
+            } catch {}
+        }
+
+        if (typeof document === 'undefined' || typeof document.createElement !== 'function' || !document.body) {
+            return;
+        }
+
+        let container = document.getElementById('ar-auth-top-alert');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'ar-auth-top-alert';
+            container.setAttribute('role', 'alert');
+            container.setAttribute('aria-live', 'assertive');
+            container.style.cssText = [
+                'position: fixed',
+                'top: 20px',
+                'left: 50%',
+                'transform: translateX(-50%)',
+                'z-index: 9999999',
+                'display: flex',
+                'align-items: center',
+                'gap: 12px',
+                'padding: 14px 24px',
+                'background: #991b1b',
+                'color: #ffffff',
+                'border: 1.5px solid #ef4444',
+                'border-radius: 9999px',
+                'box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3)',
+                'font-family: inherit',
+                'font-size: 14px',
+                'font-weight: 600',
+                'max-width: 90vw',
+                'box-sizing: border-box',
+                'pointer-events: auto',
+                'transition: opacity 0.3s ease, transform 0.3s ease'
+            ].join(';');
+            document.body.appendChild(container);
+        }
+
+        const iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        const detalheHtml = detalhe ? '<span style="font-weight:400; opacity:0.9; margin-left:6px">(' + detalhe + ')</span>' : '';
+
+        container.innerHTML = [
+            iconSvg,
+            '<span>' + textoPrincipal + detalheHtml + '</span>',
+            '<button type="button" aria-label="Fechar" style="background:transparent; border:none; color:#fca5a5; cursor:pointer; font-size:20px; line-height:1; padding:0 4px; margin-left:8px; display:inline-flex; align-items:center;">&times;</button>'
+        ].join('');
+
+        container.style.display = 'flex';
+        container.style.opacity = '1';
+        container.style.transform = 'translateX(-50%) translateY(0)';
+
+        const closeBtn = container.querySelector('button');
+        if (closeBtn) {
+            closeBtn.onclick = function () {
+                container.style.opacity = '0';
+                container.style.transform = 'translateX(-50%) translateY(-10px)';
+                setTimeout(function () {
+                    if (container.style.opacity === '0') container.style.display = 'none';
+                }, 300);
+            };
+        }
+
+        if (container._timeout) clearTimeout(container._timeout);
+        container._timeout = setTimeout(function () {
+            container.style.opacity = '0';
+            container.style.transform = 'translateX(-50%) translateY(-10px)';
+            setTimeout(function () {
+                if (container.style.opacity === '0') container.style.display = 'none';
+            }, 300);
+        }, 6000);
+    }
+
     // ------------------------- Formulários (Login / Cadastro) -------------------------
     function initForms() {
         document.querySelectorAll('form[data-acesso]').forEach((form) => {
@@ -322,6 +411,7 @@ window.Arcadia = window.Arcadia || {};
                     alert(text);
                 }
                 if (msgSucesso) msgSucesso.style.display = 'none';
+                showTopAlert('Não foi possível realizar o cadastro ou login', text);
             };
 
             const showSuccess = (text) => {
@@ -513,32 +603,44 @@ window.Arcadia = window.Arcadia || {};
 
     // ---------------------------- Logout ----------------------------
     async function logout() {
-        // Revoga a sessão no servidor antes de descartar o JWT no navegador.
+        // Tenta revogar a sessão no servidor antes de descartar o JWT no navegador
         try {
-            await api.expect(
-                api.post(
-                    getSessao().tipo_usuario === 'externo'
-                        ? '/api/external/logout'
-                        : '/api/auth/logout'
-                )
+            await api.post(
+                getSessao().tipo_usuario === 'externo'
+                    ? '/api/external/logout'
+                    : '/api/auth/logout'
             );
         } catch (error) {
-            if (error.status !== 401) {
-                alert(error.message || 'Não foi possível encerrar a sessão.');
-                return;
-            }
+            console.warn('Revogação no servidor offline ou ignorada:', error);
+        } finally {
+            Token.clear();
+            try {
+                localStorage.removeItem('arcadiaToken');
+                localStorage.removeItem('arcadiaSessao');
+                sessionStorage.removeItem('arcadiaToken');
+                sessionStorage.removeItem('arcadiaSessao');
+            } catch {}
+            window.location.href = 'login.html';
         }
-        Token.clear();
-        window.location.href = 'login.html';
     }
 
     function initLogout() {
-        document.querySelectorAll('[data-logout], [data-sign-out]').forEach((btn) => {
+        document.querySelectorAll('[data-logout], [data-sign-out], #adminLogout, #externalLogout, [data-action="logout"]').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 logout();
             });
         });
+
+        if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+            document.addEventListener('click', (e) => {
+                const btn = e.target && e.target.closest && e.target.closest('[data-logout], [data-sign-out], #adminLogout, #externalLogout, [data-action="logout"]');
+                if (btn) {
+                    e.preventDefault();
+                    logout();
+                }
+            });
+        }
     }
 
     // Use nas páginas protegidas: redireciona ao login se não houver sessão.
@@ -688,7 +790,21 @@ window.Arcadia = window.Arcadia || {};
                     select.appendChild(option);
                 });
         } catch (error) {
-            select.innerHTML = '<option value="">Não foi possível carregar os cursos</option>';
+            console.warn('Falha na API de cursos, carregando opções institucionais locais:', error);
+            const fallback = [
+                { id_curso: 1, nome: 'Técnico em Desenvolvimento de Sistemas (Integrado)' },
+                { id_curso: 2, nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas' },
+                { id_curso: 3, nome: 'Engenharia de Controle e Automação' },
+                { id_curso: 4, nome: 'Técnico em Informática (Subsequente)' },
+                { id_curso: 5, nome: 'Licenciatura em Física' }
+            ];
+            select.innerHTML = '<option value="">Selecione seu curso</option>';
+            fallback.forEach((c) => {
+                const option = document.createElement('option');
+                option.value = c.id_curso;
+                option.textContent = c.nome;
+                select.appendChild(option);
+            });
         }
     }
 
@@ -721,6 +837,7 @@ window.Arcadia = window.Arcadia || {};
         completeGoogleAuth,
         triggerRealGoogleOAuth,
         openGoogleAuthModal,
-        closeGoogleAuthModal
+        closeGoogleAuthModal,
+        showTopAlert
     };
 })(window.Arcadia);
