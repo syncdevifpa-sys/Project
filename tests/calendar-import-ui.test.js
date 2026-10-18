@@ -5,7 +5,7 @@ const { test } = require('node:test'),
 function fixture(
     fail = false,
     ambiguous = false,
-    readerVersion = 'colunas-2026-10-16-v3',
+    readerVersion = 'colunas-contexto-v4',
     reviewReason
 ) {
     const nodes = [],
@@ -83,6 +83,16 @@ function fixture(
         };
     }
     const A = {
+        calendarCategories: require('../front/js/calendar-categories'),
+        contentFields: require('../front/js/content-fields'),
+        calendarColors: {
+            read: () => ({
+                evento: '#176b9a',
+                feriado: '#c43b3b',
+                registro_academico: '#8652b3',
+                interrupcao_presencial: '#65778d'
+            })
+        },
         auth: { getSessao: () => ({ id_usuario: 4, tipo_usuario: 'servidor' }) },
         showToast() {},
         api: {
@@ -113,6 +123,7 @@ function fixture(
     return {
         nodes,
         calls,
+        preview,
         dialog,
         findLabel,
         get refreshed() {
@@ -271,7 +282,7 @@ test('cores ambíguas ficam fora do lote e só podem ser marcadas após revisão
 });
 
 test('data válida com aviso apenas de cor pode ser marcada em lote', async () => {
-    const f = fixture(false, true, 'colunas-2026-10-16-v3', 'color');
+    const f = fixture(false, true, 'colunas-contexto-v4', 'color');
     f.nodes.find((n) => n.name === 'file').files = [
         {
             name: 'calendar.pdf',
@@ -288,4 +299,54 @@ test('data válida com aviso apenas de cor pode ser marcada em lote', async () =
     assert.equal(f.findLabel('Importar este evento').checked, true);
     assert.equal(f.findLabel('Conferi o trecho, o título e as datas no PDF').checked, true);
     assert.equal(f.calls.length, 1);
+});
+
+test('importação compartilha todas as categorias e muda o retorno visual sem alterar a evidência do PDF', async () => {
+    const f = fixture();
+    Object.assign(f.preview.candidates[0], {
+        cor: '#ff0000',
+        legenda: 'Feriado/pontos facultativos',
+        categoria: 'feriado'
+    });
+    f.nodes.find((n) => n.name === 'file').files = [
+        {
+            name: 'calendar.pdf',
+            size: 100,
+            slice: () => ({ arrayBuffer: async () => new TextEncoder().encode('%PDF-').buffer })
+        }
+    ];
+    f.nodes.find((n) => n.name === 'year').value = '2025';
+    f.nodes.find((n) => n.name === 'label').value = 'Res1544';
+    f.findLabel('Modalidade').value = 'basica';
+    f.nodes.find((n) => n.name === 'metadataConfirmed').checked = true;
+    await f.nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });
+    const category = f.findLabel('Categoria');
+    const expected = require('../front/js/calendar-categories').options;
+    assert.deepEqual(category.children.map((n) => n.value).sort(), Object.keys(expected).sort());
+    assert.equal(Object.keys(expected).length, 9);
+    const feedback = f.nodes.find((n) => n.className === 'ar-calendar-category-feedback');
+    assert.equal(feedback.textContent, 'Categoria para importar: Feriados');
+    assert.equal(feedback.style.borderInlineStart, '6px solid #c43b3b');
+    const source = f.nodes.find((n) => n.textContent === 'No PDF: Feriado/pontos facultativos');
+    assert.ok(source.attributes.style.includes('#ff0000'));
+    const reviewed = f.findLabel('Conferi o trecho, o título e as datas no PDF');
+    reviewed.checked = true;
+    reviewed.events.change();
+    const selected = f.findLabel('Importar este evento');
+    selected.checked = true;
+    category.value = 'registro_academico';
+    category.events.change();
+    assert.equal(feedback.style.borderInlineStart, '6px solid #8652b3');
+    assert.equal(feedback.textContent, 'Categoria para importar: ' + expected.registro_academico);
+    assert.ok(source.attributes.style.includes('#ff0000'));
+    assert.equal(reviewed.checked, false);
+    assert.equal(selected.checked, false);
+    assert.equal(selected.disabled, true);
+    reviewed.checked = true;
+    reviewed.events.change();
+    selected.checked = true;
+    f.findLabel('Confirmo a publicação dos eventos selecionados no calendário público').checked =
+        true;
+    await f.nodes.find((n) => n.textContent === 'Importar eventos selecionados').events.click();
+    assert.equal(f.calls[1].body.events[0].categoria, 'registro_academico');
 });

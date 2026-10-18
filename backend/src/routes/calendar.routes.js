@@ -4,6 +4,7 @@ const router = express.Router();
 
 const {
     listEvents,
+    listManagedEvents,
     getEventById,
     createEvent,
     updateEvent,
@@ -18,12 +19,13 @@ const {
 
 // Public routes
 router.get('/', listEvents);
+router.get('/manage', authenticateToken, listManagedEvents);
 router.get('/:id', getEventById);
 
 // Teacher and staff routes
-router.post('/', authenticateToken, authorizeRoles('docente', 'servidor'), createEvent);
+router.post('/', authenticateToken, createEvent);
 
-router.put('/:id', authenticateToken, authorizeRoles('docente', 'servidor'), updateEvent);
+router.put('/:id', authenticateToken, updateEvent);
 
 // Administrator route
 router.delete('/:id', authenticateToken, authorizeAdmin, deleteEvent);

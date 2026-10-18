@@ -2,6 +2,13 @@
     'use strict';
     A.contentEditor = {
         canEdit(resource, notice) {
+            if (notice.automatico) return false;
+            if (
+                resource === 'calendar' &&
+                notice.visibilidade === 'pessoal' &&
+                Number(notice.id_usuario) !== Number(A.auth.getSessao().id_usuario)
+            )
+                return false;
             const session = A.auth.getSessao();
             return (
                 session.tipo_usuario !== 'externo' &&
@@ -13,7 +20,7 @@
                     Boolean(session.is_admin))
             );
         },
-        open(resource, notice, onSuccess) {
+        open(resource, notice, onSuccess, initial = {}) {
             const config = A.contentFields[resource],
                 fields = config.fields;
             const editing = Boolean(notice),
@@ -24,14 +31,17 @@
                     : session.tipo_usuario === 'externo' ||
                       !session.id_usuario ||
                       (resource === 'links' && !session.is_admin) ||
-                      (['notices', 'calendar'].includes(resource) &&
+                      (resource === 'notices' &&
                           !(
                               session.is_admin ||
                               ['docente', 'servidor'].includes(session.tipo_usuario)
                           ))
             )
                 return;
-            notice = Object.assign({}, config.defaults, notice || {});
+            notice = Object.assign({}, config.defaults, initial, notice || {});
+            const canPublish =
+                Boolean(session.is_admin) || ['docente', 'servidor'].includes(session.tipo_usuario);
+            if (resource === 'calendar' && !editing && !canPublish) notice.visibilidade = 'pessoal';
             const dialog = document.createElement('dialog');
             dialog.className = 'ar-dialog ar-notice-editor';
             dialog.setAttribute('aria-labelledby', 'noticeEditorTitle');
@@ -42,7 +52,25 @@
             const form = document.createElement('form');
             form.className = 'ar-form-grid';
             const inputs = {};
-            for (const [name, text, type, max] of fields) {
+            for (const [name, text, fieldType, max] of fields) {
+                let type =
+                    resource === 'calendar' && name === 'categoria'
+                        ? A.calendarCategories.options
+                        : fieldType;
+                if (
+                    resource === 'calendar' &&
+                    name === 'visibilidade' &&
+                    !canPublish &&
+                    (!editing || notice.visibilidade === 'pessoal')
+                )
+                    type = { pessoal: 'Pessoal · apenas o autor' };
+                if (
+                    resource === 'calendar' &&
+                    name === 'visibilidade' &&
+                    editing &&
+                    Number(notice.id_usuario) !== Number(session.id_usuario)
+                )
+                    type = { publico: 'Público · todos podem consultar' };
                 const label = document.createElement('label');
                 label.className =
                     'ar-field' +
@@ -81,9 +109,31 @@
                         type === 'date'
                             ? String(notice[name] || '').slice(0, 10)
                             : String(notice[name] ?? '');
+                if (resource === 'calendar' && name === 'categoria')
+                    input.value = A.calendarCategories.canonical(notice[name]);
                 inputs[name] = input;
                 label.append(input);
                 form.append(label);
+            }
+            if (resource === 'calendar' && A.calendarColors) {
+                const preview = document.createElement('p');
+                preview.className = 'ar-event-color-preview ar-span-2';
+                preview.setAttribute('role', 'status');
+                const swatch = document.createElement('span');
+                swatch.className = 'ar-color-swatch';
+                swatch.setAttribute('aria-hidden', 'true');
+                const text = document.createElement('span');
+                preview.append(swatch, text);
+                const update = () => {
+                    const name = inputs.categoria.value;
+                    swatch.style.backgroundColor = A.calendarColors.read()[name];
+                    text.textContent = A.calendarColors.labels[name] || name;
+                    inputs.categoria.style.borderInlineStart =
+                        '6px solid ' + A.calendarColors.read()[name];
+                };
+                inputs.categoria.addEventListener('change', update);
+                update();
+                inputs.categoria.parentElement.after(preview);
             }
             const cover = resource === 'notices' ? A.noticeCover?.editor(form, notice.capa) : null;
             const error = document.createElement('p');
@@ -142,6 +192,12 @@
                               : ['date', 'time', 'datetime-local'].includes(type)
                                 ? inputs[name].value || null
                                 : inputs[name].value;
+                if (
+                    resource === 'calendar' &&
+                    editing &&
+                    A.calendarCategories.canonical(notice.categoria) === payload.categoria
+                )
+                    payload.categoria = notice.categoria;
                 if (cover?.changed) payload.capa = cover.value;
                 try {
                     await A.api.expect(
@@ -161,9 +217,15 @@
                             : A.api.post(config.endpoint, payload)
                     );
                     dialog.close();
-                    A.showToast(editing ? 'Registro atualizado.' : 'Registro criado.');
+                    A.showToast(
+                        resource === 'calendar' && payload.oculto
+                            ? 'Evento ocultado. Você pode reexibi-lo em Editar eventos.'
+                            : editing
+                              ? 'Registro atualizado.'
+                              : 'Registro criado.'
+                    );
                     try {
-                        await onSuccess();
+                        await onSuccess(payload);
                     } catch {
                         A.showToast('Registro salvo. Recarregue a página para atualizar a lista.');
                     }

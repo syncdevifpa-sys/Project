@@ -2,7 +2,9 @@
 const path = require('path');
 const crypto = require('crypto');
 const colors = require('./calendar-colors.service');
-const READER_VERSION = 'colunas-2026-10-16-v3';
+const diagnostics = require('./calendar-diagnostics.service');
+const fs = require('fs');
+const READER_VERSION = 'colunas-contexto-v4';
 const MONTHS = [
     'janeiro',
     'fevereiro',
@@ -152,17 +154,8 @@ function candidatesFromPages(pages, { year, level }) {
         lastMonth = 0,
         contextYear = year;
     for (const page of pages) {
-        const heading = page.items.find((item) =>
-            /^(educacao basica(?: e profissional)?|(?:ensino de )?graduacao|pos[- ]graduacao)$/.test(
-                normalize(item.text)
-            )
-        );
-        if (heading) {
-            const levelName = normalize(heading.text).includes('basica')
-                ? 'basica'
-                : normalize(heading.text).startsWith('pos')
-                  ? 'pos'
-                  : 'graduacao';
+        const levelName = colors.pageLevel(page.items);
+        if (levelName) {
             if (levelName !== currentLevel) {
                 previousColumns = [];
                 lastMonth = 0;
@@ -170,6 +163,21 @@ function candidatesFromPages(pages, { year, level }) {
             }
             currentLevel = levelName;
         }
+        // Cabeçalhos institucionais atravessam colunas: remova a linha inteira antes do recorte.
+        const pageTop = Math.max(...page.items.map((item) => item.y));
+        const headerRows = page.items
+            .filter(
+                (item) =>
+                    item.y >= pageTop - 6 * (item.height || 10) &&
+                    /^(mec\b|instituto federal|ministerio|secretaria|calendario academic|campus\b)/.test(
+                        normalize(item.text)
+                    ) &&
+                    item.text.trim() === item.text.trim().toUpperCase()
+            )
+            .map((item) => item.y);
+        const pageItems = page.items.filter(
+            (item) => !headerRows.some((y) => Math.abs(y - item.y) < 2)
+        );
         if (currentLevel !== 'geral' && currentLevel !== level) continue;
         if (
             page.items.some((item) => normalize(item.text).includes('minuta')) &&
@@ -180,7 +188,7 @@ function candidatesFromPages(pages, { year, level }) {
             warnings.push(
                 'O PDF contém a palavra MINUTA. Confira a resolução e a versão antes de importar.'
             );
-        const anchors = page.items
+        const anchors = pageItems
             .map((item) => {
                 const match = normalize(item.text).match(/^([a-z]+)(?:\s*\/\s*(\d{4}))?$/);
                 if (!match || !MONTHS.includes(match[1])) return null;
@@ -231,10 +239,21 @@ function candidatesFromPages(pages, { year, level }) {
             band.anchors.sort((a, b) => a.x - b.x);
             if (band.anchors.length > 1)
                 columnWidth = band.anchors[1].center - band.anchors[0].center;
-            const cols = band.anchors.map((anchor) => ({ anchor, items: [] }));
-            for (const item of page.items.filter(
+            const bandItems = pageItems.filter(
                 (item) => item.y < band.y - 3 && item.y > bottom + 3
-            )) {
+            );
+            // O rótulo e o número de um total podem estar em objetos/colunas diferentes.
+            // Delimite o rodapé antes de associar os fragmentos à coluna mais próxima.
+            const footerY = Math.max(
+                -Infinity,
+                ...bandItems
+                    .filter((item) =>
+                        /^(dias letivos|total de dias|legendas)/.test(normalize(item.text))
+                    )
+                    .map((item) => item.y)
+            );
+            const cols = band.anchors.map((anchor) => ({ anchor, items: [] }));
+            for (const item of bandItems.filter((item) => item.y > footerY + 2)) {
                 // O início do texto identifica a coluna. Uma descrição longa não muda
                 // de mês só porque a largura calculada ultrapassa o centro da célula.
                 const center = item.x;
@@ -264,18 +283,33 @@ function candidatesFromPages(pages, { year, level }) {
                     lines: lines(col.items),
                     month: col.anchor.month,
                     year: contextYear,
-                    anchor: col.anchor
+                    anchor: col.anchor,
+                    column: cols.indexOf(col) + 1,
+                    closed: footerY !== -Infinity
                 };
                 groups.push(group);
                 if (index === bands.length - 1) lastColumns.push(group);
             }
         }
-        const above = page.items.filter((item) => !bands.length || item.y > bands[0].y + 3);
+        const aboveItems = pageItems.filter((item) => !bands.length || item.y > bands[0].y + 3);
+        const aboveFooterY = Math.max(
+            -Infinity,
+            ...aboveItems
+                .filter((item) =>
+                    /^(dias letivos|total de dias|legendas)/.test(normalize(item.text))
+                )
+                .map((item) => item.y)
+        );
+        const above = aboveItems.filter((item) => item.y > aboveFooterY + 2);
         // Uma tabela pode atravessar a página sem repetir os cabeçalhos dos meses.
         // Reutiliza as colunas anteriores somente dentro da mesma modalidade.
         if (above.length && previousColumns.length) {
             const pageTop = Math.max(...page.items.map((item) => item.y));
-            const continuations = previousColumns.map((column) => ({ ...column, items: [] }));
+            const continuations = previousColumns.map((column) => ({
+                ...column,
+                items: [],
+                closed: aboveFooterY !== -Infinity
+            }));
             for (const item of above) {
                 if (
                     /^(mec|instituto|campus|ministerio|secretaria|educacao basica|graduacao|pos[- ]graduacao)/.test(
@@ -297,18 +331,30 @@ function candidatesFromPages(pages, { year, level }) {
             for (const column of continuations) column.lines = lines(column.items);
             groups.unshift(...continuations);
             if (!bands.length) lastColumns = continuations;
-        } else if (above.length) groups.unshift({ lines: lines(above), month: null, year });
+        } else if (above.length) {
+            // O preâmbulo de resoluções não é uma coluna de eventos. Preserve apenas datas explícitas.
+            groups.unshift({
+                lines: lines(above).filter(
+                    (line) =>
+                        currentLevel !== 'geral' || /^\d{1,2}[/.]\d{1,2}(?:[/.]\d{4})?\s/.test(line)
+                ),
+                month: null,
+                year
+            });
+        }
         for (const group of groups) {
             let candidate = group.candidate || null;
             for (const line of group.lines) {
                 if (/^(dias letivos|total de dias|legendas)/i.test(normalize(line))) {
                     candidate = null;
-                    continue;
+                    group.closed = true;
+                    break;
                 }
                 const parsed = parseLine(line, group);
                 if (parsed) {
                     candidate = {
                         ...parsed,
+                        sourceColumn: group.column || null,
                         sourceMonth: group.month,
                         sourceYear: group.year,
                         page: page.number,
@@ -340,7 +386,7 @@ function candidatesFromPages(pages, { year, level }) {
             }
             group.candidate = candidate;
         }
-        previousColumns = lastColumns;
+        previousColumns = lastColumns.filter((column) => !column.closed);
     }
     // Expande dias enumerados depois de juntar as linhas de uma mesma descrição.
     // "27 e 30" não inclui os dias 28 e 29.
@@ -435,28 +481,51 @@ async function extractCalendarPdf(buffer, metadata) {
         require('@napi-rs/canvas');
         pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
         globalThis.pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs');
-    } catch {
+    } catch (error) {
+        diagnostics.report(error, 'pdf-runtime');
         fail(
             503,
             'Leitor de PDF indisponível no servidor. Atualize o deploy com as dependências de PDF (PDF_RUNTIME_UNAVAILABLE).'
         );
     }
-    const fonts =
-        path
-            .join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'standard_fonts')
-            .replace(/\\/g, '/') + '/';
-    const task = pdfjs.getDocument({
-        data: new Uint8Array(buffer),
-        isEvalSupported: false,
-        disableFontFace: true,
-        useSystemFonts: false,
-        disableAutoFetch: true,
-        disableStream: true,
-        stopAtErrors: false,
-        standardFontDataUrl: fonts,
-        maxImageSize: 0,
-        verbosity: 0
-    });
+    let fonts, task;
+    try {
+        fonts =
+            path
+                .join(
+                    path.dirname(require.resolve('pdfjs-dist/legacy/build/pdf.mjs')),
+                    '../../standard_fonts'
+                )
+                .replace(/\\/g, '/') + '/';
+        if (!fs.existsSync(fonts))
+            throw Object.assign(new Error('PDF assets unavailable'), { code: 'ENOENT' });
+    } catch (error) {
+        diagnostics.report(error, 'pdf-assets');
+        fail(
+            503,
+            'Arquivos do leitor de PDF indisponíveis no servidor (PDF_ASSETS_UNAVAILABLE). Contate a administração.'
+        );
+    }
+    try {
+        task = pdfjs.getDocument({
+            data: new Uint8Array(buffer),
+            isEvalSupported: false,
+            disableFontFace: true,
+            useSystemFonts: false,
+            disableAutoFetch: true,
+            disableStream: true,
+            stopAtErrors: false,
+            standardFontDataUrl: fonts,
+            maxImageSize: 0,
+            verbosity: 0
+        });
+    } catch (error) {
+        diagnostics.report(error, 'pdf-init');
+        fail(
+            503,
+            'Não foi possível iniciar o leitor de PDF no servidor (PDF_INIT_UNAVAILABLE). Contate a administração.'
+        );
+    }
     try {
         return await withPdfDeadline(task, async () => {
             const doc = await task.promise;
@@ -517,14 +586,30 @@ async function extractCalendarPdf(buffer, metadata) {
                 '';
             const parsed = candidatesFromPages(pages, metadata);
             parsed.colorAnalysis = colors.extractColoredDays(pages, metadata);
-            colors.mergeColorCandidates(parsed, parsed.colorAnalysis);
             if (!years.length)
                 parsed.warnings.push(
                     'Ano do calendário não reconhecido no cabeçalho. Confirme o ano escolhido diretamente no PDF.'
                 );
-            if (!normalize(text).includes('campus belem'))
+            const campusHeaders = [
+                ...new Set(
+                    pages
+                        .flatMap((page) => lines(page.items))
+                        .filter((line) => /^CAMPUS\s+/.test(line) && line === line.toUpperCase())
+                        .map((line) => line.replace(/^CAMPUS\s+/, '').trim())
+                )
+            ];
+            const campus =
+                campusHeaders.length === 1
+                    ? normalize(campusHeaders[0]) === 'belem'
+                        ? 'Belém'
+                        : campusHeaders[0].slice(0, 100)
+                    : null;
+            colors.mergeColorCandidates(parsed, parsed.colorAnalysis, {
+                region: campus === 'Belém' ? 'belem' : 'brasil'
+            });
+            if (!campus)
                 parsed.warnings.push(
-                    'Campus Belém não identificado no texto: confirme a origem do documento.'
+                    'Campus não identificado de forma inequívoca no cabeçalho: confirme a origem do documento.'
                 );
             return {
                 ...parsed,
@@ -532,7 +617,7 @@ async function extractCalendarPdf(buffer, metadata) {
                 detected: {
                     years,
                     reference,
-                    campus: normalize(text).includes('campus belem') ? 'Belém' : null
+                    campus
                 },
                 pages: pages.length,
                 hash: crypto.createHash('sha256').update(buffer).digest('hex')
