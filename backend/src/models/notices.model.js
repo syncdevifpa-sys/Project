@@ -109,11 +109,12 @@ async function createNotice(noticeData) {
             data_prazo,
             data_evento,
             vagas,
-            detalhes
+            detalhes,
+            data_publicacao
             ${typeAvailable ? ', tipo_publicacao' : ''}
             ${coverAvailable ? ', capa' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${typeAvailable ? ', ?' : ''}${coverAvailable ? ', ?' : ''})
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${situacao === 'publicado' ? 'CURRENT_TIMESTAMP' : 'NULL'}${typeAvailable ? ', ?' : ''}${coverAvailable ? ', ?' : ''})
     `,
         [
             id_usuario,

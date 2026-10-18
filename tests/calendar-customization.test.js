@@ -44,7 +44,10 @@ test('cores locais são isoladas por usuário e ignoram valores inválidos e pro
         ]
     ]);
     const applied = {};
-    const A = { auth: { getSessao: () => ({ id_usuario: 4 }) } };
+    const A = {
+        calendarCategories: require('../front/js/calendar-categories'),
+        auth: { getSessao: () => ({ id_usuario: 4 }) }
+    };
     vm.runInNewContext(fs.readFileSync('front/js/calendar-colors.js', 'utf8'), {
         window: { Arcadia: A, addEventListener() {} },
         document: {

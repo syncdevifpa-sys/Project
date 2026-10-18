@@ -1,7 +1,26 @@
 const db = require('../config/database');
 
-async function listEvents() {
-    const [events] = await db.execute(`
+const hidden = (event) => event.oculto === true || Number(event.oculto) === 1;
+async function queryVisibility(sql, params = []) {
+    let columns = ['oculto', 'visibilidade'];
+    for (;;) {
+        try {
+            const select = columns.length
+                ? sql.replace('FROM calendario', ', ' + columns.join(', ') + ' FROM calendario')
+                : sql;
+            return await db.execute(select, params);
+        } catch (error) {
+            const message = error.sqlMessage || error.message || '';
+            const missing = columns.find((column) =>
+                (column === 'oculto' ? /\boculto\b/ : /\bvisibilidade\b/).test(message)
+            );
+            if (error.code !== 'ER_BAD_FIELD_ERROR' || !missing) throw error;
+            columns = columns.filter((column) => column !== missing);
+        }
+    }
+}
+async function listEvents(options = {}) {
+    const [events] = await queryVisibility(`
         SELECT
             id_evento,
             id_usuario,
@@ -20,11 +39,15 @@ async function listEvents() {
         ORDER BY data_evento ASC, hora_inicio ASC
     `);
 
-    return events;
+    return events.filter((event) => {
+        const owner = Number(event.id_usuario) === Number(options.actorId);
+        if (event.visibilidade === 'pessoal') return options.manage && owner;
+        return options.manage ? options.admin || owner : !hidden(event);
+    });
 }
 
 async function findEventById(eventId) {
-    const [events] = await db.execute(
+    const [events] = await queryVisibility(
         `
         SELECT
             id_evento,
@@ -46,7 +69,9 @@ async function findEventById(eventId) {
         [eventId]
     );
 
-    return events[0];
+    return events[0] && !hidden(events[0]) && events[0].visibilidade !== 'pessoal'
+        ? events[0]
+        : undefined;
 }
 
 async function createEvent(userId, eventData) {
@@ -59,7 +84,9 @@ async function createEvent(userId, eventData) {
         data_fim = null,
         hora_inicio = null,
         hora_fim = null,
-        local = null
+        local = null,
+        oculto = false,
+        visibilidade = 'publico'
     } = eventData;
 
     const [result] = await db.execute(
@@ -74,9 +101,9 @@ async function createEvent(userId, eventData) {
             data_fim,
             hora_inicio,
             hora_fim,
-            local
+            local${oculto ? ', oculto' : ''}${visibilidade === 'pessoal' ? ', visibilidade' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?${oculto ? ', ?' : ''}${visibilidade === 'pessoal' ? ', ?' : ''})
     `,
         [
             userId,
@@ -88,7 +115,9 @@ async function createEvent(userId, eventData) {
             data_fim,
             hora_inicio,
             hora_fim,
-            local
+            local,
+            ...(oculto ? [true] : []),
+            ...(visibilidade === 'pessoal' ? ['pessoal'] : [])
         ]
     );
 
