@@ -3,6 +3,7 @@ const db = require('../config/database');
 const jwt = require('jsonwebtoken');
 const { validateContent } = require('./content-edit.service');
 const { extractCalendarPdf, normalize } = require('./calendar-pdf.service');
+const { atStage } = require('./calendar-diagnostics.service');
 const LEVELS = { basica: 'Educação básica', graduacao: 'Graduação', pos: 'Pós-graduação' };
 function fail(status, message) {
     throw Object.assign(new Error(message), { status });
@@ -50,20 +51,22 @@ async function actorForImport(id, connection = db) {
     return rows[0];
 }
 async function preview(buffer, input, actorId) {
-    await actorForImport(actorId);
-    const meta = metadata(input),
-        result = await extractCalendarPdf(buffer, meta);
-    const token = jwt.sign(
-        {
-            scope: 'calendar-pdf-preview',
-            actor: actorId,
-            ...meta,
-            hash: result.hash,
-            reference: result.detected.reference,
-            campus: result.detected.campus || 'Campus não identificado'
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '2h', audience: 'calendar-import' }
+    await atStage('authorization', () => actorForImport(actorId));
+    const meta = await atStage('metadata', () => metadata(input)),
+        result = await atStage('pdf-read', () => extractCalendarPdf(buffer, meta));
+    const token = await atStage('preview-sign', () =>
+        jwt.sign(
+            {
+                scope: 'calendar-pdf-preview',
+                actor: actorId,
+                ...meta,
+                hash: result.hash,
+                reference: result.detected.reference,
+                campus: result.detected.campus || 'Campus não identificado'
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h', audience: 'calendar-import' }
+        )
     );
     return {
         ...result,

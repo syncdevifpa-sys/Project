@@ -235,3 +235,35 @@ test(
         );
     }
 );
+
+test('falhas inesperadas da prévia retornam códigos seguros e diagnóstico por etapa', async (t) => {
+    mock(t);
+    const service = require('../backend/src/services/calendar-import.service');
+    const logs = [];
+    t.mock.method(console, 'error', (...args) => logs.push(args));
+    for (const stage of ['pdf-read', 'preview-sign']) {
+        t.mock.method(service, 'preview', async () => {
+            throw Object.assign(new Error('SMTP_PASS /private/path secret-token'), {
+                calendarStage: stage,
+                code: 'PRIVATE_SECRET_CODE'
+            });
+        });
+        const res = await fetch(base + '/api/calendar-import/preview', {
+            method: 'POST',
+            headers: headers(),
+            body: '%PDF-fake'
+        });
+        assert.equal(res.status, 503);
+        const data = await res.json();
+        assert.match(
+            data.error,
+            new RegExp(
+                stage === 'preview-sign' ? 'CALENDAR_PREVIEW_SIGN' : 'CALENDAR_PREVIEW_UNAVAILABLE'
+            )
+        );
+        assert.doesNotMatch(JSON.stringify(data), /SMTP_PASS|private|secret-token/);
+    }
+    assert.equal(logs.length, 2);
+    assert.equal(logs[1][1].stage, 'preview-sign');
+    assert.doesNotMatch(JSON.stringify(logs), /SMTP_PASS|private|secret-token|PRIVATE_SECRET_CODE/);
+});

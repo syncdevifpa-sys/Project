@@ -584,3 +584,25 @@ test('campus extenso não provoca truncamento silencioso do período no banco', 
         false
     );
 });
+
+test('resolução das fontes é protegida e não expõe caminhos em falha de implantação', async (t) => {
+    const moduleApi = require('node:module'),
+        original = moduleApi._resolveFilename;
+    await import('pdfjs-dist/legacy/build/pdf.mjs');
+    const logs = [];
+    t.mock.method(console, 'error', (...args) => logs.push(args));
+    t.mock.method(moduleApi, '_resolveFilename', function (request, ...args) {
+        if (request === 'pdfjs-dist/legacy/build/pdf.mjs')
+            throw Object.assign(new Error('/private/path secret-token'), {
+                code: 'MODULE_NOT_FOUND'
+            });
+        return original.call(this, request, ...args);
+    });
+    await assert.rejects(
+        pdf.extractCalendarPdf(Buffer.from('%PDF-test-document'), { year: 2026, level: 'basica' }),
+        (e) => e.status === 503 && /PDF_ASSETS_UNAVAILABLE/.test(e.message)
+    );
+    assert.equal(logs[0][1].stage, 'pdf-assets');
+    assert.equal(logs[0][1].code, 'MODULE_NOT_FOUND');
+    assert.doesNotMatch(JSON.stringify(logs), /private|secret-token/);
+});

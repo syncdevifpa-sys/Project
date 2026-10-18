@@ -2,6 +2,8 @@
 const path = require('path');
 const crypto = require('crypto');
 const colors = require('./calendar-colors.service');
+const diagnostics = require('./calendar-diagnostics.service');
+const fs = require('fs');
 const READER_VERSION = 'colunas-contexto-v4';
 const MONTHS = [
     'janeiro',
@@ -479,28 +481,51 @@ async function extractCalendarPdf(buffer, metadata) {
         require('@napi-rs/canvas');
         pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
         globalThis.pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs');
-    } catch {
+    } catch (error) {
+        diagnostics.report(error, 'pdf-runtime');
         fail(
             503,
             'Leitor de PDF indisponível no servidor. Atualize o deploy com as dependências de PDF (PDF_RUNTIME_UNAVAILABLE).'
         );
     }
-    const fonts =
-        path
-            .join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'standard_fonts')
-            .replace(/\\/g, '/') + '/';
-    const task = pdfjs.getDocument({
-        data: new Uint8Array(buffer),
-        isEvalSupported: false,
-        disableFontFace: true,
-        useSystemFonts: false,
-        disableAutoFetch: true,
-        disableStream: true,
-        stopAtErrors: false,
-        standardFontDataUrl: fonts,
-        maxImageSize: 0,
-        verbosity: 0
-    });
+    let fonts, task;
+    try {
+        fonts =
+            path
+                .join(
+                    path.dirname(require.resolve('pdfjs-dist/legacy/build/pdf.mjs')),
+                    '../../standard_fonts'
+                )
+                .replace(/\\/g, '/') + '/';
+        if (!fs.existsSync(fonts))
+            throw Object.assign(new Error('PDF assets unavailable'), { code: 'ENOENT' });
+    } catch (error) {
+        diagnostics.report(error, 'pdf-assets');
+        fail(
+            503,
+            'Arquivos do leitor de PDF indisponíveis no servidor (PDF_ASSETS_UNAVAILABLE). Contate a administração.'
+        );
+    }
+    try {
+        task = pdfjs.getDocument({
+            data: new Uint8Array(buffer),
+            isEvalSupported: false,
+            disableFontFace: true,
+            useSystemFonts: false,
+            disableAutoFetch: true,
+            disableStream: true,
+            stopAtErrors: false,
+            standardFontDataUrl: fonts,
+            maxImageSize: 0,
+            verbosity: 0
+        });
+    } catch (error) {
+        diagnostics.report(error, 'pdf-init');
+        fail(
+            503,
+            'Não foi possível iniciar o leitor de PDF no servidor (PDF_INIT_UNAVAILABLE). Contate a administração.'
+        );
+    }
     try {
         return await withPdfDeadline(task, async () => {
             const doc = await task.promise;
