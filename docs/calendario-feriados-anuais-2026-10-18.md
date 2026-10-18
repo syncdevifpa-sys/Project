@@ -15,13 +15,13 @@ Conferência em 18/10/2026. Alterações locais na branch codex/fix-auth-calenda
 
 ## Comparação com o IFPA
 
-Documento local: Resoluo_n_1591.2025_-_Calendrio_2026_campus_Belm.pdf, educação básica, páginas 2 a 4. SHA-256: 0d7667db7333599e9e8aefa16ed7712bf40a31dc2895fc3c01104c6c5526b17a.
+Documento local: Resoluo*n_1591.2025*-\_Calendrio_2026_campus_Belm.pdf, educação básica, páginas 2 a 4. SHA-256: 0d7667db7333599e9e8aefa16ed7712bf40a31dc2895fc3c01104c6c5526b17a.
 
-| Datas em 2026 | Conferência no PDF |
-| --- | --- |
-| 01/01, 03/04, 21/04, 01/05, 04/06 | Página 2 |
-| 15/08, 07/09, 12/10, 02/11, 15/11, 20/11, 08/12 | Página 3 |
-| 25/12 | Página 4 |
+| Datas em 2026                                   | Conferência no PDF |
+| ----------------------------------------------- | ------------------ |
+| 01/01, 03/04, 21/04, 01/05, 04/06               | Página 2           |
+| 15/08, 07/09, 12/10, 02/11, 15/11, 20/11, 08/12 | Página 3           |
+| 25/12                                           | Página 4           |
 
 As 13 datas foram conferidas com os candidatos extraídos do PDF. O teste automatizado também confirma ausência de novas cópias automáticas quando esse calendário está carregado. Isso não afirma exatidão de todos os demais eventos do importador.
 
@@ -42,3 +42,11 @@ As regras refletem as fontes consultadas; mudanças futuras de legislação exig
 Testes cobrem anos diferentes, datas móveis, abrangência, duplicidades, comparação com o PDF real e retorno de cor ao alterar categoria com preferência personalizada. Build estático executado. A validação visual foi realizada posteriormente na revisão descrita em calendario-ihc-2026-10-18.md. Deploy não realizado.
 
 A atualização backend/admin/add-calendar-categories.sql continua necessária para persistir as novas categorias manuais da rodada anterior em bancos ainda não atualizados. Nenhuma alteração foi aplicada ao banco externo; os feriados automáticos não precisam dessa migração.
+
+# Revisão de Natal e Ano-Novo na importação
+
+A classificação da prévia passou a reconhecer Natal em 25/12 e Confraternização Universal, Ano-Novo ou Réveillon em 01/01 como feriado, mesmo sem uma cor utilizável no PDF. O nome e a data devem coincidir e o registro deve representar um único dia; atividades como Natal solidário não são convertidas automaticamente.
+
+Para 2026, Véspera de Natal (24/12) e Véspera de Ano-Novo/Réveillon (31/12) recebem ponto facultativo, com indicação de que a regra federal é após as 13h e deve ser conferida para o Campus. A regra das vésperas não é estendida automaticamente a outros anos. Fonte: [calendário oficial de 2026 do MGI](https://www.gov.br/gestao/pt-br/assuntos/noticias/2025/dezembro/confira-o-calendario-oficial-de-feriados-nacionais-e-pontos-facultativos-em-2026).
+
+O teste com o PDF real da Resolução 1591/2025 agora verifica explicitamente a categoria de Natal e Véspera de Réveillon, além das 13 datas anuais. Registros já salvos não são alterados pela leitura de uma nova prévia.

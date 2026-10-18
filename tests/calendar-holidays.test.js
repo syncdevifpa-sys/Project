@@ -67,6 +67,16 @@ test(
             { year: 2026, level: 'basica' }
         );
         const annual = holidays.forYear(2026, 'belem');
+        for (const [date, title, category] of [
+            ['2026-12-25', /^Natal$/i, 'feriado'],
+            ['2026-12-31', /Réveillon/i, 'ponto_facultativo']
+        ]) {
+            const event = result.candidates.find(
+                (item) => item.data_evento === date && title.test(item.titulo)
+            );
+            assert.ok(event, date);
+            assert.equal(event.categoria, category, event.titulo);
+        }
         for (const holiday of annual)
             assert.ok(
                 result.candidates.some((event) => event.data_evento === holiday.data_evento),

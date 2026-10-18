@@ -299,8 +299,26 @@ function extractColoredDays(pages, { year, level }) {
         conflictingColors: [...conflicts]
     };
 }
-function textMeaning(title) {
+function textMeaning(title, date = '') {
     const value = norm(title);
+    const monthDay = date.slice(5);
+    if (
+        (monthDay === '12-25' && /^(?:natal|feriado de natal)(?:\s*[-–—:(]|$)/.test(value)) ||
+        (monthDay === '01-01' &&
+            /^(?:confraternizacao universal|ano[- ]novo|reveillon)(?:\s*[-–—:(]|$)/.test(value))
+    )
+        return { kind: 'sem_aula', categoria: 'feriado' };
+    // A portaria federal de 2026 prevê expediente facultativo após as 13h nas vésperas.
+    // Não presume que essa regra administrativa se repita em outros anos.
+    if (
+        date.startsWith('2026-') &&
+        ((monthDay === '12-24' && /^vespera (?:de|do) natal\b/.test(value)) ||
+            (monthDay === '12-31' &&
+                /^(?:vespera (?:de|do) (?:ano[- ]novo|reveillon)|reveillon)(?:\s*[-–—:(]|$)/.test(
+                    value
+                )))
+    )
+        return { kind: 'sem_aula', categoria: 'ponto_facultativo' };
     if (/interrupcao.*aulas presenciais/.test(value))
         return { kind: 'interrupcao_presencial', categoria: 'evento' };
     if (/^ferias.*docent/.test(value)) return { kind: 'ferias_docentes', categoria: 'evento' };
@@ -337,7 +355,12 @@ function mergeColorCandidates(parsed, analysis) {
     for (const candidate of candidates) {
         candidate.warning = candidate.warning || [];
         candidate.sourcePages = candidate.sourcePages || [candidate.page];
-        const meaning = textMeaning(candidate.titulo);
+        const meaning = textMeaning(
+            candidate.titulo,
+            !candidate.data_fim || candidate.data_fim === candidate.data_evento
+                ? candidate.data_evento
+                : ''
+        );
         if (meaning) {
             candidate.natureza = meaning.kind;
             candidate.categoria = meaning.categoria;
@@ -349,6 +372,11 @@ function mergeColorCandidates(parsed, analysis) {
                       ? 'O texto informa férias de docentes, sem comprovar suspensão de todas as aulas.'
                       : 'Sem aula conforme a descrição do evento; confira o alcance no PDF.'
             );
+            if (meaning.categoria === 'ponto_facultativo')
+                note(
+                    candidate,
+                    'Véspera em 2026: ponto facultativo federal após as 13h, conforme Portaria MGI nº 11.460/2025; confira a aplicação no Campus.'
+                );
         }
         const range = validRange(candidate);
         if (!range) {

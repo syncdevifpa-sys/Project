@@ -47,6 +47,35 @@ const merge = (candidates, days, extras = {}) =>
         { days, legend: [{ color: orange }], level: 'basica', ...extras }
     );
 
+test('Natal e Ano-Novo usam nome e data mesmo sem cor; vésperas de 2026 são pontos facultativos', () => {
+    for (const [date, title, category] of [
+        ['2026-12-25', 'Natal', 'feriado'],
+        ['2027-01-01', 'Confraternização Universal', 'feriado'],
+        ['2027-01-01', 'Réveillon', 'feriado'],
+        ['2026-12-31', 'Véspera de Réveillon', 'ponto_facultativo'],
+        ['2026-12-31', 'Réveillon', 'ponto_facultativo'],
+        ['2026-12-24', 'Véspera de Natal', 'ponto_facultativo']
+    ]) {
+        const row = candidate(date, '', title);
+        merge([row], []);
+        assert.equal(row.categoria, category, title);
+    }
+    const conflict = candidate('2026-12-25', '', 'Natal');
+    merge([conflict], [day('2026-12-25', yellow, 'evento', 'evento')]);
+    assert.equal(conflict.categoria, 'feriado');
+    assert.equal(conflict.needsIndividualReview, true);
+    for (const [date, title, end] of [
+        ['2026-12-20', 'Natal', ''],
+        ['2026-12-25', 'Natal solidário', ''],
+        ['2026-12-25', 'Natal', '2026-12-31'],
+        ['2027-12-31', 'Véspera de Réveillon', '']
+    ]) {
+        const row = candidate(date, end, title);
+        merge([row], []);
+        assert.equal(row.categoria, undefined, title);
+    }
+});
+
 test('prazo encerra também leitura pendente após abrir PDF e libera recursos uma única vez', async () => {
     let destroyed = 0;
     await assert.rejects(
