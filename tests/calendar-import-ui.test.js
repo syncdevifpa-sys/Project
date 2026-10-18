@@ -5,7 +5,7 @@ const { test } = require('node:test'),
 function fixture(
     fail = false,
     ambiguous = false,
-    readerVersion = 'colunas-2026-10-16-v3',
+    readerVersion = 'colunas-contexto-v4',
     reviewReason
 ) {
     const nodes = [],
@@ -271,7 +271,7 @@ test('cores ambíguas ficam fora do lote e só podem ser marcadas após revisão
 });
 
 test('data válida com aviso apenas de cor pode ser marcada em lote', async () => {
-    const f = fixture(false, true, 'colunas-2026-10-16-v3', 'color');
+    const f = fixture(false, true, 'colunas-contexto-v4', 'color');
     f.nodes.find((n) => n.name === 'file').files = [
         {
             name: 'calendar.pdf',

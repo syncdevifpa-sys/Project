@@ -59,7 +59,8 @@ async function preview(buffer, input, actorId) {
             actor: actorId,
             ...meta,
             hash: result.hash,
-            reference: result.detected.reference
+            reference: result.detected.reference,
+            campus: result.detected.campus || 'Campus não identificado'
         },
         process.env.JWT_SECRET,
         { expiresIn: '2h', audience: 'calendar-import' }
@@ -104,7 +105,12 @@ async function commit(body, actorId) {
     if (claims.scope !== 'calendar-pdf-preview' || Number(claims.actor) !== Number(actorId))
         fail(403, 'A prévia pertence a outra sessão.');
     const meta = metadata(claims),
-        period = `Belém · ${meta.year} · ${LEVELS[meta.level]}`;
+        period = `${claims.campus || 'Belém'} · ${meta.year} · ${LEVELS[meta.level]}`;
+    if (period.length > 60)
+        fail(
+            400,
+            'Identificação do calendário excede o limite de 60 caracteres. Confira o campus na fonte.'
+        );
     const events = body.events.map((event, index) => {
         if (event.reviewed !== true) fail(400, 'Confirme a revisão do evento ' + (index + 1) + '.');
         if (event.requiresEnd === true && !event.data_fim)

@@ -72,7 +72,7 @@
             source.maxLength = 1000;
             const confirmed = field(
                 'metadataConfirmed',
-                'Conferi campus Belém, ano, modalidade e versão no PDF',
+                'Conferi campus, ano, modalidade e versão no PDF',
                 'checkbox'
             );
             confirmed.required = true;
@@ -473,7 +473,7 @@
                             'Dados alterados durante a leitura. Extraia novamente.';
                         return;
                     }
-                    if (data.readerVersion !== 'colunas-2026-10-16-v3') {
+                    if (data.readerVersion !== 'colunas-contexto-v4') {
                         throw new Error(
                             'O servidor ainda está usando uma versão anterior do leitor de PDF. Reinicie o backend local ou publique o deploy atualizado antes de importar.'
                         );

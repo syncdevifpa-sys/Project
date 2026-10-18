@@ -144,7 +144,7 @@ test(
         );
         assert.equal(response.status, 200);
         const preview = await response.json();
-        assert.equal(preview.readerVersion, 'colunas-2026-10-16-v3');
+        assert.equal(preview.readerVersion, 'colunas-contexto-v4');
         const selected = preview.candidates.filter(
             (event) =>
                 event.data_evento &&
@@ -208,5 +208,30 @@ test(
         assert.equal((await (await submit()).json()).imported, 0);
         assert.equal(stored.length, selected.length);
         assert.equal(commits, 2);
+    }
+);
+
+test(
+    'prévia do Superior preserva campus reconhecido dentro do token assinado',
+    { skip: !process.env.ARCADIA_SUPERIOR_CALENDAR_PDF_FIXTURE },
+    async (t) => {
+        mock(t);
+        const res = await fetch(
+            base + '/api/calendar-import/preview?year=2026&level=graduacao&label=Superior',
+            {
+                method: 'POST',
+                headers: headers(),
+                body: fs.readFileSync(process.env.ARCADIA_SUPERIOR_CALENDAR_PDF_FIXTURE)
+            }
+        );
+        assert.equal(res.status, 200);
+        const preview = await res.json();
+        assert.equal(preview.detected.campus, 'CONCEIÇÃO DO ARAGUAIA');
+        assert.equal(
+            jwt.verify(preview.previewToken, process.env.JWT_SECRET, {
+                audience: 'calendar-import'
+            }).campus,
+            'CONCEIÇÃO DO ARAGUAIA'
+        );
     }
 );

@@ -121,14 +121,14 @@ function pageLevel(items) {
     const heading = [...items]
         .sort((a, b) => b.y - a.y)
         .find((i) =>
-            /^(educacao basica(?: e profissional)?|(?:ensino de )?graduacao|pos[- ]graduacao)$/.test(
+            /^(educacao basica(?: e profissional)?|(?:ensino (?:de )?)?(?:graduacao|superior)|(?:ensino (?:de )?)?pos[- ]graduacao)$/.test(
                 norm(i.text)
             )
         );
     return heading
         ? norm(heading.text).includes('basica')
             ? 'basica'
-            : norm(heading.text).startsWith('pos')
+            : norm(heading.text).includes('pos')
               ? 'pos'
               : 'graduacao'
         : null;
