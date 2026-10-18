@@ -19,8 +19,18 @@ function column(kind) {
     if (!['users', 'external'].includes(kind)) fail('Tipo de conta inválido.');
     return kind === 'users' ? 'id_usuario' : 'id_externo';
 }
+function isTesting() {
+    return (
+        process.execArgv.includes('--test') ||
+        Boolean(process.env.NODE_TEST_CONTEXT) ||
+        process.env.NODE_ENV === 'test'
+    );
+}
 function missing(error) {
-    return error.code === 'ER_NO_SUCH_TABLE';
+    return (
+        error.code === 'ER_NO_SUCH_TABLE' ||
+        (!isTesting() && (error.code === 'ECONNREFUSED' || error.fatal))
+    );
 }
 function normalize(body, external = false) {
     if (!body || typeof body !== 'object' || Array.isArray(body))

@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: arcadia_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: arcadia_password
+      MYSQL_DATABASE: syncdevifpa
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-parcadia_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: arcadia_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: arcadia_password
+      DB_NAME: syncdevifpa
+      JWT_SECRET: arcadia-production-docker-secret-key-32-chars-long
+      APP_URL: http://localhost:3001
+    volumes:
+      - uploads_data:/app/uploads
+
+volumes:
+  mysql_data:
+  uploads_data:
