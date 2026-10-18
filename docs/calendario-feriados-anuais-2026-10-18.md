@@ -50,3 +50,13 @@ A classificação da prévia passou a reconhecer Natal em 25/12 e Confraterniza�
 Para 2026, Véspera de Natal (24/12) e Véspera de Ano-Novo/Réveillon (31/12) recebem ponto facultativo, com indicação de que a regra federal é após as 13h e deve ser conferida para o Campus. A regra das vésperas não é estendida automaticamente a outros anos. Fonte: [calendário oficial de 2026 do MGI](https://www.gov.br/gestao/pt-br/assuntos/noticias/2025/dezembro/confira-o-calendario-oficial-de-feriados-nacionais-e-pontos-facultativos-em-2026).
 
 O teste com o PDF real da Resolução 1591/2025 agora verifica explicitamente a categoria de Natal e Véspera de Réveillon, além das 13 datas anuais. Registros já salvos não são alterados pela leitura de uma nova prévia.
+
+## Revisão dos demais feriados e pontos facultativos
+
+A conferência encontrou sete outros feriados sem categoria na prévia: Adesão do Pará, Independência do Brasil, Nossa Senhora de Aparecida, Finados, Proclamação da República, Consciência Negra e Imaculada Conceição. O teste com o PDF real agora exige categoria de feriado nas 13 datas anuais, além da presença das datas.
+
+O reconhecimento considera nome, data, ano e abrangência. Datas móveis seguem a Páscoa; a classificação regional só é aplicada quando o cabeçalho identifica inequivocamente o Campus Belém. Eventos com nomes diferentes no mesmo dia e intervalos de férias não se transformam em feriados.
+
+Carnaval e Cinzas em fevereiro de 2026, Dia do Servidor Público em 28/10/2026 e descrições explícitas de Facultado/Ponto facultativo recebem a categoria correspondente, em vez de herdar feriado da legenda compartilhada. Cinzas inclui aviso de ponto facultativo federal até as 14h. As regras administrativas de 2026 não são presumidas nos anos seguintes. Cores incompatíveis continuam exigindo conferência individual e a categoria identificada pelo texto é preservada.
+
+Recírio, festividades do Círio e Dia do Professor não são promovidos automaticamente a feriado nacional. A suspensão de atividades depende do calendário institucional. Fontes adicionais: [calendário federal 2026 reproduzido pela Agência Gov](https://agenciagov.ebc.com.br/noticias/202512/confira-o-calendario-oficial-de-feriados-nacionais-e-pontos-facultativos-em-2026) e [Adesão do Pará na ALEPA](https://www.alepa.pa.gov.br/Comunicacao/Noticia/8982/200-anos-de-adesao-da-provincia-do-para-a-independencia-da-republica-do-brasil).

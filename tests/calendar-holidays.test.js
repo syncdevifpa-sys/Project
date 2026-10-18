@@ -79,9 +79,25 @@ test(
         }
         for (const holiday of annual)
             assert.ok(
-                result.candidates.some((event) => event.data_evento === holiday.data_evento),
+                result.candidates.some(
+                    (event) =>
+                        event.data_evento === holiday.data_evento && event.categoria === 'feriado'
+                ),
                 holiday.titulo
             );
+        for (const [date, title] of [
+            ['2026-02-16', 'Facultado'],
+            ['2026-02-17', 'Carnaval'],
+            ['2026-02-18', 'Cinzas'],
+            ['2026-10-27', 'Facultado'],
+            ['2026-10-28', 'Dia do Servidor Público']
+        ]) {
+            const row = result.candidates.find(
+                (event) => event.data_evento === date && event.titulo === title
+            );
+            assert.ok(row, title);
+            assert.equal(row.categoria, 'ponto_facultativo', title);
+        }
         assert.equal(
             holidays.merge(result.candidates, 2026, 'belem').filter((event) => event.automatico)
                 .length,

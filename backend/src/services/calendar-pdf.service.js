@@ -586,7 +586,6 @@ async function extractCalendarPdf(buffer, metadata) {
                 '';
             const parsed = candidatesFromPages(pages, metadata);
             parsed.colorAnalysis = colors.extractColoredDays(pages, metadata);
-            colors.mergeColorCandidates(parsed, parsed.colorAnalysis);
             if (!years.length)
                 parsed.warnings.push(
                     'Ano do calendário não reconhecido no cabeçalho. Confirme o ano escolhido diretamente no PDF.'
@@ -605,6 +604,9 @@ async function extractCalendarPdf(buffer, metadata) {
                         ? 'Belém'
                         : campusHeaders[0].slice(0, 100)
                     : null;
+            colors.mergeColorCandidates(parsed, parsed.colorAnalysis, {
+                region: campus === 'Belém' ? 'belem' : 'brasil'
+            });
             if (!campus)
                 parsed.warnings.push(
                     'Campus não identificado de forma inequívoca no cabeçalho: confirme a origem do documento.'

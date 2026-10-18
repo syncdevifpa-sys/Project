@@ -64,6 +64,13 @@ test('Natal e Ano-Novo usam nome e data mesmo sem cor; vésperas de 2026 são po
     merge([conflict], [day('2026-12-25', yellow, 'evento', 'evento')]);
     assert.equal(conflict.categoria, 'feriado');
     assert.equal(conflict.needsIndividualReview, true);
+    const optional = candidate('2026-02-17', '', 'Carnaval');
+    merge(
+        [optional],
+        [{ ...day('2026-02-17', red, 'sem_aula', 'feriado'), text: 'Feriado/pontos facultativos' }]
+    );
+    assert.equal(optional.categoria, 'ponto_facultativo');
+    assert.notEqual(optional.needsIndividualReview, true);
     for (const [date, title, end] of [
         ['2026-12-20', 'Natal', ''],
         ['2026-12-25', 'Natal solidário', ''],

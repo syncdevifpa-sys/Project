@@ -1,5 +1,6 @@
 /* Geometria e legendas: a cor só é aplicada quando todos os dias são inequívocos. */
 // Reconhece somente células vetoriais e legendas próximas, dentro da modalidade.
+const { classifyHoliday } = require('./calendar-holiday-classification.service');
 const norm = (value) =>
     String(value || '')
         .normalize('NFD')
@@ -299,8 +300,10 @@ function extractColoredDays(pages, { year, level }) {
         conflictingColors: [...conflicts]
     };
 }
-function textMeaning(title, date = '') {
+function textMeaning(title, date = '', region = 'brasil') {
     const value = norm(title);
+    const holiday = classifyHoliday(title, date, region);
+    if (holiday) return holiday;
     const monthDay = date.slice(5);
     if (
         (monthDay === '12-25' && /^(?:natal|feriado de natal)(?:\s*[-–—:(]|$)/.test(value)) ||
@@ -322,8 +325,9 @@ function textMeaning(title, date = '') {
     if (/interrupcao.*aulas presenciais/.test(value))
         return { kind: 'interrupcao_presencial', categoria: 'evento' };
     if (/^ferias.*docent/.test(value)) return { kind: 'ferias_docentes', categoria: 'evento' };
-    if (/\bferiado\b|\bfacultad[oa]\b|\bfacultativo\b/.test(value))
-        return { kind: 'sem_aula', categoria: 'feriado' };
+    if (/\bfacultad[oa]\b|\bfacultativo\b/.test(value) && !/feriado/.test(value))
+        return { kind: 'sem_aula', categoria: 'ponto_facultativo' };
+    if (/\bferiado\b/.test(value)) return { kind: 'sem_aula', categoria: 'feriado' };
     if (/^ferias\b/.test(value)) return { kind: 'sem_aula', categoria: 'cancelamento' };
     return null;
 }
@@ -342,7 +346,7 @@ function validRange(candidate) {
         ? { start, end, length: Math.round((end - start) / DAY) + 1 }
         : null;
 }
-function mergeColorCandidates(parsed, analysis) {
+function mergeColorCandidates(parsed, analysis, { region = 'brasil' } = {}) {
     const candidates = parsed.candidates;
     const note = (candidate, message) => {
         candidate.sourceText = `${message} | ${candidate.sourceText || ''}`;
@@ -359,7 +363,8 @@ function mergeColorCandidates(parsed, analysis) {
             candidate.titulo,
             !candidate.data_fim || candidate.data_fim === candidate.data_evento
                 ? candidate.data_evento
-                : ''
+                : '',
+            region
         );
         if (meaning) {
             candidate.natureza = meaning.kind;
@@ -370,12 +375,22 @@ function mergeColorCandidates(parsed, analysis) {
                     ? 'O texto informa interrupção das aulas presenciais, sem comprovar suspensão de todas as atividades.'
                     : meaning.kind === 'ferias_docentes'
                       ? 'O texto informa férias de docentes, sem comprovar suspensão de todas as aulas.'
-                      : 'Sem aula conforme a descrição do evento; confira o alcance no PDF.'
+                      : meaning.categoria === 'ponto_facultativo'
+                        ? 'Ponto facultativo: confira o horário e a aplicação às atividades do Campus.'
+                        : 'Sem aula conforme a descrição do evento; confira o alcance no PDF.'
             );
-            if (meaning.categoria === 'ponto_facultativo')
+            if (
+                meaning.categoria === 'ponto_facultativo' &&
+                /vespera|reveillon/i.test(norm(candidate.titulo))
+            )
                 note(
                     candidate,
                     'Véspera em 2026: ponto facultativo federal após as 13h, conforme Portaria MGI nº 11.460/2025; confira a aplicação no Campus.'
+                );
+            if (meaning.categoria === 'ponto_facultativo' && /cinzas/.test(norm(candidate.titulo)))
+                note(
+                    candidate,
+                    'Em 2026, ponto facultativo federal até as 14h; confira a aplicação no Campus.'
                 );
         }
         const range = validRange(candidate);
@@ -406,16 +421,26 @@ function mergeColorCandidates(parsed, analysis) {
             return rgb.length && Math.max(...rgb) - Math.min(...rgb) > 15;
         });
         const day = matching[0];
+        const sharedHolidayLegend =
+            full &&
+            meaning?.categoria === 'ponto_facultativo' &&
+            day.kind === 'sem_aula' &&
+            day.categoria === 'feriado' &&
+            /feriad/.test(norm(day.text)) &&
+            /facultativ/.test(norm(day.text));
         const conflict =
-            full && meaning && (meaning.kind !== day.kind || meaning.categoria !== day.categoria);
+            full &&
+            meaning &&
+            !sharedHolidayLegend &&
+            (meaning.kind !== day.kind || meaning.categoria !== day.categoria);
         if (full && !conflict) {
             candidate.cor = day.color;
             candidate.natureza = day.kind;
             candidate.legenda = day.text;
-            candidate.categoria = day.categoria;
+            candidate.categoria = sharedHolidayLegend ? meaning.categoria : day.categoria;
             note(
                 candidate,
-                `Legenda de cor em todos os dias do período: ${day.text} (${day.color}). ${day.kind === 'sem_aula' ? 'Sem aula conforme a legenda.' : 'A cor não indica suspensão das aulas.'}`
+                `Legenda de cor em todos os dias do período: ${day.text} (${day.color}). ${sharedHolidayLegend ? 'A legenda reúne feriados e pontos facultativos; a descrição determina a categoria e o alcance deve ser conferido.' : day.kind === 'sem_aula' ? 'Sem aula conforme a legenda.' : 'A cor não indica suspensão das aulas.'}`
             );
         } else if (
             matching.length ||
