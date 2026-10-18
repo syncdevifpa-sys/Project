@@ -3,6 +3,11 @@
     'use strict';
     const groups = {
         evento: {
+            label: 'Eventos',
+            color: '#176b9a',
+            description: 'Eventos gerais e compromissos que não pertencem às demais categorias.'
+        },
+        atividades_campus: {
             label: 'Atividades do Campus',
             color: '#c99a16',
             description:
@@ -50,9 +55,8 @@
         }
     };
     const aliases = {
-        atividades_campus: 'evento',
-        sabado_letivo: 'evento',
-        aniversario: 'evento',
+        sabado_letivo: 'atividades_campus',
+        aniversario: 'atividades_campus',
         edital: 'registro_academico',
         periodo_academico: 'registro_academico',
         culminancia_bimestral: 'avaliacao',

@@ -118,7 +118,7 @@ test('editar um evento antigo preserva o tipo específico se o grupo não foi al
     };
     A.contentEditor.open('calendar', event, async () => {});
     const category = nodes.find((n) => n.name === 'categoria');
-    assert.equal(category.children.length, 8);
+    assert.equal(category.children.length, 9);
     assert.equal(category.value, 'ferias');
     nodes.find((n) => n.name === 'titulo').value = 'Recesso revisado';
     await nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });

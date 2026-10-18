@@ -323,7 +323,7 @@ test('importação compartilha todas as categorias e muda o retorno visual sem a
     const category = f.findLabel('Categoria');
     const expected = require('../front/js/calendar-categories').options;
     assert.deepEqual(category.children.map((n) => n.value).sort(), Object.keys(expected).sort());
-    assert.equal(Object.keys(expected).length, 8);
+    assert.equal(Object.keys(expected).length, 9);
     const feedback = f.nodes.find((n) => n.className === 'ar-calendar-category-feedback');
     assert.equal(feedback.textContent, 'Categoria para importar: Feriados');
     assert.equal(feedback.style.borderInlineStart, '6px solid #c43b3b');
