@@ -121,7 +121,7 @@ test('início público usa projeções públicas e independe da sessão', async 
         const contentQueries = queries.filter((sql) => !sql.startsWith('SHOW COLUMNS'));
         assert.match(
             contentQueries[0],
-            /situacao = 'publicado' AND publico_alvo IN \('todos', 'externo'\)/
+            /situacao = 'publicado' AND \(FIND_IN_SET\('todos', publico_alvo\) > 0 OR FIND_IN_SET\('externo', publico_alvo\) > 0\)/
         );
         assert.match(contentQueries[1], /aprovacao = 'aprovado'/);
         for (const sql of queries)

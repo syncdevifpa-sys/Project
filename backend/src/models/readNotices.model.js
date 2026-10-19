@@ -46,7 +46,7 @@ async function listReadNotices(userId) {
         INNER JOIN usuarios u ON u.id_usuario = al.id_usuario AND u.situacao = 'ativo'
         WHERE al.id_usuario = ?
           AND (u.is_admin = 1 OR a.id_usuario = u.id_usuario OR
-               (a.situacao = 'publicado' AND a.publico_alvo IN ('todos', 'externo', u.tipo_usuario)))
+               (a.situacao = 'publicado' AND (FIND_IN_SET('todos', a.publico_alvo) > 0 OR FIND_IN_SET('externo', a.publico_alvo) > 0 OR FIND_IN_SET(u.tipo_usuario, a.publico_alvo) > 0)))
         ORDER BY al.lido_em DESC
     `,
         [userId]
@@ -62,7 +62,7 @@ async function countUnreadNotices(userId) {
         FROM avisos a
         INNER JOIN usuarios u ON u.id_usuario = ? AND u.situacao = 'ativo'
         WHERE a.situacao = 'publicado'
-        AND (u.is_admin = 1 OR a.id_usuario = u.id_usuario OR a.publico_alvo IN ('todos', 'externo', u.tipo_usuario))
+        AND (u.is_admin = 1 OR a.id_usuario = u.id_usuario OR (FIND_IN_SET('todos', a.publico_alvo) > 0 OR FIND_IN_SET('externo', a.publico_alvo) > 0 OR FIND_IN_SET(u.tipo_usuario, a.publico_alvo) > 0))
         AND NOT EXISTS (
             SELECT 1
             FROM avisos_lidos al

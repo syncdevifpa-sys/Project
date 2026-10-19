@@ -89,6 +89,7 @@ async function findNoticeById(noticeId) {
 }
 
 async function createNotice(noticeData) {
+    await require('../services/notice-schema.service').writableAudience(noticeData.publico_alvo || 'todos');
     const coverAvailable = await writableCover(noticeData.capa);
     const typeAvailable = await writableType(noticeData.tipo_publicacao || 'aviso');
     const {

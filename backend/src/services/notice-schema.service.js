@@ -8,7 +8,7 @@ async function writableType(type = 'aviso') {
     if (!available && type !== 'aviso')
         throw Object.assign(
             new Error(
-                'O tipo Notícia ainda não está habilitado neste ambiente. Solicite a atualização à administração; seus dados não foram alterados.'
+                'O banco ainda não permite salvar Notícias. A administração precisa executar add-notice-type.sql (ou update-notice-publishing.sql). Seus dados continuam no formulário.'
             ),
             { status: 409 }
         );
@@ -27,4 +27,19 @@ async function writableCover(cover) {
         );
     return available;
 }
-module.exports = { hasNoticeType, writableType, hasNoticeCover, writableCover };
+async function writableAudience(value = 'todos') {
+    if (!String(value).includes(',')) return;
+    const [columns] = await db.execute("SHOW COLUMNS FROM avisos LIKE 'publico_alvo'");
+    if (
+        !columns.some(
+            (column) => column.Field === 'publico_alvo' && /^set\(/i.test(column.Type || '')
+        )
+    )
+        throw Object.assign(
+            new Error(
+                'Execute update-notice-publishing.sql no banco para permitir mais de um público-alvo. Seus dados continuam no formulário.'
+            ),
+            { status: 409 }
+        );
+}
+module.exports = { hasNoticeType, writableType, hasNoticeCover, writableCover, writableAudience };

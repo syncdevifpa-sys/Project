@@ -2,12 +2,13 @@
     'use strict';
     A.noticeFilters = {
         audienceMatches(notice, selected) {
-            return selected.includes('todos') || selected.includes(notice.publico_alvo);
+            return A.noticeAudiences.matches(notice.publico_alvo, selected);
         },
         audienceCount(rows, audience) {
             return audience === 'todos'
                 ? rows.length
-                : rows.filter((row) => row.publico_alvo === audience).length;
+                : rows.filter((row) => A.noticeAudiences.matches(row.publico_alvo, [audience]))
+                      .length;
         },
         audienceHint(all, selectedCount) {
             return all

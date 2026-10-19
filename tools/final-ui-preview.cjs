@@ -1,4 +1,4 @@
-// Prévia local: dados fictícios; edição do calendário somente em memória, sem banco ou mensagens.
+// Prévia local: dados fictícios; calendário e publicações somente em memória, sem banco ou mensagens.
 const express = require('../node_modules/express');
 const fs = require('fs'),
     path = require('path');
@@ -108,27 +108,84 @@ app.get('/api/public', (_req, res) =>
     })
 );
 app.get('/api/read-notices/unread/count', (_req, res) => res.json({ unread: 1 }));
-app.get('/api/notices', (_req, res) =>
-    res.json([
-        {
-            id_aviso: 7,
-            capa:
-                'data:image/png;base64,' +
-                fs
-                    .readFileSync(path.join(__dirname, '../front/assets/print-calendar.png'))
-                    .toString('base64'),
-            id_usuario: 4,
-            titulo: 'Informações sobre inscrições, atividades e encontros da comunidade acadêmica do campus',
-            resumo: 'Confira os detalhes das atividades, os documentos necessários e as orientações de participação. Referência: identificador_de_publicacao_extenso_sem_espacos_para_conferir_quebra_de_linha.',
-            descricao: 'Conteúdo com link https://example.test',
-            tipo_publicacao: 'noticia',
-            categoria: 'evento',
+const noticeDemoRows = [
+    {
+        id_aviso: 7,
+        capa:
+            'data:image/png;base64,' +
+            fs
+                .readFileSync(path.join(__dirname, '../front/assets/print-calendar.png'))
+                .toString('base64'),
+        id_usuario: 4,
+        titulo: 'Informações sobre inscrições, atividades e encontros da comunidade acadêmica do campus',
+        resumo: 'Confira os detalhes das atividades, os documentos necessários e as orientações de participação. Referência: identificador_de_publicacao_extenso_sem_espacos_para_conferir_quebra_de_linha.',
+        descricao: 'Conteúdo com link https://example.test',
+        tipo_publicacao: 'noticia',
+        categoria: 'evento',
+        publico_alvo: 'todos',
+        situacao: 'publicado',
+        data_publicacao: demoPublishedAt
+    }
+];
+app.get('/api/notices', (_req, res) => res.json(noticeDemoRows));
+app.get('/api/notices/:id', (req, res) => {
+    const notice = noticeDemoRows.find((row) => String(row.id_aviso) === req.params.id);
+    return notice
+        ? res.json(notice)
+        : res.status(404).json({ error: 'Publicação não encontrada na demonstração.' });
+});
+app.post('/api/notices', (req, res) => {
+    try {
+        const values = require('../backend/src/services/notice-edit.service').validateNotice(
+            req.body,
+            true
+        );
+        const notice = {
+            id_aviso: Math.max(0, ...noticeDemoRows.map((row) => row.id_aviso)) + 1,
+            id_usuario: user.id_usuario,
+            tipo_publicacao: 'aviso',
             publico_alvo: 'todos',
+            categoria: 'evento',
             situacao: 'publicado',
-            data_publicacao: demoPublishedAt
-        }
-    ])
-);
+            ...values,
+            criado_em: new Date().toISOString(),
+            atualizado_em: new Date().toISOString()
+        };
+        notice.data_publicacao = notice.situacao === 'publicado' ? notice.criado_em : null;
+        noticeDemoRows.push(notice);
+        res.status(201).json({
+            noticeId: notice.id_aviso,
+            message: 'Publicação de demonstração criada somente na memória.'
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({
+            error: error.status ? error.message : 'Não foi possível criar a demonstração.'
+        });
+    }
+});
+app.put('/api/notices/:id', (req, res) => {
+    const notice = noticeDemoRows.find((row) => String(row.id_aviso) === req.params.id);
+    if (!notice)
+        return res.status(404).json({ error: 'Publicação não encontrada na demonstração.' });
+    try {
+        const values = require('../backend/src/services/notice-edit.service').validateNotice(
+            req.body
+        );
+        const publishNow =
+            values.situacao === 'publicado' &&
+            (notice.situacao === 'rascunho' || !notice.data_publicacao);
+        Object.assign(notice, values, { atualizado_em: new Date().toISOString() });
+        if (publishNow) notice.data_publicacao = notice.atualizado_em;
+        res.json({
+            affectedRows: 1,
+            message: 'Publicação de demonstração atualizada somente na memória.'
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({
+            error: error.status ? error.message : 'Não foi possível salvar a demonstração.'
+        });
+    }
+});
 const calendarDemoEvents = [
     {
         id_evento: 1,
@@ -279,6 +336,8 @@ app.get('/:file.html', (req, res, next) => {
     );
 });
 app.use(express.static(path.join(__dirname, '../front')));
-app.listen(61119, '127.0.0.1', () =>
-    console.log('Prévia local com dados fictícios em memória: 61119')
-);
+module.exports = app;
+if (require.main === module)
+    app.listen(61119, '127.0.0.1', () =>
+        console.log('Prévia local com dados fictícios em memória: 61119')
+    );

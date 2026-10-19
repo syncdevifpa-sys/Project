@@ -12,13 +12,17 @@
         },
         async remove(notices, onSuccess) {
             if (!notices.length || notices.some((notice) => !this.canDelete(notice))) return;
-            const titles = notices.map((notice) => '• ' + notice.titulo).join('\n');
             if (
-                !window.confirm(
-                    'Excluir definitivamente esta(s) publicação(ões)?\n' +
-                        titles +
-                        '\nEsta ação não pode ser desfeita.'
-                )
+                !(await A.confirmAction({
+                    title:
+                        notices.length === 1
+                            ? 'Excluir publicação?'
+                            : 'Excluir ' + notices.length + ' publicações?',
+                    message: 'Esta ação não pode ser desfeita.',
+                    items: notices.map((notice) => notice.titulo),
+                    confirmLabel:
+                        notices.length === 1 ? 'Excluir publicação' : 'Excluir publicações'
+                }))
             )
                 return;
             for (const notice of notices)
