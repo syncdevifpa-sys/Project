@@ -1,3 +1,4 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const db = require('../config/database');
 const {
     hasNoticeType,
@@ -38,8 +39,7 @@ async function listNotices() {
 
         return notices;
     } catch (err) {
-        const isTesting = process.execArgv.includes('--test') || Boolean(process.env.NODE_TEST_CONTEXT) || process.env.NODE_ENV === 'test';
-        if (!isTesting && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return require('../services/dev-memory-store.service').listNotices();
         }
         throw err;
@@ -81,8 +81,7 @@ async function findNoticeById(noticeId) {
 
         return notices[0];
     } catch (err) {
-        const isTesting = process.execArgv.includes('--test') || Boolean(process.env.NODE_TEST_CONTEXT) || process.env.NODE_ENV === 'test';
-        if (!isTesting && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return require('../services/dev-memory-store.service').findNoticeById(noticeId);
         }
         throw err;
