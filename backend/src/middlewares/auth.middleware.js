@@ -1,3 +1,4 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const db = require('../config/database');
@@ -36,8 +37,7 @@ async function authenticateToken(req, res, next) {
             );
             sessions = dbSessions;
         } catch (err) {
-            const isTesting = process.execArgv.includes('--test') || Boolean(process.env.NODE_TEST_CONTEXT) || process.env.NODE_ENV === 'test';
-            if (!isTesting && (err.code === 'ECONNREFUSED' || err.fatal)) {
+                if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
                 let devUser = require('../services/dev-memory-store.service').findUserById(decoded.id_usuario);
                 if (!devUser && decoded.id_usuario) {
                     devUser = require('../services/dev-memory-store.service').ensureUser({

@@ -1,9 +1,8 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const { verificationEnabled } = require('../services/email-config.service');
 const db = require('../config/database');
 
-function isTesting() {
-    return process.execArgv.includes('--test') || Boolean(process.env.NODE_TEST_CONTEXT) || process.env.NODE_ENV === 'test';
-}
+
 
 async function createSession(data) {
     const {
@@ -38,7 +37,7 @@ async function createSession(data) {
             return result;
         }
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return { insertId: Date.now() };
         }
         throw err;
@@ -111,7 +110,7 @@ async function listUserSessions(userId) {
 
         return sessions;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return [
                 {
                     id_token: 1,
@@ -148,7 +147,7 @@ async function listExternalSessions(externalId) {
 
         return sessions;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return [
                 {
                     id_token: 1,
@@ -177,7 +176,7 @@ async function deleteUserSession(sessionId, userId) {
 
         return result;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return { affectedRows: 1 };
         }
         throw err;
@@ -197,7 +196,7 @@ async function deleteExternalSession(sessionId, externalId) {
 
         return result;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return { affectedRows: 1 };
         }
         throw err;
@@ -216,7 +215,7 @@ async function deleteAllUserSessions(userId) {
 
         return result;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return { affectedRows: 1 };
         }
         throw err;
@@ -235,7 +234,7 @@ async function deleteAllExternalSessions(externalId) {
 
         return result;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return { affectedRows: 1 };
         }
         throw err;

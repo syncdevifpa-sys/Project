@@ -12,6 +12,13 @@ test('entrada da Vercel carrega sem .env e registra o pool MySQL compatível', (
             '-e',
             `
         process.env.VERCEL = '1';
+        const fs = require('node:fs');
+        const originalMkdir = fs.mkdirSync;
+        fs.mkdirSync = function(directory, ...args) {
+            if (String(directory).replace(/\\\\/g, '/').endsWith('/uploads'))
+                throw Object.assign(new Error('Read-only deployment directory'), { code: 'EROFS' });
+            return originalMkdir.call(this, directory, ...args);
+        };
         const app = require('./server');
         const db = require('./backend/src/config/database');
         if (typeof app !== 'function' || db.pool.listenerCount('release') < 1) process.exitCode = 1;
