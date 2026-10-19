@@ -581,6 +581,8 @@
     <link rel="stylesheet" href="brand-logo.css" />
     <link rel="stylesheet" href="email-verification.css" />
     <link rel="stylesheet" href="credentials.css" />
+    <link rel="stylesheet" href="site-footer.css?v=3" />
+    <link rel="stylesheet" href="privacy-notice.css" />
   </head>
   <body class="ar-auth-green">
     <!-- Decorative shapes -->
@@ -998,27 +1000,18 @@
                 </div>
               </div>
 
-              <!-- Terms -->
-              <label class="ar-check" style="margin: 4px 0 0 0; font-size: 13px">
-                <input type="checkbox" required checked />
-                <span class="ar-check-box" aria-hidden="true">
-                  <svg
-                    class="ar-icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M20 6 9 17l-5-5"></path>
-                  </svg>
-                </span>
-                Concordo com as normas acadêmicas e os termos de uso
-              </label>
+              <!-- Aceite explícito, separado do aviso de armazenamento. -->
+              <div class="ar-signup-legal">
+                <label for="legalAcceptance">
+                  <input id="legalAcceptance" name="legalAcceptance" type="checkbox" required aria-describedby="legalAcceptanceHelp" />
+                  <span>Li e aceito os Termos de Uso e estou ciente da Política de Privacidade.</span>
+                </label>
+                <p id="legalAcceptanceHelp">Para criar sua conta, leia os documentos e marque a opção acima. O aceite começa desmarcado.</p>
+                <div class="ar-signup-legal-links">
+                  <a href="terms.html">Ler Termos de Uso</a>
+                  <a href="privacy.html">Ler Política de Privacidade</a>
+                </div>
+              </div>
 
               <!-- Submit Button -->
               <button
@@ -1284,5 +1277,16 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+
+    <footer class="ar-site-footer" aria-label="Contato e informações legais">
+      <span>Arcádia · Portal acadêmico</span>
+      <nav aria-label="Contato e documentos">
+        <a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a>
+        <a href="privacy.html">Política de Privacidade</a>
+        <a href="terms.html">Termos de Uso</a>
+        <a href="cookies.html">Política de Cookies</a>
+      </nav>
+    </footer>
+    <script src="js/privacy-notice.js"></script>
   </body>
 </html>
