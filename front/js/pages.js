@@ -985,8 +985,16 @@
             stats[1].textContent = results[1].value.filter((r) => r.status !== 'concluida').length;
         if (results[2].status === 'fulfilled')
             stats[2].textContent = results[2].value.filter((r) => r.status !== 'pronto').length;
-        const row = (r, href, when) =>
-            `<a class="ar-row ar-row--nav ar-dashboard-row" href="${href}"><span class="ar-row-main"><div class="ar-row-title">${esc(r.titulo)}</div><div class="ar-row-meta">${esc(r.resumo || r.descricao || '')}</div></span><span class="ar-row-trail">${date(when)}</span></a>`;
+        const row = (r, href, when, calendar = false) => {
+            const category = calendar ? A.calendarCategories.canonical(r.categoria) : null;
+            const metadata = [
+                category ? A.calendarCategories.options[category] : '',
+                r.resumo || r.descricao || ''
+            ]
+                .filter(Boolean)
+                .join(' · ');
+            return `<a class="ar-row ar-row--nav ar-dashboard-row"${category ? ` data-event-category="${esc(category)}"` : ''} href="${href}"><span class="ar-row-main"><div class="ar-row-title">${esc(r.titulo)}</div><div class="ar-row-meta">${esc(metadata)}</div></span><span class="ar-row-trail">${date(when)}</span></a>`;
+        };
         panels[0].innerHTML =
             results[3].status === 'fulfilled'
                 ? results[3].value
@@ -996,7 +1004,7 @@
                               new Date().toLocaleDateString('sv-SE')
                       )
                       .slice(0, 5)
-                      .map((r) => row(r, 'calendar.html', r.data_evento))
+                      .map((r) => row(r, 'calendar.html', r.data_evento, true))
                       .join('') || '<p>Nenhuma data próxima.</p>'
                 : '<p>Não foi possível carregar o calendário.</p>';
         panels[1].innerHTML =
