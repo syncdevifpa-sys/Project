@@ -77,7 +77,7 @@ function headers(claims) {
     return { Authorization: 'Bearer ' + jwt.sign(claims, process.env.JWT_SECRET) };
 }
 test('Todos inclui todos os públicos com seleções mistas ou sem subitens; externo e vazio são distintos', () => {
-    const A = {};
+    const A = { noticeAudiences: require('../front/js/notice-audiences') };
     vm.runInNewContext(fs.readFileSync('front/js/notice-filters.js', 'utf8'), {
         window: { Arcadia: A }
     });
@@ -88,11 +88,11 @@ test('Todos inclui todos os públicos com seleções mistas ou sem subitens; ext
         );
     assert.deepEqual(
         rows.filter((r) => A.noticeFilters.audienceMatches(r, ['externo'])).map((r) => r.id_aviso),
-        [2]
+        [1, 2, 6]
     );
     assert.equal(rows.filter((r) => A.noticeFilters.audienceMatches(r, [])).length, 0);
     assert.equal(A.noticeFilters.audienceCount(rows, 'todos'), rows.length);
-    assert.equal(A.noticeFilters.audienceCount(rows, 'externo'), 1);
+    assert.equal(A.noticeFilters.audienceCount(rows, 'externo'), 3);
     assert.match(A.noticeFilters.audienceHint(false, 0), /Selecione/);
 });
 test('anon e externo recebem apenas publicados públicos; filtro não concede acesso ao detalhe restrito', async (t) => {
@@ -256,6 +256,7 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
         { id_aviso: 3, titulo: 'Para externos', publico_alvo: 'externo', situacao: 'publicado' }
     ];
     const A = {
+        noticeAudiences: require('../front/js/notice-audiences'),
         auth: { getSessao: () => ({ id_usuario: 4, tipo_usuario: 'servidor' }) },
         noticeActions: { canDelete: () => false },
         showToast: (m) => assert.fail(m),

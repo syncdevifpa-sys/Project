@@ -8,18 +8,14 @@
         async remove(events, onSuccess, options = {}) {
             if (!this.canDelete() || !events.length) return;
             if (
-                !window.confirm(
-                    'Apagar definitivamente ' +
-                        events.length +
-                        ' evento(s) do calendário?\n' +
-                        (options.scope ? 'Calendário: ' + options.scope + '\n' : '') +
-                        events
-                            .slice(0, 8)
-                            .map((event) => '• ' + event.titulo)
-                            .join('\n') +
-                        (events.length > 8 ? '\n…' : '') +
-                        '\nEsta ação não pode ser desfeita.'
-                )
+                !(await A.confirmAction({
+                    title: 'Excluir ' + events.length + ' evento(s) do calendário?',
+                    message:
+                        (options.scope ? 'Calendário: ' + options.scope + '. ' : '') +
+                        'Esta ação não pode ser desfeita.',
+                    items: events.map((event) => event.titulo),
+                    confirmLabel: 'Excluir eventos'
+                }))
             )
                 return;
             let removed = 0;

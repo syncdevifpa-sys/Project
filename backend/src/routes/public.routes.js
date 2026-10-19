@@ -9,7 +9,7 @@ router.get('/', async (req, res, next) => {
             : 'NULL AS capa';
         const [[notices], [projects]] = await Promise.all([
             db.execute(`SELECT id_aviso, titulo, resumo, descricao, data_publicacao, ${coverColumn}
-                FROM avisos WHERE situacao = 'publicado' AND publico_alvo IN ('todos', 'externo')
+                FROM avisos WHERE situacao = 'publicado' AND (FIND_IN_SET('todos', publico_alvo) > 0 OR FIND_IN_SET('externo', publico_alvo) > 0)
                 ORDER BY fixado DESC, data_publicacao DESC`),
             db.execute(`SELECT id_projeto, titulo, descricao, eixo, data_inicio, data_fim
                 FROM projetos WHERE aprovacao = 'aprovado' ORDER BY criado_em DESC`)
