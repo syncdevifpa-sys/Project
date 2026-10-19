@@ -168,7 +168,7 @@ CREATE TABLE avisos (
     descricao       TEXT,                              -- texto completo (página notice.html)
     categoria       ENUM('matricula', 'edital', 'evento', 'cancelamento', 'calendario')
                         NOT NULL DEFAULT 'matricula',
-    publico_alvo    ENUM('todos', 'discente', 'docente', 'servidor', 'externo') NOT NULL DEFAULT 'todos',
+    publico_alvo    SET('todos', 'discente', 'docente', 'servidor', 'externo') NOT NULL DEFAULT 'todos',
                     -- 'todos' = visível a todos, inclusive público externo;
                     -- 'externo' = direcionado ao público externo
     situacao        ENUM('rascunho', 'publicado', 'arquivado') NOT NULL DEFAULT 'publicado',

@@ -136,7 +136,13 @@ function fixture(fail = false, role = 'discente') {
     };
     const document = { body: element('body'), createElement: element };
     const context = { window: { Arcadia: A }, document };
-    for (const p of ['calendar-categories', 'content-fields', 'notice-actions', 'notice-editor'])
+    for (const p of [
+        'notice-audiences',
+        'calendar-categories',
+        'content-fields',
+        'notice-actions',
+        'notice-editor'
+    ])
         vm.runInNewContext(fs.readFileSync('front/js/' + p + '.js', 'utf8'), context);
     const notice = {
         id_aviso: 7,
@@ -154,11 +160,38 @@ function fixture(fail = false, role = 'discente') {
     };
     return { A, nodes, notice, requests };
 }
+test('editor permite selecionar professores e servidores, alternar Todos e salvar Notícia na criação e edição', async () => {
+    for (const editing of [false, true]) {
+        const f = fixture(false, 'servidor');
+        f.notice.publico_alvo = 'docente,servidor';
+        f.A.noticeEditor.open(editing ? f.notice : null, () => {});
+        const checkbox = (value) =>
+            f.nodes.find((node) => node.type === 'checkbox' && node.value === value);
+        if (editing) {
+            assert.equal(checkbox('docente').checked, true);
+            assert.equal(checkbox('servidor').checked, true);
+        }
+        checkbox('todos').checked = true;
+        checkbox('todos').events.change();
+        assert.equal(checkbox('docente').checked, false);
+        checkbox('docente').checked = true;
+        checkbox('docente').events.change();
+        assert.equal(checkbox('todos').checked, false);
+        checkbox('servidor').checked = true;
+        checkbox('servidor').events.change();
+        f.nodes.find((node) => node.name === 'tipo_publicacao').value = 'noticia';
+        await f.nodes.find((node) => node.tag === 'form').events.submit({ preventDefault() {} });
+        assert.deepEqual(Array.from(f.requests[0].body.publico_alvo), ['docente', 'servidor']);
+        assert.equal(f.requests[0].body.tipo_publicacao, 'noticia');
+        assert.equal(f.requests[0].path, editing ? '/api/notices/7' : '/api/notices');
+    }
+});
+
 test('editor pré-carrega texto/público/estado/prazo; cancelar não envia alteração', () => {
     const f = fixture(),
         dialog = f.A.noticeEditor.open(f.notice, () => {});
     assert.equal(f.nodes.find((n) => n.name === 'titulo').value, 'Título atual');
-    assert.equal(f.nodes.find((n) => n.name === 'publico_alvo').value, 'externo');
+    assert.deepEqual(Array.from(f.nodes.find((n) => n.name === 'publico_alvo').value), ['externo']);
     assert.equal(f.nodes.find((n) => n.name === 'data_prazo').value, '2026-10-25');
     assert.equal(f.nodes.find((n) => n.name === 'situacao').value, 'rascunho');
     assert.equal(f.nodes.find((n) => n.name === 'urgente').checked, true);
@@ -179,7 +212,7 @@ test('salvar envia allowlist e atualiza tela; falha mantém editor e conteúdo d
         });
         f.nodes.find((n) => n.name === 'titulo').value = 'Título alterado';
         await f.nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });
-        assert.equal(f.requests[0].body.publico_alvo, 'externo');
+        assert.deepEqual(Array.from(f.requests[0].body.publico_alvo), ['externo']);
         assert.equal(f.requests[0].body.titulo, 'Título alterado');
         assert.equal(Object.hasOwn(f.requests[0].body, 'id_usuario'), false);
         assert.equal(updated, !fail);

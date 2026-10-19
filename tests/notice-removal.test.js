@@ -66,6 +66,10 @@ function ui(confirm = true, fail = false) {
     const A = {
         auth: { getSessao: () => ({ id_usuario: 4, tipo_usuario: 'discente' }) },
         showToast() {},
+        confirmAction: async (options) => {
+            state.confirmations.push([options.title, options.message, ...options.items].join('\n'));
+            return confirm;
+        },
         api: {
             del: (path) => {
                 requests.push(path);

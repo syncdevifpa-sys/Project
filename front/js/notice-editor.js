@@ -53,6 +53,45 @@
             form.className = 'ar-form-grid';
             const inputs = {};
             for (const [name, text, fieldType, max] of fields) {
+                if (resource === 'notices' && name === 'publico_alvo') {
+                    const group = document.createElement('fieldset');
+                    group.name = name;
+                    group.className = 'ar-field ar-span-2 ar-notice-audiences';
+                    const legend = document.createElement('legend');
+                    legend.textContent = 'Público-alvo · selecione um ou mais';
+                    group.append(legend);
+                    const selected = A.noticeAudiences.parse(notice[name]);
+                    const choices = {};
+                    for (const [key, text] of Object.entries(A.noticeAudiences.labels)) {
+                        const label = document.createElement('label');
+                        const check = document.createElement('input');
+                        check.type = 'checkbox';
+                        check.value = key;
+                        check.checked = selected.includes(key);
+                        choices[key] = check;
+                        check.addEventListener('change', () => {
+                            if (key === 'todos' && check.checked)
+                                for (const [name, other] of Object.entries(choices)) {
+                                    if (name !== 'todos') other.checked = false;
+                                }
+                            if (key !== 'todos' && check.checked) choices.todos.checked = false;
+                        });
+                        const caption = document.createElement('span');
+                        caption.textContent = text;
+                        label.append(check, caption);
+                        group.append(label);
+                    }
+                    Object.defineProperty(group, 'value', {
+                        get() {
+                            return Object.entries(choices)
+                                .filter(([, check]) => check.checked)
+                                .map(([name]) => name);
+                        }
+                    });
+                    inputs[name] = group;
+                    form.append(group);
+                    continue;
+                }
                 let type =
                     resource === 'calendar' && name === 'categoria'
                         ? A.calendarCategories.options
@@ -171,6 +210,10 @@
             dialog.addEventListener('close', () => dialog.remove(), { once: true });
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
+                if (resource === 'notices' && !inputs.publico_alvo.value.length) {
+                    error.textContent = 'Selecione ao menos um público-alvo.';
+                    return;
+                }
                 if (cover?.busy) {
                     error.textContent = 'Aguarde a imagem terminar de carregar.';
                     return;

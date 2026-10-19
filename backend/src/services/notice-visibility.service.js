@@ -9,8 +9,8 @@ function canReadNotice(notice, viewer) {
     )
         return true;
     if (notice.situacao !== 'publicado') return false;
-    const audience = notice.publico_alvo;
-    if (audience === 'todos' || audience === 'externo') return true;
-    return Boolean(institutional && audience === viewer.tipo_usuario);
+    const audiences = require('../../../front/js/notice-audiences').parse(notice.publico_alvo);
+    if (audiences.includes('todos') || audiences.includes('externo')) return true;
+    return Boolean(institutional && audiences.includes(viewer.tipo_usuario));
 }
 module.exports = { canReadNotice };

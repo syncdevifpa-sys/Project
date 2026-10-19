@@ -9,6 +9,7 @@ function fixture({ admin = true, confirm = true, fail = false } = {}) {
     const A = {
         auth: { getSessao: () => ({ tipo_usuario: 'servidor', is_admin: admin }) },
         showToast: (text) => messages.push(text),
+        confirmAction: async () => confirm,
         api: {
             expect: (p) => p,
             del: async (path) => {
@@ -61,6 +62,10 @@ test('confirmação da exclusão informa quantidade e calendário selecionado an
     const A = {
         auth: { getSessao: () => ({ tipo_usuario: 'servidor', is_admin: true }) },
         showToast() {},
+        confirmAction: async (options) => {
+            prompts.push([options.title, options.message, ...options.items].join('\n'));
+            return false;
+        },
         api: { expect: (p) => p, del: async (path) => calls.push(path) }
     };
     vm.runInNewContext(fs.readFileSync('front/js/calendar-actions.js', 'utf8'), {
