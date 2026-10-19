@@ -1,9 +1,8 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const db = require('../config/database');
 const devStore = require('../services/dev-memory-store.service');
 
-function isTesting() {
-    return process.execArgv.includes('--test') || Boolean(process.env.NODE_TEST_CONTEXT) || process.env.NODE_ENV === 'test';
-}
+
 
 async function findExternalByEmail(email) {
     try {
@@ -18,7 +17,7 @@ async function findExternalByEmail(email) {
 
         return users[0] || null;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return devStore.findExternalByEmail(email);
         }
         throw err;
@@ -38,7 +37,7 @@ async function findInstitutionalByEmail(email) {
 
         return users[0] || null;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return devStore.findUserByEmail(email);
         }
         throw err;
@@ -67,7 +66,7 @@ async function findExternalById(id) {
 
         return users[0] || null;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return devStore.findExternalById(id);
         }
         throw err;
@@ -78,7 +77,7 @@ async function createExternal(data) {
     try {
         return await require('../services/email-verification.service').register('external', data);
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)) {
             return devStore.createExternalUser(data);
         }
         throw err;
@@ -96,7 +95,7 @@ async function updateLastAccess(id) {
             [id]
         );
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return;
         }
         throw err;

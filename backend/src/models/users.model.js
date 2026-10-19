@@ -1,13 +1,8 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const db = require('../config/database');
 const devStore = require('../services/dev-memory-store.service');
 
-function isTesting() {
-    return (
-        process.execArgv.includes('--test') ||
-        Boolean(process.env.NODE_TEST_CONTEXT) ||
-        process.env.NODE_ENV === 'test'
-    );
-}
+
 
 async function listUsers() {
     try {
@@ -38,7 +33,7 @@ async function listUsers() {
 
         return users;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return devStore.listUsers();
         }
         throw err;
@@ -78,13 +73,13 @@ async function findUserById(userId, includeInactive = false) {
             return users[0];
         }
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return devStore.findUserById(userId);
         }
         throw err;
     }
 
-    if (!isTesting()) {
+    if (developmentFallbackEnabled()) {
         return devStore.findUserById(userId);
     }
 
@@ -95,7 +90,7 @@ async function createUser(userData) {
     try {
         return await require('../services/email-verification.service').register('users', userData);
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)) {
             return devStore.createUser(userData);
         }
         throw err;
@@ -146,7 +141,7 @@ async function updateUser(userId, userData) {
         );
         return result;
     } catch (err) {
-        if (!isTesting() && (err.code === 'ECONNREFUSED' || err.fatal)) {
+        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal)) {
             return devStore.updateUser(userId, userData);
         }
         throw err;
