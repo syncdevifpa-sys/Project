@@ -428,8 +428,17 @@
 .ar-calendar-toolbar {
   grid-template-columns: minmax(140px, 0.7fr) minmax(180px, 1fr) auto auto auto;
 }
+.ar-calendar-toolbar:has(#btnCalendarListScope:not([hidden])) {
+  grid-template-columns: minmax(120px, 0.7fr) minmax(150px, 1fr) auto auto auto auto;
+}
+#calendarListStatus {
+  color: var(--ink-muted);
+  font-size: 14px;
+  margin: 0 0 12px;
+}
 @media (max-width: 1100px) {
-  .ar-calendar-toolbar {
+  .ar-calendar-toolbar,
+  .ar-calendar-toolbar:has(#btnCalendarListScope:not([hidden])) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .ar-calendar-options:not([open]) {

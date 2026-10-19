@@ -222,6 +222,14 @@
         <button type="button" class="ar-btn ar-btn--secondary" id="btnEditEvents" hidden
           >Editar eventos</button
         >
+        <button
+          type="button"
+          class="ar-btn ar-btn--secondary"
+          id="btnCalendarListScope"
+          aria-pressed="false"
+          hidden
+          >Todos os eventos</button
+        >
         <details class="ar-calendar-options" id="calendarOptions">
           <summary>Filtros e opções</summary>
           <div class="ar-calendar-options-body">
@@ -326,6 +334,7 @@
             >Público</span
           >
         </div>
+        <p id="calendarListStatus" role="status" hidden></p>
         <div class="ar-panel-body"><p role="status">Carregando calendário...</p></div>
       </section>
 

@@ -1,3 +1,4 @@
+const { developmentFallbackEnabled } = require('./development-mode.service');
 /* Privacidade por campo: dados de acesso nunca entram no perfil público. */
 const db = require('../config/database');
 const photo = require('./profile-photo.service');
@@ -19,17 +20,11 @@ function column(kind) {
     if (!['users', 'external'].includes(kind)) fail('Tipo de conta inválido.');
     return kind === 'users' ? 'id_usuario' : 'id_externo';
 }
-function isTesting() {
-    return (
-        process.execArgv.includes('--test') ||
-        Boolean(process.env.NODE_TEST_CONTEXT) ||
-        process.env.NODE_ENV === 'test'
-    );
-}
+
 function missing(error) {
     return (
         error.code === 'ER_NO_SUCH_TABLE' ||
-        (!isTesting() && (error.code === 'ECONNREFUSED' || error.fatal))
+        (developmentFallbackEnabled() && (error.code === 'ECONNREFUSED' || error.fatal))
     );
 }
 function normalize(body, external = false) {

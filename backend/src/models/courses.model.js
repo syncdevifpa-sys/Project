@@ -1,3 +1,4 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const db = require('../config/database');
 const path = require('path');
 const fs = require('fs');
@@ -14,7 +15,8 @@ function getFallbackCourses() {
                 nivel: c.nivel || 'tecnico',
                 ativo: 1
             }));
-        } catch {
+        } catch (error) {
+        if (!developmentFallbackEnabled()) throw error;
             fallbackCourses = [
                 { id_curso: 1, nome: 'Técnico em Desenvolvimento de Sistemas (Integrado)', nivel: 'tecnico', ativo: 1 },
                 { id_curso: 2, nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas', nivel: 'graduacao', ativo: 1 },
@@ -42,11 +44,12 @@ async function listCourses() {
         if (Array.isArray(courses) && courses.length > 0) {
             return courses;
         }
-    } catch {
+    } catch (error) {
+        if (!developmentFallbackEnabled()) throw error;
         // Fallback quando o banco não estiver disponível
     }
 
-    return getFallbackCourses();
+    return developmentFallbackEnabled() ? getFallbackCourses() : [];
 }
 
 async function findCourseById(courseId) {
@@ -67,10 +70,12 @@ async function findCourseById(courseId) {
         if (courses && courses[0]) {
             return courses[0];
         }
-    } catch {
+    } catch (error) {
+        if (!developmentFallbackEnabled()) throw error;
         // Fallback quando o banco não estiver disponível
     }
 
+    if (!developmentFallbackEnabled()) return null;
     const numericId = Number(courseId);
     return getFallbackCourses().find((c) => c.id_curso === numericId) || null;
 }
@@ -92,7 +97,8 @@ async function createCourse(courseData) {
         );
 
         return result;
-    } catch {
+    } catch (error) {
+        if (!developmentFallbackEnabled()) throw error;
         const list = getFallbackCourses();
         const newId = list.length > 0 ? Math.max(...list.map((c) => c.id_curso)) + 1 : 1;
         list.push({ id_curso: newId, nome, nivel, ativo: ativo ? 1 : 0 });
@@ -127,7 +133,8 @@ async function updateCourse(courseId, courseData) {
         );
 
         return result;
-    } catch {
+    } catch (error) {
+        if (!developmentFallbackEnabled()) throw error;
         currentCourse.nome = nome;
         currentCourse.nivel = nivel;
         currentCourse.ativo = ativo ? 1 : 0;
@@ -146,7 +153,8 @@ async function deleteCourse(courseId) {
         );
 
         return result;
-    } catch {
+    } catch (error) {
+        if (!developmentFallbackEnabled()) throw error;
         const list = getFallbackCourses();
         const idx = list.findIndex((c) => c.id_curso === Number(courseId));
         if (idx >= 0) {

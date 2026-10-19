@@ -455,6 +455,9 @@
             wholeCalendarButton;
         const sourcePicker = $('#calendarSourceFilter'),
             viewPicker = $('#calendarViewMode');
+        const listScopeButton = $('#btnCalendarListScope');
+        const today = () => new Date().toLocaleDateString('sv-SE');
+        let listAll = false;
         const monthState = {
             month: new Date().toLocaleDateString('sv-SE').slice(0, 7),
             day: new Date().toLocaleDateString('sv-SE')
@@ -484,7 +487,9 @@
                       selected,
                       viewPicker.value === 'month'
                           ? Number(monthState.month.slice(0, 4))
-                          : Number(holidayYear.value),
+                          : !listAll
+                            ? Number(today().slice(0, 4))
+                            : Number(holidayYear.value),
                       holidayRegion.value
                   );
         };
@@ -504,7 +509,9 @@
         const visibleRows = () =>
             viewPicker.value === 'month'
                 ? A.calendarView.inMonth(bar.visible(), monthState.month)
-                : bar.visible();
+                : listAll
+                  ? bar.visible()
+                  : A.calendarView.onDay(bar.visible(), today());
         if (canDelete) {
             const controls = document.createElement('div');
             controls.className = 'ar-calendar-tools';
@@ -635,13 +642,29 @@
             render();
         });
         viewPicker.addEventListener('change', () => {
+            listAll = false;
+            selectedEvents.clear();
             if (viewPicker.value === 'month') chooseUsefulMonth();
+            render();
+        });
+        listScopeButton.addEventListener('click', () => {
+            listAll = !listAll;
+            selectedEvents.clear();
             render();
         });
         $('.ar-panel-label').textContent = 'Calendário acadêmico';
         function render() {
             if (viewPicker.value === 'month') holidayYear.value = monthState.month.slice(0, 4);
-            $('#holidayYearField').hidden = personal() || viewPicker.value === 'month';
+            $('#holidayYearField').hidden = personal() || viewPicker.value === 'month' || !listAll;
+            const isList = viewPicker.value === 'list';
+            listScopeButton.hidden = !isList;
+            listScopeButton.textContent = listAll ? 'Eventos de hoje' : 'Todos os eventos';
+            listScopeButton.setAttribute('aria-pressed', String(listAll));
+            const listStatus = $('#calendarListStatus');
+            listStatus.hidden = !isList;
+            listStatus.textContent = listAll
+                ? 'Todos os eventos dos calendários e categorias selecionados.'
+                : 'Eventos de hoje · ' + new Date().toLocaleDateString('pt-BR');
             $('.ar-calendar-holiday-options').hidden = personal();
             $('#btnImportCalendar').style.display = canManage && !personal() ? '' : 'none';
             $('.ar-panel-label').textContent = personal()
@@ -658,7 +681,7 @@
             $('#calendarFilterStatus').textContent =
                 categoryText === 'Todos' ? 'Todas as categorias' : 'Categoria: ' + categoryText;
             let target = container,
-                list = bar.visible();
+                list = visibleRows();
             if (viewPicker.value === 'month') {
                 const result = A.calendarView.render(container, list, monthState, render);
                 target = result.agenda;
@@ -733,7 +756,10 @@
                             '</div>'
                         );
                     })
-                    .join('') || '<p>Nenhum evento encontrado.</p>';
+                    .join('') ||
+                (isList && !listAll
+                    ? '<p>Nenhum evento para hoje nos filtros selecionados. Use “Todos os eventos” para consultar as outras datas.</p>'
+                    : '<p>Nenhum evento encontrado.</p>');
             linkDescriptions('.ar-panel-body .ar-row-meta');
             syncSelection();
             bar.counts();
