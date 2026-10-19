@@ -451,6 +451,14 @@ window.Arcadia = window.Arcadia || {};
                 const senha = form.querySelector('#senha, #password')?.value || '';
 
                 if (tipoAcesso === 'cadastro') {
+                    const legalAcceptance = form.querySelector('#legalAcceptance');
+                    if (legalAcceptance && !legalAcceptance.checked) {
+                        legalAcceptance.focus();
+                        return showError(
+                            'Para criar a conta, aceite os Termos de Uso e confirme a leitura da Política de Privacidade.'
+                        );
+                    }
+
                     const nome = (form.querySelector('#nome, #name')?.value || '').trim();
                     const telefone =
                         (form.querySelector('#telefone, #phone')?.value || '').trim() || null;
