@@ -1,6 +1,6 @@
 const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
-const express = require('../node_modules/express');
+const express = require('express');
 const bcrypt = require('bcrypt');
 const db = require('../backend/src/config/database');
 const service = require('../backend/src/services/email-verification.service');
