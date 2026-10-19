@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { developmentFallbackEnabled } = require('./development-mode.service');
 const fs = require('fs');
 const path = require('path');
 
@@ -163,7 +164,7 @@ let notices = [...defaultNotices];
 // Carregar dados salvos em disco (se existirem)
 function loadFromDisk() {
     try {
-        if (fs.existsSync(DEV_DATA_FILE)) {
+        if (developmentFallbackEnabled() && fs.existsSync(DEV_DATA_FILE)) {
             const raw = fs.readFileSync(DEV_DATA_FILE, 'utf8');
             const data = JSON.parse(raw);
             if (Array.isArray(data.users)) {
@@ -187,6 +188,7 @@ function loadFromDisk() {
 }
 
 function saveToDisk() {
+    if (!developmentFallbackEnabled()) return;
     try {
         fs.writeFileSync(
             DEV_DATA_FILE,

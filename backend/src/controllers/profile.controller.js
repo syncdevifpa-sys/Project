@@ -1,16 +1,11 @@
+const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const users = require('../models/users.model');
 const auth = require('../models/auth.model');
 const sessions = require('../models/sessions.model');
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
-function isTesting() {
-    return (
-        process.execArgv.includes('--test') ||
-        Boolean(process.env.NODE_TEST_CONTEXT) ||
-        process.env.NODE_ENV === 'test'
-    );
-}
+
 
 async function getProfile(req, res) {
     try {
@@ -95,7 +90,7 @@ async function changePassword(req, res) {
         try {
             connection = await db.getConnection();
         } catch (dbErr) {
-            if (!isTesting() && (dbErr.code === 'ECONNREFUSED' || dbErr.fatal)) {
+            if (developmentFallbackEnabled() && (dbErr.code === 'ECONNREFUSED' || dbErr.fatal)) {
                 require('../services/dev-memory-store.service').updatePassword(
                     req.user.id_usuario,
                     passwordHash
