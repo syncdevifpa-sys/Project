@@ -4,8 +4,8 @@ const { test, before, after } = require('node:test'),
     vm = require('vm');
 const db = require('../backend/src/config/database'),
     model = require('../backend/src/models/notices.model'),
-    jwt = require('../backend/node_modules/jsonwebtoken'),
-    express = require('../backend/node_modules/express');
+    jwt = require('jsonwebtoken'),
+    express = require('express');
 const { canReadNotice } = require('../backend/src/services/notice-visibility.service');
 let api, server;
 const secret = process.env.JWT_SECRET;

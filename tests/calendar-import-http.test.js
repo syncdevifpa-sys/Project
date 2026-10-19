@@ -1,8 +1,8 @@
 const { test, before, after } = require('node:test'),
     assert = require('node:assert/strict'),
     fs = require('node:fs'),
-    jwt = require('../backend/node_modules/jsonwebtoken'),
-    express = require('../backend/node_modules/express');
+    jwt = require('jsonwebtoken'),
+    express = require('express');
 const db = require('../backend/src/config/database');
 let server, base;
 const previous = process.env.JWT_SECRET;

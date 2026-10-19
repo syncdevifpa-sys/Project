@@ -1,7 +1,7 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const express = require('../node_modules/express');
-const jwt = require('../node_modules/jsonwebtoken');
+const express = require('express');
+const jwt = require('jsonwebtoken');
 const db = require('../backend/src/config/database');
 const users = require('../backend/src/models/users.model');
 let server, base;
