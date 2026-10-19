@@ -198,7 +198,7 @@
             const html = card(
                 r.titulo,
                 r.resumo,
-                `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(label(audiences, r.publico_alvo))} · ${date(r.data_publicacao)}`,
+                `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
                 `<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--secondary btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button><button type="button" class="ar-btn ar-btn--quiet btn-delete" data-id="${esc(r.id_aviso)}">Excluir publicação</button>` : ''}`
             );
             return A.noticeCover?.valid(r.capa)
@@ -225,7 +225,7 @@
             table.innerHTML = list
                 .map(
                     (r) =>
-                        `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso" ${A.noticeActions.canDelete(r) ? '' : 'disabled'}></td><td><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(label(audiences, r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--sm btn-edit" data-id="${esc(r.id_aviso)}">Editar</button><button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`
+                        `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso" ${A.noticeActions.canDelete(r) ? '' : 'disabled'}></td><td><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(A.noticeAudiences.format(r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--sm btn-edit" data-id="${esc(r.id_aviso)}">Editar</button><button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`
                 )
                 .join('');
             board.innerHTML =
@@ -944,7 +944,7 @@
         A.noticeText.render(body, r.descricao || r.resumo || '');
         body.style.whiteSpace = 'pre-wrap';
         $('.ar-detail-eyebrow').innerHTML =
-            `<span class="ar-tag">${esc(r.referencia || label(categories, r.categoria))}</span><span class="ar-tag">${esc(label(audiences, r.publico_alvo))}</span>`;
+            `<span class="ar-tag">${esc(r.referencia || label(categories, r.categoria))}</span><span class="ar-tag">${esc(A.noticeAudiences.format(r.publico_alvo))}</span>`;
         $('.ar-detail-status').textContent =
             `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${label(noticeStatuses, r.situacao)}`;
         info.innerHTML = `<div class="ar-info-item">Publicado: ${date(r.data_publicacao)}</div><div class="ar-info-item">Prazo: ${date(r.data_prazo)}</div><div class="ar-info-item">Vagas: ${esc(r.vagas ?? '—')}</div>`;

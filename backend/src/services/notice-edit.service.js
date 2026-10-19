@@ -2,7 +2,6 @@ const db = require('../config/database');
 const enums = {
     tipo_publicacao: ['aviso', 'noticia'],
     categoria: ['matricula', 'edital', 'evento', 'cancelamento', 'calendario'],
-    publico_alvo: ['todos', 'discente', 'docente', 'servidor', 'externo'],
     situacao: ['rascunho', 'publicado', 'arquivado']
 };
 const texts = { titulo: 150, resumo: 65535, descricao: 65535, referencia: 50 };
@@ -30,6 +29,11 @@ function validateNotice(body, creation = false) {
             }
         }
     if (creation && (!values.titulo || !values.resumo)) fail(400, 'Preencha título e resumo.');
+    if (Object.hasOwn(body, 'publico_alvo')) {
+        const audience = require('../../../front/js/notice-audiences').parse(body.publico_alvo);
+        if (!audience.length) fail(400, 'Selecione ao menos um público-alvo válido.');
+        values.publico_alvo = audience.join(',');
+    }
     for (const [key, options] of Object.entries(enums))
         if (Object.hasOwn(body, key)) {
             if (!options.includes(body[key])) fail(400, 'Opção inválida em ' + key + '.');
@@ -77,6 +81,8 @@ async function editNotice(id, body, actorId) {
     if (!/^[1-9]\d*$/.test(String(id)) || !Number.isSafeInteger(Number(id)))
         fail(400, 'Identificador de publicação inválido.');
     const values = validateNotice(body);
+    if (Object.hasOwn(values, 'publico_alvo'))
+        await require('./notice-schema.service').writableAudience(values.publico_alvo);
     if (
         Object.hasOwn(values, 'tipo_publicacao') &&
         !(await require('./notice-schema.service').writableType(values.tipo_publicacao))
