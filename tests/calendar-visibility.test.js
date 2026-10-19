@@ -1,7 +1,7 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const express = require('../backend/node_modules/express');
-const jwt = require('../backend/node_modules/jsonwebtoken');
+const express = require('express');
+const jwt = require('jsonwebtoken');
 const db = require('../backend/src/config/database');
 const model = require('../backend/src/models/calendar.model');
 const { editContent, validateContent } = require('../backend/src/services/content-edit.service');

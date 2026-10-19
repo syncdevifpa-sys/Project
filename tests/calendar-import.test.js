@@ -1,7 +1,7 @@
 const { test, after } = require('node:test'),
     assert = require('node:assert/strict'),
     fs = require('node:fs'),
-    jwt = require('../backend/node_modules/jsonwebtoken');
+    jwt = require('jsonwebtoken');
 const db = require('../backend/src/config/database'),
     pdf = require('../backend/src/services/calendar-pdf.service'),
     service = require('../backend/src/services/calendar-import.service');
