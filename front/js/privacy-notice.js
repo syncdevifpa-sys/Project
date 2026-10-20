@@ -16,7 +16,7 @@
         '<h2 id="privacyNoticeTitle">Cookies e sua privacidade</h2>' +
         '<p>O armazenamento necessário mantém seu acesso e a operação do portal. Você permite cookies opcionais?</p>' +
         '<p><strong>Nenhum cookie opcional está ativo nesta versão.</strong> Sua escolha não autoriza novos rastreadores. Antes de incluir um recurso que exija consentimento, pediremos uma nova autorização específica.</p>' +
-        '<div class="ar-privacy-notice-actions"><button type="button" data-choice="necessary">Usar apenas necessários</button><button type="button" data-choice="optional">Aceitar opcionais</button><a href="cookies.html">Ler Política de Cookies</a><a href="privacy.html">Como usamos seus dados</a></div>';
+        '<div class="ar-privacy-notice-actions"><button type="button" data-choice="necessary">Rejeitar cookies opcionais</button><button type="button" data-choice="optional">Aceitar opcionais</button><a href="cookies.html">Ler Política de Cookies</a><a href="privacy.html">Como usamos seus dados</a></div>';
     document.body.append(panel);
     const toggle = document.createElement('button');
     toggle.type = 'button';
