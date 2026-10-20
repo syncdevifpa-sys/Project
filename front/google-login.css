@@ -1,0 +1,191 @@
+.ar-google-login-dialog {
+  box-sizing: border-box;
+  width: min(456px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 28px;
+  overflow: auto;
+  border: 1px solid var(--line, #d6dfda);
+  border-radius: 32px;
+  background: var(--surface, #fff);
+  color: var(--ink, #23352d);
+  box-shadow: 0 24px 80px #0004;
+  font:
+    400 14px/1.6 system-ui,
+    sans-serif;
+}
+.ar-google-login-dialog::backdrop {
+  background: #10251b99;
+}
+.ar-google-login-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.ar-google-login-brand {
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.3px;
+  color: var(--ref-primary, #246344);
+}
+.ar-google-login-dialog h2 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+}
+.ar-google-login-dialog p {
+  margin: 0 0 16px;
+}
+.ar-google-login-intro {
+  color: var(--ink-muted, #55685e);
+}
+.ar-google-login-provider {
+  padding: 8px 0 4px;
+}
+.ar-google-login-dialog [data-google-button] {
+  min-height: 44px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+.ar-google-login-dialog [data-google-button] > div {
+  border-radius: 999px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ar-google-login-dialog [data-google-button] iframe {
+  border-radius: 999px;
+}
+.ar-google-login-status {
+  color: var(--ink-muted, #55685e);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0 0 !important;
+}
+.ar-google-login-status[data-state='error'] {
+  color: var(--danger, #b42318);
+}
+.ar-google-login-status[data-state='info'] {
+  color: var(--ink-muted, #55685e);
+}
+.ar-google-login-dialog form {
+  display: grid;
+  gap: 10px;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid var(--line, #d6dfda);
+}
+.ar-google-login-dialog form[hidden] {
+  display: none;
+}
+.ar-google-login-dialog h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
+.ar-google-login-dialog form p {
+  font-size: 13px;
+  color: var(--ink-muted, #55685e);
+  margin: 0 0 4px;
+}
+.ar-google-login-dialog label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.ar-google-login-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--control-border, #75887d);
+  border-radius: 10px;
+  background: var(--surface-sunken, #f4f7f4);
+  color: inherit;
+  font: inherit;
+}
+.ar-google-login-dialog button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.ar-google-login-dialog button[data-google-close] {
+  padding: 8px;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--ink-muted, #55685e);
+}
+.ar-google-login-dialog button[data-google-close]:hover {
+  background: var(--surface-sunken, #f4f7f4);
+  color: var(--ink, #23352d);
+}
+.ar-google-login-dialog form button {
+  margin-top: 4px;
+  background: var(--ref-primary, #246344);
+  color: #fff;
+}
+.ar-google-login-dialog form button:hover {
+  background: var(--ref-primary-hover, #194c33);
+}
+.ar-google-login-dialog button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.ar-google-login-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line, #d6dfda);
+  margin-top: 24px;
+  padding-top: 12px;
+  font-size: 13px;
+  color: var(--ink-muted, #55685e);
+}
+.ar-google-login-dialog a {
+  color: var(--ink, #23352d);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ar-google-login-dialog :focus-visible {
+  outline: 3px solid var(--ref-input-focus, #30845b);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .ar-google-login-dialog {
+    padding: 20px;
+    width: calc(100vw - 24px);
+    border-radius: 28px;
+  }
+  .ar-google-login-dialog h2 {
+    font-size: 24px;
+  }
+}
+
+.ar-google-login-dialog .ar-google-login-enter {
+  width: 100%;
+  margin-top: 20px;
+  background: var(--ref-primary, #246344);
+  color: #fff;
+}
+.ar-google-login-dialog .ar-google-login-enter:hover {
+  background: var(--ref-primary-hover, #194c33);
+}
+.ar-google-login-dialog .ar-google-login-enter:disabled {
+  cursor: not-allowed;
+}
+.ar-google-login-dialog .ar-google-login-enter[hidden] {
+  display: none;
+}

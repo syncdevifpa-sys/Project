@@ -1,6 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
+router.use('/google', require('./googleAuth.routes'));
 
 const { login } = require('../controllers/auth.controller');
 const { authenticateToken } = require('../middlewares/auth.middleware');

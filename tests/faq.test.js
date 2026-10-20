@@ -13,7 +13,7 @@ test('FAQ mantém perguntas, responde limites reais e associa botões e painéis
     ])
         assert.ok(html.includes(question));
     assert.match(html, /Comunidade externa/);
-    assert.match(html, /login com Google ainda não está disponível/);
+    assert.match(html, /Google permite entrar em uma conta já cadastrada/);
     assert.match(html, /recuperação de senha depende do serviço/);
     assert.match(html, /validação administrativa/);
     assert.match(html, /não gera um documento oficial automaticamente/);
