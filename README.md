@@ -139,7 +139,7 @@ Documentos pessoais usam `GET /api/documents/my`; a listagem administrativa em `
 
 Cada JWT institucional precisa ter uma sessão ativa na tabela `tokens`. Logout e encerramento de sessões revogam o acesso. Alterar a senha encerra as outras sessões e preserva a atual.
 
-Arquivos de documentos devem existir na URL cadastrada em `arquivo`. O portal não gera certificados ou PDFs oficiais a partir de dados de demonstração. As preferências de notificação são persistidas; o envio automático de alertas por e-mail depende de um serviço de entrega próprio. A autenticação implementada é por e-mail e senha; não há autenticação OAuth Google no backend.
+Arquivos de documentos devem existir na URL cadastrada em `arquivo`. O portal não gera certificados ou PDFs oficiais a partir de dados de demonstração. As preferências de notificação são persistidas; o envio automático de alertas por e-mail depende de um serviço de entrega próprio. A autenticação por e-mail e senha também pode ser vinculada ao Google quando o ambiente estiver configurado. Consulte `docs/google-login.md` para configurar o Client ID, as origens e a migração incremental.
 
 ## Verificar
 
