@@ -583,6 +583,7 @@
     <link rel="stylesheet" href="credentials.css" />
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
+    <link rel="stylesheet" href="google-login.css" />
   </head>
   <body class="ar-auth-green">
     <!-- Decorative shapes -->
@@ -647,69 +648,6 @@
       </svg>
     </div>
 
-    <!-- Real Google Account Authentication Modal -->
-    <div class="ar-google-modal-scrim" id="googleAuthModal" style="display: none">
-      <div class="ar-google-modal" role="dialog" aria-modal="true" aria-labelledby="gModalTitle">
-        <div class="ar-google-modal-head">
-          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="#4285F4"
-              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.66-5.17 3.66-9.12z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.57H1.25C.45 8.15 0 9.99 0 12s.45 3.85 1.25 5.43l4.03-3.14z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"
-            />
-          </svg>
-          <h2 id="gModalTitle" class="ar-google-modal-title">Cadastrar com o Google</h2>
-          <p class="ar-google-modal-sub">para continuar na Arcadia IFPA</p>
-        </div>
-        <form id="googleAuthForm" class="ar-google-modal-body">
-          <div class="ar-google-modal-field">
-            <label for="realGoogleEmail">Seu e-mail do Google</label>
-            <input
-              type="email"
-              id="realGoogleEmail"
-              placeholder="seu.email@gmail.com"
-              required
-              autocomplete="email"
-            />
-            <span class="ar-google-modal-hint">Informe o e-mail da sua conta Google ou Gmail.</span>
-          </div>
-          <div class="ar-google-modal-field" id="realGoogleNameWrap">
-            <label for="realGoogleName">Seu nome completo</label>
-            <input
-              type="text"
-              id="realGoogleName"
-              placeholder="Exemplo: João Silva"
-              autocomplete="name"
-              required
-            />
-          </div>
-          <div class="ar-google-modal-consent">
-            O acesso pelo Google ainda não está disponível.<br />
-            Use o cadastro com senha e confirme o link enviado ao seu e-mail.
-          </div>
-          <div class="ar-google-modal-actions">
-            <button type="button" class="ar-google-modal-cancel" id="cancelGoogleModal"
-              >Cancelar</button
-            >
-            <button type="submit" class="ar-google-modal-submit" id="submitGoogleModal"
-              >Continuar</button
-            >
-          </div>
-        </form>
-      </div>
-    </div>
-
     <div class="ar-auth-page">
       <!-- Top Bar -->
       <header class="ar-auth-header">
@@ -746,8 +684,7 @@
               type="button"
               class="ar-btn-google-signup"
               id="googleSignupBtn"
-              disabled
-              title="O acesso com o Google ainda não está disponível"
+              title="Entrar com uma conta já cadastrada no Arcádia"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -767,7 +704,7 @@
                   d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"
                 />
               </svg>
-              <span>Cadastrar com o Google</span>
+              <span>Já tenho conta · Entrar com Google</span>
             </button>
 
             <div class="ar-auth-divider">
