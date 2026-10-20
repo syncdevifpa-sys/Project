@@ -86,196 +86,148 @@ window.Arcadia = window.Arcadia || {};
     async function sendWelcomeEmail() {
         return { success: false, reason: 'disabled' };
     }
-    async function completeGoogleAuth() {
-        alert('O acesso com o Google ainda não está disponível. Use e-mail e senha.');
+    let googleSdk;
+    function loadGoogleSdk() {
+        if (window.google?.accounts?.id) return Promise.resolve();
+        if (!googleSdk) googleSdk = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = () => { script.remove(); googleSdk = null; reject(new Error('Não foi possível abrir o Google. Confira a conexão e tente novamente.')); };
+            document.head.append(script);
+        });
+        return googleSdk;
     }
-
-    // Google Identity Services (GIS) Callback Global
-    window.handleGoogleCredentialResponse = function (response) {
-        if (!response || !response.credential) return;
+    // O token é enviado inteiro ao backend; nome, e-mail ou claims do navegador não autenticam.
+    async function completeGoogleAuth(credential, challenge, senha) {
+        if (typeof credential !== 'string' || credential.split('.').length !== 3 ||
+            typeof challenge !== 'string' || challenge.split('.').length !== 3) {
+            throw new Error('Use o botão oficial do Google para confirmar sua conta.');
+        }
+        const result = await api.post('/api/auth/google', { credential, challenge, ...(senha ? { senha } : {}) }, { auth: false });
+        if (!result.ok) throw Object.assign(new Error(result.data?.error || 'Não foi possível entrar com Google.'), { data: result.data });
+        salvarSessao(result.data.user, result.data.token);
+        irParaPortal();
+    }
+    let googleContext, googlePreparing, googleSubmit;
+    async function prepareGoogleAuth() {
+        if (googleContext && Date.now() < googleContext.expiresAt) return googleContext;
+        if (googlePreparing) return googlePreparing;
+        googlePreparing = (async () => {
+            const result = await api.post('/api/auth/google/challenge', {}, { auth: false });
+            if (!result.ok) throw new Error(result.data?.error || 'Não foi possível preparar o acesso com Google.');
+            await loadGoogleSdk();
+            const context = { ...result.data, expiresAt: Date.now() + 4 * 60 * 1000 };
+            window.google.accounts.id.initialize({ client_id: context.clientId, nonce: context.nonce,
+                auto_select: false, ux_mode: 'popup', use_fedcm_for_prompt: true,
+                callback: async response => {
+                    if (!response.credential) return;
+                    if (googleSubmit) return googleSubmit(response.credential);
+                    triggerRealGoogleOAuth({ context, credential: response.credential });
+                } });
+            googleContext = context;
+            return context;
+        })();
+        try { return await googlePreparing; } finally { googlePreparing = null; }
+    }
+    async function initGoogleModal() {
+        if (typeof document.querySelector !== 'function') return;
+        const form = document.querySelector('form[data-acesso="login"]');
+        if (!form || estaLogado()) return;
+        let typing = false;
+        form.addEventListener('input', () => { typing = true; window.google?.accounts?.id?.cancel(); }, { once: true });
         try {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(
-                atob(base64)
-                    .split('')
-                    .map(function (c) {
-                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                    })
-                    .join('')
-            );
-            const payload = JSON.parse(jsonPayload);
-            if (payload && payload.email) {
-                completeGoogleAuth(
-                    payload.name || '',
-                    payload.email,
-                    payload.picture || '',
-                    'Google'
-                );
-            }
-        } catch (err) {
-            console.error('[Arcadia Google Auth] Erro ao processar credencial Google:', err);
-        }
-    };
-
-    // ------------------------- Modal de Conexão Google -------------------------
-    function openGoogleAuthModal(mode = 'login') {
-        const modal = document.getElementById('googleAuthModal');
-        if (!modal) return;
-
-        const gModalTitle = document.getElementById('gModalTitle');
-        const realGoogleNameWrap = document.getElementById('realGoogleNameWrap');
-        const realGoogleName = document.getElementById('realGoogleName');
-        const realGoogleEmail = document.getElementById('realGoogleEmail');
-
-        if (mode === 'signup') {
-            if (gModalTitle) gModalTitle.textContent = 'Cadastrar com Google';
-            if (realGoogleNameWrap) realGoogleNameWrap.style.display = 'flex';
-            if (realGoogleName) realGoogleName.required = true;
-        } else {
-            if (gModalTitle) gModalTitle.textContent = 'Entrar com Google';
-            if (realGoogleNameWrap) realGoogleNameWrap.style.display = 'flex';
-            if (realGoogleName) realGoogleName.required = false;
-        }
-
-        const formName = document.getElementById('nome');
-        const formEmail = document.getElementById('email');
-
-        if (formEmail && formEmail.value.trim() && realGoogleEmail) {
-            realGoogleEmail.value = formEmail.value.trim();
-        }
-        if (formName && formName.value.trim() && realGoogleName) {
-            realGoogleName.value = formName.value.trim();
-        }
-
-        modal.style.display = 'flex';
-        if (realGoogleEmail) {
-            setTimeout(() => realGoogleEmail.focus(), 60);
-        }
+            await prepareGoogleAuth();
+            if (!typing && !document.querySelector('dialog[open]')) window.google.accounts.id.prompt();
+        } catch (_) { /* A sugestão é opcional: falhas não interrompem a entrada com senha. */ }
     }
-
-    function closeGoogleAuthModal() {
-        const modal = document.getElementById('googleAuthModal');
-        if (modal) modal.style.display = 'none';
-    }
-
-    function initGoogleModal() {
-        const modal = document.getElementById('googleAuthModal');
-        const form = document.getElementById('googleAuthForm');
-        const cancelBtn = document.getElementById('cancelGoogleModal');
-        const realGoogleEmail = document.getElementById('realGoogleEmail');
-        const realGoogleName = document.getElementById('realGoogleName');
-
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', closeGoogleAuthModal);
-        }
-
-        if (modal) {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeGoogleAuthModal();
-            });
-        }
-
-        if (form) {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const emailVal = (realGoogleEmail ? realGoogleEmail.value : '').trim();
-                const nameVal = (realGoogleName ? realGoogleName.value : '').trim();
-
-                if (!emailVal || !emailVal.includes('@')) {
-                    alert('Por favor, informe um endereço de e-mail válido.');
-                    return;
-                }
-
-                closeGoogleAuthModal();
-                await completeGoogleAuth(nameVal, emailVal, '', 'Google');
-            });
-        }
-    }
-
-    // ------------------------- Disparador do Fluxo Google OAuth -------------------------
-    function triggerRealGoogleOAuth(mode = 'login') {
-        const cfg = window.ARCADIA_CONFIG || {};
-
-        // 1. Google OAuth requer protocolo HTTP ou HTTPS. Se executado via file://, abre o modal direto
-        if (window.location.protocol === 'file:') {
-            console.info(
-                '[Arcadia Google Auth] Executando sob file:// (Google OAuth oficial requer servidor HTTP). Abrindo modal de acesso.'
-            );
-            openGoogleAuthModal(mode);
-            return;
-        }
-
-        // 2. Se a biblioteca oficial do Google estiver pronta e o client_id estiver definido
-        if (
-            cfg.googleClientId &&
-            typeof google !== 'undefined' &&
-            google.accounts &&
-            google.accounts.oauth2
-        ) {
+    async function triggerRealGoogleOAuth(initial = {}) {
+        if (document.querySelector('.ar-google-login-dialog')) return;
+        const previous = document.activeElement;
+        const dialog = document.createElement('dialog');
+        dialog.className = 'ar-google-login-dialog';
+        dialog.setAttribute('aria-labelledby', 'googleLoginTitle');
+        dialog.innerHTML = '<div class="ar-google-login-heading"><span class="ar-google-login-brand">Arcádia</span><button type="button" data-google-close aria-label="Fechar entrada com Google">Fechar</button></div>' +
+            '<h2 id="googleLoginTitle">Entrar com Google</h2>' +
+            '<p class="ar-google-login-intro">Escolha a conta Google que usa o mesmo e-mail do seu cadastro.</p>' +
+            '<div class="ar-google-login-provider"><div data-google-button></div></div>' +
+            '<p class="ar-google-login-status" role="status">Preparando o acesso…</p>' +
+            '<button type="button" class="ar-google-login-enter" data-google-enter>Entrar</button>' +
+            '<form data-google-link hidden><h3>Vincule sua conta</h3><p>Confirme sua senha do Arcádia apenas nesta primeira vez. Seu perfil e suas permissões continuam os mesmos.</p><label for="googleLinkPassword">Senha do Arcádia</label><input id="googleLinkPassword" type="password" autocomplete="current-password" required maxlength="256"><button type="submit">Vincular e entrar</button></form>' +
+            '<div class="ar-google-login-actions"><span>Ainda não tem cadastro?</span><a href="signup.html">Criar conta</a></div>';
+        const status = dialog.querySelector('[role="status"]');
+        const linkForm = dialog.querySelector('form');
+        const enter = dialog.querySelector('[data-google-enter]');
+        enter.disabled = !estaLogado();
+        let credential, challenge, busy = false;
+        const showError = error => { status.textContent = error.message; status.dataset.state = error.data?.passwordRequired ? 'info' : 'error'; };
+        const submit = async (token, password) => {
+            if (busy || !dialog.isConnected) return;
+            busy = true;
+            linkForm.querySelector('button').disabled = true;
+            enter.disabled = true;
+            enter.textContent = 'Entrando…';
             try {
-                const tokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: cfg.googleClientId,
-                    scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-                    callback: async (tokenResponse) => {
-                        if (tokenResponse.error) {
-                            console.error(
-                                '[Arcadia Google Auth] Erro no token OAuth:',
-                                tokenResponse
-                            );
-                            openGoogleAuthModal(mode);
-                            return;
-                        }
-                        try {
-                            const res = await fetch(
-                                'https://www.googleapis.com/oauth2/v3/userinfo',
-                                {
-                                    headers: {
-                                        Authorization: `Bearer ${tokenResponse.access_token}`
-                                    }
-                                }
-                            );
-                            const profile = await res.json();
-                            if (profile && profile.email) {
-                                await completeGoogleAuth(
-                                    profile.name || '',
-                                    profile.email,
-                                    profile.picture || '',
-                                    'Google'
-                                );
-                            } else {
-                                openGoogleAuthModal(mode);
-                            }
-                        } catch (fetchErr) {
-                            console.error(
-                                '[Arcadia Google Auth] Erro ao obter dados do usuário do Google:',
-                                fetchErr
-                            );
-                            openGoogleAuthModal(mode);
-                        }
-                    },
-                    error_callback: (err) => {
-                        console.warn(
-                            '[Arcadia Google Auth] Erro retornado pelo cliente Google:',
-                            err
-                        );
-                        openGoogleAuthModal(mode);
-                    }
-                });
-
-                tokenClient.requestAccessToken({ prompt: 'select_account' });
-                return;
-            } catch (e) {
-                console.warn(
-                    '[Arcadia Google Auth] Erro ao disparar tokenClient do Google, abrindo modal:',
-                    e
-                );
+                await completeGoogleAuth(token, challenge, password);
+                dialog.close();
+            } catch (error) {
+                showError(error);
+                if (error.data?.passwordRequired) { enter.hidden = true; linkForm.hidden = false; linkForm.querySelector('input').focus(); }
+            } finally {
+                linkForm.querySelector('input').value = '';
+                linkForm.querySelector('button').disabled = false;
+                busy = false;
+                enter.disabled = !credential && !estaLogado();
+                enter.textContent = 'Entrar';
             }
-        }
-
-        // 3. Fallback seguro para modal local
-        openGoogleAuthModal(mode);
+        };
+        enter.addEventListener('click', () => {
+            if (busy) return;
+            if (credential) submit(credential);
+            else if (estaLogado()) irParaPortal();
+        });
+        linkForm.addEventListener('submit', event => { event.preventDefault(); submit(credential, linkForm.querySelector('input').value); });
+        dialog.querySelector('[data-google-close]').addEventListener('click', () => dialog.close());
+        dialog.addEventListener('close', () => {
+            googleSubmit = null;
+            credential = null;
+            linkForm.querySelector('input').value = '';
+            window.google?.accounts?.id?.cancel();
+            dialog.remove();
+            if (previous?.isConnected) previous.focus();
+        });
+        document.body.append(dialog);
+        dialog.showModal();
+        dialog.querySelector('[data-google-close]').focus();
+        try {
+            window.google?.accounts?.id?.cancel();
+            const context = initial.context || await prepareGoogleAuth();
+            if (!dialog.isConnected) return;
+            challenge = context.challenge;
+            googleSubmit = token => {
+                credential = token;
+                enter.disabled = false;
+                enter.hidden = false;
+                linkForm.hidden = true;
+                status.textContent = 'Conta Google selecionada. Clique em Entrar para continuar.';
+                status.dataset.state = 'info';
+                enter.focus();
+            };
+            const width = Math.min(340, Math.max(200, Math.floor(dialog.querySelector('[data-google-button]').getBoundingClientRect().width)));
+            window.google.accounts.id.renderButton(dialog.querySelector('[data-google-button]'),
+                { theme: 'outline', shape: 'pill', size: 'large', text: 'signin_with', locale: 'pt-BR', width });
+            status.textContent = estaLogado() ? 'Você já tem uma sessão do Arcádia. Clique em Entrar para voltar ou escolha outra conta Google.' : 'Escolha sua conta Google acima para habilitar a entrada.';
+            if (initial.credential && !initial.error) googleSubmit(initial.credential);
+            if (initial.error) {
+                credential = initial.credential;
+                showError(initial.error);
+                if (initial.error.data?.passwordRequired) { linkForm.hidden = false; linkForm.querySelector('input').focus(); }
+            }
+        } catch (error) { showError(error); }
     }
+    function openGoogleAuthModal() { return triggerRealGoogleOAuth(); }
+    function closeGoogleAuthModal() { document.querySelector('.ar-google-login-dialog')?.close(); }
 
     // ------------------------- Botões Sociais (Google / Facebook) -------------------------
     function initSocialButtons() {
@@ -843,6 +795,7 @@ window.Arcadia = window.Arcadia || {};
         logout,
         sendWelcomeEmail,
         completeGoogleAuth,
+        initGoogleSuggestion: initGoogleModal,
         triggerRealGoogleOAuth,
         openGoogleAuthModal,
         closeGoogleAuthModal,
