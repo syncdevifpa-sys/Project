@@ -57,6 +57,24 @@ function entry(body) {
     ];
 }
 function createClasses(database = db) {
+    const isAdmin = (actor) => actor.is_admin === 1 || actor.is_admin === true;
+    async function teacher(c, key) {
+        const professor = id(key);
+        const [rows] = await c.execute(
+            "SELECT id_usuario FROM usuarios WHERE id_usuario=? AND tipo_usuario='docente' AND situacao='ativo'",
+            [professor]
+        );
+        if (!rows.length) fail(400, 'Escolha um professor ativo.');
+        return professor;
+    }
+    async function teachers(owner) {
+        const actor = await user(database, owner);
+        if (!isAdmin(actor)) fail(403, 'Somente administradores atribuem professores.');
+        const [rows] = await database.execute(
+            "SELECT id_usuario,nome FROM usuarios WHERE tipo_usuario='docente' AND situacao='ativo' ORDER BY nome,id_usuario"
+        );
+        return rows;
+    }
     async function user(c, owner, lock = false) {
         const [rows] = await c.execute(
             'SELECT id_usuario, tipo_usuario, is_admin, email, situacao FROM usuarios WHERE id_usuario = ?' +
@@ -124,13 +142,14 @@ function createClasses(database = db) {
                     (actor.tipo_usuario === 'docente' && d.id_professor === owner)
             })),
             invites,
-            canCreate: actor.tipo_usuario === 'docente',
+            canCreate: actor.tipo_usuario === 'docente' || isAdmin(actor),
+            canAdminister: isAdmin(actor),
             role: actor.tipo_usuario
         };
     }
     async function cohorts(owner) {
         const actor = await user(database, owner);
-        if (actor.tipo_usuario !== 'docente')
+        if (actor.tipo_usuario !== 'docente' && !isAdmin(actor))
             fail(403, 'Somente professores consultam turmas para criar disciplinas.');
         const [rows] = await database.execute(
             'SELECT t.*, c.nome AS curso FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE c.ativo=1 ORDER BY t.ano_ingresso DESC, c.nome, t.nome'
@@ -139,8 +158,9 @@ function createClasses(database = db) {
     }
     async function create(owner, body) {
         return transaction(owner, async (c, actor) => {
-            if (actor.tipo_usuario !== 'docente')
+            if (actor.tipo_usuario !== 'docente' && !isAdmin(actor))
                 fail(403, 'Somente professores criam suas disciplinas.');
+            const professor = isAdmin(actor) ? await teacher(c, body.id_professor) : owner;
             if (!['manha', 'tarde', 'noite', 'integral'].includes(body.turno))
                 fail(400, 'Turno inválido.');
             const course = id(body.id_curso),
@@ -164,7 +184,7 @@ function createClasses(database = db) {
             );
             const [d] = await c.execute(
                 'INSERT INTO academico_disciplinas (id_turma,id_professor,nome,ano_letivo) VALUES (?,?,?,?)',
-                [t.insertId, owner, text(body.nome, 100, 'Disciplina'), academic]
+                [t.insertId, professor, text(body.nome, 100, 'Disciplina'), academic]
             );
             return { id_disciplina: d.insertId };
         });
@@ -187,6 +207,39 @@ function createClasses(database = db) {
               )
             : [[]];
         return { subject, posts, people, pending };
+    }
+    async function updateSubject(owner, key, body) {
+        return transaction(owner, async (c, actor) => {
+            if (!isAdmin(actor))
+                fail(403, 'Somente administradores alteram a disciplina e seu responsável.');
+            await scope(c, actor, key, true);
+            const professor = await teacher(c, body.id_professor);
+            await c.execute(
+                'UPDATE academico_disciplinas SET nome=?,id_professor=? WHERE id_disciplina=?',
+                [text(body.nome, 100, 'Disciplina'), professor, id(key)]
+            );
+        });
+    }
+    async function updateCohort(owner, key, body) {
+        return transaction(owner, async (c, actor) => {
+            if (!isAdmin(actor)) fail(403, 'Somente administradores alteram os dados da turma.');
+            if (!['manha', 'tarde', 'noite', 'integral'].includes(body.turno))
+                fail(400, 'Turno inválido.');
+            const [rows] = await c.execute(
+                'SELECT id_turma FROM academico_turmas WHERE id_turma=? FOR UPDATE',
+                [id(key)]
+            );
+            if (!rows.length) fail(404, 'Turma não encontrada.');
+            await c.execute(
+                'UPDATE academico_turmas SET nome=?,turno=?,campus=? WHERE id_turma=?',
+                [
+                    text(body.nome, 100, 'Turma'),
+                    body.turno,
+                    text(body.campus, 100, 'Campus'),
+                    id(key)
+                ]
+            );
+        });
     }
     async function cohortFeed(owner, key) {
         const actor = await user(database, owner);
@@ -336,6 +389,9 @@ function createClasses(database = db) {
         return rows[0];
     }
     return {
+        teachers,
+        updateSubject,
+        updateCohort,
         list,
         cohorts,
         create,

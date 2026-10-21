@@ -9,7 +9,8 @@ function fixture({
     otherCohort = false,
     invite = true,
     ownFile = true,
-    active = true
+    active = true,
+    teacherActive = true
 } = {}) {
     const queries = [],
         writes = [],
@@ -33,6 +34,11 @@ function fixture({
         async execute(sql, args = []) {
             queries.push({ sql, args });
             if (sql.startsWith('SELECT id_usuario, tipo_usuario')) return [[actor]];
+            if (sql.startsWith('SELECT id_usuario FROM usuarios WHERE id_usuario=?'))
+                return [teacherActive ? [{ id_usuario: args[0] }] : []];
+            if (sql.startsWith('SELECT id_usuario,nome FROM usuarios'))
+                return [[{ id_usuario: 8, nome: 'Professor ativo' }]];
+            if (sql.startsWith('SELECT id_turma FROM academico_turmas')) return [[{ id_turma: 2 }]];
             if (sql.startsWith('SELECT d.*, t.id_curso')) return [[subject]];
             if (sql.startsWith('SELECT id_aluno FROM academico_matriculas'))
                 return [enrolled ? [{ id_aluno: 7 }] : []];
@@ -114,6 +120,65 @@ test('professor cria sua disciplina reutilizando a turma compartilhada e ignora 
     const student = fixture({ role: 'discente' });
     await assert.rejects(student.service.create(7, {}), { status: 403 });
     assert.equal(student.writes.length, 0);
+});
+test('admin cria disciplina com professor ativo; contas comuns não atribuem responsáveis', async () => {
+    const body = {
+        id_curso: 1,
+        nome: 'Programação',
+        turma: '2026 A',
+        ano_ingresso: 2026,
+        ano_letivo: 2026,
+        turno: 'manha',
+        campus: 'Belém',
+        id_professor: 8
+    };
+    const admin = fixture({ role: 'servidor', admin: true });
+    await admin.service.create(7, body);
+    assert.deepEqual(admin.writes[1].args, [2, 8, 'Programação', 2026]);
+    const list = await admin.service.list(7);
+    assert.equal(list.canCreate, true);
+    assert.equal(list.canAdminister, true);
+    assert.equal((await admin.service.teachers(7))[0].id_usuario, 8);
+    await admin.service.cohorts(7);
+    const invalid = fixture({ admin: true, teacherActive: false });
+    await assert.rejects(invalid.service.create(7, body), { status: 400 });
+    assert.equal(invalid.writes.length, 0);
+    for (const role of ['discente', 'docente', 'servidor']) {
+        const common = fixture({ role });
+        await assert.rejects(common.service.teachers(7), { status: 403 });
+        await assert.rejects(
+            common.service.updateSubject(7, 3, { nome: 'Outra', id_professor: 8 }),
+            { status: 403 }
+        );
+        await assert.rejects(
+            common.service.updateCohort(7, 2, { nome: 'Outra', turno: 'tarde', campus: 'Belém' }),
+            { status: 403 }
+        );
+        assert.equal(common.writes.length, 0);
+    }
+});
+test('admin altera responsável e metadados da turma preservando matrículas e conteúdos', async () => {
+    const admin = fixture({ admin: true, teacher: 8 });
+    await admin.service.updateSubject(7, 3, { nome: 'Programação II', id_professor: 9 });
+    assert.deepEqual(admin.writes[0].args, ['Programação II', 9, 3]);
+    await admin.service.updateCohort(7, 2, {
+        nome: '2026 B',
+        turno: 'tarde',
+        campus: 'Belém',
+        id_curso: 99,
+        ano_ingresso: 2020
+    });
+    assert.deepEqual(admin.writes[1].args, ['2026 B', 'tarde', 'Belém', 2]);
+    assert.ok(
+        !admin.writes.some((q) =>
+            /DELETE|academico_matriculas|academico_publicacoes|id_curso=|ano_ingresso=/.test(q.sql)
+        )
+    );
+    const invalid = fixture({ admin: true, teacherActive: false });
+    await assert.rejects(invalid.service.updateSubject(7, 3, { nome: 'Aula', id_professor: 9 }), {
+        status: 400
+    });
+    assert.equal(invalid.writes.length, 0);
 });
 test('professor não acessa nem modifica disciplina alheia; aluno só lê quando matriculado', async () => {
     for (const options of [

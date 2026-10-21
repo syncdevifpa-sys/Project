@@ -5,7 +5,8 @@ A página `classes.html` usa a sessão real do Arcádia e a API `/api/classes`. 
 ## Como funciona
 
 - Professores criam sua própria disciplina em uma turma existente ou nova. Curso, nome da turma, ingresso, turno e campus identificam a mesma turma; nome e ano letivo identificam uma disciplina dentro dela. Uma disciplina não é duplicada silenciosamente nem transferida a outro professor.
-- O professor acessa suas disciplinas; cada contexto mostra somente os participantes e conteúdos daquela disciplina. Administradores podem administrar os contextos existentes. Criar disciplina exige uma conta de professor.
+- O professor acessa suas disciplinas; cada contexto mostra somente os participantes e conteúdos daquela disciplina. Administradores podem criar disciplinas escolhendo um professor ativo, editar o nome e responsável da disciplina, editar nome/turno/campus da turma e administrar participantes, convites e conteúdos. Dados de turma são compartilhados por todas as suas disciplinas; curso e ingresso não são alterados por essa edição.
+- A troca de professor preserva as matrículas e publicações, concede acesso ao novo responsável e retira o acesso do anterior, salvo seu privilégio administrativo. Documentos originais continuam pertencendo a seus autores.
 - O responsável pode cancelar um convite pendente ou remover o acesso de um aluno à sua disciplina, com confirmação. Isso não exclui a conta nem as matrículas nas outras disciplinas.
 - Alunos veem as disciplinas aceitas, agrupadas por turma. O convite não dá acesso às demais disciplinas.
 - A opção **Todas as disciplinas** reúne avisos, materiais, projetos e agenda apenas das disciplinas aceitas naquela turma. Cada publicação identifica sua disciplina. O professor permanece no contexto de uma disciplina, sem essa visão agregada de aluno.

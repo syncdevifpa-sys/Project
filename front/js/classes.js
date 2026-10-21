@@ -58,10 +58,14 @@
         try {
             data = await call('');
             q('#classCreate').hidden = !data.canCreate;
-            q('#classIntro').textContent =
-                data.role === 'docente'
-                    ? 'Cada disciplina reúne somente seus alunos, materiais e atividades.'
-                    : 'Sua turma reúne as disciplinas em que você participa.';
+            q('.ar-hero-title').textContent = data.canAdminister
+                ? 'Administrar turmas'
+                : 'Minhas turmas';
+            q('#classIntro').textContent = data.canAdminister
+                ? 'Administre turmas, professores responsáveis, participantes e conteúdos.'
+                : data.role === 'docente'
+                  ? 'Cada disciplina reúne somente seus alunos, materiais e atividades.'
+                  : 'Sua turma reúne as disciplinas em que você participa.';
             renderSubjects();
             renderInvites();
             if (
@@ -197,6 +201,14 @@
                 'ac-meta'
             )
         );
+        if (data.canAdminister && !detail.aggregate) {
+            const actions = el('div', undefined, 'ac-actions');
+            actions.append(
+                btn('Editar turma', cohortEditor),
+                btn('Editar disciplina e professor', subjectEditor)
+            );
+            heading.append(actions);
+        }
         const tabs = q('#classTabs');
         tabs.hidden = false;
         tabs.replaceChildren();
@@ -418,19 +430,30 @@
     }
     async function createEditor() {
         try {
-            const [courses, cohorts] = await Promise.all([
+            const [courses, cohorts, teachers] = await Promise.all([
                 api.expect(api.get('/api/courses', { auth: false })),
-                call('/cohorts')
+                call('/cohorts'),
+                data.canAdminister ? call('/teachers') : Promise.resolve([])
             ]);
             const e = editor('Criar disciplina em uma turma'),
                 now = new Date().getFullYear();
             e.fields.append(
                 el(
                     'p',
-                    'Use o mesmo curso, nome da turma, ingresso, turno e campus para reunir disciplinas na mesma turma. Você será o professor responsável.',
+                    data.canAdminister
+                        ? 'Selecione a turma e o professor responsável. O professor escolhido terá acesso à disciplina e aos participantes.'
+                        : 'Use o mesmo curso, nome da turma, ingresso, turno e campus para reunir disciplinas na mesma turma. Você será o professor responsável.',
                     'ac-meta'
                 )
             );
+            let professor;
+            if (data.canAdminister) {
+                professor = e.select('Professor responsável', [
+                    ['', 'Selecione um professor'],
+                    ...teachers.map((t) => [t.id_usuario, t.nome])
+                ]);
+                professor.required = true;
+            }
             const existing = e.select('Turma existente', [
                 ['', 'Criar uma nova turma'],
                 ...cohorts.map((c) => [
@@ -489,13 +512,84 @@
                     ano_ingresso: Number(start.value),
                     ano_letivo: Number(year.value),
                     turno: shift.value,
-                    campus: campus.value
+                    campus: campus.value,
+                    ...(professor ? { id_professor: Number(professor.value) } : {})
                 });
                 selected = created.id_disciplina;
             });
         } catch (e) {
             message(e.message);
         }
+    }
+    async function subjectEditor() {
+        try {
+            const subject = detail.subject,
+                teachers = await call('/teachers');
+            const e = editor('Editar disciplina e professor');
+            const name = e.field('Disciplina', {
+                value: subject.nome,
+                required: true,
+                maxLength: 100
+            });
+            const professor = e.select(
+                'Professor responsável',
+                [
+                    ['', 'Selecione um professor ativo'],
+                    ...teachers.map((t) => [t.id_usuario, t.nome])
+                ],
+                subject.id_professor
+            );
+            professor.required = true;
+            e.fields.append(
+                el(
+                    'p',
+                    'Ao trocar o responsável, o novo professor recebe acesso aos conteúdos e participantes desta disciplina. O anterior perde esse acesso, salvo se também for administrador. As matrículas são preservadas.',
+                    'ac-meta'
+                )
+            );
+            e.submit(() =>
+                call('/' + subject.id_disciplina, 'PUT', {
+                    nome: name.value,
+                    id_professor: Number(professor.value)
+                })
+            );
+        } catch (e) {
+            message(e.message);
+        }
+    }
+    function cohortEditor() {
+        const subject = detail.subject,
+            e = editor('Editar turma');
+        const name = e.field('Nome da turma', {
+            value: subject.turma,
+            required: true,
+            maxLength: 100
+        });
+        const shift = e.select(
+            'Turno',
+            [
+                ['manha', 'Manhã'],
+                ['tarde', 'Tarde'],
+                ['noite', 'Noite'],
+                ['integral', 'Integral']
+            ],
+            subject.turno
+        );
+        const campus = e.field('Campus', { value: subject.campus, required: true, maxLength: 100 });
+        e.fields.append(
+            el(
+                'p',
+                'Esses dados são compartilhados por todas as disciplinas desta turma. Curso, ingresso, alunos e conteúdos serão preservados.',
+                'ac-meta'
+            )
+        );
+        e.submit(() =>
+            call('/cohorts/' + subject.id_turma, 'PUT', {
+                nome: name.value,
+                turno: shift.value,
+                campus: campus.value
+            })
+        );
     }
     function inviteEditor() {
         const e = editor('Convidar para ' + detail.subject.nome),

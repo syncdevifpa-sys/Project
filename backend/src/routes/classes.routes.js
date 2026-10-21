@@ -16,6 +16,24 @@ const action = (fn) => async (q, s, next) => {
     }
 };
 router.get(
+    '/teachers',
+    action(async (q, s) => s.json(await service.teachers(q.user.id_usuario)))
+);
+router.put(
+    '/cohorts/:id',
+    action(async (q, s) => {
+        await service.updateCohort(q.user.id_usuario, q.params.id, q.body || {});
+        s.json({ message: 'Dados da turma atualizados.' });
+    })
+);
+router.put(
+    '/:id',
+    action(async (q, s) => {
+        await service.updateSubject(q.user.id_usuario, q.params.id, q.body || {});
+        s.json({ message: 'Disciplina e responsável atualizados.' });
+    })
+);
+router.get(
     '/',
     action(async (q, s) => s.json(await service.list(q.user.id_usuario)))
 );
@@ -110,7 +128,7 @@ router.use((e, _q, s, _next) => {
             : status === 503
               ? 'Turmas precisa ser habilitado no banco. Aplique a migração com a equipe.'
               : status === 409
-                ? 'Essa disciplina já existe nesta turma e ano. Confira o nome ou fale com o responsável.'
+                ? 'Já existe uma turma ou disciplina com esses dados. Confira os nomes e o ano.'
                 : 'Não foi possível concluir a operação de Turmas.'
     });
 });

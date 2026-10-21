@@ -108,6 +108,10 @@
 .ac-editor::backdrop {
   background: var(--scrim);
 }
+.ac-editor,
+.ac-editor * {
+  box-sizing: border-box;
+}
 .ac-fields {
   display: grid;
   gap: 16px;
