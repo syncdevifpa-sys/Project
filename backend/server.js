@@ -82,6 +82,7 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/calendar-import', require('./src/routes/calendarImport.routes'));
 app.use('/api/projects', projectsRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/document-library', require('./src/routes/documentLibrary.routes'));
 app.use('/api/reminders', remindersRoutes);
 app.use('/api/useful-links', usefulLinksRoutes);
 app.use('/api/external', externalUsersRoutes);
