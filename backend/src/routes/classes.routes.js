@@ -40,6 +40,10 @@ router.get(
     '/:id',
     action(async (q, s) => s.json(await service.detail(q.user.id_usuario, q.params.id)))
 );
+router.get(
+    '/cohorts/:id/feed',
+    action(async (q, s) => s.json(await service.cohortFeed(q.user.id_usuario, q.params.id)))
+);
 router.post(
     '/:id/invites',
     action(async (q, s) => {

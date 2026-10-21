@@ -8,6 +8,7 @@ A página `classes.html` usa a sessão real do Arcádia e a API `/api/classes`. 
 - O professor acessa suas disciplinas; cada contexto mostra somente os participantes e conteúdos daquela disciplina. Administradores podem administrar os contextos existentes. Criar disciplina exige uma conta de professor.
 - O responsável pode cancelar um convite pendente ou remover o acesso de um aluno à sua disciplina, com confirmação. Isso não exclui a conta nem as matrículas nas outras disciplinas.
 - Alunos veem as disciplinas aceitas, agrupadas por turma. O convite não dá acesso às demais disciplinas.
+- A opção **Todas as disciplinas** reúne avisos, materiais, projetos e agenda apenas das disciplinas aceitas naquela turma. Cada publicação identifica sua disciplina. O professor permanece no contexto de uma disciplina, sem essa visão agregada de aluno.
 - Convites são endereçados ao e-mail atual da conta, expiram em sete dias e aparecem em Turmas. Não há envio por SMTP nesta entrega. O aluno precisa de uma conta institucional do tipo discente; possuir Gmail não atribui esse papel automaticamente.
 - Aceitar não muda a turma de um aluno que já participa de outra turma do mesmo curso. O conflito pede conferência com o professor; não existe transferência automática nesta entrega.
 - Avisos, materiais, projetos com prazo e eventos da agenda são privados da disciplina. Professores podem editar e excluir publicações. Agenda permite sinalizar cancelamento. Projetos são orientações: entrega de trabalhos e atribuição de notas não fazem parte desta etapa.

@@ -188,6 +188,36 @@ function createClasses(database = db) {
             : [[]];
         return { subject, posts, people, pending };
     }
+    async function cohortFeed(owner, key) {
+        const actor = await user(database, owner);
+        if (actor.tipo_usuario !== 'discente')
+            fail(403, 'A visão consolidada é exclusiva dos alunos da turma.');
+        const [subjects] = await database.execute(
+            'SELECT d.id_disciplina, t.* FROM academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE m.id_aluno=? AND t.id_turma=?',
+            [owner, id(key)]
+        );
+        if (!subjects.length) fail(404, 'Turma não encontrada para esta conta.');
+        const [posts] = await database.execute(
+            "SELECT p.*, d.nome AS disciplina, DATE_FORMAT(p.inicio, '%Y-%m-%dT%H:%i') AS inicio, DATE_FORMAT(p.fim, '%Y-%m-%dT%H:%i') AS fim, i.nome_arquivo, i.tipo AS tipo_documento, i.url AS documento_url FROM academico_publicacoes p JOIN academico_disciplinas d ON d.id_disciplina=p.id_disciplina JOIN academico_matriculas m ON m.id_disciplina=d.id_disciplina LEFT JOIN documento_itens i ON i.id_item=p.id_item WHERE m.id_aluno=? AND d.id_turma=? ORDER BY p.criado_em DESC,p.id_publicacao DESC",
+            [owner, id(key)]
+        );
+        const t = subjects[0];
+        return {
+            subject: {
+                id_turma: t.id_turma,
+                nome: 'Minha turma',
+                turma: t.nome,
+                ano_ingresso: t.ano_ingresso,
+                turno: t.turno,
+                campus: t.campus,
+                canManage: false
+            },
+            posts,
+            people: [],
+            pending: [],
+            aggregate: true
+        };
+    }
     async function invite(owner, key, body) {
         return transaction(owner, async (c, actor) => {
             const d = await scope(c, actor, key, true),
@@ -310,6 +340,7 @@ function createClasses(database = db) {
         cohorts,
         create,
         detail,
+        cohortFeed,
         invite,
         decide,
         cancelInvite,

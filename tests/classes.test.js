@@ -36,6 +36,21 @@ function fixture({
             if (sql.startsWith('SELECT d.*, t.id_curso')) return [[subject]];
             if (sql.startsWith('SELECT id_aluno FROM academico_matriculas'))
                 return [enrolled ? [{ id_aluno: 7 }] : []];
+            if (sql.startsWith('SELECT d.id_disciplina, t.*'))
+                return [
+                    enrolled
+                        ? [
+                              {
+                                  id_disciplina: 3,
+                                  id_turma: 2,
+                                  nome: '2026 A',
+                                  ano_ingresso: 2026,
+                                  turno: 'manha',
+                                  campus: 'Belém'
+                              }
+                          ]
+                        : []
+                ];
             if (sql.startsWith('SELECT v.id_convite,v.id_disciplina'))
                 return [
                     invite ? [{ id_convite: 4, id_disciplina: 3, id_turma: 2, id_curso: 1 }] : []
@@ -229,6 +244,24 @@ test('listagem separa professor e matrícula de aluno; conta inativa é recusada
     assert.match(q.sql, /EXISTS .*academico_matriculas/);
     const inactive = fixture({ active: false });
     await assert.rejects(inactive.service.list(7), { status: 403 });
+});
+test('visão consolidada reúne apenas as disciplinas aceitas pelo aluno na mesma turma', async () => {
+    const student = fixture({ role: 'discente', teacher: 8, enrolled: true });
+    const result = await student.service.cohortFeed(7, 2);
+    assert.equal(result.aggregate, true);
+    assert.equal(result.subject.canManage, false);
+    const query = student.queries.find((q) => q.sql.startsWith('SELECT p.*, d.nome AS disciplina'));
+    assert.deepEqual(query.args, [7, 2]);
+    assert.match(
+        query.sql,
+        /JOIN academico_matriculas m ON m.id_disciplina=p.id_disciplina|JOIN academico_matriculas m ON m.id_disciplina=d.id_disciplina/
+    );
+    assert.match(query.sql, /WHERE m.id_aluno=\? AND d.id_turma=\?/);
+    assert.doesNotMatch(query.sql.split(' FROM ')[0], /conteudo|email/);
+    const outsider = fixture({ role: 'discente' });
+    await assert.rejects(outsider.service.cohortFeed(7, 2), { status: 404 });
+    const teacher = fixture();
+    await assert.rejects(teacher.service.cohortFeed(7, 2), { status: 403 });
 });
 test('HTTP exige sessão real e impede acesso e download de outra disciplina', async (t) => {
     process.env.JWT_SECRET = process.env.JWT_SECRET || 'classes-http-tests-with-32-characters';

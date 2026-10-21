@@ -64,10 +64,18 @@
                     : 'Sua turma reúne as disciplinas em que você participa.';
             renderSubjects();
             renderInvites();
-            if (selected && data.subjects.some((s) => s.id_disciplina === selected))
+            if (
+                typeof selected === 'string' &&
+                selected.startsWith('cohort:') &&
+                data.subjects.some((s) => s.id_turma === Number(selected.slice(7)))
+            )
+                await loadCohort(Number(selected.slice(7)));
+            else if (selected && data.subjects.some((s) => s.id_disciplina === selected))
                 await load(selected);
-            else if (data.subjects.length) await load(data.subjects[0].id_disciplina);
-            else {
+            else if (data.subjects.length) {
+                if (data.role === 'discente') await loadCohort(data.subjects[0].id_turma);
+                else await load(data.subjects[0].id_disciplina);
+            } else {
                 selected = null;
                 detail = null;
                 q('#classTabs').hidden = true;
@@ -96,6 +104,14 @@
         for (const rows of groups.values()) {
             const first = rows[0];
             nav.append(el('h3', `${first.turma} · ${first.ano_ingresso} · ${first.curso}`));
+            if (data.role === 'discente') {
+                const aggregate = btn('Todas as disciplinas', () => loadCohort(first.id_turma));
+                aggregate.setAttribute(
+                    'aria-current',
+                    selected === 'cohort:' + first.id_turma ? 'page' : 'false'
+                );
+                nav.append(aggregate);
+            }
             for (const d of rows) {
                 const b = btn(`${d.nome} · ${d.ano_letivo}`, () => load(d.id_disciplina));
                 b.setAttribute('aria-current', selected === d.id_disciplina ? 'page' : 'false');
@@ -154,6 +170,22 @@
             if (version === generation) message(e.message);
         }
     }
+    async function loadCohort(id) {
+        const version = ++generation;
+        message('Carregando sua turma...');
+        try {
+            const result = await call('/cohorts/' + id + '/feed');
+            if (version !== generation) return;
+            selected = 'cohort:' + id;
+            detail = result;
+            if (tab === 'people') tab = 'aviso';
+            renderSubjects();
+            render();
+            message('');
+        } catch (e) {
+            if (version === generation) message(e.message);
+        }
+    }
     function render() {
         const { subject: d, posts, people, pending } = detail;
         const heading = q('#classContext');
@@ -161,7 +193,7 @@
             el('h2', d.nome),
             el(
                 'p',
-                `${d.turma} · ingresso ${d.ano_ingresso} · ${d.turno} · ${d.campus} · ano letivo ${d.ano_letivo}`,
+                `${d.turma} · ingresso ${d.ano_ingresso} · ${{ manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral' }[d.turno] || d.turno} · ${d.campus}${d.ano_letivo ? ' · ano letivo ' + d.ano_letivo : ''}`,
                 'ac-meta'
             )
         );
@@ -169,6 +201,7 @@
         tabs.hidden = false;
         tabs.replaceChildren();
         for (const [key, label] of Object.entries(labels)) {
+            if (detail.aggregate && key === 'people') continue;
             const b = btn(label, () => {
                 tab = key;
                 render();
@@ -261,6 +294,7 @@
                 el('h3', post.titulo),
                 el('p', 'Publicado em ' + dateText(post.criado_em), 'ac-meta')
             );
+            if (post.disciplina) row.append(el('p', post.disciplina, 'ac-meta'));
             if (post.descricao) row.append(el('p', post.descricao));
             if (post.inicio)
                 row.append(
@@ -566,7 +600,13 @@
     }
     async function download(post) {
         const response = await fetch(
-            api.BASE + base + '/' + selected + '/posts/' + post.id_publicacao + '/download',
+            api.BASE +
+                base +
+                '/' +
+                (post.id_disciplina || selected) +
+                '/posts/' +
+                post.id_publicacao +
+                '/download',
             { headers: { Authorization: 'Bearer ' + A.token.get() } }
         );
         if (!response.ok)
