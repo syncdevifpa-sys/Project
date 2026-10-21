@@ -83,6 +83,7 @@ app.use('/api/calendar-import', require('./src/routes/calendarImport.routes'));
 app.use('/api/projects', projectsRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/document-library', require('./src/routes/documentLibrary.routes'));
+app.use('/api/classes', require('./src/routes/classes.routes'));
 app.use('/api/reminders', remindersRoutes);
 app.use('/api/useful-links', usefulLinksRoutes);
 app.use('/api/external', externalUsersRoutes);
@@ -100,6 +101,11 @@ for (const [oldPage, newPage] of Object.entries(pageRedirects)) {
         res.redirect(308, '/' + newPage + req.originalUrl.slice(req.path.length));
     });
 }
+if (process.env.VERCEL || process.env.NODE_ENV === 'production')
+    app.get(
+        ['/classes-preview.html', '/classes-preview.css', '/js/classes-preview.js'],
+        (_req, res) => res.sendStatus(404)
+    );
 app.use(express.static(path.join(__dirname, '../front')));
 console.log('Application routes configured.');
 

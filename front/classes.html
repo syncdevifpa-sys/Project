@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Turmas · Arcádia</title
+    ><script src="js/theme.js"></script>
+    <link rel="stylesheet" href="tokens.css" /><link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" /><link
+      rel="stylesheet"
+      href="navigation.css"
+    />
+    <link rel="stylesheet" href="brand-logo.css" /><link
+      rel="stylesheet"
+      href="site-footer.css?v=3"
+    />
+    <link rel="stylesheet" href="privacy-notice.css" /><link
+      rel="stylesheet"
+      href="confirm-dialog.css"
+    />
+    <link rel="stylesheet" href="classes.css" />
+  </head>
+  <body
+    ><div class="ar-app">
+      <header class="ar-nav">
+        <a class="ar-brand" href="index.html"
+          ><img
+            class="ar-brand-img"
+            src="assets/arcadia-emblem.png"
+            alt="Arcádia"
+            width="34"
+            height="34"
+          /><span>Arcádia<small>IFPA Campus Belém</small></span></a
+        >
+        <nav class="ar-navpill" aria-label="Seções do portal"
+          ><a href="index.html">Início</a><a href="dashboard.html">Meu painel</a
+          ><a href="classes.html" aria-current="page">Turmas</a></nav
+        >
+        <a class="ar-btn" href="settings.html">Configurações</a>
+      </header>
+      <main id="classesApp">
+        <section class="ar-hero ar-hero--lime ar-hero--compact ac-heading"
+          ><div
+            ><p>Acesso privado · turma e disciplina</p><h1 class="ar-hero-title">Minhas turmas</h1
+            ><p id="classIntro">Materiais, avisos, projetos e agenda das suas disciplinas.</p></div
+          ><button class="ar-btn ar-btn--primary" id="classCreate" hidden
+            >Criar disciplina</button
+          ></section
+        >
+        <p id="classStatus" role="status" aria-live="polite"></p>
+        <section id="classInvites" aria-label="Convites recebidos" hidden></section>
+        <div class="ac-workspace"
+          ><aside class="ar-card ac-context"
+            ><h2>Minhas disciplinas</h2
+            ><nav id="classSubjects" aria-label="Turmas e disciplinas"></nav
+          ></aside>
+          <section class="ac-content"
+            ><div id="classContext"></div
+            ><nav id="classTabs" class="ac-tabs" aria-label="Conteúdo da disciplina" hidden></nav
+            ><div id="classContent"></div></section
+        ></div> </main
+    ></div>
+    <footer class="ar-site-footer" aria-label="Contato e informações legais"
+      ><span>Arcádia · Portal acadêmico</span
+      ><nav aria-label="Contato e documentos"
+        ><a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a
+        ><a href="privacy.html">Política de Privacidade</a><a href="terms.html">Termos de Uso</a
+        ><a href="cookies.html">Política de Cookies</a></nav
+      ></footer
+    >
+    <script src="js/api.js"></script
+    ><script src="js/auth.js"></script
+    ><script src="js/portal.js"></script
+    ><script src="js/confirm-dialog.js"></script
+    ><script src="js/classes.js"></script
+    ><script src="js/navigation.js"></script
+    ><script src="js/privacy-notice.js"></script> </body
+></html>

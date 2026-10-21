@@ -134,10 +134,12 @@ test('início público usa projeções públicas e independe da sessão', async 
     for (const file of fs
         .readdirSync(path.join(root, 'front'))
         .filter((f) => f.endsWith('.html'))) {
+        // A prévia isolada não usa sessão real nem integra o build publicado.
+        if (file === 'classes-preview.html') continue;
         const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
         if (!html.includes('class="ar-navpill"')) continue;
         assert.match(html, /href="index.html">Início<\/a>/, file);
-        assert.match(html, /href="dashboard.html"[^>]*>Meu painel<\/a>/, file);
+        assert.match(html, /href="dashboard.html"[^>]*>Meu painel<\/a\s*>/, file);
     }
 });
 

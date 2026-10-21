@@ -143,6 +143,12 @@ router.get(
     })
 );
 router.use((error, _req, res, _next) => {
+    if (['ER_ROW_IS_REFERENCED', 'ER_ROW_IS_REFERENCED_2'].includes(error.code))
+        return res
+            .status(409)
+            .json({
+                error: 'Este documento está anexado a uma disciplina. Remova o anexo em Turmas antes de excluir o original.'
+            });
     const missing = error.code === 'ER_NO_SUCH_TABLE';
     const tooLarge = error.type === 'entity.too.large';
     if (error.code === 'ER_DUP_ENTRY')
