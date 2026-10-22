@@ -236,7 +236,7 @@
                                         message:
                                             'Esta ação não pode ser desfeita.' +
                                             (people()
-                                                ? ' Pessoas com histórico não serão excluídas.'
+                                                ? ' A conta e seus dados vinculados serão removidos mesmo com histórico. Se for professor, suas disciplinas, matrículas e publicações também serão removidas.'
                                                 : ''),
                                         items: [
                                             `${row.nome || row.titulo || row[meta.id]} (ID ${id})`
