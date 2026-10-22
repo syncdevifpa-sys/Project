@@ -36,6 +36,14 @@ if (fs.existsSync(target)) {
     }
     fs.rmSync(target, { recursive: true });
 }
-fs.cpSync(path.join(root, 'front'), target, { recursive: true });
+const localPreviews = new Set([
+    'classes-preview.html',
+    'classes-preview.css',
+    'classes-preview.js'
+]);
+fs.cpSync(path.join(root, 'front'), target, {
+    recursive: true,
+    filter: (source) => !localPreviews.has(path.basename(source))
+});
 fs.writeFileSync(path.join(target, '.arcadia-generated'), 'Gerado por tools/build-static.js\n');
 console.log('Frontend copiado para public/; API entregue pelo adaptador Express.');

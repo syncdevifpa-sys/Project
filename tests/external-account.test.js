@@ -159,7 +159,7 @@ test('comparação institucional é exata e domínio não permite autoatribuir c
             },
             res
         );
-        assert.equal(res.code, 403);
+        assert.equal(res.code, tipo_usuario === 'docente' ? 400 : 403);
     }
 });
 

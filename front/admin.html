@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="bundle.css" />
     <link rel="stylesheet" href="portal-responsive.css" />
     <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="confirm-dialog.css" />
     <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
     <link rel="stylesheet" href="scrollbars.css" />
     <link rel="stylesheet" href="navigation.css" />
@@ -54,10 +55,18 @@
         <h1>Administração do aplicativo</h1>
         <p
           >Gerencie pessoas e conteúdo do portal. Desativar uma pessoa preserva o histórico e
-          encerra suas sessões. Exclusão definitiva só é permitida sem histórico vinculado.</p
+          encerra suas sessões. A exclusão definitiva remove a conta e os dados vinculados, mesmo
+          com histórico.</p
         >
       </section>
-      <section class="admin-panel">
+      <nav class="ar-requirement-tabs" aria-label="Áreas administrativas"
+        ><button type="button" class="ar-btn" id="adminGeneralTab" aria-pressed="true"
+          >Pessoas e conteúdo</button
+        ><button type="button" class="ar-btn" id="adminRequirementsTab" aria-pressed="false"
+          >Requisitos</button
+        ></nav
+      >
+      <section class="admin-panel" id="adminGeneralPanel">
         <div class="actions"
           ><label
             >Área
@@ -78,6 +87,15 @@
           </table>
         </div>
       </section>
+      <section class="admin-panel" id="adminRequirementsPanel" hidden
+        ><h2>Requisitos</h2
+        ><p
+          >Solicitações para Professor. Com seu acesso institucional autorizado ao SIGAA, confira
+          nome, matrícula / SIAPE, usuário, formação e vínculo. A confirmação do e-mail também é
+          obrigatória. A conferência no SIGAA é manual.</p
+        ><p id="requirementsAdminStatus" role="status" aria-live="polite"></p
+        ><div id="requirementsAdminList"></div
+      ></section>
       <dialog id="adminEditor">
         <form id="adminForm">
           <h2 id="editorTitle">Editar registro</h2>
@@ -101,7 +119,10 @@
     <link rel="stylesheet" href="avatar-editor.css" />
     <script src="js/avatar-editor.js"></script>
     <script src="js/notice-cover.js"></script>
+    <script src="js/confirm-dialog.js"></script>
     <script src="js/admin.js"></script>
+    <link rel="stylesheet" href="teacher-requirements.css" />
+    <script src="js/teacher-requirements-admin.js"></script>
     <script src="js/navigation.js"></script>
 
     <footer class="ar-site-footer" aria-label="Contato e informações legais">

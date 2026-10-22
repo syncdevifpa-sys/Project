@@ -200,9 +200,17 @@
                             row.situacao === 'bloqueado' ? 'Reativar' : 'Desativar',
                             async () => {
                                 if (
-                                    !confirm(
-                                        `${row.situacao === 'bloqueado' ? 'Reativar' : 'Desativar'} ${row.nome} (${row.email})? A desativação preserva o histórico e encerra as sessões.`
-                                    )
+                                    !(await A.confirmAction({
+                                        title:
+                                            row.situacao === 'bloqueado'
+                                                ? 'Reativar pessoa?'
+                                                : 'Desativar pessoa?',
+                                        message:
+                                            'A desativação preserva o histórico e encerra as sessões.',
+                                        items: [row.nome, row.email],
+                                        confirmLabel:
+                                            row.situacao === 'bloqueado' ? 'Reativar' : 'Desativar'
+                                    }))
                                 )
                                     return;
                                 await mutate(() =>
@@ -221,12 +229,26 @@
                             'Excluir definitivamente',
                             async () => {
                                 if (
-                                    !confirm(
-                                        `Excluir definitivamente ${row.nome || row.titulo || row[meta.id]} (ID ${id})? Esta ação não pode ser desfeita. Pessoas com histórico não serão excluídas.`
-                                    )
+                                    !(await A.confirmAction({
+                                        title: people()
+                                            ? 'Excluir pessoa definitivamente?'
+                                            : 'Excluir registro definitivamente?',
+                                        message:
+                                            'Esta ação não pode ser desfeita.' +
+                                            (people()
+                                                ? ' A conta e seus dados vinculados serão removidos mesmo com histórico. Se for professor, suas disciplinas, matrículas e publicações também serão removidas.'
+                                                : ''),
+                                        items: [
+                                            `${row.nome || row.titulo || row[meta.id]} (ID ${id})`
+                                        ],
+                                        confirmLabel: 'Excluir definitivamente'
+                                    }))
                                 )
                                     return;
-                                await mutate(() => request(endpoint() + '/' + id, 'DELETE'));
+                                await mutate(
+                                    () => request(endpoint() + '/' + id, 'DELETE'),
+                                    `${row.nome || row.titulo || row[meta.id]} foi excluído(a) definitivamente.`
+                                );
                             },
                             false,
                             true
@@ -240,10 +262,11 @@
             status.textContent = error.message;
         }
     }
-    async function mutate(action) {
+    async function mutate(action, successMessage) {
         try {
             await action();
             await load();
+            if (successMessage) status.textContent = successMessage;
         } catch (error) {
             status.textContent = error.message;
         }
