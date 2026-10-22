@@ -21,6 +21,29 @@ function transaction(t, person, admins, history = false) {
     t.mock.method(db, 'getConnection', async () => connection);
     return calls;
 }
+test('atribuir Professor diretamente pela edição administrativa é bloqueado em favor de Requisitos', async (t) => {
+    const calls = transaction(
+        t,
+        {
+            id_usuario: 8,
+            email: 'pessoa@ifpa.edu.br',
+            situacao: 'ativo',
+            tipo_usuario: 'discente',
+            is_admin: 0
+        },
+        [{ id_usuario: 4 }]
+    );
+    await assert.rejects(
+        service.changePerson(
+            'users',
+            8,
+            { tipo_usuario: 'docente', institutional_confirmation: true },
+            4
+        ),
+        (e) => e.status === 409 && /Requisitos/.test(e.message)
+    );
+    assert.ok(!calls.some((c) => c.sql?.startsWith('UPDATE usuarios')));
+});
 test('admin desativa outra pessoa e encerra suas sessões sem excluir histórico', async (t) => {
     const calls = transaction(
         t,
@@ -68,20 +91,50 @@ test('último admin não pode ser desativado e falha faz rollback', async (t) =>
     assert.ok(calls.includes('rollback'));
     assert.ok(!calls.some((call) => call.sql?.startsWith('UPDATE')));
 });
-test('exclusão com histórico é recusada; pessoa permanece desativada', async (t) => {
+test('admin exclui pessoa com histórico e limpa dependências antes da conta', async (t) => {
     const calls = transaction(
         t,
         { id_usuario: 8, email: 'pessoa@gmail.com', situacao: 'bloqueado', is_admin: 0 },
         [{ id_usuario: 4 }],
         true
     );
-    await assert.rejects(
-        service.changePerson('users', 8, {}, 4, true),
-        (error) => error.status === 409
-    );
-    assert.ok(!calls.some((call) => call.sql?.startsWith('DELETE FROM usuarios')));
+    await service.changePerson('users', 8, {}, 4, true);
+    const deletion = calls.findIndex((c) => c.sql?.startsWith('DELETE FROM usuarios'));
+    for (const table of [
+        'academico_disciplinas',
+        'documento_itens',
+        'documento_pastas',
+        'docente_requisitos',
+        'avisos',
+        'projetos'
+    ]) {
+        const index = calls.findIndex((c) => c.sql?.startsWith('DELETE FROM ' + table));
+        assert.ok(index >= 0 && index < deletion, table);
+        assert.equal(calls[index].params[0], 8);
+    }
+    assert.equal(calls.at(-2), 'commit');
 });
-test('exclusão definitiva exige bloqueio e ausência de relações', async (t) => {
+
+test('falha na limpeza reverte a exclusão sem desabilitar integridade referencial', async (t) => {
+    const calls = transaction(
+        t,
+        { id_usuario: 8, email: 'pessoa@gmail.com', situacao: 'bloqueado', is_admin: 0 },
+        [{ id_usuario: 4 }]
+    );
+    const connection = await db.getConnection();
+    const execute = connection.execute;
+    connection.execute = async (sql, params) => {
+        if (sql.startsWith('DELETE FROM documento_itens'))
+            throw new Error('Falha de armazenamento');
+        return execute(sql, params);
+    };
+    await assert.rejects(service.changePerson('users', 8, {}, 4, true), /Falha de armazenamento/);
+    assert.ok(calls.includes('rollback'));
+    assert.ok(!calls.some((c) => c.sql?.startsWith('DELETE FROM usuarios')));
+    assert.ok(!calls.some((c) => /FOREIGN_KEY_CHECKS/.test(c.sql || '')));
+});
+
+test('exclusão administrativa exige bloqueio prévio', async (t) => {
     const calls = transaction(
         t,
         { id_usuario: 8, email: 'pessoa@gmail.com', situacao: 'bloqueado', is_admin: 0 },
@@ -233,4 +286,44 @@ test('situação de inscrição de outra pessoa é alterada sem apagar históric
         service.registrations(10, 8, { status: 'invalido' }),
         (error) => error.status === 400
     );
+});
+
+test('admin não exclui pessoa ativa sem desativar primeiro', async (t) => {
+    const calls = transaction(t, { id_usuario: 8, situacao: 'ativo', is_admin: 0 }, [
+        { id_usuario: 4 }
+    ]);
+    await assert.rejects(service.changePerson('users', 8, {}, 4, true), (e) => e.status === 409);
+    assert.ok(!calls.some((c) => c.sql?.startsWith('DELETE')));
+});
+
+test('admin exclui conta externa com Requisitos e convites sem apagar dados de usuários institucionais', async (t) => {
+    const calls = transaction(
+        t,
+        { id_externo: 8, email: 'externo@example.test', situacao: 'bloqueado' },
+        [{ id_usuario: 4 }],
+        true
+    );
+    await service.changePerson('external-users', 8, {}, 4, true);
+    assert.ok(
+        calls.some(
+            (c) =>
+                c.sql === 'DELETE FROM docente_requisitos WHERE id_externo = ?' && c.params[0] === 8
+        )
+    );
+    assert.ok(
+        calls.some(
+            (c) =>
+                c.sql === 'DELETE FROM academico_convites WHERE email = ?' &&
+                c.params[0] === 'externo@example.test'
+        )
+    );
+    assert.ok(calls.some((c) => c.sql === 'DELETE FROM publico_externo WHERE id_externo = ?'));
+    assert.ok(
+        !calls.some(
+            (c) =>
+                c.sql?.startsWith('DELETE FROM usuarios') ||
+                c.sql?.startsWith('DELETE FROM academico_disciplinas')
+        )
+    );
+    assert.equal(calls.at(-2), 'commit');
 });

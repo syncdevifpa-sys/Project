@@ -1,0 +1,123 @@
+.ar-requirement-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.ar-requirement-tabs [aria-pressed='true'] {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.ar-teacher-request {
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  color: var(--ink);
+}
+.ar-teacher-request form,
+.ar-requirement-dialog form {
+  display: grid;
+  gap: 16px;
+}
+.ar-teacher-request summary {
+  cursor: pointer;
+  font-weight: 650;
+  min-height: 44px;
+  align-content: center;
+}
+.ar-requirement-dialog textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.ar-teacher-request label,
+.ar-requirement-dialog label {
+  display: grid;
+  gap: 6px;
+}
+.ar-teacher-request input,
+.ar-requirement-dialog textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  font: inherit;
+}
+.ar-teacher-request input[readonly] {
+  color: var(--ink-muted);
+}
+.ar-requirement-card {
+  padding: 20px;
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+.ar-requirement-card dl {
+  display: grid;
+  grid-template-columns: minmax(110px, 150px) minmax(0, 1fr);
+  gap: 8px 16px;
+}
+.ar-requirement-card dd {
+  margin: 0;
+  white-space: pre-line;
+}
+.ar-requirement-card dt {
+  font-weight: 600;
+}
+.ar-requirement-dialog {
+  box-sizing: border-box;
+  max-width: 560px;
+  width: calc(100% - 24px);
+  max-height: 90dvh;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.ar-requirement-dialog::backdrop {
+  background: var(--scrim);
+}
+.ar-requirement-dialog label:has(input[type='checkbox']) {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+.ar-requirement-dialog button {
+  padding: 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  background: var(--surface-sunken);
+  color: var(--ink);
+  border: 1px solid var(--control-border);
+  font: inherit;
+}
+.ar-requirement-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ar-requirement-feedback {
+  color: var(--danger);
+}
+@media (max-width: 600px) {
+  .ar-teacher-request {
+    margin: 16px;
+    padding: 18px;
+  }
+  .ar-requirement-card dl {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .ar-requirement-card dd {
+    margin-bottom: 10px;
+  }
+}

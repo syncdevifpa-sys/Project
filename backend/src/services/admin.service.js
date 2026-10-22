@@ -301,7 +301,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                       ['recuperacao_senha', 'id_usuario']
                   ]
                 : [['recuperacao_senha', 'id_externo']];
-            for (const [relation, column] of relations) {
+            for (const [relation, column] of selfRemoval ? relations : []) {
                 const [used] = await connection.execute(
                     `SELECT 1 FROM ${relation} WHERE ${column} = ? LIMIT 1`,
                     [id]
@@ -313,6 +313,54 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                     );
             }
             await connection.execute(`DELETE FROM tokens WHERE ${primary} = ?`, [id]);
+            try {
+                const [requests] = await connection.execute(
+                    `SELECT 1 FROM docente_requisitos WHERE ${primary} = ? LIMIT 1`,
+                    [id]
+                );
+                if (selfRemoval && requests.length)
+                    fail(
+                        409,
+                        'Esta conta possui uma solicitação de vínculo ou histórico em Requisitos. Use desativação para preservar o histórico.'
+                    );
+            } catch (error) {
+                if (error.code !== 'ER_NO_SUCH_TABLE') throw error;
+            }
+            if (!selfRemoval) {
+                // Limpeza na mesma transação; módulos ainda não instalados são opcionais.
+                const optional = async (sql, values = [id]) => {
+                    try {
+                        await connection.execute(sql, values);
+                    } catch (error) {
+                        if (error.code !== 'ER_NO_SUCH_TABLE') throw error;
+                    }
+                };
+                await optional(`DELETE FROM docente_requisitos WHERE ${primary} = ?`);
+                await optional('DELETE FROM academico_convites WHERE email = ?', [person.email]);
+                if (institutional) {
+                    // Excluir disciplinas primeiro libera seus anexos e demais dependências.
+                    await optional('DELETE FROM academico_disciplinas WHERE id_professor = ?');
+                    await optional(
+                        'DELETE p FROM academico_publicacoes p JOIN documento_itens i ON i.id_item = p.id_item WHERE i.id_usuario = ?'
+                    );
+                    await optional('DELETE FROM documento_salvos WHERE id_usuario = ?');
+                    await optional('DELETE FROM documento_itens WHERE id_usuario = ?');
+                    await optional('DELETE FROM documento_pastas WHERE id_usuario = ?');
+                    for (const relation of [
+                        'avisos',
+                        'tarefas',
+                        'documentos',
+                        'calendario',
+                        'projetos',
+                        'links_uteis'
+                    ]) {
+                        await connection.execute(`DELETE FROM ${relation} WHERE id_usuario = ?`, [
+                            id
+                        ]);
+                    }
+                }
+                // As demais relações usam CASCADE ou SET NULL conforme o esquema.
+            }
             await require('./email-verification.service').removeAccountState(
                 connection,
                 institutional ? 'users' : 'external',
@@ -381,6 +429,11 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 );
             delete data.email;
             const targetRole = data.tipo_usuario || person.tipo_usuario;
+            if (institutional && targetRole === 'docente' && person.tipo_usuario !== 'docente')
+                fail(
+                    409,
+                    'A atribuição de Professor exige aprovação pela aba Requisitos. Não altere o vínculo diretamente.'
+                );
             const targetEmail = data.email || person.email;
             if (
                 institutional &&

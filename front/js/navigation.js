@@ -32,13 +32,14 @@
             settings: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6',
             calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 10h16',
             people: 'M16 21v-3a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v3 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M17 5a3 3 0 0 1 0 6 M17 14a4 4 0 0 1 4 4v3',
+            class: 'M8 21v-3a4 4 0 0 1 8 0v3 M12 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6 M2 18v-2a3 3 0 0 1 4-3 M22 18v-2a3 3 0 0 0-4-3 M5 3a3 3 0 1 0 0 6 M19 3a3 3 0 1 1 0 6',
             projects: 'M3 7h7l2-3h9v17H3z',
             shield: 'M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z'
         };
         const groups = [
             {
                 name: 'Meu espaço',
-                icon: 'home',
+                icon: 'panel',
                 links: [
                     ['dashboard.html', 'Meu painel', 'panel'],
                     ['tasks.html', 'Tarefas', 'tasks'],
@@ -57,6 +58,11 @@
                 ]
             }
         ];
+        groups.push({
+            name: 'Turmas',
+            icon: 'class',
+            links: [['classes.html', 'Minhas turmas', 'class']]
+        });
         if (session.is_admin)
             groups.push({
                 name: 'Administração',
