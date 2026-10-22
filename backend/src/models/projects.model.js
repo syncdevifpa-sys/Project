@@ -1,7 +1,19 @@
 const db = require('../config/database');
+async function publicQuery(sql, params = []) {
+    try {
+        return await db.execute(sql, params);
+    } catch (e) {
+        if (
+            e.code !== 'ER_BAD_FIELD_ERROR' ||
+            !/permite_externos/.test(e.sqlMessage || e.message || '')
+        )
+            throw e;
+        return db.execute(sql.replace('permite_externos,', '0 AS permite_externos,'), params);
+    }
+}
 
 async function listProjects() {
-    const [projects] = await db.execute(`
+    const [projects] = await publicQuery(`
         SELECT
             id_projeto,
             id_usuario,
@@ -11,6 +23,7 @@ async function listProjects() {
             responsavel_nome,
             rotulo_responsavel,
             vagas,
+            permite_externos,
             unidade_vaga,
             link,
             situacao,
@@ -29,7 +42,7 @@ async function listProjects() {
 }
 
 async function findProjectById(projectId) {
-    const [projects] = await db.execute(
+    const [projects] = await publicQuery(
         `
         SELECT
             id_projeto,
@@ -40,6 +53,7 @@ async function findProjectById(projectId) {
             responsavel_nome,
             rotulo_responsavel,
             vagas,
+            permite_externos,
             unidade_vaga,
             link,
             situacao,
@@ -69,6 +83,7 @@ async function createProject(userId, projectData) {
         unidade_vaga = 'vagas',
         link = null,
         situacao = 'ativo',
+        permite_externos = false,
         data_inicio = null,
         data_fim = null
     } = projectData;
@@ -83,13 +98,14 @@ async function createProject(userId, projectData) {
             responsavel_nome,
             rotulo_responsavel,
             vagas,
+            permite_externos,
             unidade_vaga,
             link,
             situacao,
             data_inicio,
             data_fim
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
         [
             userId,
@@ -99,6 +115,7 @@ async function createProject(userId, projectData) {
             responsavel_nome,
             rotulo_responsavel,
             vagas,
+            permite_externos,
             unidade_vaga,
             link,
             situacao,
@@ -124,6 +141,7 @@ async function updateProject(projectId, projectData) {
         responsavel_nome = currentProject.responsavel_nome,
         rotulo_responsavel = currentProject.rotulo_responsavel,
         vagas = currentProject.vagas,
+        permite_externos = currentProject.permite_externos,
         unidade_vaga = currentProject.unidade_vaga,
         link = currentProject.link,
         situacao = currentProject.situacao,
@@ -141,6 +159,7 @@ async function updateProject(projectId, projectData) {
             responsavel_nome = ?,
             rotulo_responsavel = ?,
             vagas = ?,
+            permite_externos = ?,
             unidade_vaga = ?,
             link = ?,
             situacao = ?,
@@ -155,6 +174,7 @@ async function updateProject(projectId, projectData) {
             responsavel_nome,
             rotulo_responsavel,
             vagas,
+            permite_externos,
             unidade_vaga,
             link,
             situacao,

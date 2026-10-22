@@ -16,7 +16,7 @@ const resources = {
         'calendario',
         'id_evento',
         'Calendário',
-        'id_usuario titulo descricao categoria periodo_letivo data_evento data_fim hora_inicio hora_fim local'
+        'id_usuario titulo descricao categoria periodo_letivo data_evento data_fim hora_inicio hora_fim local origem_calendario'
     ],
     documents: [
         'documentos',
@@ -28,7 +28,7 @@ const resources = {
         'projetos',
         'id_projeto',
         'Projetos',
-        'id_usuario titulo descricao eixo responsavel_nome rotulo_responsavel vagas unidade_vaga link situacao aprovacao aprovado_por data_inicio data_fim'
+        'id_usuario titulo descricao eixo responsavel_nome rotulo_responsavel vagas unidade_vaga link situacao aprovacao aprovado_por data_inicio data_fim permite_externos'
     ],
     tasks: [
         'tarefas',
@@ -311,6 +311,36 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                         409,
                         'Esta conta possui ligações ou histórico. A exclusão não é permitida; use desativação pela administração.'
                     );
+            }
+            if (selfRemoval) {
+                const optionalRelations = institutional
+                    ? [
+                          ['documento_itens', 'id_usuario'],
+                          ['documento_pastas', 'id_usuario'],
+                          ['documento_salvos', 'id_usuario'],
+                          ['academico_matriculas', 'id_aluno'],
+                          ['academico_disciplinas', 'id_professor'],
+                          ['academico_saidas_professor', 'id_professor']
+                      ]
+                    : [
+                          ['projeto_inscricoes_externas', 'id_externo'],
+                          ['agenda_externa', 'id_externo']
+                      ];
+                for (const [relation, column] of optionalRelations) {
+                    try {
+                        const [used] = await connection.execute(
+                            `SELECT 1 FROM ${relation} WHERE ${column} = ? LIMIT 1`,
+                            [id]
+                        );
+                        if (used.length)
+                            fail(
+                                409,
+                                'Esta conta possui ligações ou histórico. Use desativação pela administração.'
+                            );
+                    } catch (e) {
+                        if (e.code !== 'ER_NO_SUCH_TABLE') throw e;
+                    }
+                }
             }
             await connection.execute(`DELETE FROM tokens WHERE ${primary} = ?`, [id]);
             try {

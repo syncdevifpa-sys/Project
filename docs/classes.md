@@ -4,12 +4,12 @@ A página `classes.html` usa a sessão real do Arcádia e a API `/api/classes`. 
 
 ## Como funciona
 
-- Professores criam sua própria disciplina em uma turma existente ou nova. Curso, nome da turma, ingresso, turno e campus identificam a mesma turma; nome e ano letivo identificam uma disciplina dentro dela. Uma disciplina não é duplicada silenciosamente nem transferida a outro professor.
+- Professores criam ofertas de suas disciplinas em uma turma existente ou nova. A turma/coorte é permanente e seu nome é único no sistema após normalização de espaços e caixa. Reutilizar uma turma exige selecionar seu ID. Cada oferta identifica ano, regime e semestre; nomes de disciplina podem se repetir em ofertas distintas.
 - O professor acessa suas disciplinas; cada contexto mostra somente os participantes e conteúdos daquela disciplina. Administradores podem criar disciplinas escolhendo um professor ativo, editar o nome e responsável da disciplina, editar nome/turno/campus da turma e administrar participantes, convites e conteúdos. Dados de turma são compartilhados por todas as suas disciplinas; curso e ingresso não são alterados por essa edição.
 - A troca de professor preserva as matrículas e publicações, concede acesso ao novo responsável e retira o acesso do anterior, salvo seu privilégio administrativo. Documentos originais continuam pertencendo a seus autores.
 - O responsável pode cancelar um convite pendente ou remover o acesso de um aluno à sua disciplina, com confirmação. Isso não exclui a conta nem as matrículas nas outras disciplinas.
 - Alunos veem as disciplinas aceitas, agrupadas por turma. O convite não dá acesso às demais disciplinas.
-- A opção **Todas as disciplinas** reúne avisos, materiais, projetos e agenda apenas das disciplinas aceitas naquela turma. Cada publicação identifica sua disciplina. O professor permanece no contexto de uma disciplina, sem essa visão agregada de aluno.
+- A opção **Todas as disciplinas** reúne avisos, materiais, projetos e agenda apenas das ofertas aceitas naquela turma e período letivo, com filtro também no servidor. Cada publicação identifica sua disciplina. O professor permanece no contexto de uma oferta, sem essa visão agregada de aluno.
 - Convites são endereçados ao e-mail atual da conta, expiram em sete dias e aparecem em Turmas. Não há envio por SMTP nesta entrega. O aluno precisa de uma conta institucional do tipo discente; possuir Gmail não atribui esse papel automaticamente.
 - Aceitar não muda a turma de um aluno que já participa de outra turma do mesmo curso. O conflito pede conferência com o professor; não existe transferência automática nesta entrega.
 - Avisos, materiais, projetos com prazo e eventos da agenda são privados da disciplina. Professores podem editar e excluir publicações. Agenda permite sinalizar cancelamento. Projetos são orientações: entrega de trabalhos e atribuição de notas não fazem parte desta etapa.
@@ -42,4 +42,8 @@ ORDER BY TABLE_NAME;
 
 Após aplicar a migração, valide com contas reais distintas: dois professores e um aluno. Crie duas disciplinas na mesma turma, convide o aluno para uma delas e confira que a outra permanece inacessível; aceite o segundo convite e confira o agrupamento. Confira anexos privados e recusa de acesso com outro aluno não matriculado. Os testes automatizados usam banco simulado, não substituem essa verificação no MySQL de produção.
 
-As rotas verificam os papéis atuais no banco, a propriedade da disciplina, a matrícula e o e-mail do convite. Não aceitam o professor/aluno do corpo da requisição como identidade. Não há notificações por e-mail, transferência de alunos, troca de professor, exclusão de turma ou diário de notas nesta entrega.
+As rotas verificam os papéis atuais no banco, a propriedade da oferta, a matrícula ativa e o e-mail do convite. Não aceitam professor/aluno do corpo da requisição como identidade. Administradores podem trocar o professor da oferta. Não há notificações por e-mail, transferência automática de alunos, exclusão de turma ou diário de notas nesta entrega.
+
+## Atualização de ofertas, saída e nomes únicos
+
+Consulte `docs/turmas-revisao-2026-10-22.md` para as quatro migrações adicionais e o diagnóstico de duplicidade antes da publicação. A saída voluntária encerra vínculos sem apagar publicações ou materiais. Legado não recebe semestre presumido. Cores são preferências pessoais por item e navegador; não alteram a turma compartilhada.

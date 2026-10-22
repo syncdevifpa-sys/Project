@@ -172,66 +172,100 @@
           <circle class="d" cx="752" cy="133" r="5"></circle>
           <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
         </svg>
-        <h1 class="ar-hero-title">Documentos<sup class="ar-library-hero-count" id="libraryHeroCount">(0)</sup></h1>
+        <h1 class="ar-hero-title"
+          >Documentos<sup class="ar-library-hero-count" id="libraryHeroCount">(0)</sup></h1
+        >
         <div class="ar-hero-side">
           <p class="ar-hero-desc"
-            >Sua biblioteca pessoal de arquivos e links, solicitações acadêmicas e recursos do campus.</p
+            >Sua biblioteca pessoal de arquivos e links, solicitações acadêmicas e recursos do
+            campus.</p
           >
           <div class="ar-hero-actions">
-            <button type="button" class="ar-btn" data-library-folder>Adicionar pasta</button><button type="button" class="ar-btn ar-btn--primary" data-library-document>Adicionar documento</button>
+            <button type="button" class="ar-btn" data-library-folder>Adicionar pasta</button
+            ><button type="button" class="ar-btn ar-btn--primary" data-library-document
+              >Adicionar documento</button
+            >
           </div>
         </div>
       </section>
 
       <section class="ar-library" id="documentLibrary" aria-labelledby="libraryTitle">
         <div class="ar-library-head">
-          <div><h2 id="libraryTitle">Minha biblioteca</h2><p data-library-description>Arquivos e links privados, organizados em pastas.</p></div>
-          <nav class="ar-library-tabs" aria-label="Áreas de documentos"><button type="button" class="ar-btn" data-library-mode="mine" aria-pressed="true">Meus documentos</button><button type="button" class="ar-btn" data-library-mode="public" aria-pressed="false">Materiais públicos</button><button type="button" class="ar-btn" data-library-mode="review" data-library-review hidden>Para avaliação</button></nav>
+          <div
+            ><h2 id="libraryTitle">Minha biblioteca</h2
+            ><p data-library-description>Arquivos e links privados, organizados em pastas.</p></div
+          >
+          <nav class="ar-library-tabs" aria-label="Áreas de documentos"
+            ><button type="button" class="ar-btn" data-library-mode="mine" aria-pressed="true"
+              >Meus documentos</button
+            ><button type="button" class="ar-btn" data-library-mode="public" aria-pressed="false"
+              >Materiais públicos</button
+            ><button
+              type="button"
+              class="ar-btn"
+              data-library-mode="review"
+              data-library-review
+              hidden
+              >Para avaliação</button
+            ></nav
+          >
         </div>
         <p class="ar-library-status" role="status" data-library-status>Carregando biblioteca...</p>
-        <div class="ar-library-layout"><nav aria-label="Pastas da biblioteca" data-library-folders></nav><div><div class="ar-library-location" data-library-location></div><div class="ar-library-items" data-library-items></div></div></div>
-        <p class="ar-library-help">PDF, PNG e JPEG: até 2 MB por arquivo e 20 MB por pessoa. Os links não ocupam esse espaço. Limite de 500 documentos e 100 pastas. O compartilhamento no site de destino de um link depende desse serviço.</p>
+        <div class="ar-library-layout"
+          ><nav aria-label="Pastas da biblioteca" data-library-folders></nav
+          ><div
+            ><div class="ar-library-location" data-library-location></div
+            ><div class="ar-library-items" data-library-items></div></div
+        ></div>
+        <p class="ar-library-help"
+          >PDF, PNG e JPEG: até 2 MB por arquivo e 20 MB por pessoa. Os links não ocupam esse
+          espaço. Limite de 500 documentos e 100 pastas. O compartilhamento no site de destino de um
+          link depende desse serviço.</p
+        >
       </section>
-      <details class="ar-library-requests"><summary>Solicitações acadêmicas e protocolos</summary><div class="ar-library-request-head"><h2 class="ar-library-request-title">Minhas solicitações</h2><button type="button" class="ar-btn ar-btn--primary" id="btnNovoDoc">
-              <span>Nova solicitação</span>
-              <svg
-                class="ar-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </button></div>
-      <!-- ChipBar Status -->
-      <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
-        <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
-          >Todos<sup class="ar-sup">(0)</sup></button
-        >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready"
-          >Pronto<sup class="ar-sup">(0)</sup></button
-        >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review"
-          >Em análise<sup class="ar-sup">(0)</sup></button
-        >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested"
-          >Solicitado<sup class="ar-sup">(0)</sup></button
-        >
-        <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending"
-          >Pendente<sup class="ar-sup">(0)</sup></button
-        >
-      </div>
+      <details class="ar-library-requests"
+        ><summary>Solicitações acadêmicas e protocolos</summary
+        ><div class="ar-library-request-head"
+          ><h2 class="ar-library-request-title">Minhas solicitações</h2
+          ><button type="button" class="ar-btn ar-btn--primary" id="btnNovoDoc">
+            <span>Nova solicitação</span>
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg> </button
+        ></div>
+        <!-- ChipBar Status -->
+        <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
+          <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
+            >Todos<sup class="ar-sup">(0)</sup></button
+          >
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready"
+            >Pronto<sup class="ar-sup">(0)</sup></button
+          >
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review"
+            >Em análise<sup class="ar-sup">(0)</sup></button
+          >
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested"
+            >Solicitado<sup class="ar-sup">(0)</sup></button
+          >
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending"
+            >Pendente<sup class="ar-sup">(0)</sup></button
+          >
+        </div>
 
-      <!-- Documents Grid -->
-      <div class="ar-card-grid"><p role="status">Carregando solicitações...</p></div>
-
+        <!-- Documents Grid -->
+        <div class="ar-card-grid"><p role="status">Carregando solicitações...</p></div>
       </details>
       <!-- Academic Systems Panel -->
       <h2 class="ar-h2">Sistemas e portais acadêmicos</h2>
@@ -379,6 +413,7 @@
     <script src="js/notice-editor.js"></script>
     <script src="js/notice-text.js"></script>
     <script src="js/content-views.js"></script>
+    <script src="js/external-community.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/document-library.js"></script>
     <script src="js/navigation.js"></script>

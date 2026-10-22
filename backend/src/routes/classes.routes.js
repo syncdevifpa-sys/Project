@@ -15,6 +15,18 @@ const action = (fn) => async (q, s, next) => {
         next(e);
     }
 };
+router.post(
+    '/cohorts/:id/leave',
+    action(async (q, s) =>
+        s.json(await service.leaveCohort(q.user.id_usuario, q.params.id, q.body || {}))
+    )
+);
+router.post(
+    '/:id/leave',
+    action(async (q, s) =>
+        s.json(await service.leaveSubject(q.user.id_usuario, q.params.id, q.body || {}))
+    )
+);
 router.get(
     '/teachers',
     action(async (q, s) => s.json(await service.teachers(q.user.id_usuario)))
@@ -60,7 +72,9 @@ router.get(
 );
 router.get(
     '/cohorts/:id/feed',
-    action(async (q, s) => s.json(await service.cohortFeed(q.user.id_usuario, q.params.id)))
+    action(async (q, s) =>
+        s.json(await service.cohortFeed(q.user.id_usuario, q.params.id, q.query.periodo))
+    )
 );
 router.post(
     '/:id/invites',
@@ -120,7 +134,12 @@ router.get(
 );
 router.use((e, _q, s, _next) => {
     const status =
-        e.status || (e.code === 'ER_NO_SUCH_TABLE' ? 503 : e.code === 'ER_DUP_ENTRY' ? 409 : 500);
+        e.status ||
+        (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(e.code)
+            ? 503
+            : e.code === 'ER_DUP_ENTRY'
+              ? 409
+              : 500);
     if (status === 500) console.error('Classes API:', e.code || e.name);
     s.status(status).json({
         error: e.status
@@ -128,7 +147,9 @@ router.use((e, _q, s, _next) => {
             : status === 503
               ? 'Turmas precisa ser habilitado no banco. Aplique a migração com a equipe.'
               : status === 409
-                ? 'Já existe uma turma ou disciplina com esses dados. Confira os nomes e o ano.'
+                ? /uq_turma_nome_global/.test(e.sqlMessage || e.message || '')
+                    ? 'Já existe uma turma com esse nome. Escolha outro nome ou use a turma existente.'
+                    : 'Já existe uma oferta desta disciplina no período letivo informado.'
                 : 'Não foi possível concluir a operação de Turmas.'
     });
 });
