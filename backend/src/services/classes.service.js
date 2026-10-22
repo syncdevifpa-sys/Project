@@ -119,12 +119,12 @@ function createClasses(database = db) {
     }
     async function scope(c, actor, key, write = false) {
         const [rows] = await c.execute(
-            'SELECT d.*, t.id_curso, t.nome AS turma, t.ano_ingresso, t.turno, t.campus FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma = d.id_turma WHERE d.id_disciplina = ?' +
+            'SELECT d.*, t.id_curso, t.nome AS turma, t.ano_ingresso, t.turno, t.campus, t.arquivada_em AS turma_arquivada_em FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma = d.id_turma WHERE d.id_disciplina = ?' +
                 (write ? ' FOR UPDATE' : ''),
             [id(key)]
         );
         const d = rows[0];
-        if (!d) fail(404, 'Disciplina não encontrada.');
+        if (!d || d.arquivada_em || d.turma_arquivada_em) fail(404, 'Disciplina indisponível ou arquivada.');
         const manage =
             (d.id_professor === actor.id_usuario &&
                 actor.tipo_usuario === 'docente' &&
@@ -145,13 +145,13 @@ function createClasses(database = db) {
     async function list(owner) {
         const actor = await user(database, owner);
         const [subjects] = await database.execute(
-            `SELECT d.*, t.nome AS turma, t.id_curso, t.ano_ingresso, t.turno, t.campus, c.nome AS curso, u.nome AS professor FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma=d.id_turma JOIN cursos c ON c.id_curso=t.id_curso JOIN usuarios u ON u.id_usuario=d.id_professor WHERE ? = 1 OR (d.id_professor = ? AND ? = 'docente' AND d.atribuicao_ativa = 1) OR (? = 'discente' AND EXISTS (SELECT 1 FROM academico_matriculas m WHERE m.id_disciplina=d.id_disciplina AND m.id_aluno=? AND m.ativa=1)) ORDER BY t.ano_ingresso DESC, t.nome, d.ano_letivo DESC, d.semestre DESC, d.nome`,
+            `SELECT d.*, t.nome AS turma, t.id_curso, t.ano_ingresso, t.turno, t.campus, c.nome AS curso, u.nome AS professor FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma=d.id_turma JOIN cursos c ON c.id_curso=t.id_curso JOIN usuarios u ON u.id_usuario=d.id_professor WHERE d.arquivada_em IS NULL AND t.arquivada_em IS NULL AND (? = 1 OR (d.id_professor = ? AND ? = 'docente' AND d.atribuicao_ativa = 1) OR (? = 'discente' AND EXISTS (SELECT 1 FROM academico_matriculas m WHERE m.id_disciplina=d.id_disciplina AND m.id_aluno=? AND m.ativa=1))) ORDER BY t.ano_ingresso DESC, t.nome, d.ano_letivo DESC, d.semestre DESC, d.nome`,
             [actor.is_admin ? 1 : 0, owner, actor.tipo_usuario, actor.tipo_usuario, owner]
         );
         const [invites] =
             actor.tipo_usuario === 'discente'
                 ? await database.execute(
-                      "SELECT v.id_convite, d.nome AS disciplina, d.ano_letivo, t.nome AS turma, t.campus, d.regime_letivo, d.semestre, u.nome AS professor FROM academico_convites v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma JOIN usuarios u ON u.id_usuario=d.id_professor WHERE LOWER(v.email) = LOWER(?) AND v.estado='pendente' AND v.expira_em > NOW() ORDER BY v.criado_em DESC",
+                      "SELECT v.id_convite, d.nome AS disciplina, d.ano_letivo, t.nome AS turma, t.campus, d.regime_letivo, d.semestre, u.nome AS professor FROM academico_convites v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma JOIN usuarios u ON u.id_usuario=d.id_professor WHERE LOWER(v.email) = LOWER(?) AND v.estado='pendente' AND v.expira_em > NOW() AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL ORDER BY v.criado_em DESC",
                       [actor.email]
                   )
                 : [[]];
@@ -168,6 +168,7 @@ function createClasses(database = db) {
             invites,
             canCreate: actor.tipo_usuario === 'docente' || isAdmin(actor),
             canAdminister: isAdmin(actor),
+            cohorts: isAdmin(actor) ? await cohorts(owner) : [],
             role: actor.tipo_usuario
         };
     }
@@ -176,7 +177,8 @@ function createClasses(database = db) {
         if (actor.tipo_usuario !== 'docente' && !isAdmin(actor))
             fail(403, 'Somente professores consultam turmas para criar disciplinas.');
         const [rows] = await database.execute(
-            'SELECT t.*, c.nome AS curso FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE c.ativo=1 ORDER BY t.ano_ingresso DESC, c.nome, t.nome'
+            'SELECT t.*, c.nome AS curso FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE (?=1 OR c.ativo=1) AND t.arquivada_em IS NULL ORDER BY t.ano_ingresso DESC, c.nome, t.nome',
+            [isAdmin(actor) ? 1 : 0]
         );
         return rows;
     }
@@ -190,7 +192,7 @@ function createClasses(database = db) {
             let turma;
             if (body.id_turma) {
                 const [rows] = await c.execute(
-                    'SELECT t.* FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE t.id_turma=? AND c.ativo=1 FOR UPDATE',
+                    'SELECT t.* FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE t.id_turma=? AND c.ativo=1 AND t.arquivada_em IS NULL FOR UPDATE',
                     [id(body.id_turma)]
                 );
                 if (!rows.length) fail(404, 'Turma indisponível.');
@@ -284,7 +286,7 @@ function createClasses(database = db) {
             if (!['manha', 'tarde', 'noite', 'integral'].includes(body.turno))
                 fail(400, 'Turno inválido.');
             const [rows] = await c.execute(
-                'SELECT id_turma FROM academico_turmas WHERE id_turma=? FOR UPDATE',
+                'SELECT id_turma FROM academico_turmas WHERE id_turma=? AND arquivada_em IS NULL FOR UPDATE',
                 [id(key)]
             );
             if (!rows.length) fail(404, 'Turma não encontrada.');
@@ -306,12 +308,33 @@ function createClasses(database = db) {
             }
         });
     }
+    async function archiveSubject(owner, key, body) {
+        if (body.confirmacao !== 'EXCLUIR') fail(400, 'Confirme a exclusão da oferta.');
+        return transaction(owner, async (c, actor) => {
+            const d = await scope(c, actor, key, true);
+            await c.execute('UPDATE academico_disciplinas SET arquivada_em=NOW() WHERE id_disciplina=?', [d.id_disciplina]);
+            await c.execute("UPDATE academico_convites SET estado='cancelado' WHERE id_disciplina=? AND estado='pendente'", [d.id_disciplina]);
+            return { message: 'Oferta excluída da área ativa. Histórico, matrículas e materiais foram arquivados e preservados.' };
+        });
+    }
+    async function archiveCohort(owner, key, body) {
+        if (body.confirmacao !== 'EXCLUIR') fail(400, 'Confirme a exclusão da turma.');
+        return transaction(owner, async (c, actor) => {
+            if (!isAdmin(actor)) fail(403, 'Somente administradores excluem turmas completas.');
+            const [rows] = await c.execute('SELECT id_turma FROM academico_turmas WHERE id_turma=? AND arquivada_em IS NULL FOR UPDATE', [id(key)]);
+            if (!rows.length) fail(404, 'Turma indisponível.');
+            await c.execute('UPDATE academico_turmas SET arquivada_em=NOW() WHERE id_turma=?', [id(key)]);
+            await c.execute('UPDATE academico_disciplinas SET arquivada_em=COALESCE(arquivada_em,NOW()) WHERE id_turma=?', [id(key)]);
+            await c.execute("UPDATE academico_convites v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina SET v.estado='cancelado' WHERE d.id_turma=? AND v.estado='pendente'", [id(key)]);
+            return { message: 'Turma excluída da área ativa. Todas as ofertas, matrículas e materiais foram arquivados e preservados.' };
+        });
+    }
     async function cohortFeed(owner, key, period) {
         const actor = await user(database, owner);
         if (actor.tipo_usuario !== 'discente')
             fail(403, 'A visão consolidada é exclusiva dos alunos da turma.');
         const [subjects] = await database.execute(
-            'SELECT d.id_disciplina, d.ano_letivo, d.regime_letivo, d.semestre, t.* FROM academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE m.id_aluno=? AND t.id_turma=? AND m.ativa=1',
+            'SELECT d.id_disciplina, d.ano_letivo, d.regime_letivo, d.semestre, t.* FROM academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE m.id_aluno=? AND t.id_turma=? AND m.ativa=1 AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL',
             [owner, id(key)]
         );
         if (!subjects.length) fail(404, 'Turma não encontrada para esta conta.');
@@ -414,14 +437,14 @@ function createClasses(database = db) {
         return transaction(owner, async (c, actor) => {
             if (actor.tipo_usuario !== 'discente') fail(403, 'Somente alunos aceitam convites.');
             const [rows] = await c.execute(
-                "SELECT v.id_convite,v.id_disciplina,d.id_turma,t.id_curso FROM academico_convites v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE v.id_convite=? AND LOWER(v.email)=LOWER(?) AND v.estado='pendente' AND v.expira_em>NOW() AND d.atribuicao_ativa=1 FOR UPDATE",
+                "SELECT v.id_convite,v.id_disciplina,d.id_turma,t.id_curso FROM academico_convites v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE v.id_convite=? AND LOWER(v.email)=LOWER(?) AND v.estado='pendente' AND v.expira_em>NOW() AND d.atribuicao_ativa=1 AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL FOR UPDATE",
                 [id(key), actor.email]
             );
             if (!rows.length) fail(404, 'Convite indisponível para esta conta.');
             const v = rows[0];
             if (body.decisao === 'aceitar') {
                 const [other] = await c.execute(
-                    'SELECT d.id_turma FROM academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE m.id_aluno=? AND t.id_curso=? AND d.id_turma<>? AND m.ativa=1',
+                    'SELECT d.id_turma FROM academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE m.id_aluno=? AND t.id_curso=? AND d.id_turma<>? AND m.ativa=1 AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL',
                     [owner, v.id_curso, v.id_turma]
                 );
                 if (other.length)
@@ -516,6 +539,8 @@ function createClasses(database = db) {
         return rows[0];
     }
     return {
+        archiveSubject,
+        archiveCohort,
         teachers,
         leaveCohort,
         leaveSubject,

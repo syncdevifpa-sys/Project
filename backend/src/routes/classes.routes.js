@@ -15,6 +15,8 @@ const action = (fn) => async (q, s, next) => {
         next(e);
     }
 };
+router.delete('/cohorts/:id', action(async (q, s) => s.json(await service.archiveCohort(q.user.id_usuario, q.params.id, q.body || {}))));
+router.delete('/:id', action(async (q, s) => s.json(await service.archiveSubject(q.user.id_usuario, q.params.id, q.body || {}))));
 router.post(
     '/cohorts/:id/leave',
     action(async (q, s) =>

@@ -1,12 +1,16 @@
-/* Banners de página e contexto, sem alterar cores semânticas dos cards. */
+/* Banners e resumos do painel; os demais cards preservam cores semânticas. */
 .ar-banner-editable { position: relative; padding-inline-end: max(58px, var(--space-6, 24px)); }
+.ar-banner-editable.ar-hero { padding-inline-end: max(58px, var(--space-6, 24px)); }
 .ar-banner-editable > .ar-banner-appearance-trigger {
   position: absolute; inset-block-start: 10px; inset-inline-end: 10px; z-index: 3;
-  display: grid; place-items: center; width: 36px; height: 36px; min-height: 36px;
-  padding: 0; border: 1px solid var(--line, #a8b0b8); border-radius: 50%;
-  background: var(--surface, var(--color-page, #fff)); color: var(--ink, var(--color-text, #182020));
-  font: 22px/1 sans-serif; cursor: pointer;
+  display: grid; place-items: center; width: 44px; height: 44px; min-height: 44px;
+  padding: 0; border: 0; border-radius: 12px;
+  background: transparent; color: inherit;
+  cursor: pointer;
 }
+.ar-banner-appearance-trigger svg { width: 16px; height: 16px; opacity: .8; }
+.ar-banner-editable > .ar-banner-appearance-trigger:hover,
+.ar-banner-editable > .ar-banner-appearance-trigger:focus-visible { background: color-mix(in srgb, currentColor 10%, transparent); }
 .ar-banner-appearance-trigger:focus-visible,
 .ar-banner-appearance-dialog :is(button, select):focus-visible {
   outline: 2px solid var(--action, #176b9a); outline-offset: 3px;
@@ -16,13 +20,15 @@
   color: var(--personal-banner-ink) !important;
 }
 .ar-banner-personal :is(.ar-hero-title, .ar-hero-count, .ar-hero-desc, .ac-meta,
-  .ar-detail-eyebrow, .ar-detail-title, .ar-detail-desc, .hero-title, .hero-subtitle, .hero-note) {
+  .ar-detail-eyebrow, .ar-detail-title, .ar-detail-desc, .hero-title, .hero-subtitle, .hero-note,
+  .ar-stat-label, .ar-stat-value, .ar-stat-cap, .ar-stat-foot .ar-link) {
   color: var(--personal-banner-ink) !important;
+  background-color: var(--personal-banner-bg);
 }
 .ar-banner-personal :is(.ar-hero-art, .hero-deco-shape) { opacity: .12 !important; }
 .ar-banner-personal :is(.ar-btn--ghost, .btn-pill--outline) {
   color: var(--personal-banner-ink) !important; border-color: currentColor;
-  background: transparent;
+  background: var(--personal-banner-bg);
 }
 .ar-banner-appearance-dialog {
   box-sizing: border-box; width: min(390px, calc(100vw - 24px));

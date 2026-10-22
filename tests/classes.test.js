@@ -13,7 +13,8 @@ function fixture({
     duplicateName = false,
     uniqueConflict = false,
     offers = null,
-    teacherActive = true
+    teacherActive = true,
+    archived = false
 } = {}) {
     let membershipActive = enrolled,
         inviteValid = invite;
@@ -36,6 +37,7 @@ function fixture({
         id_curso: 1,
         atribuicao_ativa: 1
     };
+    subject.arquivada_em = archived ? '2026-10-22 10:00:00' : null;
     const database = {
         async execute(sql, args = []) {
             queries.push({ sql, args });
@@ -606,4 +608,31 @@ test('renomear turma normaliza o nome e não permite conflito com outra turma', 
         (e) => e.status === 409 && /turma com esse nome/.test(e.message)
     );
     assert.ok(conflict.lifecycle.includes('rollback'));
+});
+
+
+test('exclusão lógica exige confirmação e permissão, sem apagar materiais ou matrículas', async () => {
+    const own = fixture();
+    await assert.rejects(own.service.archiveSubject(7, 3, {}), { status: 400 });
+    await assert.rejects(fixture({ teacher: 9 }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    await assert.rejects(fixture({ role: 'discente', enrolled: true }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    await own.service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR', id_professor: 99 });
+    assert.ok(own.writes.some((w) => /SET arquivada_em=NOW/.test(w.sql)));
+    assert.ok(own.writes.some((w) => /academico_convites SET estado='cancelado'/.test(w.sql)));
+    assert.ok(!own.writes.some((w) => /DELETE|UPDATE academico_matriculas/.test(w.sql)));
+    await assert.rejects(fixture({ archived: true }).service.download(7, 3, 5), { status: 404 });
+    await assert.rejects(fixture({ archived: true }).service.savePost(7, 3, { tipo: 'aviso', titulo: 'X' }), { status: 404 });
+});
+test('somente administrador exclui turma inteira e cancela os convites de todas as ofertas', async () => {
+    await assert.rejects(fixture().service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    const admin = fixture({ admin: true });
+    await admin.service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' });
+    assert.ok(admin.writes.some((w) => w.sql.startsWith('UPDATE academico_turmas SET arquivada_em')));
+    assert.ok(admin.writes.some((w) => w.sql.startsWith('UPDATE academico_disciplinas SET arquivada_em')));
+    assert.ok(admin.writes.some((w) => /UPDATE academico_convites v JOIN/.test(w.sql)));
+    assert.ok(!admin.writes.some((w) => /DELETE/.test(w.sql)));
+    assert.ok(admin.lifecycle.includes('commit'));
+    await admin.service.list(7);
+    const listing = admin.queries.find((q) => /SELECT d.\*, t.nome AS turma/.test(q.sql));
+    assert.match(listing.sql, /d.arquivada_em IS NULL AND t.arquivada_em IS NULL/);
 });

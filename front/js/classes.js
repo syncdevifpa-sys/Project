@@ -164,6 +164,26 @@
             }
         }
         if (!groups.size) nav.append(el('p', 'Sem disciplinas.', 'ac-meta'));
+        if (data.canAdminister && data.cohorts?.length) {
+            const management = el('details');
+            management.append(el('summary', 'Administrar todas as turmas'));
+            for (const cohort of data.cohorts) {
+                const row = el('div', undefined, 'ac-invite');
+                row.append(el('p', cohort.nome + ' · ' + cohort.ano_ingresso));
+                row.append(btn('Excluir turma', async (event) => {
+                    const clicked = event.currentTarget;
+                    if (!(await A.confirmAction({ title: 'Excluir turma?',
+                        message: 'Esta turma e suas ofertas serão arquivadas. Convites pendentes serão cancelados; histórico, matrículas e materiais serão preservados.',
+                        items: [cohort.nome], confirmLabel: 'Excluir turma' }))) return;
+                    await run(clicked, async () => {
+                        const result = await call('/cohorts/' + cohort.id_turma, 'DELETE', { confirmacao: 'EXCLUIR' });
+                        selected = null; await reload(); message(result.message);
+                    });
+                }));
+                management.append(row);
+            }
+            nav.append(management);
+        }
     }
     function renderInvites() {
         const host = q('#classInvites');
@@ -253,6 +273,33 @@
                 btn('Editar turma', cohortEditor),
                 btn('Editar disciplina e professor', subjectEditor)
             );
+            heading.append(actions);
+        }
+        if (!detail.aggregate && d.canManage) {
+            const actions = el('div', undefined, 'ac-actions');
+            for (const cohort of data.canAdminister ? [false, true] : [false]) {
+                actions.append(btn(cohort ? 'Excluir turma' : 'Excluir oferta', async (event) => {
+                    const clicked = event.currentTarget;
+                    const confirmed = await A.confirmAction({
+                        title: cohort ? 'Excluir esta turma?' : 'Excluir esta oferta?',
+                        message: cohort
+                            ? 'Todas as ofertas desta turma sairão da área ativa. Convites serão cancelados. Histórico, matrículas e materiais serão preservados em arquivo. Esta ação é diferente de sair da turma.'
+                            : 'Somente esta oferta sairá da área ativa. Convites serão cancelados. Histórico, matrículas e materiais serão preservados em arquivo. Esta ação é diferente de sair da disciplina.',
+                        items: [cohort ? d.turma : d.nome + ' · ' + periodLabel(d)],
+                        confirmLabel: cohort ? 'Excluir turma' : 'Excluir oferta'
+                    });
+                    if (!confirmed) return;
+                    await run(clicked, async () => {
+                        const result = await call(cohort ? '/cohorts/' + d.id_turma : '/' + d.id_disciplina,
+                            'DELETE', { confirmacao: 'EXCLUIR' });
+                        selected = null;
+                        delete heading.dataset.appearanceKey;
+        heading.replaceChildren();
+                        await reload();
+                        message(result.message);
+                    });
+                }));
+            }
             heading.append(actions);
         }
         if (

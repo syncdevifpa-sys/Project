@@ -40,7 +40,8 @@
     }
     function resolve(style) {
         if (style === 'neutral') return { mode: 'neutral' };
-        if (legacy[style]) return { mode: 'custom', background: legacy[style], text: '#182020' };
+        if (typeof style === 'string' && Object.hasOwn(legacy, style))
+            return { mode: 'custom', background: legacy[style], text: '#182020' };
         if (style?.mode === 'neutral') return { mode: 'neutral' };
         if (style?.mode === 'custom' && valid(style.background) && valid(style.text))
             return { ...style, text: readable(style.background, style.text) };
@@ -58,16 +59,23 @@
         }
     }
     function decorate(node, key, title) {
-        if (!node || node.dataset.appearanceKey) return;
+        if (!node) return;
+        const existing = node.querySelector('.ar-banner-appearance-trigger');
+        if (node.dataset.appearanceKey === key && existing) return;
+        existing?.remove();
         node.dataset.appearanceKey = key;
         node.classList.add('ar-banner-editable');
         apply(node, key);
         const trigger = document.createElement('button');
         trigger.type = 'button';
         trigger.className = 'ar-banner-appearance-trigger';
-        trigger.textContent = '◐';
-        trigger.title = 'Personalizar aparência deste banner';
-        trigger.setAttribute('aria-label', 'Personalizar aparência do banner ' + title);
+        trigger.innerHTML = '<svg class="ar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>';
+        if (A.getIconSvg) {
+            trigger.innerHTML = A.getIconSvg('palette', 16);
+            trigger.querySelector('svg').setAttribute('aria-hidden', 'true');
+        }
+        trigger.title = 'Personalizar cores · ' + title;
+        trigger.setAttribute('aria-label', 'Personalizar cores');
         trigger.setAttribute('aria-haspopup', 'dialog');
         trigger.setAttribute('aria-expanded', 'false');
         trigger.onclick = () => {
@@ -159,6 +167,12 @@
             const title = node.querySelector('h1,h2')?.textContent.trim() || 'Página';
             decorate(node, key, title);
         });
+        if (page === 'dashboard.html') {
+            for (const node of document.querySelectorAll('.ar-stat[data-appearance-id]')) {
+                decorate(node, 'dashboard:summary:' + node.dataset.appearanceId,
+                    node.querySelector('.ar-stat-label')?.textContent || 'Resumo');
+            }
+        }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
