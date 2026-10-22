@@ -83,18 +83,22 @@
         ><form id="teacherRequestForm"
           ><label>Nome da conta<input name="nome" readonly /></label
           ><label>E-mail da conta<input name="email" type="email" readonly /></label
-          ><label>Matrícula / SIAPE<input name="matricula" maxlength="30" required /></label
           ><label
-            >Nome de usuário<input
+            >Matrícula / SIAPE no SIGAA<input name="matricula" maxlength="30" required /></label
+          ><label
+            >Nome de usuário no SIGAA<input
               name="nome_usuario"
               minlength="3"
               maxlength="40"
               pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,39}"
               required /></label
-          ><label>Formação<input name="formacao" maxlength="300" required /></label
+          ><label
+            >Formação registrada no SIGAA<input name="formacao" maxlength="300" required /></label
           ><p
-            >Nome e e-mail vêm da sua conta. O acesso continua pelo e-mail. Alterar e reenviar
-            substitui o pedido pendente, sem gerar duplicatas.</p
+            >Informe os dados do vínculo como aparecem no SIGAA. A administração autorizada fará a
+            conferência no sistema institucional. Esses dados não aparecem no perfil público. Não
+            informe sua senha do SIGAA. Nome e e-mail vêm da sua conta; o acesso ao Arcádia continua
+            pelo e-mail. Alterar e reenviar substitui o pedido pendente, sem gerar duplicatas.</p
           ><button type="submit">Enviar para análise</button></form
         ></details
       >

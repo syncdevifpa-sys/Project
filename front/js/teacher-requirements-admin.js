@@ -46,9 +46,9 @@
                 const dl = el('dl');
                 for (const [key, label] of [
                     ['email', 'E-mail'],
-                    ['matricula', 'Matrícula'],
-                    ['nome_usuario', 'Nome de usuário'],
-                    ['formacao', 'Formação']
+                    ['matricula', 'Matrícula / SIAPE no SIGAA'],
+                    ['nome_usuario', 'Usuário no SIGAA'],
+                    ['formacao', 'Formação no SIGAA']
                 ])
                     dl.append(el('dt', label), el('dd', r[key]));
                 card.append(dl);
@@ -58,7 +58,7 @@
                         el(
                             'p',
                             r.email_confirmado
-                                ? 'E-mail confirmado. Confira também os documentos e o vínculo.'
+                                ? 'E-mail confirmado. Confira os dados e o vínculo de Professor diretamente no SIGAA antes de aprovar.'
                                 : 'E-mail ainda não confirmado. A aprovação ficará bloqueada.'
                         )
                     );
@@ -97,7 +97,7 @@
         const label = el(
             'label',
             decision === 'aprovar'
-                ? 'Conferi matrícula, vínculo e formação com a instituição. O usuário receberá acesso de Professor e precisará entrar novamente.'
+                ? 'Conferi nome, matrícula / SIAPE, usuário, formação e vínculo de Professor diretamente no SIGAA, com meu acesso institucional autorizado. O usuário receberá acesso de Professor e precisará entrar novamente.'
                 : 'Justificativa da recusa'
         );
         input = el(decision === 'aprovar' ? 'input' : 'textarea');
