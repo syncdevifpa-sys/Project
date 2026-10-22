@@ -100,7 +100,8 @@
                 rotulo_responsavel: 'Coordenação',
                 vagas: 0,
                 unidade_vaga: 'vagas',
-                situacao: 'ativo'
+                situacao: 'ativo',
+                permite_externos: false
             },
             fields: [
                 title,
@@ -115,6 +116,7 @@
                         inovacao: 'Inovação'
                     }
                 ],
+                ['permite_externos', 'Permitir inscrições da Comunidade externa', 'checkbox'],
                 ['responsavel_nome', 'Pessoa responsável', 'text', 100],
                 ['rotulo_responsavel', 'Rótulo da responsabilidade', 'text', 20],
                 ['vagas', 'Vagas', 'number'],
@@ -166,6 +168,14 @@
                         recesso: 'Recesso',
                         registro_academico:
                             'Cadastro de disciplinas, notas e outras informações acadêmicas'
+                    }
+                ],
+                [
+                    'origem_calendario',
+                    'Tipo de calendário',
+                    {
+                        agenda: 'Agenda comum',
+                        ifpa: 'Calendário acadêmico IFPA · acesso institucional'
                     }
                 ],
                 ['periodo_letivo', 'Período letivo', 'text', 60],

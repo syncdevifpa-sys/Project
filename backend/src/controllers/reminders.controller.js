@@ -6,6 +6,9 @@ async function listReminders(req, res) {
 
         return res.json(reminders);
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
+        if (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(error.code))
+            return res.status(503).json({ error: 'Lembretes precisam ser habilitados no banco pela equipe.' });
         console.error('Erro ao listar lembretes:', error);
 
         return res.status(500).json({
@@ -26,6 +29,9 @@ async function getReminderById(req, res) {
 
         return res.json(reminder);
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
+        if (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(error.code))
+            return res.status(503).json({ error: 'Lembretes precisam ser habilitados no banco pela equipe.' });
         console.error('Erro ao buscar lembrete:', error);
 
         return res.status(500).json({
@@ -36,9 +42,9 @@ async function getReminderById(req, res) {
 
 async function createReminder(req, res) {
     try {
-        const { titulo, data_lembrete } = req.body;
+        const { titulo, agendado_utc } = req.body || {};
 
-        if (!titulo || !data_lembrete) {
+        if (!titulo || !agendado_utc) {
             return res.status(400).json({
                 error: 'Titulo e data do lembrete são obrigatórios.'
             });
@@ -50,6 +56,9 @@ async function createReminder(req, res) {
             reminderId: result.insertId
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
+        if (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(error.code))
+            return res.status(503).json({ error: 'Lembretes precisam ser habilitados no banco pela equipe.' });
         console.error('Erro ao criar lembrete:', error);
 
         return res.status(500).json({
@@ -76,6 +85,9 @@ async function updateReminder(req, res) {
             message: 'Lembrete atualizado com sucesso.'
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
+        if (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(error.code))
+            return res.status(503).json({ error: 'Lembretes precisam ser habilitados no banco pela equipe.' });
         console.error('Erro ao atualizar lembrete:', error);
 
         return res.status(500).json({
@@ -98,6 +110,9 @@ async function deleteReminder(req, res) {
             message: 'Lembrete excluído com sucesso.'
         });
     } catch (error) {
+        if (error.status) return res.status(error.status).json({ error: error.message });
+        if (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(error.code))
+            return res.status(503).json({ error: 'Lembretes precisam ser habilitados no banco pela equipe.' });
         console.error('Erro ao excluir lembrete:', error);
 
         return res.status(500).json({

@@ -4,10 +4,15 @@
         A.auth.exigirLogin();
         return;
     }
+    if (A.auth.getSessao().tipo_usuario === 'externo') {
+        window.location.replace('community.html');
+        return;
+    }
     const api = A.api,
         base = '/api/classes',
         q = (s) => document.querySelector(s),
         status = q('#classStatus');
+    A.classAppearance.decorate(q('.ar-hero'), 'overview', 'Minhas turmas');
     const labels = {
         aviso: 'Avisos',
         material: 'Materiais',
@@ -53,6 +58,19 @@
             button.disabled = false;
         }
     }
+    const periodKey = (row) =>
+        `${row.ano_letivo}.${row.regime_letivo === 'semestral' ? row.semestre : row.regime_letivo === 'anual' ? 'anual' : 'legado'}`;
+    const periodLabel = (row) =>
+        row.regime_letivo === 'semestral'
+            ? `${row.ano_letivo}.${row.semestre}`
+            : `${row.ano_letivo} · ${row.regime_letivo === 'anual' ? 'anual' : 'período não informado'}`;
+    function subjectChoice(title, metadata, action, active) {
+        const b = btn('', action);
+        b.className = 'ac-subject-choice';
+        b.append(el('span', title, 'ac-nav-title'), el('span', metadata, 'ac-nav-meta'));
+        if (active) b.setAttribute('aria-current', 'page');
+        return b;
+    }
     async function reload() {
         message('Carregando turmas...');
         try {
@@ -80,13 +98,14 @@
             if (
                 typeof selected === 'string' &&
                 selected.startsWith('cohort:') &&
-                data.subjects.some((s) => s.id_turma === Number(selected.slice(7)))
+                data.subjects.some((s) => s.id_turma === Number(selected.split(':')[1]))
             )
-                await loadCohort(Number(selected.slice(7)));
+                await loadCohort(Number(selected.split(':')[1]), selected.split(':')[2]);
             else if (selected && data.subjects.some((s) => s.id_disciplina === selected))
                 await load(selected);
             else if (data.subjects.length) {
-                if (data.role === 'discente') await loadCohort(data.subjects[0].id_turma);
+                if (data.role === 'discente')
+                    await loadCohort(data.subjects[0].id_turma, periodKey(data.subjects[0]));
                 else await load(data.subjects[0].id_disciplina);
             } else {
                 selected = null;
@@ -119,21 +138,52 @@
         for (const rows of groups.values()) {
             const first = rows[0];
             nav.append(el('h3', `${first.turma} · ${first.ano_ingresso} · ${first.curso}`));
-            if (data.role === 'discente') {
-                const aggregate = btn('Todas as disciplinas', () => loadCohort(first.id_turma));
-                aggregate.setAttribute(
-                    'aria-current',
-                    selected === 'cohort:' + first.id_turma ? 'page' : 'false'
-                );
-                nav.append(aggregate);
-            }
-            for (const d of rows) {
-                const b = btn(`${d.nome} · ${d.ano_letivo}`, () => load(d.id_disciplina));
-                b.setAttribute('aria-current', selected === d.id_disciplina ? 'page' : 'false');
-                nav.append(b);
+            const periods = [...new Set(rows.map(periodKey))].sort().reverse();
+            for (const period of periods) {
+                const offers = rows.filter((row) => periodKey(row) === period),
+                    firstOffer = offers[0];
+                nav.append(el('h4', periodLabel(firstOffer), 'ac-period-label'));
+                if (data.role === 'discente')
+                    nav.append(
+                        subjectChoice(
+                            'Todas as disciplinas',
+                            periodLabel(firstOffer),
+                            () => loadCohort(first.id_turma, period),
+                            selected === `cohort:${first.id_turma}:${period}`
+                        )
+                    );
+                for (const d of offers)
+                    nav.append(
+                        subjectChoice(
+                            d.nome,
+                            periodLabel(d),
+                            () => load(d.id_disciplina),
+                            selected === d.id_disciplina
+                        )
+                    );
             }
         }
         if (!groups.size) nav.append(el('p', 'Sem disciplinas.', 'ac-meta'));
+        if (data.canAdminister && data.cohorts?.length) {
+            const management = el('details');
+            management.append(el('summary', 'Administrar todas as turmas'));
+            for (const cohort of data.cohorts) {
+                const row = el('div', undefined, 'ac-invite');
+                row.append(el('p', cohort.nome + ' · ' + cohort.ano_ingresso));
+                row.append(btn('Excluir turma', async (event) => {
+                    const clicked = event.currentTarget;
+                    if (!(await A.confirmAction({ title: 'Excluir turma?',
+                        message: 'Esta turma e suas ofertas serão arquivadas. Convites pendentes serão cancelados; histórico, matrículas e materiais serão preservados.',
+                        items: [cohort.nome], confirmLabel: 'Excluir turma' }))) return;
+                    await run(clicked, async () => {
+                        const result = await call('/cohorts/' + cohort.id_turma, 'DELETE', { confirmacao: 'EXCLUIR' });
+                        selected = null; await reload(); message(result.message);
+                    });
+                }));
+                management.append(row);
+            }
+            nav.append(management);
+        }
     }
     function renderInvites() {
         const host = q('#classInvites');
@@ -144,7 +194,7 @@
             const row = el('article', undefined, 'ac-invite');
             row.append(
                 el('h3', `${invite.disciplina} · ${invite.turma}`),
-                el('p', `${invite.professor} · ${invite.campus} · ${invite.ano_letivo}`)
+                el('p', `${invite.professor} · ${invite.campus} · ${periodLabel(invite)}`)
             );
             const actions = el('div', undefined, 'ac-actions');
             for (const [value, label] of [
@@ -185,13 +235,18 @@
             if (version === generation) message(e.message);
         }
     }
-    async function loadCohort(id) {
+    async function loadCohort(id, period) {
         const version = ++generation;
         message('Carregando sua turma...');
         try {
-            const result = await call('/cohorts/' + id + '/feed');
+            const result = await call(
+                '/cohorts/' +
+                    id +
+                    '/feed' +
+                    (period ? '?periodo=' + encodeURIComponent(period) : '')
+            );
             if (version !== generation) return;
-            selected = 'cohort:' + id;
+            selected = 'cohort:' + id + ':' + (period || periodKey(result.subject));
             detail = result;
             if (tab === 'people') tab = 'aviso';
             renderSubjects();
@@ -208,7 +263,7 @@
             el('h2', d.nome),
             el(
                 'p',
-                `${d.turma} · ingresso ${d.ano_ingresso} · ${{ manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral' }[d.turno] || d.turno} · ${d.campus}${d.ano_letivo ? ' · ano letivo ' + d.ano_letivo : ''}`,
+                `${d.turma} · ingresso ${d.ano_ingresso} · ${{ manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral' }[d.turno] || d.turno} · ${d.campus}${d.ano_letivo ? ' · oferta ' + periodLabel(d) : ''}`,
                 'ac-meta'
             )
         );
@@ -220,6 +275,78 @@
             );
             heading.append(actions);
         }
+        if (!detail.aggregate && d.canManage) {
+            const actions = el('div', undefined, 'ac-actions');
+            for (const cohort of data.canAdminister ? [false, true] : [false]) {
+                actions.append(btn(cohort ? 'Excluir turma' : 'Excluir oferta', async (event) => {
+                    const clicked = event.currentTarget;
+                    const confirmed = await A.confirmAction({
+                        title: cohort ? 'Excluir esta turma?' : 'Excluir esta oferta?',
+                        message: cohort
+                            ? 'Todas as ofertas desta turma sairão da área ativa. Convites serão cancelados. Histórico, matrículas e materiais serão preservados em arquivo. Esta ação é diferente de sair da turma.'
+                            : 'Somente esta oferta sairá da área ativa. Convites serão cancelados. Histórico, matrículas e materiais serão preservados em arquivo. Esta ação é diferente de sair da disciplina.',
+                        items: [cohort ? d.turma : d.nome + ' · ' + periodLabel(d)],
+                        confirmLabel: cohort ? 'Excluir turma' : 'Excluir oferta'
+                    });
+                    if (!confirmed) return;
+                    await run(clicked, async () => {
+                        const result = await call(cohort ? '/cohorts/' + d.id_turma : '/' + d.id_disciplina,
+                            'DELETE', { confirmacao: 'EXCLUIR' });
+                        selected = null;
+                        delete heading.dataset.appearanceKey;
+        heading.replaceChildren();
+                        await reload();
+                        message(result.message);
+                    });
+                }));
+            }
+            heading.append(actions);
+        }
+        if (
+            data.role === 'discente' ||
+            (!detail.aggregate &&
+                data.role === 'docente' &&
+                Number(d.id_professor) === Number(A.auth.getSessao().id_usuario) &&
+                d.atribuicao_ativa !== 0)
+        ) {
+            const student = data.role === 'discente';
+            const leave = btn(student ? 'Sair da turma' : 'Sair da disciplina', async (event) => {
+                const clicked = event.currentTarget;
+                const confirmed = await A.confirmAction({
+                    title: student ? 'Sair da turma?' : 'Sair desta disciplina?',
+                    message: student
+                        ? 'Seu acesso a todas as disciplinas privadas desta turma, em todos os períodos letivos, será encerrado. O histórico será preservado. Para voltar, será necessário um novo convite.'
+                        : 'Sua atribuição apenas nesta oferta será encerrada. Alunos, materiais e autoria serão preservados; convites pendentes serão cancelados. A administração poderá designar outro responsável.',
+                    items: student ? [d.turma] : [d.nome + ' · ' + periodLabel(d)],
+                    confirmLabel: student ? 'Sair da turma' : 'Sair da disciplina'
+                });
+                if (!confirmed) return;
+                await run(clicked, async () => {
+                    const result = await call(
+                        student
+                            ? '/cohorts/' + d.id_turma + '/leave'
+                            : '/' + d.id_disciplina + '/leave',
+                        'POST',
+                        { confirmacao: 'SAIR' }
+                    );
+                    selected = null;
+                    await reload();
+                    message(result.message);
+                });
+            });
+            leave.className = 'ar-btn ar-btn--quiet';
+            const actions = el('div', undefined, 'ac-actions');
+            actions.append(leave);
+            heading.append(actions);
+        }
+        heading.classList.add('ac-subject-banner');
+        A.classAppearance.decorate(
+            heading,
+            detail.aggregate
+                ? 'cohort:' + d.id_turma + ':' + periodKey(d)
+                : 'offering:' + d.id_disciplina,
+            d.nome
+        );
         const tabs = q('#classTabs');
         tabs.hidden = false;
         tabs.replaceChildren();
@@ -501,6 +628,25 @@
                     'manha'
                 ),
                 campus = e.field('Campus', { value: 'Belém', required: true, maxLength: 100 });
+            const regime = e.select(
+                'Regime da oferta',
+                [
+                    ['semestral', 'Semestral'],
+                    ['anual', 'Anual']
+                ],
+                'semestral'
+            );
+            const semester = e.select(
+                'Semestre letivo',
+                [
+                    ['1', 'Primeiro semestre'],
+                    ['2', 'Segundo semestre']
+                ],
+                new Date().getMonth() < 6 ? '1' : '2'
+            );
+            regime.onchange = () => {
+                semester.disabled = regime.value !== 'semestral';
+            };
             start.min = year.min = '2000';
             start.max = year.max = '2100';
             existing.onchange = () => {
@@ -517,11 +663,14 @@
             };
             e.submit(async () => {
                 const created = await call('', 'POST', {
+                    ...(existing.value ? { id_turma: Number(existing.value) } : {}),
                     id_curso: course.value,
                     nome: name.value,
                     turma: cohort.value,
                     ano_ingresso: Number(start.value),
                     ano_letivo: Number(year.value),
+                    regime_letivo: regime.value,
+                    semestre: regime.value === 'semestral' ? Number(semester.value) : 0,
                     turno: shift.value,
                     campus: campus.value,
                     ...(professor ? { id_professor: Number(professor.value) } : {})

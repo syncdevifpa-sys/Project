@@ -8,6 +8,12 @@ async function listProjects(req, res) {
         return res.json(projects);
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao listar projetos:', error);
 
         return res.status(500).json({
@@ -20,7 +26,7 @@ async function getProjectById(req, res) {
     try {
         const project = await projectsModel.findProjectById(req.params.id);
 
-        if (!project) {
+        if (!project || project.aprovacao !== 'aprovado') {
             return res.status(404).json({
                 error: 'Projeto não encontrado.'
             });
@@ -29,6 +35,12 @@ async function getProjectById(req, res) {
         return res.json(project);
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao buscar projeto:', error);
 
         return res.status(500).json({
@@ -58,6 +70,12 @@ async function createProject(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao criar projeto:', error);
 
         return res.status(500).json({
@@ -81,6 +99,12 @@ async function updateProject(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao atualizar projeto:', error);
 
         return res.status(500).json({
@@ -104,6 +128,12 @@ async function deleteProject(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao excluir projeto:', error);
 
         return res.status(500).json({
@@ -127,6 +157,12 @@ async function approveProject(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao aprovar projeto:', error);
 
         return res.status(500).json({
@@ -150,6 +186,12 @@ async function rejectProject(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao recusar projeto:', error);
 
         return res.status(500).json({
@@ -182,6 +224,12 @@ async function registerForProject(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao se inscrever para o projeto:', error);
 
         if (error.code === 'ER_DUP_ENTRY') {
@@ -211,6 +259,12 @@ async function cancelRegistration(req, res) {
         });
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao cancelar inscrição:', error);
 
         return res.status(500).json({
@@ -226,6 +280,12 @@ async function listProjectRegistrations(req, res) {
         return res.json(registrations);
     } catch (error) {
         if (error.status) return res.status(error.status).json({ error: error.message });
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            return res
+                .status(503)
+                .json({
+                    error: 'Atualize o banco para configurar a participação da Comunidade externa em projetos.'
+                });
         console.error('Erro ao buscar inscrições:', error);
 
         return res.status(500).json({

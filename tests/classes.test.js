@@ -10,8 +10,14 @@ function fixture({
     invite = true,
     ownFile = true,
     active = true,
-    teacherActive = true
+    duplicateName = false,
+    uniqueConflict = false,
+    offers = null,
+    teacherActive = true,
+    archived = false
 } = {}) {
+    let membershipActive = enrolled,
+        inviteValid = invite;
     const queries = [],
         writes = [],
         lifecycle = [];
@@ -28,8 +34,10 @@ function fixture({
         id_turma: 2,
         nome: 'Programação',
         turma: '2026 A',
-        id_curso: 1
+        id_curso: 1,
+        atribuicao_ativa: 1
     };
+    subject.arquivada_em = archived ? '2026-10-22 10:00:00' : null;
     const database = {
         async execute(sql, args = []) {
             queries.push({ sql, args });
@@ -38,19 +46,31 @@ function fixture({
                 return [teacherActive ? [{ id_usuario: args[0] }] : []];
             if (sql.startsWith('SELECT id_usuario,nome FROM usuarios'))
                 return [[{ id_usuario: 8, nome: 'Professor ativo' }]];
+            if (sql.startsWith('SELECT id_turma FROM academico_turmas WHERE nome_chave'))
+                return [duplicateName ? [{ id_turma: 2 }] : []];
             if (sql.startsWith('SELECT id_turma FROM academico_turmas')) return [[{ id_turma: 2 }]];
-            if (sql.startsWith('SELECT d.*, t.id_curso')) return [[subject]];
-            if (sql.startsWith('SELECT id_aluno FROM academico_matriculas'))
-                return [enrolled ? [{ id_aluno: 7 }] : []];
-            if (sql.startsWith('SELECT d.id_disciplina, t.*'))
+            if (sql.startsWith('SELECT t.* FROM academico_turmas'))
+                return [[{ id_turma: 2, ano_ingresso: 2026 }]];
+            if (sql.startsWith('SELECT d.*, t.id_curso'))
                 return [
-                    enrolled
-                        ? [
+                    offers
+                        ? offers.filter((row) => Number(row.id_disciplina) === Number(args[0]))
+                        : [subject]
+                ];
+            if (sql.startsWith('SELECT id_aluno FROM academico_matriculas'))
+                return [membershipActive ? [{ id_aluno: 7 }] : []];
+            if (sql.startsWith('SELECT d.id_disciplina, d.ano_letivo'))
+                return [
+                    membershipActive
+                        ? offers || [
                               {
                                   id_disciplina: 3,
                                   id_turma: 2,
                                   nome: '2026 A',
                                   ano_ingresso: 2026,
+                                  ano_letivo: 2026,
+                                  regime_letivo: 'legado',
+                                  semestre: 0,
                                   turno: 'manha',
                                   campus: 'Belém'
                               }
@@ -59,7 +79,9 @@ function fixture({
                 ];
             if (sql.startsWith('SELECT v.id_convite,v.id_disciplina'))
                 return [
-                    invite ? [{ id_convite: 4, id_disciplina: 3, id_turma: 2, id_curso: 1 }] : []
+                    inviteValid
+                        ? [{ id_convite: 4, id_disciplina: 3, id_turma: 2, id_curso: 1 }]
+                        : []
                 ];
             if (sql.startsWith('SELECT d.id_turma FROM academico_matriculas'))
                 return [otherCohort ? [{ id_turma: 9 }] : []];
@@ -79,8 +101,24 @@ function fixture({
                     ]
                 ];
             if (sql.startsWith('SELECT')) return [[]];
+            if (
+                uniqueConflict &&
+                (sql.startsWith('INSERT INTO academico_turmas') ||
+                    sql.startsWith('UPDATE academico_turmas SET nome'))
+            )
+                throw Object.assign(Error('uq_turma_nome_global'), { code: 'ER_DUP_ENTRY' });
+            let affectedRows = 1;
+            if (sql.startsWith('UPDATE academico_matriculas m JOIN')) {
+                affectedRows = membershipActive && Number(args[1]) === 2 ? 1 : 0;
+                if (affectedRows) membershipActive = false;
+            }
+            if (sql.startsWith('UPDATE academico_disciplinas SET atribuicao_ativa=0'))
+                subject.atribuicao_ativa = 0;
+            if (sql.startsWith('UPDATE academico_convites')) inviteValid = false;
+            if (sql.startsWith('INSERT INTO academico_convites')) inviteValid = true;
+            if (sql.startsWith('INSERT INTO academico_matriculas')) membershipActive = true;
             writes.push({ sql, args });
-            return [{ insertId: sql.includes('academico_turmas') ? 2 : 3, affectedRows: 1 }];
+            return [{ insertId: sql.includes('academico_turmas') ? 2 : 3, affectedRows }];
         },
         async getConnection() {
             return {
@@ -100,7 +138,16 @@ function fixture({
             };
         }
     };
-    return { database, service: createClasses(database), queries, writes, lifecycle };
+    return {
+        database,
+        service: createClasses(database),
+        queries,
+        writes,
+        lifecycle,
+        renewInvite: () => {
+            inviteValid = true;
+        }
+    };
 }
 test('professor cria sua disciplina reutilizando a turma compartilhada e ignora proprietário forjado', async () => {
     const f = fixture();
@@ -110,12 +157,15 @@ test('professor cria sua disciplina reutilizando a turma compartilhada e ignora 
         turma: '2026 A',
         ano_ingresso: 2026,
         ano_letivo: 2026,
+        regime_letivo: 'semestral',
+        semestre: 1,
         turno: 'manha',
         campus: 'Belém',
         id_professor: 99
     });
-    assert.match(f.writes[0].sql, /ON DUPLICATE KEY UPDATE id_turma=LAST_INSERT_ID/);
-    assert.deepEqual(f.writes[1].args, [2, 7, 'Programação', 2026]);
+    assert.match(f.writes[0].sql, /INSERT INTO academico_turmas/);
+    assert.doesNotMatch(f.writes[0].sql, /ON DUPLICATE/);
+    assert.deepEqual(f.writes[1].args, [2, 7, 'Programação', 2026, 'semestral', 1]);
     assert.ok(f.lifecycle.includes('commit'));
     const student = fixture({ role: 'discente' });
     await assert.rejects(student.service.create(7, {}), { status: 403 });
@@ -128,13 +178,15 @@ test('admin cria disciplina com professor ativo; contas comuns não atribuem res
         turma: '2026 A',
         ano_ingresso: 2026,
         ano_letivo: 2026,
+        regime_letivo: 'semestral',
+        semestre: 1,
         turno: 'manha',
         campus: 'Belém',
         id_professor: 8
     };
     const admin = fixture({ role: 'servidor', admin: true });
     await admin.service.create(7, body);
-    assert.deepEqual(admin.writes[1].args, [2, 8, 'Programação', 2026]);
+    assert.deepEqual(admin.writes[1].args, [2, 8, 'Programação', 2026, 'semestral', 1]);
     const list = await admin.service.list(7);
     assert.equal(list.canCreate, true);
     assert.equal(list.canAdminister, true);
@@ -168,7 +220,7 @@ test('admin altera responsável e metadados da turma preservando matrículas e c
         id_curso: 99,
         ano_ingresso: 2020
     });
-    assert.deepEqual(admin.writes[1].args, ['2026 B', 'tarde', 'Belém', 2]);
+    assert.deepEqual(admin.writes[1].args, ['2026 B', '2026 b', 'tarde', 'Belém', 2]);
     assert.ok(
         !admin.writes.some((q) =>
             /DELETE|academico_matriculas|academico_publicacoes|id_curso=|ano_ingresso=/.test(q.sql)
@@ -316,7 +368,7 @@ test('visão consolidada reúne apenas as disciplinas aceitas pelo aluno na mesm
     assert.equal(result.aggregate, true);
     assert.equal(result.subject.canManage, false);
     const query = student.queries.find((q) => q.sql.startsWith('SELECT p.*, d.nome AS disciplina'));
-    assert.deepEqual(query.args, [7, 2]);
+    assert.deepEqual(query.args, [7, 2, 3]);
     assert.match(
         query.sql,
         /JOIN academico_matriculas m ON m.id_disciplina=p.id_disciplina|JOIN academico_matriculas m ON m.id_disciplina=d.id_disciplina/
@@ -366,4 +418,221 @@ test('HTTP exige sessão real e impede acesso e download de outra disciplina', a
     assert.equal((await fetch(base + '/3/posts/5/download', { headers })).status, 403);
     assert.equal((await fetch(base + '/cohorts', { headers })).status, 403);
     assert.equal(f.writes.length, 0);
+});
+
+test('ofertas semestrais usam a mesma turma e preservam opção anual sem inventar semestre no legado', async () => {
+    const { offering, offeringPeriod } = require('../backend/src/services/classes.service');
+    assert.throws(() => offering({ semestre: 3 }), { status: 400 });
+    assert.throws(() => offering({}), { status: 400 });
+    assert.deepEqual(offering({ regime_letivo: 'anual' }), { regime_letivo: 'anual', semestre: 0 });
+    assert.equal(offeringPeriod({ ano_letivo: 2025 }), '2025.legado');
+    const f = fixture(),
+        body = {
+            id_curso: 1,
+            nome: 'Programação',
+            turma: '2026 A',
+            ano_ingresso: 2026,
+            ano_letivo: 2026,
+            regime_letivo: 'semestral',
+            turno: 'manha',
+            campus: 'Belém'
+        };
+    await f.service.create(7, { ...body, semestre: 1 });
+    await f.service.create(7, { ...body, semestre: 2 });
+    const writes = f.writes.filter((q) => q.sql.startsWith('INSERT INTO academico_disciplinas'));
+    assert.equal(writes[0].args[0], writes[1].args[0]);
+    assert.equal(writes[0].args.at(-1), 1);
+    assert.equal(writes[1].args.at(-1), 2);
+    assert.ok(!f.writes.some((q) => q.sql.startsWith('DELETE')));
+});
+test('aluno consulta disciplinas de cada semestre sem misturar publicações da outra oferta', async () => {
+    const offers = [
+        {
+            id_disciplina: 3,
+            id_turma: 2,
+            nome: '2026 A',
+            ano_letivo: 2026,
+            regime_letivo: 'semestral',
+            semestre: 1
+        },
+        {
+            id_disciplina: 4,
+            id_turma: 2,
+            nome: '2026 A',
+            ano_letivo: 2026,
+            regime_letivo: 'semestral',
+            semestre: 2
+        }
+    ];
+    const f = fixture({ role: 'discente', enrolled: true, offers });
+    await assert.rejects(f.service.cohortFeed(7, 2), { status: 400 });
+    await f.service.cohortFeed(7, 2, '2026.1');
+    await f.service.cohortFeed(7, 2, '2026.2');
+    const queries = f.queries.filter((q) => q.sql.startsWith('SELECT p.*, d.nome AS disciplina'));
+    assert.deepEqual(
+        queries.map((q) => q.args),
+        [
+            [7, 2, 3],
+            [7, 2, 4]
+        ]
+    );
+    assert.ok(queries.every((q) => q.sql.includes('d.id_disciplina IN (?)')));
+    await assert.rejects(f.service.cohortFeed(7, 2, '2027.1'), { status: 404 });
+});
+test('professor não publica nem convida para oferta de outro professor em outro semestre', async () => {
+    const offers = [
+        {
+            id_disciplina: 3,
+            id_professor: 7,
+            id_turma: 2,
+            ano_letivo: 2026,
+            regime_letivo: 'semestral',
+            semestre: 1
+        },
+        {
+            id_disciplina: 4,
+            id_professor: 8,
+            id_turma: 2,
+            ano_letivo: 2026,
+            regime_letivo: 'semestral',
+            semestre: 2
+        }
+    ];
+    const f = fixture({ offers });
+    await assert.rejects(
+        f.service.savePost(7, 4, { tipo: 'aviso', titulo: 'Teste', id_disciplina: 3 }),
+        { status: 403 }
+    );
+    await assert.rejects(f.service.invite(7, 4, { email: 'aluno@example.com', id_disciplina: 3 }), {
+        status: 403
+    });
+    await f.service.savePost(7, 3, {
+        tipo: 'aviso',
+        titulo: 'Primeiro semestre',
+        id_disciplina: 4
+    });
+    assert.equal(f.writes[0].args.at(-2), 3);
+    assert.ok(f.writes.every((q) => !q.args.includes(4)));
+});
+
+test('nome de turma é normalizado, duplicidade é global e conflito concorrente reverte criação', async () => {
+    const { normalizeCohort } = require('../backend/src/services/classes.service');
+    assert.equal(normalizeCohort('  Turma   B  '), 'Turma B');
+    const body = {
+        id_curso: 1,
+        nome: 'Disciplina',
+        turma: '  Turma   B ',
+        ano_ingresso: 2026,
+        ano_letivo: 2026,
+        semestre: 1,
+        turno: 'manha',
+        campus: 'Belém'
+    };
+    const ok = fixture();
+    await ok.service.create(7, body);
+    assert.deepEqual(ok.writes[0].args.slice(1, 3), ['Turma B', 'turma b']);
+    for (const options of [{ duplicateName: true }, { uniqueConflict: true }]) {
+        const f = fixture(options);
+        await assert.rejects(
+            f.service.create(7, body),
+            (e) => e.status === 409 && /turma com esse nome/.test(e.message)
+        );
+        assert.ok(f.lifecycle.includes('rollback'));
+        assert.ok(!f.writes.some((q) => q.sql.startsWith('INSERT INTO academico_disciplinas')));
+    }
+    const reuse = fixture();
+    await reuse.service.create(7, { ...body, id_turma: 2 });
+    assert.ok(!reuse.writes.some((q) => q.sql.startsWith('INSERT INTO academico_turmas')));
+    assert.equal(reuse.writes[0].args[0], 2);
+});
+test('saída de aluno encerra todas as ofertas da turma e cancela convites antigos, sem apagar histórico', async () => {
+    const f = fixture({ role: 'discente', enrolled: true });
+    await f.service.detail(7, 3);
+    await assert.rejects(f.service.leaveCohort(7, 2, { confirmacao: 'CANCELAR' }), { status: 400 });
+    assert.equal(f.writes.length, 0);
+    await assert.rejects(f.service.leaveCohort(7, 9, { confirmacao: 'SAIR' }), { status: 404 });
+    await f.service.detail(7, 3);
+    await f.service.leaveCohort(7, 2, { confirmacao: 'SAIR', id_usuario: 99 });
+    const exit = f.writes.find((q) => q.sql.startsWith('UPDATE academico_matriculas m JOIN'));
+    assert.deepEqual(
+        f.writes.filter((q) => q.sql.startsWith('UPDATE academico_matriculas m JOIN')).at(-1).args,
+        [7, 2]
+    );
+    assert.ok(!f.writes.some((q) => q.sql.startsWith('DELETE')));
+    await assert.rejects(f.service.detail(7, 3), { status: 403 });
+    await assert.rejects(f.service.download(7, 3, 5), { status: 403 });
+    await assert.rejects(f.service.decide(7, 4, { decisao: 'aceitar' }), { status: 404 });
+    f.renewInvite();
+    await f.service.decide(7, 4, { decisao: 'aceitar' });
+    await f.service.detail(7, 3);
+    assert.ok(f.writes.some((q) => q.sql.includes('ON DUPLICATE KEY UPDATE ativa=1')));
+});
+test('professor sai apenas de sua oferta e perde acesso privado preservando alunos e publicações', async () => {
+    const f = fixture();
+    await assert.rejects(f.service.leaveSubject(7, 3, { confirmacao: 'CANCELAR' }), {
+        status: 400
+    });
+    await f.service.leaveSubject(7, 3, { confirmacao: 'SAIR', id_professor: 99 });
+    assert.deepEqual(
+        f.writes.find((q) => q.sql.startsWith('UPDATE academico_disciplinas SET atribuicao')).args,
+        [3, 7]
+    );
+    assert.ok(f.writes.some((q) => q.sql.startsWith('INSERT INTO academico_saidas_professor')));
+    assert.ok(
+        !f.writes.some((q) =>
+            /DELETE|UPDATE academico_matriculas|UPDATE academico_publicacoes/.test(q.sql)
+        )
+    );
+    await assert.rejects(f.service.detail(7, 3), { status: 403 });
+    await assert.rejects(f.service.savePost(7, 3, { tipo: 'aviso', titulo: 'Após saída' }), {
+        status: 403
+    });
+    const other = fixture({ teacher: 8 });
+    await assert.rejects(other.service.leaveSubject(7, 3, { confirmacao: 'SAIR' }), {
+        status: 403
+    });
+    assert.equal(other.writes.length, 0);
+    const student = fixture({ role: 'discente', enrolled: true });
+    await assert.rejects(student.service.leaveSubject(7, 3, { confirmacao: 'SAIR' }), {
+        status: 403
+    });
+});
+
+test('renomear turma normaliza o nome e não permite conflito com outra turma', async () => {
+    const f = fixture({ admin: true });
+    await f.service.updateCohort(7, 2, { nome: '  Turma   C ', turno: 'manha', campus: 'Belém' });
+    assert.deepEqual(f.writes[0].args.slice(0, 2), ['Turma C', 'turma c']);
+    const conflict = fixture({ admin: true, uniqueConflict: true });
+    await assert.rejects(
+        conflict.service.updateCohort(7, 2, { nome: 'turma c', turno: 'manha', campus: 'Belém' }),
+        (e) => e.status === 409 && /turma com esse nome/.test(e.message)
+    );
+    assert.ok(conflict.lifecycle.includes('rollback'));
+});
+
+
+test('exclusão lógica exige confirmação e permissão, sem apagar materiais ou matrículas', async () => {
+    const own = fixture();
+    await assert.rejects(own.service.archiveSubject(7, 3, {}), { status: 400 });
+    await assert.rejects(fixture({ teacher: 9 }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    await assert.rejects(fixture({ role: 'discente', enrolled: true }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    await own.service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR', id_professor: 99 });
+    assert.ok(own.writes.some((w) => /SET arquivada_em=NOW/.test(w.sql)));
+    assert.ok(own.writes.some((w) => /academico_convites SET estado='cancelado'/.test(w.sql)));
+    assert.ok(!own.writes.some((w) => /DELETE|UPDATE academico_matriculas/.test(w.sql)));
+    await assert.rejects(fixture({ archived: true }).service.download(7, 3, 5), { status: 404 });
+    await assert.rejects(fixture({ archived: true }).service.savePost(7, 3, { tipo: 'aviso', titulo: 'X' }), { status: 404 });
+});
+test('somente administrador exclui turma inteira e cancela os convites de todas as ofertas', async () => {
+    await assert.rejects(fixture().service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    const admin = fixture({ admin: true });
+    await admin.service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' });
+    assert.ok(admin.writes.some((w) => w.sql.startsWith('UPDATE academico_turmas SET arquivada_em')));
+    assert.ok(admin.writes.some((w) => w.sql.startsWith('UPDATE academico_disciplinas SET arquivada_em')));
+    assert.ok(admin.writes.some((w) => /UPDATE academico_convites v JOIN/.test(w.sql)));
+    assert.ok(!admin.writes.some((w) => /DELETE/.test(w.sql)));
+    assert.ok(admin.lifecycle.includes('commit'));
+    await admin.service.list(7);
+    const listing = admin.queries.find((q) => /SELECT d.\*, t.nome AS turma/.test(q.sql));
+    assert.match(listing.sql, /d.arquivada_em IS NULL AND t.arquivada_em IS NULL/);
 });
