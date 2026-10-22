@@ -30,7 +30,7 @@ O navegador não agenda envios de e-mail e não precisa permanecer aberto. Foi p
 
 Além da conexão do banco e da configuração SMTP já utilizada pelo projeto (`SMTP_USER`, `SMTP_PASS`, `SMTP_SERVICE`, `APP_URL`), habilitar conscientemente `REMINDER_EMAIL_ENABLED=true`. Para o endpoint HTTP, configurar também `CRON_SECRET` no ambiente correto. Sem a flag e SMTP válido, o processador fica desativado. A flag não comprova que existe um job ativo: a interface informa essa dependência.
 
-Cada execução processa no máximo cinco versões vencidas nas últimas 24 horas, em ordem. Escolha a frequência de acordo com o volume e os limites já disponíveis na hospedagem; atrasos maiores que 24h não geram uma avalanche de mensagens antigas. Confira logs agregados e os estados no banco, sem registrar conteúdo ou destinatários. Migração, agendador, entrega SMTP e precisão operacional ainda precisam de validação no ambiente real.
+Cada execução processa no máximo uma versão vencida nas últimas 24 horas, em ordem, para reduzir o risco de exceder os 60 segundos configurados na hospedagem durante o SMTP. Escolha a frequência de acordo com o volume e os limites já disponíveis; atrasos maiores que 24h não geram uma avalanche de mensagens antigas. Confira logs agregados e os estados no banco, sem registrar conteúdo ou destinatários. Migração, agendador, entrega SMTP e precisão operacional ainda precisam de validação no ambiente real.
 
 ## Duplicação e falhas
 

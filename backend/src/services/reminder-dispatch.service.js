@@ -8,7 +8,7 @@ function createDispatcher(db = database, mail = email) {
         const [due] = await db.execute(`SELECT l.id_lembrete,l.versao FROM lembretes l
             WHERE l.ativo=1 AND l.enviar_email=1 AND l.agendado_utc BETWEEN DATE_SUB(UTC_TIMESTAMP(),INTERVAL 24 HOUR) AND UTC_TIMESTAMP()
             AND NOT EXISTS (SELECT 1 FROM lembrete_envios e WHERE e.id_lembrete=l.id_lembrete AND e.versao=l.versao)
-            ORDER BY l.agendado_utc,l.id_lembrete LIMIT 5`);
+            ORDER BY l.agendado_utc,l.id_lembrete LIMIT 1`);
         const result = { sent: 0, failed: 0, cancelled: 0 };
         for (const item of due) {
             const [claim] = await db.execute('INSERT IGNORE INTO lembrete_envios(id_lembrete,versao) SELECT id_lembrete,versao FROM lembretes WHERE id_lembrete=? AND versao=?', [item.id_lembrete, item.versao]);
