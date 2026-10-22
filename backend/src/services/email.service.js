@@ -87,4 +87,30 @@ async function sendLink(toEmail, token, verification = false) {
 }
 const sendPasswordRecovery = (email, token) => sendLink(email, token);
 const sendEmailVerification = (email, token) => sendLink(email, token, true);
-module.exports = { recoveryConfigured, sendPasswordRecovery, sendEmailVerification };
+async function sendReminder(toEmail, reminder) {
+    if (!recoveryConfigured()) throw new Error('REMINDER_EMAIL_NOT_CONFIGURED');
+    const recipient = emailAddress(toEmail), sender = emailAddress(process.env.SMTP_USER);
+    if (!Number.isSafeInteger(reminder.id) || !Number.isSafeInteger(reminder.versao) ||
+        typeof reminder.titulo !== 'string' || reminder.titulo.length > 150)
+        throw new Error('INVALID_REMINDER');
+    const transport = nodemailer.createTransport({
+        service: process.env.SMTP_SERVICE || 'gmail',
+        connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000,
+        requireTLS: true, tls: { rejectUnauthorized: true },
+        disableFileAccess: true, disableUrlAccess: true, maxRecipients: 1,
+        logger: false, debug: false, auth: { user: sender, pass: process.env.SMTP_PASS }
+    });
+    try {
+        const link = new URL('/tasks.html', process.env.APP_URL);
+        const result = await transport.sendMail({
+            from: { name: 'Arcádia IFPA', address: sender }, to: recipient,
+            envelope: { from: sender, to: [recipient] }, subject: 'Seu lembrete — Arcádia',
+            messageId: `<arcadia-reminder-${reminder.id}-${reminder.versao}@${new URL(process.env.APP_URL).hostname}>`,
+            text: `Lembrete: ${reminder.titulo}\n\nAbra suas tarefas: ${link.href}\nVocê autorizou estes avisos. Para desativar, abra Tarefas e desmarque as notificações por e-mail.`,
+            disableFileAccess: true, disableUrlAccess: true
+        });
+        if (result.accepted?.length !== 1) throw new Error('DELIVERY_FAILED');
+    } catch { throw new Error('REMINDER_DELIVERY_FAILED'); }
+    finally { try { transport.close?.(); } catch {} }
+}
+module.exports = { recoveryConfigured, sendPasswordRecovery, sendEmailVerification, sendReminder };

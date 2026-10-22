@@ -17,10 +17,11 @@ const {
     authorizeAdmin
 } = require('../middlewares/auth.middleware');
 
-// Public routes
-router.get('/', listEvents);
+const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
+// Visitantes e Comunidade externa recebem somente a agenda comum.
+router.get('/', optionalNoticeViewer, listEvents);
 router.get('/manage', authenticateToken, listManagedEvents);
-router.get('/:id', getEventById);
+router.get('/:id', optionalNoticeViewer, getEventById);
 
 // Teacher and staff routes
 router.post('/', authenticateToken, createEvent);

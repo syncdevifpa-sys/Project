@@ -6,7 +6,17 @@
     async function load() {
         try {
             const data = await A.api.expect(A.api.get('/api/teacher-requirements/mine'));
-            document.getElementById('teacherRequestSection').open = !!data.request;
+            const section = document.getElementById('teacherRequestSection');
+            section.open = !!data.request;
+            section.dataset.state = data.request?.estado || 'novo';
+            document.getElementById('teacherRequestState').textContent =
+                {
+                    pendente: 'Aguardando análise',
+                    recusado: 'Revisão necessária',
+                    aprovado: 'Aprovado',
+                    novo: 'Validação institucional'
+                }[section.dataset.state] || 'Validação institucional';
+            status.dataset.state = section.dataset.state;
             form.elements.nome.value = data.profile.nome;
             form.elements.email.value = data.profile.email;
             for (const field of ['matricula', 'nome_usuario', 'formacao'])
@@ -22,6 +32,7 @@
                 ? 'Atualizar e reenviar pedido'
                 : 'Enviar para análise';
         } catch (e) {
+            status.dataset.state = 'erro';
             status.textContent = e.message;
             button.disabled = true;
         }
@@ -39,6 +50,7 @@
             );
             await load();
         } catch (e) {
+            status.dataset.state = 'erro';
             status.textContent = e.message;
         } finally {
             button.disabled = false;
