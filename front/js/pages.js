@@ -365,9 +365,33 @@
         A.contentViews.update(root, rows, groupKey, groupLabels);
     }
     async function projects() {
+        const external = A.auth.getSessao().tipo_usuario === 'externo';
+        let registrations = [];
+        if (external) $('#btnNovoProjeto').hidden = true;
         let rows = [];
         const grid = $('#gridProjetos');
         const bar = filterBar('#chipbarProjetos', tracks, () => rows, 'eixo', render);
+        function projectActions(r) {
+            if (external) {
+                const registration = registrations.find(
+                    (item) => Number(item.id_projeto) === Number(r.id_projeto)
+                );
+                if (registration && ['inscrito', 'aprovado'].includes(registration.status))
+                    return `<p>Você está inscrito.</p><button type="button" class="ar-btn ar-btn--secondary" data-cancel="${esc(r.id_projeto)}">Cancelar inscrição</button>`;
+                if (registration?.status === 'recusado')
+                    return '<p>Sua inscrição foi recusada.</p>';
+                if (
+                    [true, 1].includes(r.permite_externos) &&
+                    r.aprovacao === 'aprovado' &&
+                    ['ativo', 'inscricoes'].includes(r.situacao)
+                )
+                    return `<button type="button" class="ar-btn ar-btn--secondary" data-register="${esc(r.id_projeto)}">Inscrever-se</button>`;
+                return '<p>Inscrições externas indisponíveis neste projeto.</p>';
+            }
+            return A.auth.getSessao().tipo_usuario === 'discente' && r.aprovacao === 'aprovado'
+                ? `<button type="button" class="ar-btn ar-btn--secondary" data-register="${esc(r.id_projeto)}">Inscrever-se</button><button type="button" class="ar-btn ar-btn--ghost" data-cancel="${esc(r.id_projeto)}">Cancelar inscrição</button>`
+                : '';
+        }
         function render() {
             grid.innerHTML =
                 bar
@@ -377,10 +401,7 @@
                             r.titulo,
                             r.descricao,
                             `${esc(label(tracks, r.eixo))} · ${esc(r.responsavel_nome || '')} · ${esc(r.vagas)} vagas`,
-                            (A.auth.getSessao().tipo_usuario === 'discente' &&
-                            r.aprovacao === 'aprovado'
-                                ? `<button type="button" class="ar-btn ar-btn--secondary" data-register="${esc(r.id_projeto)}">Inscrever-se</button><button type="button" class="ar-btn ar-btn--ghost" data-cancel="${esc(r.id_projeto)}">Cancelar inscrição</button>`
-                                : '') + editAction('projects', r, r.id_projeto)
+                            projectActions(r) + editAction('projects', r, r.id_projeto)
                         )
                     )
                     .join('') || '<p>Nenhum projeto encontrado.</p>';
@@ -394,6 +415,14 @@
         }
         async function reload() {
             rows = await api.expect(api.get('/api/projects'));
+            if (external) {
+                try {
+                    registrations = await api.expect(api.get('/api/external/space/registrations'));
+                } catch (e) {
+                    registrations = [];
+                    error(e);
+                }
+            }
             if (A.auth.getSessao().id_usuario) {
                 const mine = await api.expect(api.get('/api/projects/my'));
                 rows = [
@@ -412,14 +441,16 @@
             button.disabled = true;
             try {
                 const id = button.dataset.register || button.dataset.cancel;
+                const projectBase = external ? '/api/external/space/projects' : '/api/projects';
                 await api.expect(
                     button.dataset.register
-                        ? api.post(`/api/projects/${id}/register`)
-                        : api.del(`/api/projects/${id}/register`)
+                        ? api.post(`${projectBase}/${id}/register`)
+                        : api.del(`${projectBase}/${id}/register`)
                 );
                 A.showToast(
                     button.dataset.register ? 'Inscrição realizada.' : 'Inscrição cancelada.'
                 );
+                await reload();
             } catch (e) {
                 error(e);
             } finally {
@@ -431,6 +462,7 @@
     }
 
     async function calendar() {
+        const external = A.auth.getSessao().tipo_usuario === 'externo';
         let rows = [],
             managedRows = [];
         const container = $('.ar-panel-body');
@@ -439,14 +471,22 @@
             ['docente', 'servidor'].includes(A.auth.getSessao().tipo_usuario);
         const institutional =
             Boolean(A.auth.getSessao().id_usuario) && A.auth.getSessao().tipo_usuario !== 'externo';
-        $('#btnNewEvent').style.display = institutional ? '' : 'none';
+        $('#btnNewEvent').style.display = institutional || external ? '' : 'none';
+        if (!institutional) {
+            $('.ar-hero-title').textContent = 'Agenda';
+            $('.ar-hero-desc').textContent =
+                'Eventos públicos da agenda comum e seus compromissos pessoais. O calendário acadêmico IFPA é de acesso institucional.';
+            $('#calendarSourceFilter').closest('label').hidden = true;
+        }
         const audience = $('#calendarAudience');
-        audience.closest('label').hidden = !institutional;
+        audience.closest('label').hidden = !institutional && !external;
         const personal = () => audience.value === 'pessoal';
         $('#btnImportCalendar').style.display = canManage ? '' : 'none';
         $('#btnImportCalendar').addEventListener('click', () => A.calendarImport.open(reload));
         $('#btnEditEvents').addEventListener('click', () =>
-            A.calendarEventEditor.open(managedRows, reload)
+            external
+                ? A.externalAgenda.choose(managedRows, reload)
+                : A.calendarEventEditor.open(managedRows, reload)
         );
         const canDelete = Boolean(A.calendarActions?.canDelete()),
             selectedEvents = new Set();
@@ -481,7 +521,7 @@
                     ...row,
                     categoria: A.calendarCategories.canonical(row.categoria)
                 }));
-            return personal()
+            return personal() || !institutional
                 ? selected
                 : A.calendarHolidays.merge(
                       selected,
@@ -665,11 +705,13 @@
             listStatus.textContent = listAll
                 ? 'Todos os eventos dos calendários e categorias selecionados.'
                 : 'Eventos de hoje · ' + new Date().toLocaleDateString('pt-BR');
-            $('.ar-calendar-holiday-options').hidden = personal();
+            $('.ar-calendar-holiday-options').hidden = personal() || !institutional;
             $('#btnImportCalendar').style.display = canManage && !personal() ? '' : 'none';
             $('.ar-panel-label').textContent = personal()
                 ? 'Meu calendário pessoal'
-                : 'Calendário acadêmico';
+                : institutional
+                  ? 'Calendário acadêmico'
+                  : 'Agenda comum';
             $('.ar-calendar-public-label').textContent = personal() ? 'Só você' : 'Público';
             const categoryChip = $('.ar-chipbar [aria-pressed="true"]');
             const categoryText =
@@ -747,7 +789,9 @@
                             '</span><span class="ar-badge">' +
                             esc(A.calendarCategories.options[r.categoria]) +
                             '</span>' +
-                            editAction('calendar', r, r.id_evento) +
+                            (external && personal()
+                                ? `<button type="button" class="ar-btn ar-btn--secondary" data-external-event="${esc(r.id_evento)}">Editar</button>`
+                                : editAction('calendar', r, r.id_evento)) +
                             (canDelete && !r.automatico
                                 ? '<button type="button" class="ar-btn ar-btn--quiet ar-btn--sm" data-calendar-delete="' +
                                   esc(r.id_evento) +
@@ -789,15 +833,29 @@
             managedRows =
                 A.auth.getSessao().id_usuario && A.auth.getSessao().tipo_usuario !== 'externo'
                     ? await api.expect(api.get('/api/calendar/manage'))
-                    : [];
-            $('#btnEditEvents').hidden = !managedRows.some((row) =>
-                A.contentEditor.canEdit('calendar', row)
-            );
+                    : external
+                      ? await api.expect(api.get('/api/external/space/agenda'))
+                      : [];
+            $('#btnEditEvents').hidden = external
+                ? !managedRows.length
+                : !managedRows.some((row) => A.contentEditor.canEdit('calendar', row));
             selectedEvents.clear();
             refreshSources();
             render();
         }
+        container.addEventListener('click', (event) => {
+            const edit = event.target.closest('[data-external-event]');
+            if (external && edit)
+                A.externalAgenda.open(
+                    managedRows.find((row) => String(row.id_evento) === edit.dataset.externalEvent),
+                    reload
+                );
+        });
         $('#btnNewEvent').addEventListener('click', () => {
+            if (external) {
+                A.externalAgenda.open(null, reload);
+                return;
+            }
             if (!canManage && institutional) {
                 audience.value = 'pessoal';
                 refreshSources();
@@ -815,6 +873,14 @@
 
     async function documents() {
         if (!A.auth.exigirLogin()) return;
+        if (A.auth.getSessao().tipo_usuario === 'externo') {
+            try {
+                await A.externalAgenda.documents();
+            } catch (e) {
+                $('#documentLibrary').textContent = e.message;
+            }
+            return;
+        }
         let rows = [];
         const grid = $('.ar-card-grid');
         const bar = filterBar('.ar-chipbar', statuses, () => rows, 'status', render);

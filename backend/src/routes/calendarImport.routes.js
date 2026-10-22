@@ -41,8 +41,12 @@ router.post('/commit', authenticateToken, async (req, res) => {
     try {
         res.json(await service.commit(req.body, req.user.id_usuario));
     } catch (error) {
-        res.status(error.status || 500).json({
-            error: error.status ? error.message : 'Não foi possível importar os eventos.'
+        res.status(error.status || (error.code === 'ER_BAD_FIELD_ERROR' ? 503 : 500)).json({
+            error: error.status
+                ? error.message
+                : error.code === 'ER_BAD_FIELD_ERROR'
+                  ? 'Atualize o banco para registrar a origem acadêmica dos eventos antes de importar.'
+                  : 'Não foi possível importar os eventos.'
         });
     }
 });

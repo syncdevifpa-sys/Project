@@ -1,7 +1,7 @@
 (function (A) {
     'use strict';
     const root = document.getElementById('documentLibrary');
-    if (!root || !A.auth.estaLogado()) return;
+    if (!root || !A.auth.estaLogado() || A.auth.getSessao().tipo_usuario === 'externo') return;
     const api = A.api,
         endpoint = '/api/document-library';
     const find = (selector) => root.querySelector(selector);

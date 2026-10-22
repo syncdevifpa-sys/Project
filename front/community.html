@@ -75,12 +75,18 @@
         <a href="index.html#public-projects">projetos públicos</a>.</p
       >
       <details id="teacherRequestSection" class="ar-teacher-request"
-        ><summary>Perfil de Professor</summary><h2>Requisitos para Professor</h2
-        ><p
-          >Enquanto o pedido estiver pendente ou recusado, seu acesso continua como Comunidade
-          externa.</p
+        ><summary
+          ><span>Perfil de Professor</span
+          ><span class="ar-teacher-state" id="teacherRequestState"
+            >Validação institucional</span
+          ></summary
+        ><h2>Solicitação de vínculo</h2
+        ><p class="ar-teacher-intro"
+          >Acompanhe a análise do seu vínculo e mantenha os dados institucionais atualizados. Seu
+          acesso atual é <strong>Comunidade externa</strong> até a aprovação.</p
         ><p id="teacherRequestStatus" role="status" aria-live="polite"></p
         ><form id="teacherRequestForm"
+          ><h3>Dados para conferência no SIGAA</h3
           ><label>Nome da conta<input name="nome" readonly /></label
           ><label>E-mail da conta<input name="email" type="email" readonly /></label
           ><label
@@ -92,14 +98,14 @@
               maxlength="40"
               pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,39}"
               required /></label
-          ><label
+          ><label class="ar-teacher-wide"
             >Formação registrada no SIGAA<input name="formacao" maxlength="300" required /></label
           ><p
             >Informe os dados do vínculo como aparecem no SIGAA. A administração autorizada fará a
             conferência no sistema institucional. Esses dados não aparecem no perfil público. Não
             informe sua senha do SIGAA. Nome e e-mail vêm da sua conta; o acesso ao Arcádia continua
             pelo e-mail. Alterar e reenviar substitui o pedido pendente, sem gerar duplicatas.</p
-          ><button type="submit">Enviar para análise</button></form
+          ><button class="ar-teacher-submit" type="submit">Enviar para análise</button></form
         ></details
       >
       <section aria-labelledby="profileTitle">

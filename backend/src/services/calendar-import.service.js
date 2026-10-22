@@ -82,7 +82,8 @@ function key(event) {
         normalize(event.titulo).replace(/\s+/g, ' '),
         iso(event.data_evento),
         iso(event.data_fim),
-        normalize(event.periodo_letivo)
+        normalize(event.periodo_letivo),
+        normalize(event.origem_calendario || 'ifpa')
     ].join('|');
 }
 async function commit(body, actorId) {
@@ -135,6 +136,7 @@ async function commit(body, actorId) {
         return {
             ...values,
             periodo_letivo: period,
+            origem_calendario: 'ifpa',
             descricao:
                 `${quote}\nFonte: ${meta.label}${claims.reference ? ' — ' + claims.reference : ''}${meta.source ? ' — ' + meta.source : ''}\nPDF SHA-256: ${claims.hash}`.trim()
         };
@@ -150,7 +152,7 @@ async function commit(body, actorId) {
         let existing;
         try {
             [existing] = await connection.execute(
-                'SELECT titulo, data_evento, data_fim, periodo_letivo, visibilidade FROM calendario FOR UPDATE'
+                'SELECT titulo, data_evento, data_fim, periodo_letivo, visibilidade, origem_calendario FROM calendario FOR UPDATE'
             );
         } catch (error) {
             if (
@@ -159,7 +161,7 @@ async function commit(body, actorId) {
             )
                 throw error;
             [existing] = await connection.execute(
-                'SELECT titulo, data_evento, data_fim, periodo_letivo FROM calendario FOR UPDATE'
+                'SELECT titulo, data_evento, data_fim, periodo_letivo, origem_calendario FROM calendario FOR UPDATE'
             );
         }
         const seen = new Set(existing.filter((event) => event.visibilidade !== 'pessoal').map(key)),
@@ -181,6 +183,7 @@ async function commit(body, actorId) {
                 'descricao',
                 'categoria',
                 'periodo_letivo',
+                'origem_calendario',
                 'data_evento',
                 'data_fim'
             ];

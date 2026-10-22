@@ -12,7 +12,7 @@ Administradores usam a aba **Requisitos** da Administração. Aprovar exige conf
 
 A transação cria a identidade institucional com papel Professor, preservando nome, e-mail, hash de senha, telefone, data de criação, foto, preferências de compartilhamento e confirmação de e-mail. O vínculo Google é transferido. A solicitação guarda o histórico da decisão e o novo usuário. A identidade externa é substituída pela institucional; suas sessões e recuperações de senha antigas são invalidadas. Não são copiados tokens de acesso. O usuário deve entrar novamente com o mesmo e-mail/senha ou Google.
 
-Se houver conflito de matrícula/e-mail, confirmação ausente, versão antiga ou falha em uma etapa, a transação é revertida. A conta não é parcialmente promovida. Contas de Professor já existentes não são rebaixadas pela migração.
+Se houver conflito de matrícula/e-mail, confirmação ausente, versão antiga ou falha em uma etapa, a transação é revertida. A conta não é parcialmente promovida. Contas de Professor já existentes não são rebaixadas pela migração. Quando as tabelas de acesso externo estão habilitadas, participações em projetos e agenda pessoal também são transferidas na transação. Professor pendente permanece externo e não acessa Turmas.
 
 ## Workbench
 

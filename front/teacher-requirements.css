@@ -9,13 +9,184 @@
   outline-offset: 2px;
 }
 .ar-teacher-request {
-  max-width: 720px;
-  margin: 24px auto;
-  padding: 24px;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 24px 0;
+  padding: clamp(18px, 4vw, 28px);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.ar-teacher-request h2 {
+  margin: 24px 0 8px;
+  font-size: clamp(22px, 4vw, 28px);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+.ar-teacher-intro {
+  margin: 0 0 20px;
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.ar-teacher-intro strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.ar-teacher-request summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+}
+.ar-teacher-request summary::-webkit-details-marker {
+  display: none;
+}
+.ar-teacher-request summary::after {
+  content: '+';
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+.ar-teacher-request[open] summary::after {
+  content: '−';
+}
+.ar-teacher-request summary:focus-visible,
+.ar-teacher-submit:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+.ar-teacher-state {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  color: var(--cyan-ink);
+  background: var(--cyan-soft);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.ar-teacher-request[data-state='pendente'] .ar-teacher-state {
+  color: var(--yellow-ink);
+  background: var(--yellow-soft);
+}
+.ar-teacher-request[data-state='recusado'] .ar-teacher-state {
+  color: var(--orange-ink);
+  background: var(--orange-soft);
+}
+.ar-teacher-request[data-state='aprovado'] .ar-teacher-state {
+  color: var(--green-ink);
+  background: var(--green-soft);
+}
+#teacherRequestStatus {
+  padding: 16px 18px;
+  margin: 0 0 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--cyan-soft);
+  color: var(--cyan-ink);
+  font-size: 14px;
+  line-height: 1.6;
+}
+#teacherRequestStatus:empty {
+  display: none;
+}
+#teacherRequestStatus[data-state='pendente'] {
+  color: var(--yellow-ink);
+  background: var(--yellow-soft);
+}
+#teacherRequestStatus[data-state='recusado'],
+#teacherRequestStatus[data-state='erro'] {
+  color: var(--orange-ink);
+  background: var(--orange-soft);
+}
+#teacherRequestStatus[data-state='aprovado'] {
+  color: var(--green-ink);
+  background: var(--green-soft);
+}
+#teacherRequestForm {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+#teacherRequestForm h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+#teacherRequestForm label {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+#teacherRequestForm input {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 400;
+  min-height: 46px;
+}
+#teacherRequestForm input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+#teacherRequestForm input[readonly] {
+  border-color: var(--line);
+}
+#teacherRequestForm .ar-teacher-wide,
+#teacherRequestForm > p {
+  grid-column: 1 / -1;
+}
+#teacherRequestForm > p {
+  margin: 2px 0 4px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+#teacherRequestForm .ar-teacher-submit {
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-height: 44px;
+  padding: 10px 20px;
+  background: var(--action);
+  color: var(--on-action);
+  border: 1px solid var(--action);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+.ar-teacher-submit:hover:not(:disabled) {
+  filter: brightness(0.9);
+}
+.ar-teacher-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+@media (max-width: 520px) {
+  #teacherRequestForm {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #teacherRequestForm .ar-teacher-submit {
+    width: 100%;
+    justify-self: stretch;
+  }
+  .ar-teacher-request summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .ar-teacher-request summary::after {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .ar-teacher-state {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+    margin-left: 0;
+  }
 }
 .ar-teacher-request form,
 .ar-requirement-dialog form {
@@ -110,7 +281,7 @@
 }
 @media (max-width: 600px) {
   .ar-teacher-request {
-    margin: 16px;
+    margin: 20px 0;
     padding: 18px;
   }
   .ar-requirement-card dl {

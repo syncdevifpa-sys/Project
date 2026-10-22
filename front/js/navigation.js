@@ -10,7 +10,12 @@
             host.replaceChildren();
             for (const [href, label] of [
                 ['index.html', 'Início'],
-                ['calendar.html', 'Calendário público'],
+                ['notices.html', 'Avisos e notícias'],
+                ['projects.html', 'Projetos'],
+                ...(session.tipo_usuario === 'externo'
+                    ? [['documents.html', 'Documentos públicos']]
+                    : []),
+                ['calendar.html', 'Agenda'],
                 [
                     session.tipo_usuario === 'externo' ? 'community.html' : 'login.html',
                     session.tipo_usuario === 'externo' ? 'Minha conta' : 'Entrar'

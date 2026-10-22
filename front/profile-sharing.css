@@ -147,3 +147,50 @@
     padding: 20px 16px;
   }
 }
+
+.ar-external-edit {
+  margin-top: 20px;
+}
+.ar-external-edit summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+  font-weight: 600;
+}
+.ar-external-edit form {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+.ar-external-edit label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+.ar-external-edit input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+.ar-external-edit input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.ar-external-edit p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.ar-external-edit button {
+  justify-self: start;
+  background: var(--action);
+  color: var(--on-action);
+  min-height: 44px;
+}

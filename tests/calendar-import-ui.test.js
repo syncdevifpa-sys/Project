@@ -194,7 +194,7 @@ test('upload prepara só prévia; gravação exige revisão e confirmação púb
         await commit.events.click();
         assert.equal(f.calls.length, 1);
         f.findLabel(
-            'Confirmo a publicação dos eventos selecionados no calendário público'
+            'Confirmo a publicação dos eventos selecionados no calendário acadêmico IFPA'
         ).checked = true;
         f.findLabel('Título revisado').value = 'Evento revisado';
         await commit.events.click();
@@ -345,8 +345,9 @@ test('importação compartilha todas as categorias e muda o retorno visual sem a
     reviewed.checked = true;
     reviewed.events.change();
     selected.checked = true;
-    f.findLabel('Confirmo a publicação dos eventos selecionados no calendário público').checked =
-        true;
+    f.findLabel(
+        'Confirmo a publicação dos eventos selecionados no calendário acadêmico IFPA'
+    ).checked = true;
     await f.nodes.find((n) => n.textContent === 'Importar eventos selecionados').events.click();
     assert.equal(f.calls[1].body.events[0].categoria, 'registro_academico');
 });
