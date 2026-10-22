@@ -56,7 +56,16 @@
     async function reload() {
         message('Carregando turmas...');
         try {
-            data = await call('');
+            const result = await call('');
+            if (
+                typeof result.canAdminister !== 'boolean' ||
+                typeof result.canCreate !== 'boolean'
+            ) {
+                throw new Error(
+                    'Esta versão do servidor de Turmas está desatualizada. Abra o Preview mais recente da branch.'
+                );
+            }
+            data = result;
             q('#classCreate').hidden = !data.canCreate;
             q('.ar-hero-title').textContent = data.canAdminister
                 ? 'Administrar turmas'
@@ -87,7 +96,9 @@
                 q('#classContent').replaceChildren(
                     el(
                         'p',
-                        'Você ainda não participa de uma disciplina. Convites recebidos aparecerão nesta página.',
+                        data.canCreate
+                            ? 'Nenhuma disciplina cadastrada. Use Criar disciplina para começar.'
+                            : 'Você ainda não participa de uma disciplina. Convites recebidos aparecerão nesta página.',
                         'ac-empty'
                     )
                 );

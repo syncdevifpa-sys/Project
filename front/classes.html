@@ -22,28 +22,132 @@
   <body
     ><div class="ar-app">
       <header class="ar-nav">
-        <a class="ar-brand" href="index.html"
-          ><img
-            class="ar-brand-img"
+        <a class="ar-brand" href="index.html">
+          <img
             src="assets/arcadia-emblem.png"
-            alt="Arcádia"
+            alt="Logo da Arcadia"
+            class="ar-brand-img"
             width="34"
             height="34"
-          /><span>Arcádia<small>IFPA Campus Belém</small></span></a
-        >
-        <nav class="ar-navpill" aria-label="Seções do portal"
-          ><a href="index.html">Início</a><a href="dashboard.html">Meu painel</a
-          ><a href="classes.html" aria-current="page">Turmas</a></nav
-        >
-        <a class="ar-btn" href="settings.html">Configurações</a>
+          />
+          <span>
+            <div class="ar-brand-name">Arcadia</div>
+            <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
+          </span>
+        </a>
+
+        <nav class="ar-navpill" aria-label="Seções do portal">
+          <a href="index.html">Início</a>
+          <a href="dashboard.html">Meu painel</a>
+          <a href="notices.html">Avisos e notícias<sup class="ar-sup">(0)</sup></a>
+          <a href="tasks.html">Tarefas</a>
+          <a href="documents.html">Documentos</a>
+          <a href="calendar.html">Calendário</a>
+          <span class="ar-sep" aria-hidden="true"></span>
+          <a href="people.html">Pessoas</a>
+          <a href="projects.html">Projetos</a>
+        </nav>
+
+        <div class="ar-nav-end">
+          <button
+            type="button"
+            class="ar-iconbtn"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            data-search-trigger
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
+          </button>
+
+          <a
+            class="ar-iconbtn"
+            href="settings.html"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M14 17H5"></path>
+              <path d="M19 7h-9"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </a>
+
+          <a class="ar-user" href="settings.html">
+            <span
+              class="ar-avatar ar-avatar--cyan"
+              style="width: 34px; height: 34px; font-size: 13px"
+              >ST</span
+            >
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
+            >Sair</button
+          >
+        </div>
       </header>
       <main id="classesApp">
-        <section class="ar-hero ar-hero--lime ar-hero--compact ac-heading"
-          ><div
-            ><p>Acesso privado · turma e disciplina</p><h1 class="ar-hero-title">Minhas turmas</h1
-            ><p id="classIntro">Materiais, avisos, projetos e agenda das suas disciplinas.</p></div
-          ><button class="ar-btn ar-btn--primary" id="classCreate" hidden
-            >Criar disciplina</button
+        <section class="ar-hero ar-hero--lime ar-hero--compact"
+          ><svg
+            class="ar-hero-art"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="xMaxYMax meet"
+            aria-hidden="true"
+          >
+            <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+            <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+            <rect
+              class="s"
+              x="770"
+              y="116"
+              width="180"
+              height="52"
+              rx="26"
+              opacity="0.75"
+              transform="rotate(-16 860 142)"
+            ></rect>
+            <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+            <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+            <circle class="d" cx="752" cy="133" r="5"></circle>
+            <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle></svg
+          ><h1 class="ar-hero-title">Minhas turmas</h1
+          ><div class="ar-hero-side"
+            ><p class="ar-hero-desc" id="classIntro"
+              >Materiais, avisos, projetos e agenda das suas disciplinas.</p
+            ><div class="ar-hero-actions"
+              ><button class="ar-btn ar-btn--primary" id="classCreate" hidden
+                >Criar disciplina</button
+              ></div
+            ></div
           ></section
         >
         <p id="classStatus" role="status" aria-live="polite"></p>

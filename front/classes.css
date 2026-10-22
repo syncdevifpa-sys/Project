@@ -1,32 +1,3 @@
-.ac-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-.ar-nav > .ar-btn {
-  color: var(--ink);
-  text-decoration: none;
-}
-.ar-brand > span {
-  display: grid;
-  gap: 3px;
-}
-.ar-brand small {
-  font-size: 11px;
-  color: var(--ink-muted);
-}
-#classesApp {
-  padding: 24px;
-  max-width: 1440px;
-  margin: auto;
-}
-#classesApp h2 {
-  font-size: 1.2rem;
-}
-#classesApp h3 {
-  font-size: 1.08rem;
-}
 .ac-workspace {
   display: grid;
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
@@ -144,15 +115,8 @@
   color: var(--ink-muted);
 }
 @media (max-width: 760px) {
-  #classesApp {
-    padding: 16px;
-  }
   .ac-workspace {
     grid-template-columns: 1fr;
-  }
-  .ac-heading {
-    align-items: start;
-    flex-direction: column;
   }
   .ac-context nav {
     max-height: 240px;
