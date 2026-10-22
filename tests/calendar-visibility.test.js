@@ -40,6 +40,7 @@ test('consulta pública e detalhe omitem ocultos; gerenciamento exige sessão e 
                       : events
               ]
     );
+    for (const event of events) event.origem_calendario = 'agenda';
     const publicList = await (await fetch(base + '/api/calendar')).json();
     assert.deepEqual(
         publicList.map((e) => e.id_evento),
@@ -99,13 +100,14 @@ test('ocultar e reexibir exigem autor/admin e preservam o registro', async (t) =
         (e) => e.status === 400
     );
 });
-test('banco antigo mantém consulta pública e edição visível, mas ocultação exige migração', async (t) => {
+test('banco antigo sem origem restringe consulta pública e mantém edição institucional', async (t) => {
     t.mock.method(db, 'execute', async (sql) => {
         if (sql.includes(', oculto FROM'))
             throw Object.assign(Error("Unknown column 'oculto'"), { code: 'ER_BAD_FIELD_ERROR' });
         return [[{ id_evento: 1, id_usuario: 4 }]];
     });
-    assert.equal((await model.listEvents()).length, 1);
+    assert.equal((await model.listEvents()).length, 0);
+    assert.equal((await model.listEvents({ institutional: true })).length, 1);
     t.mock.method(db, 'getConnection', async () => ({
         beginTransaction: async () => {},
         commit: async () => {},

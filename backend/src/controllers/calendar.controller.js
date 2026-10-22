@@ -16,7 +16,9 @@ async function listManagedEvents(req, res) {
 }
 async function listEvents(req, res) {
     try {
-        const events = await calendarModel.listEvents();
+        const events = await calendarModel.listEvents({
+            institutional: Boolean(req.noticeViewer?.id_usuario)
+        });
 
         return res.json(events);
     } catch (error) {
@@ -44,7 +46,9 @@ async function getEventById(req, res) {
     try {
         const eventId = req.params.id;
 
-        const event = await calendarModel.findEventById(eventId);
+        const event = await calendarModel.findEventById(eventId, {
+            institutional: Boolean(req.noticeViewer?.id_usuario)
+        });
 
         if (!event) {
             return res.status(404).json({
@@ -82,11 +86,9 @@ async function createEvent(req, res) {
             !req.user.is_admin &&
             !['docente', 'servidor'].includes(req.user.tipo_usuario)
         )
-            return res
-                .status(403)
-                .json({
-                    error: 'Esta conta pode criar eventos pessoais. A publicação pública é restrita a docentes, servidores e administradores.'
-                });
+            return res.status(403).json({
+                error: 'Esta conta pode criar eventos pessoais. A publicação pública é restrita a docentes, servidores e administradores.'
+            });
 
         const { titulo, data_evento } = req.body;
 

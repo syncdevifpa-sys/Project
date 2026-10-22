@@ -20,7 +20,7 @@
                 heading,
                 make(
                     'p',
-                    'Extraia uma prévia, confira o PDF e selecione os eventos. Nada será gravado até sua confirmação. Os eventos do calendário são públicos.'
+                    'Extraia uma prévia, confira o PDF e selecione os eventos. Nada será gravado até sua confirmação. Os eventos importados pertencem ao calendário acadêmico IFPA, de acesso institucional.'
                 )
             );
             const form = make('form');
@@ -390,7 +390,7 @@
                 result.append(manual);
                 const publishLabel = make(
                     'label',
-                    'Confirmo a publicação dos eventos selecionados no calendário público'
+                    'Confirmo a publicação dos eventos selecionados no calendário acadêmico IFPA'
                 );
                 publishLabel.className = 'ar-field';
                 const publish = make('input');
@@ -405,7 +405,7 @@
                     const selected = rows.filter((row) => row.selected.checked);
                     if (!publish.checked || !selected.length) {
                         status.textContent =
-                            'Selecione eventos revisados e confirme a publicação no calendário público.';
+                            'Selecione eventos revisados e confirme a publicação no calendário acadêmico IFPA.';
                         return;
                     }
                     const events = selected.map((row) => ({

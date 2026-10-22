@@ -222,6 +222,23 @@ function createRequirements(database = db) {
                 "UPDATE docente_requisitos SET id_usuario=?,estado='aprovado',justificativa=NULL,revisado_por=?,revisado_em=NOW() WHERE id_requisito=?",
                 [user, actor, r.id_requisito]
             );
+            // Ao aprovar, preserva participações e agenda pessoal no novo vínculo.
+            for (const [sql, params] of [
+                [
+                    'INSERT INTO projeto_inscricoes(id_projeto,id_usuario,status,criado_em) SELECT id_projeto,?,status,criado_em FROM projeto_inscricoes_externas WHERE id_externo=?',
+                    [user, account.id_externo]
+                ],
+                [
+                    "INSERT INTO calendario(id_usuario,titulo,descricao,categoria,data_evento,data_fim,hora_inicio,hora_fim,local,visibilidade,origem_calendario,criado_em) SELECT ?,titulo,descricao,categoria,data_evento,data_fim,hora_inicio,hora_fim,local,'pessoal','agenda',criado_em FROM agenda_externa WHERE id_externo=?",
+                    [user, account.id_externo]
+                ]
+            ]) {
+                try {
+                    await c.execute(sql, params);
+                } catch (e) {
+                    if (e.code !== 'ER_NO_SUCH_TABLE') throw e;
+                }
+            }
             await c.execute('DELETE FROM tokens WHERE id_externo=?', [account.id_externo]);
             await c.execute('DELETE FROM recuperacao_senha WHERE id_externo=?', [
                 account.id_externo
