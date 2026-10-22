@@ -16,9 +16,12 @@ function fail(status, message) {
 }
 function enabled() {
     if (!verificationEnabled())
-        fail(503, process.env.VERCEL_ENV === 'preview'
-            ? 'A confirmação de e-mail não está habilitada neste Preview. Configure EMAIL_VERIFICATION_ENABLED=true para Preview na Vercel e refaça o deploy.'
-            : 'A confirmação de e-mail ainda não foi habilitada neste ambiente. Entre em contato com a administração.');
+        fail(
+            503,
+            process.env.VERCEL_ENV === 'preview'
+                ? 'A confirmação de e-mail não está habilitada neste Preview. Configure EMAIL_VERIFICATION_ENABLED=true para Preview na Vercel e refaça o deploy.'
+                : 'A confirmação de e-mail ainda não foi habilitada neste ambiente. Entre em contato com a administração.'
+        );
 }
 function address(value) {
     const email = emailAddress(value).toLowerCase();
@@ -112,7 +115,8 @@ async function deliver(ticket) {
     } catch (error) {
         if (error.status === 429 || error.status === 503) {
             console.error('[email] Envio não iniciado', {
-                reason: error.status === 429 ? 'DELIVERY_QUOTA' : 'DELIVERY_LIMIT_STORAGE_UNAVAILABLE'
+                reason:
+                    error.status === 429 ? 'DELIVERY_QUOTA' : 'DELIVERY_LIMIT_STORAGE_UNAVAILABLE'
             });
         }
         // Uma falha de envio não publica tokens nem bloqueia o reenvio posterior.
@@ -143,6 +147,13 @@ async function register(kind, data) {
                 [data.nome, email, data.telefone || null, data.senha, data.organizacao || null]
             );
         } else fail(400, 'Tipo de conta inválido.');
+        if (kind === 'external' && data.teacherRequest)
+            await require('./teacher-requirements.service').insertRequest(
+                connection,
+                insertion.insertId,
+                data.teacherRequest,
+                { nome: data.nome, email }
+            );
         await connection.execute(
             "INSERT INTO email_estado (tipo, identidade, email, regime) VALUES (?, ?, ?, 'novo')",
             [kind, insertion.insertId, email]

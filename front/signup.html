@@ -849,6 +849,43 @@
                 </div>
               </div>
 
+              <div id="teacherSignupFields" hidden>
+                <div class="ar-input-group"
+                  ><label class="ar-input-label" for="teacherMatricula"
+                    >Matrícula / SIAPE no SIGAA</label
+                  ><div class="ar-input-wrap"
+                    ><input id="teacherMatricula" name="matricula" maxlength="30" disabled /></div
+                ></div>
+                <div class="ar-input-group"
+                  ><label class="ar-input-label" for="teacherUsername"
+                    >Nome de usuário no SIGAA</label
+                  ><div class="ar-input-wrap"
+                    ><input
+                      id="teacherUsername"
+                      name="nome_usuario"
+                      autocomplete="username"
+                      minlength="3"
+                      maxlength="40"
+                      pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,39}"
+                      disabled /></div
+                  ><span class="ar-field-hint"
+                    >Informe seu usuário institucional, como aparece no SIGAA. O acesso ao Arcádia
+                    continua pelo e-mail.</span
+                  ></div
+                >
+                <div class="ar-input-group"
+                  ><label class="ar-input-label" for="teacherFormacao"
+                    >Formação registrada no SIGAA</label
+                  ><div class="ar-input-wrap"
+                    ><input id="teacherFormacao" name="formacao" maxlength="300" disabled /></div
+                ></div>
+                <p class="ar-field-hint"
+                  >Informe os dados do seu vínculo de Professor como aparecem no SIGAA. A
+                  administração autorizada conferirá essas informações no sistema institucional
+                  antes de aprovar. Estes dados são restritos à análise do vínculo e não aparecem no
+                  perfil público. Não informe sua senha do SIGAA.</p
+                >
+              </div>
               <!-- Course Selection -->
               <div class="ar-input-group" id="campoCursoWrapper">
                 <label class="ar-input-label" for="curso">
@@ -940,10 +977,21 @@
               <!-- Aceite explícito, separado do aviso de armazenamento. -->
               <div class="ar-signup-legal">
                 <label for="legalAcceptance">
-                  <input id="legalAcceptance" name="legalAcceptance" type="checkbox" required aria-describedby="legalAcceptanceHelp" />
-                  <span>Li e aceito os Termos de Uso e estou ciente da Política de Privacidade.</span>
+                  <input
+                    id="legalAcceptance"
+                    name="legalAcceptance"
+                    type="checkbox"
+                    required
+                    aria-describedby="legalAcceptanceHelp"
+                  />
+                  <span
+                    >Li e aceito os Termos de Uso e estou ciente da Política de Privacidade.</span
+                  >
                 </label>
-                <p id="legalAcceptanceHelp">Para criar sua conta, leia os documentos e marque a opção acima. O aceite começa desmarcado.</p>
+                <p id="legalAcceptanceHelp"
+                  >Para criar sua conta, leia os documentos e marque a opção acima. O aceite começa
+                  desmarcado.</p
+                >
                 <div class="ar-signup-legal-links">
                   <a href="terms.html">Ler Termos de Uso</a>
                   <a href="privacy.html">Ler Política de Privacidade</a>
