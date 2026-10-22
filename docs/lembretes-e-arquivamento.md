@@ -12,12 +12,7 @@ Em Turmas, excluir é arquivar, diferentemente de sair. Somente administrador ex
 
 ## SQL pendente — não aplicado
 
-Após backup e migrações anteriores de Turmas, revisar e executar no Workbench:
-
-1. `backend/admin/add-class-archive.sql`.
-2. `backend/admin/add-task-reminders.sql` (inclui trigger com `DELIMITER`).
-
-As duas migrações também constam no esquema para bancos novos. Não execute o esquema completo em banco existente nem repita os ALTERs. O usuário de migração precisa poder criar tabelas, colunas, chaves e trigger. Falta de migração retorna uma mensagem de indisponibilidade nos novos recursos. Não houve acesso ao banco real ou execução destes scripts.
+A atualização atual está consolidada em `backend/db/migrations/1.1.25.sql`; veja `backend/db/README.md` para diagnóstico, pré-requisitos e execução no Workbench. Os arquivos antigos de arquivamento e lembretes foram preservados no histórico, sem reaplicação em base já atualizada. Não execute schema.sql inteiro em banco existente. Nenhum SQL foi executado pelo agente.
 
 ## Processamento automático — depende de configuração
 

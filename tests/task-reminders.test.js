@@ -107,10 +107,11 @@ test('envio revalida consentimento, endereço, tarefa concluída, dono e ediçã
     } finally { if (previous === undefined) delete process.env.REMINDER_EMAIL_ENABLED; else process.env.REMINDER_EMAIL_ENABLED = previous; }
 });
 test('migração invalida avisos ao concluir ou alterar prazo e exclui avisos vinculados ao apagar tarefa', () => {
-    const sql = fs.readFileSync(require('node:path').join(__dirname, '../backend/admin/add-task-reminders.sql'), 'utf8');
+    const sql = fs.readFileSync(require('node:path').join(__dirname, '../backend/db/migrations/1.1.25.sql'), 'utf8');
     assert.match(sql, /AFTER UPDATE ON tarefas/);
     assert.match(sql, /NEW.status='concluida'/);
     assert.match(sql, /NEW.data_entrega <=> OLD.data_entrega/);
-    assert.match(sql, /REFERENCES tarefas\(id_tarefa\) ON DELETE CASCADE/);
+    const spec = require('../backend/db/migrations/1.1.25.json');
+    assert.ok(spec.foreignKeys.some((fk) => fk.table === 'lembretes' && fk.columns === 'id_tarefa' && fk.ref === 'tarefas' && fk.delete === 'CASCADE'));
     assert.match(sql, /PRIMARY KEY \(id_lembrete, versao\)/);
 });

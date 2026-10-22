@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Requisitos para Professor
 
 Escolher Professor no cadastro cria uma conta real de Comunidade externa e um pedido de vínculo na mesma transação. Não concede permissões de Professor. O usuário confirma o e-mail pelo fluxo existente e pode entrar com senha ou Google mantendo o acesso externo até a aprovação. O domínio do e-mail não atribui cargo.
@@ -16,6 +18,6 @@ Se houver conflito de matrícula/e-mail, confirmação ausente, versão antiga o
 
 ## Workbench
 
-Execute **somente** `backend/admin/add-teacher-requirements.sql` no banco correto após backup. Ele cria uma tabela nova, sem promover ninguém. O ambiente também precisa das tabelas existentes de confirmação de e-mail, sessões, recuperação, compartilhamento de perfil e Google. Não execute `backend/schema.sql` em banco existente. Nenhuma migração de produção foi executada pelo agente.
+Execute **somente** `backend/db/history/pre-1.1.25/add-teacher-requirements.sql` no banco correto após backup. Ele cria uma tabela nova, sem promover ninguém. O ambiente também precisa das tabelas existentes de confirmação de e-mail, sessões, recuperação, compartilhamento de perfil e Google. Não execute `backend/schema.sql` em banco existente. Nenhuma migração de produção foi executada pelo agente.
 
 Depois publique/acesse um deployment da branch com o código e valide com duas contas reais: solicitante externo e administrador. Confirme o e-mail, revise um pedido, recuse com motivo, reenvie e aprove. Confira que a sessão externa antiga deixou de funcionar e que uma nova entrada usa Professor. Testes automatizados com banco simulado não validam a conectividade do MySQL/SMTP de produção.
