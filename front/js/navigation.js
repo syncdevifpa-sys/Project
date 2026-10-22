@@ -58,17 +58,17 @@
                 ]
             }
         ];
+        groups.push({
+            name: 'Turmas',
+            icon: 'class',
+            links: [['classes.html', 'Minhas turmas', 'class']]
+        });
         if (session.is_admin)
             groups.push({
                 name: 'Administração',
                 icon: 'shield',
                 links: [['admin.html', 'Gerenciar aplicativo', 'shield']]
             });
-        groups.push({
-            name: 'Turmas',
-            icon: 'class',
-            links: [['classes.html', 'Minhas turmas', 'class']]
-        });
         function icon(path) {
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             for (const [key, value] of Object.entries({
