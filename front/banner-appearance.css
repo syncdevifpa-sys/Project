@@ -1,0 +1,46 @@
+/* Banners de página e contexto, sem alterar cores semânticas dos cards. */
+.ar-banner-editable { position: relative; padding-inline-end: max(58px, var(--space-6, 24px)); }
+.ar-banner-editable > .ar-banner-appearance-trigger {
+  position: absolute; inset-block-start: 10px; inset-inline-end: 10px; z-index: 3;
+  display: grid; place-items: center; width: 36px; height: 36px; min-height: 36px;
+  padding: 0; border: 1px solid var(--line, #a8b0b8); border-radius: 50%;
+  background: var(--surface, var(--color-page, #fff)); color: var(--ink, var(--color-text, #182020));
+  font: 22px/1 sans-serif; cursor: pointer;
+}
+.ar-banner-appearance-trigger:focus-visible,
+.ar-banner-appearance-dialog :is(button, select):focus-visible {
+  outline: 2px solid var(--action, #176b9a); outline-offset: 3px;
+}
+.ar-banner-personal {
+  background: var(--personal-banner-bg) !important;
+  color: var(--personal-banner-ink) !important;
+}
+.ar-banner-personal :is(.ar-hero-title, .ar-hero-count, .ar-hero-desc, .ac-meta,
+  .ar-detail-eyebrow, .ar-detail-title, .ar-detail-desc, .hero-title, .hero-subtitle, .hero-note) {
+  color: var(--personal-banner-ink) !important;
+}
+.ar-banner-personal :is(.ar-hero-art, .hero-deco-shape) { opacity: .12 !important; }
+.ar-banner-personal :is(.ar-btn--ghost, .btn-pill--outline) {
+  color: var(--personal-banner-ink) !important; border-color: currentColor;
+  background: transparent;
+}
+.ar-banner-appearance-dialog {
+  box-sizing: border-box; width: min(390px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px); overflow: auto; padding: 22px;
+  border: 1px solid var(--line, #b4bac0); border-radius: 20px;
+  background: var(--surface, var(--color-page, #fff)); color: var(--ink, var(--color-text, #182020));
+  box-shadow: 0 16px 48px #0003; font: inherit;
+}
+.ar-banner-appearance-dialog::backdrop { background: #0005; }
+.ar-banner-appearance-dialog h2 { margin: 0 0 10px; font-size: 20px; }
+.ar-banner-appearance-dialog p { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.ar-banner-appearance-dialog form > label { display: grid; gap: 8px; }
+.ar-banner-appearance-dialog select,
+.ar-banner-appearance-dialog button {
+  min-height: 44px; padding: 8px 12px; border: 1px solid var(--line, #9fa8af);
+  border-radius: 12px; background: var(--surface, var(--color-page, #fff)); color: var(--ink, var(--color-text, #182020)); font: inherit;
+}
+.ar-banner-appearance-dialog .ar-color-fields { grid-template-columns: 1fr 1fr; }
+.ar-banner-appearance-dialog [hidden] { display: none !important; }
+.ar-banner-appearance-preview { padding: 16px; border-radius: 12px; font-weight: 600; }
+.ar-banner-appearance-actions { display: flex; justify-content: end; flex-wrap: wrap; gap: 8px; }
