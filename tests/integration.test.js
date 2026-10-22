@@ -422,7 +422,7 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
                 tipo_usuario
             })
         });
-        assert.equal(res.status, 403);
+        assert.equal(res.status, tipo_usuario === 'docente' ? 400 : 403);
     }
     const invalid = await fetch(base + '/api/users', {
         method: 'POST',

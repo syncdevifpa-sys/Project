@@ -74,6 +74,30 @@
         <a href="index.html#public-news">notícias</a> e
         <a href="index.html#public-projects">projetos públicos</a>.</p
       >
+      <details id="teacherRequestSection" class="ar-teacher-request"
+        ><summary>Perfil de Professor</summary><h2>Requisitos para Professor</h2
+        ><p
+          >Enquanto o pedido estiver pendente ou recusado, seu acesso continua como Comunidade
+          externa.</p
+        ><p id="teacherRequestStatus" role="status" aria-live="polite"></p
+        ><form id="teacherRequestForm"
+          ><label>Nome da conta<input name="nome" readonly /></label
+          ><label>E-mail da conta<input name="email" type="email" readonly /></label
+          ><label>Matrícula / SIAPE<input name="matricula" maxlength="30" required /></label
+          ><label
+            >Nome de usuário<input
+              name="nome_usuario"
+              minlength="3"
+              maxlength="40"
+              pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,39}"
+              required /></label
+          ><label>Formação<input name="formacao" maxlength="300" required /></label
+          ><p
+            >Nome e e-mail vêm da sua conta. O acesso continua pelo e-mail. Alterar e reenviar
+            substitui o pedido pendente, sem gerar duplicatas.</p
+          ><button type="submit">Enviar para análise</button></form
+        ></details
+      >
       <section aria-labelledby="profileTitle">
         <h2 id="profileTitle">Seus dados</h2>
         <p id="externalStatus" role="status" aria-live="polite">Carregando perfil…</p>
@@ -124,9 +148,11 @@
         </div>
       </details>
     </main>
+    <link rel="stylesheet" href="teacher-requirements.css" />
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/community.js"></script>
+    <script src="js/teacher-requirements.js"></script>
     <script src="js/avatar-editor.js"></script>
     <script src="js/profile-sharing.js"></script>
     <script src="js/account-email.js"></script>

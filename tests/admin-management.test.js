@@ -21,6 +21,29 @@ function transaction(t, person, admins, history = false) {
     t.mock.method(db, 'getConnection', async () => connection);
     return calls;
 }
+test('atribuir Professor diretamente pela edição administrativa é bloqueado em favor de Requisitos', async (t) => {
+    const calls = transaction(
+        t,
+        {
+            id_usuario: 8,
+            email: 'pessoa@ifpa.edu.br',
+            situacao: 'ativo',
+            tipo_usuario: 'discente',
+            is_admin: 0
+        },
+        [{ id_usuario: 4 }]
+    );
+    await assert.rejects(
+        service.changePerson(
+            'users',
+            8,
+            { tipo_usuario: 'docente', institutional_confirmation: true },
+            4
+        ),
+        (e) => e.status === 409 && /Requisitos/.test(e.message)
+    );
+    assert.ok(!calls.some((c) => c.sql?.startsWith('UPDATE usuarios')));
+});
 test('admin desativa outra pessoa e encerra suas sessões sem excluir histórico', async (t) => {
     const calls = transaction(
         t,

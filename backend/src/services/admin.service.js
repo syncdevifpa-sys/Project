@@ -313,6 +313,19 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                     );
             }
             await connection.execute(`DELETE FROM tokens WHERE ${primary} = ?`, [id]);
+            try {
+                const [requests] = await connection.execute(
+                    `SELECT 1 FROM docente_requisitos WHERE ${primary} = ? LIMIT 1`,
+                    [id]
+                );
+                if (requests.length)
+                    fail(
+                        409,
+                        'Esta conta possui uma solicitação de vínculo ou histórico em Requisitos. Use desativação para preservar o histórico.'
+                    );
+            } catch (error) {
+                if (error.code !== 'ER_NO_SUCH_TABLE') throw error;
+            }
             await require('./email-verification.service').removeAccountState(
                 connection,
                 institutional ? 'users' : 'external',
@@ -381,6 +394,11 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 );
             delete data.email;
             const targetRole = data.tipo_usuario || person.tipo_usuario;
+            if (institutional && targetRole === 'docente' && person.tipo_usuario !== 'docente')
+                fail(
+                    409,
+                    'A atribuição de Professor exige aprovação pela aba Requisitos. Não altere o vínculo diretamente.'
+                );
             const targetEmail = data.email || person.email;
             if (
                 institutional &&

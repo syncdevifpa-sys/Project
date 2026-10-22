@@ -84,6 +84,7 @@ app.use('/api/projects', projectsRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/document-library', require('./src/routes/documentLibrary.routes'));
 app.use('/api/classes', require('./src/routes/classes.routes'));
+app.use('/api/teacher-requirements', require('./src/routes/teacherRequirements.routes'));
 app.use('/api/reminders', remindersRoutes);
 app.use('/api/useful-links', usefulLinksRoutes);
 app.use('/api/external', externalUsersRoutes);

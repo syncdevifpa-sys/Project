@@ -9,7 +9,9 @@ function registration() {
         wrapper = { style: {} },
         course = {},
         help = {},
-        submit = {};
+        submit = {},
+        teacherInputs = [{}, {}, {}],
+        teacherFields = { hidden: true, querySelectorAll: () => teacherInputs };
     const buttons = ['Student', 'Professor', 'Staff', 'External'].map((value, index) => {
         const attributes = {
             'data-vinculo': value,
@@ -57,7 +59,8 @@ function registration() {
                     campoCursoWrapper: wrapper,
                     curso: course,
                     registrationRoleHelp: help,
-                    signupSubmit: submit
+                    signupSubmit: submit,
+                    teacherSignupFields: teacherFields
                 })[id] || null,
             querySelector: () => null,
             querySelectorAll: (selector) => (selector === '.ar-role-btn' ? buttons : [])
@@ -68,7 +71,7 @@ function registration() {
         context
     );
     ready();
-    return { buttons, input, wrapper, course, help, submit };
+    return { buttons, input, wrapper, course, help, submit, teacherFields, teacherInputs };
 }
 
 test('clique seleciona professor/servidor e volta para aluno sem conceder cadastro privilegiado', () => {
@@ -85,8 +88,17 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
         assert.equal(r.course.required, false);
         assert.equal(r.course.value, '');
         assert.equal(r.course.disabled, index !== 2);
-        assert.equal(r.submit.disabled, true);
-        assert.match(r.help.textContent, /administração/);
+        assert.equal(r.submit.disabled, index === 2);
+        assert.equal(r.teacherFields.hidden, index !== 1);
+        assert.ok(
+            r.teacherInputs.every(
+                (input) => input.required === (index === 1) && input.disabled === (index !== 1)
+            )
+        );
+        assert.match(
+            r.help.textContent,
+            index === 1 ? /Requisitos|Comunidade externa/ : /administração/
+        );
     }
     r.buttons[0].click();
     assert.equal(r.input.value, 'Student');
@@ -115,7 +127,8 @@ test('setas e extremos do teclado selecionam e movem foco no grupo de vínculos'
 test('formulário real envia comunidade externa ao endpoint externo e aluno ao endpoint institucional', async () => {
     for (const [value, route, role] of [
         ['External', '/api/external/register', 'externo'],
-        ['Student', '/api/users', 'discente']
+        ['Student', '/api/users', 'discente'],
+        ['Professor', '/api/external/register', 'docente']
     ]) {
         const fields = {
             '#nome, #name': { value: 'Pessoa de teste' },
@@ -123,7 +136,10 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
             '#senha, #password': { value: 'senha-de-teste' },
             '#telefone, #phone': { value: '' },
             '#vinculoInput, #affiliationInput': { value },
-            '#curso': { value: '1' }
+            '#curso': { value: '1' },
+            '#teacherMatricula': { value: '12345' },
+            '#teacherUsername': { value: 'professor.teste' },
+            '#teacherFormacao': { value: 'Licenciatura' }
         };
         let submit, request;
         const form = {
@@ -144,7 +160,9 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
                                 ok: true,
                                 status: 201,
                                 data: {
-                                    [role === 'externo' ? 'externalId' : 'userId']: 10,
+                                    [['externo', 'docente'].includes(role)
+                                        ? 'externalId'
+                                        : 'userId']: 10,
                                     verificationRequired: true,
                                     verificationSent: true
                                 }
@@ -176,5 +194,10 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
         assert.equal(request.path, route);
         assert.equal(request.body.tipo_usuario, role);
         assert.equal(request.body.id_curso, role === 'discente' ? 1 : null);
+        if (role === 'docente') {
+            assert.equal(request.body.matricula, '12345');
+            assert.equal(request.body.nome_usuario, 'professor.teste');
+            assert.equal(request.body.formacao, 'Licenciatura');
+        }
     }
 });
