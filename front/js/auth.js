@@ -89,24 +89,45 @@ window.Arcadia = window.Arcadia || {};
     let googleSdk;
     function loadGoogleSdk() {
         if (window.google?.accounts?.id) return Promise.resolve();
-        if (!googleSdk) googleSdk = new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = 'https://accounts.google.com/gsi/client';
-            script.async = true;
-            script.onload = resolve;
-            script.onerror = () => { script.remove(); googleSdk = null; reject(new Error('Não foi possível abrir o Google. Confira a conexão e tente novamente.')); };
-            document.head.append(script);
-        });
+        if (!googleSdk)
+            googleSdk = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://accounts.google.com/gsi/client';
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => {
+                    script.remove();
+                    googleSdk = null;
+                    reject(
+                        new Error(
+                            'Não foi possível abrir o Google. Confira a conexão e tente novamente.'
+                        )
+                    );
+                };
+                document.head.append(script);
+            });
         return googleSdk;
     }
     // O token é enviado inteiro ao backend; nome, e-mail ou claims do navegador não autenticam.
     async function completeGoogleAuth(credential, challenge, senha) {
-        if (typeof credential !== 'string' || credential.split('.').length !== 3 ||
-            typeof challenge !== 'string' || challenge.split('.').length !== 3) {
+        if (
+            typeof credential !== 'string' ||
+            credential.split('.').length !== 3 ||
+            typeof challenge !== 'string' ||
+            challenge.split('.').length !== 3
+        ) {
             throw new Error('Use o botão oficial do Google para confirmar sua conta.');
         }
-        const result = await api.post('/api/auth/google', { credential, challenge, ...(senha ? { senha } : {}) }, { auth: false });
-        if (!result.ok) throw Object.assign(new Error(result.data?.error || 'Não foi possível entrar com Google.'), { data: result.data });
+        const result = await api.post(
+            '/api/auth/google',
+            { credential, challenge, ...(senha ? { senha } : {}) },
+            { auth: false }
+        );
+        if (!result.ok)
+            throw Object.assign(
+                new Error(result.data?.error || 'Não foi possível entrar com Google.'),
+                { data: result.data }
+            );
         salvarSessao(result.data.user, result.data.token);
         irParaPortal();
     }
@@ -116,31 +137,53 @@ window.Arcadia = window.Arcadia || {};
         if (googlePreparing) return googlePreparing;
         googlePreparing = (async () => {
             const result = await api.post('/api/auth/google/challenge', {}, { auth: false });
-            if (!result.ok) throw new Error(result.data?.error || 'Não foi possível preparar o acesso com Google.');
+            if (!result.ok)
+                throw new Error(
+                    result.data?.error || 'Não foi possível preparar o acesso com Google.'
+                );
             await loadGoogleSdk();
             const context = { ...result.data, expiresAt: Date.now() + 4 * 60 * 1000 };
-            window.google.accounts.id.initialize({ client_id: context.clientId, nonce: context.nonce,
-                auto_select: false, ux_mode: 'popup', use_fedcm_for_prompt: true,
-                callback: async response => {
+            window.google.accounts.id.initialize({
+                client_id: context.clientId,
+                nonce: context.nonce,
+                auto_select: false,
+                ux_mode: 'popup',
+                use_fedcm_for_prompt: true,
+                callback: async (response) => {
                     if (!response.credential) return;
                     if (googleSubmit) return googleSubmit(response.credential);
                     triggerRealGoogleOAuth({ context, credential: response.credential });
-                } });
+                }
+            });
             googleContext = context;
             return context;
         })();
-        try { return await googlePreparing; } finally { googlePreparing = null; }
+        try {
+            return await googlePreparing;
+        } finally {
+            googlePreparing = null;
+        }
     }
     async function initGoogleModal() {
         if (typeof document.querySelector !== 'function') return;
         const form = document.querySelector('form[data-acesso="login"]');
         if (!form || estaLogado()) return;
         let typing = false;
-        form.addEventListener('input', () => { typing = true; window.google?.accounts?.id?.cancel(); }, { once: true });
+        form.addEventListener(
+            'input',
+            () => {
+                typing = true;
+                window.google?.accounts?.id?.cancel();
+            },
+            { once: true }
+        );
         try {
             await prepareGoogleAuth();
-            if (!typing && !document.querySelector('dialog[open]')) window.google.accounts.id.prompt();
-        } catch (_) { /* A sugestão é opcional: falhas não interrompem a entrada com senha. */ }
+            if (!typing && !document.querySelector('dialog[open]'))
+                window.google.accounts.id.prompt();
+        } catch (_) {
+            /* A sugestão é opcional: falhas não interrompem a entrada com senha. */
+        }
     }
     async function triggerRealGoogleOAuth(initial = {}) {
         if (document.querySelector('.ar-google-login-dialog')) return;
@@ -148,7 +191,8 @@ window.Arcadia = window.Arcadia || {};
         const dialog = document.createElement('dialog');
         dialog.className = 'ar-google-login-dialog';
         dialog.setAttribute('aria-labelledby', 'googleLoginTitle');
-        dialog.innerHTML = '<div class="ar-google-login-heading"><span class="ar-google-login-brand">Arcádia</span><button type="button" data-google-close aria-label="Fechar entrada com Google">Fechar</button></div>' +
+        dialog.innerHTML =
+            '<div class="ar-google-login-heading"><span class="ar-google-login-brand">Arcádia</span><button type="button" data-google-close aria-label="Fechar entrada com Google">Fechar</button></div>' +
             '<h2 id="googleLoginTitle">Entrar com Google</h2>' +
             '<p class="ar-google-login-intro">Escolha a conta Google que usa o mesmo e-mail do seu cadastro.</p>' +
             '<div class="ar-google-login-provider"><div data-google-button></div></div>' +
@@ -160,8 +204,13 @@ window.Arcadia = window.Arcadia || {};
         const linkForm = dialog.querySelector('form');
         const enter = dialog.querySelector('[data-google-enter]');
         enter.disabled = !estaLogado();
-        let credential, challenge, busy = false;
-        const showError = error => { status.textContent = error.message; status.dataset.state = error.data?.passwordRequired ? 'info' : 'error'; };
+        let credential,
+            challenge,
+            busy = false;
+        const showError = (error) => {
+            status.textContent = error.message;
+            status.dataset.state = error.data?.passwordRequired ? 'info' : 'error';
+        };
         const submit = async (token, password) => {
             if (busy || !dialog.isConnected) return;
             busy = true;
@@ -173,7 +222,11 @@ window.Arcadia = window.Arcadia || {};
                 dialog.close();
             } catch (error) {
                 showError(error);
-                if (error.data?.passwordRequired) { enter.hidden = true; linkForm.hidden = false; linkForm.querySelector('input').focus(); }
+                if (error.data?.passwordRequired) {
+                    enter.hidden = true;
+                    linkForm.hidden = false;
+                    linkForm.querySelector('input').focus();
+                }
             } finally {
                 linkForm.querySelector('input').value = '';
                 linkForm.querySelector('button').disabled = false;
@@ -187,7 +240,10 @@ window.Arcadia = window.Arcadia || {};
             if (credential) submit(credential);
             else if (estaLogado()) irParaPortal();
         });
-        linkForm.addEventListener('submit', event => { event.preventDefault(); submit(credential, linkForm.querySelector('input').value); });
+        linkForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            submit(credential, linkForm.querySelector('input').value);
+        });
         dialog.querySelector('[data-google-close]').addEventListener('click', () => dialog.close());
         dialog.addEventListener('close', () => {
             googleSubmit = null;
@@ -202,10 +258,10 @@ window.Arcadia = window.Arcadia || {};
         dialog.querySelector('[data-google-close]').focus();
         try {
             window.google?.accounts?.id?.cancel();
-            const context = initial.context || await prepareGoogleAuth();
+            const context = initial.context || (await prepareGoogleAuth());
             if (!dialog.isConnected) return;
             challenge = context.challenge;
-            googleSubmit = token => {
+            googleSubmit = (token) => {
                 credential = token;
                 enter.disabled = false;
                 enter.hidden = false;
@@ -214,20 +270,45 @@ window.Arcadia = window.Arcadia || {};
                 status.dataset.state = 'info';
                 enter.focus();
             };
-            const width = Math.min(340, Math.max(200, Math.floor(dialog.querySelector('[data-google-button]').getBoundingClientRect().width)));
-            window.google.accounts.id.renderButton(dialog.querySelector('[data-google-button]'),
-                { theme: 'outline', shape: 'pill', size: 'large', text: 'signin_with', locale: 'pt-BR', width });
-            status.textContent = estaLogado() ? 'Você já tem uma sessão do Arcádia. Clique em Entrar para voltar ou escolha outra conta Google.' : 'Escolha sua conta Google acima para habilitar a entrada.';
+            const width = Math.min(
+                340,
+                Math.max(
+                    200,
+                    Math.floor(
+                        dialog.querySelector('[data-google-button]').getBoundingClientRect().width
+                    )
+                )
+            );
+            window.google.accounts.id.renderButton(dialog.querySelector('[data-google-button]'), {
+                theme: 'outline',
+                shape: 'pill',
+                size: 'large',
+                text: 'signin_with',
+                locale: 'pt-BR',
+                width
+            });
+            status.textContent = estaLogado()
+                ? 'Você já tem uma sessão do Arcádia. Clique em Entrar para voltar ou escolha outra conta Google.'
+                : 'Escolha sua conta Google acima para habilitar a entrada.';
             if (initial.credential && !initial.error) googleSubmit(initial.credential);
             if (initial.error) {
                 credential = initial.credential;
                 showError(initial.error);
-                if (initial.error.data?.passwordRequired) { linkForm.hidden = false; linkForm.querySelector('input').focus(); }
+                if (initial.error.data?.passwordRequired) {
+                    linkForm.hidden = false;
+                    linkForm.querySelector('input').focus();
+                }
             }
-        } catch (error) { showError(error); }
+        } catch (error) {
+            showError(error);
+        }
     }
-    function openGoogleAuthModal() { return triggerRealGoogleOAuth(); }
-    function closeGoogleAuthModal() { document.querySelector('.ar-google-login-dialog')?.close(); }
+    function openGoogleAuthModal() {
+        return triggerRealGoogleOAuth();
+    }
+    function closeGoogleAuthModal() {
+        document.querySelector('.ar-google-login-dialog')?.close();
+    }
 
     // ------------------------- Botões Sociais (Google / Facebook) -------------------------
     function initSocialButtons() {
@@ -261,7 +342,11 @@ window.Arcadia = window.Arcadia || {};
     function showTopAlert(mensagem, detalhe) {
         const textoPrincipal = 'Não foi possível realizar o cadastro ou login';
 
-        if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof CustomEvent !== 'undefined') {
+        if (
+            typeof window !== 'undefined' &&
+            typeof window.dispatchEvent === 'function' &&
+            typeof CustomEvent !== 'undefined'
+        ) {
             try {
                 window.dispatchEvent(
                     new CustomEvent('arcadia:auth-error', {
@@ -277,7 +362,11 @@ window.Arcadia = window.Arcadia || {};
             } catch {}
         }
 
-        if (typeof document === 'undefined' || typeof document.createElement !== 'function' || !document.body) {
+        if (
+            typeof document === 'undefined' ||
+            typeof document.createElement !== 'function' ||
+            !document.body
+        ) {
             return;
         }
 
@@ -313,8 +402,11 @@ window.Arcadia = window.Arcadia || {};
             document.body.appendChild(container);
         }
 
-        const iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-        const detalheHtml = detalhe ? '<span style="font-weight:400; opacity:0.9; margin-left:6px">(' + detalhe + ')</span>' : '';
+        const iconSvg =
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        const detalheHtml = detalhe
+            ? '<span style="font-weight:400; opacity:0.9; margin-left:6px">(' + detalhe + ')</span>'
+            : '';
 
         container.innerHTML = [
             iconSvg,
@@ -427,7 +519,7 @@ window.Arcadia = window.Arcadia || {};
                               : 'Aluno';
                     const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
 
-                    if (!['discente', 'externo'].includes(tipo_usuario)) {
+                    if (!['discente', 'externo', 'docente'].includes(tipo_usuario)) {
                         return showError(
                             'Contas de professor e servidor precisam ser autorizadas pela administração.'
                         );
@@ -442,12 +534,22 @@ window.Arcadia = window.Arcadia || {};
 
                     try {
                         const { ok, status, data } = await api.post(
-                            tipo_usuario === 'externo' ? '/api/external/register' : '/api/users',
+                            ['externo', 'docente'].includes(tipo_usuario)
+                                ? '/api/external/register'
+                                : '/api/users',
                             {
                                 nome,
                                 email,
                                 senha,
                                 tipo_usuario,
+                                ...(tipo_usuario === 'docente'
+                                    ? {
+                                          matricula: form.querySelector('#teacherMatricula')?.value,
+                                          nome_usuario:
+                                              form.querySelector('#teacherUsername')?.value,
+                                          formacao: form.querySelector('#teacherFormacao')?.value
+                                      }
+                                    : {}),
                                 telefone:
                                     telefone ||
                                     (form.querySelector('#telefone')?.value || '').trim() ||
@@ -476,8 +578,9 @@ window.Arcadia = window.Arcadia || {};
                             return showError(data.error || 'Não foi possível realizar o cadastro.');
                         }
 
-                        const createdId =
-                            tipo_usuario === 'externo' ? data?.externalId : data?.userId;
+                        const createdId = ['externo', 'docente'].includes(tipo_usuario)
+                            ? data?.externalId
+                            : data?.userId;
                         if (
                             status !== 201 ||
                             !Number.isInteger(createdId) ||
@@ -566,9 +669,7 @@ window.Arcadia = window.Arcadia || {};
         // Tenta revogar a sessão no servidor antes de descartar o JWT no navegador
         try {
             await api.post(
-                getSessao().tipo_usuario === 'externo'
-                    ? '/api/external/logout'
-                    : '/api/auth/logout'
+                getSessao().tipo_usuario === 'externo' ? '/api/external/logout' : '/api/auth/logout'
             );
         } catch (error) {
             console.warn('Revogação no servidor offline ou ignorada:', error);
@@ -585,16 +686,25 @@ window.Arcadia = window.Arcadia || {};
     }
 
     function initLogout() {
-        document.querySelectorAll('[data-logout], [data-sign-out], #adminLogout, #externalLogout, [data-action="logout"]').forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                logout();
+        document
+            .querySelectorAll(
+                '[data-logout], [data-sign-out], #adminLogout, #externalLogout, [data-action="logout"]'
+            )
+            .forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
             });
-        });
 
         if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
             document.addEventListener('click', (e) => {
-                const btn = e.target && e.target.closest && e.target.closest('[data-logout], [data-sign-out], #adminLogout, #externalLogout, [data-action="logout"]');
+                const btn =
+                    e.target &&
+                    e.target.closest &&
+                    e.target.closest(
+                        '[data-logout], [data-sign-out], #adminLogout, #externalLogout, [data-action="logout"]'
+                    );
                 if (btn) {
                     e.preventDefault();
                     logout();
@@ -626,7 +736,15 @@ window.Arcadia = window.Arcadia || {};
         function atualizarCurso(tipo) {
             if (!cursoWrap) return;
             const ehAluno = tipo === 'discente';
-            const publicRole = ehAluno || tipo === 'externo';
+            const publicRole = ehAluno || tipo === 'externo' || tipo === 'docente';
+            const teacherFields = document.getElementById('teacherSignupFields');
+            if (teacherFields) {
+                teacherFields.hidden = tipo !== 'docente';
+                for (const input of teacherFields.querySelectorAll('input')) {
+                    input.required = tipo === 'docente';
+                    input.disabled = tipo !== 'docente';
+                }
+            }
             const academicVisible = ehAluno || tipo === 'servidor';
             cursoWrap.style.display = academicVisible ? 'flex' : 'none';
             if (courseLabel)
@@ -641,10 +759,12 @@ window.Arcadia = window.Arcadia || {};
             if (roleHelp)
                 roleHelp.textContent = ehAluno
                     ? 'Aluno: preencha seus dados e selecione o curso. O cadastro aceita e-mail pessoal, como Gmail.'
-                    : tipo === 'externo'
-                      ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
-                      : (tipo === 'docente' ? 'Professor' : 'Servidor') +
-                        ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
+                    : tipo === 'docente'
+                      ? 'Professor: confirme seu e-mail e aguarde a análise dos Requisitos. Enquanto isso, sua conta terá acesso de Comunidade externa.'
+                      : tipo === 'externo'
+                        ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
+                        : (tipo === 'docente' ? 'Professor' : 'Servidor') +
+                          ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
         }
         atualizarCurso(paraTipoUsuario(vinculoInput?.value || 'Aluno'));
 

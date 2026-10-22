@@ -8,10 +8,15 @@ const externalUsersModel = require('../models/externalUsers.model');
 async function registerExternal(req, res) {
     try {
         const { nome, email, senha, telefone, organizacao } = req.body;
+        const teacherRequest =
+            req.body.tipo_usuario === 'docente'
+                ? require('../services/teacher-requirements.service').fields(req.body)
+                : null;
 
         if (
             typeof nome !== 'string' ||
             !nome.trim() ||
+            nome.trim().length > 100 ||
             typeof email !== 'string' ||
             email.length > 150 ||
             !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
@@ -47,16 +52,26 @@ async function registerExternal(req, res) {
 
         const hashedPassword = await bcrypt.hash(senha, 10);
 
-        const result = await externalUsersModel.createExternal({
+        const registration = {
             nome: nome.trim(),
             email: normalizedEmail,
             telefone: telefone || null,
             senha: hashedPassword,
-            organizacao: organizacao || null
-        });
+            organizacao: organizacao || null,
+            ...(teacherRequest ? { teacherRequest } : {})
+        };
+        const result = teacherRequest
+            ? await require('../services/email-verification.service').register(
+                  'external',
+                  registration
+              )
+            : await externalUsersModel.createExternal(registration);
 
         return res.status(201).json({
-            message: 'Usuário externo criado com sucesso.',
+            message: teacherRequest
+                ? 'Conta externa criada. O pedido de Professor aguarda análise em Requisitos.'
+                : 'Usuário externo criado com sucesso.',
+            teacherRequestPending: !!teacherRequest,
             externalId: result.insertId,
             verificationRequired: true,
             verificationSent: result.verificationSent === true
@@ -64,11 +79,24 @@ async function registerExternal(req, res) {
     } catch (error) {
         if (!error.status) console.error('External registration failed.');
 
-        return res.status(error.status || 500).json({
-            error: error.status
-                ? error.message
-                : 'Não foi possível concluir a operação. Tente novamente.'
-        });
+        return res
+            .status(
+                error.status ||
+                    (error.code === 'ER_NO_SUCH_TABLE'
+                        ? 503
+                        : error.code === 'ER_DUP_ENTRY'
+                          ? 409
+                          : 500)
+            )
+            .json({
+                error: error.status
+                    ? error.message
+                    : error.code === 'ER_NO_SUCH_TABLE'
+                      ? 'A solicitação de Professor precisa ser habilitada no banco.'
+                      : error.code === 'ER_DUP_ENTRY'
+                        ? 'E-mail ou nome de usuário já cadastrado. Confira os dados.'
+                        : 'Não foi possível concluir a operação. Tente novamente.'
+            });
     }
 }
 
