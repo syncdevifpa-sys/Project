@@ -9,6 +9,7 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 | Atualização da base anterior para 1.1.25, inclusive parcialmente aplicada | `backend/db/migrations/1.1.25.sql` |
 | Evolução de lembretes de eventos/exteriores após 1.1.25 | `backend/db/migrations/1.1.26.sql` |
 | Diagnóstico da evolução de lembretes | `backend/db/checks/1.1.26.sql` |
+| Execução assistida pelo Workbench | `backend/db/workbench/` — adoção e etapas separadas |
 | Rastreabilidade de scripts antigos | `backend/db/history/pre-1.1.25/` |
 | Operações administrativas específicas | `backend/admin/` |
 
@@ -30,9 +31,11 @@ O esquema registra as versões 1.1.25 e 1.1.26 em `arcadia_schema_migrations`. E
 
 Uma base que já recebeu os seis blocos antigos não precisa reaplicá-los. O arquivo consolidado primeiro confere a estrutura e pode registrar a versão já compatível, preservando os dados. Não se infere a estrutura real apenas de uma captura antiga; o usuário confirmou posteriormente os blocos no Workbench, mas não houve acesso do agente ao banco real.
 
+O usuário também confirmou a conclusão dos passos assistidos da 1.1.26 no `defaultdb`. Eles ficam em [workbench/](workbench/README.md), separados das consultas de leitura. Não os reaplique nesse banco. Essa execução pelo usuário não implica teste SMTP, cron, aplicação publicada ou outras bases. A validação de CHECK trata os delimitadores escapados dos literais conhecidos; gatilhos com um único UPDATE aceitam o mesmo corpo com ou sem BEGIN/END.
+
 ## Manutenção do repositório
 
-O manifesto `db/migrations/1.1.25.json` descreve o contrato das seis tabelas (incluindo inscrições em editais), dezesseis colunas e demais objetos dessa atualização. `node tools/build-db-migration.cjs` gera o SQL correspondente **offline** e atualiza o checksum da instalação nova. O helper de geração não conecta a banco. Não edite SQL gerado isoladamente nem altere o checksum de uma versão aplicada: mudanças futuras exigem uma nova versão de migração.
+O manifesto `db/migrations/1.1.25.json` descreve o contrato das seis tabelas (incluindo inscrições em editais), dezesseis colunas e demais objetos dessa atualização. `node tools/db/build-migrations.cjs` gera o SQL correspondente **offline** e atualiza o checksum da instalação nova. O helper de geração não conecta a banco. Não edite SQL gerado isoladamente nem altere o checksum de uma versão aplicada: mudanças futuras exigem uma nova versão de migração.
 
 Os 19 originais foram movidos sem alterar seus bytes; `history/pre-1.1.25/manifest.json` guarda SHA-256 para conferência. O antigo pacote `release-1.1.25-workbench.sql` foi removido por repetir exatamente seis desses originais; a equivalência e seu checksum estão registrados em `retired-bundle.json`. Documentos de entregas anteriores apontam para o histórico por rastreabilidade, não como instrução para reaplicar tudo. Scripts exclusivos de importação de cursos, consulta e promoção administrativa continuam em `backend/admin/`.
 

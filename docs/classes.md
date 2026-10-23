@@ -48,4 +48,4 @@ As rotas verificam os papéis atuais no banco, a propriedade da oferta, a matrí
 
 ## Atualização de ofertas, saída e nomes únicos
 
-Consulte `docs/turmas-revisao-2026-10-22.md` para as quatro migrações adicionais e o diagnóstico de duplicidade antes da publicação. A saída voluntária encerra vínculos sem apagar publicações ou materiais. Legado não recebe semestre presumido. Cores são preferências pessoais por item e navegador; não alteram a turma compartilhada.
+Consulte `docs/history/turmas-revisao-2026-10-22.md` para as quatro migrações adicionais e o diagnóstico de duplicidade antes da publicação. A saída voluntária encerra vínculos sem apagar publicações ou materiais. Legado não recebe semestre presumido. Cores são preferências pessoais por item e navegador; não alteram a turma compartilhada.

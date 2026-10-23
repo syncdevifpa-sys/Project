@@ -1,4 +1,4 @@
--- GERADO por node tools/build-db-migration.cjs. Nao editar este arquivo manualmente.
+-- GERADO por node tools/db/build-migrations.cjs. Nao editar este arquivo manualmente.
 -- MySQL 8.4. Banco EXISTENTE com baseline documentado; backup e janela de manutencao.
 -- Workbench: ativar parar ao ocorrer erro e executar o arquivo inteiro na mesma conexao.
 -- DDL faz COMMIT implicito. Nao ha rollback global. Repetir apos corrigir a causa retoma objetos ausentes.
@@ -125,6 +125,12 @@ BEGIN
   END IF;
  ELSE
   CALL _arc125_assert(enforced_value='YES','CHECK de semestre esta desativado.');
+  -- CHECK_CLAUSE pode devolver delimitadores de strings como barra+aspas.
+  -- Nesta regra, os tres literais ENUM nao contem aspas ou barras internas.
+  -- Normalizar apenas esses literais conhecidos, sem mudar sql_mode nem a constraint.
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'semestral',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'semestral',CHAR(39)));
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'legado',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'legado',CHAR(39)));
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'anual',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'anual',CHAR(39)));
   -- Compara todo o dominio: tres valores ENUM x todos os 256 valores TINYINT UNSIGNED.
   SET @arc125_sql=CONCAT('SELECT SUM(COALESCE((',clause_value,'),1) <> ((regime_letivo=''semestral'' AND semestre IN (1,2)) OR (regime_letivo IN (''legado'',''anual'') AND semestre=0))) INTO @arc125_check_diff FROM (WITH RECURSIVE n AS (SELECT 0 AS semestre UNION ALL SELECT semestre+1 FROM n WHERE semestre<255) SELECT n.semestre,r.regime_letivo FROM n CROSS JOIN (SELECT ''legado'' AS regime_letivo UNION ALL SELECT ''anual'' UNION ALL SELECT ''semestral'') r) domain_values');
   PREPARE arc125_stmt FROM @arc125_sql; EXECUTE arc125_stmt; DEALLOCATE PREPARE arc125_stmt;
@@ -175,13 +181,13 @@ CALL _arc125_fk('lembretes','id_tarefa','tarefas','id_tarefa','CASCADE','0');
 CALL _arc125_index('academico_disciplinas','uq_disciplina_turma','id_turma,nome,ano_letivo',1,0);
 CALL _arc125_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_turma_nome_insert' AND NOT (
  EVENT_OBJECT_TABLE='academico_turmas' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='INSERT' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end')),'Trigger ausente ou divergente: trg_turma_nome_insert');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end'))),'Trigger ausente ou divergente: trg_turma_nome_insert');
 CALL _arc125_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_turma_nome_update' AND NOT (
  EVENT_OBJECT_TABLE='academico_turmas' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end')),'Trigger ausente ou divergente: trg_turma_nome_update');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end'))),'Trigger ausente ou divergente: trg_turma_nome_update');
 CALL _arc125_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='tarefa_invalida_lembretes' AND NOT (
  EVENT_OBJECT_TABLE='tarefas' AND ACTION_TIMING='AFTER' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginif(new.status=''concluida''andold.status<>''concluida'')ornot(new.data_entrega<=>old.data_entrega)thenupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_tarefa=new.id_tarefa;endif;end')),'Trigger ausente ou divergente: tarefa_invalida_lembretes');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginif(new.status=''concluida''andold.status<>''concluida'')ornot(new.data_entrega<=>old.data_entrega)thenupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_tarefa=new.id_tarefa;endif;end'))),'Trigger ausente ou divergente: tarefa_invalida_lembretes');
 -- Tabela existente deve estar completa. IF NOT EXISTS sozinho nao comprova equivalencia: projeto_inscricoes_externas.
 SET @arc125_table_exists=EXISTS(SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='projeto_inscricoes_externas');
 CALL _arc125_assert(NOT @arc125_table_exists OR EXISTS(SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='projeto_inscricoes_externas' AND ENGINE='InnoDB' AND TABLE_TYPE='BASE TABLE'),'Tabela existente precisa ser InnoDB.');
@@ -409,13 +415,13 @@ END$$
 DELIMITER ;
 CALL _arc125_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_turma_nome_insert' AND (
  EVENT_OBJECT_TABLE='academico_turmas' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='INSERT' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end')),'Trigger ausente ou divergente: trg_turma_nome_insert');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end'))),'Trigger ausente ou divergente: trg_turma_nome_insert');
 CALL _arc125_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_turma_nome_update' AND (
  EVENT_OBJECT_TABLE='academico_turmas' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end')),'Trigger ausente ou divergente: trg_turma_nome_update');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginsetnew.nome=regexp_replace(trim(new.nome),''[[:space:]]+'','''');setnew.nome_chave=lower(new.nome);end'))),'Trigger ausente ou divergente: trg_turma_nome_update');
 CALL _arc125_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='tarefa_invalida_lembretes' AND (
  EVENT_OBJECT_TABLE='tarefas' AND ACTION_TIMING='AFTER' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginif(new.status=''concluida''andold.status<>''concluida'')ornot(new.data_entrega<=>old.data_entrega)thenupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_tarefa=new.id_tarefa;endif;end')),'Trigger ausente ou divergente: tarefa_invalida_lembretes');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginif(new.status=''concluida''andold.status<>''concluida'')ornot(new.data_entrega<=>old.data_entrega)thenupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_tarefa=new.id_tarefa;endif;end'))),'Trigger ausente ou divergente: tarefa_invalida_lembretes');
 CALL _arc125_column('projetos','permite_externos','permite_externos TINYINT(1) NOT NULL DEFAULT 0','tinyint','0','0','0','0',NULL,'0');
 CALL _arc125_column('calendario','origem_calendario','origem_calendario ENUM(''agenda'',''ifpa'') NOT NULL DEFAULT ''ifpa''','enum(''agenda'',''ifpa'')','0','ifpa','0','0',NULL,'0');
 CALL _arc125_column('academico_disciplinas','regime_letivo','regime_letivo ENUM(''legado'',''anual'',''semestral'') NOT NULL DEFAULT ''legado''','enum(''legado'',''anual'',''semestral'')','0','legado','0','0',NULL,'0');

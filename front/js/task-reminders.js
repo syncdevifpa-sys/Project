@@ -46,7 +46,7 @@
                 finally { consent.disabled = !prefs.email_confirmado && !prefs.email_lembretes; }
             };
             controls.append(make('p', prefs.email_confirmado ? 'Destino fixo: ' + prefs.email : 'Confirme o e-mail da sua conta para ativar notificações.'), consentLabel,
-                make('p', prefs.envio_habilitado ? 'O envio depende do processamento periódico do servidor. Você pode desativar os avisos a qualquer momento.' : 'O envio por e-mail ainda não está disponível. Seus lembretes continuam salvos aqui.'),
+                make('p', prefs.envio_mensagem || (prefs.envio_habilitado ? 'O envio depende do processamento periódico do servidor. Você pode desativar os avisos a qualquer momento.' : 'O envio por e-mail ainda não está disponível. Seus lembretes continuam salvos aqui.')),
                 make('p',prefs.aviso_frequencia||'Os avisos são processados diariamente e podem atrasar.'),
                 button('Criar lembrete', () => editor()));
             if (!reminders.length) list.append(make('p', 'Nenhum lembrete cadastrado.'));

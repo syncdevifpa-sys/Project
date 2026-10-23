@@ -2,6 +2,20 @@
 
 Frontend em HTML, CSS e JavaScript; API em Node.js/Express; banco MySQL.
 
+## Organização
+
+| Pasta | Conteúdo |
+| --- | --- |
+| `front/` | Páginas, estilos, scripts e imagens do portal |
+| `backend/src/` | Rotas, regras e persistência da API |
+| `backend/db/` | Migrações, diagnóstico, passos do Workbench e histórico SQL |
+| `docs/` | Guias atuais e documentos jurídicos; relatórios anteriores em `docs/history/` |
+| `tests/` | Testes automatizados |
+| `tools/` | Ferramentas; geradores de SQL em `tools/db/` |
+
+Comece pelo [índice da documentação](docs/README.md) ou pelo [guia do banco](backend/db/README.md).
+`public/` é saída do build e `tmp/` contém artefatos locais; não são fontes da aplicação.
+
 ## Executar
 
 1. Use Node.js 24 e instale as dependências na raiz: `npm ci`.
@@ -219,7 +233,7 @@ Se a preparação do leitor falhar, a resposta identifica `PDF_RUNTIME_UNAVAILAB
 
 O envio público de boas-vindas foi desativado. Novos cadastros usam confirmação por link antes do acesso pleno; contas antigas permanecem legadas e não verificadas até prova de posse do endereço. Trocas de e-mail exigem senha atual e confirmação do novo endereço.
 
-Antes de ativar, aplique as migrações de limites e confirmação no banco correto e configure SMTP, APP_URL, segredo das cotas e EMAIL_VERIFICATION_ENABLED conforme [o guia de ativação](docs/confirmacao-email.md). As migrações foram preparadas, mas não executadas em bancos reais nesta etapa. Nunca coloque credenciais no navegador ou em commits. A auditoria geral e suas pendências estão em [docs/auditoria-seguranca-2026-10-16.md](docs/auditoria-seguranca-2026-10-16.md).
+Antes de ativar, aplique as migrações de limites e confirmação no banco correto e configure SMTP, APP_URL, segredo das cotas e EMAIL_VERIFICATION_ENABLED conforme [o guia de ativação](docs/confirmacao-email.md). As migrações foram preparadas, mas não executadas em bancos reais nesta etapa. Nunca coloque credenciais no navegador ou em commits. A auditoria geral e suas pendências estão em [docs/history/auditoria-seguranca-2026-10-16.md](docs/history/auditoria-seguranca-2026-10-16.md).
 
 ## Organização dos SQLs
 

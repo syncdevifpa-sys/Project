@@ -18,6 +18,22 @@ function schedule(body, now = Date.now()) {
         fail(400, 'Informe o fuso horário.');
     return instant.slice(0, 19).replace('T', ' ');
 }
+function deliveryAvailability() {
+    if (process.env.REMINDER_EMAIL_ENABLED !== 'true') return {
+        envio_habilitado: false, envio_status: 'desativado',
+        envio_mensagem: 'O envio de lembretes está desativado neste ambiente. A administração precisa habilitá-lo; seus lembretes continuam salvos aqui.'
+    };
+    if (!emailService.recoveryConfigured()) return {
+        envio_habilitado: false, envio_status: 'email_nao_configurado',
+        envio_mensagem: 'O serviço de e-mail dos lembretes ainda precisa ser configurado neste ambiente. Contate a administração; seus lembretes continuam salvos aqui.'
+    };
+    if ((process.env.CRON_SECRET || '').length < 32) return {
+        envio_habilitado: false, envio_status: 'processamento_nao_configurado',
+        envio_mensagem: 'O processamento por e-mail dos lembretes ainda precisa ser configurado neste ambiente. Contate a administração; seus lembretes continuam salvos aqui.'
+    };
+    return { envio_habilitado: true, envio_status: 'configurado',
+        envio_mensagem: 'O envio está configurado para processamento diário. A entrega depende da execução do agendador e do serviço de e-mail.' };
+}
 function createReminders(db = database) {
     async function transaction(action) {
         const c = await db.getConnection();
@@ -50,7 +66,7 @@ function createReminders(db = database) {
         return { email_lembretes: await preference(db,owner,actor),
             email_confirmado: await verified(db, owner, actor.email), email: actor.email,
             frequencia: 'diaria', aviso_frequencia: 'Os avisos são processados diariamente e podem chegar depois do horário escolhido. Para eventos, prefira antecedência de 48 horas.',
-            envio_habilitado: process.env.REMINDER_EMAIL_ENABLED === 'true' && emailService.recoveryConfigured() && (process.env.CRON_SECRET || '').length >= 32 };
+            ...deliveryAvailability() };
     }
     async function consent(owner, body) {
         if (typeof body.email_lembretes !== 'boolean') fail(400, 'Informe sua escolha de notificações.');

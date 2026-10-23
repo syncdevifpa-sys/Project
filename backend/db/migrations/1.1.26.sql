@@ -1,4 +1,4 @@
--- GERADO offline por tools/build-db-migration.cjs. MySQL 8.4.
+-- GERADO offline por tools/db/build-migrations.cjs. MySQL 8.4.
 -- Requer contrato 1.1.25 conferido/registrado, backup e manutencao sem envios/escritas.
 -- Workbench: parar no primeiro erro e mesma conexao. DDL confirma implicitamente.
 -- Nenhum usuario/dado e removido. Muda apenas nulabilidade do titular para permitir externo.
@@ -122,6 +122,12 @@ BEGIN
   END IF;
  ELSE
   CALL _arc126_assert(enforced_value='YES','CHECK de semestre esta desativado.');
+  -- CHECK_CLAUSE pode devolver delimitadores de strings como barra+aspas.
+  -- Nesta regra, os tres literais ENUM nao contem aspas ou barras internas.
+  -- Normalizar apenas esses literais conhecidos, sem mudar sql_mode nem a constraint.
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'semestral',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'semestral',CHAR(39)));
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'legado',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'legado',CHAR(39)));
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'anual',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'anual',CHAR(39)));
   -- Compara todo o dominio: tres valores ENUM x todos os 256 valores TINYINT UNSIGNED.
   SET @arc126_sql=CONCAT('SELECT SUM(COALESCE((',clause_value,'),1) <> ((regime_letivo=''semestral'' AND semestre IN (1,2)) OR (regime_letivo IN (''legado'',''anual'') AND semestre=0))) INTO @arc126_check_diff FROM (WITH RECURSIVE n AS (SELECT 0 AS semestre UNION ALL SELECT semestre+1 FROM n WHERE semestre<255) SELECT n.semestre,r.regime_letivo FROM n CROSS JOIN (SELECT ''legado'' AS regime_letivo UNION ALL SELECT ''anual'' UNION ALL SELECT ''semestral'') r) domain_values');
   PREPARE arc126_stmt FROM @arc126_sql; EXECUTE arc126_stmt; DEALLOCATE PREPARE arc126_stmt;
@@ -146,16 +152,16 @@ CALL _arc126_fk('lembretes','id_externo','publico_externo','id_externo','CASCADE
 CALL _arc126_fk('lembretes','id_evento_externo','agenda_externa','id_evento','SET NULL','0');
 CALL _arc126_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_calendario_lembrete_update' AND NOT (
  EVENT_OBJECT_TABLE='calendario' AND ACTION_TIMING='AFTER' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento;end')),'Trigger ausente ou divergente: trg_calendario_lembrete_update');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento;'))),'Trigger ausente ou divergente: trg_calendario_lembrete_update');
 CALL _arc126_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_calendario_lembrete_delete' AND NOT (
  EVENT_OBJECT_TABLE='calendario' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='DELETE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento;end')),'Trigger ausente ou divergente: trg_calendario_lembrete_delete');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento;'))),'Trigger ausente ou divergente: trg_calendario_lembrete_delete');
 CALL _arc126_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_agenda_externa_lembrete_update' AND NOT (
  EVENT_OBJECT_TABLE='agenda_externa' AND ACTION_TIMING='AFTER' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento;end')),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_update');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento;'))),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_update');
 CALL _arc126_assert(NOT EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_agenda_externa_lembrete_delete' AND NOT (
  EVENT_OBJECT_TABLE='agenda_externa' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='DELETE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento;end')),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_delete');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento;'))),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_delete');
 DELIMITER $$
 DROP PROCEDURE IF EXISTS _arc126_evolve$$
 CREATE PROCEDURE _arc126_evolve()
@@ -235,16 +241,16 @@ END$$
 DELIMITER ;
 CALL _arc126_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_calendario_lembrete_update' AND (
  EVENT_OBJECT_TABLE='calendario' AND ACTION_TIMING='AFTER' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento;end')),'Trigger ausente ou divergente: trg_calendario_lembrete_update');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=new.id_evento;'))),'Trigger ausente ou divergente: trg_calendario_lembrete_update');
 CALL _arc126_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_calendario_lembrete_delete' AND (
  EVENT_OBJECT_TABLE='calendario' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='DELETE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento;end')),'Trigger ausente ou divergente: trg_calendario_lembrete_delete');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento=old.id_evento;'))),'Trigger ausente ou divergente: trg_calendario_lembrete_delete');
 CALL _arc126_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_agenda_externa_lembrete_update' AND (
  EVENT_OBJECT_TABLE='agenda_externa' AND ACTION_TIMING='AFTER' AND EVENT_MANIPULATION='UPDATE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento;end')),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_update');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=new.id_evento;'))),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_update');
 CALL _arc126_assert(EXISTS(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME='trg_agenda_externa_lembrete_delete' AND (
  EVENT_OBJECT_TABLE='agenda_externa' AND ACTION_TIMING='BEFORE' AND EVENT_MANIPULATION='DELETE' AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')='beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento;end')),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_delete');
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN ('beginupdatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento;end','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento','updatelembretessetativo=false,enviar_email=false,versao=versao+1whereid_evento_externo=old.id_evento;'))),'Trigger ausente ou divergente: trg_agenda_externa_lembrete_delete');
 CALL _arc126_column('lembretes','id_externo','id_externo INT NULL','int','1',NULL,'0','0',NULL,'0');
 CALL _arc126_column('lembretes','id_evento_externo','id_evento_externo INT NULL','int','1',NULL,'0','0',NULL,'0');
 CALL _arc126_column('lembretes','contexto','contexto ENUM(''avulso'',''tarefa'',''calendario'',''agenda_externa'') NOT NULL DEFAULT ''avulso''','enum(''avulso'',''tarefa'',''calendario'',''agenda_externa'')','0','avulso','0','0',NULL,'0');

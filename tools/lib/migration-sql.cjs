@@ -121,6 +121,12 @@ BEGIN
   END IF;
  ELSE
   CALL _arc125_assert(enforced_value='YES','CHECK de semestre esta desativado.');
+  -- CHECK_CLAUSE pode devolver delimitadores de strings como barra+aspas.
+  -- Nesta regra, os tres literais ENUM nao contem aspas ou barras internas.
+  -- Normalizar apenas esses literais conhecidos, sem mudar sql_mode nem a constraint.
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'semestral',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'semestral',CHAR(39)));
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'legado',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'legado',CHAR(39)));
+  SET clause_value=REPLACE(clause_value,CONCAT(CHAR(92),CHAR(39),'anual',CHAR(92),CHAR(39)),CONCAT(CHAR(39),'anual',CHAR(39)));
   -- Compara todo o dominio: tres valores ENUM x todos os 256 valores TINYINT UNSIGNED.
   SET @arc125_sql=CONCAT('SELECT SUM(COALESCE((',clause_value,'),1) <> ((regime_letivo=''semestral'' AND semestre IN (1,2)) OR (regime_letivo IN (''legado'',''anual'') AND semestre=0))) INTO @arc125_check_diff FROM (WITH RECURSIVE n AS (SELECT 0 AS semestre UNION ALL SELECT semestre+1 FROM n WHERE semestre<255) SELECT n.semestre,r.regime_letivo FROM n CROSS JOIN (SELECT ''legado'' AS regime_letivo UNION ALL SELECT ''anual'' UNION ALL SELECT ''semestral'') r) domain_values');
   PREPARE arc125_stmt FROM @arc125_sql; EXECUTE arc125_stmt; DEALLOCATE PREPARE arc125_stmt;
@@ -140,13 +146,16 @@ function fk(i, apply) {
 }
 function triggerCheck(t, required = false) {
     const body = t.body.toLowerCase().replace(/[`\s]/g,'');
+    // BEGIN/END opcional somente quando o corpo contem um unico UPDATE.
+    const singleUpdate = /^begin(update[^;]+);end$/.exec(body);
+    const bodies = singleUpdate ? [body, singleUpdate[1], singleUpdate[1]+';'] : [body];
     return `CALL _arc125_assert(${required?'EXISTS':'NOT EXISTS'}(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=${quote(t.name)} AND ${required?'':'NOT '}(
  EVENT_OBJECT_TABLE=${quote(t.table)} AND ACTION_TIMING=${quote(t.timing)} AND EVENT_MANIPULATION=${quote(t.event)} AND
- REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','')=${quote(body)})),${quote('Trigger ausente ou divergente: '+t.name)});`;
+ REGEXP_REPLACE(LOWER(REPLACE(ACTION_STATEMENT,CHAR(96),'')),'[[:space:]]+','') IN (${bodies.map(quote).join(',')}))),${quote('Trigger ausente ou divergente: '+t.name)});`;
 }
 function generate(spec) {
     const hash = checksum(spec);
-    const out = [`-- GERADO por node tools/build-db-migration.cjs. Nao editar este arquivo manualmente.
+    const out = [`-- GERADO por node tools/db/build-migrations.cjs. Nao editar este arquivo manualmente.
 -- MySQL 8.4. Banco EXISTENTE com baseline documentado; backup e janela de manutencao.
 -- Workbench: ativar parar ao ocorrer erro e executar o arquivo inteiro na mesma conexao.
 -- DDL faz COMMIT implicito. Nao ha rollback global. Repetir apos corrigir a causa retoma objetos ausentes.

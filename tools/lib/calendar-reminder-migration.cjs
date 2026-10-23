@@ -4,7 +4,7 @@ const q=(s)=>"'"+String(s).replace(/'/g,"''")+"'";
 function generate(spec) {
     const hash=checksum(spec);
     const baselineHash=checksum(require('../../backend/db/migrations/1.1.25.json'));
-    const sql=[`-- GERADO offline por tools/build-db-migration.cjs. MySQL 8.4.
+    const sql=[`-- GERADO offline por tools/db/build-migrations.cjs. MySQL 8.4.
 -- Requer contrato 1.1.25 conferido/registrado, backup e manutencao sem envios/escritas.
 -- Workbench: parar no primeiro erro e mesma conexao. DDL confirma implicitamente.
 -- Nenhum usuario/dado e removido. Muda apenas nulabilidade do titular para permitir externo.

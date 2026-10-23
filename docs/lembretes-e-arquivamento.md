@@ -18,7 +18,9 @@ Triggers desativam e versionam os lembretes quando a tarefa é concluída, seu p
 
 Em Turmas, excluir significa arquivar, diferente de sair. Só administrador arquiva a turma inteira, inclusive vazia; administrador ou professor responsável arquiva sua oferta. Confirmações identificam o item e explicam preservação de matrículas, autoria, materiais e histórico. Convites são cancelados. Nomes continuam reservados. Não há restauração pela interface nesta etapa.
 
-## SQL e ativação — pendentes de validação real
+## SQL e ativação
+
+O usuário confirmou a conclusão da 1.1.26 no `defaultdb` pelo Workbench nesta sessão. Não reaplique os passos nesse banco. Os arquivos assistidos e as orientações ficam em `backend/db/workbench/README.md`; consultas de diagnóstico permanecem em `backend/db/checks/`. Essa confirmação não comprova entrega SMTP ou ativação do cron.
 
 Em banco existente MySQL 8.4:
 
@@ -27,7 +29,7 @@ Em banco existente MySQL 8.4:
 3. Aplicar `backend/db/migrations/1.1.26.sql`, em manutenção sem envios/escritas e Workbench configurado para parar no primeiro erro. Trata explicitamente a nulabilidade do titular e a expansão dos estados de envio; não modifica tipos/estruturas divergentes silenciosamente.
 4. Conferir `backend/db/checks/1.1.26.sql`, FKs, CHECK do titular, quatro triggers de eventos e registro das duas versões.
 
-DDL faz commit implícito. Não execute schema.sql em defaultdb existente. O esquema para banco vazio já inclui ambas as versões. Não reaplique a versão 1.1.25 após evoluir para 1.1.26: os novos estados de envio pertencem ao contrato mais recente. Antes de produção, ensaiar as migrações em cópia descartável e anonimizada, incluindo repetição, falha intermediária e estrutura parcial. **Os SQLs gerados ainda não foram compilados/executados em MySQL real nesta etapa.**
+DDL faz commit implícito. Não execute schema.sql em defaultdb existente. O esquema para banco vazio já inclui ambas as versões. Não reaplique a versão 1.1.25 após evoluir para 1.1.26: os novos estados de envio pertencem ao contrato mais recente. Para outro banco, ensaie as migrações em cópia descartável e anonimizada, incluindo repetição, falha intermediária e estrutura parcial. O agente não conectou ao banco nem executou SQL; os passos assistidos foram executados pelo usuário, que confirmou sucesso. Isso não valida todas as variantes de retomada ou de bancos divergentes.
 
 ## Agendador e capacidade
 
@@ -44,6 +46,14 @@ Também existe CLI `node tools/send-reminders.cjs` para um agendador do servidor
 No ambiente **Production** da Vercel, manter a conexão do banco e SMTP existentes (`SMTP_USER`, `SMTP_PASS`, `SMTP_SERVICE`) e `APP_URL=https://portalarcadia.vercel.app`. Acrescentar `CRON_SECRET` aleatório com pelo menos 32 caracteres, gerado fora do chat, sem reutilizar JWT ou senha SMTP. Começar com `REMINDER_EMAIL_ENABLED=false`. Após o ensaio de SQL, SMTP e decisão consciente sobre a cadência diária, habilitar `REMINDER_EMAIL_ENABLED=true`. Manter Preview/desenvolvimento desligados para evitar mensagens de teste com dados de produção. Não envie senhas ou segredos no chat.
 
 Essas variáveis não foram lidas/alteradas na Vercel. O cron versionado só entra em funcionamento depois de deploy de produção autorizado; nem flag nem código comprovam entrega. Conferir logs agregados sem destinatários/conteúdo. Um teste real de e-mail para a própria conta exige instrução específica e ainda não foi realizado.
+
+### Como interpretar a disponibilidade na tela
+
+`GET /api/reminders/preferences` (ou `/api/external/reminders/preferences`) retorna `envio_habilitado`, `envio_status` e `envio_mensagem`, sem revelar valores de configuração. O estado `desativado` significa que `REMINDER_EMAIL_ENABLED` não é exatamente `true`; `email_nao_configurado` indica ausência/formato inválido de `SMTP_USER`, `SMTP_PASS`, `SMTP_SERVICE` ou `APP_URL`; `processamento_nao_configurado` indica `CRON_SECRET` ausente ou com menos de 32 caracteres. Se tudo isso passa, o estado é `configurado`, que comprova somente presença/formato, sem testar credenciais, disponibilidade do provedor ou execução real do cron. Quando há mais de uma pendência, aparece a primeira nessa ordem.
+
+O envio de confirmação pode funcionar com `EMAIL_VERIFICATION_ENABLED=true` enquanto lembretes permanecem desligados: são habilitações diferentes. A confirmação é solicitada imediatamente pelo usuário; o lembrete aguarda data e processamento diário. Consentimento geral, escolha de e-mail no lembrete e endereço confirmado são verificados separadamente; não causam esse aviso de configuração. Migração ausente produz erro da API, não deve ser interpretada como flag desligada. Um erro na leitura das preferências é mostrado como erro, sem inventar estado de configuração.
+
+Sem conhecer o endereço/ambiente da captura, não é possível afirmar qual variável falta. Confira a resposta autenticada de `preferences` naquele mesmo ambiente. A captura antiga com aviso genérico apenas demonstra que ao menos uma das três condições falhou; não demonstra senha SMTP incorreta. Não envie token, senha ou valores das variáveis no chat.
 
 ## Duplicação, repetição e quedas
 

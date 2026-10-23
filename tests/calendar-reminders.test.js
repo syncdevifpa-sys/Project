@@ -34,6 +34,37 @@ function fixture({external=false,origin='agenda',visibility='publico',hidden=fal
     };
     return {db,event,queries,writes,service:createReminders(db),owner:external?{external:7}:7};
 }
+
+test('disponibilidade diferencia habilitação, configuração de email e processamento sem testar SMTP',async(t)=>{
+    const names=['REMINDER_EMAIL_ENABLED','SMTP_USER','SMTP_PASS','SMTP_SERVICE','APP_URL','CRON_SECRET'];
+    const previous=Object.fromEntries(names.map(name=>[name,process.env[name]]));
+    t.after(()=>{for(const name of names)if(previous[name]===undefined)delete process.env[name];else process.env[name]=previous[name];});
+    for(const external of [false,true]) {
+        const f=fixture({external,verified:false,consent:false});
+        process.env.REMINDER_EMAIL_ENABLED='false';
+        assert.equal((await f.service.settings(f.owner)).envio_status,'desativado');
+        process.env.REMINDER_EMAIL_ENABLED='true';delete process.env.SMTP_PASS;
+        assert.equal((await f.service.settings(f.owner)).envio_status,'email_nao_configurado');
+        Object.assign(process.env,{SMTP_USER:'remetente@example.test',SMTP_PASS:'configuration-placeholder',SMTP_SERVICE:'gmail',APP_URL:'https://portal.example.test'});
+        process.env.CRON_SECRET='short';
+        assert.equal((await f.service.settings(f.owner)).envio_status,'processamento_nao_configurado');
+        process.env.CRON_SECRET='a'.repeat(32);
+        const prefs=await f.service.settings(f.owner);
+        assert.equal(prefs.envio_status,'configurado');assert.equal(prefs.envio_habilitado,true);
+        assert.equal(prefs.email_confirmado,false);assert.equal(prefs.email_lembretes,false);
+        assert.ok(!JSON.stringify(prefs).includes('configuration-placeholder'));
+        assert.ok(!JSON.stringify(prefs).includes(process.env.CRON_SECRET));
+        assert.match(prefs.envio_mensagem,/depende da execução/);
+        process.env.APP_URL='not-a-url';
+        assert.equal((await f.service.settings(f.owner)).envio_status,'email_nao_configurado');
+    }
+});
+
+test('erro ao ler estrutura de preferências não vira aviso de envio desativado',async()=>{
+    const error=Object.assign(new Error('schema fixture'),{code:'ER_BAD_FIELD_ERROR'});
+    const service=createReminders({execute:async()=>{throw error;}});
+    await assert.rejects(service.settings(7),e=>e===error);
+});
 test('fuso explícito converte sem depender do fuso do host; rejeita lacunas e ambiguidade',()=>{
     assert.equal(toUTC('2026-10-22T18:00','America/Belem'),'2026-10-22T21:00:00.000Z');
     assert.equal(fromUTC('2026-10-22T21:00:00.000Z','America/Belem'),'2026-10-22T18:00');
