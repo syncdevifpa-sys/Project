@@ -6,7 +6,7 @@ const db = require('../backend/src/config/database');
 const model = require('../backend/src/models/calendar.model');
 const { editContent, validateContent } = require('../backend/src/services/content-edit.service');
 const events = [
-    { id_evento: 1, id_usuario: 4, titulo: 'Público', oculto: 0 },
+    { id_evento: 1, id_usuario: 4, titulo: 'Público', oculto: 0, visibilidade: 'publico' },
     { id_evento: 2, id_usuario: 4, titulo: 'Oculto próprio', oculto: 1 },
     { id_evento: 3, id_usuario: 8, titulo: 'Oculto alheio', oculto: 1 },
     { id_evento: 4, id_usuario: 4, titulo: 'Pessoal próprio', oculto: 0, visibilidade: 'pessoal' },

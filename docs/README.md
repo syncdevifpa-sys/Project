@@ -12,6 +12,8 @@
 - [Sessão, logout e políticas públicas](sessao-e-documentos-publicos.md)
 - [Administração e exclusão de contas](admin-account-deletion.md)
 - [Aparência de banners](aparencia-banners.md)
+- [Comunidade externa e intenção de vínculo](comunidade-externa.md)
+- [Migração gradual para TypeScript](typescript-gradual.md)
 
 ## Referência e revisão
 

@@ -19,6 +19,7 @@ function fixture(options = {}) {
                             aprovacao: options.aprovacao || 'aprovado',
                             situacao: options.situacao || 'inscricoes',
                             permite_externos: options.allow === false ? 0 : 1,
+                            visibilidade: options.visibility || 'publico',
                             vagas: options.full ? 1 : 0
                         }
                     ]
@@ -117,12 +118,13 @@ test('agenda externa é pessoal e ignora autoria e origem acadêmica forjadas', 
     });
     assert.equal(dates.writes.length, 0);
 });
-test('documento público pode ser baixado; arquivo privado não é retornado ao externo', async () => {
+test('documentos públicos e privados não pertencem ao acesso autenticado externo', async () => {
     const f = fixture();
-    assert.equal((await f.service.download(5, 8)).nome_arquivo, 'publico.pdf');
-    await assert.rejects(fixture({ private: true }).service.download(5, 8), { status: 404 });
+    await assert.rejects(f.service.download(5, 8), { status: 403 });
+    await assert.rejects(f.service.documents(5), { status: 403 });
+    await assert.rejects(fixture({ private: true }).service.download(5, 8), { status: 403 });
 });
-test('HTTP protege calendário acadêmico por origem, inclusive detalhe direto, para externo e visitante', async (t) => {
+test('HTTP permite calendário explicitamente público, inclusive IFPA público, e fecha legado sem visibilidade', async (t) => {
     const express = require('express'),
         jwt = require('jsonwebtoken');
     const previous = process.env.JWT_SECRET;
@@ -177,9 +179,9 @@ test('HTTP protege calendário acadêmico por origem, inclusive detalhe direto, 
         const response = await fetch(base + '/api/calendar?origem_calendario=ifpa', { headers });
         assert.deepEqual(
             (await response.json()).map((e) => e.id_evento),
-            [1]
+            [1, 2]
         );
-        assert.equal((await fetch(base + '/api/calendar/2', { headers })).status, 404);
+        assert.equal((await fetch(base + '/api/calendar/2', { headers })).status, 200);
         assert.equal((await fetch(base + '/api/calendar/3', { headers })).status, 404);
     }
     assert.equal(

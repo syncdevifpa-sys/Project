@@ -329,6 +329,8 @@
             icon: 'calendar'
         }
     ];
+    var externalPalette = window.Arcadia?.auth?.getSessao()?.tipo_usuario === 'externo';
+    if (externalPalette) PALETTE_DATA = PALETTE_DATA.filter(function(item) { return item.type !== 'Documents'; });
     var SCOPE_LABELS = {
         Notices: 'Avisos e notícias',
         Tasks: 'Tarefas',
@@ -361,7 +363,7 @@
             '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos e notícias</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tarefas</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>' +
+            (externalPalette ? '' : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
             '</div>' +
             '</div>' +
@@ -574,6 +576,11 @@
     function hydrateTopNav() {
         var A = window.Arcadia;
         var sessao = (A.auth && A.auth.getSessao()) || {};
+        if (sessao.tipo_usuario === 'externo') {
+            document.querySelectorAll('.ar-nav-end a[href="settings.html"], .ar-topbar a[href="settings.html"]').forEach(function(link) {
+                link.href = 'community.html#accountSettings';
+            });
+        }
 
         var hasValidSession = Boolean(
             sessao.id_usuario ||

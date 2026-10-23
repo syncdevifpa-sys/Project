@@ -104,10 +104,11 @@ test('sidebar marks current section, gates administration and remembers icon rai
         ),
         false
     );
-    assert.equal(
-        fixture('community.html', { tipo_usuario: 'externo', is_admin: true }).sidebar,
-        undefined
-    );
+    const external = fixture('community.html', { tipo_usuario: 'externo', is_admin: true });
+    assert.ok(external.sidebar);
+    const destinations = external.nodes.filter(node=>node.tag==='a').map(node=>node.href);
+    for(const path of ['community.html','community.html#accountSettings','tasks.html','notices.html','calendar.html','projects.html']) assert.ok(destinations.includes(path));
+    for(const path of ['documents.html','people.html','classes.html','admin.html']) assert.ok(!destinations.includes(path));
 });
 test('mobile drawer closes with Escape, backdrop and navigation; restores background access', () => {
     const f = fixture('settings.html', { tipo_usuario: 'discente' }, true);

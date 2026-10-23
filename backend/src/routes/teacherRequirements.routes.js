@@ -12,11 +12,11 @@ const action = (fn) => async (q, s) => {
     } catch (e) {
         s.status(
             e.status ||
-                (e.code === 'ER_NO_SUCH_TABLE' ? 503 : e.code === 'ER_DUP_ENTRY' ? 409 : 500)
+                (['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(e.code) ? 503 : e.code === 'ER_DUP_ENTRY' ? 409 : 500)
         ).json({
             error: e.status
                 ? e.message
-                : e.code === 'ER_NO_SUCH_TABLE'
+                : ['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(e.code)
                   ? 'Requisitos precisa ser habilitado no banco.'
                   : e.code === 'ER_DUP_ENTRY'
                     ? 'Nome de usuário, matrícula ou e-mail já vinculado. Confira os dados.'

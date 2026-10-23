@@ -6,15 +6,13 @@
         if (!host || !window.Arcadia?.auth) return;
         const session = Arcadia.auth.getSessao(),
             page = location.pathname.split('/').pop();
-        if (session.tipo_usuario === 'externo' || !session.tipo_usuario) {
+        const external = session.tipo_usuario === 'externo';
+        if (!session.tipo_usuario) {
             host.replaceChildren();
             for (const [href, label] of [
                 ['index.html', 'Início'],
                 ['notices.html', 'Avisos e notícias'],
                 ['projects.html', 'Projetos'],
-                ...(session.tipo_usuario === 'externo'
-                    ? [['documents.html', 'Documentos públicos']]
-                    : []),
                 ['calendar.html', 'Agenda'],
                 [
                     session.tipo_usuario === 'externo' ? 'community.html' : 'login.html',
@@ -41,7 +39,15 @@
             projects: 'M3 7h7l2-3h9v17H3z',
             shield: 'M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z'
         };
-        const groups = [
+        const groups = external ? [
+            { name: 'Meu espaço', icon: 'panel', links: [
+                ['community.html','Meu painel','panel'],['tasks.html','Tarefas','tasks'],
+                ['community.html#accountSettings','Configurações','settings']
+            ] },
+            { name: 'Conteúdo', icon: 'file', links: [
+                ['notices.html','Avisos e notícias','news'],['calendar.html','Calendário','calendar'],['projects.html','Projetos','projects']
+            ] }
+        ] : [
             {
                 name: 'Meu espaço',
                 icon: 'panel',
@@ -63,12 +69,12 @@
                 ]
             }
         ];
-        groups.push({
+        if (!external) groups.push({
             name: 'Turmas',
             icon: 'class',
             links: [['classes.html', 'Minhas turmas', 'class']]
         });
-        if (session.is_admin)
+        if (session.is_admin && !external)
             groups.push({
                 name: 'Administração',
                 icon: 'shield',
@@ -121,7 +127,7 @@
             item.append(text);
             return item;
         }
-        nav.append(link('index.html', 'Início', 'home'));
+        if (!external) nav.append(link('index.html', 'Início', 'home'));
         const sections = [];
         let currentLabel = page === 'notice.html' ? 'Publicação' : 'Portal';
         groups.forEach((group) => {

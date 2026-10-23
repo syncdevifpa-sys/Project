@@ -17,3 +17,11 @@ if(fs.existsSync(nextPath)) {
     fs.writeFileSync(schemaPath,schema);
 }
 console.log('Schema novo e migracoes 1.1.25 e 1.1.26 preparados offline. Nenhum SQL foi executado.');
+const accessPath=path.join(base,'db/migrations/1.1.27.json');
+if(fs.existsSync(accessPath)) {
+    const access=JSON.parse(fs.readFileSync(accessPath,'utf8'));
+    fs.writeFileSync(path.join(base,'db/migrations/1.1.27.sql'),require('../lib/external-access-migration.cjs').generate(access));
+    schema+=`INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('${access.version}','${checksum(access)}');\n`;
+    fs.writeFileSync(schemaPath,schema);
+    console.log('Migracao 1.1.27 tambem gerada offline.');
+}

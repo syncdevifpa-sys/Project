@@ -40,7 +40,7 @@ async function listEvents(options = {}) {
     `);
 
     return events.filter((event) => {
-        if (!options.manage && !options.institutional && event.origem_calendario !== 'agenda')
+        if (!options.manage && !options.institutional && event.visibilidade !== 'publico')
             return false;
         const owner = Number(event.id_usuario) === Number(options.actorId);
         if (event.visibilidade === 'pessoal') return options.manage && owner;
@@ -74,7 +74,7 @@ async function findEventById(eventId, options = {}) {
     return events[0] &&
         !hidden(events[0]) &&
         events[0].visibilidade !== 'pessoal' &&
-        (options.institutional || events[0].origem_calendario === 'agenda')
+        (options.institutional || events[0].visibilidade === 'publico')
         ? events[0]
         : undefined;
 }

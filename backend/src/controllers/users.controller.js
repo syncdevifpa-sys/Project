@@ -42,7 +42,7 @@ async function getUserById(req, res) {
 }
 
 async function createUser(req, res) {
-    if (req.body?.tipo_usuario === 'docente')
+    if (['docente','servidor'].includes(req.body?.tipo_usuario))
         return require('./externalUsers.controller').registerExternal(req, res);
     try {
         const { nome, email, senha, tipo_usuario } = req.body;

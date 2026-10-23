@@ -41,3 +41,4 @@ Thumbs.db
 
 # Experimentos, ambientes isolados e saídas locais reproduzíveis
 /tmp/
+/tools/generated/

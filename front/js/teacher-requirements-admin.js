@@ -37,7 +37,7 @@
                     el(
                         'h3',
                         r.nome +
-                            ' · ' +
+                            ' · ' + (r.tipo_solicitado === 'servidor' ? 'Servidor' : 'Professor') + ' · ' +
                             { pendente: 'Pendente', recusado: 'Recusado', aprovado: 'Aprovado' }[
                                 r.estado
                             ]
@@ -58,13 +58,13 @@
                         el(
                             'p',
                             r.email_confirmado
-                                ? 'E-mail confirmado. Confira os dados e o vínculo de Professor diretamente no SIGAA antes de aprovar.'
+                                ? 'E-mail confirmado. Confira os dados e o vínculo solicitado diretamente no SIGAA antes de aprovar.'
                                 : 'E-mail ainda não confirmado. A aprovação ficará bloqueada.'
                         )
                     );
                     const actions = el('div');
                     actions.className = 'ar-requirement-actions';
-                    const approve = button('Aprovar Professor', () => decide(r, 'aprovar'));
+                    const approve = button(r.tipo_solicitado === 'servidor' ? 'Aprovar Servidor' : 'Aprovar Professor', () => decide(r, 'aprovar'));
                     approve.disabled = !r.email_confirmado;
                     actions.append(
                         approve,
@@ -84,7 +84,7 @@
         dialog.className = 'ar-requirement-dialog';
         const h = el(
             'h2',
-            decision === 'aprovar' ? 'Aprovar perfil de Professor' : 'Recusar solicitação'
+            decision === 'aprovar' ? 'Aprovar perfil de ' + (r.tipo_solicitado === 'servidor' ? 'Servidor' : 'Professor') : 'Recusar solicitação'
         );
         h.id = 'requirementsDecisionTitle';
         dialog.setAttribute('aria-labelledby', h.id);
@@ -97,7 +97,7 @@
         const label = el(
             'label',
             decision === 'aprovar'
-                ? 'Conferi nome, matrícula / SIAPE, usuário, formação e vínculo de Professor diretamente no SIGAA, com meu acesso institucional autorizado. O usuário receberá acesso de Professor e precisará entrar novamente.'
+                ? 'Conferi nome, matrícula / SIAPE, usuário e vínculo solicitado no SIGAA, com meu acesso institucional autorizado. Conferi também a formação quando exigida. O solicitante receberá somente o vínculo escolhido no cadastro e precisará entrar novamente.'
                 : 'Justificativa da recusa'
         );
         input = el(decision === 'aprovar' ? 'input' : 'textarea');

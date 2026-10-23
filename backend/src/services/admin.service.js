@@ -325,6 +325,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                     : [
                           ['projeto_inscricoes_externas', 'id_externo'],
                           ['agenda_externa', 'id_externo'],
+                          ['tarefas', 'id_externo'],
                           ['lembretes', 'id_externo']
                       ];
                 for (const [relation, column] of optionalRelations) {

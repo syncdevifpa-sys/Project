@@ -18,7 +18,7 @@ const {
 } = require('../middlewares/auth.middleware');
 
 const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
-// Visitantes e Comunidade externa recebem somente a agenda comum.
+// Visitantes e Comunidade externa recebem somente eventos explicitamente publicos.
 router.get('/', optionalNoticeViewer, listEvents);
 router.get('/manage', authenticateToken, listManagedEvents);
 router.get('/:id', optionalNoticeViewer, getEventById);

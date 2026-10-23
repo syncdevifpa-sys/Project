@@ -79,14 +79,16 @@ test('namespace externo é separado de usuário institucional com mesmo número'
     assert.throws(()=>identity({id_usuario:7}),{status:400});
     assert.throws(()=>context({id_tarefa:1,id_evento:2}),{status:400});
 });
-test('externo e professor pendente só vinculam agenda comum, nunca IFPA, oculto ou pessoal de terceiro',async()=>{
-    for(const options of [{origin:'ifpa'},{origin:null},{visibility:'pessoal',eventOwner:99},{hidden:true}]) {
+test('externo e professor pendente só vinculam eventos públicos, sem inferir permissão pela origem',async()=>{
+    for(const options of [{visibility:null},{visibility:'pessoal',eventOwner:99},{hidden:true}]) {
         const f=fixture({external:true,...options});
         await assert.rejects(authorizeContext(f.db,f.owner,{id_evento:3}),{status:404});
     }
     const f=fixture({external:true});
     await authorizeContext(f.db,f.owner,{id_evento:3});
-    await assert.rejects(authorizeContext(f.db,f.owner,{id_tarefa:3}),{status:403});
+    await authorizeContext(f.db,f.owner,{id_evento:3});
+    await authorizeContext(fixture({external:true,origin:'ifpa'}).db,f.owner,{id_evento:3});
+    await assert.rejects(authorizeContext(f.db,f.owner,{id_tarefa:3}),{status:404});
     await assert.rejects(authorizeContext(f.db,{external:8},{id_evento_externo:3}),{status:404});
     await authorizeContext(f.db,f.owner,{id_evento_externo:3});
     await assert.rejects(authorizeContext(f.db,7,{id_evento_externo:3}),{status:403});
@@ -112,7 +114,7 @@ test('salvar usa titular do token e email confirmado da própria conta; novo env
 });
 test('revogar acesso ou apagar evento não vaza título, descrição ou vínculo ao listar/get/editar',async()=>{
     const stored={id_lembrete:5,id_usuario:null,id_externo:7,contexto:'calendario',id_evento:3,titulo:'Título privado',descricao:'Descrição privada',ativo:1};
-    const f=fixture({external:true,origin:'ifpa',stored});
+    const f=fixture({external:true,visibility:'pessoal',stored});
     const rows=await f.service.listReminders(f.owner);
     assert.equal(rows[0].titulo,'Lembrete indisponível');assert.equal(rows[0].descricao,undefined);assert.equal(rows[0].id_evento,undefined);
     await assert.rejects(f.service.findReminderById(5,f.owner),{status:404});
@@ -193,10 +195,10 @@ function workerFixture({origin='agenda',external=true,missing=false,active=true,
     }};
     return{dispatcher:createDispatcher(db,mail),db,mail,reservations,sends,queries,event,row};
 }
-test('processador revalida evento no envio e não entrega título/link após IFPA, ocultação, exclusão ou bloqueio',async()=>{
+test('processador revalida visibilidade no envio, ocultação, exclusão e bloqueio',async()=>{
     const before=process.env.REMINDER_EMAIL_ENABLED;process.env.REMINDER_EMAIL_ENABLED='true';
     try {
-        for(const options of [{origin:'ifpa'},{missing:true},{active:false}]) {
+        for(const options of [{missing:true},{active:false}]) {
             const f=workerFixture(options);await f.dispatcher.run();assert.equal(f.sends.length,0);
         }
         const hidden=workerFixture();hidden.event.oculto=1;await hidden.dispatcher.run();assert.equal(hidden.sends.length,0);
@@ -271,7 +273,7 @@ test('HTTP usa sessão real externa, persiste no namespace correto, redige após
         assert.equal(created.status,201);assert.equal((await created.json()).reminderId,5);
         const listing=await request('/api/external/reminders');const rows=await listing.json();
         assert.equal(rows.length,1);assert.equal(rows[0].id_externo,7);assert.equal(rows[0].enviar_email,false);
-        f.event.origem_calendario='ifpa';
+        f.event.visibilidade='pessoal';
         assert.equal((await request('/api/external/reminders/event/calendario/3')).status,404);
         const redacted=await(await request('/api/external/reminders')).json();
         assert.equal(redacted[0].indisponivel,true);assert.ok(!JSON.stringify(redacted).includes(f.event.titulo));

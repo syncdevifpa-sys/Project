@@ -17,29 +17,32 @@ function text(value, max, label) {
         fail(400, `${label} inválido.`);
     return value.trim();
 }
-function fields(body) {
+function fields(body, type = 'docente') {
+    if (!['docente','servidor'].includes(type)) fail(400,'Vínculo solicitado inválido.');
     const name = text(body.nome_usuario, 40, 'Nome de usuário').toLowerCase();
     if (!/^[a-z0-9][a-z0-9._-]{2,39}$/.test(name))
         fail(400, 'Use de 3 a 40 letras, números, ponto, hífen ou sublinhado no nome de usuário.');
     return {
         matricula: text(body.matricula, 30, 'Matrícula'),
         nome_usuario: name,
-        formacao: text(body.formacao, 300, 'Formação')
+        formacao: type === 'servidor' && (body.formacao == null || (typeof body.formacao === 'string' && !body.formacao.trim())) ? '' : text(body.formacao, 300, 'Formação'),
+        tipo_solicitado: type
     };
 }
 async function insertRequest(c, external, details, profile) {
-    const f = fields(details);
+    const f = fields(details, details.tipo_solicitado || 'docente');
     let result;
     try {
         [result] = await c.execute(
-            'INSERT INTO docente_requisitos (id_externo,nome,email,matricula,nome_usuario,formacao) VALUES (?,?,?,?,?,?)',
+            'INSERT INTO docente_requisitos (id_externo,nome,email,matricula,nome_usuario,formacao,tipo_solicitado) VALUES (?,?,?,?,?,?,?)',
             [
                 external,
                 text(profile.nome, 100, 'Nome'),
                 profile.email,
                 f.matricula,
                 f.nome_usuario,
-                f.formacao
+                f.formacao,
+                f.tipo_solicitado
             ]
         );
     } catch (error) {
@@ -84,19 +87,32 @@ function createRequirements(database = db) {
     async function own(key) {
         const profile = await external(database, key);
         const [rows] = await database.execute(
-            'SELECT id_requisito,nome,email,matricula,nome_usuario,formacao,estado,versao,justificativa,atualizado_em FROM docente_requisitos WHERE id_externo=?',
+            'SELECT * FROM docente_requisitos WHERE id_externo=?',
             [id(key)]
         );
-        return { profile: { nome: profile.nome, email: profile.email }, request: rows[0] || null };
+        const intent = requestedType(profile, rows[0]);
+        return { profile: { nome: profile.nome, email: profile.email }, request: rows[0] || null,
+            can_request: !!intent, tipo_solicitado: intent };
+    }
+    function requestedType(profile, request) {
+        const stored = profile.intencao_cadastro;
+        if (['docente','servidor'].includes(stored)) {
+            if (request && (request.tipo_solicitado || 'docente') !== stored) fail(409,'O vínculo do pedido precisa de revisão administrativa.');
+            return stored;
+        }
+        // Legado: somente um pedido realmente existente comprova a intencao anterior.
+        return request ? (request.tipo_solicitado || 'docente') : null;
     }
     async function submit(key, body) {
-        const details = fields(body);
         return transaction(async (c) => {
             const profile = await external(c, key, true);
             const [rows] = await c.execute(
-                'SELECT id_requisito,estado FROM docente_requisitos WHERE id_externo=? FOR UPDATE',
+                'SELECT * FROM docente_requisitos WHERE id_externo=? FOR UPDATE',
                 [id(key)]
             );
+            const type = requestedType(profile, rows[0]);
+            if (!type) fail(403,'Esta conta foi criada como Comunidade externa e não solicita vínculo institucional.');
+            const details = fields(body, type);
             if (rows[0]?.estado === 'aprovado')
                 fail(409, 'Solicitação já aprovada. Entre novamente.');
             if (rows[0]) {
@@ -154,6 +170,8 @@ function createRequirements(database = db) {
                 fail(409, 'Solicitação alterada ou já avaliada. Atualize a lista.');
             if (r.id_externo !== account.id_externo)
                 fail(409, 'A identidade da solicitação mudou. Atualize a lista.');
+            const requested = requestedType(account, r);
+            if (!['docente','servidor'].includes(requested)) fail(409,'Vínculo solicitado inválido.');
             if (account.email !== r.email || account.nome !== r.nome)
                 fail(
                     409,
@@ -169,7 +187,7 @@ function createRequirements(database = db) {
                 };
             }
             if (body.conferencia !== true)
-                fail(400, 'Confirme que conferiu o vínculo e a formação com a instituição.');
+                fail(400, 'Confirme que conferiu os dados e o vínculo com a instituição.');
             const [states] = await c.execute(
                 "SELECT email,regime,confirmado_em FROM email_estado WHERE tipo='external' AND identidade=? FOR UPDATE",
                 [account.id_externo]
@@ -188,12 +206,13 @@ function createRequirements(database = db) {
                 [account.id_externo]
             );
             const [created] = await c.execute(
-                "INSERT INTO usuarios (nome,email,telefone,senha,tipo_usuario,matricula,foto,criado_em) VALUES (?,?,?,?,'docente',?,?,?)",
+                "INSERT INTO usuarios (nome,email,telefone,senha,tipo_usuario,matricula,foto,criado_em) VALUES (?,?,?,?,?,?,?,?)",
                 [
                     account.nome,
                     account.email,
                     account.telefone,
                     account.senha,
+                    requested,
                     r.matricula,
                     sharing[0]?.foto || null,
                     account.criado_em
@@ -240,6 +259,14 @@ function createRequirements(database = db) {
                 }
             }
             await c.execute('DELETE FROM tokens WHERE id_externo=?', [account.id_externo]);
+            // Preservar tarefas pessoais ao substituir a identidade; notificacoes exigem nova revisao/consentimento.
+            for (const sql of [
+                'UPDATE tarefas SET id_usuario=?,id_externo=NULL WHERE id_externo=?',
+                'UPDATE lembretes SET id_usuario=?,id_externo=NULL,ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_externo=?'
+            ]) {
+                try { await c.execute(sql,[user,account.id_externo]); }
+                catch(error) { if(!['ER_BAD_FIELD_ERROR','ER_NO_SUCH_TABLE'].includes(error.code)) throw error; }
+            }
             await c.execute('DELETE FROM recuperacao_senha WHERE id_externo=?', [
                 account.id_externo
             ]);
@@ -253,7 +280,7 @@ function createRequirements(database = db) {
             await c.execute('DELETE FROM publico_externo WHERE id_externo=?', [account.id_externo]);
             return {
                 message:
-                    'Professor aprovado. O solicitante deve entrar novamente com o mesmo e-mail e senha ou Google.'
+                    (requested === 'servidor' ? 'Servidor aprovado.' : 'Professor aprovado.') + ' O solicitante deve entrar novamente com o mesmo e-mail e senha ou Google.'
             };
         });
     }

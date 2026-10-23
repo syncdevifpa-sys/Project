@@ -7,6 +7,14 @@
         try {
             const data = await A.api.expect(A.api.get('/api/teacher-requirements/mine'));
             const section = document.getElementById('teacherRequestSection');
+            section.hidden = data.can_request !== true;
+            if (!data.can_request) { button.disabled = true; return; }
+            const staff = data.tipo_solicitado === 'servidor';
+            const title = document.getElementById('requestedRoleTitle');
+            if (title) title.textContent = staff ? 'Perfil de Servidor' : 'Perfil de Professor';
+            form.elements.formacao.required = !staff;
+            const trainingLabel = document.getElementById('requestedTrainingLabel');
+            if (trainingLabel) trainingLabel.textContent = staff ? 'Formação registrada no SIGAA (opcional)' : 'Formação registrada no SIGAA';
             section.open = !!data.request;
             section.dataset.state = data.request?.estado || 'novo';
             document.getElementById('teacherRequestState').textContent =

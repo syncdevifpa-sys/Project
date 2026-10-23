@@ -138,6 +138,12 @@ test('início público usa projeções públicas e independe da sessão', async 
         if (file === 'classes-preview.html') continue;
         const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
         if (!html.includes('class="ar-navpill"')) continue;
+        if (file === 'community.html') {
+            assert.match(html,/href="community.html"[^>]*>Meu painel<\/a>/);
+            assert.match(html,/href="community.html#accountSettings"/);
+            assert.doesNotMatch(html,/href="(?:documents|people|classes|admin)\.html"/);
+            continue;
+        }
         assert.match(html, /href="index.html">Início<\/a>/, file);
         assert.match(html, /href="dashboard.html"[^>]*>Meu painel<\/a\s*>/, file);
     }
@@ -422,7 +428,7 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
                 tipo_usuario
             })
         });
-        assert.equal(res.status, tipo_usuario === 'docente' ? 400 : 403);
+        assert.equal(res.status, 400);
     }
     const invalid = await fetch(base + '/api/users', {
         method: 'POST',

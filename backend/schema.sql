@@ -64,7 +64,8 @@ CREATE TABLE publico_externo (
     atualizado_em   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
                         ON UPDATE CURRENT_TIMESTAMP,
     email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,
-    consentimento_lembretes_em DATETIME NULL
+    consentimento_lembretes_em DATETIME NULL,
+    intencao_cadastro ENUM('externo','docente','servidor') NOT NULL DEFAULT 'externo'
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -219,7 +220,11 @@ CREATE TABLE avisos_lidos (                            -- contador "Avisos não 
 -- ---------------------------------------------------------------------
 CREATE TABLE tarefas (
     id_tarefa       INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario      INT NOT NULL,                      -- dono da tarefa
+    id_usuario      INT NULL,                          -- titular institucional ou externo, nunca ambos
+    id_externo INT NULL,
+    CONSTRAINT chk_tarefa_titular CHECK ((id_usuario IS NULL) <> (id_externo IS NULL)),
+    FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,
+    INDEX idx_tarefas_externo (id_externo,data_entrega),
     titulo          VARCHAR(150) NOT NULL,
     categoria       VARCHAR(40) NOT NULL DEFAULT 'Acadêmico',   -- Acadêmico, Estágio, Secretaria, Pesquisa
     responsavel     VARCHAR(100),                      -- texto livre: pessoa ou setor
@@ -297,6 +302,7 @@ CREATE TABLE calendario (
 -- 8. PROJETOS (pesquisa, extensão, ensino, inovação)
 -- ---------------------------------------------------------------------
 CREATE TABLE projetos (
+    visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado',
     permite_externos TINYINT(1) NOT NULL DEFAULT 0,
     id_projeto        INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario        INT NULL,                        -- quem cadastrou/submeteu
@@ -443,7 +449,7 @@ CREATE VIEW vw_proximas_datas AS
 --   ORDER BY criado_em DESC LIMIT 4
 CREATE VIEW vw_criados_recentemente AS
     SELECT 'projeto' AS origem, id_projeto AS id_origem, titulo, criado_em, NULL AS id_usuario
-      FROM projetos WHERE aprovacao = 'aprovado'
+      FROM projetos WHERE aprovacao = 'aprovado' AND visibilidade = 'publico'
     UNION ALL
     SELECT 'aviso', id_aviso, titulo, criado_em, NULL
       FROM avisos WHERE situacao = 'publicado'
@@ -709,6 +715,7 @@ CREATE TABLE academico_publicacoes (
 
 -- Não promove contas existentes nem altera confirmação de e-mail.
 CREATE TABLE docente_requisitos (
+ tipo_solicitado ENUM('docente','servidor') NOT NULL DEFAULT 'docente',
  id_requisito INT AUTO_INCREMENT PRIMARY KEY,
  id_externo INT NULL UNIQUE,
  id_usuario INT NULL UNIQUE,
@@ -845,3 +852,4 @@ CREATE TABLE arcadia_schema_migrations (
 ) ENGINE=InnoDB;
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.25','f0402abf4488dcc69f32855bd22dfd6ddb85fcdca802ca9c2a7e974205c6a8b1');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b671b7384d5a1474c34a23d412d3a7a73b5f6a7a58da85b634ad79d25c6');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.27','d9fd23826f42a137bc3ccc4df312df48c6efd2e21d8d324aa62cf068a18135ad');

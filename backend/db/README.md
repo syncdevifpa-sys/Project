@@ -10,6 +10,8 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 | Evolução de lembretes de eventos/exteriores após 1.1.25 | `backend/db/migrations/1.1.26.sql` |
 | Diagnóstico da evolução de lembretes | `backend/db/checks/1.1.26.sql` |
 | Execução assistida pelo Workbench | `backend/db/workbench/` — adoção e etapas separadas |
+| Evolução de tarefas externas, intenção de cadastro e projetos públicos | `backend/db/migrations/1.1.27.sql` — após 1.1.26 |
+| Diagnóstico dessa evolução | `backend/db/checks/1.1.27.sql` |
 | Rastreabilidade de scripts antigos | `backend/db/history/pre-1.1.25/` |
 | Operações administrativas específicas | `backend/admin/` |
 
@@ -17,7 +19,7 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 
 Em MySQL 8.4, selecione um banco vazio. `npm run db:schema` gera `backend/schema.generated.sql` sem CREATE DATABASE/USE para hospedagem gerenciada. Revise e importe o arquivo gerado somente no banco vazio. O esquema contém diretamente as colunas, índices e relações finais, além dos dados iniciais de cursos/links; não encadeia migrações antigas nem atualiza dados existentes.
 
-O esquema registra as versões 1.1.25 e 1.1.26 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
+O esquema registra as versões 1.1.25, 1.1.26 e 1.1.27 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
 
 ## Atualização de banco existente no Workbench
 
@@ -35,7 +37,7 @@ O usuário também confirmou a conclusão dos passos assistidos da 1.1.26 no `de
 
 ## Manutenção do repositório
 
-O manifesto `db/migrations/1.1.25.json` descreve o contrato das seis tabelas (incluindo inscrições em editais), dezesseis colunas e demais objetos dessa atualização. `node tools/db/build-migrations.cjs` gera o SQL correspondente **offline** e atualiza o checksum da instalação nova. O helper de geração não conecta a banco. Não edite SQL gerado isoladamente nem altere o checksum de uma versão aplicada: mudanças futuras exigem uma nova versão de migração.
+O manifesto `db/migrations/1.1.25.json` descreve o contrato das seis tabelas (incluindo inscrições em editais), dezesseis colunas e demais objetos dessa atualização. `npm run db:migration:build` gera os SQLs **offline** e atualiza o registro da instalação nova. O comando compila antes o utilitário TypeScript de checksum; o helper não conecta a banco. Não edite SQL gerado isoladamente nem altere o checksum de uma versão aplicada: mudanças futuras exigem uma nova versão de migração.
 
 Os 19 originais foram movidos sem alterar seus bytes; `history/pre-1.1.25/manifest.json` guarda SHA-256 para conferência. O antigo pacote `release-1.1.25-workbench.sql` foi removido por repetir exatamente seis desses originais; a equivalência e seu checksum estão registrados em `retired-bundle.json`. Documentos de entregas anteriores apontam para o histórico por rastreabilidade, não como instrução para reaplicar tudo. Scripts exclusivos de importação de cursos, consulta e promoção administrativa continuam em `backend/admin/`.
 
@@ -52,3 +54,11 @@ Referências de sintaxe: [CREATE TRIGGER no MySQL 8.4](https://dev.mysql.com/doc
 Depois de conferir/adotar 1.1.25 no banco existente, a atualização 1.1.26 evolui o titular de lembretes sem criar uma tabela paralela. Adiciona sete colunas, dois índices, dois FKs e quatro triggers; torna id_usuario nullable mantendo seu FK, adiciona CHECK de titular exclusivo e amplia o enum de envio sem retirar valores antigos. DML de backfill é limitado à classificação de vínculos legados e desativação de avisos antigos de calendário, com restauração de safe updates. Não reaplique 1.1.25 sobre 1.1.26: validações estritas de enum antigo detectariam a evolução como divergência.
 
 O gerador offline prepara ambas as versões sem alterar o manifesto/checksum anterior. A instalação vazia usa diretamente as definições finais, sem ALTER; a agenda externa é criada antes da FK que a referencia. `docs/lembretes-e-arquivamento.md` descreve SQLs, consentimento, limites diários, configuração externa e testes. Os SQLs ainda exigem ensaio MySQL 8.4 descartável antes de produção; nenhuma estrutura real foi alterada pelo agente.
+
+## Evolução 1.1.27 — pendente de execução pelo responsável
+
+Depois da 1.1.26, `db/migrations/1.1.27.sql` acrescenta quatro colunas: titular externo de tarefas, intenção de cadastro, tipo do pedido institucional e visibilidade de projetos. Torna `tarefas.id_usuario` nullable e exige exatamente um titular, com FK e índice externos. Não altera IDs nem apaga tarefas; tarefas antigas permanecem com o titular institucional.
+
+Projetos legados ficam `privado` por padrão, inclusive quando aprovados. Um responsável autorizado deve escolher a publicação explícita; a migração não infere publicidade pelo título ou por inscrição externa. Contas antigas recebem intenção `externo`; somente um pedido já existente comprova o vínculo solicitado anteriormente. A coluna do pedido usa `docente` para os registros históricos, que eram exclusivamente pedidos de Professor; isso não altera papel de conta nem concede privilégios.
+
+Backup, diagnóstico e ensaio em cópia descartável precedem a aplicação. Execute somente esta migração no banco existente, na mesma conexão e parando no primeiro erro; confira `db/checks/1.1.27.sql` depois. Não reaplique 1.1.25 ou 1.1.26 após essa evolução. O agente não executou nem compilou esse SQL no MySQL real. A implantação do código deve ser coordenada com a migração: tarefas externas e novos pedidos de vínculo exigem a estrutura nova; consultas públicas de projetos sem a flag permanecem fechadas.

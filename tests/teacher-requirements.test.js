@@ -11,13 +11,16 @@ function fixture({
     pending = true,
     version = 1,
     failAt = null,
-    changedEmail = false
+    changedEmail = false,
+    intent = 'docente',
+    requested = 'docente'
 } = {}) {
     const queries = [],
         writes = [],
         lifecycle = [];
     const account = {
         id_externo: 5,
+        intencao_cadastro: intent,
         nome: 'Pessoa de teste',
         email: changedEmail ? 'outra@example.com' : 'pessoa@example.com',
         telefone: '91999990000',
@@ -27,6 +30,7 @@ function fixture({
     };
     const request = {
         id_requisito: 3,
+        tipo_solicitado: requested,
         id_externo: 5,
         nome: 'Pessoa de teste',
         email: 'pessoa@example.com',
@@ -99,6 +103,36 @@ function fixture({
     };
 }
 const body = { matricula: '12345', nome_usuario: 'Pessoa.Teste', formacao: 'Licenciatura' };
+test('conta externa comum não recebe opção de vínculo nem consegue forjar solicitação',async()=>{
+    const f=fixture({pending:false,intent:'externo'});
+    const own=await f.service.own(5);
+    assert.equal(own.can_request,false);assert.equal(own.tipo_solicitado,null);
+    await assert.rejects(f.service.submit(5,{...body,tipo_solicitado:'docente',intencao_cadastro:'docente'}),{status:403});
+    assert.equal(f.writes.length,0);
+});
+test('Servidor escolhido no cadastro permite formação opcional e só é concedido após revisão',async()=>{
+    const fresh=fixture({pending:false,intent:'servidor',requested:'servidor'});
+    await fresh.service.submit(5,{...body,formacao:'',tipo_solicitado:'docente'});
+    const insertion=fresh.writes.find(q=>q.sql.startsWith('INSERT INTO docente_requisitos'));
+    assert.equal(insertion.args.at(-1),'servidor');assert.equal(insertion.args.at(-2),'');
+    assert.ok(!fresh.writes.some(q=>q.sql.startsWith('INSERT INTO usuarios')));
+    const reviewed=fixture({intent:'servidor',requested:'servidor'});
+    reviewed.request.formacao='';
+    await reviewed.service.decide(7,3,{decisao:'aprovar',versao:1,conferencia:true,tipo_usuario:'docente'});
+    assert.equal(reviewed.writes.find(q=>q.sql.startsWith('INSERT INTO usuarios')).args[4],'servidor');
+    assert.ok(reviewed.writes.some(q=>q.sql.startsWith('UPDATE tarefas SET id_usuario=')));
+    assert.ok(reviewed.writes.some(q=>q.sql.startsWith('UPDATE lembretes SET id_usuario=')&&q.sql.includes('enviar_email=FALSE')));
+});
+test('legado precisa de pedido próprio comprovado; não infere intenção de email ou domínio',async()=>{
+    const legacy=fixture({intent:'externo',pending:true});
+    assert.equal((await legacy.service.own(5)).tipo_solicitado,'docente');
+    await legacy.service.submit(5,body);
+    const noRequest=fixture({intent:undefined,pending:false});
+    noRequest.account.intencao_cadastro=undefined;
+    noRequest.account.email='professor@ifpa.edu.br';
+    assert.equal((await noRequest.service.own(5)).can_request,false);
+    await assert.rejects(noRequest.service.submit(5,body),{status:403});
+});
 test('solicitação é vinculada à conta e atualiza um único pedido pendente sem conceder cargo', async () => {
     const f = fixture();
     await f.service.submit(5, {
@@ -178,11 +212,12 @@ test('aprovação preserva senha, confirmação e Google; encerra sessões e sub
         'pessoa@example.com',
         '91999990000',
         'hash-existente',
+        'docente',
         '12345',
         'foto-existente',
         f.account.criado_em
     ]);
-    assert.match(created.sql, /'docente'/);
+    assert.equal(created.args[4], 'docente');
     assert.doesNotMatch(created.sql, /is_admin/);
     assert.deepEqual(
         f.writes.find((q) => q.sql.startsWith('UPDATE google_identidades')).args,

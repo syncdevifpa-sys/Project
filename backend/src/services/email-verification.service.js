@@ -142,9 +142,10 @@ async function register(kind, data) {
                 [data.nome, email, data.telefone || null, data.senha, 'discente', data.id_curso]
             );
         } else if (kind === 'external') {
+            const intended = data.teacherRequest?.tipo_solicitado;
             [insertion] = await connection.execute(
-                'INSERT INTO publico_externo (nome, email, telefone, senha, organizacao) VALUES (?, ?, ?, ?, ?)',
-                [data.nome, email, data.telefone || null, data.senha, data.organizacao || null]
+                'INSERT INTO publico_externo (nome, email, telefone, senha, organizacao'+(intended?',intencao_cadastro':'')+') VALUES (?, ?, ?, ?, ?'+(intended?',?':'')+')',
+                [data.nome, email, data.telefone || null, data.senha, data.organizacao || null, ...(intended?[intended]:[])]
             );
         } else fail(400, 'Tipo de conta inválido.');
         if (kind === 'external' && data.teacherRequest)

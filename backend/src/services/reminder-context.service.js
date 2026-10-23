@@ -23,8 +23,7 @@ async function authorizeContext(db, owner, row, { lock=false, sending=false }={}
     const who=identity(owner), link=context(row), suffix=lock?' FOR UPDATE':'';
     if (link.kind==='avulso') return null;
     if (link.kind==='tarefa') {
-        if (who.external) fail(403,'Tarefas institucionais não estão disponíveis para esta conta.');
-        const [rows]=await db.execute('SELECT id_tarefa,status FROM tarefas WHERE id_tarefa=? AND id_usuario=?'+suffix,[link.key,who.id]);
+        const [rows]=await db.execute('SELECT id_tarefa,status FROM tarefas WHERE id_tarefa=? AND '+who.column+'=?'+(who.external?' AND id_usuario IS NULL':'')+suffix,[link.key,who.id]);
         if (!rows.length) fail(404,'Tarefa não encontrada para esta conta.');
         if ((sending || row.ativo) && rows[0].status==='concluida') fail(409,'Tarefa concluída não recebe lembretes ativos.');
         return rows[0];
@@ -39,8 +38,7 @@ async function authorizeContext(db, owner, row, { lock=false, sending=false }={}
     const event=rows[0];
     const publicEvent=event?.visibilidade==='publico';
     const ownPersonal=!who.external && event?.visibilidade==='pessoal' && Number(event.id_usuario)===who.id;
-    if (!event || event.oculto || (!publicEvent && !ownPersonal) ||
-        (who.external && event.origem_calendario!=='agenda')) fail(404,'Evento não disponível para esta conta.');
+    if (!event || event.oculto || (!publicEvent && !ownPersonal)) fail(404,'Evento não disponível para esta conta.');
     return event;
 }
 module.exports={ identity,context,authorizeContext,id };

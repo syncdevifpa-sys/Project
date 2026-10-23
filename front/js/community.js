@@ -11,11 +11,12 @@
         window.location.href = 'dashboard.html';
         return;
     }
-    document.getElementById('externalLogout').addEventListener('click', () => A.auth.logout());
     const status = document.getElementById('externalStatus');
     try {
         const profile = await A.api.expect(A.api.get('/api/external/me'));
         document.getElementById('externalName').textContent = profile.nome;
+        const greeting = document.getElementById('externalGreeting');
+        if (greeting) greeting.textContent = 'Olá, ' + profile.nome.split(' ')[0];
         document.getElementById('externalEmail').textContent = profile.email;
         document.getElementById('externalOrganization').textContent =
             profile.organizacao || 'Não informada';

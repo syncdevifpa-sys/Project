@@ -1,6 +1,5 @@
 const db = require('../config/database');
 const { validateContent } = require('./content-edit.service');
-const { createLibrary } = require('./document-library.service');
 function fail(status, message) {
     throw Object.assign(new Error(message), { status });
 }
@@ -65,16 +64,17 @@ function createCommunity(database = db) {
     }
     async function registrations(owner) {
         await account(database, owner);
-        const [rows] = await database.execute(
-            'SELECT id_projeto,status FROM projeto_inscricoes_externas WHERE id_externo=?',
+        let rows;
+        try { [rows] = await database.execute(
+            "SELECT e.id_projeto,e.status FROM projeto_inscricoes_externas e JOIN projetos p ON p.id_projeto=e.id_projeto WHERE e.id_externo=? AND p.aprovacao='aprovado' AND p.visibilidade='publico'",
             [id(owner)]
-        );
+        ); } catch(error) { if(error.code==='ER_BAD_FIELD_ERROR') return []; throw error; }
         return rows;
     }
     async function register(owner, project, cancel = false) {
         return transaction(owner, async (c) => {
             const [projects] = await c.execute(
-                'SELECT id_projeto,aprovacao,situacao,permite_externos,vagas FROM projetos WHERE id_projeto=? FOR UPDATE',
+                'SELECT id_projeto,aprovacao,situacao,permite_externos,vagas,visibilidade FROM projetos WHERE id_projeto=? FOR UPDATE',
                 [id(project)]
             );
             const row = projects[0];
@@ -89,6 +89,7 @@ function createCommunity(database = db) {
             }
             if (![1, true].includes(row.permite_externos))
                 fail(403, 'Este projeto não permite participação da Comunidade externa.');
+            if (row.visibilidade !== 'publico') fail(404,'Projeto não disponível publicamente.');
             if (!['ativo', 'inscricoes'].includes(row.situacao))
                 fail(409, 'O projeto não está recebendo inscrições.');
             const [existing] = await c.execute(
@@ -183,18 +184,10 @@ function createCommunity(database = db) {
         });
     }
     async function documents(owner) {
-        await account(database, owner);
-        return createLibrary(database).publicList();
+        fail(403,'Documentos não estão disponíveis para a Comunidade externa.');
     }
     async function download(owner, key) {
-        await account(database, owner);
-        const [rows] = await database.execute(
-            "SELECT i.nome_arquivo,i.mime,i.tipo,i.conteudo FROM documento_itens i JOIN usuarios u ON u.id_usuario=i.id_usuario WHERE i.id_item=? AND i.visibilidade='publico' AND u.situacao='ativo' AND (u.tipo_usuario='docente' OR u.is_admin=1 OR i.revisao='aprovado')",
-            [id(key)]
-        );
-        if (!rows.length || rows[0].tipo !== 'arquivo')
-            fail(404, 'Documento público não encontrado.');
-        return rows[0];
+        fail(403,'Documentos não estão disponíveis para a Comunidade externa.');
     }
     return {
         updateProfile,
