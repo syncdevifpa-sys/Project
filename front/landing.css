@@ -2031,3 +2031,5 @@ section[id] {
 [data-theme='dark'] .faq-item {
   border-color: rgba(255, 255, 255, 0.12);
 }
+
+.product-mockup-note { display: block; margin-top: 10px; font-size: 13px; line-height: 1.5; color: var(--color-text-secondary); }

@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Turmas e disciplinas
 
 A página `classes.html` usa a sessão real do Arcádia e a API `/api/classes`. A prévia anterior continua separada: seus dados são fictícios e seus arquivos são excluídos do build publicado.
@@ -21,8 +23,8 @@ A página `classes.html` usa a sessão real do Arcádia e a API `/api/classes`. 
 O usuário informou que possui backup do banco de produção e executará os SQLs manualmente. Nenhum script foi executado automaticamente.
 
 1. Abra a conexão de produção usada pela Vercel e selecione o banco correto no painel SCHEMAS. Confira com `SELECT DATABASE();`.
-2. Execute `backend/admin/add-document-library.sql` inteiro primeiro.
-3. Execute `backend/admin/add-classes.sql` inteiro em seguida. Ele depende da biblioteca para anexos.
+2. Execute `backend/db/history/pre-1.1.25/add-document-library.sql` inteiro primeiro.
+3. Execute `backend/db/history/pre-1.1.25/add-classes.sql` inteiro em seguida. Ele depende da biblioteca para anexos.
 4. Atualize o painel de tabelas. Confira a criação de `documento_pastas`, `documento_itens`, `documento_salvos`, `documento_armazenamento`, `academico_turmas`, `academico_disciplinas`, `academico_matriculas`, `academico_convites` e `academico_publicacoes`.
 5. Use um deployment da branch que contém a implementação. O banco atualizado não altera sozinho o código do site em produção.
 
@@ -46,4 +48,4 @@ As rotas verificam os papéis atuais no banco, a propriedade da oferta, a matrí
 
 ## Atualização de ofertas, saída e nomes únicos
 
-Consulte `docs/turmas-revisao-2026-10-22.md` para as quatro migrações adicionais e o diagnóstico de duplicidade antes da publicação. A saída voluntária encerra vínculos sem apagar publicações ou materiais. Legado não recebe semestre presumido. Cores são preferências pessoais por item e navegador; não alteram a turma compartilhada.
+Consulte `docs/history/turmas-revisao-2026-10-22.md` para as quatro migrações adicionais e o diagnóstico de duplicidade antes da publicação. A saída voluntária encerra vínculos sem apagar publicações ou materiais. Legado não recebe semestre presumido. Cores são preferências pessoais por item e navegador; não alteram a turma compartilhada.

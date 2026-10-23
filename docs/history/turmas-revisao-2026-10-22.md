@@ -1,3 +1,5 @@
+> Registro da entrega original. O caminho atual para atualização é `backend/db/README.md` e a migração consolidada `backend/db/migrations/1.1.25.sql`. Os scripts listados abaixo são históricos, não uma fila para reaplicar.
+
 # Revisão de Turmas e acesso da Comunidade externa
 
 ## Ofertas e vínculos
@@ -27,10 +29,10 @@ Nenhuma migração desta revisão foi executada em banco local ou produção. N�
 
 Confirme primeiro as migrações iniciais de biblioteca, Turmas e Requisitos. Depois aplique somente as ainda ausentes:
 
-1. `backend/admin/add-external-community-access.sql`: opção de participação, origem e tabelas externas.
-2. `backend/admin/add-class-offerings.sql`: regime, semestre e unicidade por oferta, mantendo IDs antigos.
-3. `backend/admin/add-class-voluntary-leave.sql`: vínculos ativos/inativos, autoria e registro de saída.
-4. `backend/admin/add-unique-class-names.sql`: execute PRIMEIRO apenas o SELECT de diagnóstico. Se retornar linhas, PARE e revise nomes e vínculos com a equipe, sem fundir nem apagar turmas. Somente sem duplicidades execute as alterações, índice e triggers, em janela sem criação ou renomeação de turmas. O índice recusará conflitos remanescentes.
+1. `backend/db/history/pre-1.1.25/add-external-community-access.sql`: opção de participação, origem e tabelas externas.
+2. `backend/db/history/pre-1.1.25/add-class-offerings.sql`: regime, semestre e unicidade por oferta, mantendo IDs antigos.
+3. `backend/db/history/pre-1.1.25/add-class-voluntary-leave.sql`: vínculos ativos/inativos, autoria e registro de saída.
+4. `backend/db/history/pre-1.1.25/add-unique-class-names.sql`: execute PRIMEIRO apenas o SELECT de diagnóstico. Se retornar linhas, PARE e revise nomes e vínculos com a equipe, sem fundir nem apagar turmas. Somente sem duplicidades execute as alterações, índice e triggers, em janela sem criação ou renomeação de turmas. O índice recusará conflitos remanescentes.
 
 Não repita ALTER TABLE em tabelas já atualizadas: confira colunas, índices e triggers antes de cada script. DDL MySQL pode fazer commit implícito; rollback de aplicação não desfaz DDL. As migrações não apagam registros antigos.
 

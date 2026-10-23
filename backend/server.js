@@ -56,6 +56,12 @@ app.use((req, res, next) => {
 // ==============================
 
 app.use(express.json({ limit: '2mb' }));
+// Respostas autenticadas e de autenticação nunca devem persistir no cache HTTP.
+app.use('/api', (req, res, next) => {
+    if (req.headers.authorization || /^\/(auth|external)(\/|$)/.test(req.path))
+        res.set('Cache-Control', 'private, no-store');
+    next();
+});
 
 // ==============================
 // Main API route

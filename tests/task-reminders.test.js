@@ -40,7 +40,7 @@ test('consentimento é desativado por padrão e ativação exige endereço confi
 test('lembrete novo pertence ao token, envio fica off e tarefa de terceiro é recusada', async () => {
     const body = { titulo: 'Prova', id_tarefa: 3, agendado_utc: future(), fuso_horario: 'America/Fortaleza', id_usuario: 99, email: 'terceiro@example.com' };
     const f = fixture(); await f.service.createReminder(7, body);
-    assert.equal(f.writes[0].args.at(-1), 7);
+    assert.equal(f.writes[0].args[9], 7);
     assert.equal(f.writes[0].args[7], false);
     assert.ok(!JSON.stringify(f.writes).includes('terceiro@example.com'));
     await assert.rejects(fixture({ taskOwner: false }).service.createReminder(7, body), { status: 404 });
@@ -58,20 +58,35 @@ test('edição exige propriedade, reagendar exige data explícita, exclusão é 
     assert.match(f.writes.at(-1).sql, /AND id_usuario=\?/);
 });
 function dispatchFixture(rowOverrides = {}, fail = false) {
-    const reservations = new Set(), sends = [], states = [];
+    const reservations = new Map(), sends = [], states = [];
     const row = { id_lembrete: 2, id_usuario: 7, versao: 1, id_tarefa: 3, dono_tarefa: 7, tarefa_status: 'aberta', titulo: 'Prova', email: 'titular@example.com', email_confirmado: 'titular@example.com', confirmado_em: '2026-01-01', email_lembretes: 1, ...rowOverrides };
     const db = {
         async execute(sql, args) {
             if (sql.startsWith('SELECT l.id_lembrete')) return [[{ id_lembrete: 2, versao: 1 }]];
             if (sql.startsWith('INSERT IGNORE')) {
-                const key = args.join(':'); const fresh = !reservations.has(key); reservations.add(key);
-                return [{ affectedRows: fresh ? 1 : 0 }];
+                const key=args.join(':');const fresh=!reservations.has(key);if(fresh)reservations.set(key,{estado:'reservado',tentativas:1});
+                return [{affectedRows:fresh?1:0}];
+            }
+            if(sql.startsWith('SELECT id_tarefa,status')) return [row.dono_tarefa===args[1]?[{id_tarefa:3,status:row.tarefa_status}]:[]];
+            if(sql.startsWith("UPDATE lembrete_envios SET estado='reservado'")) {
+                const state=reservations.get(args.join(':'));
+                if(state?.estado!=='aguardando'||state.tentativas>=3)return [{affectedRows:0}];
+                state.estado='reservado';state.tentativas++;return [{affectedRows:1}];
             }
             if (sql.startsWith('SELECT l.*')) {
                 assert.match(sql, /FOR UPDATE/); assert.match(sql, /UTC_TIMESTAMP/);
                 return [row.versao === args[1] ? [row] : []];
             }
-            states.push(sql); return [{ affectedRows: 1 }];
+            states.push(sql);
+            const state=reservations.get(args.join(':'));
+            if(state){
+                if(sql.includes("SET estado='enviando'"))state.estado='enviando';
+                if(sql.includes("SET estado='enviado'"))state.estado='enviado';
+                if(sql.includes("SET estado='falhou'"))state.estado='falhou';
+                if(sql.includes("SET estado='cancelado'"))state.estado='cancelado';
+                if(sql.includes("SET estado=IF(tentativas"))state.estado=state.tentativas<3?'aguardando':'falhou';
+            }
+            return [{ affectedRows: 1 }];
         },
         async getConnection() { return { execute: db.execute, beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release() {} }; }
     };
@@ -107,10 +122,11 @@ test('envio revalida consentimento, endereço, tarefa concluída, dono e ediçã
     } finally { if (previous === undefined) delete process.env.REMINDER_EMAIL_ENABLED; else process.env.REMINDER_EMAIL_ENABLED = previous; }
 });
 test('migração invalida avisos ao concluir ou alterar prazo e exclui avisos vinculados ao apagar tarefa', () => {
-    const sql = fs.readFileSync(require('node:path').join(__dirname, '../backend/admin/add-task-reminders.sql'), 'utf8');
+    const sql = fs.readFileSync(require('node:path').join(__dirname, '../backend/db/migrations/1.1.25.sql'), 'utf8');
     assert.match(sql, /AFTER UPDATE ON tarefas/);
     assert.match(sql, /NEW.status='concluida'/);
     assert.match(sql, /NEW.data_entrega <=> OLD.data_entrega/);
-    assert.match(sql, /REFERENCES tarefas\(id_tarefa\) ON DELETE CASCADE/);
+    const spec = require('../backend/db/migrations/1.1.25.json');
+    assert.ok(spec.foreignKeys.some((fk) => fk.table === 'lembretes' && fk.columns === 'id_tarefa' && fk.ref === 'tarefas' && fk.delete === 'CASCADE'));
     assert.match(sql, /PRIMARY KEY \(id_lembrete, versao\)/);
 });

@@ -352,7 +352,7 @@
                   <div class="ar-profile-name" id="confProfileName">Minha conta</div>
                   <div class="ar-profile-meta" id="confProfileRole">Carregando perfil...</div>
                   <div class="ar-profile-badges">
-                    <span class="ar-tag" id="confProfileMatricula"></span>
+                    <span class="ar-tag" id="confProfileMatricula" hidden></span>
                     <button
                       type="button"
                       class="ar-btn ar-btn--ghost ar-btn--xs"
@@ -1161,9 +1161,9 @@
         }
         document.getElementById('campoNomeSocial').value = sessao.nome_social || '';
         document.getElementById('campoCurso').value = '';
-        document.getElementById('confProfileMatricula').textContent = sessao.matricula
-          ? 'ID ' + sessao.matricula
-          : '';
+        var matriculaTag = document.getElementById('confProfileMatricula');
+        matriculaTag.textContent = sessao.matricula ? 'ID ' + sessao.matricula : '';
+        matriculaTag.hidden = !String(sessao.matricula || '').trim();
         document.getElementById('confProfileRole').textContent = Arcadia.auth.paraVinculo(
           sessao.tipo_usuario
         );
@@ -1231,6 +1231,7 @@
         }
         if (sessao.matricula) {
           document.getElementById('confProfileMatricula').textContent = 'ID ' + sessao.matricula;
+          document.getElementById('confProfileMatricula').hidden = false;
         }
         if (sessao.sobre) {
           document.getElementById('campoSobre').value = sessao.sobre;

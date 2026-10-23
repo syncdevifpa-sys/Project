@@ -1,0 +1,78 @@
+[
+  {
+    "file": "add-calendar-categories.sql",
+    "sha256": "b6082bccdab63caebfbd93d3379c7b52cc3f460efb0a6b2dcb71a472e9f3a742"
+  },
+  {
+    "file": "add-calendar-visibility.sql",
+    "sha256": "fc6d6c61b9682390da6d5ef8a777c8874281ee8d6aa7aa65cce96006459976ba"
+  },
+  {
+    "file": "add-class-archive.sql",
+    "sha256": "c535096607b9850349109b8e23d9c8f8c976792b503df8e30d17497cfc25b340"
+  },
+  {
+    "file": "add-class-offerings.sql",
+    "sha256": "9fa28a4109ad1ca8607d56328fa32c37b43389d8bbc5199499737f271ce28b93"
+  },
+  {
+    "file": "add-class-voluntary-leave.sql",
+    "sha256": "3a14e37d1092d5aa428aaeac0034429a4fe4997b7ba17cc4bd9d0c5c67e9a3ff"
+  },
+  {
+    "file": "add-classes.sql",
+    "sha256": "77905143906886cd3526a12fbf53a105b61c9859d7d85d65dd91f16bd28eda4e"
+  },
+  {
+    "file": "add-document-library.sql",
+    "sha256": "0caa30c1fb507de74561e694f874492c0828683e994a0e04a0dca148b09fcfb1"
+  },
+  {
+    "file": "add-email-verification.sql",
+    "sha256": "1c3d7da16a71247461108928fcf82fdd298775b0f1b5972fa47ffbad1fc5327a"
+  },
+  {
+    "file": "add-external-community-access.sql",
+    "sha256": "b99c169f2552b1ee7a7caf2ca3a67c81dbd239fad7cf62fd2bdf68eb792a1845"
+  },
+  {
+    "file": "add-google-login.sql",
+    "sha256": "85ff8e56dd299e7b78f8d499d915a48d6d0096b2017c8ed6f58c6006d90553e3"
+  },
+  {
+    "file": "add-notice-applications.sql",
+    "sha256": "eb6efd5e92ee732b853a22f3ec8f0a325b2dc6e2e63328643acc9b0d480cec38"
+  },
+  {
+    "file": "add-notice-cover.sql",
+    "sha256": "e60f29fdbd7d05527051c41eab729e0a56e4c565508ccfcd44d773f7d4a2e834"
+  },
+  {
+    "file": "add-notice-type.sql",
+    "sha256": "2dfef65aa002340d8121976b6faf0a145816a3d2e9318cc3a3c16e5b05309dc1"
+  },
+  {
+    "file": "add-profile-sharing.sql",
+    "sha256": "64f69ca62319c3cd35779f61408b5b40eebd17068bdb4ef49b384222f488d703"
+  },
+  {
+    "file": "add-security-rate-limits.sql",
+    "sha256": "729bba9244a1eb85e6222682d9c5c995138c3ac9a0d1fc1a11711a163741fdbe"
+  },
+  {
+    "file": "add-task-reminders.sql",
+    "sha256": "d5169a5b69ba80d9354b0c10d7bee8a127f2144afd9815e744177a1867710002"
+  },
+  {
+    "file": "add-teacher-requirements.sql",
+    "sha256": "cf61127a14621c81e70d9ed0e7dc735f2be9069ef3ca756e638f9ef8ff9607f5"
+  },
+  {
+    "file": "add-unique-class-names.sql",
+    "sha256": "a7d1648a327dacc0f27fb04dbf6f070b39bb8070b984c65b7d983338b2e6eb3e"
+  },
+  {
+    "file": "update-notice-publishing.sql",
+    "sha256": "b6a57b1f0f7cbb6609e967886c6897cae0e5fe610b4f0806beaaea4d4c1d14d1"
+  }
+]

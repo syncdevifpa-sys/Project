@@ -118,6 +118,7 @@ window.Arcadia = window.Arcadia || {};
         ) {
             throw new Error('Use o botão oficial do Google para confirmar sua conta.');
         }
+        const generation = localStorage.getItem('arcadiaLogoutEpoch');
         const result = await api.post(
             '/api/auth/google',
             { credential, challenge, ...(senha ? { senha } : {}) },
@@ -128,6 +129,8 @@ window.Arcadia = window.Arcadia || {};
                 new Error(result.data?.error || 'Não foi possível entrar com Google.'),
                 { data: result.data }
             );
+        if (localStorage.getItem('arcadiaLogoutEpoch') !== generation)
+            throw new Error('A entrada foi cancelada ao sair. Tente novamente.');
         salvarSessao(result.data.user, result.data.token);
         irParaPortal();
     }
@@ -142,7 +145,8 @@ window.Arcadia = window.Arcadia || {};
                     result.data?.error || 'Não foi possível preparar o acesso com Google.'
                 );
             await loadGoogleSdk();
-            const context = { ...result.data, expiresAt: Date.now() + 4 * 60 * 1000 };
+            const context = { ...result.data, expiresAt: Date.now() + 4 * 60 * 1000,
+                logoutEpoch: localStorage.getItem('arcadiaLogoutEpoch') };
             window.google.accounts.id.initialize({
                 client_id: context.clientId,
                 nonce: context.nonce,
@@ -150,6 +154,7 @@ window.Arcadia = window.Arcadia || {};
                 ux_mode: 'popup',
                 use_fedcm_for_prompt: true,
                 callback: async (response) => {
+                    if (context.logoutEpoch !== localStorage.getItem('arcadiaLogoutEpoch')) return;
                     if (!response.credential) return;
                     if (googleSubmit) return googleSubmit(response.credential);
                     triggerRealGoogleOAuth({ context, credential: response.credential });
@@ -179,7 +184,9 @@ window.Arcadia = window.Arcadia || {};
         );
         try {
             await prepareGoogleAuth();
-            if (!typing && !document.querySelector('dialog[open]'))
+            let explicitLogout = false;
+            try { explicitLogout = !!sessionStorage.getItem('arcadiaExplicitLogout'); } catch {}
+            if (!typing && !explicitLogout && !document.querySelector('dialog[open]'))
                 window.google.accounts.id.prompt();
         } catch (_) {
             /* A sugestão é opcional: falhas não interrompem a entrada com senha. */
@@ -666,6 +673,16 @@ window.Arcadia = window.Arcadia || {};
 
     // ---------------------------- Logout ----------------------------
     async function logout() {
+        if (logout.running) return;
+        logout.running = true;
+        try {
+            localStorage.setItem('arcadiaLogoutEpoch', String(Date.now()));
+            sessionStorage.setItem('arcadiaExplicitLogout', '1');
+        } catch {}
+        googleContext = null;
+        googleSubmit = null;
+        window.google?.accounts?.id?.cancel();
+        window.google?.accounts?.id?.disableAutoSelect();
         // Tenta revogar a sessão no servidor antes de descartar o JWT no navegador
         try {
             await api.post(
@@ -681,7 +698,8 @@ window.Arcadia = window.Arcadia || {};
                 sessionStorage.removeItem('arcadiaToken');
                 sessionStorage.removeItem('arcadiaSessao');
             } catch {}
-            window.location.href = 'login.html';
+            document.body.replaceChildren();
+            window.location.replace('login.html');
         }
     }
 

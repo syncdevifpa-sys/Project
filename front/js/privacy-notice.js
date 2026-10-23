@@ -1,6 +1,32 @@
 (function () {
     'use strict';
-    if (window.self !== window.top) return;
+    if (window.self !== window.top) {
+        // O leitor fica no contexto original; a navegação do portal não abre dentro dele.
+        const style = document.createElement('style');
+        style.textContent = 'body > header, body > footer, body > .skip { display: none; }';
+        document.head.append(style);
+        return;
+    }
+    const legalPages = new Set(['privacy.html', 'terms.html', 'cookies.html']);
+    const returnPages = new Set(['index.html','login.html','signup.html','dashboard.html','community.html','settings.html','tasks.html','calendar.html','notices.html','projects.html','documents.html','classes.html','admin.html','people.html','profile.html']);
+    const currentPage = location.pathname.split('/').pop();
+    if (legalPages.has(currentPage)) {
+        try {
+            if (document.referrer) {
+                const previous = new URL(document.referrer);
+                const page = previous.pathname.split('/').pop();
+                if (previous.origin === location.origin && returnPages.has(page))
+                    sessionStorage.setItem('arcadiaLegalReturn', page);
+            }
+            const back = sessionStorage.getItem('arcadiaLegalReturn');
+            if (returnPages.has(back)) {
+                const link = document.createElement('a');
+                link.href = back;
+                link.textContent = 'Voltar à página anterior';
+                document.querySelector('header nav')?.prepend(link);
+            }
+        } catch (_) {}
+    }
     const key = 'arcadia-cookie-choice-v2';
     let choice = null;
     try {
@@ -58,7 +84,7 @@
             event.altKey
         )
             return;
-        if (typeof HTMLDialogElement === 'undefined') return;
+        if (typeof HTMLDialogElement === 'undefined' || typeof HTMLDialogElement.prototype.showModal !== 'function') return;
         event.preventDefault();
         const title = {
             'terms.html': 'Termos de Uso',
@@ -78,6 +104,7 @@
         close.textContent = 'Fechar';
         const frame = document.createElement('iframe');
         frame.title = title;
+        frame.referrerPolicy = 'same-origin';
         frame.src = link.getAttribute('href') + '?embedded=1';
         head.append(heading, close);
         dialog.append(head, frame);
