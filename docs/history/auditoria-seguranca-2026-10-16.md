@@ -15,7 +15,7 @@ Esta seção atualiza o estado; os achados abaixo preservam a evidência da audi
 - **Ativação pendente:** executar duas migrações revisadas, configurar SMTP/URL HTTPS/segredo das cotas e habilitar EMAIL_VERIFICATION_ENABLED no ambiente de destino. Nada foi executado na Aiven/Vercel, nenhuma mensagem real foi enviada e não houve push/deploy. A tabela de estado não pode ser apagada como manutenção.
 - **Permanecem pendentes:** M01 (projetos não aprovados), restante de A03, M03/M04, mensagens de enumeração, política dos inscritos, comprovação de vínculo e validação do ambiente real. A conclusão geral de segurança continua sem aprovação para produção até essas verificações.
 
-Veja [o guia de configuração e migração](confirmacao-email.md) e as evidências de testes em tmp/security-audit. O relatório original não representa um ensaio do ambiente publicado.
+Veja [o guia de configuração e migração](../confirmacao-email.md) e as evidências de testes em tmp/security-audit. O relatório original não representa um ensaio do ambiente publicado.
 
 ## Escopo e método
 

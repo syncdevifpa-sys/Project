@@ -45,7 +45,7 @@ ORDER BY e.tabela,e.coluna;
 WITH esperadas AS (
  SELECT 'projeto_inscricoes_externas' AS tabela UNION ALL SELECT 'agenda_externa'
  UNION ALL SELECT 'academico_saidas_professor' UNION ALL SELECT 'preferencias_notificacao'
- UNION ALL SELECT 'lembrete_envios'
+ UNION ALL SELECT 'lembrete_envios' UNION ALL SELECT 'inscricoes_editais'
 )
 SELECT e.tabela,IF(t.TABLE_NAME IS NULL,'PENDENTE','OK') AS situacao
 FROM esperadas e LEFT JOIN information_schema.TABLES t
@@ -69,3 +69,9 @@ GROUP BY TABLE_NAME,INDEX_NAME;
 SELECT TABLE_NAME,CONSTRAINT_NAME,CONSTRAINT_TYPE FROM information_schema.TABLE_CONSTRAINTS
 WHERE CONSTRAINT_SCHEMA=DATABASE() AND TABLE_NAME IN
  ('academico_disciplinas','academico_publicacoes','lembretes','preferencias_notificacao','lembrete_envios');
+
+-- Definicoes efetivas dos FKs: conferir destino, colunas e regras, nao apenas o nome.
+SELECT k.TABLE_NAME,k.CONSTRAINT_NAME,k.COLUMN_NAME,k.REFERENCED_TABLE_NAME,k.REFERENCED_COLUMN_NAME,r.DELETE_RULE,r.UPDATE_RULE
+FROM information_schema.KEY_COLUMN_USAGE k JOIN information_schema.REFERENTIAL_CONSTRAINTS r
+ ON r.CONSTRAINT_SCHEMA=k.CONSTRAINT_SCHEMA AND r.TABLE_NAME=k.TABLE_NAME AND r.CONSTRAINT_NAME=k.CONSTRAINT_NAME
+WHERE k.CONSTRAINT_SCHEMA=DATABASE() AND k.TABLE_NAME IN ('academico_publicacoes','lembretes','projeto_inscricoes_externas','agenda_externa','academico_saidas_professor','preferencias_notificacao','lembrete_envios');

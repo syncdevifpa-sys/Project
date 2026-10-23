@@ -114,7 +114,7 @@ test('banco migrado persiste tipo na criação, leitura e edição sem alterar c
         () => validateNotice({ tipo_publicacao: 'edital' }),
         (e) => e.status === 400
     );
-    const sql = fs.readFileSync('backend/admin/add-notice-type.sql', 'utf8');
+    const sql = fs.readFileSync('backend/db/history/pre-1.1.25/add-notice-type.sql', 'utf8');
     assert.match(sql, /information_schema\.COLUMNS/);
     assert.match(sql, /DEFAULT ''aviso''/);
     assert.doesNotMatch(sql, /\bDROP\b|\bDELETE\b|\bUPDATE\b/);

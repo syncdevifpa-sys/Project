@@ -1,32 +1,14 @@
-# Atualização do banco e publicação 1.1.25
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
 
-O backup foi confirmado pelo responsável em 22/10/2026. A captura do Workbench indica como últimos scripts aplicados: Google, biblioteca de documentos, Turmas e Requisitos de professores. Isso orienta o pacote, mas não substitui conferir o esquema do banco selecionado.
+# Publicação 1.1.25 — organização atual do banco
 
-## 1. Conferir sem alterar
+O roteiro anterior por seis arquivos foi substituído pela atualização consolidada. A referência atual é `backend/db/README.md`.
 
-Abra `backend/admin/check-release-1.1.25.sql` no Workbench, selecione a conexão de produção e execute o diagnóstico. Confira o banco retornado por `DATABASE()` e MySQL 8 com suporte a CHECK e REGEXP_REPLACE. O diagnóstico retorna apenas estrutura e eventuais nomes de turmas duplicados; não retorna credenciais.
+- Banco novo: `backend/schema.sql` ou o arquivo gerado por `npm run db:schema`, somente em base vazia.
+- Diagnóstico sem alterações: `backend/db/checks/1.1.25.sql`.
+- Banco existente com os pré-requisitos documentados: `backend/db/migrations/1.1.25.sql`, no Workbench com parada no primeiro erro, após backup e em janela de manutenção.
+- Originais dos seis blocos e das atualizações mais antigas: `backend/db/history/pre-1.1.25/`, preservados por rastreabilidade, sem necessidade de repetir.
 
-Os pré-requisitos precisam estar OK. Antes da atualização, os novos campos e tabelas devem aparecer PENDENTE. Se alguns já estiverem OK e outros PENDENTE na mesma migração, pare e informe o resultado: não execute novamente o script inteiro sobre uma migração parcial. A consulta de duplicidade de turmas precisa retornar zero linhas.
+O usuário confirmou aplicação dos seis blocos no Workbench e a versão 1.1.25 foi enviada ao main anteriormente. Isso não é confirmação por conexão direta do agente. A nova organização está sendo preparada somente na branch de desenvolvimento. A migração consolidada ainda precisa de ensaio no MySQL 8.4 descartável antes de uso em produção; nenhum banco foi acessado durante esta reorganização.
 
-## 2. Aplicar apenas as migrações ausentes
-
-Com backup e sem criação/renomeação de turmas durante a atualização, abra `backend/admin/release-1.1.25-workbench.sql`. O arquivo reúne os seis scripts e identifica cada bloco. Execute **um bloco por vez**, confira sucesso e só então prossiga. Não use “executar tudo” antes de revisar o diagnóstico. Preserve os delimitadores de triggers. Se houver qualquer erro, pare e envie o erro; DDL faz commit implícito e não é desfeito por um ROLLBACK genérico.
-
-1. Acesso da comunidade externa e origem dos eventos.
-2. Ofertas por semestre, mantendo IDs existentes.
-3. Saída voluntária e autoria.
-4. Unicidade de nomes de turmas, somente sem duplicidades.
-5. Arquivamento de turmas e ofertas.
-6. Lembretes de tarefas, consentimento, controle de envios e trigger de invalidação.
-
-Não execute `backend/schema.sql` nem `schema.generated.sql` em produção existente. Os scripts deste pacote não apagam usuários, turmas, materiais ou histórico. O índice antigo de disciplina é substituído somente após criar o novo. O pacote não é idempotente: não o repita após aplicação bem-sucedida.
-
-## 3. Conferir e publicar
-
-Repita o diagnóstico. Todos os novos campos/tabelas devem estar OK; os três triggers, índices, CHECK e FKs precisam estar presentes. `uq_disciplina_turma` deve ter sido removido. Confirme o resultado antes do push de main para que o deploy automático não execute código que exige colunas ainda ausentes.
-
-O commit de integração segue `version 1.1.25 - ...` com descrição. Build e testes verificam código e mocks; a aplicação real de SQL depende do resultado do Workbench. O push de main pode disparar o deploy automático configurado no projeto.
-
-## E-mails continuam opcionais
-
-Atualizar o banco não ativa envios sozinho. SMTP, `REMINDER_EMAIL_ENABLED`, segredo do endpoint e um agendador real ainda precisam estar configurados e verificados, como descrito em `docs/lembretes-e-arquivamento.md`. A atualização não deve ligar notificações para quem não optou por recebê-las.
+Se a base já estiver compatível, a migração versionada confere objetos e registra o manifesto sem repetir ADDs. Se houver estrutura parcial compatível, adiciona ausentes. Divergências, tabelas parciais fora do contrato e nomes duplicados exigem revisão, sem exclusão automática. DDL confirma alterações implicitamente; não há rollback global.

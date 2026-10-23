@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Biblioteca de documentos
 
 A aba Documentos organiza materiais de aula em duas áreas: **Meus documentos**, privada para cada conta institucional, e **Materiais públicos**, disponível às contas institucionais autenticadas. Professores e administradores podem publicar materiais; o padrão de criação permanece privado e o formulário exige selecionar a visibilidade conscientemente. A publicação apresenta a autoria. Usuários externos e visitantes não têm acesso a esta entrega.
@@ -6,7 +8,7 @@ As solicitações acadêmicas anteriores permanecem em **Solicitações acadêmi
 
 ## Habilitação
 
-Revise `backend/admin/add-document-library.sql` e aplique o arquivo inteiro no banco correto após backup. Não execute `schema.sql` sobre uma base existente. A migração cria tabelas novas com `IF NOT EXISTS` e insere a chave de controle com `INSERT IGNORE`; não publica conteúdo nem altera contas. Nenhuma migração foi aplicada automaticamente ao banco local ou à Aiven nesta implementação.
+Revise `backend/db/history/pre-1.1.25/add-document-library.sql` e aplique o arquivo inteiro no banco correto após backup. Não execute `schema.sql` sobre uma base existente. A migração cria tabelas novas com `IF NOT EXISTS` e insere a chave de controle com `INSERT IGNORE`; não publica conteúdo nem altera contas. Nenhuma migração foi aplicada automaticamente ao banco local ou à Aiven nesta implementação.
 
 O código usa o MySQL existente, sem novo provedor pago e sem gravar arquivos no disco temporário da Vercel. O uso do banco consome a capacidade já contratada; os limites não significam que o plano seja ilimitado ou que toda a capacidade esteja livre. A cota total inicial de arquivos da biblioteca é 200 MB, conservadora em relação a um banco de 1 GB, que também precisa guardar as demais tabelas e índices. Aumentar a cota exige avaliar o espaço real disponível e as condições do provedor.
 

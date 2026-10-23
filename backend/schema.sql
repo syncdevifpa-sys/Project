@@ -62,7 +62,9 @@ CREATE TABLE publico_externo (
     ultimo_acesso   DATETIME,
     criado_em       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                        ON UPDATE CURRENT_TIMESTAMP
+                        ON UPDATE CURRENT_TIMESTAMP,
+    email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,
+    consentimento_lembretes_em DATETIME NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -106,7 +108,7 @@ CREATE TABLE tokens (
 
 -- Execute apenas no banco correto, após backup. Não execute schema.sql em uma base existente.
 -- Vínculos por identificador estável do Google. Senhas e permissões continuam nas contas do Arcádia.
-CREATE TABLE IF NOT EXISTS google_identidades (
+CREATE TABLE google_identidades (
     google_sub VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL PRIMARY KEY,
     id_usuario INT NULL UNIQUE,
     id_externo INT NULL UNIQUE,
@@ -141,13 +143,12 @@ CREATE TABLE seguranca_limites (
 ) ENGINE=InnoDB;
 
 -- Migração gradual. Execute no banco correto após revisar.
--- DDL faz COMMIT implícito. Não altera contas, papéis, senhas nem sessões existentes.
 -- Ausência de email_estado significa LEGADO NÃO VERIFICADO, nunca confirmação presumida.
-CREATE TABLE IF NOT EXISTS seguranca_email_lock (
+CREATE TABLE seguranca_email_lock (
     chave TINYINT PRIMARY KEY
 ) ENGINE=InnoDB;
 INSERT IGNORE INTO seguranca_email_lock (chave) VALUES (1);
-CREATE TABLE IF NOT EXISTS email_estado (
+CREATE TABLE email_estado (
     tipo ENUM('users', 'external') NOT NULL,
     identidade INT NOT NULL,
     email VARCHAR(150) NOT NULL,
@@ -155,7 +156,7 @@ CREATE TABLE IF NOT EXISTS email_estado (
     confirmado_em DATETIME NULL,
     PRIMARY KEY (tipo, identidade)
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS email_tokens (
+CREATE TABLE email_tokens (
     id_token_email BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tipo ENUM('users', 'external') NOT NULL,
     identidade INT NOT NULL,
@@ -268,6 +269,7 @@ CREATE TABLE documentos (
 -- 7. CALENDÁRIO ACADÊMICO
 -- ---------------------------------------------------------------------
 CREATE TABLE calendario (
+    origem_calendario ENUM('agenda','ifpa') NOT NULL DEFAULT 'ifpa',
     id_evento       INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario      INT NULL,
     titulo          VARCHAR(150) NOT NULL,
@@ -295,6 +297,7 @@ CREATE TABLE calendario (
 -- 8. PROJETOS (pesquisa, extensão, ensino, inovação)
 -- ---------------------------------------------------------------------
 CREATE TABLE projetos (
+    permite_externos TINYINT(1) NOT NULL DEFAULT 0,
     id_projeto        INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario        INT NULL,                        -- quem cadastrou/submeteu
     titulo            VARCHAR(150) NOT NULL,
@@ -336,9 +339,32 @@ CREATE TABLE projeto_inscricoes (
 -- ---------------------------------------------------------------------
 -- 9. LEMBRETES (pessoais)
 -- ---------------------------------------------------------------------
+CREATE TABLE agenda_externa (
+ id_evento INT AUTO_INCREMENT PRIMARY KEY,
+ id_externo INT NOT NULL,
+ titulo VARCHAR(150) NOT NULL,
+ descricao TEXT NULL,
+ categoria VARCHAR(40) NOT NULL DEFAULT 'evento',
+ data_evento DATE NOT NULL,
+ data_fim DATE NULL,
+ hora_inicio TIME NULL,
+ hora_fim TIME NULL,
+ local VARCHAR(150) NULL,
+ criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE lembretes (
+    id_tarefa INT NULL,
+    agendado_utc DATETIME NULL,
+    fuso_horario VARCHAR(64) NOT NULL DEFAULT 'America/Fortaleza',
+    enviar_email BOOLEAN NOT NULL DEFAULT FALSE,
+    versao INT UNSIGNED NOT NULL DEFAULT 1,
+    CONSTRAINT fk_lembrete_tarefa FOREIGN KEY(id_tarefa) REFERENCES tarefas(id_tarefa) ON DELETE CASCADE,
+    INDEX idx_lembrete_envio (enviar_email,ativo,agendado_utc),
     id_lembrete     INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario      INT NOT NULL,
+    id_usuario      INT NULL,
     id_evento       INT NULL,                          -- opcional: evento do calendário
     titulo          VARCHAR(150) NOT NULL,
     descricao       TEXT,
@@ -349,7 +375,14 @@ CREATE TABLE lembretes (
 
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)  ON DELETE CASCADE,
     FOREIGN KEY (id_evento)  REFERENCES calendario(id_evento) ON DELETE SET NULL,
-    INDEX idx_lembretes_usuario (id_usuario, data_lembrete)
+    INDEX idx_lembretes_usuario (id_usuario, data_lembrete),
+    id_externo INT NULL,
+    id_evento_externo INT NULL,
+    contexto ENUM('avulso','tarefa','calendario','agenda_externa') NOT NULL DEFAULT 'avulso',
+    CONSTRAINT chk_lembrete_titular CHECK ((id_usuario IS NULL) <> (id_externo IS NULL)),
+    FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,
+    INDEX idx_lembrete_externo (id_externo,agendado_utc),
+    FOREIGN KEY(id_evento_externo) REFERENCES agenda_externa(id_evento) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -549,7 +582,7 @@ INSERT INTO links_uteis (titulo, descricao, url, categoria, ordem) VALUES
 
 -- Migração aditiva. Revise e aplique no banco correto após backup.
 -- Biblioteca pessoal independente das solicitações em documentos.
-CREATE TABLE IF NOT EXISTS documento_pastas (
+CREATE TABLE documento_pastas (
  id_pasta INT AUTO_INCREMENT PRIMARY KEY,
  id_usuario INT NOT NULL,
  nome VARCHAR(100) NOT NULL,
@@ -558,7 +591,7 @@ CREATE TABLE IF NOT EXISTS documento_pastas (
  UNIQUE KEY idx_doc_pasta_nome (id_usuario, nome),
  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS documento_itens (
+CREATE TABLE documento_itens (
  id_item INT AUTO_INCREMENT PRIMARY KEY,
  id_usuario INT NOT NULL,
  id_pasta INT NULL,
@@ -586,12 +619,12 @@ CREATE TABLE IF NOT EXISTS documento_itens (
  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
  FOREIGN KEY (id_pasta) REFERENCES documento_pastas(id_pasta) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS documento_armazenamento (
+CREATE TABLE documento_armazenamento (
  id TINYINT NOT NULL PRIMARY KEY
 ) ENGINE=InnoDB;
 INSERT IGNORE INTO documento_armazenamento (id) VALUES (1);
 
-CREATE TABLE IF NOT EXISTS documento_salvos (
+CREATE TABLE documento_salvos (
  id_salvo INT AUTO_INCREMENT PRIMARY KEY,
  id_usuario INT NOT NULL,
  id_item INT NULL,
@@ -603,8 +636,10 @@ CREATE TABLE IF NOT EXISTS documento_salvos (
  FOREIGN KEY (id_pasta) REFERENCES documento_pastas(id_pasta) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- Migração aditiva: aplicar após add-document-library.sql e backup no banco correto.
-CREATE TABLE IF NOT EXISTS academico_turmas (
+CREATE TABLE academico_turmas (
+ nome_chave VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+ arquivada_em DATETIME NULL,
+ UNIQUE KEY uq_turma_nome_global (nome_chave),
  id_turma INT AUTO_INCREMENT PRIMARY KEY,
  id_curso INT NOT NULL,
  nome VARCHAR(100) NOT NULL,
@@ -615,18 +650,25 @@ CREATE TABLE IF NOT EXISTS academico_turmas (
  UNIQUE KEY uq_turma_coorte (id_curso, nome, ano_ingresso, turno, campus),
  FOREIGN KEY (id_curso) REFERENCES cursos(id_curso) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS academico_disciplinas (
+CREATE TABLE academico_disciplinas (
+ regime_letivo ENUM('legado','anual','semestral') NOT NULL DEFAULT 'legado',
+ semestre TINYINT UNSIGNED NOT NULL DEFAULT 0,
+ atribuicao_ativa TINYINT(1) NOT NULL DEFAULT 1,
+ arquivada_em DATETIME NULL,
+ CONSTRAINT chk_oferta_semestre CHECK ((regime_letivo='semestral' AND semestre IN (1,2)) OR (regime_letivo IN ('legado','anual') AND semestre=0)),
  id_disciplina INT AUTO_INCREMENT PRIMARY KEY,
  id_turma INT NOT NULL,
  id_professor INT NOT NULL,
  nome VARCHAR(100) NOT NULL,
  ano_letivo SMALLINT UNSIGNED NOT NULL,
  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
- UNIQUE KEY uq_disciplina_turma (id_turma, nome, ano_letivo),
+ UNIQUE KEY uq_oferta_turma (id_turma,nome,ano_letivo,regime_letivo,semestre),
  FOREIGN KEY (id_turma) REFERENCES academico_turmas(id_turma) ON DELETE RESTRICT,
  FOREIGN KEY (id_professor) REFERENCES usuarios(id_usuario) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS academico_matriculas (
+CREATE TABLE academico_matriculas (
+ ativa TINYINT(1) NOT NULL DEFAULT 1,
+ encerrado_em DATETIME NULL,
  id_disciplina INT NOT NULL,
  id_aluno INT NOT NULL,
  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -634,7 +676,7 @@ CREATE TABLE IF NOT EXISTS academico_matriculas (
  FOREIGN KEY (id_disciplina) REFERENCES academico_disciplinas(id_disciplina) ON DELETE CASCADE,
  FOREIGN KEY (id_aluno) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS academico_convites (
+CREATE TABLE academico_convites (
  id_convite INT AUTO_INCREMENT PRIMARY KEY,
  id_disciplina INT NOT NULL,
  email VARCHAR(150) NOT NULL,
@@ -645,7 +687,9 @@ CREATE TABLE IF NOT EXISTS academico_convites (
  INDEX idx_convites_email (email, estado),
  FOREIGN KEY (id_disciplina) REFERENCES academico_disciplinas(id_disciplina) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS academico_publicacoes (
+CREATE TABLE academico_publicacoes (
+ id_autor INT NULL,
+ CONSTRAINT fk_publicacao_autor FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,
  id_publicacao INT AUTO_INCREMENT PRIMARY KEY,
  id_disciplina INT NOT NULL,
  tipo ENUM('aviso','material','projeto','agenda') NOT NULL,
@@ -663,9 +707,8 @@ CREATE TABLE IF NOT EXISTS academico_publicacoes (
  FOREIGN KEY (id_item) REFERENCES documento_itens(id_item) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- Migração aditiva: executar no banco correto após backup.
 -- Não promove contas existentes nem altera confirmação de e-mail.
-CREATE TABLE IF NOT EXISTS docente_requisitos (
+CREATE TABLE docente_requisitos (
  id_requisito INT AUTO_INCREMENT PRIMARY KEY,
  id_externo INT NULL UNIQUE,
  id_usuario INT NULL UNIQUE,
@@ -689,12 +732,9 @@ CREATE TABLE IF NOT EXISTS docente_requisitos (
 
 -- Acesso delimitado da Comunidade externa
 -- Esquema inicial: opção externa fechada e origem explicitamente persistida.
--- Requer biblioteca de documentos, visibilidade do calendário e tabelas de projetos existentes.
-ALTER TABLE projetos ADD COLUMN permite_externos TINYINT(1) NOT NULL DEFAULT 0;
 -- Legado sem origem confiável fica restrito. O administrador pode classificar eventos
 -- comuns como agenda após revisão; nenhum evento é classificado por palavras no título.
-ALTER TABLE calendario ADD COLUMN origem_calendario ENUM('agenda','ifpa') NOT NULL DEFAULT 'ifpa';
-CREATE TABLE IF NOT EXISTS projeto_inscricoes_externas (
+CREATE TABLE projeto_inscricoes_externas (
  id_projeto INT NOT NULL,
  id_externo INT NOT NULL,
  status ENUM('inscrito','aprovado','recusado','cancelado') NOT NULL DEFAULT 'inscrito',
@@ -703,41 +743,13 @@ CREATE TABLE IF NOT EXISTS projeto_inscricoes_externas (
  FOREIGN KEY(id_projeto) REFERENCES projetos(id_projeto) ON DELETE CASCADE,
  FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS agenda_externa (
- id_evento INT AUTO_INCREMENT PRIMARY KEY,
- id_externo INT NOT NULL,
- titulo VARCHAR(150) NOT NULL,
- descricao TEXT NULL,
- categoria VARCHAR(40) NOT NULL DEFAULT 'evento',
- data_evento DATE NOT NULL,
- data_fim DATE NULL,
- hora_inicio TIME NULL,
- hora_fim TIME NULL,
- local VARCHAR(150) NULL,
- criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
- atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
- FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE
-) ENGINE=InnoDB;
+
 
 -- Ofertas por período letivo
--- Executar após add-classes.sql, com backup, somente no banco correto.
 -- Legado permanece sem semestre presumido. A turma/coorte e IDs de ofertas não mudam.
-ALTER TABLE academico_disciplinas
- ADD COLUMN regime_letivo ENUM('legado','anual','semestral') NOT NULL DEFAULT 'legado',
- ADD COLUMN semestre TINYINT UNSIGNED NOT NULL DEFAULT 0,
- ADD CONSTRAINT chk_oferta_semestre CHECK ((regime_letivo='semestral' AND semestre IN (1,2)) OR (regime_letivo IN ('legado','anual') AND semestre=0));
-ALTER TABLE academico_disciplinas
- ADD UNIQUE KEY uq_oferta_turma (id_turma,nome,ano_letivo,regime_letivo,semestre);
-ALTER TABLE academico_disciplinas DROP INDEX uq_disciplina_turma;
 
 -- Saída voluntária preservando ofertas e histórico
--- Executar após add-class-offerings.sql, com backup. Sem exclusão de histórico.
-ALTER TABLE academico_matriculas ADD COLUMN ativa TINYINT(1) NOT NULL DEFAULT 1,
- ADD COLUMN encerrado_em DATETIME NULL;
-ALTER TABLE academico_disciplinas ADD COLUMN atribuicao_ativa TINYINT(1) NOT NULL DEFAULT 1;
-ALTER TABLE academico_publicacoes ADD COLUMN id_autor INT NULL,
- ADD CONSTRAINT fk_publicacao_autor FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL;
-CREATE TABLE IF NOT EXISTS academico_saidas_professor (
+CREATE TABLE academico_saidas_professor (
  id_saida INT AUTO_INCREMENT PRIMARY KEY,
  id_disciplina INT NOT NULL,
  id_professor INT NULL,
@@ -747,16 +759,6 @@ CREATE TABLE IF NOT EXISTS academico_saidas_professor (
 ) ENGINE=InnoDB;
 
 -- Unicidade global do nome de turma
--- Workbench: rode primeiro o diagnóstico abaixo. Se retornar linhas, PARE.
--- Não apague/funda turmas. Revise nomes e vínculos com a administração e repita o diagnóstico.
-SELECT LOWER(REGEXP_REPLACE(TRIM(nome),'[[:space:]]+',' ')) COLLATE utf8mb4_bin AS nome_normalizado,
- COUNT(*) AS quantidade, GROUP_CONCAT(id_turma ORDER BY id_turma) AS ids
-FROM academico_turmas GROUP BY nome_normalizado HAVING COUNT(*) > 1;
--- Continue somente sem duplicados, após backup e em janela sem criação/renomeação de turmas.
--- Se a restrição UNIQUE falhar, preserve os dados e resolva o diagnóstico; não force a migração.
-ALTER TABLE academico_turmas ADD COLUMN nome_chave VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '';
-UPDATE academico_turmas SET nome_chave=LOWER(REGEXP_REPLACE(TRIM(nome),'[[:space:]]+',' '));
-ALTER TABLE academico_turmas ADD UNIQUE KEY uq_turma_nome_global(nome_chave);
 DELIMITER $$
 CREATE TRIGGER trg_turma_nome_insert BEFORE INSERT ON academico_turmas FOR EACH ROW
 BEGIN
@@ -771,23 +773,9 @@ END$$
 DELIMITER ;
 
 
--- Atualização: add-class-archive.sql
--- Aplicar somente após backup e migrações anteriores de Turmas. Não apaga histórico.
-ALTER TABLE academico_turmas ADD COLUMN arquivada_em DATETIME NULL;
-ALTER TABLE academico_disciplinas ADD COLUMN arquivada_em DATETIME NULL;
 
 
--- Atualização: add-task-reminders.sql
--- Backup antes de aplicar. Não executar schema.sql inteiro em banco existente.
 -- Datas legadas ficam sem agendamento UTC até serem revisadas pelo titular.
-ALTER TABLE lembretes
-  ADD COLUMN id_tarefa INT NULL,
-  ADD COLUMN agendado_utc DATETIME NULL,
-  ADD COLUMN fuso_horario VARCHAR(64) NOT NULL DEFAULT 'America/Fortaleza',
-  ADD COLUMN enviar_email BOOLEAN NOT NULL DEFAULT FALSE,
-  ADD COLUMN versao INT UNSIGNED NOT NULL DEFAULT 1,
-  ADD CONSTRAINT fk_lembrete_tarefa FOREIGN KEY (id_tarefa) REFERENCES tarefas(id_tarefa) ON DELETE CASCADE,
-  ADD INDEX idx_lembrete_envio (enviar_email, ativo, agendado_utc);
 CREATE TABLE preferencias_notificacao (
   id_usuario INT PRIMARY KEY,
   email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,
@@ -797,11 +785,14 @@ CREATE TABLE preferencias_notificacao (
 CREATE TABLE lembrete_envios (
   id_lembrete INT NOT NULL,
   versao INT UNSIGNED NOT NULL,
-  estado ENUM('reservado','enviado','falhou','cancelado') NOT NULL DEFAULT 'reservado',
+  estado ENUM('reservado','enviado','falhou','cancelado','aguardando','enviando') NOT NULL DEFAULT 'reservado',
   reservado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   finalizado_em DATETIME NULL,
   PRIMARY KEY (id_lembrete, versao),
-  FOREIGN KEY (id_lembrete) REFERENCES lembretes(id_lembrete) ON DELETE CASCADE
+  FOREIGN KEY (id_lembrete) REFERENCES lembretes(id_lembrete) ON DELETE CASCADE,
+    tentativas TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    proxima_tentativa_utc DATETIME NULL,
+    INDEX idx_lembrete_retry (estado,proxima_tentativa_utc)
 ) ENGINE=InnoDB;
 
 -- Abrange todas as formas de edição de tarefa, incluindo a API compartilhada de conteúdo.
@@ -814,3 +805,43 @@ BEGIN
   END IF;
 END$$
 DELIMITER ;
+
+
+-- Inscrições em editais (preserva definição do módulo existente).
+CREATE TABLE inscricoes_editais (
+    id_inscricao INT AUTO_INCREMENT PRIMARY KEY,
+    id_aviso INT NOT NULL,
+    id_usuario INT NOT NULL,
+    status ENUM('inscrito', 'em_analise', 'deferido', 'indeferido', 'aprovado') DEFAULT 'inscrito',
+    motivo TEXT NULL,
+    anexo_url VARCHAR(500) NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_aviso_usuario (id_aviso, id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_calendario_lembrete_update AFTER UPDATE ON calendario FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento=NEW.id_evento;
+END$$
+CREATE TRIGGER trg_calendario_lembrete_delete BEFORE DELETE ON calendario FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento=OLD.id_evento;
+END$$
+CREATE TRIGGER trg_agenda_externa_lembrete_update AFTER UPDATE ON agenda_externa FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento_externo=NEW.id_evento;
+END$$
+CREATE TRIGGER trg_agenda_externa_lembrete_delete BEFORE DELETE ON agenda_externa FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento_externo=OLD.id_evento;
+END$$
+DELIMITER ;
+
+-- Registro da instalacao consolidada (somente banco NOVO).
+CREATE TABLE arcadia_schema_migrations (
+ versao VARCHAR(32) PRIMARY KEY,checksum CHAR(64) NOT NULL,verificado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.25','f0402abf4488dcc69f32855bd22dfd6ddb85fcdca802ca9c2a7e974205c6a8b1');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b671b7384d5a1474c34a23d412d3a7a73b5f6a7a58da85b634ad79d25c6');

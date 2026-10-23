@@ -10,7 +10,9 @@
     "db:schema": "node tools/prepare-schema.js",
     "test": "node --test tests/*.test.js",
     "seed": "node tools/seed.js",
-    "email:check": "node tools/check-email-setup.cjs"
+    "email:check": "node tools/check-email-setup.cjs",
+    "db:migration:build": "node tools/db/build-migrations.cjs",
+    "db:workbench:build": "node tools/db/build-adoption.cjs && node tools/db/build-reminder-steps.cjs"
   },
   "dependencies": {
     "@napi-rs/canvas": "1.0.11",
