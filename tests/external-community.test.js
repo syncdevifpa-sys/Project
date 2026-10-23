@@ -19,7 +19,7 @@ function fixture(options = {}) {
                             aprovacao: options.aprovacao || 'aprovado',
                             situacao: options.situacao || 'inscricoes',
                             permite_externos: options.allow === false ? 0 : 1,
-                            visibilidade: options.visibility || 'publico',
+                            visibilidade: Object.hasOwn(options, 'visibility') ? options.visibility : 'publico',
                             vagas: options.full ? 1 : 0
                         }
                     ]
@@ -70,6 +70,10 @@ function fixture(options = {}) {
 test('projeto visível não autoriza inscrição externa sem opção explícita', async () => {
     for (const options of [
         { allow: false },
+        { visibility: 'privado' },
+        { visibility: null },
+        { visibility: undefined },
+        { visibility: '' },
         { aprovacao: 'pendente' },
         { situacao: 'encerrado' },
         { full: true },
@@ -215,12 +219,13 @@ test('edição do próprio perfil externo não altera e-mail, vínculo, situaç�
         email: 'outro@example.com',
         tipo_usuario: 'docente',
         is_admin: true,
-        situacao: 'ativo'
+        situacao: 'ativo',
+        intencao_cadastro: 'docente'
     });
     assert.deepEqual(f.writes[0].args, ['Nome atualizado', '91999999999', 'Organização', 5]);
     assert.doesNotMatch(
         f.writes[0].sql.split(' WHERE ')[0],
-        /email=|tipo_usuario=|is_admin=|situacao=/
+        /email=|tipo_usuario=|is_admin=|situacao=|intencao_cadastro=/
     );
     assert.ok(f.writes[0].sql.includes("WHERE id_externo=? AND situacao='ativo'"));
 });

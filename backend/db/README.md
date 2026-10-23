@@ -55,7 +55,9 @@ Depois de conferir/adotar 1.1.25 no banco existente, a atualização 1.1.26 evol
 
 O gerador offline prepara ambas as versões sem alterar o manifesto/checksum anterior. A instalação vazia usa diretamente as definições finais, sem ALTER; a agenda externa é criada antes da FK que a referencia. `docs/lembretes-e-arquivamento.md` descreve SQLs, consentimento, limites diários, configuração externa e testes. Os SQLs ainda exigem ensaio MySQL 8.4 descartável antes de produção; nenhuma estrutura real foi alterada pelo agente.
 
-## Evolução 1.1.27 — pendente de execução pelo responsável
+## Evolução 1.1.27 — aplicação confirmada pelo responsável
+
+Em 23/10/2026, o responsável informou ter executado esta migração via Workbench no banco hospedado, com backup prévio, sem erros registrados e com a versão 1.1.27 presente em `arcadia_schema_migrations`. Essa é uma confirmação do responsável, não uma inspeção independente do agente sobre colunas, índices, FKs e CHECKs. Não reaplicar no banco confirmado. As instruções abaixo permanecem como referência para outros bancos ainda não atualizados.
 
 Depois da 1.1.26, `db/migrations/1.1.27.sql` acrescenta quatro colunas: titular externo de tarefas, intenção de cadastro, tipo do pedido institucional e visibilidade de projetos. Torna `tarefas.id_usuario` nullable e exige exatamente um titular, com FK e índice externos. Não altera IDs nem apaga tarefas; tarefas antigas permanecem com o titular institucional.
 

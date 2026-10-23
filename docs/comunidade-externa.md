@@ -26,6 +26,6 @@ Na aprovação, a nova identidade institucional recebe somente o tipo do pedido.
 
 ## Banco e validação
 
-Prepare a [migração 1.1.27](../backend/db/migrations/1.1.27.sql) conforme o [guia do banco](../backend/db/README.md). Ela está preparada, não executada. Projetos antigos ficam restritos até publicação explícita; nenhuma promoção é feita em massa.
+A [migração 1.1.27](../backend/db/migrations/1.1.27.sql) foi aplicada pelo responsável via Workbench, conforme confirmação em 23/10/2026: backup prévio, nenhum erro registrado e versão presente em `arcadia_schema_migrations`. Não reaplicar. O agente não acessou o banco nem conferiu independentemente todos os objetos; veja o [guia do banco](../backend/db/README.md). Projetos antigos ficam restritos até publicação explícita; nenhuma promoção é feita em massa.
 
 Testes usam banco e sessões simulados, incluindo acesso direto e colisão de IDs. A interface usa o shell, tokens, navegação, cabeçalho e estilos do portal, sem servidor de prévia ou conta fictícia real. A validação visual em navegador e o ensaio do SQL real continuam necessários no ambiente de teste autorizado.
