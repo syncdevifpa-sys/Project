@@ -11,3 +11,8 @@ backend/migrations
 backend/admin
 backend/test-database.js
 backend/generate-password.js
+backend/db
+tools/db
+docs
+tmp
+.codex-remote-attachments

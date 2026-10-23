@@ -2,11 +2,25 @@
 
 Frontend em HTML, CSS e JavaScript; API em Node.js/Express; banco MySQL.
 
+## Organização
+
+| Pasta | Conteúdo |
+| --- | --- |
+| `front/` | Páginas, estilos, scripts e imagens do portal |
+| `backend/src/` | Rotas, regras e persistência da API |
+| `backend/db/` | Migrações, diagnóstico, passos do Workbench e histórico SQL |
+| `docs/` | Guias atuais e documentos jurídicos; relatórios anteriores em `docs/history/` |
+| `tests/` | Testes automatizados |
+| `tools/` | Ferramentas; geradores de SQL em `tools/db/` |
+
+Comece pelo [índice da documentação](docs/README.md) ou pelo [guia do banco](backend/db/README.md).
+`public/` é saída do build e `tmp/` contém artefatos locais; não são fontes da aplicação.
+
 ## Executar
 
 1. Use Node.js 24 e instale as dependências na raiz: `npm ci`.
 2. Configure `backend/.env` com `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` e `JWT_SECRET`. A porta HTTP padrão é `3001`; use `PORT` para alterá-la.
-3. Em um banco novo, importe `backend/schema.sql`. Para MySQL gerenciado, execute `npm run db:schema` e revise `backend/schema.generated.sql` antes de importar no banco selecionado. Nunca use este esquema como migração de um banco existente.
+3. Consulte `backend/db/README.md` para escolher instalação ou atualização. Em um banco novo, importe `backend/schema.sql`. Para MySQL gerenciado, execute `npm run db:schema` e revise `backend/schema.generated.sql` antes de importar no banco selecionado. Nunca use este esquema como migração de um banco existente.
 4. Na raiz do projeto, execute `npm start`.
 5. Abra [a aplicação](http://localhost:3001) ou [o status da API](http://localhost:3001/api).
 
@@ -35,7 +49,7 @@ As páginas HTML usam nomes em inglês; os textos e rótulos da interface contin
 
 `index.html` e `login.html` mantêm os nomes. Não existem cópias das páginas antigas: redirects permanentes 308 preservam parâmetros de consulta no Express e na Vercel. `page-redirects.json` define o mapa usado pelo Express; o build verifica que `vercel.json` contém os mesmos redirects. O link de recuperação enviado por e-mail já aponta para `reset-password.html`. Live Server não executa os redirects do Express; nele, abra diretamente as páginas novas.
 
-A padronização também cobre assets e auxiliares: `front/illustrations/`, nomes ingleses dos SVGs, prints `print-notices.png`, `print-documents.png`, `print-calendar.png` e `print-projects.png`, `backend/schema.sql` e `backend/test-database.js`. Os scripts, configurações, regras de arquivos ignorados e documentação usam esses caminhos. Os nomes antigos dos HTMLs aparecem somente no mapa/redirects, nos testes de compatibilidade e nesta tabela. Nomes de tabelas, campos do banco, rótulos da interface e contratos da API mantêm sua semântica existente.
+A padronização também cobre assets e auxiliares: `front/illustrations/`, nomes ingleses dos SVGs, mockups `illustrations/product/notices.svg`, `illustrations/product/documents.svg`, `print-calendar.png` e `illustrations/product/projects.svg`, `backend/schema.sql` e `backend/test-database.js`. Os scripts, configurações, regras de arquivos ignorados e documentação usam esses caminhos. Os nomes antigos dos HTMLs aparecem somente no mapa/redirects, nos testes de compatibilidade e nesta tabela. Nomes de tabelas, campos do banco, rótulos da interface e contratos da API mantêm sua semântica existente.
 
 Use inglês para novos nomes de arquivos e caminhos, mantendo comentários novos ou revisados em português. A interface do portal continua em português.
 
@@ -185,7 +199,7 @@ Para cada novo calendário anual, envie o PDF no próprio Arcadia, confirme ano/
 
 Em **Configurações → Compartilhamento**, cada pessoa pode informar e-mail de contato, @ com o nome da rede e telefone, e marcar separadamente o que deseja publicar. O e-mail de contato é independente do login. A foto pode ficar oculta para terceiros sem ser removida da própria conta. Todos os campos começam privados, inclusive em contas antigas; o diretório e os detalhes de terceiros recebem apenas contatos autorizados e omitem a foto quando oculta. Contas desativadas continuam fora da lista. O @ é texto, sem link ou plataforma presumida.
 
-Para habilitar a gravação, revise e execute **o arquivo inteiro `backend/admin/add-profile-sharing.sql` no banco correto**. A migração cria `perfil_compartilhamento` de forma idempotente, sem publicar ou copiar dados antigos. DDL no MySQL faz COMMIT implícito. Não execute `schema.sql` em banco existente. A migração não foi aplicada ao Aiven neste trabalho. Sem a tabela, a API mantém os dados privados e a interface informa que falta habilitar o recurso; as demais configurações continuam funcionando. Preferências são removidas por cascata junto da conta e não constituem histórico impeditivo de exclusão.
+Para habilitar a gravação, revise e execute **o arquivo inteiro `backend/db/history/pre-1.1.25/add-profile-sharing.sql` no banco correto**. A migração cria `perfil_compartilhamento` de forma idempotente, sem publicar ou copiar dados antigos. DDL no MySQL faz COMMIT implícito. Não execute `schema.sql` em banco existente. A migração não foi aplicada ao Aiven neste trabalho. Sem a tabela, a API mantém os dados privados e a interface informa que falta habilitar o recurso; as demais configurações continuam funcionando. Preferências são removidas por cascata junto da conta e não constituem histórico impeditivo de exclusão.
 
 Contas externas encontram os mesmos controles na própria página **Minha conta**, inclusive foto opcional com o editor de recorte existente. O diretório Pessoas continua com o público institucional que já listava; salvar preferências não adiciona contas externas à lista. O endpoint externo usa sua própria identidade autenticada, separada da numeração institucional.
 
@@ -201,7 +215,7 @@ Para publicar as alterações do frontend, execute `npm run build`; a saída ger
 
 - A consulta do calendário dispensa login e está disponível na navegação pública. Criação, edição e exclusão mantêm as permissões atuais.
 - No PDF, cada descrição usa o mês do cabeçalho de sua coluna, inclusive quando a tabela continua na página seguinte; o número inicial representa o dia. Datas incompletas ou ambíguas continuam exigindo revisão.
-- Férias e aniversários têm categorias e cores próprias. Antes de usar essas categorias em banco existente, execute o arquivo incremental backend/admin/add-calendar-categories.sql no banco correto; não execute o esquema completo. Nenhuma migração é executada automaticamente.
+- Férias e aniversários têm categorias e cores próprias. Antes de usar essas categorias em banco existente, execute o arquivo incremental backend/db/history/pre-1.1.25/add-calendar-categories.sql no banco correto; não execute o esquema completo. Nenhuma migração é executada automaticamente.
 - As cores das categorias podem ser personalizadas em Configurações > Aparência, por usuário neste navegador, com restauração dos padrões. O texto da categoria acompanha a cor.
 - Notícias preservam a proporção das capas, com opções Original, Paisagem (16:9) e Retrato (4:5) no enquadramento. O editor oferece zoom e posição na prévia, cancelamento e edição da imagem existente; a publicação precisa ser salva para gravar a alteração.
 - Notícias têm quadro por situação. Projetos e documentos oferecem lista, tabela e quadro agrupado; tarefas mantêm três colunas de andamento. Os controles de edição continuam no conteúdo.
@@ -219,4 +233,8 @@ Se a preparação do leitor falhar, a resposta identifica `PDF_RUNTIME_UNAVAILAB
 
 O envio público de boas-vindas foi desativado. Novos cadastros usam confirmação por link antes do acesso pleno; contas antigas permanecem legadas e não verificadas até prova de posse do endereço. Trocas de e-mail exigem senha atual e confirmação do novo endereço.
 
-Antes de ativar, aplique as migrações de limites e confirmação no banco correto e configure SMTP, APP_URL, segredo das cotas e EMAIL_VERIFICATION_ENABLED conforme [o guia de ativação](docs/confirmacao-email.md). As migrações foram preparadas, mas não executadas em bancos reais nesta etapa. Nunca coloque credenciais no navegador ou em commits. A auditoria geral e suas pendências estão em [docs/auditoria-seguranca-2026-10-16.md](docs/auditoria-seguranca-2026-10-16.md).
+Antes de ativar, aplique as migrações de limites e confirmação no banco correto e configure SMTP, APP_URL, segredo das cotas e EMAIL_VERIFICATION_ENABLED conforme [o guia de ativação](docs/confirmacao-email.md). As migrações foram preparadas, mas não executadas em bancos reais nesta etapa. Nunca coloque credenciais no navegador ou em commits. A auditoria geral e suas pendências estão em [docs/history/auditoria-seguranca-2026-10-16.md](docs/history/auditoria-seguranca-2026-10-16.md).
+
+## Organização dos SQLs
+
+`backend/schema.sql` é a instalação final para banco novo. `backend/db/migrations/1.1.25.sql` é a atualização consolidada e verificável para bancos existentes com os pré-requisitos documentados. `backend/db/checks/1.1.25.sql` só consulta estrutura. Scripts antigos foram preservados, com checksums, em `backend/db/history/pre-1.1.25/`; não são uma fila para executar novamente. `backend/admin/` contém somente operações administrativas explícitas. Consulte `backend/db/README.md` antes de qualquer importação. Nenhuma migração roda automaticamente ao iniciar o site.

@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Notícias e públicos múltiplos
 
 Base: branch `codex/fix-auth-calendar`, atualizada a partir da main 1.1.19.
@@ -10,7 +12,7 @@ Na consulta inicial, o banco configurado tinha apenas `publico_alvo ENUM('todos'
 
 Após o pedido explícito de ajustar o banco, foi confirmada a correspondência entre as duas publicações da tabela `arcadia.avisos` e o backend da porta 3001. A atualização incremental foi aplicada: `tipo_publicacao ENUM('aviso','noticia')` e `publico_alvo SET('todos','discente','docente','servidor','externo')`. Foi feita cópia local ignorada pelo Git e conferido o hash dos campos anteriores: as duas publicações foram preservadas. Uma transação de teste validou Notícia e públicos múltiplos e foi revertida; o conteúdo não foi alterado por esse teste.
 
-O arquivo `backend/admin/update-notice-publishing.sql` permanece disponível para outros ambientes que ainda não receberam a atualização. Não é necessário recriar a tabela ou executar o schema completo. DDL MySQL tem commit implícito.
+O arquivo `backend/db/history/pre-1.1.25/update-notice-publishing.sql` permanece disponível para outros ambientes que ainda não receberam a atualização. Não é necessário recriar a tabela ou executar o schema completo. DDL MySQL tem commit implícito.
 
 ## Comportamento
 

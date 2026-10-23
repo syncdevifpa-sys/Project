@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function page({ login = true, loggedIn = false, challenge } = {}) {
+function page({ login = true, loggedIn = false, challenge, explicitLogout = false } = {}) {
     const events = {};
     const calls = { prompt: 0, cancel: 0, challenge: 0, initialize: [] };
     const form = { addEventListener(name, fn) { events[name] = fn; } };
@@ -22,6 +22,7 @@ function page({ login = true, loggedIn = false, challenge } = {}) {
         document: { readyState: 'loading', addEventListener() {},
             querySelector: selector => selector === 'form[data-acesso="login"]' && login ? form : null },
         localStorage: { getItem: () => JSON.stringify({ logado: loggedIn }) },
+        sessionStorage: { getItem: () => explicitLogout ? '1' : null },
         console
     };
     vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), context);
@@ -42,6 +43,14 @@ test('não sugere no cadastro nem com sessão existente', async () => {
         const p = page(options); await p.auth.initGoogleSuggestion();
         assert.equal(p.calls.challenge, 0); assert.equal(p.calls.prompt, 0);
     }
+});
+
+test('logout explícito impede sugestão automática e mantém botão Google disponível', async () => {
+    const p = page({ explicitLogout: true });
+    await p.auth.initGoogleSuggestion();
+    assert.equal(p.calls.prompt, 0);
+    assert.equal(p.calls.initialize.length, 1);
+    assert.equal(typeof p.auth.triggerRealGoogleOAuth, 'function');
 });
 test('digitar enquanto prepara o Google impede abertura tardia; falha da API não bloqueia login', async () => {
     let resolve;

@@ -29,6 +29,40 @@ window.Arcadia = window.Arcadia || {};
         }
     };
 
+    // Oculta a fotografia do documento antes de o navegador guardá-lo no histórico.
+    // Ao restaurar, valida também a sessão no servidor, não apenas o JWT armazenado.
+    const pageToken = Token.get();
+    const privatePages = new Set(['dashboard.html','tasks.html','settings.html','admin.html','classes.html','community.html']);
+    const privatePage = privatePages.has((location.pathname || '').split('/').pop());
+    function discardPage() {
+        document.body?.replaceChildren();
+        window.location.replace('login.html');
+    }
+    if (typeof window.addEventListener === 'function') {
+        window.addEventListener('pagehide', () => {
+            if (pageToken && document.documentElement) document.documentElement.style.visibility = 'hidden';
+        });
+        window.addEventListener('pageshow', async (event) => {
+            if (!event.persisted) return;
+            if (pageToken !== Token.get()) {
+                if (privatePage || pageToken) return discardPage();
+                return window.location.reload();
+            }
+            if (pageToken) {
+                try {
+                    const external = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario === 'externo';
+                    const result = await request(external ? '/api/external/me' : '/api/auth/perfil');
+                    if (!result.ok || Token.get() !== pageToken) return discardPage();
+                } catch { return discardPage(); }
+            } else if (privatePage) return discardPage();
+            if (document.documentElement) document.documentElement.style.visibility = '';
+        });
+        window.addEventListener('storage', (event) => {
+            if ((event.key === 'arcadiaToken' || event.key === null) && pageToken !== Token.get()) discardPage();
+        });
+        if (privatePage && !pageToken) window.location.replace('login.html');
+    }
+
     /**
      * Faz uma requisição à API e devolve { ok, status, data }.
      * - Envia o JWT automaticamente (Authorization: Bearer) quando auth = true.
@@ -47,11 +81,15 @@ window.Arcadia = window.Arcadia || {};
 
         const res = await fetch(`${API_BASE}${path}`, {
             method,
+            cache: auth ? 'no-store' : 'default',
             headers,
             body: body !== undefined ? (raw ? body : JSON.stringify(body)) : undefined
         });
 
         const data = await res.json().catch(() => ({}));
+        // Não entrega dados de uma conta anterior a componentes ainda aguardando resposta.
+        if (auth && token && Token.get() !== token)
+            return { ok: false, status: 401, data: { error: 'A sessão mudou. Entre novamente.' } };
 
         // Uma resposta antiga não pode encerrar um login concluído enquanto ela aguardava.
         if (res.status === 401 && auth && token && Token.get() === token) {

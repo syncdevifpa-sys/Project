@@ -1,0 +1,793 @@
+{
+  "version": "1.1.25",
+  "baseline": [
+    "usuarios",
+    "publico_externo",
+    "projetos",
+    "projeto_inscricoes",
+    "calendario",
+    "tarefas",
+    "lembretes",
+    "email_estado",
+    "documento_itens",
+    "academico_turmas",
+    "academico_disciplinas",
+    "academico_matriculas",
+    "academico_publicacoes",
+    "academico_convites"
+  ],
+  "tables": [
+    {
+      "name": "projeto_inscricoes_externas",
+      "sql": "CREATE TABLE IF NOT EXISTS projeto_inscricoes_externas (\n id_projeto INT NOT NULL,\n id_externo INT NOT NULL,\n status ENUM('inscrito','aprovado','recusado','cancelado') NOT NULL DEFAULT 'inscrito',\n criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n PRIMARY KEY(id_projeto,id_externo),\n FOREIGN KEY(id_projeto) REFERENCES projetos(id_projeto) ON DELETE CASCADE,\n FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE\n) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "projeto_inscricoes_externas",
+          "name": "id_projeto",
+          "definition": "id_projeto INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "projeto_inscricoes_externas",
+          "name": "id_externo",
+          "definition": "id_externo INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "projeto_inscricoes_externas",
+          "name": "status",
+          "definition": "status ENUM('inscrito','aprovado','recusado','cancelado') NOT NULL DEFAULT 'inscrito'",
+          "type": "enum('inscrito','aprovado','recusado','cancelado')",
+          "nullable": false,
+          "default": "inscrito",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "projeto_inscricoes_externas",
+          "name": "criado_em",
+          "definition": "criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        }
+      ],
+      "indexes": [
+        {
+          "table": "projeto_inscricoes_externas",
+          "name": "PRIMARY",
+          "columns": "id_projeto,id_externo",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "projeto_inscricoes_externas",
+          "columns": "id_projeto",
+          "ref": "projetos",
+          "refColumns": "id_projeto",
+          "delete": "CASCADE"
+        },
+        {
+          "table": "projeto_inscricoes_externas",
+          "columns": "id_externo",
+          "ref": "publico_externo",
+          "refColumns": "id_externo",
+          "delete": "CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "agenda_externa",
+      "sql": "CREATE TABLE IF NOT EXISTS agenda_externa (\n id_evento INT AUTO_INCREMENT PRIMARY KEY,\n id_externo INT NOT NULL,\n titulo VARCHAR(150) NOT NULL,\n descricao TEXT NULL,\n categoria VARCHAR(40) NOT NULL DEFAULT 'evento',\n data_evento DATE NOT NULL,\n data_fim DATE NULL,\n hora_inicio TIME NULL,\n hora_fim TIME NULL,\n local VARCHAR(150) NULL,\n criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE\n) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "agenda_externa",
+          "name": "id_evento",
+          "definition": "id_evento INT AUTO_INCREMENT PRIMARY KEY",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": true,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "id_externo",
+          "definition": "id_externo INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "titulo",
+          "definition": "titulo VARCHAR(150) NOT NULL",
+          "type": "varchar(150)",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "descricao",
+          "definition": "descricao TEXT NULL",
+          "type": "text",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "categoria",
+          "definition": "categoria VARCHAR(40) NOT NULL DEFAULT 'evento'",
+          "type": "varchar(40)",
+          "nullable": false,
+          "default": "evento",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "data_evento",
+          "definition": "data_evento DATE NOT NULL",
+          "type": "date",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "data_fim",
+          "definition": "data_fim DATE NULL",
+          "type": "date",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "hora_inicio",
+          "definition": "hora_inicio TIME NULL",
+          "type": "time",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "hora_fim",
+          "definition": "hora_fim TIME NULL",
+          "type": "time",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "local",
+          "definition": "local VARCHAR(150) NULL",
+          "type": "varchar(150)",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "criado_em",
+          "definition": "criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "agenda_externa",
+          "name": "atualizado_em",
+          "definition": "atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "auto": false,
+          "collation": null,
+          "onUpdate": true
+        }
+      ],
+      "indexes": [
+        {
+          "table": "agenda_externa",
+          "name": "PRIMARY",
+          "columns": "id_evento",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "agenda_externa",
+          "columns": "id_externo",
+          "ref": "publico_externo",
+          "refColumns": "id_externo",
+          "delete": "CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "academico_saidas_professor",
+      "sql": "CREATE TABLE IF NOT EXISTS academico_saidas_professor (\n id_saida INT AUTO_INCREMENT PRIMARY KEY,\n id_disciplina INT NOT NULL,\n id_professor INT NULL,\n encerrado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n FOREIGN KEY(id_disciplina) REFERENCES academico_disciplinas(id_disciplina) ON DELETE CASCADE,\n FOREIGN KEY(id_professor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL\n) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "academico_saidas_professor",
+          "name": "id_saida",
+          "definition": "id_saida INT AUTO_INCREMENT PRIMARY KEY",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": true,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "academico_saidas_professor",
+          "name": "id_disciplina",
+          "definition": "id_disciplina INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "academico_saidas_professor",
+          "name": "id_professor",
+          "definition": "id_professor INT NULL",
+          "type": "int",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "academico_saidas_professor",
+          "name": "encerrado_em",
+          "definition": "encerrado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        }
+      ],
+      "indexes": [
+        {
+          "table": "academico_saidas_professor",
+          "name": "PRIMARY",
+          "columns": "id_saida",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "academico_saidas_professor",
+          "columns": "id_disciplina",
+          "ref": "academico_disciplinas",
+          "refColumns": "id_disciplina",
+          "delete": "CASCADE"
+        },
+        {
+          "table": "academico_saidas_professor",
+          "columns": "id_professor",
+          "ref": "usuarios",
+          "refColumns": "id_usuario",
+          "delete": "SET NULL"
+        }
+      ]
+    },
+    {
+      "name": "preferencias_notificacao",
+      "sql": "CREATE TABLE IF NOT EXISTS preferencias_notificacao (\n  id_usuario INT PRIMARY KEY,\n  email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,\n  consentido_em DATETIME NULL,\n  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE\n) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "preferencias_notificacao",
+          "name": "id_usuario",
+          "definition": "id_usuario INT PRIMARY KEY",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "preferencias_notificacao",
+          "name": "email_lembretes",
+          "definition": "email_lembretes BOOLEAN NOT NULL DEFAULT FALSE",
+          "type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "preferencias_notificacao",
+          "name": "consentido_em",
+          "definition": "consentido_em DATETIME NULL",
+          "type": "datetime",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        }
+      ],
+      "indexes": [
+        {
+          "table": "preferencias_notificacao",
+          "name": "PRIMARY",
+          "columns": "id_usuario",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "preferencias_notificacao",
+          "columns": "id_usuario",
+          "ref": "usuarios",
+          "refColumns": "id_usuario",
+          "delete": "CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "lembrete_envios",
+      "sql": "CREATE TABLE IF NOT EXISTS lembrete_envios (\n  id_lembrete INT NOT NULL,\n  versao INT UNSIGNED NOT NULL,\n  estado ENUM('reservado','enviado','falhou','cancelado') NOT NULL DEFAULT 'reservado',\n  reservado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  finalizado_em DATETIME NULL,\n  PRIMARY KEY (id_lembrete, versao),\n  FOREIGN KEY (id_lembrete) REFERENCES lembretes(id_lembrete) ON DELETE CASCADE\n) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "lembrete_envios",
+          "name": "id_lembrete",
+          "definition": "id_lembrete INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "lembrete_envios",
+          "name": "versao",
+          "definition": "versao INT UNSIGNED NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "lembrete_envios",
+          "name": "estado",
+          "definition": "estado ENUM('reservado','enviado','falhou','cancelado') NOT NULL DEFAULT 'reservado'",
+          "type": "enum('reservado','enviado','falhou','cancelado')",
+          "nullable": false,
+          "default": "reservado",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "lembrete_envios",
+          "name": "reservado_em",
+          "definition": "reservado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "lembrete_envios",
+          "name": "finalizado_em",
+          "definition": "finalizado_em DATETIME NULL",
+          "type": "datetime",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        }
+      ],
+      "indexes": [
+        {
+          "table": "lembrete_envios",
+          "name": "PRIMARY",
+          "columns": "id_lembrete,versao",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "lembrete_envios",
+          "columns": "id_lembrete",
+          "ref": "lembretes",
+          "refColumns": "id_lembrete",
+          "delete": "CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "inscricoes_editais",
+      "sql": "CREATE TABLE IF NOT EXISTS inscricoes_editais (\n    id_inscricao INT AUTO_INCREMENT PRIMARY KEY,\n    id_aviso INT NOT NULL,\n    id_usuario INT NOT NULL,\n    status ENUM('inscrito', 'em_analise', 'deferido', 'indeferido', 'aprovado') DEFAULT 'inscrito',\n    motivo TEXT NULL,\n    anexo_url VARCHAR(500) NULL,\n    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE KEY uq_aviso_usuario (id_aviso, id_usuario)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+      "columns": [
+        {
+          "table": "inscricoes_editais",
+          "name": "id_inscricao",
+          "definition": "id_inscricao INT AUTO_INCREMENT PRIMARY KEY",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": true,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "id_aviso",
+          "definition": "id_aviso INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "id_usuario",
+          "definition": "id_usuario INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "status",
+          "definition": "status ENUM('inscrito', 'em_analise', 'deferido', 'indeferido', 'aprovado') DEFAULT 'inscrito'",
+          "type": "enum('inscrito','em_analise','deferido','indeferido','aprovado')",
+          "nullable": true,
+          "default": "inscrito",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "motivo",
+          "definition": "motivo TEXT NULL",
+          "type": "text",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "anexo_url",
+          "definition": "anexo_url VARCHAR(500) NULL",
+          "type": "varchar(500)",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "criado_em",
+          "definition": "criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+          "type": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "auto": false,
+          "collation": null,
+          "onUpdate": false
+        }
+      ],
+      "indexes": [
+        {
+          "table": "inscricoes_editais",
+          "name": "PRIMARY",
+          "columns": "id_inscricao",
+          "unique": true
+        },
+        {
+          "table": "inscricoes_editais",
+          "name": "uq_aviso_usuario",
+          "columns": "id_aviso,id_usuario",
+          "unique": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "columns": [
+    {
+      "table": "projetos",
+      "name": "permite_externos",
+      "definition": "permite_externos TINYINT(1) NOT NULL DEFAULT 0",
+      "type": "tinyint",
+      "nullable": false,
+      "default": "0",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "calendario",
+      "name": "origem_calendario",
+      "definition": "origem_calendario ENUM('agenda','ifpa') NOT NULL DEFAULT 'ifpa'",
+      "type": "enum('agenda','ifpa')",
+      "nullable": false,
+      "default": "ifpa",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_disciplinas",
+      "name": "regime_letivo",
+      "definition": "regime_letivo ENUM('legado','anual','semestral') NOT NULL DEFAULT 'legado'",
+      "type": "enum('legado','anual','semestral')",
+      "nullable": false,
+      "default": "legado",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_disciplinas",
+      "name": "semestre",
+      "definition": "semestre TINYINT UNSIGNED NOT NULL DEFAULT 0",
+      "type": "tinyint",
+      "nullable": false,
+      "default": "0",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_disciplinas",
+      "name": "atribuicao_ativa",
+      "definition": "atribuicao_ativa TINYINT(1) NOT NULL DEFAULT 1",
+      "type": "tinyint",
+      "nullable": false,
+      "default": "1",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_disciplinas",
+      "name": "arquivada_em",
+      "definition": "arquivada_em DATETIME NULL",
+      "type": "datetime",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_matriculas",
+      "name": "ativa",
+      "definition": "ativa TINYINT(1) NOT NULL DEFAULT 1",
+      "type": "tinyint",
+      "nullable": false,
+      "default": "1",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_matriculas",
+      "name": "encerrado_em",
+      "definition": "encerrado_em DATETIME NULL",
+      "type": "datetime",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_publicacoes",
+      "name": "id_autor",
+      "definition": "id_autor INT NULL",
+      "type": "int",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "academico_turmas",
+      "name": "nome_chave",
+      "definition": "nome_chave VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT ''",
+      "type": "varchar(100)",
+      "nullable": false,
+      "default": "",
+      "auto": false,
+      "collation": "utf8mb4_bin",
+      "onUpdate": false
+    },
+    {
+      "table": "academico_turmas",
+      "name": "arquivada_em",
+      "definition": "arquivada_em DATETIME NULL",
+      "type": "datetime",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "lembretes",
+      "name": "id_tarefa",
+      "definition": "id_tarefa INT NULL",
+      "type": "int",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "lembretes",
+      "name": "agendado_utc",
+      "definition": "agendado_utc DATETIME NULL",
+      "type": "datetime",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "lembretes",
+      "name": "fuso_horario",
+      "definition": "fuso_horario VARCHAR(64) NOT NULL DEFAULT 'America/Fortaleza'",
+      "type": "varchar(64)",
+      "nullable": false,
+      "default": "America/Fortaleza",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "lembretes",
+      "name": "enviar_email",
+      "definition": "enviar_email BOOLEAN NOT NULL DEFAULT FALSE",
+      "type": "tinyint",
+      "nullable": false,
+      "default": "0",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    },
+    {
+      "table": "lembretes",
+      "name": "versao",
+      "definition": "versao INT UNSIGNED NOT NULL DEFAULT 1",
+      "type": "int",
+      "nullable": false,
+      "default": "1",
+      "auto": false,
+      "collation": null,
+      "onUpdate": false
+    }
+  ],
+  "indexes": [
+    {
+      "table": "academico_disciplinas",
+      "name": "uq_oferta_turma",
+      "columns": "id_turma,nome,ano_letivo,regime_letivo,semestre",
+      "unique": true
+    },
+    {
+      "table": "academico_turmas",
+      "name": "uq_turma_nome_global",
+      "columns": "nome_chave",
+      "unique": true
+    },
+    {
+      "table": "lembretes",
+      "name": "idx_lembrete_envio",
+      "columns": "enviar_email,ativo,agendado_utc",
+      "unique": false
+    }
+  ],
+  "foreignKeys": [
+    {
+      "table": "academico_publicacoes",
+      "columns": "id_autor",
+      "ref": "usuarios",
+      "refColumns": "id_usuario",
+      "delete": "SET NULL"
+    },
+    {
+      "table": "lembretes",
+      "columns": "id_tarefa",
+      "ref": "tarefas",
+      "refColumns": "id_tarefa",
+      "delete": "CASCADE"
+    }
+  ],
+  "triggers": [
+    {
+      "name": "trg_turma_nome_insert",
+      "timing": "BEFORE",
+      "event": "INSERT",
+      "table": "academico_turmas",
+      "body": "BEGIN\n SET NEW.nome=REGEXP_REPLACE(TRIM(NEW.nome),'[[:space:]]+',' ');\n SET NEW.nome_chave=LOWER(NEW.nome);\nEND"
+    },
+    {
+      "name": "trg_turma_nome_update",
+      "timing": "BEFORE",
+      "event": "UPDATE",
+      "table": "academico_turmas",
+      "body": "BEGIN\n SET NEW.nome=REGEXP_REPLACE(TRIM(NEW.nome),'[[:space:]]+',' ');\n SET NEW.nome_chave=LOWER(NEW.nome);\nEND"
+    },
+    {
+      "name": "tarefa_invalida_lembretes",
+      "timing": "AFTER",
+      "event": "UPDATE",
+      "table": "tarefas",
+      "body": "BEGIN\n  IF (NEW.status='concluida' AND OLD.status<>'concluida') OR NOT (NEW.data_entrega <=> OLD.data_entrega) THEN\n    UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_tarefa=NEW.id_tarefa;\n  END IF;\nEND"
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Calendário: feriados anuais, legenda e formulário
 
 Conferência em 18/10/2026. Alterações locais na branch codex/fix-auth-calendar.
@@ -41,7 +43,7 @@ As regras refletem as fontes consultadas; mudanças futuras de legislação exig
 
 Testes cobrem anos diferentes, datas móveis, abrangência, duplicidades, comparação com o PDF real e retorno de cor ao alterar categoria com preferência personalizada. Build estático executado. A validação visual foi realizada posteriormente na revisão descrita em calendario-ihc-2026-10-18.md. Deploy não realizado.
 
-A atualização backend/admin/add-calendar-categories.sql continua necessária para persistir as novas categorias manuais da rodada anterior em bancos ainda não atualizados. Nenhuma alteração foi aplicada ao banco externo; os feriados automáticos não precisam dessa migração.
+A atualização backend/db/history/pre-1.1.25/add-calendar-categories.sql continua necessária para persistir as novas categorias manuais da rodada anterior em bancos ainda não atualizados. Nenhuma alteração foi aplicada ao banco externo; os feriados automáticos não precisam dessa migração.
 
 # Revisão de Natal e Ano-Novo na importação
 

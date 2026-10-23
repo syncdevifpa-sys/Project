@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Envio seguro e confirmação de e-mail
 
 Esta implementação usa SMTP para enviar links do Arcádia. Não habilita “Entrar com Google” e não confere cargo, matrícula ou administração ao confirmar um endereço.
@@ -10,17 +12,17 @@ O código de confirmação, reenvio e troca de endereço está presente. Na cons
 
 Para colocar em funcionamento no computador:
 
-1. No cliente MySQL, selecione o banco local usado pelo backend e aplique, nesta ordem, `backend/admin/add-security-rate-limits.sql` e `backend/admin/add-email-verification.sql`. Preserve um backup. Não importe o esquema completo sobre o banco existente.
+1. No cliente MySQL, selecione o banco local usado pelo backend e aplique, nesta ordem, `backend/db/history/pre-1.1.25/add-security-rate-limits.sql` e `backend/db/history/pre-1.1.25/add-email-verification.sql`. Preserve um backup. Não importe o esquema completo sobre o banco existente.
 2. Acrescente os campos de `backend/email.env.example` ao **backend/.env existente**, preservando banco e JWT_SECRET. Preencha SMTP_USER com a conta remetente e SMTP_PASS com a senha de aplicativo do Gmail, criada após habilitar a verificação em duas etapas. Digite a credencial somente no arquivo privado; não a envie por conversa nem a coloque no Git.
 3. Gere um segredo separado de pelo menos 32 bytes para RATE_LIMIT_SECRET. Por exemplo, execute localmente `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` e copie o resultado para o arquivo privado. Não altere JWT_SECRET para resolver essa pendência.
 4. Use APP_URL=http://localhost:3001 para abrir o portal servido pelo backend local. Se usar outro endereço de frontend, ajuste APP_URL para esse endereço confiável; o link precisa abrir a página de confirmação que acessa a mesma API. Produção exige HTTPS.
 5. Execute `npm run email:check -- --schema-local`. O comando mostra somente presença/validade e nomes das tabelas; não imprime credenciais e não envia mensagens. Quando as configurações e tabelas estiverem prontas, altere EMAIL_VERIFICATION_ENABLED para true e reinicie o backend com `npm start`.
 6. Com uma conta de teste sob seu controle, crie um cadastro, abra o link recebido e clique em Confirmar e-mail. Só então teste o login, o reenvio e a troca de endereço. O diagnóstico não comprova entrega Gmail; essa etapa precisa ser feita pelo responsável com a configuração real.
 
-O calendário local também estava com o enum antigo, sem ferias/aniversario. Para gravar essas categorias, revise e aplique separadamente `backend/admin/add-calendar-categories.sql`; isso não é uma migração de e-mail.
+O calendário local também estava com o enum antigo, sem ferias/aniversario. Para gravar essas categorias, revise e aplique separadamente `backend/db/history/pre-1.1.25/add-calendar-categories.sql`; isso não é uma migração de e-mail.
 
 1. Preserve um backup e confira o banco selecionado. Não execute `backend/schema.sql` em banco existente: ele é o esquema para uma instalação nova.
-2. Revise e aplique `backend/admin/add-security-rate-limits.sql` e `backend/admin/add-email-verification.sql`. São migrações idempotentes; criam tabelas de infraestrutura e não marcam contas existentes como verificadas, não mudam papéis e não encerram sessões. DDL no MySQL faz commit implícito.
+2. Revise e aplique `backend/db/history/pre-1.1.25/add-security-rate-limits.sql` e `backend/db/history/pre-1.1.25/add-email-verification.sql`. São migrações idempotentes; criam tabelas de infraestrutura e não marcam contas existentes como verificadas, não mudam papéis e não encerram sessões. DDL no MySQL faz commit implícito.
 3. Configure as variáveis privadas do backend conforme `.env.example`: `APP_URL`, `SMTP_SERVICE`, `SMTP_USER`, `SMTP_PASS` e `RATE_LIMIT_SECRET`. Use pelo menos 32 bytes aleatórios no segredo das cotas. O código aceita o JWT_SECRET como alternativa somente se ele já tiver esse tamanho. Não troque uma chave JWT existente silenciosamente: isso encerra sessões e requer rotação planejada.
 4. Em produção, `APP_URL` deve ser a URL HTTPS confiável do site. Não é construída a partir do Host da requisição. O endereço `http://localhost:3001` do exemplo é apenas de desenvolvimento. Configure TLS validado para banco remoto e as permissões necessárias às quatro tabelas novas.
 5. Somente depois dessas etapas, habilite `EMAIL_VERIFICATION_ENABLED=true` no ambiente de destino. Sem ativação, o cadastro novo falha fechado, mas contas antigas continuam no modo legado. Com a opção habilitada, ausência da tabela de estado causa indisponibilidade da autenticação em vez de liberar contas novas não verificadas.

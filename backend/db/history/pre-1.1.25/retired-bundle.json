@@ -1,0 +1,12 @@
+{
+  "removed": "backend/admin/release-1.1.25-workbench.sql",
+  "sha256": "f50c4a2839b36cadf7275624c43697e52d5627b66476716c91f5b04060e8f351",
+  "equivalentSources": [
+    "add-external-community-access.sql",
+    "add-class-offerings.sql",
+    "add-class-voluntary-leave.sql",
+    "add-unique-class-names.sql",
+    "add-class-archive.sql",
+    "add-task-reminders.sql"
+  ]
+}
