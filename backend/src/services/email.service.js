@@ -1,6 +1,7 @@
 /* Somente mensagens transacionais iniciadas pelo servidor. Não há relay de boas-vindas. */
 const nodemailer = require('nodemailer');
 const { emailAddress } = require('./email-address.service');
+const { confirmationHTML } = require('./email-templates.service');
 
 function recoveryConfigured() {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.APP_URL) return false;
@@ -52,7 +53,7 @@ async function sendLink(toEmail, token, verification = false) {
             debug: false,
             auth: { user: sender, pass: process.env.SMTP_PASS }
         });
-        // Texto simples: nenhum nome, provedor ou HTML fornecido pelo navegador é interpolado.
+        // O HTML de confirmação é fixo; somente a URL validada e escapada é interpolada.
         const result = await transporter.sendMail({
             from: { name: 'Arcádia IFPA', address: sender },
             to: recipient,
@@ -63,6 +64,7 @@ async function sendLink(toEmail, token, verification = false) {
             text: verification
                 ? `Para confirmar a posse deste e-mail na Arcádia, abra ${url.href}\nNa página, clique em Confirmar e-mail. O link expira em 30 minutos. Isso não confirma vínculo institucional. Se não solicitou, ignore esta mensagem.`
                 : `Para redefinir sua senha, abra ${url.href}\nO link expira em 30 minutos. Se não solicitou a alteração, ignore esta mensagem.`,
+            ...(verification ? { html: confirmationHTML(url) } : {}),
             disableFileAccess: true,
             disableUrlAccess: true
         });

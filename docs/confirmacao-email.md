@@ -83,13 +83,17 @@ A limpeza periódica pode remover linhas expiradas de `seguranca_limites` e toke
 
 `POST /api/auth/send-welcome` retorna 410 e nunca abre transporte. O fallback EmailJS foi removido. O navegador não cria sessão Google fictícia nem dispara mensagem de “conta verificada”. Por enquanto não há mensagem de boas-vindas independente.
 
-O serviço aceita um destinatário simples e único, rejeita objetos, listas, nomes MIME, HTML, controles e entradas excessivas. Os templates de confirmação e recuperação usam texto simples, provedor/remetente controlados pelo servidor e links com token hexadecimal; não interpolam HTML de cadastro. O transporte exige TLS validado, um destinatário e bloqueia acesso a arquivos e URLs para compor a mensagem. Erros SMTP não são publicados.
+O serviço aceita um destinatário simples e único, rejeita objetos, listas, nomes MIME, HTML, controles e entradas excessivas. A confirmação usa HTML fixo com o botão “Confirmar e-mail” e a alternativa curta “Abrir confirmação”, ambos com o mesmo endereço seguro e token íntegro no href. A URL não aparece como texto no HTML; a parte em texto simples mantém o link completo para leitores sem HTML. A recuperação continua em texto simples. Provedor/remetente são controlados pelo servidor e não se interpola HTML de cadastro. O transporte exige TLS validado, um destinatário e bloqueia acesso a arquivos e URLs para compor a mensagem. Erros SMTP não são publicados.
+
+O botão apenas abre a página; o POST de confirmação continua dependendo de ação explícita nessa página. Expiração de 30 minutos, hash no banco e uso único não mudaram. Não há encurtador externo, rastreador, imagem remota ou confirmação automática por GET. A apresentação usa tabelas e estilos inline, sem depender de scripts ou folhas externas.
 
 Nodemailer foi fixado em 10.1.2 nos dois manifests/locks, compatível com Node 24. As duas consultas npm audit após a atualização retornaram zero avisos de produção naquele momento. O teste de integração usa a composição real da biblioteca em memória, sem conexão SMTP. [Opções de segurança do Nodemailer](https://nodemailer.com/smtp).
 
 ## Limites desta entrega
 
-As migrações estão preparadas, mas não aplicadas a bancos reais. Configurações SMTP, chave de cotas e ativação na Vercel dependem do ambiente privado do responsável. A validação concorrente foi feita com modelo transacional simulado, não com um ensaio de carga no MySQL real. Entrega SMTP e políticas reais do provedor precisam de um teste autorizado de implantação.
+As informações de migração deste guia descrevem sua entrega original; consulte o guia atual do banco e os registros de versão antes de aplicar qualquer SQL. Configurações SMTP, chave de cotas e ativação na Vercel dependem do ambiente privado do responsável. A validação concorrente foi feita com modelo transacional simulado, não com um ensaio de carga no MySQL real.
+
+Em 23/10/2026, um teste local autorizado autenticou no SMTP e teve uma mensagem de diagnóstico aceita pelo servidor; um único pedido de reenvio no site oficial retornou a resposta genérica de sucesso. O usuário posteriormente informou ter encontrado o e-mail de confirmação no spam. Portanto, não se presume mais envio ausente nesse relato. Isso não significa que o destinatário concluiu a confirmação, nem que todos os provedores aceitarão mensagens futuras. O novo template foi composto e testado em memória, sem outro envio real. Um botão mais legível não garante saída do spam; regras de remetente e filtragem do provedor continuam independentes.
 
 A conclusão geral da auditoria continua pendente: limites de login/PDF, exposição de projetos pendentes, cabeçalhos, configuração criptográfica de produção e demais políticas devem ser acompanhados no relatório. E-mail confirmado prova acesso à caixa de entrada; não valida vínculo institucional.
 

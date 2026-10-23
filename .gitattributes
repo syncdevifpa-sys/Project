@@ -1,0 +1,7 @@
+# Saidas SQL geradas sao deterministicas em Windows/Linux.
+backend/schema.sql text eol=lf
+backend/db/migrations/*.sql text eol=lf
+backend/db/workbench/** text eol=lf
+
+# Historico auditavel: conservar bytes originais, inclusive finais de linha mistos.
+backend/db/history/pre-1.1.25/*.sql -text
