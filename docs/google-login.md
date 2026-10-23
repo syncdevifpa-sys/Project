@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Entrada com Google no Arcádia
 
 O código está preparado para entrar em uma conta já cadastrada. Na primeira vez, a pessoa seleciona sua conta no botão oficial do Google e informa a senha do Arcádia para autorizar a vinculação. Depois, seleciona a conta Google e confirma no botão Entrar sem repetir essa senha. O perfil e a administração são lidos do banco e não são concedidos pelo Google, pelo domínio do e-mail ou por dados enviados pelo navegador.
@@ -42,7 +44,7 @@ APP_URL=https://portalarcadia.vercel.app
 
 No local, mantenha `APP_URL=http://localhost:3001`. As origens locais das portas 3001 e 61119 são permitidas somente fora da Vercel. Origens adicionais devem ser separadas por vírgula. O backend exige um `JWT_SECRET` de pelo menos 32 caracteres para esse fluxo; não troque um segredo existente sem planejar a invalidação das sessões atuais. Nunca coloque segredos no frontend. O Client ID utilizado pelo navegador vem do próprio backend.
 
-Revise e execute **backend/admin/add-google-login.sql** no banco correto após backup. A migração apenas cria `google_identidades`, sem alterar contas, senhas ou conteúdo. Não execute `schema.sql` em um banco existente. DDL do MySQL pode efetuar commit implícito. Esta implementação não executa migrações automaticamente e não alterou o banco externo.
+Revise e execute **backend/db/history/pre-1.1.25/add-google-login.sql** no banco correto após backup. A migração apenas cria `google_identidades`, sem alterar contas, senhas ou conteúdo. Não execute `schema.sql` em um banco existente. DDL do MySQL pode efetuar commit implícito. Esta implementação não executa migrações automaticamente e não alterou o banco externo.
 
 Instale as dependências com `npm ci` na raiz, reinicie o servidor local e refaça o deploy após configurar as variáveis da Vercel. Alterar variáveis não atualiza uma implantação já criada.
 

@@ -1,3 +1,5 @@
+> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+
 # Revisão de IHC do calendário — 18/10/2026
 
 ## Alterações
@@ -35,7 +37,7 @@ Evidência local: tmp/security-audit/calendar-ihc-browser.json e tmp/security-au
 
 ## Publicação e banco
 
-Nenhum deploy, push ou alteração no banco externo foi realizado. A migração de categorias está preparada em backend/admin/add-calendar-categories.sql e continua necessária nos bancos ainda não atualizados. Ela preserva os valores anteriores do enum. A alteração local do usuário em backend/admin/import-belem-courses.sql e o protótipo tools/pdf-prototype/ foram preservados.
+Nenhum deploy, push ou alteração no banco externo foi realizado. A migração de categorias está preparada em backend/db/history/pre-1.1.25/add-calendar-categories.sql e continua necessária nos bancos ainda não atualizados. Ela preserva os valores anteriores do enum. A alteração local do usuário em backend/admin/import-belem-courses.sql e o protótipo tools/pdf-prototype/ foram preservados.
 
 ## Atualização posterior: edição e redução para oito grupos
 
@@ -63,7 +65,7 @@ A visibilidade fica no formulário. Ao salvar, a consulta acompanha o modo escol
 
 Compatibilidade: bancos antigos continuam permitindo a consulta pública e edições que mantenham os valores padrão. Ocultação e eventos pessoais retornam uma orientação de atualização quando as colunas ainda não existem. Em migrações parciais, os campos que já existem continuam sendo considerados; não se descartam as informações de ocultação ou de visibilidade.
 
-Migração preparada: backend/admin/add-calendar-visibility.sql. Ela adiciona oculto e visibilidade, mantendo os registros anteriores públicos/visíveis, e atualiza as duas views de consulta para excluir ocultos e pessoais. Nenhuma alteração foi aplicada ao banco externo.
+Migração preparada: backend/db/history/pre-1.1.25/add-calendar-visibility.sql. Ela adiciona oculto e visibilidade, mantendo os registros anteriores públicos/visíveis, e atualiza as duas views de consulta para excluir ocultos e pessoais. Nenhuma alteração foi aplicada ao banco externo.
 
 ## Atualização: data real de publicação
 

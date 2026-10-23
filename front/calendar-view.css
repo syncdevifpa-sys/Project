@@ -136,7 +136,17 @@
 .ar-calendar-event .ar-row-date {
   flex: 0 0 48px;
 }
-.ar-calendar-event > .ar-btn {
+.ar-calendar-event-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 0;
+  max-width: 100%;
+}
+.ar-calendar-event-actions .ar-btn {
   max-width: 100%;
   white-space: normal;
 }
@@ -166,6 +176,9 @@
     gap: 10px;
   }
   .ar-calendar-event .ar-row-main {
+    flex-basis: 100%;
+  }
+  .ar-calendar-event-actions {
     flex-basis: 100%;
   }
 }

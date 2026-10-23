@@ -11,6 +11,7 @@ const {
 
 const { authenticateExternal } = require('../middlewares/externalAuth.middleware');
 
+router.use('/reminders', require('./reminders.routes').externalRouter);
 router.use('/space', require('./externalCommunity.routes'));
 
 router.post('/register', registerExternal);
