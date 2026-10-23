@@ -125,7 +125,7 @@ async function editContent(kind, id, body, actorId) {
                 fail(403, 'Somente o autor pode acessar um evento pessoal.');
             if (
                 row.visibilidade === 'pessoal' &&
-                values.visibilidade === 'publico' &&
+                values.visibilidade && values.visibilidade !== 'pessoal' &&
                 !admin &&
                 !['docente', 'servidor'].includes(actor.tipo_usuario)
             )
@@ -175,6 +175,7 @@ async function editContent(kind, id, body, actorId) {
         return result;
     } catch (error) {
         await connection.rollback();
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) fail(409, 'A visibilidade ampliada exige a migração 1.1.28.');
         if (
             kind === 'calendar' &&
             error.code === 'ER_BAD_FIELD_ERROR' &&

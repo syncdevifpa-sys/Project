@@ -184,8 +184,10 @@ test('página de comunidade carrega apenas perfil externo e usa o logout compart
     const calls = [];
     let exited = false;
     const context = {
+        location: { pathname: '/community.html' },
         window: {
             Arcadia: {
+                formatPersonName: value => value,
                 token: { get: () => 'test-token' },
                 auth: {
                     getSessao: () => ({ logado: true, tipo_usuario: 'externo' }),

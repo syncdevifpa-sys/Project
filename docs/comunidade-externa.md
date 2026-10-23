@@ -5,10 +5,10 @@ O acesso efetivo de Professor/Servidor pendente é o mesmo de Comunidade externa
 | Área | Acesso externo |
 | --- | --- |
 | Meu painel | `community.html`, dados da própria conta, sem indicadores institucionais |
-| Configurações | `community.html#accountSettings`, dados, foto, privacidade, e-mail e gestão próprios |
+| Configurações | `community-settings.html`, página própria de dados, foto, e-mail e gestão da conta; sem controles de publicação em Pessoas |
 | Tarefas e lembretes | Somente itens do titular externo; IDs iguais aos de usuários institucionais não compartilham propriedade |
 | Avisos e notícias | Publicados para Todos ou Comunidade externa; rascunhos e demais públicos não são liberados |
-| Calendário | Eventos de calendários explicitamente públicos e compromissos da própria agenda; ocultos, privados e legado sem visibilidade não são liberados |
+| Calendário | Eventos públicos na internet, eventos compartilhados com IFPA e contas externas após a 1.1.28, e compromissos da própria agenda; escopo institucional, ocultos, privados alheios e legado sem visibilidade não são liberados |
 | Projetos | Aprovados e explicitamente públicos; inscrição depende também de `permite_externos`, situação e vagas |
 | Documentos, Pessoas, Turmas e Administração | Indisponíveis na sessão externa |
 

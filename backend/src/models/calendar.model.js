@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { canRead } = require('../services/calendar-access.service');
 
 const hidden = (event) => event.oculto === true || Number(event.oculto) === 1;
 async function queryVisibility(sql, params = []) {
@@ -40,8 +41,7 @@ async function listEvents(options = {}) {
     `);
 
     return events.filter((event) => {
-        if (!options.manage && !options.institutional && event.visibilidade !== 'publico')
-            return false;
+        if (!options.manage) return canRead(event, options);
         const owner = Number(event.id_usuario) === Number(options.actorId);
         if (event.visibilidade === 'pessoal') return options.manage && owner;
         return options.manage ? options.admin || owner : !hidden(event);
@@ -71,12 +71,7 @@ async function findEventById(eventId, options = {}) {
         [eventId]
     );
 
-    return events[0] &&
-        !hidden(events[0]) &&
-        events[0].visibilidade !== 'pessoal' &&
-        (options.institutional || events[0].visibilidade === 'publico')
-        ? events[0]
-        : undefined;
+    return canRead(events[0], options) ? events[0] : undefined;
 }
 
 async function createEvent(userId, eventData) {
@@ -91,7 +86,7 @@ async function createEvent(userId, eventData) {
         hora_fim = null,
         local = null,
         oculto = false,
-        visibilidade = 'publico',
+        visibilidade = 'institucional',
         origem_calendario = 'agenda'
     } = eventData;
 
@@ -108,9 +103,9 @@ async function createEvent(userId, eventData) {
             hora_inicio,
             hora_fim,
             origem_calendario,
-            local${oculto ? ', oculto' : ''}${visibilidade === 'pessoal' ? ', visibilidade' : ''}
+            local${oculto ? ', oculto' : ''}${visibilidade !== 'publico' ? ', visibilidade' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${oculto ? ', ?' : ''}${visibilidade === 'pessoal' ? ', ?' : ''})
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${oculto ? ', ?' : ''}${visibilidade !== 'publico' ? ', ?' : ''})
     `,
         [
             userId,
@@ -125,7 +120,7 @@ async function createEvent(userId, eventData) {
             origem_calendario,
             local,
             ...(oculto ? [true] : []),
-            ...(visibilidade === 'pessoal' ? ['pessoal'] : [])
+            ...(visibilidade !== 'publico' ? [visibilidade] : [])
         ]
     );
 

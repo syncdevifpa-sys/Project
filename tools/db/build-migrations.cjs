@@ -25,3 +25,7 @@ if(fs.existsSync(accessPath)) {
     fs.writeFileSync(schemaPath,schema);
     console.log('Migracao 1.1.27 tambem gerada offline.');
 }
+const visibility=require('../../backend/db/migrations/1.1.28.json');
+fs.writeFileSync(path.join(base,'db/migrations/1.1.28.sql'),require('../lib/calendar-visibility-migration.cjs').generate(visibility));
+schema+=`INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('${visibility.version}','${checksum(visibility)}');\n`;
+fs.writeFileSync(schemaPath,schema);

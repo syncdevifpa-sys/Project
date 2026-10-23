@@ -37,6 +37,7 @@ if (fs.existsSync(target)) {
     fs.rmSync(target, { recursive: true });
 }
 const localPreviews = new Set([
+    'typed',
     'classes-preview.html',
     'classes-preview.css',
     'classes-preview.js'

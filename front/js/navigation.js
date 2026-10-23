@@ -42,7 +42,7 @@
         const groups = external ? [
             { name: 'Meu espaço', icon: 'panel', links: [
                 ['community.html','Meu painel','panel'],['tasks.html','Tarefas','tasks'],
-                ['community.html#accountSettings','Configurações','settings']
+                ['community-settings.html','Configurações','settings']
             ] },
             { name: 'Conteúdo', icon: 'file', links: [
                 ['notices.html','Avisos e notícias','news'],['calendar.html','Calendário','calendar'],['projects.html','Projetos','projects']

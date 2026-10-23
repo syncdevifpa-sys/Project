@@ -1,3 +1,4 @@
+const { canRead } = require('./calendar-access.service');
 function fail(status, message) { throw Object.assign(new Error(message), { status }); }
 function id(value) {
     if (!/^[1-9]\d*$/.test(String(value)) || !Number.isSafeInteger(Number(value))) fail(400,'Identificador inválido.');
@@ -36,9 +37,7 @@ async function authorizeContext(db, owner, row, { lock=false, sending=false }={}
     }
     const [rows]=await db.execute("SELECT id_evento,id_usuario,titulo,visibilidade,oculto,origem_calendario,DATE_FORMAT(data_evento,'%Y-%m-%d') AS data_evento,TIME_FORMAT(hora_inicio,'%H:%i') AS hora_inicio FROM calendario WHERE id_evento=?"+suffix,[link.key]);
     const event=rows[0];
-    const publicEvent=event?.visibilidade==='publico';
-    const ownPersonal=!who.external && event?.visibilidade==='pessoal' && Number(event.id_usuario)===who.id;
-    if (!event || event.oculto || (!publicEvent && !ownPersonal)) fail(404,'Evento não disponível para esta conta.');
+    if (!canRead(event, { institutional: !who.external, external: who.external, actorId: who.id })) fail(404,'Evento não disponível para esta conta.');
     return event;
 }
 module.exports={ identity,context,authorizeContext,id };

@@ -12,6 +12,8 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 | Execução assistida pelo Workbench | `backend/db/workbench/` — adoção e etapas separadas |
 | Evolução de tarefas externas, intenção de cadastro e projetos públicos | `backend/db/migrations/1.1.27.sql` — após 1.1.26 |
 | Diagnóstico dessa evolução | `backend/db/checks/1.1.27.sql` |
+| Novos escopos do calendário, após 1.1.27 | `backend/db/migrations/1.1.28.sql` — preparada, não aplicada pelo agente |
+| Diagnóstico dos escopos | `backend/db/checks/1.1.28.sql` |
 | Rastreabilidade de scripts antigos | `backend/db/history/pre-1.1.25/` |
 | Operações administrativas específicas | `backend/admin/` |
 
@@ -19,7 +21,7 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 
 Em MySQL 8.4, selecione um banco vazio. `npm run db:schema` gera `backend/schema.generated.sql` sem CREATE DATABASE/USE para hospedagem gerenciada. Revise e importe o arquivo gerado somente no banco vazio. O esquema contém diretamente as colunas, índices e relações finais, além dos dados iniciais de cursos/links; não encadeia migrações antigas nem atualiza dados existentes.
 
-O esquema registra as versões 1.1.25, 1.1.26 e 1.1.27 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
+O esquema registra as versões 1.1.25, 1.1.26, 1.1.27 e 1.1.28 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
 
 ## Atualização de banco existente no Workbench
 
@@ -70,3 +72,13 @@ Backup, diagnóstico e ensaio em cópia descartável precedem a aplicação. Exe
 `tests/external-migration.test.js` verifica geração determinística da 1.1.27, checksums da base e da atualização, padrões restritos de visibilidade/intenção e ausência de exclusão ou promoção de contas em massa. Confere também que a validação de titular único das tarefas precede o registro da versão. Os testes de acesso complementam essa revisão com sessões e banco simulados; não comprovam a execução de DDL no MySQL.
 
 No ensaio descartável, confira tarefas institucionais preexistentes, criação de tarefa externa, rejeição de dois titulares/nenhum titular, repetição do script e interrupção no primeiro erro. DDL tem commit implícito: uma falha pode deixar estruturas parcialmente aplicadas. Só prossiga com a publicação do código após conferir os objetos e o registro usando o diagnóstico da 1.1.27. Essa numeração identifica a migração; não publica nem incrementa automaticamente a versão de release do portal.
+
+## Evolução 1.1.28 — preparada, não executada
+
+A 1.1.27 já foi confirmada pelo responsável; não reaplicar. A nova 1.1.28 apenas acrescenta `institucional` e `comunidade` ao final do enum de visibilidade do calendário, preservando os valores e o padrão anteriores. Não reclassifica eventos nem modifica o manifesto/checksum aplicado da 1.1.27. Exige o registro/checksum da base e interrompe diante de definição divergente. Validar em MySQL 8.4 descartável antes de aplicação autorizada, com backup e parada no primeiro erro.
+
+`institucional` significa Comunidade do IFPA autenticada; `comunidade`, IFPA e contas externas autenticadas; `pessoal`, somente o responsável; `publico`, acesso sem conta, preservando o contrato anterior. Professores/servidores pendentes continuam externos. Eventos ocultos não aparecem na leitura. Sem a coluna em banco legado, somente sessões institucionais podem consultar; isso não cria publicação para visitantes.
+
+O responsável pode editar a visibilidade de seu evento. A edição de um calendário agrupa os eventos pelo período selecionado e verifica cada titular no servidor, em transação; não concede propriedade pelo nome do período. Administradores podem gerenciar eventos compartilhados, mas não acessar/alterar eventos privados de terceiros. Não há compartilhamento privado por convite nesta etapa: Privado significa somente o responsável. Não se presume uma lista de pessoas autorizadas inexistente.
+
+Novos eventos/importações começam institucionais, salvo escolha explícita permitida. Os triggers da 1.1.26 invalidam os lembretes vinculados após alterações; a leitura e o processamento de lembretes reaplicam a mesma regra de acesso. Exportações da interface usam os eventos já filtrados da sessão. Não enviar este código a produção antes de coordenar a migração 1.1.28.

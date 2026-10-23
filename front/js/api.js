@@ -32,7 +32,7 @@ window.Arcadia = window.Arcadia || {};
     // Oculta a fotografia do documento antes de o navegador guardá-lo no histórico.
     // Ao restaurar, valida também a sessão no servidor, não apenas o JWT armazenado.
     const pageToken = Token.get();
-    const privatePages = new Set(['dashboard.html','tasks.html','settings.html','admin.html','classes.html','community.html']);
+    const privatePages = new Set(['dashboard.html','tasks.html','settings.html','admin.html','classes.html','community.html','community-settings.html']);
     const privatePage = privatePages.has((location.pathname || '').split('/').pop());
     let externalSession = false;
     try { externalSession = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario === 'externo'; } catch {}
@@ -46,7 +46,7 @@ window.Arcadia = window.Arcadia || {};
             const page = (location.pathname || '').split('/').pop();
             if (externalRestricted.has(page) || ['dashboard.html','settings.html'].includes(page)) {
                 document.body?.replaceChildren();
-                window.location.replace('community.html' + (page === 'settings.html' ? '#accountSettings' : ''));
+                window.location.replace((page === 'settings.html' ? 'community-settings.html' : 'community.html'));
             }
         }
         window.addEventListener('pagehide', () => {

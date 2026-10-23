@@ -42,3 +42,5 @@ Thumbs.db
 # Experimentos, ambientes isolados e saídas locais reproduzíveis
 /tmp/
 /tools/generated/
+/backend/generated/
+/front/js/person-name.js

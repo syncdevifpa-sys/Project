@@ -578,7 +578,7 @@
         var sessao = (A.auth && A.auth.getSessao()) || {};
         if (sessao.tipo_usuario === 'externo') {
             document.querySelectorAll('.ar-nav-end a[href="settings.html"], .ar-topbar a[href="settings.html"]').forEach(function(link) {
-                link.href = 'community.html#accountSettings';
+                link.href = 'community-settings.html';
             });
         }
 
@@ -599,7 +599,7 @@
                     link.href = 'login.html';
                 });
         }
-        var userName = sessao.nome || 'Visitante';
+        var userName = A.formatPersonName ? A.formatPersonName(sessao.nome) || 'Visitante' : sessao.nome || 'Visitante';
         var userRole = sessao.is_admin
             ? 'Administrador'
             : sessao.vinculo || (A.auth ? A.auth.paraVinculo(sessao.tipo_usuario) : 'Usuário');
@@ -635,7 +635,7 @@
         }
 
         if (sessao.nome) {
-            var primeiroNome = sessao.nome.split(' ')[0];
+            var primeiroNome = userName.split(' ')[0];
             var greetingEl = document.getElementById('painelUserGreeting');
             if (greetingEl) greetingEl.textContent = primeiroNome;
             var titleEl = document.querySelector('.portal-titulo');

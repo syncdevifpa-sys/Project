@@ -282,7 +282,7 @@ CREATE TABLE calendario (
     categoria       ENUM('matricula', 'cancelamento', 'evento', 'edital', 'feriado', 'ferias', 'aniversario', 'atividades_campus', 'sabado_letivo', 'periodo_academico', 'culminancia_bimestral', 'recesso', 'registro_academico', 'ponto_facultativo', 'avaliacao', 'interrupcao_presencial', 'ferias_docentes')
                         NOT NULL DEFAULT 'evento',
     oculto         TINYINT(1) NOT NULL DEFAULT 0,
-    visibilidade   ENUM('publico','pessoal') NOT NULL DEFAULT 'publico',
+    visibilidade   ENUM('publico','pessoal','institucional','comunidade') NOT NULL DEFAULT 'publico',
     periodo_letivo  VARCHAR(60),                       -- "2º semestre letivo · 2026" (agrupamento)
     data_evento     DATE NOT NULL,
     data_fim        DATE NULL,
@@ -853,3 +853,4 @@ CREATE TABLE arcadia_schema_migrations (
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.25','f0402abf4488dcc69f32855bd22dfd6ddb85fcdca802ca9c2a7e974205c6a8b1');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b671b7384d5a1474c34a23d412d3a7a73b5f6a7a58da85b634ad79d25c6');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.27','d9fd23826f42a137bc3ccc4df312df48c6efd2e21d8d324aa62cf068a18135ad');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.28','9cdf3a5752095a953bdb79caf01a7774266d7588be89ae08d9fdff5a1634d70b');

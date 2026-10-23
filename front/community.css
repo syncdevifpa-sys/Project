@@ -25,3 +25,8 @@
  .ar-community-content dd { margin-bottom:12px; }
  .ar-community-shortcuts .ar-btn { flex:1 1 145px; }
 }
+
+.ar-community-page:not(.ar-community-settings-page) #accountEmail,
+.ar-community-page:not(.ar-community-settings-page) #profileSharing,
+.ar-community-page:not(.ar-community-settings-page) #excluir-conta,
+.ar-community-page:not(.ar-community-settings-page) .ar-community-content > p { display:none; }

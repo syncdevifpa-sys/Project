@@ -143,7 +143,7 @@
             label: 'Evento',
             id: 'id_evento',
             endpoint: '/api/calendar',
-            defaults: { categoria: 'evento', oculto: false, visibilidade: 'publico' },
+            defaults: { categoria: 'evento', oculto: false, visibilidade: 'institucional' },
             fields: [
                 title,
                 description,
@@ -190,8 +190,10 @@
                     'visibilidade',
                     'Visibilidade',
                     {
-                        publico: 'Público · todos podem consultar',
-                        pessoal: 'Pessoal · apenas o autor'
+                        institucional: 'Comunidade do IFPA',
+                        comunidade: 'Comunidade do IFPA e externa',
+                        publico: 'Público na internet · inclui visitantes',
+                        pessoal: 'Privado · apenas o responsável'
                     }
                 ],
                 ['oculto', 'Ocultar evento do calendário', 'checkbox']

@@ -1,0 +1,8 @@
+{
+  "version": "1.1.28",
+  "table": "calendario",
+  "column": "visibilidade",
+  "previousType": "enum('publico','pessoal')",
+  "type": "enum('publico','pessoal','institucional','comunidade')",
+  "default": "publico"
+}

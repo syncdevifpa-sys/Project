@@ -837,8 +837,8 @@
             sourcePicker.value = groups.includes(selected) ? selected : '';
         }
         async function reload(saved) {
-            if (saved && ['publico', 'pessoal'].includes(saved.visibilidade))
-                audience.value = saved.visibilidade;
+            if (saved && saved.visibilidade)
+                audience.value = saved.visibilidade === 'pessoal' ? 'pessoal' : 'publico';
             rows = await api.expect(api.get('/api/calendar'));
             managedRows =
                 A.auth.getSessao().id_usuario && A.auth.getSessao().tipo_usuario !== 'externo'
@@ -873,7 +873,7 @@
             }
             if (A.auth.exigirLogin())
                 A.contentEditor.open('calendar', null, reload, {
-                    visibilidade: personal() ? 'pessoal' : 'publico'
+                    visibilidade: personal() ? 'pessoal' : 'institucional'
                 });
         });
         editableGrid(container, 'calendar', () => [...rows, ...managedRows], reload);

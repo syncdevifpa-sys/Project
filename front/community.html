@@ -33,7 +33,7 @@
           </span>
         </a>
 
-        <nav class="ar-navpill" aria-label="Seções do portal"><a href="community.html" aria-current="page">Meu painel</a><a href="tasks.html">Tarefas</a><a href="community.html#accountSettings">Configurações</a><a href="notices.html">Avisos e notícias</a><a href="calendar.html">Calendário</a><a href="projects.html">Projetos</a></nav>
+        <nav class="ar-navpill" aria-label="Seções do portal"><a href="community.html" aria-current="page">Meu painel</a><a href="tasks.html">Tarefas</a><a href="community-settings.html">Configurações</a><a href="notices.html">Avisos e notícias</a><a href="calendar.html">Calendário</a><a href="projects.html">Projetos</a></nav>
 
         <div class="ar-nav-end">
           <button
@@ -62,7 +62,7 @@
 
           <a
             class="ar-iconbtn"
-            href="community.html#accountSettings"
+            href="community-settings.html"
             aria-label="Configurações"
             title="Configurações"
           >
@@ -85,7 +85,7 @@
             </svg>
           </a>
 
-          <a class="ar-user" href="community.html#accountSettings">
+          <a class="ar-user" href="community-settings.html">
             <span
               class="ar-avatar ar-avatar--cyan"
               style="width: 34px; height: 34px; font-size: 13px"
@@ -107,7 +107,7 @@
 <div class="ar-hero-main"><p class="ar-hero-eyebrow">Meu painel · Comunidade externa</p><h1 class="ar-hero-title" id="externalGreeting">Meu painel</h1><p class="ar-hero-desc">Suas tarefas e configurações pessoais, notícias destinadas a todos ou à Comunidade externa, calendários públicos e projetos públicos.</p></div>
 <div class="ar-hero-actions"><a class="ar-btn ar-btn--primary" href="tasks.html">Ver minhas tarefas</a></div>
 </section>
-<nav class="ar-community-shortcuts" aria-label="Acessos do meu painel"><a class="ar-btn ar-btn--secondary" href="notices.html">Avisos e notícias</a><a class="ar-btn ar-btn--secondary" href="calendar.html">Calendário público</a><a class="ar-btn ar-btn--secondary" href="projects.html">Projetos públicos</a><a class="ar-btn ar-btn--secondary" href="#accountSettings">Minhas configurações</a></nav>
+<nav class="ar-community-shortcuts" aria-label="Acessos do meu painel"><a class="ar-btn ar-btn--secondary" href="notices.html">Avisos e notícias</a><a class="ar-btn ar-btn--secondary" href="calendar.html">Calendário público</a><a class="ar-btn ar-btn--secondary" href="projects.html">Projetos públicos</a><a class="ar-btn ar-btn--secondary" href="community-settings.html">Minhas configurações</a></nav>
 <main class="ar-community-content" aria-label="Minha conta e configurações">
 <details hidden id="teacherRequestSection" class="ar-teacher-request"
         ><summary
@@ -156,7 +156,7 @@
         class="ar-account-email"
         aria-label="Confirmação do e-mail de acesso"
       ></section>
-      <section id="profileSharing" aria-label="Compartilhamento do perfil"></section>
+      <section id="profileSharing" aria-label="Foto da minha conta"></section>
       <p><a href="reset-password.html">Recuperar senha</a></p>
       <details class="ar-account-management" id="excluir-conta"
         ><summary>Gerenciar conta <span>Opções da conta</span></summary
@@ -193,6 +193,7 @@
         </div>
       </details>
 </main></div>
+<script src="js/person-name.js"></script>
 <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/community.js"></script>
