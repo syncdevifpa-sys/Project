@@ -774,9 +774,6 @@
                             '<div class="ar-row ar-calendar-event" data-event-category="' +
                             esc(r.categoria) +
                             '">' +
-                            ((institutional || external) && !r.oculto
-                                ? '<button type="button" class="ar-btn ar-btn--secondary ar-btn--sm" data-calendar-remind="'+esc(r.id_evento)+'" data-reminder-source="'+(r.automatico?'avulso':external&&personal()?'agenda_externa':'calendario')+'">Criar lembrete</button>'
-                                : '') +
                             (canDelete && !r.automatico
                                 ? '<input type="checkbox" data-calendar-select="' +
                                   esc(r.id_evento) +
@@ -798,7 +795,7 @@
                             details +
                             '</span><span class="ar-badge">' +
                             esc(A.calendarCategories.options[r.categoria]) +
-                            '</span>' +
+                            '</span><span class="ar-calendar-event-actions" role="group" aria-label="Ações de ' + esc(r.titulo) + '">' +
                             (external && personal()
                                 ? `<button type="button" class="ar-btn ar-btn--secondary" data-external-event="${esc(r.id_evento)}">Editar</button>`
                                 : editAction('calendar', r, r.id_evento)) +
@@ -810,7 +807,7 @@
                                   esc(r.id_evento) +
                                   '">Apagar</button>'
                                 : '') +
-                            '</div>'
+                            '</span></div>'
                         );
                     })
                     .join('') ||
