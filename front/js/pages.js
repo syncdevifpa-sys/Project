@@ -478,6 +478,13 @@
                 'Eventos públicos da agenda comum e seus compromissos pessoais. O calendário acadêmico IFPA é de acesso institucional.';
             $('#calendarSourceFilter').closest('label').hidden = true;
         }
+        container.addEventListener('click',(event)=>{
+            const button=event.target.closest('[data-calendar-remind]');
+            if(!button) return;
+            const row=scoped().find((r)=>String(r.id_evento)===button.dataset.calendarRemind);
+            if(row && A.reminderUI) A.reminderUI.open(row,button.dataset.reminderSource);
+            else A.showToast('Os lembretes ainda estão carregando. Tente novamente.');
+        });
         const audience = $('#calendarAudience');
         audience.closest('label').hidden = !institutional && !external;
         const personal = () => audience.value === 'pessoal';
@@ -767,6 +774,9 @@
                             '<div class="ar-row ar-calendar-event" data-event-category="' +
                             esc(r.categoria) +
                             '">' +
+                            ((institutional || external) && !r.oculto
+                                ? '<button type="button" class="ar-btn ar-btn--secondary ar-btn--sm" data-calendar-remind="'+esc(r.id_evento)+'" data-reminder-source="'+(r.automatico?'avulso':external&&personal()?'agenda_externa':'calendario')+'">Criar lembrete</button>'
+                                : '') +
                             (canDelete && !r.automatico
                                 ? '<input type="checkbox" data-calendar-select="' +
                                   esc(r.id_evento) +
@@ -792,6 +802,9 @@
                             (external && personal()
                                 ? `<button type="button" class="ar-btn ar-btn--secondary" data-external-event="${esc(r.id_evento)}">Editar</button>`
                                 : editAction('calendar', r, r.id_evento)) +
+                            ((institutional || external) && !r.oculto
+                                ? '<button type="button" class="ar-btn ar-btn--secondary ar-btn--sm" data-calendar-remind="'+esc(r.id_evento)+'" data-reminder-source="'+(r.automatico?'avulso':external&&personal()?'agenda_externa':'calendario')+'">Criar lembrete</button>'
+                                : '') +
                             (canDelete && !r.automatico
                                 ? '<button type="button" class="ar-btn ar-btn--quiet ar-btn--sm" data-calendar-delete="' +
                                   esc(r.id_evento) +

@@ -100,17 +100,20 @@ async function sendReminder(toEmail, reminder) {
         disableFileAccess: true, disableUrlAccess: true, maxRecipients: 1,
         logger: false, debug: false, auth: { user: sender, pass: process.env.SMTP_PASS }
     });
+    let deadline;
     try {
-        const link = new URL('/tasks.html', process.env.APP_URL);
-        const result = await transport.sendMail({
+        const link = new URL(reminder.calendar ? '/calendar.html' : '/tasks.html', process.env.APP_URL);
+        const result = await Promise.race([transport.sendMail({
             from: { name: 'Arcádia IFPA', address: sender }, to: recipient,
             envelope: { from: sender, to: [recipient] }, subject: 'Seu lembrete — Arcádia',
             messageId: `<arcadia-reminder-${reminder.id}-${reminder.versao}@${new URL(process.env.APP_URL).hostname}>`,
-            text: `Lembrete: ${reminder.titulo}\n\nAbra suas tarefas: ${link.href}\nVocê autorizou estes avisos. Para desativar, abra Tarefas e desmarque as notificações por e-mail.`,
+            text: `Lembrete: ${reminder.titulo}\n\nAbra seus lembretes: ${link.href}\nVocê autorizou estes avisos. Para desativar, abra Meus lembretes e notificações no Calendário ou em Tarefas.`,
             disableFileAccess: true, disableUrlAccess: true
-        });
+        }),new Promise((_,reject)=>{
+            deadline=setTimeout(()=>{try { transport.close?.(); } catch {} reject(new Error('REMINDER_SMTP_TIMEOUT'));},15000);
+        })]);
         if (result.accepted?.length !== 1) throw new Error('DELIVERY_FAILED');
     } catch { throw new Error('REMINDER_DELIVERY_FAILED'); }
-    finally { try { transport.close?.(); } catch {} }
+    finally { clearTimeout(deadline); try { transport.close?.(); } catch {} }
 }
 module.exports = { recoveryConfigured, sendPasswordRecovery, sendEmailVerification, sendReminder };

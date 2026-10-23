@@ -1,0 +1,142 @@
+{
+  "version": "1.1.26",
+  "columns": [
+    {
+      "table": "lembretes",
+      "name": "id_externo",
+      "definition": "id_externo INT NULL",
+      "type": "int",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "lembretes",
+      "name": "id_evento_externo",
+      "definition": "id_evento_externo INT NULL",
+      "type": "int",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "lembretes",
+      "name": "contexto",
+      "definition": "contexto ENUM('avulso','tarefa','calendario','agenda_externa') NOT NULL DEFAULT 'avulso'",
+      "type": "enum('avulso','tarefa','calendario','agenda_externa')",
+      "nullable": false,
+      "default": "avulso",
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "publico_externo",
+      "name": "email_lembretes",
+      "definition": "email_lembretes BOOLEAN NOT NULL DEFAULT FALSE",
+      "type": "tinyint",
+      "nullable": false,
+      "default": "0",
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "publico_externo",
+      "name": "consentimento_lembretes_em",
+      "definition": "consentimento_lembretes_em DATETIME NULL",
+      "type": "datetime",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "lembrete_envios",
+      "name": "tentativas",
+      "definition": "tentativas TINYINT UNSIGNED NOT NULL DEFAULT 1",
+      "type": "tinyint unsigned",
+      "nullable": false,
+      "default": "1",
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "lembrete_envios",
+      "name": "proxima_tentativa_utc",
+      "definition": "proxima_tentativa_utc DATETIME NULL",
+      "type": "datetime",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    }
+  ],
+  "foreignKeys": [
+    {
+      "table": "lembretes",
+      "columns": "id_externo",
+      "ref": "publico_externo",
+      "refColumns": "id_externo",
+      "delete": "CASCADE"
+    },
+    {
+      "table": "lembretes",
+      "columns": "id_evento_externo",
+      "ref": "agenda_externa",
+      "refColumns": "id_evento",
+      "delete": "SET NULL"
+    }
+  ],
+  "indexes": [
+    {
+      "table": "lembretes",
+      "name": "idx_lembrete_externo",
+      "columns": "id_externo,agendado_utc",
+      "unique": false
+    },
+    {
+      "table": "lembrete_envios",
+      "name": "idx_lembrete_retry",
+      "columns": "estado,proxima_tentativa_utc",
+      "unique": false
+    }
+  ],
+  "triggers": [
+    {
+      "name": "trg_calendario_lembrete_update",
+      "table": "calendario",
+      "timing": "AFTER",
+      "event": "UPDATE",
+      "body": "BEGIN\n UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento=NEW.id_evento;\nEND"
+    },
+    {
+      "name": "trg_calendario_lembrete_delete",
+      "table": "calendario",
+      "timing": "BEFORE",
+      "event": "DELETE",
+      "body": "BEGIN\n UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento=OLD.id_evento;\nEND"
+    },
+    {
+      "name": "trg_agenda_externa_lembrete_update",
+      "table": "agenda_externa",
+      "timing": "AFTER",
+      "event": "UPDATE",
+      "body": "BEGIN\n UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento_externo=NEW.id_evento;\nEND"
+    },
+    {
+      "name": "trg_agenda_externa_lembrete_delete",
+      "table": "agenda_externa",
+      "timing": "BEFORE",
+      "event": "DELETE",
+      "body": "BEGIN\n UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento_externo=OLD.id_evento;\nEND"
+    }
+  ]
+}

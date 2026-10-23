@@ -202,4 +202,4 @@ DELIMITER $$`,
     ...['assert','column','index','fk','names','check'].map((n)=>'DROP PROCEDURE IF EXISTS _arc125_'+n+';'));
     return out.join('\n')+'\n';
 }
-module.exports = { generate, checksum, column, index, fk };
+module.exports = { generate, checksum, column, index, fk, helpers, triggerCheck };

@@ -7,6 +7,8 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 | Banco novo e vazio | `backend/schema.sql` |
 | Banco existente, diagnóstico sem alterações | `backend/db/checks/1.1.25.sql` |
 | Atualização da base anterior para 1.1.25, inclusive parcialmente aplicada | `backend/db/migrations/1.1.25.sql` |
+| Evolução de lembretes de eventos/exteriores após 1.1.25 | `backend/db/migrations/1.1.26.sql` |
+| Diagnóstico da evolução de lembretes | `backend/db/checks/1.1.26.sql` |
 | Rastreabilidade de scripts antigos | `backend/db/history/pre-1.1.25/` |
 | Operações administrativas específicas | `backend/admin/` |
 
@@ -14,7 +16,7 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 
 Em MySQL 8.4, selecione um banco vazio. `npm run db:schema` gera `backend/schema.generated.sql` sem CREATE DATABASE/USE para hospedagem gerenciada. Revise e importe o arquivo gerado somente no banco vazio. O esquema contém diretamente as colunas, índices e relações finais, além dos dados iniciais de cursos/links; não encadeia migrações antigas nem atualiza dados existentes.
 
-O esquema registra a versão consolidada em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
+O esquema registra as versões 1.1.25 e 1.1.26 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
 
 ## Atualização de banco existente no Workbench
 
@@ -41,3 +43,9 @@ Testes de arquivos verificam preservação do histórico, cobertura do contrato 
 Notificações por e-mail dependem também de SMTP, consentimento, endereço confirmado e agendador. A organização dos SQLs não ativa esses serviços.
 
 Referências de sintaxe: [CREATE TRIGGER no MySQL 8.4](https://dev.mysql.com/doc/refman/8.4/en/create-trigger.html), [prepared statements](https://dev.mysql.com/doc/refman/8.4/en/sql-prepared-statements.html) e [DDL com commit implícito](https://dev.mysql.com/doc/refman/8.4/en/implicit-commit.html).
+
+## Evolução 1.1.26 — lembretes de eventos e contas externas
+
+Depois de conferir/adotar 1.1.25 no banco existente, a atualização 1.1.26 evolui o titular de lembretes sem criar uma tabela paralela. Adiciona sete colunas, dois índices, dois FKs e quatro triggers; torna id_usuario nullable mantendo seu FK, adiciona CHECK de titular exclusivo e amplia o enum de envio sem retirar valores antigos. DML de backfill é limitado à classificação de vínculos legados e desativação de avisos antigos de calendário, com restauração de safe updates. Não reaplique 1.1.25 sobre 1.1.26: validações estritas de enum antigo detectariam a evolução como divergência.
+
+O gerador offline prepara ambas as versões sem alterar o manifesto/checksum anterior. A instalação vazia usa diretamente as definições finais, sem ALTER; a agenda externa é criada antes da FK que a referencia. `docs/lembretes-e-arquivamento.md` descreve SQLs, consentimento, limites diários, configuração externa e testes. Os SQLs ainda exigem ensaio MySQL 8.4 descartável antes de produção; nenhuma estrutura real foi alterada pelo agente.

@@ -62,7 +62,9 @@ CREATE TABLE publico_externo (
     ultimo_acesso   DATETIME,
     criado_em       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                        ON UPDATE CURRENT_TIMESTAMP
+                        ON UPDATE CURRENT_TIMESTAMP,
+    email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,
+    consentimento_lembretes_em DATETIME NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -337,6 +339,22 @@ CREATE TABLE projeto_inscricoes (
 -- ---------------------------------------------------------------------
 -- 9. LEMBRETES (pessoais)
 -- ---------------------------------------------------------------------
+CREATE TABLE agenda_externa (
+ id_evento INT AUTO_INCREMENT PRIMARY KEY,
+ id_externo INT NOT NULL,
+ titulo VARCHAR(150) NOT NULL,
+ descricao TEXT NULL,
+ categoria VARCHAR(40) NOT NULL DEFAULT 'evento',
+ data_evento DATE NOT NULL,
+ data_fim DATE NULL,
+ hora_inicio TIME NULL,
+ hora_fim TIME NULL,
+ local VARCHAR(150) NULL,
+ criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE lembretes (
     id_tarefa INT NULL,
     agendado_utc DATETIME NULL,
@@ -346,7 +364,7 @@ CREATE TABLE lembretes (
     CONSTRAINT fk_lembrete_tarefa FOREIGN KEY(id_tarefa) REFERENCES tarefas(id_tarefa) ON DELETE CASCADE,
     INDEX idx_lembrete_envio (enviar_email,ativo,agendado_utc),
     id_lembrete     INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario      INT NOT NULL,
+    id_usuario      INT NULL,
     id_evento       INT NULL,                          -- opcional: evento do calendário
     titulo          VARCHAR(150) NOT NULL,
     descricao       TEXT,
@@ -357,7 +375,14 @@ CREATE TABLE lembretes (
 
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)  ON DELETE CASCADE,
     FOREIGN KEY (id_evento)  REFERENCES calendario(id_evento) ON DELETE SET NULL,
-    INDEX idx_lembretes_usuario (id_usuario, data_lembrete)
+    INDEX idx_lembretes_usuario (id_usuario, data_lembrete),
+    id_externo INT NULL,
+    id_evento_externo INT NULL,
+    contexto ENUM('avulso','tarefa','calendario','agenda_externa') NOT NULL DEFAULT 'avulso',
+    CONSTRAINT chk_lembrete_titular CHECK ((id_usuario IS NULL) <> (id_externo IS NULL)),
+    FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,
+    INDEX idx_lembrete_externo (id_externo,agendado_utc),
+    FOREIGN KEY(id_evento_externo) REFERENCES agenda_externa(id_evento) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -718,21 +743,7 @@ CREATE TABLE projeto_inscricoes_externas (
  FOREIGN KEY(id_projeto) REFERENCES projetos(id_projeto) ON DELETE CASCADE,
  FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-CREATE TABLE agenda_externa (
- id_evento INT AUTO_INCREMENT PRIMARY KEY,
- id_externo INT NOT NULL,
- titulo VARCHAR(150) NOT NULL,
- descricao TEXT NULL,
- categoria VARCHAR(40) NOT NULL DEFAULT 'evento',
- data_evento DATE NOT NULL,
- data_fim DATE NULL,
- hora_inicio TIME NULL,
- hora_fim TIME NULL,
- local VARCHAR(150) NULL,
- criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
- atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
- FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE
-) ENGINE=InnoDB;
+
 
 -- Ofertas por período letivo
 -- Legado permanece sem semestre presumido. A turma/coorte e IDs de ofertas não mudam.
@@ -774,11 +785,14 @@ CREATE TABLE preferencias_notificacao (
 CREATE TABLE lembrete_envios (
   id_lembrete INT NOT NULL,
   versao INT UNSIGNED NOT NULL,
-  estado ENUM('reservado','enviado','falhou','cancelado') NOT NULL DEFAULT 'reservado',
+  estado ENUM('reservado','enviado','falhou','cancelado','aguardando','enviando') NOT NULL DEFAULT 'reservado',
   reservado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   finalizado_em DATETIME NULL,
   PRIMARY KEY (id_lembrete, versao),
-  FOREIGN KEY (id_lembrete) REFERENCES lembretes(id_lembrete) ON DELETE CASCADE
+  FOREIGN KEY (id_lembrete) REFERENCES lembretes(id_lembrete) ON DELETE CASCADE,
+    tentativas TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    proxima_tentativa_utc DATETIME NULL,
+    INDEX idx_lembrete_retry (estado,proxima_tentativa_utc)
 ) ENGINE=InnoDB;
 
 -- Abrange todas as formas de edição de tarefa, incluindo a API compartilhada de conteúdo.
@@ -805,8 +819,29 @@ CREATE TABLE inscricoes_editais (
     UNIQUE KEY uq_aviso_usuario (id_aviso, id_usuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+DELIMITER $$
+CREATE TRIGGER trg_calendario_lembrete_update AFTER UPDATE ON calendario FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento=NEW.id_evento;
+END$$
+CREATE TRIGGER trg_calendario_lembrete_delete BEFORE DELETE ON calendario FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento=OLD.id_evento;
+END$$
+CREATE TRIGGER trg_agenda_externa_lembrete_update AFTER UPDATE ON agenda_externa FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento_externo=NEW.id_evento;
+END$$
+CREATE TRIGGER trg_agenda_externa_lembrete_delete BEFORE DELETE ON agenda_externa FOR EACH ROW
+BEGIN
+ UPDATE lembretes SET ativo=FALSE,enviar_email=FALSE,versao=versao+1 WHERE id_evento_externo=OLD.id_evento;
+END$$
+DELIMITER ;
+
 -- Registro da instalacao consolidada (somente banco NOVO).
 CREATE TABLE arcadia_schema_migrations (
  versao VARCHAR(32) PRIMARY KEY,checksum CHAR(64) NOT NULL,verificado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.25','f0402abf4488dcc69f32855bd22dfd6ddb85fcdca802ca9c2a7e974205c6a8b1');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b671b7384d5a1474c34a23d412d3a7a73b5f6a7a58da85b634ad79d25c6');

@@ -71,5 +71,11 @@
       "includeFiles": "node_modules/{pdfjs-dist/{package.json,standard_fonts/**,legacy/build/pdf.mjs,legacy/build/pdf.worker.mjs},@napi-rs/canvas/**,@napi-rs/canvas-linux-x64-gnu/**}",
       "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/internal/reminders/run",
+      "schedule": "0 12 * * *"
+    }
+  ]
 }
