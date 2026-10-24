@@ -1,6 +1,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const client = require('./helpers/signup-client.cjs');
+test('login anuncia confirmação uma vez e não cria sessão automaticamente',()=>{
+    const c=client('users','person@example.test',()=>assert.fail('Sem login automático'),'login',{'arcadia.emailConfirmed':'1'});
+    assert.equal(c.confirmedNotice.hidden,false);assert.match(c.confirmedNotice.textContent,/E-mail confirmado/);
+    assert.equal(c.session.has('arcadia.emailConfirmed'),false);assert.equal(c.storage.has('arcadiaToken'),false);
+});
 for (const role of ['discente', 'externo']) {
     test('login inicializa com modal presente e preserva sessão de ' + role, async () => {
         const user =

@@ -1,0 +1,313 @@
+{
+  "version": "1.1.29",
+  "columns": [
+    {
+      "table": "usuarios",
+      "name": "id_externo_origem",
+      "definition": "id_externo_origem INT NULL",
+      "type": "int",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "docente_requisitos",
+      "name": "curso_informado",
+      "definition": "curso_informado VARCHAR(150) NULL",
+      "type": "varchar(150)",
+      "nullable": true,
+      "default": null,
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    },
+    {
+      "table": "docente_requisitos",
+      "name": "origem_solicitacao",
+      "definition": "origem_solicitacao ENUM('cadastro','configuracoes') NOT NULL DEFAULT 'cadastro'",
+      "type": "enum('cadastro','configuracoes')",
+      "nullable": false,
+      "default": "cadastro",
+      "auto": false,
+      "onUpdate": false,
+      "collation": null
+    }
+  ],
+  "indexes": [
+    {
+      "table": "usuarios",
+      "name": "uq_usuario_origem_externa",
+      "columns": "id_externo_origem",
+      "unique": true
+    }
+  ],
+  "tables": [
+    {
+      "name": "conta_vinculos",
+      "sql": "CREATE TABLE IF NOT EXISTS conta_vinculos (id_externo INT PRIMARY KEY,id_usuario INT NOT NULL UNIQUE,id_requisito INT NULL UNIQUE,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "conta_vinculos",
+          "name": "id_externo",
+          "definition": "id_externo INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "conta_vinculos",
+          "name": "id_usuario",
+          "definition": "id_usuario INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "conta_vinculos",
+          "name": "id_requisito",
+          "definition": "id_requisito INT NULL",
+          "type": "int",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "conta_vinculos",
+          "name": "criado_em",
+          "definition": "criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "current_timestamp()",
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        }
+      ],
+      "indexes": [
+        {
+          "table": "conta_vinculos",
+          "name": "PRIMARY",
+          "columns": "id_externo",
+          "unique": true
+        },
+        {
+          "table": "conta_vinculos",
+          "name": "id_usuario",
+          "columns": "id_usuario",
+          "unique": true
+        },
+        {
+          "table": "conta_vinculos",
+          "name": "id_requisito",
+          "columns": "id_requisito",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "conta_vinculos",
+          "columns": "id_externo",
+          "ref": "publico_externo",
+          "refColumns": "id_externo",
+          "delete": "CASCADE"
+        },
+        {
+          "table": "conta_vinculos",
+          "columns": "id_usuario",
+          "ref": "usuarios",
+          "refColumns": "id_usuario",
+          "delete": "CASCADE"
+        },
+        {
+          "table": "conta_vinculos",
+          "columns": "id_requisito",
+          "ref": "docente_requisitos",
+          "refColumns": "id_requisito",
+          "delete": "SET NULL"
+        }
+      ]
+    },
+    {
+      "name": "agenda_vinculos",
+      "sql": "CREATE TABLE IF NOT EXISTS agenda_vinculos (id_evento_externo INT PRIMARY KEY,id_evento INT NOT NULL UNIQUE,FOREIGN KEY(id_evento_externo) REFERENCES agenda_externa(id_evento) ON DELETE CASCADE,FOREIGN KEY(id_evento) REFERENCES calendario(id_evento) ON DELETE CASCADE) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "agenda_vinculos",
+          "name": "id_evento_externo",
+          "definition": "id_evento_externo INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "agenda_vinculos",
+          "name": "id_evento",
+          "definition": "id_evento INT NOT NULL",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        }
+      ],
+      "indexes": [
+        {
+          "table": "agenda_vinculos",
+          "name": "PRIMARY",
+          "columns": "id_evento_externo",
+          "unique": true
+        },
+        {
+          "table": "agenda_vinculos",
+          "name": "id_evento",
+          "columns": "id_evento",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "agenda_vinculos",
+          "columns": "id_evento_externo",
+          "ref": "agenda_externa",
+          "refColumns": "id_evento",
+          "delete": "CASCADE"
+        },
+        {
+          "table": "agenda_vinculos",
+          "columns": "id_evento",
+          "ref": "calendario",
+          "refColumns": "id_evento",
+          "delete": "CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "vinculo_auditoria",
+      "sql": "CREATE TABLE IF NOT EXISTS vinculo_auditoria (id_auditoria INT AUTO_INCREMENT PRIMARY KEY,id_requisito INT NULL,id_externo INT NULL,id_admin INT NULL,acao VARCHAR(30) NOT NULL,motivo VARCHAR(1000) NOT NULL,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE SET NULL,FOREIGN KEY(id_admin) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;",
+      "columns": [
+        {
+          "table": "vinculo_auditoria",
+          "name": "id_auditoria",
+          "definition": "id_auditoria INT AUTO_INCREMENT PRIMARY KEY",
+          "type": "int",
+          "nullable": false,
+          "default": null,
+          "auto": true,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "vinculo_auditoria",
+          "name": "id_requisito",
+          "definition": "id_requisito INT NULL",
+          "type": "int",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "vinculo_auditoria",
+          "name": "id_externo",
+          "definition": "id_externo INT NULL",
+          "type": "int",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "vinculo_auditoria",
+          "name": "id_admin",
+          "definition": "id_admin INT NULL",
+          "type": "int",
+          "nullable": true,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "vinculo_auditoria",
+          "name": "acao",
+          "definition": "acao VARCHAR(30) NOT NULL",
+          "type": "varchar(30)",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "vinculo_auditoria",
+          "name": "motivo",
+          "definition": "motivo VARCHAR(1000) NOT NULL",
+          "type": "varchar(1000)",
+          "nullable": false,
+          "default": null,
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        },
+        {
+          "table": "vinculo_auditoria",
+          "name": "criado_em",
+          "definition": "criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "type": "datetime",
+          "nullable": false,
+          "default": "current_timestamp()",
+          "auto": false,
+          "onUpdate": false,
+          "collation": null
+        }
+      ],
+      "indexes": [
+        {
+          "table": "vinculo_auditoria",
+          "name": "PRIMARY",
+          "columns": "id_auditoria",
+          "unique": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "vinculo_auditoria",
+          "columns": "id_requisito",
+          "ref": "docente_requisitos",
+          "refColumns": "id_requisito",
+          "delete": "SET NULL"
+        },
+        {
+          "table": "vinculo_auditoria",
+          "columns": "id_externo",
+          "ref": "publico_externo",
+          "refColumns": "id_externo",
+          "delete": "SET NULL"
+        },
+        {
+          "table": "vinculo_auditoria",
+          "columns": "id_admin",
+          "ref": "usuarios",
+          "refColumns": "id_usuario",
+          "delete": "SET NULL"
+        }
+      ]
+    }
+  ]
+}

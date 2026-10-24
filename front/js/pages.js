@@ -475,8 +475,8 @@
         if (!institutional) {
             $('.ar-hero-title').textContent = 'Agenda';
             $('.ar-hero-desc').textContent =
-                'Eventos públicos da agenda comum e seus compromissos pessoais. O calendário acadêmico IFPA é de acesso institucional.';
-            $('#calendarSourceFilter').closest('label').hidden = true;
+                'Calendários publicados para todos e seus compromissos pessoais. Eventos privados e ocultos não aparecem nesta agenda.';
+            $('#calendarSourceFilter').closest('label').hidden = false;
         }
         container.addEventListener('click',(event)=>{
             const button=event.target.closest('[data-calendar-remind]');
@@ -837,8 +837,8 @@
             sourcePicker.value = groups.includes(selected) ? selected : '';
         }
         async function reload(saved) {
-            if (saved && ['publico', 'pessoal'].includes(saved.visibilidade))
-                audience.value = saved.visibilidade;
+            if (saved && saved.visibilidade)
+                audience.value = saved.visibilidade === 'pessoal' ? 'pessoal' : 'publico';
             rows = await api.expect(api.get('/api/calendar'));
             managedRows =
                 A.auth.getSessao().id_usuario && A.auth.getSessao().tipo_usuario !== 'externo'
@@ -873,7 +873,7 @@
             }
             if (A.auth.exigirLogin())
                 A.contentEditor.open('calendar', null, reload, {
-                    visibilidade: personal() ? 'pessoal' : 'publico'
+                    visibilidade: personal() ? 'pessoal' : 'institucional'
                 });
         });
         editableGrid(container, 'calendar', () => [...rows, ...managedRows], reload);
@@ -1026,13 +1026,14 @@
         info.innerHTML = `<div class="ar-info-item">Publicado: ${date(r.data_publicacao)}</div><div class="ar-info-item">Prazo: ${date(r.data_prazo)}</div><div class="ar-info-item">Vagas: ${esc(r.vagas ?? '—')}</div>`;
         const crumb = $('.ar-crumbs [aria-current="page"]');
         if (crumb) crumb.textContent = r.titulo;
-        if (A.auth.estaLogado()) {
+        if (A.auth.estaLogado() && A.auth.getSessao().tipo_usuario !== 'externo') {
             await api.expect(api.post('/api/read-notices/' + encodeURIComponent(id)));
         }
     }
 
     async function dashboard() {
         if (!A.auth.exigirLogin()) return;
+        if (A.auth.getSessao().tipo_usuario === 'externo') return;
         const stats = $$('.ar-stat-value');
         const captions = $$('.ar-stat-cap');
         stats.forEach((el) => {

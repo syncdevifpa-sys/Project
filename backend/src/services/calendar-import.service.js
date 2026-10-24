@@ -137,6 +137,7 @@ async function commit(body, actorId) {
             ...values,
             periodo_letivo: period,
             origem_calendario: 'ifpa',
+            visibilidade: 'institucional',
             descricao:
                 `${quote}\nFonte: ${meta.label}${claims.reference ? ' — ' + claims.reference : ''}${meta.source ? ' — ' + meta.source : ''}\nPDF SHA-256: ${claims.hash}`.trim()
         };
@@ -185,7 +186,8 @@ async function commit(body, actorId) {
                 'periodo_letivo',
                 'origem_calendario',
                 'data_evento',
-                'data_fim'
+                'data_fim',
+                'visibilidade'
             ];
             await connection.execute(
                 'INSERT INTO calendario (' +
@@ -205,6 +207,7 @@ async function commit(body, actorId) {
         };
     } catch (error) {
         await connection.rollback();
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) fail(409, 'A visibilidade ampliada exige a migração 1.1.28.');
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             fail(
                 409,

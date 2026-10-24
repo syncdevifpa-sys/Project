@@ -329,6 +329,8 @@
             icon: 'calendar'
         }
     ];
+    var externalPalette = window.Arcadia?.auth?.getSessao()?.tipo_usuario === 'externo';
+    if (externalPalette) PALETTE_DATA = PALETTE_DATA.filter(function(item) { return item.type !== 'Documents'; });
     var SCOPE_LABELS = {
         Notices: 'Avisos e notícias',
         Tasks: 'Tarefas',
@@ -361,7 +363,7 @@
             '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos e notícias</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tarefas</button>' +
-            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>' +
+            (externalPalette ? '' : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
             '</div>' +
             '</div>' +
@@ -574,6 +576,11 @@
     function hydrateTopNav() {
         var A = window.Arcadia;
         var sessao = (A.auth && A.auth.getSessao()) || {};
+        if (sessao.tipo_usuario === 'externo') {
+            document.querySelectorAll('.ar-nav-end a[href="settings.html"], .ar-topbar a[href="settings.html"]').forEach(function(link) {
+                link.href = 'community-settings.html';
+            });
+        }
 
         var hasValidSession = Boolean(
             sessao.id_usuario ||
@@ -592,7 +599,7 @@
                     link.href = 'login.html';
                 });
         }
-        var userName = sessao.nome || 'Visitante';
+        var userName = A.formatPersonName ? A.formatPersonName(sessao.nome) || 'Visitante' : sessao.nome || 'Visitante';
         var userRole = sessao.is_admin
             ? 'Administrador'
             : sessao.vinculo || (A.auth ? A.auth.paraVinculo(sessao.tipo_usuario) : 'Usuário');
@@ -614,7 +621,7 @@
             el.textContent = userRole;
         });
         updateUserAvatar(sessao.foto, userName, userInitials);
-        if (sessao.is_admin && !document.getElementById('adminAccess')) {
+        if (sessao.is_admin && sessao.tipo_usuario !== 'externo' && !document.getElementById('adminAccess')) {
             var end =
                 document.querySelector('.ar-navpill') || document.querySelector('.ar-nav-end');
             if (end) {
@@ -628,7 +635,7 @@
         }
 
         if (sessao.nome) {
-            var primeiroNome = sessao.nome.split(' ')[0];
+            var primeiroNome = userName.split(' ')[0];
             var greetingEl = document.getElementById('painelUserGreeting');
             if (greetingEl) greetingEl.textContent = primeiroNome;
             var titleEl = document.querySelector('.portal-titulo');

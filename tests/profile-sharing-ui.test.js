@@ -105,8 +105,11 @@ test('banco sem migração não permite publicar; externo usa endpoint próprio 
     await new Promise((resolve) => setImmediate(resolve));
     await external.nodes.find((node) => node.tag === 'form').events.submit({ preventDefault() {} });
     assert.equal(external.calls[1].path, '/api/external/compartilhamento');
+    assert.equal(Object.keys(external.calls[1].body).length, 0);
+    assert.equal(external.root.children.some(node => node.tag === 'label'), false);
+    assert.equal(external.nodes.some(node => node.type === 'checkbox' && external.nodes.find(n => n.tag === 'fieldset').children.includes(node)), false);
     assert.ok(
-        external.nodes.some((node) => node.textContent?.includes('não adicionam sua conta à lista'))
+        external.nodes.some((node) => node.textContent?.includes('não é publicada no diretório Pessoas'))
     );
 });
 test('falha ao carregar permite digitar, mas impede sobrescrever preferências desconhecidas', async () => {

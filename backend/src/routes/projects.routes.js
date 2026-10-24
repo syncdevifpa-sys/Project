@@ -34,8 +34,9 @@ router.get('/my', authenticateToken, async (req, res) => {
 });
 
 // Public
-router.get('/', listProjects);
-router.get('/:id', getProjectById);
+const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
+router.get('/', optionalNoticeViewer, listProjects);
+router.get('/:id', optionalNoticeViewer, getProjectById);
 
 // Authenticated institutional user
 router.post('/', authenticateToken, createProject);

@@ -56,6 +56,7 @@ app.use((req, res, next) => {
 // ==============================
 
 app.use(express.json({ limit: '2mb' }));
+app.use('/api', require('./src/middlewares/subject.middleware').externalScope);
 // Respostas autenticadas e de autenticação nunca devem persistir no cache HTTP.
 app.use('/api', (req, res, next) => {
     if (req.headers.authorization || /^\/(auth|external)(\/|$)/.test(req.path))

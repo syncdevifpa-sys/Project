@@ -101,7 +101,8 @@
                 vagas: 0,
                 unidade_vaga: 'vagas',
                 situacao: 'ativo',
-                permite_externos: false
+                permite_externos: false,
+                visibilidade: 'privado'
             },
             fields: [
                 title,
@@ -116,6 +117,7 @@
                         inovacao: 'Inovação'
                     }
                 ],
+                ['visibilidade', 'Visibilidade do projeto', { privado: 'Comunidade institucional', publico: 'Público, incluindo Comunidade externa' }],
                 ['permite_externos', 'Permitir inscrições da Comunidade externa', 'checkbox'],
                 ['responsavel_nome', 'Pessoa responsável', 'text', 100],
                 ['rotulo_responsavel', 'Rótulo da responsabilidade', 'text', 20],
@@ -141,7 +143,7 @@
             label: 'Evento',
             id: 'id_evento',
             endpoint: '/api/calendar',
-            defaults: { categoria: 'evento', oculto: false, visibilidade: 'publico' },
+            defaults: { categoria: 'evento', oculto: false, visibilidade: 'institucional' },
             fields: [
                 title,
                 description,
@@ -188,8 +190,10 @@
                     'visibilidade',
                     'Visibilidade',
                     {
-                        publico: 'Público · todos podem consultar',
-                        pessoal: 'Pessoal · apenas o autor'
+                        institucional: 'Comunidade do IFPA',
+                        comunidade: 'Comunidade do IFPA e externa',
+                        publico: 'Público na internet · inclui visitantes',
+                        pessoal: 'Privado · apenas o responsável'
                     }
                 ],
                 ['oculto', 'Ocultar evento do calendário', 'checkbox']
