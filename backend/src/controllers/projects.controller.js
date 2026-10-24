@@ -3,7 +3,7 @@ const projectsModel = require('../models/projects.model');
 
 async function listProjects(req, res) {
     try {
-        const projects = await projectsModel.listProjects();
+        const projects = await projectsModel.listProjects({ institutional: !!req.user });
 
         return res.json(projects);
     } catch (error) {
@@ -26,7 +26,7 @@ async function getProjectById(req, res) {
     try {
         const project = await projectsModel.findProjectById(req.params.id);
 
-        if (!project || project.aprovacao !== 'aprovado') {
+        if (!project || project.aprovacao !== 'aprovado' || (!req.user && project.visibilidade !== 'publico')) {
             return res.status(404).json({
                 error: 'Projeto não encontrado.'
             });

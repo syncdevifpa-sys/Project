@@ -99,11 +99,13 @@
 }
 @font-face {
   font-family: 'Onest';
+  font-display: optional;
   src: url(fonts/Onest-Variable-latin.woff2) format('woff2');
   font-weight: 100 900;
 }
 @font-face {
   font-family: 'JetBrains Mono';
+  font-display: swap;
   src: url(fonts/JetBrainsMono-Variable-latin.woff2) format('woff2');
   font-weight: 100 800;
 }

@@ -2,6 +2,8 @@
 
 Frontend em HTML, CSS e JavaScript; API em Node.js/Express; banco MySQL.
 
+TypeScript foi iniciado em um utilitário delimitado das ferramentas, sem converter a aplicação inteira. Consulte [o escopo e os comandos](docs/typescript-gradual.md).
+
 ## Organização
 
 | Pasta | Conteúdo |

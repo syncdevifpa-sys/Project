@@ -41,7 +41,8 @@ test('cadastro externo aceita e-mail comum e ignora cargo/admin enviados pelo cl
                 nome: 'Visitante',
                 email: 'visitante@gmail.com',
                 senha: 'senha-segura',
-                tipo_usuario: 'servidor',
+                tipo_usuario: 'externo',
+                intencao_cadastro: 'servidor',
                 is_admin: true
             }
         },
@@ -159,11 +160,11 @@ test('comparação institucional é exata e domínio não permite autoatribuir c
             },
             res
         );
-        assert.equal(res.code, tipo_usuario === 'docente' ? 400 : 403);
+        assert.equal(res.code, 400);
     }
 });
 
-test('página de comunidade carrega apenas perfil externo e vincula logout', async () => {
+test('página de comunidade carrega apenas perfil externo e usa o logout compartilhado', async () => {
     const nodes = Object.fromEntries(
         [
             'externalLogout',
@@ -183,8 +184,10 @@ test('página de comunidade carrega apenas perfil externo e vincula logout', asy
     const calls = [];
     let exited = false;
     const context = {
+        location: { pathname: '/community.html' },
         window: {
             Arcadia: {
+                formatPersonName: value => value,
                 token: { get: () => 'test-token' },
                 auth: {
                     getSessao: () => ({ logado: true, tipo_usuario: 'externo' }),
@@ -209,8 +212,10 @@ test('página de comunidade carrega apenas perfil externo e vincula logout', asy
     );
     assert.deepEqual(calls, ['/api/external/me']);
     assert.equal(nodes.externalName.textContent, 'Visitante');
-    nodes.externalLogout.click();
-    assert.equal(exited, true);
+    assert.equal(exited, false);
+    const html=fs.readFileSync(path.join(__dirname,'../front/community.html'),'utf8');
+    assert.ok(html.includes('id="externalLogout" data-sign-out'));
+    assert.ok(html.includes('src="js/auth.js"'));
 });
 
 require('node:test').beforeEach((t) => {

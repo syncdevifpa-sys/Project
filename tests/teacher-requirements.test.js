@@ -11,13 +11,17 @@ function fixture({
     pending = true,
     version = 1,
     failAt = null,
-    changedEmail = false
+    changedEmail = false,
+    intent = 'docente',
+    requested = 'docente',
+    events = []
 } = {}) {
     const queries = [],
         writes = [],
         lifecycle = [];
     const account = {
         id_externo: 5,
+        intencao_cadastro: intent,
         nome: 'Pessoa de teste',
         email: changedEmail ? 'outra@example.com' : 'pessoa@example.com',
         telefone: '91999990000',
@@ -27,6 +31,7 @@ function fixture({
     };
     const request = {
         id_requisito: 3,
+        tipo_solicitado: requested,
         id_externo: 5,
         nome: 'Pessoa de teste',
         email: 'pessoa@example.com',
@@ -66,6 +71,7 @@ function fixture({
                 return [collision ? [{ id_usuario: 99 }] : []];
             if (sql.startsWith('SELECT foto FROM perfil_compartilhamento'))
                 return [[{ foto: 'foto-existente' }]];
+            if (sql.startsWith('SELECT * FROM agenda_externa')) return [events];
             if (sql.startsWith('SELECT')) throw Error('Consulta não coberta: ' + sql);
             writes.push({ sql, args });
             return [{ insertId: sql.startsWith('INSERT INTO usuarios') ? 20 : 3, affectedRows: 1 }];
@@ -99,6 +105,81 @@ function fixture({
     };
 }
 const body = { matricula: '12345', nome_usuario: 'Pessoa.Teste', formacao: 'Licenciatura' };
+
+test('externo comum inicia explicitamente vínculo Aluno/Professor/Servidor sem promover nem alterar intenção', async () => {
+    for (const type of ['discente','docente','servidor']) {
+        const f = fixture({pending:false,intent:'externo'});
+        await f.service.startChange(5,{...body,tipo_solicitado:type,formacao:type==='docente'?'Licenciatura':'',curso_informado:'Informática · ingresso 2027.1',is_admin:true});
+        const request = f.writes.find(q=>q.sql.startsWith('INSERT INTO docente_requisitos'));
+        assert.equal(request.args[6],type); assert.equal(request.args[8],'configuracoes');
+        assert.equal(f.account.intencao_cadastro,'externo');
+        assert.ok(!f.writes.some(q=>/INSERT INTO usuarios|UPDATE publico_externo/.test(q.sql)));
+        if (type === 'discente') assert.equal(request.args[7],'Informática · ingresso 2027.1');
+    }
+    const duplicate = fixture({requested:'servidor',intent:'externo'});
+    duplicate.request.origem_solicitacao='configuracoes';
+    await assert.rejects(duplicate.service.startChange(5,{...body,tipo_solicitado:'docente'}),{status:409});
+    assert.equal(duplicate.writes.length,0);
+});
+
+test('aprovação de cada vínculo preserva origem, credenciais e preferência sem conceder admin ou turma', async () => {
+    for (const requested of ['discente','docente','servidor']) {
+        const f=fixture({intent:'externo',requested}); f.request.origem_solicitacao='configuracoes';
+        await f.service.decide(7,3,{decisao:'aprovar',versao:1,conferencia:true,is_admin:true});
+        const created=f.writes.find(q=>q.sql.startsWith('INSERT INTO usuarios'));
+        assert.equal(created.args[4],requested); assert.equal(created.args[3],f.account.senha); assert.equal(created.args[8],5);
+        assert.ok(f.writes.some(q=>q.sql.startsWith('INSERT INTO preferencias_notificacao')));
+        assert.ok(f.writes.some(q=>q.sql.startsWith('INSERT INTO conta_vinculos')));
+        assert.ok(!f.writes.some(q=>/INSERT INTO academico_matriculas|DELETE FROM publico_externo/.test(q.sql)));
+        assert.doesNotMatch(created.sql,/is_admin/);
+    }
+});
+
+test('rejeição mantém conta; desativação por abuso exige prova explícita, motivo, admin e auditoria', async () => {
+    const denied=fixture();
+    await denied.service.decide(7,3,{decisao:'recusar',versao:1,justificativa:'Vínculo ainda não comprovado'});
+    assert.ok(!denied.writes.some(q=>/UPDATE publico_externo|DELETE FROM tokens/.test(q.sql)));
+    const missing=fixture();
+    await assert.rejects(missing.service.decide(7,3,{decisao:'desativar',versao:1,justificativa:'Abuso comprovado'}),{status:400});
+    assert.equal(missing.writes.length,0);
+    const unauthorized=fixture({admin:false});
+    await assert.rejects(unauthorized.service.decide(7,3,{decisao:'desativar',versao:1,justificativa:'Abuso comprovado',abuso_confirmado:true}),{status:403});
+    const abuse=fixture();
+    await abuse.service.decide(7,3,{decisao:'desativar',versao:1,justificativa:'Spam comprovado após análise',abuso_confirmado:true});
+    assert.ok(abuse.writes.some(q=>q.sql.startsWith('INSERT INTO vinculo_auditoria')));
+    assert.ok(abuse.writes.some(q=>q.sql.startsWith('DELETE FROM tokens')));
+    assert.ok(!abuse.writes.some(q=>q.sql.startsWith('DELETE FROM publico_externo')));
+});
+test('conta externa comum não recebe opção de vínculo nem consegue forjar solicitação',async()=>{
+    const f=fixture({pending:false,intent:'externo'});
+    const own=await f.service.own(5);
+    assert.equal(own.can_request,false);assert.equal(own.tipo_solicitado,null);
+    await assert.rejects(f.service.submit(5,{...body,tipo_solicitado:'docente',intencao_cadastro:'docente'}),{status:403});
+    assert.equal(f.writes.length,0);
+});
+test('Servidor escolhido no cadastro permite formação opcional e só é concedido após revisão',async()=>{
+    const fresh=fixture({pending:false,intent:'servidor',requested:'servidor'});
+    await fresh.service.submit(5,{...body,formacao:'',tipo_solicitado:'docente'});
+    const insertion=fresh.writes.find(q=>q.sql.startsWith('INSERT INTO docente_requisitos'));
+    assert.equal(insertion.args[6],'servidor');assert.equal(insertion.args[5],'');
+    assert.ok(!fresh.writes.some(q=>q.sql.startsWith('INSERT INTO usuarios')));
+    const reviewed=fixture({intent:'servidor',requested:'servidor'});
+    reviewed.request.formacao='';
+    await reviewed.service.decide(7,3,{decisao:'aprovar',versao:1,conferencia:true,tipo_usuario:'docente'});
+    assert.equal(reviewed.writes.find(q=>q.sql.startsWith('INSERT INTO usuarios')).args[4],'servidor');
+    assert.ok(reviewed.writes.some(q=>q.sql.startsWith('UPDATE tarefas SET id_usuario=')));
+    assert.ok(reviewed.writes.some(q=>q.sql.startsWith('UPDATE lembretes SET id_usuario=')&&q.sql.includes('versao=versao+1') && !q.sql.includes('enviar_email=FALSE')));
+});
+test('legado precisa de pedido próprio comprovado; não infere intenção de email ou domínio',async()=>{
+    const legacy=fixture({intent:'externo',pending:true});
+    assert.equal((await legacy.service.own(5)).tipo_solicitado,'docente');
+    await legacy.service.submit(5,body);
+    const noRequest=fixture({intent:undefined,pending:false});
+    noRequest.account.intencao_cadastro=undefined;
+    noRequest.account.email='professor@ifpa.edu.br';
+    assert.equal((await noRequest.service.own(5)).can_request,false);
+    await assert.rejects(noRequest.service.submit(5,body),{status:403});
+});
 test('solicitação é vinculada à conta e atualiza um único pedido pendente sem conceder cargo', async () => {
     const f = fixture();
     await f.service.submit(5, {
@@ -118,6 +199,9 @@ test('solicitação é vinculada à conta e atualiza um único pedido pendente s
         '12345',
         'pessoa.teste',
         'Licenciatura',
+        'docente',
+        null,
+        'cadastro',
         3
     ]);
     assert.match(f.writes[0].sql, /versao=versao\+1/);
@@ -169,7 +253,7 @@ test('aprovação exige e-mail realmente confirmado, versão atual e conferênci
     });
     assert.equal(f.writes.length, 0);
 });
-test('aprovação preserva senha, confirmação e Google; encerra sessões e substitui conta atomicamente', async () => {
+test('aprovação preserva senha, confirmação e Google; encerra sessões e mantém origem da mesma conta atomicamente', async () => {
     const f = fixture();
     await f.service.decide(7, 3, { decisao: 'aprovar', versao: 1, conferencia: true });
     const created = f.writes.find((q) => q.sql.startsWith('INSERT INTO usuarios'));
@@ -178,11 +262,13 @@ test('aprovação preserva senha, confirmação e Google; encerra sessões e sub
         'pessoa@example.com',
         '91999990000',
         'hash-existente',
+        'docente',
         '12345',
         'foto-existente',
-        f.account.criado_em
+        f.account.criado_em,
+        5
     ]);
-    assert.match(created.sql, /'docente'/);
+    assert.equal(created.args[4], 'docente');
     assert.doesNotMatch(created.sql, /is_admin/);
     assert.deepEqual(
         f.writes.find((q) => q.sql.startsWith('UPDATE google_identidades')).args,
@@ -200,7 +286,9 @@ test('aprovação preserva senha, confirmação e Google; encerra sessões e sub
         f.writes.some((q) => q.sql === 'DELETE FROM tokens WHERE id_externo=?' && q.args[0] === 5)
     );
     assert.ok(f.writes.some((q) => q.sql === 'DELETE FROM recuperacao_senha WHERE id_externo=?'));
-    assert.equal(f.writes.at(-1).sql, 'DELETE FROM publico_externo WHERE id_externo=?');
+    assert.equal(f.writes.at(-1).sql, "UPDATE publico_externo SET situacao='bloqueado' WHERE id_externo=?");
+    assert.ok(f.writes.some(q => q.sql.startsWith('INSERT INTO conta_vinculos') && q.args[0] === 5 && q.args[1] === 20));
+    assert.ok(!f.writes.some(q => q.sql.startsWith('DELETE FROM publico_externo')));
     assert.deepEqual(f.lifecycle, ['begin', 'commit', 'release']);
     const externalLock = f.queries.findIndex(
         (q) => q.sql.startsWith('SELECT * FROM publico_externo') && q.sql.includes('FOR UPDATE')
@@ -219,6 +307,13 @@ test('falha ao transferir Google reverte aprovação sem confirmar uma promoçã
     assert.ok(f.lifecycle.includes('rollback'));
     assert.ok(!f.lifecycle.includes('commit'));
     assert.ok(!f.writes.some((q) => q.sql.startsWith('DELETE FROM publico_externo')));
+});
+
+test('falha tardia ao relacionar agenda reverte aprovação antes de bloquear a origem', async () => {
+    const f=fixture({failAt:'INSERT INTO agenda_vinculos',events:[{id_evento:91,titulo:'Evento',data_evento:'2027-01-01'}]});
+    await assert.rejects(f.service.decide(7,3,{decisao:'aprovar',versao:1,conferencia:true}),/falha simulada/);
+    assert.ok(f.lifecycle.includes('rollback'));assert.ok(!f.lifecycle.includes('commit'));
+    assert.ok(!f.writes.some(q=>q.sql.startsWith("UPDATE publico_externo SET situacao='bloqueado'")));
 });
 test('campos obrigatórios e nome de usuário são validados sem aceitar atributos de privilégio', () => {
     assert.equal(

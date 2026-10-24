@@ -61,8 +61,11 @@
                 token = null;
                 try {
                     window.sessionStorage.removeItem('arcadia.pendingEmail');
+                    window.sessionStorage.setItem('arcadia.emailConfirmed', '1');
                 } catch {}
                 if (data.reauthenticate) window.Arcadia.token.clear();
+                status.textContent = 'E-mail confirmado. Redirecionando para entrar…';
+                location.replace('login.html');
             }
         } catch (error) {
             status.textContent =
@@ -73,7 +76,7 @@
     }
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        if (token) submit(form, '/api/email-verification/confirm', { token });
+        if (token && !form.querySelector('button').disabled) submit(form, '/api/email-verification/confirm', { token });
     });
     resend.addEventListener('submit', (event) => {
         event.preventDefault();

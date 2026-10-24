@@ -453,6 +453,16 @@ window.Arcadia = window.Arcadia || {};
             const msgErro = form.querySelector('.mensagem-erro, .error-message');
             const msgSucesso = form.querySelector('.mensagem-sucesso, .success-message');
             const confirmationHelp = form.querySelector('[data-email-verification-help]');
+              const confirmedNotice = form.querySelector('[data-email-confirmation-notice]');
+              if (tipoAcesso === 'login' && confirmedNotice) {
+                  try {
+                      if (window.sessionStorage.getItem('arcadia.emailConfirmed') === '1') {
+                          confirmedNotice.hidden = false;
+                          confirmedNotice.textContent = 'E-mail confirmado. Entre com sua senha ou com o Google já vinculado à sua conta.';
+                          window.sessionStorage.removeItem('arcadia.emailConfirmed');
+                      }
+                  } catch { /* A confirmação não depende de armazenamento no navegador. */ }
+              }
 
             const showError = (text) => {
                 if (msgErro) {
@@ -526,7 +536,7 @@ window.Arcadia = window.Arcadia || {};
                               : 'Aluno';
                     const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
 
-                    if (!['discente', 'externo', 'docente'].includes(tipo_usuario)) {
+                    if (!['discente', 'externo', 'docente', 'servidor'].includes(tipo_usuario)) {
                         return showError(
                             'Contas de professor e servidor precisam ser autorizadas pela administração.'
                         );
@@ -541,7 +551,7 @@ window.Arcadia = window.Arcadia || {};
 
                     try {
                         const { ok, status, data } = await api.post(
-                            ['externo', 'docente'].includes(tipo_usuario)
+                            ['externo', 'docente', 'servidor'].includes(tipo_usuario)
                                 ? '/api/external/register'
                                 : '/api/users',
                             {
@@ -549,7 +559,7 @@ window.Arcadia = window.Arcadia || {};
                                 email,
                                 senha,
                                 tipo_usuario,
-                                ...(tipo_usuario === 'docente'
+                                ...(['docente','servidor'].includes(tipo_usuario)
                                     ? {
                                           matricula: form.querySelector('#teacherMatricula')?.value,
                                           nome_usuario:
@@ -561,7 +571,7 @@ window.Arcadia = window.Arcadia || {};
                                     telefone ||
                                     (form.querySelector('#telefone')?.value || '').trim() ||
                                     null,
-                                id_curso: ['discente', 'servidor'].includes(tipo_usuario)
+                                id_curso: tipo_usuario === 'discente'
                                     ? Number(form.querySelector('#curso')?.value) || null
                                     : null
                             },
@@ -585,7 +595,7 @@ window.Arcadia = window.Arcadia || {};
                             return showError(data.error || 'Não foi possível realizar o cadastro.');
                         }
 
-                        const createdId = ['externo', 'docente'].includes(tipo_usuario)
+                        const createdId = ['externo', 'docente', 'servidor'].includes(tipo_usuario)
                             ? data?.externalId
                             : data?.userId;
                         if (
@@ -754,16 +764,18 @@ window.Arcadia = window.Arcadia || {};
         function atualizarCurso(tipo) {
             if (!cursoWrap) return;
             const ehAluno = tipo === 'discente';
-            const publicRole = ehAluno || tipo === 'externo' || tipo === 'docente';
+            const publicRole = ['discente','externo','docente','servidor'].includes(tipo);
             const teacherFields = document.getElementById('teacherSignupFields');
             if (teacherFields) {
-                teacherFields.hidden = tipo !== 'docente';
+                teacherFields.hidden = !['docente','servidor'].includes(tipo);
                 for (const input of teacherFields.querySelectorAll('input')) {
-                    input.required = tipo === 'docente';
-                    input.disabled = tipo !== 'docente';
+                    input.required = ['docente','servidor'].includes(tipo) && !(tipo === 'servidor' && input.id === 'teacherFormacao');
+                    input.disabled = !['docente','servidor'].includes(tipo);
                 }
+                const trainingLabel = document.getElementById('teacherFormacaoLabel');
+                if (trainingLabel) trainingLabel.textContent = tipo === 'servidor' ? 'Formação no SIGAA (opcional)' : 'Formação no SIGAA';
             }
-            const academicVisible = ehAluno || tipo === 'servidor';
+            const academicVisible = ehAluno;
             cursoWrap.style.display = academicVisible ? 'flex' : 'none';
             if (courseLabel)
                 courseLabel.textContent = ehAluno ? 'Curso' : 'Curso / formação (opcional)';
@@ -779,6 +791,8 @@ window.Arcadia = window.Arcadia || {};
                     ? 'Aluno: preencha seus dados e selecione o curso. O cadastro aceita e-mail pessoal, como Gmail.'
                     : tipo === 'docente'
                       ? 'Professor: confirme seu e-mail e aguarde a análise dos Requisitos. Enquanto isso, sua conta terá acesso de Comunidade externa.'
+                      : tipo === 'servidor'
+                        ? 'Servidor: confirme seu e-mail e aguarde a análise do vínculo. Formação é opcional; até a aprovação, seu acesso será de Comunidade externa.'
                       : tipo === 'externo'
                         ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
                         : (tipo === 'docente' ? 'Professor' : 'Servidor') +

@@ -18,6 +18,8 @@ CREATE TABLE cursos (
 -- 2. USUÁRIOS
 -- ---------------------------------------------------------------------
 CREATE TABLE usuarios (
+    id_externo_origem INT NULL,
+    UNIQUE KEY uq_usuario_origem_externa(id_externo_origem),
     id_usuario      INT AUTO_INCREMENT PRIMARY KEY,
     nome            VARCHAR(100) NOT NULL,
     nome_social     VARCHAR(100),
@@ -64,7 +66,8 @@ CREATE TABLE publico_externo (
     atualizado_em   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
                         ON UPDATE CURRENT_TIMESTAMP,
     email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,
-    consentimento_lembretes_em DATETIME NULL
+    consentimento_lembretes_em DATETIME NULL,
+    intencao_cadastro ENUM('externo','docente','servidor') NOT NULL DEFAULT 'externo'
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -219,7 +222,11 @@ CREATE TABLE avisos_lidos (                            -- contador "Avisos não 
 -- ---------------------------------------------------------------------
 CREATE TABLE tarefas (
     id_tarefa       INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario      INT NOT NULL,                      -- dono da tarefa
+    id_usuario      INT NULL,                          -- titular institucional ou externo, nunca ambos
+    id_externo INT NULL,
+    CONSTRAINT chk_tarefa_titular CHECK ((id_usuario IS NULL) <> (id_externo IS NULL)),
+    FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,
+    INDEX idx_tarefas_externo (id_externo,data_entrega),
     titulo          VARCHAR(150) NOT NULL,
     categoria       VARCHAR(40) NOT NULL DEFAULT 'Acadêmico',   -- Acadêmico, Estágio, Secretaria, Pesquisa
     responsavel     VARCHAR(100),                      -- texto livre: pessoa ou setor
@@ -277,7 +284,7 @@ CREATE TABLE calendario (
     categoria       ENUM('matricula', 'cancelamento', 'evento', 'edital', 'feriado', 'ferias', 'aniversario', 'atividades_campus', 'sabado_letivo', 'periodo_academico', 'culminancia_bimestral', 'recesso', 'registro_academico', 'ponto_facultativo', 'avaliacao', 'interrupcao_presencial', 'ferias_docentes')
                         NOT NULL DEFAULT 'evento',
     oculto         TINYINT(1) NOT NULL DEFAULT 0,
-    visibilidade   ENUM('publico','pessoal') NOT NULL DEFAULT 'publico',
+    visibilidade   ENUM('publico','pessoal','institucional','comunidade') NOT NULL DEFAULT 'publico',
     periodo_letivo  VARCHAR(60),                       -- "2º semestre letivo · 2026" (agrupamento)
     data_evento     DATE NOT NULL,
     data_fim        DATE NULL,
@@ -297,6 +304,7 @@ CREATE TABLE calendario (
 -- 8. PROJETOS (pesquisa, extensão, ensino, inovação)
 -- ---------------------------------------------------------------------
 CREATE TABLE projetos (
+    visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado',
     permite_externos TINYINT(1) NOT NULL DEFAULT 0,
     id_projeto        INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario        INT NULL,                        -- quem cadastrou/submeteu
@@ -443,7 +451,7 @@ CREATE VIEW vw_proximas_datas AS
 --   ORDER BY criado_em DESC LIMIT 4
 CREATE VIEW vw_criados_recentemente AS
     SELECT 'projeto' AS origem, id_projeto AS id_origem, titulo, criado_em, NULL AS id_usuario
-      FROM projetos WHERE aprovacao = 'aprovado'
+      FROM projetos WHERE aprovacao = 'aprovado' AND visibilidade = 'publico'
     UNION ALL
     SELECT 'aviso', id_aviso, titulo, criado_em, NULL
       FROM avisos WHERE situacao = 'publicado'
@@ -709,6 +717,9 @@ CREATE TABLE academico_publicacoes (
 
 -- Não promove contas existentes nem altera confirmação de e-mail.
 CREATE TABLE docente_requisitos (
+ curso_informado VARCHAR(150) NULL,
+ origem_solicitacao ENUM('cadastro','configuracoes') NOT NULL DEFAULT 'cadastro',
+ tipo_solicitado ENUM('docente','servidor','discente') NOT NULL DEFAULT 'docente',
  id_requisito INT AUTO_INCREMENT PRIMARY KEY,
  id_externo INT NULL UNIQUE,
  id_usuario INT NULL UNIQUE,
@@ -839,9 +850,16 @@ BEGIN
 END$$
 DELIMITER ;
 
+CREATE TABLE conta_vinculos (id_externo INT PRIMARY KEY,id_usuario INT NOT NULL UNIQUE,id_requisito INT NULL UNIQUE,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL) ENGINE=InnoDB;
+CREATE TABLE agenda_vinculos (id_evento_externo INT PRIMARY KEY,id_evento INT NOT NULL UNIQUE,FOREIGN KEY(id_evento_externo) REFERENCES agenda_externa(id_evento) ON DELETE CASCADE,FOREIGN KEY(id_evento) REFERENCES calendario(id_evento) ON DELETE CASCADE) ENGINE=InnoDB;
+CREATE TABLE vinculo_auditoria (id_auditoria INT AUTO_INCREMENT PRIMARY KEY,id_requisito INT NULL,id_externo INT NULL,id_admin INT NULL,acao VARCHAR(30) NOT NULL,motivo VARCHAR(1000) NOT NULL,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE SET NULL,FOREIGN KEY(id_admin) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;
+
 -- Registro da instalacao consolidada (somente banco NOVO).
 CREATE TABLE arcadia_schema_migrations (
  versao VARCHAR(32) PRIMARY KEY,checksum CHAR(64) NOT NULL,verificado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.25','f0402abf4488dcc69f32855bd22dfd6ddb85fcdca802ca9c2a7e974205c6a8b1');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b671b7384d5a1474c34a23d412d3a7a73b5f6a7a58da85b634ad79d25c6');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.27','d9fd23826f42a137bc3ccc4df312df48c6efd2e21d8d324aa62cf068a18135ad');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.28','9cdf3a5752095a953bdb79caf01a7774266d7588be89ae08d9fdff5a1634d70b');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.29','45b86a2a1a6303a7356c9e7c251144fd1b7cbd2fef24f1439747485b23f27907');
