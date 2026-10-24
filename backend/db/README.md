@@ -12,9 +12,9 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 | Execução assistida pelo Workbench | `backend/db/workbench/` — adoção e etapas separadas |
 | Evolução de tarefas externas, intenção de cadastro e projetos públicos | `backend/db/migrations/1.1.27.sql` — após 1.1.26 |
 | Diagnóstico dessa evolução | `backend/db/checks/1.1.27.sql` |
-| Novos escopos do calendário, após 1.1.27 | `backend/db/migrations/1.1.28.sql` — preparada, não aplicada pelo agente |
+| Novos escopos do calendário, após 1.1.27 | `backend/db/migrations/1.1.28.sql` — aplicação confirmada pelo responsável |
 | Diagnóstico dos escopos | `backend/db/checks/1.1.28.sql` |
-| Mudança explícita de vínculo e preservação da conta, após 1.1.28 | `backend/db/migrations/1.1.29.sql` — preparada, não aplicada |
+| Mudança explícita de vínculo e preservação da conta, após 1.1.28 | `backend/db/migrations/1.1.29.sql` — aplicação confirmada pelo responsável |
 | Diagnóstico de vínculos e contas de origem | `backend/db/checks/1.1.29.sql` |
 | Rastreabilidade de scripts antigos | `backend/db/history/pre-1.1.25/` |
 | Operações administrativas específicas | `backend/admin/` |
@@ -75,7 +75,9 @@ Backup, diagnóstico e ensaio em cópia descartável precedem a aplicação. Exe
 
 No ensaio descartável, confira tarefas institucionais preexistentes, criação de tarefa externa, rejeição de dois titulares/nenhum titular, repetição do script e interrupção no primeiro erro. DDL tem commit implícito: uma falha pode deixar estruturas parcialmente aplicadas. Só prossiga com a publicação do código após conferir os objetos e o registro usando o diagnóstico da 1.1.27. Essa numeração identifica a migração; não publica nem incrementa automaticamente a versão de release do portal.
 
-## Evolução 1.1.28 — preparada, não executada
+## Evolução 1.1.28 — aplicação confirmada pelo responsável
+
+Em 24/10/2026, o responsável confirmou que aplicou as migrações 1.1.28 e 1.1.29 no banco usado pela Vercel. O agente não executou SQL nem inspecionou independentemente todos os objetos. Não reaplicar nesse banco. As instruções seguintes servem para outras bases ainda não atualizadas.
 
 A 1.1.27 já foi confirmada pelo responsável; não reaplicar. A nova 1.1.28 apenas acrescenta `institucional` e `comunidade` ao final do enum de visibilidade do calendário, preservando os valores e o padrão anteriores. Não reclassifica eventos nem modifica o manifesto/checksum aplicado da 1.1.27. Exige o registro/checksum da base e interrompe diante de definição divergente. Validar em MySQL 8.4 descartável antes de aplicação autorizada, com backup e parada no primeiro erro.
 
@@ -85,7 +87,7 @@ O responsável pode editar a visibilidade de seu evento. A edição de um calend
 
 Novos eventos/importações começam institucionais, salvo escolha explícita permitida. Os triggers da 1.1.26 invalidam os lembretes vinculados após alterações; a leitura e o processamento de lembretes reaplicam a mesma regra de acesso. Exportações da interface usam os eventos já filtrados da sessão. Não enviar este código a produção antes de coordenar a migração 1.1.28.
 
-## Evolução 1.1.29 — preparada, não executada
+## Evolução 1.1.29 — aplicação confirmada pelo responsável
 
 Requer a 1.1.28 registrada. Amplia o tipo de pedido para Aluno, acrescenta curso informado/origem da solicitação, uma origem externa única em usuários e três tabelas de ligação/auditoria. Não cria nem aprova contas em massa. A 1.1.27 aplicada e seus checksums permanecem intactos. A geração é offline; o agente não executou essas duas novas migrações em MySQL.
 
@@ -93,4 +95,4 @@ A mudança explícita passa por Requisitos. Aprovação liga os namespaces da me
 
 Ensaiar com dados fictícios os três papéis, e-mail/matrícula já usados, reenvio concorrente versus aprovação, falha intermediária na transferência, tarefa pessoal, evento com lembrete, Google pré-vinculado/não vinculado, preferências e exclusão administrativa. Conferir o diagnóstico: contagens de vínculos inconsistentes, origens sem vínculo e origens com acesso externo devem ser zero. Desativação por abuso é explícita e auditada; recusa comum não bloqueia a conta.
 
-Para este código, coordenar a aplicação autorizada de **1.1.28 e depois 1.1.29** antes do ambiente real. Não reaplicar a 1.1.27 confirmada. Os novos filtros de autenticação/administração dependem da 1.1.29; uma base anterior pode retornar indisponibilidade até a atualização. Não usar `schema.sql` inteiro no banco existente.
+Na base confirmada pelo responsável, não reaplicar a 1.1.28 nem a 1.1.29. Para outras bases, coordenar a aplicação autorizada de **1.1.28 e depois 1.1.29** antes do ambiente real. Não reaplicar a 1.1.27 confirmada. Os novos filtros de autenticação/administração dependem da 1.1.29; uma base anterior pode retornar indisponibilidade até a atualização. Não usar `schema.sql` inteiro no banco existente.

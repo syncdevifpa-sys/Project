@@ -22,6 +22,6 @@ A ação administrativa **Desativar por abuso comprovado** é distinta de recusa
 
 ## Banco e limites
 
-A migração 1.1.27 foi confirmada pelo responsável; não reaplicar. As novas etapas 1.1.28 (calendário) e 1.1.29 (mudança de vínculo) estão preparadas, não executadas pelo agente. Consulte backend/db/README.md; faça ensaio MySQL 8.4 descartável, backup e aplicação autorizada nessa ordem antes de usar o código no ambiente real. Nenhum checksum aplicado foi alterado.
+A migração 1.1.27 foi confirmada pelo responsável; não reaplicar. Em 24/10/2026, o responsável também confirmou a aplicação da 1.1.28 (calendário) e 1.1.29 (mudança de vínculo) no banco usado pela Vercel. Não reaplicar nesse banco; essa confirmação não é uma inspeção independente do agente. Consulte backend/db/README.md; para outras bases ainda não atualizadas, faça ensaio MySQL 8.4 descartável, backup e aplicação autorizada nessa ordem. Nenhum checksum aplicado foi alterado.
 
 Testes com banco simulado verificam titularidade, papéis, conflitos, transação/rollback, revogação e preservação das relações. Não substituem o ensaio SQL nem testes de conta real no Preview; nenhuma mensagem real adicional foi enviada.
