@@ -109,9 +109,10 @@
 </section>
 
 <main class="ar-community-content" aria-label="Minha conta e configurações">
+<p><button type="button" class="ar-btn ar-btn--secondary" id="startLinkRequest" hidden>Solicitar vínculo com o IFPA</button></p>
 <details hidden id="teacherRequestSection" class="ar-teacher-request"
         ><summary
-          ><span>Perfil de Professor</span
+          ><span id="requestedRoleTitle">Vínculo com o IFPA</span
           ><span class="ar-teacher-state" id="teacherRequestState"
             >Validação institucional</span
           ></summary
@@ -121,8 +122,7 @@
           acesso atual é <strong>Comunidade externa</strong> até a aprovação.</p
         ><p id="teacherRequestStatus" role="status" aria-live="polite"></p
         ><form id="teacherRequestForm"
-          ><h3>Dados para conferência no SIGAA</h3
-          ><label>Nome da conta<input name="nome" readonly /></label
+          ><h3>Dados para conferência no SIGAA</h3><p class="ar-vinculo-warning" role="note">Esta solicitação é exclusiva para quem está ingressando ou já possui vínculo com o IFPA. Os dados serão analisados pela administração. Em caso de spam ou comprovação de declaração falsa de vínculo, a conta será desativada após análise administrativa. A recusa do pedido ou a falta de comprovante não desativa sua conta automaticamente. Não envie sua senha do SIGAA.</p><label>Vínculo solicitado<select name="tipo_solicitado" id="requestedRolePicker" required><option value="docente">Professor</option><option value="servidor">Servidor</option><option value="discente">Aluno</option></select></label><label id="requestedCourseLabel" hidden>Curso e período de ingresso / letivo no SIGAA<input name="curso_informado" maxlength="150"></label><label>Nome da conta<input name="nome" readonly /></label
           ><label>E-mail da conta<input name="email" type="email" readonly /></label
           ><label
             >Matrícula / SIAPE no SIGAA<input name="matricula" maxlength="30" required /></label

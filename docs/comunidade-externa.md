@@ -20,9 +20,11 @@ O menu e a busca rápida não oferecem destinos proibidos. URLs institucionais d
 
 A escolha inicial é persistida como intenção, sem mudar o papel efetivo da conta externa. O cadastro abre o pedido correspondente junto da conta pendente e da confirmação. Matrícula/SIAPE e usuário no SIGAA são exigidos; formação é obrigatória para Professor e opcional para Servidor. A administração vê o tipo solicitado e só aprova após conferência e e-mail confirmado.
 
-Comunidade externa comum não recebe o acordeão e não pode forjar um POST para criar pedido. Edição do perfil e login Google não alteram intenção. Google exige cadastro prévio com a escolha inicial; vincular a conta Google não cria vínculo institucional. No legado, um pedido próprio já existente permite acompanhar/corrigir o vínculo comprovado; não se infere intenção por domínio, nome ou por toda conta ser externa.
+Comunidade externa comum não recebe um formulário permanente de Professor no painel. Nas Configurações, pode iniciar explicitamente “Solicitar vínculo com o IFPA” para Aluno, Professor ou Servidor. Esse fluxo exige a migração 1.1.29 e não altera intenção original nem acesso efetivo. Edição do perfil e login Google não mudam vínculo. Um pedido pendente de outro tipo impede criar uma segunda solicitação concorrente; o responsável pode reenviar os dados no mesmo pedido.
 
-Na aprovação, a nova identidade institucional recebe somente o tipo do pedido. Senha/Google/estado de confirmação são preservados, e sessões antigas são encerradas. Tarefas próprias são transferidas; lembretes transferidos ficam desativados, sem e-mail, para revisão e novo consentimento. Dados anteriores não são apagados para simplesmente esconder áreas.
+Na aprovação, a conta recebe somente o tipo conferido do pedido, sem administração ou ingresso automático em turma. O cadastro externo fica preservado como origem bloqueada, ligado à projeção institucional por `conta_vinculos` e `usuarios.id_externo_origem`. Credenciais, Google, perfil, tarefas, preferências, agenda e histórico de lembretes são preservados; IDs de eventos externos convertidos ficam rastreáveis em `agenda_vinculos`. A versão dos lembretes avança para invalidar trabalhos de envio antigos, preservando escolha e consentimento. Sessões e tokens de recuperação anteriores são encerrados. Não há mesclagem por mera coincidência de e-mail/matrícula.
+
+Solicitar vínculo é exclusivo para ingresso ou vínculo real comprovável. A recusa comum mantém a conta externa. Desativar por spam ou falsa declaração comprovada é decisão administrativa distinta: exige justificativa e confirmação, registra auditoria e revoga sessões sem excluir dados. Nenhum bot ou classificação automática desativa a conta por não possuir vínculo.
 
 ## Banco e validação
 

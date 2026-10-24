@@ -228,7 +228,7 @@ async function people(kind) {
         kind === 'users'
             ? 'id_usuario, nome, email, tipo_usuario, situacao, is_admin, id_curso, periodo, setor'
             : 'id_externo, nome, email, situacao, organizacao';
-    const [rows] = await db.execute(`SELECT ${columns} FROM ${table} ORDER BY nome`);
+    const [rows] = await db.execute(`SELECT ${columns} FROM ${table}${kind === 'external-users' ? ' WHERE NOT EXISTS(SELECT 1 FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo)' : ''} ORDER BY nome`);
     return rows;
 }
 async function changePerson(kind, id, body, actor, deletion = false, selfRemoval = false) {
@@ -259,11 +259,12 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
             "SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE"
         );
         const [rows] = await connection.execute(
-            `SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario' : ''}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
+            `SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
             [id]
         );
         const person = rows[0];
         if (!person) fail(404, 'Pessoa não encontrada.');
+        if (!institutional && person.id_usuario_vinculado) fail(409, 'Esta é a origem de uma conta já vinculada. Gerencie a mesma conta na lista de usuários institucionais.');
         if (
             institutional &&
             person.is_admin &&
@@ -399,6 +400,10 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 id
             );
             await connection.execute(`DELETE FROM ${table} WHERE ${primary} = ?`, [id]);
+            if (institutional && person.id_externo_origem) {
+                await require('./email-verification.service').removeAccountState(connection, 'external', person.id_externo_origem);
+                await connection.execute('DELETE FROM publico_externo WHERE id_externo=?', [person.id_externo_origem]);
+            }
         } else {
             const allowed = institutional
                 ? [

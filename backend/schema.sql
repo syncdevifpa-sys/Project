@@ -18,6 +18,8 @@ CREATE TABLE cursos (
 -- 2. USUÁRIOS
 -- ---------------------------------------------------------------------
 CREATE TABLE usuarios (
+    id_externo_origem INT NULL,
+    UNIQUE KEY uq_usuario_origem_externa(id_externo_origem),
     id_usuario      INT AUTO_INCREMENT PRIMARY KEY,
     nome            VARCHAR(100) NOT NULL,
     nome_social     VARCHAR(100),
@@ -715,7 +717,9 @@ CREATE TABLE academico_publicacoes (
 
 -- Não promove contas existentes nem altera confirmação de e-mail.
 CREATE TABLE docente_requisitos (
- tipo_solicitado ENUM('docente','servidor') NOT NULL DEFAULT 'docente',
+ curso_informado VARCHAR(150) NULL,
+ origem_solicitacao ENUM('cadastro','configuracoes') NOT NULL DEFAULT 'cadastro',
+ tipo_solicitado ENUM('docente','servidor','discente') NOT NULL DEFAULT 'docente',
  id_requisito INT AUTO_INCREMENT PRIMARY KEY,
  id_externo INT NULL UNIQUE,
  id_usuario INT NULL UNIQUE,
@@ -846,6 +850,10 @@ BEGIN
 END$$
 DELIMITER ;
 
+CREATE TABLE conta_vinculos (id_externo INT PRIMARY KEY,id_usuario INT NOT NULL UNIQUE,id_requisito INT NULL UNIQUE,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE CASCADE,FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL) ENGINE=InnoDB;
+CREATE TABLE agenda_vinculos (id_evento_externo INT PRIMARY KEY,id_evento INT NOT NULL UNIQUE,FOREIGN KEY(id_evento_externo) REFERENCES agenda_externa(id_evento) ON DELETE CASCADE,FOREIGN KEY(id_evento) REFERENCES calendario(id_evento) ON DELETE CASCADE) ENGINE=InnoDB;
+CREATE TABLE vinculo_auditoria (id_auditoria INT AUTO_INCREMENT PRIMARY KEY,id_requisito INT NULL,id_externo INT NULL,id_admin INT NULL,acao VARCHAR(30) NOT NULL,motivo VARCHAR(1000) NOT NULL,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE SET NULL,FOREIGN KEY(id_admin) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;
+
 -- Registro da instalacao consolidada (somente banco NOVO).
 CREATE TABLE arcadia_schema_migrations (
  versao VARCHAR(32) PRIMARY KEY,checksum CHAR(64) NOT NULL,verificado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -854,3 +862,4 @@ INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.25','f0402ab
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b671b7384d5a1474c34a23d412d3a7a73b5f6a7a58da85b634ad79d25c6');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.27','d9fd23826f42a137bc3ccc4df312df48c6efd2e21d8d324aa62cf068a18135ad');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.28','9cdf3a5752095a953bdb79caf01a7774266d7588be89ae08d9fdff5a1634d70b');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.29','45b86a2a1a6303a7356c9e7c251144fd1b7cbd2fef24f1439747485b23f27907');

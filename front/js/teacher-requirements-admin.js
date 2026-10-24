@@ -3,6 +3,7 @@
     const q = (id) => document.getElementById(id),
         status = q('requirementsAdminStatus'),
         list = q('requirementsAdminList');
+    const personName = value => A.formatPersonName ? A.formatPersonName(value) : value;
     const el = (tag, text) => {
         const n = document.createElement(tag);
         if (text !== undefined) n.textContent = text;
@@ -36,8 +37,8 @@
                 card.append(
                     el(
                         'h3',
-                        r.nome +
-                            ' · ' + (r.tipo_solicitado === 'servidor' ? 'Servidor' : 'Professor') + ' · ' +
+                        personName(r.nome) +
+                            ' · ' + ({servidor:'Servidor',discente:'Aluno',docente:'Professor'}[r.tipo_solicitado] || 'Professor') + ' · ' +
                             { pendente: 'Pendente', recusado: 'Recusado', aprovado: 'Aprovado' }[
                                 r.estado
                             ]
@@ -48,9 +49,10 @@
                     ['email', 'E-mail'],
                     ['matricula', 'Matrícula / SIAPE no SIGAA'],
                     ['nome_usuario', 'Usuário no SIGAA'],
-                    ['formacao', 'Formação no SIGAA']
+                    ['formacao', 'Formação no SIGAA'],
+                    ['curso_informado', 'Curso e período informados']
                 ])
-                    dl.append(el('dt', label), el('dd', r[key]));
+                    if (r[key]) dl.append(el('dt', label), el('dd', r[key]));
                 card.append(dl);
                 if (r.justificativa) card.append(el('p', 'Justificativa: ' + r.justificativa));
                 if (r.estado === 'pendente') {
@@ -64,11 +66,12 @@
                     );
                     const actions = el('div');
                     actions.className = 'ar-requirement-actions';
-                    const approve = button(r.tipo_solicitado === 'servidor' ? 'Aprovar Servidor' : 'Aprovar Professor', () => decide(r, 'aprovar'));
+                    const approve = button('Aprovar ' + ({servidor:'Servidor',discente:'Aluno',docente:'Professor'}[r.tipo_solicitado] || 'Professor'), () => decide(r, 'aprovar'));
                     approve.disabled = !r.email_confirmado;
                     actions.append(
                         approve,
-                        button('Recusar', () => decide(r, 'recusar'))
+                        button('Recusar pedido', () => decide(r, 'recusar')),
+                        button('Desativar por abuso comprovado', () => decide(r, 'desativar'))
                     );
                     card.append(actions);
                 }
@@ -84,7 +87,7 @@
         dialog.className = 'ar-requirement-dialog';
         const h = el(
             'h2',
-            decision === 'aprovar' ? 'Aprovar perfil de ' + (r.tipo_solicitado === 'servidor' ? 'Servidor' : 'Professor') : 'Recusar solicitação'
+            decision === 'aprovar' ? 'Aprovar perfil de ' + ({servidor:'Servidor',discente:'Aluno',docente:'Professor'}[r.tipo_solicitado] || 'Professor') : decision === 'desativar' ? 'Desativar conta por abuso comprovado' : 'Recusar solicitação'
         );
         h.id = 'requirementsDecisionTitle';
         dialog.setAttribute('aria-labelledby', h.id);
@@ -98,7 +101,7 @@
             'label',
             decision === 'aprovar'
                 ? 'Conferi nome, matrícula / SIAPE, usuário e vínculo solicitado no SIGAA, com meu acesso institucional autorizado. Conferi também a formação quando exigida. O solicitante receberá somente o vínculo escolhido no cadastro e precisará entrar novamente.'
-                : 'Justificativa da recusa'
+                : decision === 'desativar' ? 'Descreva as evidências de spam ou falsa declaração de vínculo. A conta será desativada, com dados preservados.' : 'Justificativa da recusa'
         );
         input = el(decision === 'aprovar' ? 'input' : 'textarea');
         if (decision === 'aprovar') input.type = 'checkbox';
@@ -110,10 +113,14 @@
         const cancel = button('Cancelar', () => dialog.close()),
             save = el(
                 'button',
-                decision === 'aprovar' ? 'Confirmar aprovação' : 'Confirmar recusa'
+                decision === 'aprovar' ? 'Confirmar aprovação' : decision === 'desativar' ? 'Desativar conta' : 'Confirmar recusa'
             );
         save.type = 'submit';
         actions.append(cancel, save);
+        const abuse = el('input'); abuse.type='checkbox';
+        if (decision === 'desativar') {
+            abuse.required=true; const evidence=el('label','Comprovei o abuso e autorizo desativar esta conta. Recusar um pedido sem prova não justifica esta ação.'); evidence.append(abuse); form.append(evidence);
+        }
         form.append(info, label, feedback, actions);
         dialog.append(h, form);
         document.body.append(dialog);
@@ -130,7 +137,8 @@
                         decisao: decision,
                         versao: r.versao,
                         conferencia: decision === 'aprovar' && input.checked,
-                        justificativa: decision === 'recusar' ? input.value : undefined
+                        justificativa: decision !== 'aprovar' ? input.value : undefined,
+                        abuso_confirmado: decision === 'desativar' && abuse.checked
                     })
                 );
                 dialog.close();

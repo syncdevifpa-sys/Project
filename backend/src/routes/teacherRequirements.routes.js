@@ -17,7 +17,7 @@ const action = (fn) => async (q, s) => {
             error: e.status
                 ? e.message
                 : ['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(e.code)
-                  ? 'Requisitos precisa ser habilitado no banco.'
+                  ? 'Requisitos precisa da migração 1.1.29 neste banco.'
                   : e.code === 'ER_DUP_ENTRY'
                     ? 'Nome de usuário, matrícula ou e-mail já vinculado. Confira os dados.'
                     : 'Não foi possível concluir a solicitação.'
@@ -28,6 +28,11 @@ router.get(
     '/mine',
     authenticateExternal,
     action((q) => service.own(q.externalUser.id_externo))
+);
+router.post(
+    '/mine/change',
+    authenticateExternal,
+    action((q) => service.startChange(q.externalUser.id_externo, q.body || {}))
 );
 router.post(
     '/mine',

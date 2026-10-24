@@ -14,6 +14,8 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 | Diagnóstico dessa evolução | `backend/db/checks/1.1.27.sql` |
 | Novos escopos do calendário, após 1.1.27 | `backend/db/migrations/1.1.28.sql` — preparada, não aplicada pelo agente |
 | Diagnóstico dos escopos | `backend/db/checks/1.1.28.sql` |
+| Mudança explícita de vínculo e preservação da conta, após 1.1.28 | `backend/db/migrations/1.1.29.sql` — preparada, não aplicada |
+| Diagnóstico de vínculos e contas de origem | `backend/db/checks/1.1.29.sql` |
 | Rastreabilidade de scripts antigos | `backend/db/history/pre-1.1.25/` |
 | Operações administrativas específicas | `backend/admin/` |
 
@@ -21,7 +23,7 @@ Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por buil
 
 Em MySQL 8.4, selecione um banco vazio. `npm run db:schema` gera `backend/schema.generated.sql` sem CREATE DATABASE/USE para hospedagem gerenciada. Revise e importe o arquivo gerado somente no banco vazio. O esquema contém diretamente as colunas, índices e relações finais, além dos dados iniciais de cursos/links; não encadeia migrações antigas nem atualiza dados existentes.
 
-O esquema registra as versões 1.1.25, 1.1.26, 1.1.27 e 1.1.28 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
+O esquema registra as versões 1.1.25, 1.1.26, 1.1.27, 1.1.28 e 1.1.29 em `arcadia_schema_migrations`. Essa anotação identifica o contrato instalado, não comprova testes reais de aplicação ou envio de e-mail. A tabela `inscricoes_editais`, antes ausente do esquema inicial, passou a constar nele com a definição do módulo existente.
 
 ## Atualização de banco existente no Workbench
 
@@ -82,3 +84,13 @@ A 1.1.27 já foi confirmada pelo responsável; não reaplicar. A nova 1.1.28 ape
 O responsável pode editar a visibilidade de seu evento. A edição de um calendário agrupa os eventos pelo período selecionado e verifica cada titular no servidor, em transação; não concede propriedade pelo nome do período. Administradores podem gerenciar eventos compartilhados, mas não acessar/alterar eventos privados de terceiros. Não há compartilhamento privado por convite nesta etapa: Privado significa somente o responsável. Não se presume uma lista de pessoas autorizadas inexistente.
 
 Novos eventos/importações começam institucionais, salvo escolha explícita permitida. Os triggers da 1.1.26 invalidam os lembretes vinculados após alterações; a leitura e o processamento de lembretes reaplicam a mesma regra de acesso. Exportações da interface usam os eventos já filtrados da sessão. Não enviar este código a produção antes de coordenar a migração 1.1.28.
+
+## Evolução 1.1.29 — preparada, não executada
+
+Requer a 1.1.28 registrada. Amplia o tipo de pedido para Aluno, acrescenta curso informado/origem da solicitação, uma origem externa única em usuários e três tabelas de ligação/auditoria. Não cria nem aprova contas em massa. A 1.1.27 aplicada e seus checksums permanecem intactos. A geração é offline; o agente não executou essas duas novas migrações em MySQL.
+
+A mudança explícita passa por Requisitos. Aprovação liga os namespaces da mesma conta em transação, retém o cadastro externo bloqueado, preserva credenciais e relações e exige novo login. O filtro de sessão externa impede acesso paralelo por uma origem já vinculada. A administração gerencia o vínculo aprovado como um único usuário institucional; a origem externa deixa de aparecer como uma segunda conta administrável. Na exclusão administrativa definitiva desse usuário, a origem também é removida, sem deixar uma credencial externa recuperável.
+
+Ensaiar com dados fictícios os três papéis, e-mail/matrícula já usados, reenvio concorrente versus aprovação, falha intermediária na transferência, tarefa pessoal, evento com lembrete, Google pré-vinculado/não vinculado, preferências e exclusão administrativa. Conferir o diagnóstico: contagens de vínculos inconsistentes, origens sem vínculo e origens com acesso externo devem ser zero. Desativação por abuso é explícita e auditada; recusa comum não bloqueia a conta.
+
+Para este código, coordenar a aplicação autorizada de **1.1.28 e depois 1.1.29** antes do ambiente real. Não reaplicar a 1.1.27 confirmada. Os novos filtros de autenticação/administração dependem da 1.1.29; uma base anterior pode retornar indisponibilidade até a atualização. Não usar `schema.sql` inteiro no banco existente.

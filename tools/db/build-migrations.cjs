@@ -29,3 +29,9 @@ const visibility=require('../../backend/db/migrations/1.1.28.json');
 fs.writeFileSync(path.join(base,'db/migrations/1.1.28.sql'),require('../lib/calendar-visibility-migration.cjs').generate(visibility));
 schema+=`INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('${visibility.version}','${checksum(visibility)}');\n`;
 fs.writeFileSync(schemaPath,schema);
+const accounts=require('../../backend/db/migrations/1.1.29.json');
+fs.writeFileSync(path.join(base,'db/migrations/1.1.29.sql'),require('../lib/account-link-migration.cjs').generate(accounts));
+schema+=`INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('${accounts.version}','${checksum(accounts)}');\n`;
+fs.writeFileSync(schemaPath,schema);
+
+console.log('Visibilidade e vínculo: 1.1.28 e 1.1.29 preparados offline. Nenhum banco acessado.');
