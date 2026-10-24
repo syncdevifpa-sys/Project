@@ -22,8 +22,9 @@ test('externo inicia pedido somente pela ação discreta, com campos de Aluno e 
     f.form.elements.matricula.value='123';f.form.elements.nome_usuario.value='pessoa';f.form.elements.curso_informado.value='Informática 2027.1';
     await f.form.events.submit({preventDefault(){}});
     assert.equal(f.calls[0].path,'/api/teacher-requirements/mine/change');assert.equal(f.calls[0].body.tipo_solicitado,'discente');
-    for(const file of ['front/community.html','front/community-settings.html']){
+    for(const file of ['front/community-settings.html']){
         const html=fs.readFileSync(file,'utf8');assert.match(html,/id="requestedRolePicker"/);assert.match(html,/id="requestedCourseLabel"/);assert.match(html,/não desativa sua conta automaticamente/);
     }
     assert.ok(!fs.readFileSync('front/community.html','utf8').includes('id="startLinkRequest"'));
+    assert.ok(!fs.readFileSync('front/community.html','utf8').includes('id="teacherRequestForm"'));
 });

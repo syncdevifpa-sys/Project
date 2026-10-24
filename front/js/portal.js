@@ -621,7 +621,7 @@
             el.textContent = userRole;
         });
         updateUserAvatar(sessao.foto, userName, userInitials);
-        if (sessao.is_admin && !document.getElementById('adminAccess')) {
+        if (sessao.is_admin && sessao.tipo_usuario !== 'externo' && !document.getElementById('adminAccess')) {
             var end =
                 document.querySelector('.ar-navpill') || document.querySelector('.ar-nav-end');
             if (end) {

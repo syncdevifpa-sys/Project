@@ -260,7 +260,9 @@
             layout();
         });
         layout();
+        document.documentElement?.setAttribute('data-portal-navigation', 'ready');
     }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();
+    else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 })();

@@ -4,7 +4,7 @@
 
 - [Banco: instalação e atualização](../backend/db/README.md)
 - [Turmas e disciplinas](classes.md)
-- [Requisitos de professor](teacher-requirements.md)
+- [Solicitações de vínculo com o IFPA](teacher-requirements.md)
 - [Biblioteca de documentos](document-library.md)
 - [Lembretes, e-mail e arquivamento](lembretes-e-arquivamento.md)
 - [Login com Google](google-login.md)
@@ -13,6 +13,7 @@
 - [Administração e exclusão de contas](admin-account-deletion.md)
 - [Aparência de banners](aparencia-banners.md)
 - [Comunidade externa e intenção de vínculo](comunidade-externa.md)
+- [Carregamento da interface e área externa](carregamento-interface.md)
 - [Migração gradual para TypeScript](typescript-gradual.md)
 
 ## Referência e revisão

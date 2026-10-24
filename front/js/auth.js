@@ -453,6 +453,16 @@ window.Arcadia = window.Arcadia || {};
             const msgErro = form.querySelector('.mensagem-erro, .error-message');
             const msgSucesso = form.querySelector('.mensagem-sucesso, .success-message');
             const confirmationHelp = form.querySelector('[data-email-verification-help]');
+              const confirmedNotice = form.querySelector('[data-email-confirmation-notice]');
+              if (tipoAcesso === 'login' && confirmedNotice) {
+                  try {
+                      if (window.sessionStorage.getItem('arcadia.emailConfirmed') === '1') {
+                          confirmedNotice.hidden = false;
+                          confirmedNotice.textContent = 'E-mail confirmado. Entre com sua senha ou com o Google já vinculado à sua conta.';
+                          window.sessionStorage.removeItem('arcadia.emailConfirmed');
+                      }
+                  } catch { /* A confirmação não depende de armazenamento no navegador. */ }
+              }
 
             const showError = (text) => {
                 if (msgErro) {

@@ -237,7 +237,7 @@ async function confirm(token) {
     const hash = crypto.createHash('sha256').update(token).digest('hex');
     return transaction(async (connection) => {
         const [tokens] = await connection.execute(
-            'SELECT * FROM email_tokens WHERE token_hash = ? AND usado_em IS NULL AND expira_em > NOW() FOR UPDATE',
+            'SELECT * FROM email_tokens WHERE token_hash = ? AND expira_em > NOW() FOR UPDATE',
             [hash]
         );
         const ticket = tokens[0];
@@ -246,6 +246,12 @@ async function confirm(token) {
             id = ticket.identidade,
             c = config(kind);
         const user = await account(connection, kind, id);
+        if (ticket.usado_em) {
+            const [states] = await connection.execute('SELECT email,confirmado_em FROM email_estado WHERE tipo=? AND identidade=? FOR UPDATE', [kind,id]);
+            if (['cadastro','troca'].includes(ticket.finalidade) && address(user.email) === ticket.email_destino && states[0]?.email === ticket.email_destino && states[0]?.confirmado_em)
+                return { message: 'E-mail já confirmado. Entre na sua conta.', reauthenticate: ticket.finalidade === 'troca', alreadyConfirmed: true };
+            fail(400, 'Link inválido, expirado ou já utilizado.');
+        }
         if (address(user.email) !== ticket.email_anterior)
             fail(400, 'Link inválido, expirado ou já utilizado.');
         await available(connection, ticket.email_destino, { kind, id });
