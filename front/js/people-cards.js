@@ -8,7 +8,8 @@
         };
         const card = make('article');
         card.className = 'ar-card ar-person-card';
-        const name = person.nome_social || person.nome || 'Pessoa';
+        const rawName = person.nome_social || person.nome || 'Pessoa';
+        const name = A.formatPersonName ? A.formatPersonName(rawName) : rawName;
         const avatar = make('div');
         avatar.className = 'ar-person-avatar';
         avatar.setAttribute('aria-hidden', 'true');

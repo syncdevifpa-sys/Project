@@ -9,8 +9,8 @@ async function registerExternal(req, res) {
     try {
         const { nome, email, senha, telefone, organizacao } = req.body;
         const teacherRequest =
-            req.body.tipo_usuario === 'docente'
-                ? require('../services/teacher-requirements.service').fields(req.body)
+            ['docente','servidor'].includes(req.body.tipo_usuario)
+                ? require('../services/teacher-requirements.service').fields(req.body, req.body.tipo_usuario)
                 : null;
 
         if (
@@ -58,7 +58,7 @@ async function registerExternal(req, res) {
             telefone: telefone || null,
             senha: hashedPassword,
             organizacao: organizacao || null,
-            ...(teacherRequest ? { teacherRequest } : {})
+            ...(teacherRequest ? { teacherRequest, intencao_cadastro: req.body.tipo_usuario } : {})
         };
         const result = teacherRequest
             ? await require('../services/email-verification.service').register(
@@ -69,7 +69,7 @@ async function registerExternal(req, res) {
 
         return res.status(201).json({
             message: teacherRequest
-                ? 'Conta externa criada. O pedido de Professor aguarda análise em Requisitos.'
+                ? 'Conta externa criada. O vínculo solicitado aguarda análise em Requisitos.'
                 : 'Usuário externo criado com sucesso.',
             teacherRequestPending: !!teacherRequest,
             externalId: result.insertId,
@@ -82,7 +82,7 @@ async function registerExternal(req, res) {
         return res
             .status(
                 error.status ||
-                    (error.code === 'ER_NO_SUCH_TABLE'
+                    (['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(error.code)
                         ? 503
                         : error.code === 'ER_DUP_ENTRY'
                           ? 409
@@ -91,8 +91,8 @@ async function registerExternal(req, res) {
             .json({
                 error: error.status
                     ? error.message
-                    : error.code === 'ER_NO_SUCH_TABLE'
-                      ? 'A solicitação de Professor precisa ser habilitada no banco.'
+                    : ['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(error.code)
+                      ? 'Atualize o banco para registrar o vínculo solicitado.'
                       : error.code === 'ER_DUP_ENTRY'
                         ? 'E-mail ou nome de usuário já cadastrado. Confira os dados.'
                         : 'Não foi possível concluir a operação. Tente novamente.'

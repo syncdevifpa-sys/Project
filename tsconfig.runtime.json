@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.tools.json",
+  "compilerOptions": { "rootDir": "backend/typed", "outDir": "backend/generated" },
+  "include": ["backend/typed/**/*.ts"],
+  "exclude": ["node_modules", "backend/generated"]
+}

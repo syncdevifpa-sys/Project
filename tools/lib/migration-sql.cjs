@@ -1,7 +1,6 @@
 // Geração offline: este módulo não abre conexão nem executa SQL.
-const crypto = require('node:crypto');
+const { checksum } = require('../generated/migration-checksum.js');
 const quote = (v) => v === null || v === undefined ? 'NULL' : "'" + String(v).replace(/'/g, "''") + "'";
-const checksum = (spec) => crypto.createHash('sha256').update(JSON.stringify(spec)).digest('hex');
 const helpers = `
 DELIMITER $$
 DROP PROCEDURE IF EXISTS _arc125_assert$$

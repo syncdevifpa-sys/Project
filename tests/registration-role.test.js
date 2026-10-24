@@ -10,7 +10,7 @@ function registration() {
         course = {},
         help = {},
         submit = {},
-        teacherInputs = [{}, {}, {}],
+        teacherInputs = [{id:'teacherMatricula'}, {id:'teacherUsername'}, {id:'teacherFormacao'}],
         teacherFields = { hidden: true, querySelectorAll: () => teacherInputs };
     const buttons = ['Student', 'Professor', 'Staff', 'External'].map((value, index) => {
         const attributes = {
@@ -84,20 +84,20 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
         assert.equal(r.input.value, index === 1 ? 'Professor' : 'Staff');
         assert.equal(r.buttons[index].attributes['aria-checked'], 'true');
         assert.equal(r.buttons[0].attributes['aria-checked'], 'false');
-        assert.equal(r.wrapper.style.display, index === 2 ? 'flex' : 'none');
+        assert.equal(r.wrapper.style.display, 'none');
         assert.equal(r.course.required, false);
         assert.equal(r.course.value, '');
-        assert.equal(r.course.disabled, index !== 2);
-        assert.equal(r.submit.disabled, index === 2);
-        assert.equal(r.teacherFields.hidden, index !== 1);
+        assert.equal(r.course.disabled, true);
+        assert.equal(r.submit.disabled, false);
+        assert.equal(r.teacherFields.hidden, false);
         assert.ok(
             r.teacherInputs.every(
-                (input) => input.required === (index === 1) && input.disabled === (index !== 1)
+                (input) => input.required === !(index === 2 && input.id === 'teacherFormacao') && input.disabled === false
             )
         );
         assert.match(
             r.help.textContent,
-            index === 1 ? /Requisitos|Comunidade externa/ : /administração/
+            index === 1 ? /Requisitos|Comunidade externa/ : /Formação é opcional/
         );
     }
     r.buttons[0].click();
@@ -128,7 +128,8 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
     for (const [value, route, role] of [
         ['External', '/api/external/register', 'externo'],
         ['Student', '/api/users', 'discente'],
-        ['Professor', '/api/external/register', 'docente']
+        ['Professor', '/api/external/register', 'docente'],
+        ['Staff', '/api/external/register', 'servidor']
     ]) {
         const fields = {
             '#nome, #name': { value: 'Pessoa de teste' },
@@ -160,7 +161,7 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
                                 ok: true,
                                 status: 201,
                                 data: {
-                                    [['externo', 'docente'].includes(role)
+                                    [['externo', 'docente', 'servidor'].includes(role)
                                         ? 'externalId'
                                         : 'userId']: 10,
                                     verificationRequired: true,

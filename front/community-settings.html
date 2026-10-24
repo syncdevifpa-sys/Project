@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Configurações — Comunidade externa · Arcádia</title>
+    <script src="js/theme.js"></script>
+    <script src="js/portal-bootstrap.js"></script>
+    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="tokens.css">
+    <link rel="stylesheet" href="bundle.css">
+    <link rel="stylesheet" href="portal-responsive.css">
+    <link rel="stylesheet" href="navigation.css">
+    <link rel="stylesheet" href="brand-logo.css">
+    <link rel="stylesheet" href="profile-sharing.css">
+    <link rel="stylesheet" href="email-verification.css">
+    <link rel="stylesheet" href="avatar-editor.css">
+    <link rel="stylesheet" href="teacher-requirements.css">
+    <link rel="stylesheet" href="scrollbars.css">
+    <link rel="stylesheet" href="site-footer.css">
+    <link rel="stylesheet" href="privacy-notice.css">
+    <link rel="stylesheet" href="community.css">
+    <link rel="stylesheet" href="banner-appearance.css">
+    <link rel="stylesheet" href="content-views.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png">
+    <script defer src="js/person-name.js"></script>
+    <script defer src="js/api.js"></script>
+    <script defer src="js/auth.js"></script>
+    <script defer src="js/community.js"></script>
+    <script defer src="js/teacher-requirements.js"></script>
+    <script defer src="js/avatar-editor.js"></script>
+    <script defer src="js/profile-sharing.js"></script>
+    <script defer src="js/account-email.js"></script>
+    <script defer src="js/account-removal.js"></script>
+    <script defer src="js/portal.js"></script>
+    <script defer src="js/navigation.js"></script>
+    <script defer src="js/class-appearance.js"></script>
+    <script defer src="js/privacy-notice.js"></script>
+  </head>
+  <body class="ar-community-page ar-community-settings-page">
+    <a class="ar-community-skip" href="#mainContent">Ir para o conteúdo</a>
+    <div class="ar-app">
+      <header class="ar-nav">
+        <a class="ar-brand" href="community.html">
+          <img
+            src="assets/arcadia-emblem.png"
+            alt="Emblema do Arcádia"
+            class="ar-brand-img"
+            width="34"
+            height="34"
+          />
+          <span class="ar-brand-copy"><span class="ar-brand-name">Arcádia</span><span class="ar-brand-sub">IFPA CAMPUS BELÉM</span></span>
+        </a>
+
+        <nav class="ar-navpill" aria-label="Seções do portal"><a href="community.html">Meu painel</a><a href="tasks.html">Tarefas</a><a href="community-settings.html" aria-current="page">Configurações</a><a href="notices.html">Avisos e notícias</a><a href="calendar.html">Calendário</a><a href="projects.html">Projetos</a></nav>
+
+        <div class="ar-nav-end">
+          <button
+            type="button"
+            class="ar-iconbtn"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            data-search-trigger
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
+          </button>
+
+          <a
+            class="ar-iconbtn"
+            href="community-settings.html"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M14 17H5"></path>
+              <path d="M19 7h-9"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </a>
+
+          <a class="ar-user" href="community-settings.html">
+            <span
+              class="ar-avatar ar-avatar--cyan"
+              >—</span
+            >
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" id="externalLogout" data-sign-out
+            >Sair</button
+          >
+        </div>
+      </header>
+      <main id="mainContent" tabindex="-1">
+        <section class="ar-hero ar-hero--cyan ar-hero--compact" aria-labelledby="externalGreeting">
+          <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"><path class="l" d="M420 214 C520 130 620 230 720 150 S900 96 1010 124"></path><circle class="s" cx="780" cy="180" r="65"></circle><circle class="s" cx="950" cy="60" r="30"></circle></svg>
+          <div class="ar-hero-main"><p class="ar-hero-eyebrow">Configurações · Comunidade externa</p><h1 class="ar-hero-title" id="externalGreeting">Configurações</h1><p class="ar-hero-desc">Seus dados, preferências de acesso e segurança, reunidos em um só lugar.</p></div>
+          <div class="ar-hero-actions"><a class="ar-btn ar-btn--primary" href="community.html">Voltar ao meu painel</a></div>
+        </section>
+        <div class="ar-community-content">
+          <section id="accountSettings" class="ar-community-card ar-profile-summary" aria-labelledby="profileTitle" aria-busy="true">
+          <div class="ar-community-card-heading"><h2 id="profileTitle">Seus dados</h2><span class="ar-tag">Comunidade externa</span></div>
+          <p id="externalStatus" class="ar-community-status" role="status" aria-live="polite">Carregando seus dados…</p>
+          <dl class="ar-profile-data">
+            <div><dt>Nome</dt><dd id="externalName"><span class="ar-community-skeleton" aria-hidden="true"></span></dd></div>
+            <div><dt>E-mail de acesso</dt><dd id="externalEmail"><span class="ar-community-skeleton" aria-hidden="true"></span></dd></div>
+            <div><dt>Organização</dt><dd id="externalOrganization"><span class="ar-community-skeleton" aria-hidden="true"></span></dd></div>
+          </dl>
+        </section>
+        <div class="ar-community-settings-grid">
+          <details class="ar-community-card"><summary>E-mail de acesso<span>Confirmação e alteração do e-mail</span></summary><section id="accountEmail" class="ar-account-email" aria-label="Confirmação do e-mail de acesso"></section></details>
+          <details class="ar-community-card"><summary>Foto da conta<span>Sua identificação no Arcádia</span></summary><section id="profileSharing" aria-label="Foto da minha conta"></section></details>
+          <section class="ar-community-card" aria-labelledby="accountSecurityTitle"><h2 id="accountSecurityTitle">Segurança e privacidade</h2><p>Gerencie seu acesso e consulte como seus dados são usados.</p><a class="ar-community-text-link" href="reset-password.html">Recuperar senha</a><a class="ar-community-text-link" href="privacy.html">Política de Privacidade</a><a class="ar-community-text-link" href="cookies.html">Preferências e política de cookies</a></section>
+          <details class="ar-account-management" id="excluir-conta"
+        ><summary>Gerenciar conta <span>Opções da conta</span></summary><h3 id="remove-title">Excluir minha conta</h3>
+        <div class="ar-sset-body">
+          <p
+            >A exclusão é definitiva e só é permitida quando não existem ligações ou histórico. Se
+            houver vínculos, solicite a desativação à administração.</p>
+          <form
+            id="accountRemoval"
+            data-endpoint="/api/external/account"
+
+          >
+            <label class="ar-field"
+              >Senha atual<input
+                name="senha"
+                type="password"
+                autocomplete="current-password"
+                required
+            /></label>
+            <label class="ar-field"
+              >Digite EXCLUIR para confirmar<input
+                name="confirmacao"
+                pattern="EXCLUIR"
+                autocomplete="off"
+                required
+            /></label>
+            <button class="ar-btn ar-btn--danger" type="submit"
+              >Excluir minha conta definitivamente</button>
+            <p id="accountRemovalStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </details>
+        </div>
+        <section class="ar-community-card ar-community-membership" aria-labelledby="membershipTitle"><h2 id="membershipTitle">Vínculo com o IFPA</h2><p>Para quem está ingressando ou já possui vínculo real com a instituição. O pedido passa pela análise da administração.</p><button type="button" class="ar-btn ar-btn--secondary" id="startLinkRequest" hidden>Solicitar vínculo com o IFPA</button><details hidden id="teacherRequestSection" class="ar-teacher-request"
+        >
+summary
+          >
+span id="requestedRoleTitle">Vínculo com o IFPA</span>
+span class="ar-teacher-state" id="teacherRequestState"
+            >Validação institucional</span>
+/summary>
+h2>Solicitação de vínculo</h2>
+p class="ar-teacher-intro"
+          >Acompanhe a análise do seu vínculo e mantenha os dados institucionais atualizados. Seu
+          acesso atual é <strong>Comunidade externa</strong> até a aprovação.</p>
+p id="teacherRequestStatus" role="status" aria-live="polite">
+/p>
+form id="teacherRequestForm"
+          >
+h3>Dados para conferência no SIGAA</h3>
+p class="ar-vinculo-warning" role="note">Esta solicitação é exclusiva para quem está ingressando ou já possui vínculo com o IFPA. Os dados serão analisados pela administração. Em caso de spam ou comprovação de declaração falsa de vínculo, a conta será desativada após análise administrativa. A recusa do pedido ou a falta de comprovante não desativa sua conta automaticamente. Não envie sua senha do SIGAA.</p>
+label>Vínculo solicitado<select name="tipo_solicitado" id="requestedRolePicker" required>
+option value="docente">Professor</option>
+option value="servidor">Servidor</option>
+option value="discente">Aluno</option>
+/select>
+/label>
+label id="requestedCourseLabel" hidden>Curso e período de ingresso / letivo no SIGAA<input name="curso_informado" maxlength="150">
+/label>
+label>Nome da conta<input name="nome" readonly />
+/label>
+label>E-mail da conta<input name="email" type="email" readonly />
+/label>
+label
+            >Matrícula / SIAPE no SIGAA<input name="matricula" maxlength="30" required />
+/label>
+label
+            >Nome de usuário no SIGAA<input
+              name="nome_usuario"
+              minlength="3"
+              maxlength="40"
+              pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,39}"
+              required />
+/label>
+label class="ar-teacher-wide"
+            >
+span id="requestedTrainingLabel">Formação registrada no SIGAA</span>
+input name="formacao" maxlength="300" required />
+/label>
+p
+            >Informe os dados do vínculo como aparecem no SIGAA. A administração autorizada fará a
+            conferência no sistema institucional. Esses dados não aparecem no perfil público. Não
+            informe sua senha do SIGAA. Nome e e-mail vêm da sua conta; o acesso ao Arcádia continua
+            pelo e-mail. Alterar e reenviar substitui o pedido pendente, sem gerar duplicatas.</p>
+button class="ar-teacher-submit" type="submit">Enviar para análise</button>
+/form>
+/details></section>
+        </div>
+      </main>
+    </div>
+    <footer class="ar-site-footer" aria-label="Contato e informações legais">
+      <span>Arcádia · Portal acadêmico</span>
+      <nav aria-label="Contato e documentos">
+        <a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a>
+        <a href="privacy.html">Política de Privacidade</a>
+        <a href="terms.html">Termos de Uso</a>
+        <a href="cookies.html">Política de Cookies</a>
+      </nav>
+    </footer>
+  </body>
+</html>

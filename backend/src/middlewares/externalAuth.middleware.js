@@ -35,7 +35,7 @@ async function authenticateExternal(req, res, next) {
         let sessions = [];
         try {
             const [dbSessions] = await db.execute(
-                "SELECT t.id_token FROM tokens t JOIN publico_externo p ON p.id_externo = t.id_externo WHERE t.token = ? AND t.id_externo = ? AND t.expiracao > NOW() AND p.situacao = 'ativo'",
+                "SELECT t.id_token FROM tokens t JOIN publico_externo p ON p.id_externo = t.id_externo WHERE t.token = ? AND t.id_externo = ? AND t.expiracao > NOW() AND p.situacao = 'ativo' AND NOT EXISTS(SELECT 1 FROM conta_vinculos v WHERE v.id_externo=p.id_externo)",
                 [hash, decoded.id_externo]
             );
             sessions = dbSessions;
@@ -62,6 +62,8 @@ async function authenticateExternal(req, res, next) {
 
         next();
     } catch (error) {
+        if (error.code === 'ER_NO_SUCH_TABLE' && /conta_vinculos/.test(error.sqlMessage || error.message || ''))
+            return res.status(503).json({ error: 'Este ambiente precisa da migração 1.1.29 para validar contas externas.' });
         if (!['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(error.name)) {
             return res.status(500).json({ error: 'Não foi possível validar a sessão.' });
         }

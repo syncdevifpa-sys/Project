@@ -1,18 +1,18 @@
 const db = require('../config/database');
 async function publicQuery(sql, params = []) {
-    try {
-        return await db.execute(sql, params);
-    } catch (e) {
-        if (
-            e.code !== 'ER_BAD_FIELD_ERROR' ||
-            !/permite_externos/.test(e.sqlMessage || e.message || '')
-        )
-            throw e;
-        return db.execute(sql.replace('permite_externos,', '0 AS permite_externos,'), params);
+    for (;;) {
+        try { return await db.execute(sql, params); }
+        catch(e) {
+            const message=e.sqlMessage || e.message || '';
+            if(e.code!=='ER_BAD_FIELD_ERROR') throw e;
+            if(/visibilidade/.test(message) && sql.includes('            visibilidade,')) sql=sql.replace('            visibilidade,',"            'privado' AS visibilidade,");
+            else if(/permite_externos/.test(message) && sql.includes('            permite_externos,')) sql=sql.replace('            permite_externos,','            0 AS permite_externos,');
+            else throw e;
+        }
     }
 }
 
-async function listProjects() {
+async function listProjects(options = {}) {
     const [projects] = await publicQuery(`
         SELECT
             id_projeto,
@@ -24,6 +24,7 @@ async function listProjects() {
             rotulo_responsavel,
             vagas,
             permite_externos,
+            visibilidade,
             unidade_vaga,
             link,
             situacao,
@@ -38,7 +39,7 @@ async function listProjects() {
         ORDER BY criado_em DESC
     `);
 
-    return projects;
+    return options.institutional ? projects : projects.filter(project=>project.visibilidade==='publico');
 }
 
 async function findProjectById(projectId) {
@@ -54,6 +55,7 @@ async function findProjectById(projectId) {
             rotulo_responsavel,
             vagas,
             permite_externos,
+            visibilidade,
             unidade_vaga,
             link,
             situacao,
@@ -85,7 +87,8 @@ async function createProject(userId, projectData) {
         situacao = 'ativo',
         permite_externos = false,
         data_inicio = null,
-        data_fim = null
+        data_fim = null,
+        visibilidade = 'privado'
     } = projectData;
 
     const [result] = await db.execute(
@@ -103,9 +106,10 @@ async function createProject(userId, projectData) {
             link,
             situacao,
             data_inicio,
-            data_fim
+            data_fim,
+            visibilidade
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
         [
             userId,
@@ -120,7 +124,8 @@ async function createProject(userId, projectData) {
             link,
             situacao,
             data_inicio,
-            data_fim
+            data_fim,
+            visibilidade
         ]
     );
 

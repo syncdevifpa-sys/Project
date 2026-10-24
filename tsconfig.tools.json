@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["node"],
+    "rootDir": "tools/typed",
+    "outDir": "tools/generated",
+    "declaration": true,
+    "sourceMap": false
+  },
+  "include": ["tools/typed/**/*.ts"],
+  "exclude": ["node_modules", "tools/generated"]
+}

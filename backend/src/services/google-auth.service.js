@@ -133,7 +133,8 @@ function createGoogleAuth({
                     'SELECT * FROM publico_externo WHERE email = ? FOR UPDATE',
                     [email]
                 );
-                if (users.length && externals.length)
+                const linked = users.length && externals.length && Number.isSafeInteger(users[0].id_externo_origem) && users[0].id_externo_origem === externals[0].id_externo;
+                if (users.length && externals.length && !linked)
                     fail(
                         409,
                         'Este cadastro precisa ser revisado pela equipe. Entre com e-mail e senha.'

@@ -117,7 +117,7 @@ async function fixture(t) {
                 data.tokens
                     .filter(
                         (row) =>
-                            !row.usado_em &&
+                            (!query.includes('usado_em IS NULL') || !row.usado_em) &&
                             row.expira_em > new Date() &&
                             (query.includes('token_hash = ?')
                                 ? row.token_hash === params[0]
@@ -219,7 +219,7 @@ test('cadastro e confirmação só armazenam hash; prova de e-mail não concede 
     );
     assert.equal(f.state().users.get(result.insertId).tipo_usuario, 'discente');
     assert.equal(f.state().users.get(result.insertId).is_admin, 0);
-    await assert.rejects(service.confirm(token), (error) => error.status === 400);
+    assert.equal((await service.confirm(token)).alreadyConfirmed, true);
 });
 
 test('legado mantém acesso, mas permanece não verificado até confirmar; outro tipo de identidade não é confirmado', async (t) => {
@@ -287,6 +287,12 @@ test('troca exige senha atual, reserva endereço e só altera login ao confirmar
     assert.equal(f.state().users.get(4).email, 'new@example.test');
     assert.deepEqual(f.state().revoked, [4]);
     assert.deepEqual(f.state().recoveryInvalidated, [4]);
+    const usedAt = f.state().tokens[0].usado_em.getTime();
+    const reopened = await service.confirm(f.messages[0].token);
+    assert.equal(reopened.alreadyConfirmed, true);
+    assert.equal(reopened.reauthenticate, true);
+    assert.equal(f.state().tokens[0].usado_em.getTime(), usedAt);
+    assert.deepEqual(f.state().revoked, [4]);
 });
 
 test('unicidade global e uso único resistem a solicitações concorrentes entre identidades', async (t) => {
@@ -311,8 +317,8 @@ test('unicidade global e uso único resistem a solicitações concorrentes entre
         service.confirm(f.messages[0].token),
         service.confirm(f.messages[0].token)
     ]);
-    assert.equal(confirm.filter((row) => row.status === 'fulfilled').length, 1);
-    assert.equal(confirm.filter((row) => row.status === 'rejected').length, 1);
+    assert.equal(confirm.filter((row) => row.status === 'fulfilled').length, 2);
+    assert.equal(confirm.filter((row) => row.status === 'fulfilled' && row.value.alreadyConfirmed === true).length, 1);
 });
 
 test('falha na confirmação reverte endereço, sessões e token; falha de entrega permite reenvio', async (t) => {

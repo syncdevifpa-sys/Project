@@ -28,20 +28,13 @@
                 '</svg>';
             return node;
         };
-        root.append(make('h2', 'O que outras pessoas podem ver'));
+        root.append(make('h2', external ? 'Foto da minha conta' : 'O que outras pessoas podem ver'));
         root.append(
             make(
                 'p',
-                'Contatos e foto são privados por padrão. Marque apenas o que deseja tornar público em Pessoas, inclusive para quem acessar sem conta. O e-mail de contato não altera seu login.'
+                external ? 'Edite sua foto de identificação. Sua conta externa não é publicada no diretório Pessoas.' : 'Contatos e foto são privados por padrão. Marque apenas o que deseja tornar público em Pessoas, inclusive para quem acessar sem conta. O e-mail de contato não altera seu login.'
             )
         );
-        if (external)
-            root.append(
-                make(
-                    'p',
-                    'Sua conta externa não aparece atualmente no diretório Pessoas. Estas opções ficam salvas, mas não adicionam sua conta à lista.'
-                )
-            );
         const form = make('form'),
             fieldset = make('fieldset'),
             status = make('p');
@@ -50,7 +43,7 @@
         status.textContent = 'Carregando suas opções…';
         fieldset.disabled = true;
         const fields = {};
-        for (const [key, title, type, limit] of [
+        for (const [key, title, type, limit] of external ? [] : [
             ['contato_email', 'E-mail de contato (opcional)', 'email', 150],
             ['contato_handle', '@ / identificação na rede (opcional)', 'text', 100],
             ['contato_telefone', 'Telefone de contato (opcional)', 'tel', 30]
@@ -94,23 +87,25 @@
             group.append(visibility);
             fieldset.append(group);
         }
-        const photoLabel = make('label');
-        photoLabel.className = 'ar-sharing-check';
-        const showPhoto = make('input');
-        showPhoto.type = 'checkbox';
-        fields.mostrar_foto = showPhoto;
-        photoLabel.append(
-            showPhoto,
-            icon('photo'),
-            make('span', 'Mostrar minha foto para outras pessoas')
-        );
-        fieldset.append(photoLabel);
-        fieldset.append(
-            make(
-                'p',
-                'Ocultar a foto não a remove da sua própria conta. Em Pessoas, será exibido um avatar com iniciais.'
-            )
-        );
+        if (!external) {
+            const photoLabel = make('label');
+            photoLabel.className = 'ar-sharing-check';
+            const showPhoto = make('input');
+            showPhoto.type = 'checkbox';
+            fields.mostrar_foto = showPhoto;
+            photoLabel.append(
+                showPhoto,
+                icon('photo'),
+                make('span', 'Mostrar minha foto para outras pessoas')
+            );
+            fieldset.append(photoLabel);
+            if (!external) fieldset.append(
+                make(
+                    'p',
+                    'Ocultar a foto não a remove da sua própria conta. Em Pessoas, será exibido um avatar com iniciais.'
+                )
+            );
+        }
         let draftPhoto;
         let available = false;
         if (external) {
@@ -161,7 +156,7 @@
             });
             fieldset.append(preview, inputLabel, remove);
         }
-        const save = make('button', 'Salvar compartilhamento');
+        const save = make('button', external ? 'Salvar foto' : 'Salvar compartilhamento');
         save.type = 'submit';
         save.className = 'ar-btn ar-btn--primary';
         fieldset.append(save);
@@ -183,7 +178,7 @@
             }
             if (external) root.renderOwnSharingPhoto(value.foto);
             fieldset.disabled = false;
-            status.textContent =
+            status.textContent = external ? 'Alterar sua foto não modifica contatos ou preferências anteriores.' :
                 'Só os campos marcados serão compartilhados. Você pode desmarcar e salvar a qualquer momento.';
         } catch (error) {
             fieldset.disabled = false;
@@ -204,9 +199,9 @@
             try {
                 const result = await A.api.expect(A.api.put(endpoint, body));
                 for (const key of ['contato_email', 'contato_handle', 'contato_telefone'])
-                    fields[key].value = result[key] || '';
+                    if (fields[key]) fields[key].value = result[key] || '';
                 draftPhoto = undefined;
-                status.textContent = 'Opções de compartilhamento salvas.';
+                status.textContent = external ? 'Foto da conta salva.' : 'Opções de compartilhamento salvas.';
             } catch (error) {
                 status.textContent =
                     error.message ||

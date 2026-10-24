@@ -2,6 +2,31 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs'),
     vm = require('node:vm');
+
+test('erro de rede ou expiração mantém confirmação disponível e não redireciona; sucesso limpa estado e vai ao login', async () => {
+    for (const failure of [true,false]) {
+        const nodes={},requests=[],redirects=[],stored=new Map();
+        for(const id of ['confirmEmailForm','resendEmailForm','emailVerificationStatus']) nodes[id]={events:{},button:{},elements:{email:{}},querySelector(){return this.button;},addEventListener(k,fn){this.events[k]=fn;}};
+        let fail=failure;
+        const context={
+            document:{getElementById:id=>nodes[id]},
+            location:{hash:'#token='+'b'.repeat(64),pathname:'/verify-email.html',replace:to=>redirects.push(to)},
+            history:{replaceState(){}},URLSearchParams,
+            window:{sessionStorage:{getItem:k=>stored.get(k),removeItem:k=>stored.delete(k),setItem:(k,v)=>stored.set(k,v)},Arcadia:{api:{post:async(path,body,options)=>{requests.push({path,body,options});if(fail)throw Error('Link expirado ou rede indisponível');return{message:'E-mail confirmado.',alreadyConfirmed:true};},expect:p=>p},token:{clear(){assert.fail('Cadastro confirmado não autentica nem altera outra sessão');}}}}
+        };
+        vm.runInNewContext(fs.readFileSync('front/js/email-verification.js','utf8'),context);
+        assert.equal(requests.length,0);
+        nodes.confirmEmailForm.events.submit({preventDefault(){}});
+        await new Promise(resolve=>setImmediate(resolve));
+        if(failure) {
+            assert.equal(redirects.length,0);assert.equal(nodes.confirmEmailForm.hidden,false);assert.equal(nodes.confirmEmailForm.button.disabled,false);
+            fail=false;nodes.confirmEmailForm.events.submit({preventDefault(){}});await new Promise(resolve=>setImmediate(resolve));
+        }
+        assert.deepEqual(redirects,['login.html']);assert.equal(stored.get('arcadia.emailConfirmed'),'1');
+        assert.ok(![...stored.values()].some(value=>value==='b'.repeat(64)));
+        assert.equal(nodes.confirmEmailForm.hidden,true);
+    }
+});
 test('abrir fragmento não envia token; clique explícito confirma e remove o token da URL', async () => {
     const nodes = {},
         calls = [];
@@ -22,7 +47,7 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
         cleared = false;
     vm.runInNewContext(fs.readFileSync('front/js/email-verification.js', 'utf8'), {
         document: { getElementById: (id) => nodes[id] },
-        location: { hash: '#token=' + 'a'.repeat(64), pathname: '/verify-email.html' },
+        location: { hash: '#token=' + 'a'.repeat(64), pathname: '/verify-email.html', replace: value => calls.push({redirect:value}) },
         history: {
             replaceState() {
                 removed = true;
@@ -56,7 +81,7 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
     assert.equal(nodes.confirmEmailForm.hidden, false);
     nodes.confirmEmailForm.events.submit({ preventDefault() {} });
     await new Promise((resolve) => setImmediate(resolve));
-    assert.equal(calls.length, 1);
+    assert.equal(calls.filter(call => call.path).length, 1);
     assert.equal(calls[0].path, '/api/email-verification/confirm');
     assert.equal(calls[0].options.auth, false);
     assert.equal(nodes.confirmEmailForm.hidden, true);
@@ -64,7 +89,8 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
     assert.equal(cleared, true);
     nodes.confirmEmailForm.events.submit({ preventDefault() {} });
     nodes.resendEmailForm.events.submit({ preventDefault() {} });
-    assert.equal(calls.length, 1);
+    assert.equal(calls.filter(call => call.path).length, 1);
+    assert.ok(calls.some(call => call.redirect === 'login.html'));
 });
 
 test('cadastro abre confirmação com destinatário preenchido e aviso de envio sem disparar mensagem', () => {

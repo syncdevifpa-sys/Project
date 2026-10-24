@@ -10,7 +10,7 @@ const {
     deleteTask
 } = require('../controllers/tasks.controller');
 
-const { authenticateToken } = require('../middlewares/auth.middleware');
+const { authenticateSubject: authenticateToken } = require('../middlewares/subject.middleware');
 
 router.get('/', authenticateToken, listTasks);
 

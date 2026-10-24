@@ -1,0 +1,11 @@
+{
+  "version": "1.1.27",
+  "columns": [
+    { "table": "tarefas", "name": "id_externo", "definition": "id_externo INT NULL", "type": "int", "nullable": true, "default": null, "auto": false, "onUpdate": false, "collation": null },
+    { "table": "publico_externo", "name": "intencao_cadastro", "definition": "intencao_cadastro ENUM('externo','docente','servidor') NOT NULL DEFAULT 'externo'", "type": "enum('externo','docente','servidor')", "nullable": false, "default": "externo", "auto": false, "onUpdate": false, "collation": null },
+    { "table": "docente_requisitos", "name": "tipo_solicitado", "definition": "tipo_solicitado ENUM('docente','servidor') NOT NULL DEFAULT 'docente'", "type": "enum('docente','servidor')", "nullable": false, "default": "docente", "auto": false, "onUpdate": false, "collation": null },
+    { "table": "projetos", "name": "visibilidade", "definition": "visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado'", "type": "enum('privado','publico')", "nullable": false, "default": "privado", "auto": false, "onUpdate": false, "collation": null }
+  ],
+  "indexes": [{ "table": "tarefas", "name": "idx_tarefas_externo", "columns": "id_externo,data_entrega", "unique": false }],
+  "foreignKeys": [{ "table": "tarefas", "columns": "id_externo", "ref": "publico_externo", "refColumns": "id_externo", "delete": "CASCADE" }]
+}

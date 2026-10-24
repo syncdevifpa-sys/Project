@@ -20,9 +20,12 @@ async function fixture({
     blocked = false,
     pending = false,
     missing = false,
-    missingTable = false
+    missingTable = false,
+    linkedOrigin = false,
+    unrelatedDuplicate = false
 } = {}) {
     const account = {
+        id_externo_origem: linkedOrigin ? 9 : null,
         id_usuario: external ? undefined : 7,
         id_externo: external ? 9 : undefined,
         email: 'person@example.test',
@@ -70,7 +73,7 @@ async function fixture({
             if (sql.startsWith('SELECT * FROM usuarios'))
                 return [!external && !missing ? [account] : []];
             if (sql.startsWith('SELECT * FROM publico_externo'))
-                return [external && !missing ? [account] : []];
+                return [linkedOrigin || unrelatedDuplicate ? [{id_externo:9,email:account.email,situacao:'bloqueado'}] : external && !missing ? [account] : []];
             writes.push({ sql, args });
             return [{ insertId: 1 }];
         }
@@ -137,6 +140,16 @@ test('Google exige configuração válida e origem autorizada, inclusive no chal
     assert.equal(f.challenge.clientId, env.GOOGLE_CLIENT_ID);
     const proof = jwt.verify(f.challenge.challenge, env.JWT_SECRET);
     assert.equal(proof.exp - proof.iat, 300);
+});
+
+test('origem externa vinculada não cria conflito Google; coincidência de email sem vínculo continua bloqueada', async () => {
+    const linked=await fixture({linkedOrigin:true});
+    const result=await linked.authenticate({senha:'correct-password'});
+    assert.equal(result.user.id_usuario,7); assert.equal(result.user.tipo_usuario,'discente');
+    assert.equal(result.user.is_admin,false);
+    const duplicate=await fixture({unrelatedDuplicate:true});
+    await assert.rejects(duplicate.authenticate({senha:'correct-password'}),{status:409});
+    assert.equal(duplicate.writes.length,0);
 });
 test('biblioteca oficial rejeita assinatura, audiência, emissor, validade e nonce inválidos', async () => {
     const f = await fixture({ bound: true });

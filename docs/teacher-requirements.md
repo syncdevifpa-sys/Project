@@ -1,23 +1,27 @@
-> SQLs incrementais citados neste documento foram preservados como histórico. Para instalação ou atualização atual, consulte `backend/db/README.md`; não reaplique arquivos antigos sem diagnóstico.
+# Solicitações de vínculo com o IFPA
 
-# Requisitos para Professor
+O cadastro inicial de Professor/Servidor permanece externo até conferência administrativa. Contas externas comuns também podem escolher explicitamente **Solicitar vínculo com o IFPA**, em Configurações, para ingresso como Aluno, Professor ou Servidor. Não há formulário permanente de Professor no painel de toda conta externa.
 
-Escolher Professor no cadastro cria uma conta real de Comunidade externa e um pedido de vínculo na mesma transação. Não concede permissões de Professor. O usuário confirma o e-mail pelo fluxo existente e pode entrar com senha ou Google mantendo o acesso externo até a aprovação. O domínio do e-mail não atribui cargo.
+Matrícula e usuário no SIGAA são exigidos. Professor informa formação; para Servidor ela é opcional. Aluno informa curso e período letivo/ingresso. Nome e e-mail vêm da própria conta. Não enviar senha do SIGAA: o Arcádia não acessa esse sistema nem comprova vínculo automaticamente; a administração usa seu acesso institucional autorizado para conferir os dados.
 
-O pedido contém nome e e-mail vinculados à própria conta, matrícula/SIAPE, nome de usuário e formação conforme registrados no SIGAA. Esses dados ficam restritos ao próprio solicitante e à administração; não são publicados no perfil. O administrador deve usar seu próprio acesso institucional autorizado ao SIGAA para conferir os dados e o vínculo antes da aprovação. O Arcádia não solicita senha do SIGAA, não acessa esse sistema automaticamente e não considera o simples conhecimento desses dados uma validação de identidade. Nome e e-mail são somente leitura na solicitação; a edição do e-mail continua usando confirmação. O acesso continua por e-mail, não por nome de usuário. O nome de usuário é registrado no pedido; não substitui automaticamente um contato público já configurado.
+A API de mudança explícita é POST /api/teacher-requirements/mine/change. O titular vem da sessão, não do corpo. O pedido não modifica papel, administração ou intenção original. Há um pedido por conta; sua atualização incrementa versão. Tipo diferente com pedido pendente recebe conflito. A conta e o pedido são travados na mesma ordem e a aprovação usa a versão atual.
 
-Na página Minha conta da Comunidade externa, o usuário vê o estado e pode atualizar ou reenviar o pedido. Há uma única solicitação por conta: reenviar incrementa a versão e invalida uma decisão administrativa baseada na versão antiga. A recusa exige justificativa e mantém a conta externa.
+## Revisão e identidade preservada
 
-Administradores usam a aba **Requisitos** da Administração. Aprovar exige conferir o vínculo, matrícula e formação com a instituição e ter confirmação real do e-mail no banco. Não há aprovação automática por domínio, Google ou edição do perfil. A edição administrativa genérica não permite mudar outro vínculo para Professor; deve usar Requisitos.
+A aba administrativa Requisitos mostra o papel solicitado. Aprovar exige administração atual, confirmação de e-mail no banco e conferência expressa. Rejeitar exige justificativa e mantém a conta externa. Conhecer um domínio institucional ou usar Google não concede permissão.
 
-## O que acontece ao aprovar
+A aprovação é transacional: o cadastro externo permanece como origem imutável e bloqueada, ligado de forma única ao registro institucional por conta_vinculos e usuarios.id_externo_origem. Os dois registros representam a mesma conta em namespaces históricos diferentes, não dois acessos independentes. Não se reutiliza um usuário de mesmo e-mail/matrícula: conflito exige revisão, sem mesclagem automática.
 
-A transação cria a identidade institucional com papel Professor, preservando nome, e-mail, hash de senha, telefone, data de criação, foto, preferências de compartilhamento e confirmação de e-mail. O vínculo Google é transferido. A solicitação guarda o histórico da decisão e o novo usuário. A identidade externa é substituída pela institucional; suas sessões e recuperações de senha antigas são invalidadas. Não são copiados tokens de acesso. O usuário deve entrar novamente com o mesmo e-mail/senha ou Google.
+Senha protegida, confirmação, Google, perfil e data de criação são mantidos. Tarefas passam ao titular institucional; agenda pessoal é convertida e rastreada em agenda_vinculos, com os lembretes religados aos novos eventos. Preferências e consentimento de e-mail são copiados; os IDs e o histórico dos lembretes permanecem, com versão incrementada. Inscrições em projeto mantêm status/data e mudam de namespace sem dobrar a contagem de vagas. As sessões externas e recuperações antigas são invalidadas; entrar novamente com o mesmo e-mail e senha ou Google. Não há administração nem turma concedidas automaticamente.
 
-Se houver conflito de matrícula/e-mail, confirmação ausente, versão antiga ou falha em uma etapa, a transação é revertida. A conta não é parcialmente promovida. Contas de Professor já existentes não são rebaixadas pela migração. Quando as tabelas de acesso externo estão habilitadas, participações em projetos e agenda pessoal também são transferidas na transação. Professor pendente permanece externo e não acessa Turmas.
+## Desativação por abuso comprovado
 
-## Workbench
+Antes do formulário, o aviso informa que a solicitação é exclusiva para ingresso ou vínculo real. Spam ou falsa declaração de vínculo comprovada podem resultar em desativação após análise administrativa. Falta de comprovante e recusa comum não causam bloqueio automático.
 
-Execute **somente** `backend/db/history/pre-1.1.25/add-teacher-requirements.sql` no banco correto após backup. Ele cria uma tabela nova, sem promover ninguém. O ambiente também precisa das tabelas existentes de confirmação de e-mail, sessões, recuperação, compartilhamento de perfil e Google. Não execute `backend/schema.sql` em banco existente. Nenhuma migração de produção foi executada pelo agente.
+A ação administrativa **Desativar por abuso comprovado** é distinta de recusar: exige motivo e confirmação explícita, grava vinculo_auditoria e encerra sessões, preservando dados. O servidor verifica administração e versão do pedido. Não existe desativação automática por domínio, texto ou decisão de bot.
 
-Depois publique/acesse um deployment da branch com o código e valide com duas contas reais: solicitante externo e administrador. Confirme o e-mail, revise um pedido, recuse com motivo, reenvie e aprove. Confira que a sessão externa antiga deixou de funcionar e que uma nova entrada usa Professor. Testes automatizados com banco simulado não validam a conectividade do MySQL/SMTP de produção.
+## Banco e limites
+
+A migração 1.1.27 foi confirmada pelo responsável; não reaplicar. Em 24/10/2026, o responsável também confirmou a aplicação da 1.1.28 (calendário) e 1.1.29 (mudança de vínculo) no banco usado pela Vercel. Não reaplicar nesse banco; essa confirmação não é uma inspeção independente do agente. Consulte backend/db/README.md; para outras bases ainda não atualizadas, faça ensaio MySQL 8.4 descartável, backup e aplicação autorizada nessa ordem. Nenhum checksum aplicado foi alterado.
+
+Testes com banco simulado verificam titularidade, papéis, conflitos, transação/rollback, revogação e preservação das relações. Não substituem o ensaio SQL nem testes de conta real no Preview; nenhuma mensagem real adicional foi enviada.

@@ -1,3 +1,4 @@
+const { canRead } = require('./calendar-access.service');
 function fail(status, message) { throw Object.assign(new Error(message), { status }); }
 function id(value) {
     if (!/^[1-9]\d*$/.test(String(value)) || !Number.isSafeInteger(Number(value))) fail(400,'Identificador inválido.');
@@ -23,8 +24,7 @@ async function authorizeContext(db, owner, row, { lock=false, sending=false }={}
     const who=identity(owner), link=context(row), suffix=lock?' FOR UPDATE':'';
     if (link.kind==='avulso') return null;
     if (link.kind==='tarefa') {
-        if (who.external) fail(403,'Tarefas institucionais não estão disponíveis para esta conta.');
-        const [rows]=await db.execute('SELECT id_tarefa,status FROM tarefas WHERE id_tarefa=? AND id_usuario=?'+suffix,[link.key,who.id]);
+        const [rows]=await db.execute('SELECT id_tarefa,status FROM tarefas WHERE id_tarefa=? AND '+who.column+'=?'+(who.external?' AND id_usuario IS NULL':'')+suffix,[link.key,who.id]);
         if (!rows.length) fail(404,'Tarefa não encontrada para esta conta.');
         if ((sending || row.ativo) && rows[0].status==='concluida') fail(409,'Tarefa concluída não recebe lembretes ativos.');
         return rows[0];
@@ -37,10 +37,7 @@ async function authorizeContext(db, owner, row, { lock=false, sending=false }={}
     }
     const [rows]=await db.execute("SELECT id_evento,id_usuario,titulo,visibilidade,oculto,origem_calendario,DATE_FORMAT(data_evento,'%Y-%m-%d') AS data_evento,TIME_FORMAT(hora_inicio,'%H:%i') AS hora_inicio FROM calendario WHERE id_evento=?"+suffix,[link.key]);
     const event=rows[0];
-    const publicEvent=event?.visibilidade==='publico';
-    const ownPersonal=!who.external && event?.visibilidade==='pessoal' && Number(event.id_usuario)===who.id;
-    if (!event || event.oculto || (!publicEvent && !ownPersonal) ||
-        (who.external && event.origem_calendario!=='agenda')) fail(404,'Evento não disponível para esta conta.');
+    if (!canRead(event, { institutional: !who.external, external: who.external, actorId: who.id })) fail(404,'Evento não disponível para esta conta.');
     return event;
 }
 module.exports={ identity,context,authorizeContext,id };

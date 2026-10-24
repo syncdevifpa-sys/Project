@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "preserve", "strict": true,
+    "noUncheckedIndexedAccess": true, "exactOptionalPropertyTypes": true,
+    "noEmitOnError": true, "rootDir": "front/typed", "outDir": "front/js"
+  },
+  "include": ["front/typed/**/*.ts"]
+}
