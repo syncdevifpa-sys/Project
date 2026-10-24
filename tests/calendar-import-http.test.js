@@ -168,8 +168,8 @@ test(
                     return [[{ id_usuario: 4, tipo_usuario: 'servidor', is_admin: 0 }]];
                 if (sql.startsWith('SELECT titulo,')) return [stored];
                 if (sql.startsWith('INSERT INTO calendario')) {
-                    assert.equal(params.length % 8, 0);
-                    for (let i = 0; i < params.length; i += 8)
+                    assert.equal(params.length % 9, 0);
+                    for (let i = 0; i < params.length; i += 9)
                         stored.push({
                             titulo: params[i + 1],
                             descricao: params[i + 2],
@@ -177,7 +177,8 @@ test(
                             periodo_letivo: params[i + 4],
                             origem_calendario: params[i + 5],
                             data_evento: params[i + 6],
-                            data_fim: params[i + 7]
+                            data_fim: params[i + 7],
+                            visibilidade: params[i + 8]
                         });
                 }
                 return [{ affectedRows: 1 }];
@@ -198,7 +199,7 @@ test(
         const saved = await submit();
         assert.equal(saved.status, 200);
         assert.equal((await saved.json()).imported, selected.length);
-        assert.ok(stored.every((event) => event.origem_calendario === 'ifpa'));
+        assert.ok(stored.every((event) => event.origem_calendario === 'ifpa' && event.visibilidade === 'institucional'));
         assert.deepEqual(
             stored.map(({ titulo, data_evento, data_fim }) => ({ titulo, data_evento, data_fim })),
             selected.map(({ titulo, data_evento, data_fim }) => ({ titulo, data_evento, data_fim }))

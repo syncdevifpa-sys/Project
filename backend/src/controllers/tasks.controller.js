@@ -1,14 +1,21 @@
 const { validateContent, editContent } = require('../services/content-edit.service');
 const tasksModel = require('../models/tasks.model');
+const { taskOwner } = require('../middlewares/subject.middleware');
+function schemaUnavailable(req, res, error) {
+    if (!req.externalUser || !['ER_BAD_FIELD_ERROR','ER_NO_SUCH_TABLE'].includes(error.code)) return false;
+    res.status(503).json({ error: 'Atualize o banco com a migração 1.1.27 para usar tarefas pessoais da Comunidade externa.' });
+    return true;
+}
 
 async function listTasks(req, res) {
     try {
-        const userId = req.user.id_usuario;
+        const userId = taskOwner(req);
 
         const tasks = await tasksModel.listTasks(userId);
 
         return res.json(tasks);
     } catch (error) {
+        if (schemaUnavailable(req, res, error)) return;
         if (error.status) return res.status(error.status).json({ error: error.message });
         console.error('Erro ao buscar tarefas:', error);
 
@@ -21,7 +28,7 @@ async function listTasks(req, res) {
 async function getTaskById(req, res) {
     try {
         const taskId = req.params.id;
-        const userId = req.user.id_usuario;
+        const userId = taskOwner(req);
 
         const task = await tasksModel.findTaskById(taskId, userId);
 
@@ -33,6 +40,7 @@ async function getTaskById(req, res) {
 
         return res.json(task);
     } catch (error) {
+        if (schemaUnavailable(req, res, error)) return;
         if (error.status) return res.status(error.status).json({ error: error.message });
         console.error('Erro ao buscar tarefa:', error);
 
@@ -44,7 +52,7 @@ async function getTaskById(req, res) {
 
 async function createTask(req, res) {
     try {
-        const userId = req.user.id_usuario;
+        const userId = taskOwner(req);
         const { titulo } = req.body;
 
         if (!titulo) {
@@ -63,6 +71,7 @@ async function createTask(req, res) {
             taskId: result.insertId
         });
     } catch (error) {
+        if (schemaUnavailable(req, res, error)) return;
         if (error.status) return res.status(error.status).json({ error: error.message });
         console.error('Erro ao criar tarefa :', error);
 
@@ -75,7 +84,7 @@ async function createTask(req, res) {
 async function updateTask(req, res) {
     try {
         const taskId = req.params.id;
-        const userId = req.user.id_usuario;
+        const userId = taskOwner(req);
 
         const result = await tasksModel.updateTask(
             taskId,
@@ -93,6 +102,7 @@ async function updateTask(req, res) {
             message: 'Tarefa atualizada com sucesso.'
         });
     } catch (error) {
+        if (schemaUnavailable(req, res, error)) return;
         if (error.status) return res.status(error.status).json({ error: error.message });
         console.error('Erro ao atualizar tarefa:', error);
 
@@ -105,7 +115,7 @@ async function updateTask(req, res) {
 async function deleteTask(req, res) {
     try {
         const taskId = req.params.id;
-        const userId = req.user.id_usuario;
+        const userId = taskOwner(req);
 
         const result = await tasksModel.deleteTask(taskId, userId);
 
@@ -119,6 +129,7 @@ async function deleteTask(req, res) {
             message: 'Tarefa excluída com sucesso.'
         });
     } catch (error) {
+        if (schemaUnavailable(req, res, error)) return;
         if (error.status) return res.status(error.status).json({ error: error.message });
         console.error('Erro ao excluir tarefa :', error);
 

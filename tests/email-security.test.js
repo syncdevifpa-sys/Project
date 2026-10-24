@@ -202,7 +202,7 @@ test('navegador não envia boas-vindas nem cria sessão Google fictícia', async
         assert.ok(!fs.readFileSync(file, 'utf8').includes('@emailjs/browser'));
 });
 
-test('Nodemailer atualizado compõe os dois links em memória, sem SMTP ou HTML', async (t) => {
+test('Nodemailer compõe recuperação em texto e confirmação multipart em memória, sem SMTP', async (t) => {
     mailEnvironment(t);
     const create = createRealTransport;
     const messages = [];
@@ -236,6 +236,9 @@ test('Nodemailer atualizado compõe os dois links em memória, sem SMTP ou HTML'
     assert.match(messages[1], /verify-email\.html#token=/);
     for (const message of messages) {
         assert.match(message, /Content-Type: text\/plain/);
-        assert.doesNotMatch(message, /Content-Type: text\/html|^Bcc:/m);
+        assert.doesNotMatch(message, /^Bcc:/m);
     }
+    assert.doesNotMatch(messages[0], /Content-Type: text\/html/);
+    assert.match(messages[1], /Content-Type: multipart\/alternative/);
+    assert.match(messages[1], /Content-Type: text\/html/);
 });

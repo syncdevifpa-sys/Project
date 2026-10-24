@@ -40,6 +40,7 @@ function fixture() {
         return node;
     };
     const A = {
+        contentFields: require('../front/js/content-fields'),
         contentEditor: {
             canEdit: (_kind, event) => !event.automatico && event.id_usuario === 4,
             open: (...args) => calls.push(args)

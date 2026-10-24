@@ -17,7 +17,9 @@ async function listManagedEvents(req, res) {
 async function listEvents(req, res) {
     try {
         const events = await calendarModel.listEvents({
-            institutional: Boolean(req.noticeViewer?.id_usuario)
+            institutional: Boolean(req.noticeViewer?.id_usuario),
+            external: Boolean(req.externalUser),
+            actorId: req.noticeViewer?.id_usuario
         });
 
         return res.json(events);
@@ -29,6 +31,7 @@ async function listEvents(req, res) {
             return res
                 .status(409)
                 .json({ error: 'Atualize o banco para habilitar a visibilidade do calendário.' });
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) return res.status(409).json({ error: 'A visibilidade ampliada exige a migração 1.1.28.' });
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             return res.status(409).json({
                 error: 'O banco precisa da atualização de categorias do calendário antes de salvar esta categoria.'
@@ -47,7 +50,9 @@ async function getEventById(req, res) {
         const eventId = req.params.id;
 
         const event = await calendarModel.findEventById(eventId, {
-            institutional: Boolean(req.noticeViewer?.id_usuario)
+            institutional: Boolean(req.noticeViewer?.id_usuario),
+            external: Boolean(req.externalUser),
+            actorId: req.noticeViewer?.id_usuario
         });
 
         if (!event) {
@@ -65,6 +70,7 @@ async function getEventById(req, res) {
             return res
                 .status(409)
                 .json({ error: 'Atualize o banco para habilitar a visibilidade do calendário.' });
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) return res.status(409).json({ error: 'A visibilidade ampliada exige a migração 1.1.28.' });
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             return res.status(409).json({
                 error: 'O banco precisa da atualização de categorias do calendário antes de salvar esta categoria.'
@@ -115,6 +121,7 @@ async function createEvent(req, res) {
             return res
                 .status(409)
                 .json({ error: 'Atualize o banco para habilitar a visibilidade do calendário.' });
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) return res.status(409).json({ error: 'A visibilidade ampliada exige a migração 1.1.28.' });
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             return res.status(409).json({
                 error: 'O banco precisa da atualização de categorias do calendário antes de salvar esta categoria.'
@@ -151,6 +158,7 @@ async function updateEvent(req, res) {
             return res
                 .status(409)
                 .json({ error: 'Atualize o banco para habilitar a visibilidade do calendário.' });
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) return res.status(409).json({ error: 'A visibilidade ampliada exige a migração 1.1.28.' });
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             return res.status(409).json({
                 error: 'O banco precisa da atualização de categorias do calendário antes de salvar esta categoria.'
@@ -187,6 +195,7 @@ async function deleteEvent(req, res) {
             return res
                 .status(409)
                 .json({ error: 'Atualize o banco para habilitar a visibilidade do calendário.' });
+        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) return res.status(409).json({ error: 'A visibilidade ampliada exige a migração 1.1.28.' });
         if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code))
             return res.status(409).json({
                 error: 'O banco precisa da atualização de categorias do calendário antes de salvar esta categoria.'

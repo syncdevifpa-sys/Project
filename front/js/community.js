@@ -11,15 +11,20 @@
         window.location.href = 'dashboard.html';
         return;
     }
-    document.getElementById('externalLogout').addEventListener('click', () => A.auth.logout());
     const status = document.getElementById('externalStatus');
+    const settingsView = location.pathname.endsWith('/community-settings.html');
+    if (settingsView) document.title = 'Configurações — Comunidade externa · Arcádia';
     try {
-        const profile = await A.api.expect(A.api.get('/api/external/me'));
-        document.getElementById('externalName').textContent = profile.nome;
+        const options = typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? { signal: AbortSignal.timeout(15000) } : {};
+        const profile = await A.api.expect(A.api.get('/api/external/me', options));
+        document.getElementById('externalName').textContent = A.formatPersonName(profile.nome);
+        const greeting = document.getElementById('externalGreeting');
+        if (greeting) greeting.textContent = settingsView ? 'Configurações' : 'Olá, ' + A.formatPersonName(profile.nome).split(' ')[0];
         document.getElementById('externalEmail').textContent = profile.email;
         document.getElementById('externalOrganization').textContent =
             profile.organizacao || 'Não informada';
         status.textContent = '';
+        if (!settingsView) return;
         const editor = document.createElement('details');
         editor.className = 'ar-external-edit';
         const summary = document.createElement('summary');
@@ -65,7 +70,7 @@
                         )
                     )
                 );
-                document.getElementById('externalName').textContent = inputs.nome.value;
+                document.getElementById('externalName').textContent = A.formatPersonName(inputs.nome.value);
                 document.getElementById('externalOrganization').textContent =
                     inputs.organizacao.value || 'Não informada';
                 const requestForm = document.getElementById('teacherRequestForm');
@@ -79,5 +84,11 @@
         };
     } catch {
         status.textContent = 'Não foi possível carregar o perfil. Tente novamente mais tarde.';
+        for (const id of ['externalName','externalEmail','externalOrganization']) {
+            const field = document.getElementById(id);
+            if (field) field.textContent = 'Indisponível';
+        }
+    } finally {
+        document.getElementById('accountSettings')?.setAttribute('aria-busy','false');
     }
 })();

@@ -4,6 +4,32 @@
   min-width: 0;
   margin: 0 auto;
 }
+/* Mesmo espaço da navegação final, antes dos scripts do rodapé. */
+html[data-portal-navigation='pending'] .ar-navpill { visibility:hidden; min-height:36px; max-height:36px; overflow:hidden; }
+@media (max-width:1100px) {
+  html[data-portal-navigation='pending'] .ar-nav { flex-wrap:wrap; border-radius:var(--radius-lg); padding-left:48px; }
+  html[data-portal-navigation='pending'] .ar-navpill { order:3; width:100%; flex-basis:100%; }
+}
+@media (min-width: 1101px) {
+  html[data-portal-navigation='pending'] { --early-sidebar-width: 240px; }
+  html[data-portal-navigation='pending'][data-sidebar-size='compact'] { --early-sidebar-width: 72px; }
+  html[data-portal-navigation='pending'] .ar-app {
+    margin-left: calc(var(--early-sidebar-width) + 24px);
+    margin-right: 8px;
+    max-width: none;
+  }
+  html[data-portal-navigation='pending'] body::before {
+    content: '';
+    position: fixed;
+    inset: 16px auto 16px 16px;
+    width: var(--early-sidebar-width);
+    box-sizing: border-box;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    pointer-events: none;
+  }
+}
 .ar-nav-current {
   display: inline-flex;
   align-items: center;

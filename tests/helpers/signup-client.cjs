@@ -1,10 +1,11 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
-module.exports = function signupClient(role, email, post, access = 'cadastro') {
+module.exports = function signupClient(role, email, post, access = 'cadastro', initialSession = {}) {
     const error = { textContent: '', style: {} },
         success = { textContent: '', style: {} },
         help = { hidden: true },
-        confirmationHelp = { hidden: true };
+        confirmationHelp = { hidden: true },
+        confirmedNotice = { hidden: true };
     const fields = {
         '#nome, #name': { value: 'Pessoa de teste' },
         '#email': { value: email },
@@ -15,7 +16,8 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
         '.mensagem-erro, .error-message': error,
         '.mensagem-sucesso, .success-message': success,
         '[data-signup-verification]': help,
-        '[data-email-verification-help]': confirmationHelp
+        '[data-email-verification-help]': confirmationHelp,
+        '[data-email-confirmation-notice]': confirmedNotice
     };
     let submit, ready;
     const timers = [];
@@ -27,7 +29,7 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
         }
     };
     const storage = new Map();
-    const session = new Map();
+    const session = new Map(Object.entries(initialSession));
     const window = {
         location: { href: 'signup.html' },
         addEventListener() {},
@@ -73,6 +75,7 @@ module.exports = function signupClient(role, email, post, access = 'cadastro') {
         success,
         help,
         confirmationHelp,
+        confirmedNotice,
         timers,
         window,
         storage,

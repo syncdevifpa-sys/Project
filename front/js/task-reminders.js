@@ -72,7 +72,7 @@
             const event=binding?.event || row.evento;
             const eventSource=binding?.source || row.contexto;
             const linked=Boolean(event) || Boolean(row.id_evento || row.id_evento_externo);
-            const tasks = external || linked ? [] : await A.api.expect(A.api.get('/api/tasks'));
+            const tasks = linked ? [] : await A.api.expect(A.api.get('/api/tasks'));
             const open=document.querySelector('.ar-reminder-editor[open]');
             if(open){open.querySelector('input,select,button')?.focus();return;}
             const dialog = make('dialog', undefined, 'ar-reminder-editor');

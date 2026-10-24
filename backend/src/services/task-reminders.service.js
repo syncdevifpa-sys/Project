@@ -84,7 +84,7 @@ function createReminders(db = database) {
     }
     const select = `SELECT l.*, DATE_FORMAT(l.agendado_utc,'%Y-%m-%dT%H:%i:%s.000Z') AS agendado_utc,
         (SELECT e.estado FROM lembrete_envios e WHERE e.id_lembrete=l.id_lembrete AND e.versao=l.versao) AS envio_estado,
-        t.titulo AS tarefa, t.status AS tarefa_status FROM lembretes l LEFT JOIN tarefas t ON t.id_tarefa=l.id_tarefa AND t.id_usuario=l.id_usuario`;
+        t.titulo AS tarefa, t.status AS tarefa_status FROM lembretes l LEFT JOIN tarefas t ON t.id_tarefa=l.id_tarefa`;
     async function listReminders(owner) {
         const who=identity(owner);
         await account(db,owner);
