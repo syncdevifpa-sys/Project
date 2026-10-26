@@ -55,7 +55,14 @@
         const status = make('p');
         status.setAttribute('role', 'status');
         const visibilityForm = make('form');
-        const groupLabel = make('label', 'Calendário para alterar a visibilidade');
+        visibilityForm.className = 'ar-calendar-visibility-form';
+        const visibilityFields = make('fieldset');
+        const visibilityTitle = make('legend', 'Visibilidade do calendário');
+        const visibilityHelp = make('p', 'Escolha o calendário e quem poderá consultar seus eventos. A alteração será confirmada antes de salvar.');
+        visibilityHelp.id = 'calendarVisibilityHelp';
+        visibilityHelp.className = 'ar-calendar-visibility-help';
+        visibilityFields.setAttribute('aria-describedby', visibilityHelp.id);
+        const groupLabel = make('label', 'Calendário / período');
         groupLabel.className = 'ar-field';
         const group = make('select');
         group.required = true;
@@ -71,9 +78,10 @@
             const option = make('option', label); option.value = value; scope.append(option);
         }
         scope.value = 'institucional'; scopeLabel.append(scope);
-        const apply = make('button', 'Alterar visibilidade do calendário'); apply.type = 'submit';
+        const apply = make('button', 'Aplicar visibilidade'); apply.type = 'submit';
         apply.className = 'ar-btn ar-btn--secondary';
-        visibilityForm.append(groupLabel, scopeLabel, apply);
+        visibilityFields.append(visibilityTitle, visibilityHelp, groupLabel, scopeLabel, apply);
+        visibilityForm.append(visibilityFields);
         visibilityForm.addEventListener('submit', async event => {
             event.preventDefault();
             const selected = events.filter(row => text(row.periodo_letivo) === group.value);
@@ -140,7 +148,9 @@
         document.body.append(dialog);
         render();
         dialog.showModal();
-        search.focus();
+        heading.tabIndex = -1;
+        heading.focus({ preventScroll: true });
+        dialog.scrollTop = 0;
         return dialog;
     }
     A.calendarEventEditor = { open, metadata, matches };

@@ -15,6 +15,22 @@ const action = (fn) => async (q, s, next) => {
         next(e);
     }
 };
+const cohortInfo = require('../services/cohort-info.service').createCohortInfo();
+const classSchedule = require('../services/class-schedule.service').createClassSchedule();
+router.get('/schedule', action(async(q,s)=>s.json(await classSchedule.agenda(q.user.id_usuario,q.query.from,q.query.to))));
+router.get('/:id/schedule', action(async(q,s)=>s.json(await classSchedule.list(q.user.id_usuario,q.params.id))));
+router.post('/:id/schedule', action(async(q,s)=>s.status(201).json(await classSchedule.save(q.user.id_usuario,q.params.id,q.body||{}))));
+router.delete('/:id/schedule/:schedule', action(async(q,s)=>s.json(await classSchedule.remove(q.user.id_usuario,q.params.id,q.params.schedule,q.body?.versao))));
+router.get('/:id/schedule/:schedule/exceptions', action(async(q,s)=>s.json(await classSchedule.exceptions(q.user.id_usuario,q.params.id,q.params.schedule))));
+router.put('/:id/schedule/:schedule/exceptions', action(async(q,s)=>s.json(await classSchedule.exception(q.user.id_usuario,q.params.id,q.params.schedule,q.body||{}))));
+router.get('/catalog', action(async(q,s)=>s.json(await cohortInfo.catalog(q.user.id_usuario))));
+router.get('/cohorts/:id/info', action(async(q,s)=>s.json(await cohortInfo.detail(q.user.id_usuario,q.params.id))));
+router.patch('/cohorts/:id/room', action(async(q,s)=>s.json(await cohortInfo.room(q.user.id_usuario,q.params.id,q.body||{}))));
+router.get('/cohorts/:id/room/history', action(async(q,s)=>s.json(await cohortInfo.history(q.user.id_usuario,q.params.id))));
+router.put('/cohorts/:id/representative', action(async(q,s)=>s.json(await cohortInfo.representative(q.user.id_usuario,q.params.id,q.body||{}))));
+router.put('/cohorts/:id/vices', action(async(q,s)=>s.json(await cohortInfo.vices(q.user.id_usuario,q.params.id,q.body||{}))));
+router.get('/cohorts/:id/representative/candidates', action(async(q,s)=>s.json(await cohortInfo.candidates(q.user.id_usuario,q.params.id))));
+router.put('/cohorts/:id/representative/whatsapp', action(async(q,s)=>s.json(await cohortInfo.whatsapp(q.user.id_usuario,q.params.id,q.body||{}))));
 router.delete('/cohorts/:id', action(async (q, s) => s.json(await service.archiveCohort(q.user.id_usuario, q.params.id, q.body || {}))));
 router.delete('/:id', action(async (q, s) => s.json(await service.archiveSubject(q.user.id_usuario, q.params.id, q.body || {}))));
 router.post(

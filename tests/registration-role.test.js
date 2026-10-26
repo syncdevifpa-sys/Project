@@ -10,7 +10,7 @@ function registration() {
         course = {},
         help = {},
         submit = {},
-        teacherInputs = [{id:'teacherMatricula'}, {id:'teacherUsername'}, {id:'teacherFormacao'}],
+        teacherInputs = ['teacherMatricula','teacherUsername','teacherFormacao','studentCourseInfo'].map(id=>({id,wrapper:{hidden:false},closest(){return this.wrapper;}})),
         teacherFields = { hidden: true, querySelectorAll: () => teacherInputs };
     const buttons = ['Student', 'Professor', 'Staff', 'External'].map((value, index) => {
         const attributes = {
@@ -76,7 +76,9 @@ function registration() {
 
 test('clique seleciona professor/servidor e volta para aluno sem conceder cadastro privilegiado', () => {
     const r = registration();
-    assert.equal(r.course.required, true);
+    assert.equal(r.course.required, false);
+    assert.equal(r.teacherFields.hidden, false);
+    assert.equal(r.teacherInputs.find(input=>input.id==='studentCourseInfo').required,true);
     assert.equal(r.submit.disabled, false);
     for (const index of [1, 2]) {
         r.course.value = '7';
@@ -92,7 +94,7 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
         assert.equal(r.teacherFields.hidden, false);
         assert.ok(
             r.teacherInputs.every(
-                (input) => input.required === !(index === 2 && input.id === 'teacherFormacao') && input.disabled === false
+                (input) => input.id==='studentCourseInfo' ? input.disabled : input.required === !(index === 2 && input.id === 'teacherFormacao') && input.disabled === false
             )
         );
         assert.match(
@@ -102,8 +104,9 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
     }
     r.buttons[0].click();
     assert.equal(r.input.value, 'Student');
-    assert.equal(r.wrapper.style.display, 'flex');
-    assert.equal(r.course.required, true);
+    assert.equal(r.wrapper.style.display, 'none');
+    assert.equal(r.course.required, false);
+    assert.match(r.help.textContent,/aprovação em Requisitos/);
     assert.equal(r.submit.disabled, false);
     r.buttons[3].click();
     assert.equal(r.input.value, 'External');
@@ -124,10 +127,10 @@ test('setas e extremos do teclado selecionam e movem foco no grupo de vínculos'
     assert.equal(r.input.value, 'Student');
 });
 
-test('formulário real envia comunidade externa ao endpoint externo e aluno ao endpoint institucional', async () => {
+test('cadastro de todos os vínculos usa conta externa até aprovação, incluindo Aluno', async () => {
     for (const [value, route, role] of [
         ['External', '/api/external/register', 'externo'],
-        ['Student', '/api/users', 'discente'],
+        ['Student', '/api/external/register', 'discente'],
         ['Professor', '/api/external/register', 'docente'],
         ['Staff', '/api/external/register', 'servidor']
     ]) {
@@ -141,6 +144,7 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
             '#teacherMatricula': { value: '12345' },
             '#teacherUsername': { value: 'professor.teste' },
             '#teacherFormacao': { value: 'Licenciatura' }
+            ,'#studentCourseInfo': {value:'Informática · 1º semestre'}
         };
         let submit, request;
         const form = {
@@ -161,9 +165,7 @@ test('formulário real envia comunidade externa ao endpoint externo e aluno ao e
                                 ok: true,
                                 status: 201,
                                 data: {
-                                    [['externo', 'docente', 'servidor'].includes(role)
-                                        ? 'externalId'
-                                        : 'userId']: 10,
+                                    externalId: 10,
                                     verificationRequired: true,
                                     verificationSent: true
                                 }

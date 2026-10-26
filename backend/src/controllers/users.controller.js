@@ -1,6 +1,4 @@
 const usersModel = require('../models/users.model');
-const bcrypt = require('bcrypt');
-const institution = require('../config/institution');
 
 async function listUsers(req, res) {
     try {
@@ -42,72 +40,10 @@ async function getUserById(req, res) {
 }
 
 async function createUser(req, res) {
-    if (['docente','servidor'].includes(req.body?.tipo_usuario))
-        return require('./externalUsers.controller').registerExternal(req, res);
-    try {
-        const { nome, email, senha, tipo_usuario } = req.body;
-        if (
-            typeof nome !== 'string' ||
-            !nome.trim() ||
-            typeof email !== 'string' ||
-            email.length > 254 ||
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-            typeof senha !== 'string' ||
-            senha.length < 8 ||
-            Buffer.byteLength(senha, 'utf8') > 72 ||
-            !['discente', 'docente', 'servidor'].includes(tipo_usuario)
-        ) {
-            return res.status(400).json({
-                error: 'Informe nome, e-mail, vínculo e senha de pelo menos 8 caracteres.'
-            });
-        }
-        // O cadastro público não comprova vínculo ou autoridade no campus, qualquer que seja o domínio do e-mail.
-        if (tipo_usuario !== 'discente') {
-            return res.status(403).json({
-                error: institution.isInstitutionalEmail(email)
-                    ? 'O domínio institucional não comprova posse nem cargo. Contas de professor e servidor precisam de validação administrativa.'
-                    : 'Para professor ou servidor, utilize e-mail do domínio ' +
-                      institution.institutionalDomain() +
-                      ' e solicite validação à administração. O cadastro público não concede esses papéis.'
-            });
-        }
-        const normalizedEmail = require('../services/email-verification.service').address(email);
-        await require('../services/security-limits.service').verification(req, normalizedEmail);
-        if (await require('../models/externalUsers.model').findExternalByEmail(normalizedEmail)) {
-            return res.status(409).json({ error: 'Este e-mail já está cadastrado. Faça login.' });
-        }
-        await require('../services/profile-course.service').validateCourseSelection(
-            req.body.id_curso,
-            true
-        );
-        const hashedPassword = await bcrypt.hash(senha, 10);
-
-        const userData = {
-            nome: nome.trim(),
-            email: normalizedEmail,
-            tipo_usuario: 'discente',
-            telefone: req.body.telefone || null,
-            id_curso: req.body.id_curso || null,
-            senha: hashedPassword
-        };
-
-        const result = await usersModel.createUser(userData);
-
-        res.status(201).json({
-            message: 'Usuário criado com sucesso.',
-            userId: result.insertId,
-            verificationRequired: true,
-            verificationSent: result.verificationSent === true
-        });
-    } catch (error) {
-        if (!error.status) console.error('Erro ao criar usuario:', error);
-
-        res.status(error.status || (error.code === 'ER_DUP_ENTRY' ? 409 : 500)).json({
-            error: error.status
-                ? error.message
-                : 'Não foi possível concluir a operação. Tente novamente.'
-        });
-    }
+    if (!['discente','docente','servidor'].includes(req.body?.tipo_usuario))
+        return res.status(400).json({error:'Escolha Aluno, Professor ou Servidor para solicitar um vínculo institucional.'});
+    // Novas contas só recebem vínculo após aprovação administrativa; legado permanece intacto.
+    return require('./externalUsers.controller').registerExternal(req, res);
 }
 
 async function updateUser(req, res) {

@@ -1,5 +1,9 @@
 # Banco de dados do Arcádia
 
+## Em preparação: 1.1.30
+
+A migração `migrations/1.1.30.sql` ainda **não foi aplicada**: acrescenta intenção de cadastro de Aluno, sala oficial opcional, histórico, identificação de representante/vices e horários semanais. Exige 1.1.29 registrada, ensaio em MySQL 8.4 e aplicação autorizada com backup antes de publicar o código dependente. `checks/1.1.30.sql` é somente leitura. Não reaplicar 1.1.27/28/29 nem executar `schema.sql` inteiro na base existente. Consulte [o fluxo de Turmas](../../docs/turmas-salas-representantes.md).
+
 Escolha **um caminho**. Nenhum comando abaixo é executado pelo site ou por build.
 
 | Situação | Arquivo |

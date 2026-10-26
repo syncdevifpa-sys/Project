@@ -44,6 +44,16 @@ test('atribuir Professor diretamente pela edição administrativa é bloqueado e
     );
     assert.ok(!calls.some((c) => c.sql?.startsWith('UPDATE usuarios')));
 });
+test('permissão administrativa pode ser atribuída a outra conta sem trocar seu vínculo institucional', async t => {
+    const calls=transaction(t,{id_usuario:8,email:'pessoa@gmail.com',situacao:'ativo',tipo_usuario:'discente',is_admin:0},[{id_usuario:4}]);
+    await service.changePerson('users',8,{is_admin:true},4);
+    const update=calls.find(c=>c.sql?.startsWith('UPDATE usuarios'));
+    assert.match(update.sql,/is_admin = \?/);
+    assert.doesNotMatch(update.sql,/tipo_usuario/);
+    assert.equal(update.params[0],true);
+    assert.ok(calls.some(c=>c.sql?.startsWith('DELETE FROM tokens')));
+});
+
 test('admin desativa outra pessoa e encerra suas sessões sem excluir histórico', async (t) => {
     const calls = transaction(
         t,

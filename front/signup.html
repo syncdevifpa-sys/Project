@@ -788,8 +788,7 @@
                   id="registrationRoleHelp"
                   role="status"
                   aria-live="polite"
-                  >Aluno: preencha seus dados e selecione o curso. Contas de professor e servidor
-                  dependem de autorização da administração.</span
+                  >Aluno, professor e servidor: o vínculo depende de aprovação da administração. Até a aprovação, a conta terá acesso de Comunidade externa.</span
                 >
               </div>
 
@@ -850,6 +849,10 @@
               </div>
 
               <div id="teacherSignupFields" hidden>
+                <div class="ar-input-group" hidden>
+                  <label class="ar-input-label" for="studentCourseInfo">Curso e período no SIGAA</label>
+                  <div class="ar-input-wrap"><input id="studentCourseInfo" name="curso_informado" maxlength="150" placeholder="Ex.: Informática · 2º semestre" disabled /></div>
+                </div>
                 <div class="ar-input-group"
                   ><label class="ar-input-label" for="teacherMatricula"
                     >Matrícula / SIAPE no SIGAA</label

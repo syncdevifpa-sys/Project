@@ -390,6 +390,11 @@ for (const delivery of [
     test('cadastro real do formulário até transação e SMTP simulado: ' + delivery, async (t) => {
         const f = await fixture(t);
         const courses = require('../backend/src/models/courses.model');
+        t.mock.method(require('../backend/src/services/teacher-requirements.service'), 'insertRequest', async (_connection,_id,details) => {
+            assert.equal(details.tipo_solicitado,'discente');
+            assert.equal(details.matricula,'202600001');
+            return {insertId:1};
+        });
         let smtpRecovered = false;
         t.mock.method(courses, 'findCourseById', async () => ({ id_curso: 1, ativo: 1 }));
         t.mock.method(limits, 'verification', async () => {
@@ -420,7 +425,7 @@ for (const delivery of [
                 kind,
                 email,
                 async (path, body) => {
-                    assert.equal(path, kind === 'users' ? '/api/users' : '/api/external/register');
+                    assert.equal(path, '/api/external/register');
                     let status = 200;
                     const res = {
                         status(value) {
@@ -443,7 +448,7 @@ for (const delivery of [
             );
             if (delivery === 'database-failure') f.fail('INSERT INTO email_estado');
             await client.submit();
-            const stored = [...f.state()[kind].values()].find((row) => row.email === email);
+            const stored = [...f.state().external.values()].find((row) => row.email === email);
             if (delivery === 'quota-failure' || delivery === 'database-failure') {
                 assert.equal(response.status, delivery === 'quota-failure' ? 429 : 503);
                 assert.equal(stored, undefined);
@@ -457,8 +462,8 @@ for (const delivery of [
             assert.equal(
                 (
                     await service.loginStatus(
-                        kind,
-                        stored[kind === 'users' ? 'id_usuario' : 'id_externo'],
+                        'external',
+                        stored.id_externo,
                         email
                     )
                 ).allowed,
@@ -490,8 +495,8 @@ for (const delivery of [
                 assert.equal(
                     (
                         await service.loginStatus(
-                            kind,
-                            stored[kind === 'users' ? 'id_usuario' : 'id_externo'],
+                            'external',
+                            stored.id_externo,
                             email
                         )
                     ).allowed,

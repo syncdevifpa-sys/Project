@@ -4,6 +4,28 @@
 .notice-filter-content {
   display: grid;
   gap: 16px;
+  min-width: 0;
+  padding-block: 4px;
+}
+.notice-filter-content .ar-filter-group {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.notice-filter-content .ar-filter-title {
+  margin-block-end: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+.notice-filter-content .ar-check {
+  min-height: 44px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+}
+.notice-filter-content .ar-check:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .notice-type-filter {
   position: relative;

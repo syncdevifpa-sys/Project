@@ -380,6 +380,7 @@ test('cadastro converte os vínculos em inglês para os valores do banco', () =>
 });
 
 test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios', async (t) => {
+    t.mock.method(require('../backend/src/models/externalUsers.model'),'findInstitutionalByEmail',async()=>null);
     t.mock.method(
         require('../backend/src/models/externalUsers.model'),
         'findExternalByEmail',
@@ -391,7 +392,8 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
     }));
     const bcrypt = require('bcrypt');
     let saved;
-    t.mock.method(users, 'createUser', async (data) => {
+    t.mock.method(require('../backend/src/services/email-verification.service'), 'register', async (kind,data) => {
+        assert.equal(kind,'external');
         saved = data;
         return { insertId: 8 };
     });
@@ -404,6 +406,7 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
                 email,
                 senha: 'senha-segura',
                 tipo_usuario: 'discente',
+                matricula:'202600001',nome_usuario:'aluno.teste',curso_informado:'Informática · 1º semestre',
                 id_curso: 1,
                 is_admin: true,
                 situacao: 'ativo'
@@ -411,12 +414,13 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
         });
         assert.equal(res.status, 201);
         assert.equal(saved.email, email);
-        assert.equal(saved.tipo_usuario, 'discente');
+        assert.equal(saved.tipo_usuario, undefined);
+        assert.equal(saved.teacherRequest.tipo_solicitado, 'discente');
         assert.equal(saved.is_admin, undefined);
         assert.equal(saved.situacao, undefined);
         assert.ok(await bcrypt.compare('senha-segura', saved.senha));
     }
-    t.mock.method(users, 'createUser', () => assert.fail('Cadastro inválido não pode gravar'));
+    t.mock.method(require('../backend/src/services/email-verification.service'), 'register', () => assert.fail('Cadastro inválido não pode gravar'));
     for (const tipo_usuario of ['docente', 'servidor']) {
         const res = await fetch(base + '/api/users', {
             method: 'POST',

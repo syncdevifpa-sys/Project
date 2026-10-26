@@ -3,7 +3,7 @@ const assert = require('node:assert/strict'),
     vm = require('node:vm'),
     fs = require('node:fs');
 const code = fs.readFileSync('front/js/navigation.js', 'utf8');
-function fixture(page, session, mobile = false, saved = '0') {
+function fixture(page, session, mobile = false, saved = '0', sessionValues = new Map()) {
     const nodes = [],
         storage = new Map([['arcadia-sidebar-collapsed', saved]]);
     function element(tag) {
@@ -67,7 +67,8 @@ function fixture(page, session, mobile = false, saved = '0') {
     };
     const Arcadia = { auth: { getSessao: () => session } };
     vm.runInNewContext(code, {
-        window: { Arcadia, matchMedia: () => media },
+        window: { Arcadia, matchMedia: () => media, addEventListener() {}, setTimeout: fn => fn() },
+        sessionStorage: { getItem:k=>sessionValues.get(k),setItem:(k,v)=>sessionValues.set(k,v) },
         Arcadia,
         document,
         location: { pathname: '/front/' + page },
@@ -79,12 +80,26 @@ function fixture(page, session, mobile = false, saved = '0') {
         app,
         media,
         storage,
+        sessionValues,
         toggle: nodes.find((n) => n.className === 'ar-iconbtn ar-sidebar-toggle'),
         sidebar: nodes.find((n) => n.id === 'portalSidebar'),
         nav: nodes.find((n) => n.attributes['aria-label'] === 'Navegação do portal'),
         backdrop: nodes.find((n) => n.className === 'ar-sidebar-backdrop')
     };
 }
+test('sidebar preserva grupos expandidos e posição ao trocar de página, separados por conta',()=>{
+    const session={id_usuario:7,tipo_usuario:'discente'};
+    const first=fixture('dashboard.html',session);
+    const content=first.nodes.find(n=>n.dataset.group==='Conteúdo');
+    content.open=true;content.children[0].events.click();
+    first.sidebar.scrollTop=145;first.sidebar.events.scroll();
+    const next=fixture('classes.html',session,false,'0',first.sessionValues);
+    assert.equal(next.nodes.find(n=>n.dataset.group==='Conteúdo').open,true);
+    assert.equal(next.sidebar.scrollTop,145);
+    const other=fixture('classes.html',{id_usuario:8,tipo_usuario:'discente'},false,'0',first.sessionValues);
+    assert.equal(other.nodes.find(n=>n.dataset.group==='Conteúdo').open,false);
+    assert.equal(other.sidebar.scrollTop,0);
+});
 test('sidebar marks current section, gates administration and remembers icon rail', () => {
     const f = fixture('admin.html', { is_admin: true, tipo_usuario: 'servidor' });
     assert.equal(f.nodes.find((n) => n.attributes['aria-current'] === 'page').href, 'admin.html');

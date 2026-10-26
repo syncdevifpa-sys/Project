@@ -309,3 +309,18 @@
   color: var(--ink);
   font: inherit;
 }
+.ac-cohort-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-block: 12px;
+  padding-block: 12px;
+  border-top: 1px solid var(--line);
+}
+.ac-cohort-info p {
+  flex-basis: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ac-cohort-info .ar-btn { min-height: 44px; }

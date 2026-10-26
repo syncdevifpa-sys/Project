@@ -396,6 +396,23 @@ test('cadastro e pedido compartilham a transação de confirmação; falha não 
     assert.ok(events.includes('rollback'));
     assert.ok(!events.includes('send'));
 });
+test('cadastro Aluno aguarda Requisitos como externo, sem autodeclaração de vínculo ou admin', async t => {
+    const users=require('../backend/src/controllers/users.controller');
+    const external=require('../backend/src/models/externalUsers.model');
+    const verification=require('../backend/src/services/email-verification.service');
+    t.mock.method(require('../backend/src/services/security-limits.service'),'verification',async()=>{});
+    t.mock.method(external,'findInstitutionalByEmail',async()=>null);
+    t.mock.method(external,'findExternalByEmail',async()=>null);
+    let stored;
+    t.mock.method(verification,'register',async(kind,data)=>{stored={kind,data};return {insertId:10,verificationSent:true};});
+    const res={code:200,status(n){this.code=n;return this;},json(data){this.data=data;return this;}};
+    await users.createUser({body:{...body,nome:'Aluno',email:'aluno@gmail.com',senha:'senha-segura',tipo_usuario:'discente',curso_informado:'Informática · 2º semestre',is_admin:true,situacao:'ativo'}},res);
+    assert.equal(res.code,201);assert.equal(res.data.externalId,10);assert.equal(res.data.userId,undefined);
+    assert.equal(stored.kind,'external');assert.equal(stored.data.teacherRequest.tipo_solicitado,'discente');
+    assert.equal(stored.data.teacherRequest.curso_informado,'Informática · 2º semestre');
+    assert.equal(stored.data.is_admin,undefined);assert.equal(stored.data.tipo_usuario,undefined);
+});
+
 test('cadastro Professor usa conta externa e confirmação; ignora tentativa de ativar cargo ou admin', async (t) => {
     const users = require('../backend/src/controllers/users.controller'),
         external = require('../backend/src/models/externalUsers.model'),
