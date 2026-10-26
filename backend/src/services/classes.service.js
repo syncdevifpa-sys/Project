@@ -75,6 +75,7 @@ function offering(body) {
     return { regime_letivo: regime, semestre: semester };
 }
 function createClasses(database = db) {
+    const academicManagement = require('./academic-management.service').createAcademicManagement(database);
     const isAdmin = (actor) => actor.is_admin === 1 || actor.is_admin === true;
     async function teacher(c, key) {
         const professor = id(key);
@@ -95,7 +96,7 @@ function createClasses(database = db) {
     }
     async function user(c, owner, lock = false) {
         const [rows] = await c.execute(
-            'SELECT id_usuario, tipo_usuario, is_admin, email, situacao FROM usuarios WHERE id_usuario = ?' +
+            'SELECT id_usuario, tipo_usuario, is_admin, email, situacao, nome FROM usuarios WHERE id_usuario = ?' +
                 (lock ? ' FOR UPDATE' : ''),
             [owner]
         );
@@ -191,6 +192,13 @@ function createClasses(database = db) {
         return transaction(owner, async (c, actor) => {
             if (actor.tipo_usuario !== 'docente' && !isAdmin(actor))
                 fail(403, 'Somente professores criam suas disciplinas.');
+            let catalogItem = null;
+            if(body.id_catalogo){
+                if(!await academicManagement.ready(c))fail(503,'O catálogo aguarda a migração 1.1.31.');
+                const [items]=await c.execute('SELECT id_catalogo,nome FROM academico_catalogo_disciplinas WHERE id_catalogo=? AND ativo=1 FOR SHARE',[id(body.id_catalogo)]);
+                if(!items[0])fail(404,'Selecione uma disciplina ativa do catálogo.');
+                catalogItem=items[0];
+            }
             const period = offering(body);
             const professor = isAdmin(actor) ? await teacher(c, body.id_professor) : owner;
             const academic = year(body.ano_letivo);
@@ -240,6 +248,7 @@ function createClasses(database = db) {
             }
             if (academic < turma.ano_ingresso)
                 fail(400, 'Ano letivo anterior ao ingresso da turma.');
+            if(catalogItem)await assertCatalogUnique(c,{id_turma:turma.id_turma},{...period,ano_letivo:academic},catalogItem.id_catalogo);
             const [d] = await c.execute(
                 'INSERT INTO academico_disciplinas (id_turma,id_professor,nome,ano_letivo,regime_letivo,semestre) VALUES (?,?,?,?,?,?)',
                 [
@@ -251,6 +260,7 @@ function createClasses(database = db) {
                     period.semestre
                 ]
             );
+            if(catalogItem)await c.execute('INSERT INTO academico_oferta_catalogo(id_disciplina,id_catalogo) VALUES (?,?)',[d.insertId,catalogItem.id_catalogo]);
             return { id_disciplina: d.insertId };
         });
     }
@@ -273,6 +283,16 @@ function createClasses(database = db) {
             : [[]];
         return { subject, posts, people, pending };
     }
+    async function assertCatalogUnique(c,d,period,catalogId=null){
+        if(!catalogId){
+            if(!await academicManagement.ready(c))return;
+            const [mapping]=await c.execute('SELECT id_catalogo FROM academico_oferta_catalogo WHERE id_disciplina=?',[d.id_disciplina]);
+            catalogId=mapping[0]?.id_catalogo;
+        }
+        if(!catalogId)return;
+        const [duplicates]=await c.execute('SELECT d.id_disciplina FROM academico_oferta_catalogo x JOIN academico_disciplinas d ON d.id_disciplina=x.id_disciplina WHERE x.id_catalogo=? AND d.id_turma=? AND d.ano_letivo=? AND d.regime_letivo=? AND d.semestre=? AND d.id_disciplina<>? FOR UPDATE',[catalogId,d.id_turma,period.ano_letivo,period.regime_letivo,period.semestre,d.id_disciplina||0]);
+        if(duplicates.length)fail(409,'Já existe uma oferta deste item do catálogo na turma e no período escolhido, mesmo com outro título. Use a existente ou solicite sua restauração.');
+    }
     async function preparePeriod(c, d, body) {
         const academic = year(body.ano_letivo), period = offering(body);
         if (academic < Number(d.ano_ingresso)) fail(400, 'Ano letivo anterior ao ingresso da turma.');
@@ -287,6 +307,7 @@ function createClasses(database = db) {
             if ([...schedules,...events].some(row => row.inicio < from || (row.fim || row.inicio) > until))
                 fail(409, 'Há horários ou eventos fora do ano letivo escolhido e de sua continuação no ano seguinte. Revise-os antes de alterar o período; nenhuma data será movida automaticamente.');
         }
+        await assertCatalogUnique(c,d,{...period,ano_letivo:academic});
         return {...period,ano_letivo:academic};
     }
     async function updatePeriod(owner, key, body) {
@@ -303,6 +324,17 @@ function createClasses(database = db) {
                 throw error;
             }
             return {message:'Período letivo atualizado. Horários, materiais, participantes e convites foram preservados.'};
+        });
+    }
+    async function updateOwnOffer(owner,key,body){
+        if(Object.keys(body).some(k=>!['nome','ano_letivo','regime_letivo','semestre','confirmar_periodo','periodo_anterior'].includes(k)))fail(400,'Envie apenas o título e o período desta oferta.');
+        return transaction(owner,async(c,actor)=>{
+            const d=await scope(c,actor,key,true),name=text(body.nome,100,'Título da oferta');
+            const hasPeriod=['ano_letivo','regime_letivo','semestre'].some(k=>Object.hasOwn(body,k));
+            const period=hasPeriod?await preparePeriod(c,d,body):null;
+            try{await c.execute('UPDATE academico_disciplinas SET nome=?'+(period?',ano_letivo=?,regime_letivo=?,semestre=?':'')+' WHERE id_disciplina=?',[name,...(period?[period.ano_letivo,period.regime_letivo,period.semestre]:[]),d.id_disciplina]);}
+            catch(e){if(e.code==='ER_DUP_ENTRY')fail(409,'Já existe uma oferta desta disciplina no período. Use a oferta existente.');throw e;}
+            return {message:'Oferta atualizada. O catálogo global e as outras turmas não foram alterados.'};
         });
     }
     async function updateSubject(owner, key, body) {
@@ -424,14 +456,22 @@ function createClasses(database = db) {
                 'UPDATE academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina SET m.ativa=0,m.encerrado_em=NOW() WHERE m.id_aluno=? AND d.id_turma=? AND m.ativa=1',
                 [owner, id(key)]
             );
-            if (!result.affectedRows) fail(404, 'Nenhum vínculo ativo com esta turma.');
+            let memberships=0;
+            if(await academicManagement.ready(c)){
+                const [changed]=await c.execute('UPDATE academico_vinculos_turma SET ativa=0,saida_em=NOW(),versao=versao+1 WHERE id_turma=? AND id_aluno=? AND ativa=1',[id(key),owner]);
+                memberships=changed.affectedRows;
+                await c.execute("UPDATE academico_pedidos_ingresso SET estado='cancelado',decidido_em=NOW(),versao=versao+1 WHERE id_turma=? AND id_aluno=? AND estado='pendente'",[id(key),owner]);
+                await c.execute('UPDATE academico_turmas SET id_representante=NULL,id_vice1=NULL,id_vice2=NULL,whatsapp_representante=NULL,consentimento_whatsapp_em=NULL WHERE id_turma=? AND id_representante=?',[id(key),owner]);
+                await c.execute('INSERT INTO academico_gestao_historico(tipo,id_alvo,acao,id_autor,nome_autor) VALUES (?,?,?,?,?)',['vinculo',owner,'sair',owner,actor.nome||'Aluno']);
+            }
+            if (!result.affectedRows&&!memberships) fail(404, 'Nenhum vínculo ativo com esta turma.');
             await c.execute(
                 "UPDATE academico_convites v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina SET v.estado='cancelado' WHERE d.id_turma=? AND LOWER(v.email)=LOWER(?) AND v.estado='pendente'",
                 [id(key), actor.email]
             );
             return {
                 message:
-                    'Você saiu da turma. O acesso às disciplinas foi encerrado. Para voltar, solicite um novo convite.'
+                    'Você saiu da turma. O acesso às disciplinas foi encerrado. Para voltar, solicite um novo ingresso na turma.'
             };
         });
     }
@@ -488,6 +528,10 @@ function createClasses(database = db) {
             if (!rows.length) fail(404, 'Convite indisponível para esta conta.');
             const v = rows[0];
             if (body.decisao === 'aceitar') {
+                if(await academicManagement.ready(c)){
+                    const [membership]=await c.execute('SELECT id_aluno FROM academico_vinculos_turma WHERE id_turma=? AND id_aluno=? AND ativa=1 FOR UPDATE',[v.id_turma,owner]);
+                    if(!membership.length)fail(409,'Solicite ingresso nesta turma e aguarde aprovação antes de aceitar o convite da disciplina.');
+                }
                 const [other] = await c.execute(
                     'SELECT d.id_turma FROM academico_matriculas m JOIN academico_disciplinas d ON d.id_disciplina=m.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE m.id_aluno=? AND t.id_curso=? AND d.id_turma<>? AND m.ativa=1 AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL',
                     [owner, v.id_curso, v.id_turma]
@@ -522,7 +566,7 @@ function createClasses(database = db) {
         return transaction(owner, async (c, actor) => {
             await scope(c, actor, subject, true);
             const [result] = await c.execute(
-                'DELETE FROM academico_matriculas WHERE id_disciplina=? AND id_aluno=?',
+                'UPDATE academico_matriculas SET ativa=0,encerrado_em=NOW() WHERE id_disciplina=? AND id_aluno=? AND ativa=1',
                 [id(subject), id(student)]
             );
             if (!result.affectedRows) fail(404, 'Aluno não encontrado nesta disciplina.');
@@ -590,6 +634,7 @@ function createClasses(database = db) {
         leaveCohort,
         leaveSubject,
         updateSubject,
+        updateOwnOffer,
         updatePeriod,
         updateCohort,
         list,

@@ -14,8 +14,8 @@ export function isoDate(value: unknown): string {
         invalid('Data inválida.');
     return value;
 }
-function clock(value: unknown): string {
-    if (typeof value !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value))
+function clock(value: unknown, end = false): string {
+    if (typeof value !== 'string' || !(/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value) || (end && /^24:[0-5]\d$/.test(value))))
         invalid('Horário inválido.');
     return value;
 }
@@ -26,7 +26,7 @@ export function weeklySlot(value: unknown): WeeklySlot {
         !/^[1-7]$/.test(String(input.dia_semana))) invalid('Dia da semana inválido.');
     const weekday = Number(input.dia_semana);
     const from = isoDate(input.vigencia_inicio), until = isoDate(input.vigencia_fim);
-    const start = clock(input.hora_inicio), end = clock(input.hora_fim);
+    const start = clock(input.hora_inicio), end = clock(input.hora_fim, true);
     if (!Number.isInteger(weekday) || weekday < 1 || weekday > 7 || start >= end ||
         until < from || Date.parse(until) - Date.parse(from) > 370 * 86400000)
         invalid('Confira dia, horários e vigência da oferta.');

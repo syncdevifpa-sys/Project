@@ -14,7 +14,9 @@ function fixture({
     uniqueConflict = false,
     offers = null,
     teacherActive = true,
-    archived = false
+    archived = false,
+    academicReady = false,
+    catalogDuplicate = false
 } = {}) {
     let membershipActive = enrolled,
         inviteValid = invite;
@@ -41,6 +43,10 @@ function fixture({
     const database = {
         async execute(sql, args = []) {
             queries.push({ sql, args });
+            if(sql.startsWith('SELECT checksum'))return [academicReady?[{checksum:require('../backend/src/services/academic-management.service').CHECKSUM}]:[]];
+            if(sql.startsWith('SELECT id_catalogo,nome'))return [[{id_catalogo:50,nome:'Programação'}]];
+            if(sql.startsWith('SELECT id_catalogo FROM academico_oferta_catalogo'))return [[{id_catalogo:50}]];
+            if(sql.startsWith('SELECT d.id_disciplina FROM academico_oferta_catalogo'))return [catalogDuplicate?[{id_disciplina:99}]:[]];
             if (sql.startsWith('SELECT id_usuario, tipo_usuario')) return [[actor]];
             if (sql.startsWith('SELECT id_usuario FROM usuarios WHERE id_usuario=?'))
                 return [teacherActive ? [{ id_usuario: args[0] }] : []];
@@ -263,7 +269,7 @@ test('remover aluno revoga apenas a matrícula da disciplina administrada', asyn
     await f.service.removeStudent(7, 3, 10);
     assert.equal(f.writes.length, 1);
     assert.deepEqual(f.writes[0].args, [3, 10]);
-    assert.match(f.writes[0].sql, /DELETE FROM academico_matriculas/);
+    assert.match(f.writes[0].sql, /UPDATE academico_matriculas SET ativa=0,encerrado_em=NOW/);
     const stranger = fixture({ teacher: 8 });
     await assert.rejects(stranger.service.removeStudent(7, 3, 10), { status: 403 });
     assert.equal(stranger.writes.length, 0);
@@ -635,4 +641,20 @@ test('somente administrador exclui turma inteira e cancela os convites de todas 
     await admin.service.list(7);
     const listing = admin.queries.find((q) => /SELECT d.\*, t.nome AS turma/.test(q.sql));
     assert.match(listing.sql, /d.arquivada_em IS NULL AND t.arquivada_em IS NULL/);
+});
+
+test('catálogo vincula nova oferta sem alterar item global; título alternativo não contorna unicidade do catálogo/período',async()=>{
+ const body={id_turma:2,id_catalogo:50,nome:'Programação especial',ano_letivo:2026,regime_letivo:'semestral',semestre:1};
+ const f=fixture({academicReady:true});await f.service.create(7,body);
+ assert.deepEqual(f.writes.find(w=>w.sql.startsWith('INSERT INTO academico_oferta_catalogo')).args,[3,50]);
+ assert.ok(!f.writes.some(w=>/UPDATE academico_catalogo/.test(w.sql)));
+ const duplicate=fixture({academicReady:true,catalogDuplicate:true});await assert.rejects(duplicate.service.create(7,body),{status:409});assert.equal(duplicate.writes.length,0);
+ await assert.rejects(fixture({academicReady:true,catalogDuplicate:true}).service.updatePeriod(7,3,{ano_letivo:2026,regime_letivo:'semestral',semestre:2,confirmar_periodo:true}),{status:409});
+});
+test('professor renomeia somente a própria oferta; aluno e professor alheio não editam e atribuição forjada é rejeitada',async()=>{
+ const f=fixture();await f.service.updateOwnOffer(7,3,{nome:'Programação II'});assert.deepEqual(f.writes[0].args,['Programação II',3]);
+ assert.ok(f.writes.every(w=>!w.sql.includes('catalogo')));
+ await assert.rejects(fixture({teacher:8}).service.updateOwnOffer(7,3,{nome:'Outra'}),{status:403});
+ await assert.rejects(fixture({role:'discente',enrolled:true}).service.updateOwnOffer(7,3,{nome:'Outra'}),{status:403});
+ await assert.rejects(f.service.updateOwnOffer(7,3,{nome:'Outra',id_professor:99}),{status:400});
 });

@@ -321,7 +321,10 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                           ['documento_salvos', 'id_usuario'],
                           ['academico_matriculas', 'id_aluno'],
                           ['academico_disciplinas', 'id_professor'],
-                          ['academico_saidas_professor', 'id_professor']
+                          ['academico_saidas_professor', 'id_professor'],
+                          ['academico_vinculos_turma', 'id_aluno'],
+                          ['academico_pedidos_ingresso', 'id_aluno'],
+                          ['academico_gestao_historico', 'id_autor']
                       ]
                     : [
                           ['projeto_inscricoes_externas', 'id_externo'],

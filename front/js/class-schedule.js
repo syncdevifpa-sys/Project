@@ -11,47 +11,39 @@
         if(canManage){const form=node('form');form.className='ar-calendar-import-row';const dateLabel=node('label','Data da aula');dateLabel.className='ar-field';const date=node('input');date.type='date';date.required=true;date.min=schedule.vigencia_inicio;date.max=schedule.vigencia_fim;dateLabel.append(date);const reasonLabel=node('label','Motivo (opcional)');reasonLabel.className='ar-field';const reason=node('input');reason.maxLength=300;reasonLabel.append(reason);const label=node('label','Cancelar somente esta aula');const canceled=node('input');canceled.type='checkbox';canceled.checked=true;label.append(canceled);const save=node('button','Salvar exceção');save.type='submit';save.className='ar-btn';form.append(dateLabel,reasonLabel,label,save);form.onsubmit=async event=>{event.preventDefault();save.disabled=true;try{const previous=current.find(row=>row.data===date.value);await call(endpoint,'PUT',{data:date.value,cancelada:canceled.checked,motivo:reason.value,versao:previous?.versao||0});await refresh();}catch(e){status.textContent=e.message;}finally{save.disabled=false;}};dialog.insertBefore(form,close);}
         await refresh();
     }
-    function renderGrid(host, rows, caption = 'Horários semanais das aulas') {
+    function renderGrid(host, rows, caption = 'Horários semanais das aulas', options = {}) {
+        const policy = A.campusTimetable;
+        host.replaceChildren();
+        if (!policy) {host.append(node('p','A grade de horários não carregou. Atualize a página.'));return;}
         const entries = rows.map(row => ({...row,
             day:row.dia_semana != null ? Number(row.dia_semana) : row.data ? (new Date(row.data).getUTCDay() || 7) : 0,
-            start:String(row.hora_inicio || '').slice(0,5),end:String(row.hora_fim || '').slice(0,5)
-        })).filter(row => row.day >= 1 && row.day <= 7 && /^\d{2}:\d{2}$/.test(row.start) && row.end > row.start);
-        host.replaceChildren();
-        if (!entries.length) {host.append(node('p','Nenhuma aula cadastrada para este período.'));return;}
-        // Merge only truly adjacent blocks of the same offer, day, room and cancellation state.
-        entries.sort((a,b)=>a.day-b.day || a.start.localeCompare(b.start));
-        const merged=[];
-        for (const row of entries) {
-            const previous=merged.at(-1);
-            if(previous && previous.day===row.day && previous.end===row.start &&
-                previous.id_disciplina===row.id_disciplina && previous.sala===row.sala &&
-                previous.cancelada===row.cancelada && previous.motivo===row.motivo) previous.end=row.end;
-            else merged.push({...row});
-        }
-        const boundaries=[...new Set(merged.flatMap(row=>[row.start,row.end]))].sort();
-        const weekdays=[...new Set(merged.map(row=>row.day))].sort((a,b)=>a-b);
+            start:policy.minutes(row.hora_inicio),end:policy.minutes(row.hora_fim)
+        })).filter(row => row.day >= 1 && row.day <= 7 && Number.isFinite(row.start) && row.end > row.start);
+        const shift = options.turno || (new Set(entries.map(row=>row.turno).filter(Boolean)).size===1 ? entries.find(row=>row.turno)?.turno : undefined);
+        const frames = policy.slots(shift);
+        const weekdays=[...new Set([1,2,3,4,5,...entries.map(row=>row.day)])].sort((a,b)=>a-b);
+        const warnings=entries.filter(row=>!policy.validate(row,shift));
+        if(warnings.length){const warning=node('p','Há horários fora da grade de Belém. Eles foram preservados e precisam de revisão; confira as datas e horas originais nos detalhes.');warning.setAttribute('role','status');host.append(warning);}
         const region=node('div');region.className='ac-week-grid-scroll';region.tabIndex=0;
         region.setAttribute('role','region');region.setAttribute('aria-label',caption+'; role horizontalmente para consultar todos os dias');
         const table=node('table');table.className='ac-week-grid';table.append(node('caption',caption));
         const head=node('thead'),header=node('tr');const corner=node('th','Horário');corner.setAttribute('scope','col');header.append(corner);
         for(const day of weekdays){const cell=node('th',days[day]);cell.setAttribute('scope','col');header.append(cell);}
-        head.append(header);table.append(head);const body=node('tbody'),until=new Map();
-        const active=(day,index)=>merged.map((row,key)=>({row,key})).filter(({row})=>row.day===day && row.start<=boundaries[index] && row.end>=boundaries[index+1]);
-        for(let index=0;index<boundaries.length-1;index++){
-            const line=node('tr'),time=node('th',boundaries[index]+'–'+boundaries[index+1]);time.setAttribute('scope','row');line.append(time);
-            for(const day of weekdays){
-                if((until.get(day)||0)>index)continue;
-                const matches=active(day,index),key=matches.map(entry=>entry.key).join(',');let end=index+1;
-                while(end<boundaries.length-1 && active(day,end).map(entry=>entry.key).join(',')===key)end++;
-                const cell=node('td');if(end-index>1)cell.setAttribute('rowspan',String(end-index));until.set(day,end);
+        head.append(header);table.append(head);const body=node('tbody');
+        for(const frame of frames){
+            const line=node('tr'),time=node('th',policy.label(frame.start)+'–'+policy.label(frame.end));time.setAttribute('scope','row');line.append(time);
+            if(frame.tipo==='intervalo'){
+                const interval=node('td','Intervalo · 20 minutos');interval.setAttribute('colspan',String(weekdays.length));interval.className='ac-week-break';line.append(interval);
+            }else for(const day of weekdays){
+                const cell=node('td'),matches=entries.filter(row=>row.day===day&&row.start<frame.end&&row.end>frame.start);
                 if(!matches.length){cell.className='ac-week-empty';cell.append(node('span','Sem aula'));}
-                for(const {row} of matches){
+                for(const row of matches){
                     const block=node('div');block.className='ac-week-class'+(row.cancelada?' ac-cancelled':'');
                     block.append(node('strong',row.titulo || row.disciplina || row.nome || 'Aula'));
                     if(row.cancelada)block.append(node('span','Aula cancelada'));
                     if(row.professor)block.append(node('span',row.professor));
-                    if(row.sala || row.sala_oficial)block.append(node('span','Sala: '+(row.sala || row.sala_oficial)));
-                    if(row.intervalo===true)block.append(node('span','Intervalo informado'));
+                    const room=policy.room(row);if(room.value)block.append(node('span','Sala: '+room.value+(room.source==='turma'?' · oficial da turma':'')));
+                    if(!policy.validate(row,shift))block.append(node('span','Revisar: '+policy.label(row.start)+'–'+policy.label(row.end)));
                     cell.append(block);
                 }
                 line.append(cell);
@@ -76,6 +68,7 @@
         const hint = node('p', 'Fuso: Belém (America/Belem). A sala da aula é opcional; sem ela, a Agenda usa a sala oficial da turma.');
         hint.className = 'ac-meta';
         root.append(hint);
+        root.append(node('p','Grade do Arcádia para Belém: seis aulas de 50 minutos por turno e intervalo de 20 minutos após a terceira. Horários antigos fora da grade exigem revisão.'));
         if (offering.regime_letivo === 'legado') {
             root.append(node('p', 'Esta oferta é de ' + offering.ano_letivo + ' e não tem semestre informado. Defina as datas reais de vigência; nenhum semestre será presumido.'));
         }
@@ -94,13 +87,14 @@
         root.append(status, retry, grid, actionsList);
         let generation = 0;
         let editing = null;
-        let inputs, weekday, save, legend, cancel;
+        let inputs, weekday, save, legend, cancel, nextDay;
 
         function resetEditor() {
             editing = null;
             if (!inputs) return;
             for (const input of Object.values(inputs)) input.value = '';
             weekday.value = '';
+            nextDay.checked = false;
             legend.textContent = 'Adicionar horário semanal';
             save.textContent = 'Adicionar horário';
             cancel.hidden = true;
@@ -110,6 +104,8 @@
             editing = row;
             weekday.value = String(row.dia_semana);
             for (const [key, input] of Object.entries(inputs)) input.value = row[key] || '';
+            nextDay.checked = A.campusTimetable.minutes(row.hora_fim) >= 1440;
+            if (nextDay.checked) inputs.hora_fim.value = A.campusTimetable.clock(A.campusTimetable.minutes(row.hora_fim) % 1440);
             legend.textContent = 'Editar horário semanal';
             save.textContent = 'Salvar alterações';
             cancel.hidden = false;
@@ -125,16 +121,18 @@
                 const rows = await call('/' + subject + '/schedule');
                 if (!Array.isArray(rows)) throw new Error('O servidor não devolveu uma lista de horários válida.');
                 if (current !== generation || !root.isConnected) return false;
-                if (offering.showGrid !== false) renderGrid(grid, rows.map(row=>({...row,nome:offering.nome})), 'Horários de ' + (offering.nome || 'aula'));
+                if (offering.showGrid !== false) renderGrid(grid, rows.map(row=>({...row,nome:offering.nome})), 'Horários de ' + (offering.nome || 'aula'), {turno:offering.turno});
                 list.replaceChildren();
                 for (const row of rows) {
                     const item = node('article');
                     item.className = 'ac-schedule-item';
                     const copy = node('div');
                     copy.append(node('h4', days[Number(row.dia_semana)] || 'Dia não informado'));
-                    copy.append(node('p', row.hora_inicio + '–' + row.hora_fim));
+                    copy.append(node('p', A.campusTimetable.label(A.campusTimetable.minutes(row.hora_inicio)) + '–' + A.campusTimetable.label(A.campusTimetable.minutes(row.hora_fim))));
+                    if(row.precisa_revisao)copy.append(node('p','Fora da grade atual de Belém. Revise este horário; nenhum dado foi movido.'));
                     copy.append(node('p', row.vigencia_inicio.split('-').reverse().join('/') + ' a ' + row.vigencia_fim.split('-').reverse().join('/')));
-                    if (row.sala) copy.append(node('p', 'Sala desta aula: ' + row.sala));
+                    const room=A.campusTimetable.room(row);
+                    if (room.value) copy.append(node('p', 'Sala: ' + room.value + (room.source==='turma'?' · oficial da turma':'')));
                     const actions = node('div');
                     actions.className = 'ac-actions';
                     if (canManage) {
@@ -208,6 +206,7 @@
             label.append(weekday); fields.append(label);
             field('hora_inicio','Início da aula','time');
             field('hora_fim','Fim da aula','time');
+            const nextLabel=node('label','A aula termina no dia seguinte');nextDay=node('input');nextDay.type='checkbox';nextLabel.className='ac-schedule-next-day';nextLabel.append(nextDay);fields.append(nextLabel);
             field('vigencia_inicio','Primeiro dia de vigência','date');
             field('vigencia_fim','Último dia de vigência','date');
             field('sala','Sala desta aula (opcional)','text');
@@ -228,6 +227,8 @@
                     const result = await call('/' + subject + '/schedule' + (record ? '/' + record.id_horario : ''),record ? 'PUT':'POST',{
                         dia_semana:Number(weekday.value),
                         ...Object.fromEntries(Object.entries(inputs).map(([key,input])=>[key,input.value])),
+                        fim_dia_seguinte: nextDay.checked===true,
+                        hora_fim: nextDay.checked ? A.campusTimetable.clock(A.campusTimetable.minutes(inputs.hora_fim.value)+1440) : inputs.hora_fim.value,
                         ...(record ? {versao:record.versao}:{})
                     });
                     if (!Number.isSafeInteger(result?.id_horario) || result.id_horario <= 0) throw new Error('O servidor não confirmou a gravação do horário. Atualize a lista antes de tentar novamente.');

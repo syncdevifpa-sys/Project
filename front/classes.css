@@ -387,3 +387,7 @@
 }
 .ac-schedule-actions-list { margin-top: 16px; }
 .ac-schedule-actions-list > summary { cursor: pointer; padding-block: 12px; min-height: 44px; box-sizing: border-box; }
+.ac-schedule-fields .ac-schedule-next-day { display: flex; align-items: center; align-self: end; gap: 8px; min-height: 44px; }
+.ac-schedule-next-day input[type='checkbox'] { flex: 0 0 20px; width: 20px; min-height: 20px; height: 20px; }
+.ac-fields label:has(input[type='checkbox']) { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.ac-fields input[type='checkbox'] { width: 20px; min-height: 20px; height: 20px; flex: 0 0 20px; }

@@ -22,7 +22,8 @@
     <link rel="stylesheet" href="notice-cover.css" />
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
-  </head>
+      <link rel="stylesheet" href="academic-management.css" />
+</head>
 
   <body>
     <main class="ar-app">
@@ -66,8 +67,9 @@
           >Pessoas e conteúdo</button
         ><button type="button" class="ar-btn" id="adminRequirementsTab" aria-pressed="false"
           >Requisitos</button
-        ></nav
+        ><button type="button" class="ar-btn" id="adminAcademicTab" aria-pressed="false">Turmas e disciplinas</button></nav
       >
+      <section class="admin-panel" id="adminAcademicPanel" hidden></section>
       <section class="admin-panel" id="adminGeneralPanel">
         <div class="actions"
           ><label
@@ -126,6 +128,8 @@
     <script src="js/admin.js"></script>
     <link rel="stylesheet" href="teacher-requirements.css" />
     <script src="js/teacher-requirements-admin.js"></script>
+    <script src="js/academic-ui.js"></script>
+    <script src="js/admin-academic.js"></script>
     <script src="js/navigation.js"></script>
 
     <footer class="ar-site-footer" aria-label="Contato e informações legais">

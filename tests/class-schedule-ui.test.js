@@ -28,6 +28,7 @@ function fixture(){
   if(options.method==='DELETE')records.length=0;
   return {id_horario:30,message:'Horário salvo.'};
  },expect:promise=>promise},confirmAction:async()=>true};
+ vm.runInNewContext(fs.readFileSync('front/js/campus-timetable.js','utf8'),{window:{Arcadia:A}});
  vm.runInNewContext(fs.readFileSync('front/js/class-schedule.js','utf8'),{window:{Arcadia:A},document:{body,readyState:'loading',addEventListener(){},createElement:tag=>new Element(tag)}});
  const mount=(id=8,manage=true)=>A.classSchedule.mount(host,{id_disciplina:id,nome:'Dados',ano_letivo:2026,regime_letivo:'legado',canManage:manage});
  const button=text=>walk(host).find(n=>n.tag==='button'&&n.textContent===text);
@@ -54,13 +55,13 @@ test('participante consulta sem formulário de gestão; trocar oferta descarta r
  assert.equal(f.host.children.length,1);
 });
 
-test('grade semântica agrupa aulas adjacentes, mantém lacunas e sábado sem inventar recreio',()=>{
- const f=fixture();const row={id_disciplina:8,nome:'Dados',dia_semana:1,hora_inicio:'08:00',hora_fim:'08:50'};
- f.renderGrid(f.host,[row,{...row,hora_inicio:'08:50',hora_fim:'09:40'},{...row,dia_semana:6,hora_inicio:'10:00',hora_fim:'10:50',nome:'Artes'}],'Turma real');
- const all=walk(f.host);assert.equal(all.filter(n=>n.tag==='strong'&&n.textContent==='Dados').length,1);
- assert.ok(all.some(n=>n.tag==='th'&&n.textContent==='08:00–09:40'&&n.attributes.scope==='row'));
+test('grade semântica repete disciplina por slot, mantém intervalo e sábado sem criar registros',()=>{
+ const f=fixture();const row={id_disciplina:8,nome:'Dados',dia_semana:1,hora_inicio:'07:00',hora_fim:'08:40',turno:'manha'};
+ f.renderGrid(f.host,[row,{...row,dia_semana:6,hora_inicio:'10:40',hora_fim:'11:30',nome:'Artes'}],'Turma real');
+ const all=walk(f.host);assert.equal(all.filter(n=>n.tag==='strong'&&n.textContent==='Dados').length,2);
+ assert.ok(all.some(n=>n.tag==='th'&&n.textContent==='07:00–07:50'&&n.attributes.scope==='row'));
  assert.ok(all.some(n=>n.tag==='th'&&n.textContent==='Sábado'&&n.attributes.scope==='col'));
- assert.match(f.host.textContent,/Sem aula/);assert.doesNotMatch(f.host.textContent,/Recreio|Intervalo informado/);
+ assert.match(f.host.textContent,/Sem aula/);assert.match(f.host.textContent,/Intervalo · 20 minutos/);
  assert.equal(all.find(n=>n.attributes.role==='region').tabIndex,0);
 });
 test('grade preserva aulas sobrepostas, cancelamentos e sala sem criar registros',()=>{
@@ -69,4 +70,10 @@ test('grade preserva aulas sobrepostas, cancelamentos e sala sem criar registros
  const before=JSON.stringify(rows);f.renderGrid(f.host,rows);assert.equal(JSON.stringify(rows),before);
  assert.match(f.host.textContent,/Dados/);assert.match(f.host.textContent,/Outra/);assert.match(f.host.textContent,/Aula cancelada/);assert.match(f.host.textContent,/Sala: B1/);
  assert.equal(f.requests.length,0);
+});
+
+test('editar aula noturna mostra 00:20 com dia seguinte e mantém fim24:20 na gravação',async()=>{
+ const f=fixture();f.records.push({id_horario:30,id_disciplina:8,versao:0,dia_semana:7,hora_inicio:'23:30',hora_fim:'24:20',vigencia_inicio:'2026-10-01',vigencia_fim:'2026-10-31',sala:''});
+ f.mount();await settle();f.button('Editar horário').onclick();assert.equal(walk(f.host).find(n=>n.name==='hora_fim').value,'00:20');assert.equal(walk(f.host).find(n=>n.type==='checkbox').checked,true);
+ await f.submit();const write=f.requests.find(r=>r.method==='PUT');assert.equal(write.body.hora_fim,'24:20');assert.equal(write.body.fim_dia_seguinte,true);
 });

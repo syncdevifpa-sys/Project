@@ -17,6 +17,8 @@
         return b;
     };
     async function show(requisites) {
+        if(q('adminAcademicPanel'))q('adminAcademicPanel').hidden=true;
+        q('adminAcademicTab')?.setAttribute('aria-pressed','false');
         q('adminGeneralPanel').hidden = requisites;
         q('adminRequirementsPanel').hidden = !requisites;
         q('adminGeneralTab').setAttribute('aria-pressed', String(!requisites));

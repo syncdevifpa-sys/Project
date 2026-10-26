@@ -9,6 +9,10 @@ function createCohortInfo(database=db){
  async function permission(c,a,key,manage=false){
   if(admin(a))return true;
   if(a.tipo_usuario==='servidor')return false;
+  if(!manage&&a.tipo_usuario==='discente'&&await require('./academic-management.service').createAcademicManagement(database).ready(c)){
+   const [members]=await c.execute('SELECT id_aluno FROM academico_vinculos_turma WHERE id_turma=? AND id_aluno=? AND ativa=1',[id(key),a.id_usuario]);
+   if(members.length)return true;
+  }
   const [r]=await c.execute(`SELECT d.id_disciplina FROM academico_disciplinas d LEFT JOIN academico_matriculas m ON m.id_disciplina=d.id_disciplina AND m.id_aluno=? WHERE d.id_turma=? AND d.arquivada_em IS NULL AND ((?='docente' AND d.id_professor=? AND d.atribuicao_ativa=1)${manage?'':" OR (?='discente' AND m.ativa=1)"}) LIMIT 1 FOR SHARE`,[a.id_usuario,id(key),a.tipo_usuario,a.id_usuario,...(manage?[]:[a.tipo_usuario])]);
   return !!r.length;
  }

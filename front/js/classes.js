@@ -193,24 +193,9 @@
             }
         }
         if (!groups.size) nav.append(el('p', 'Sem disciplinas.', 'ac-meta'));
-        if (data.canAdminister && data.cohorts?.length) {
-            const management = el('details');
-            management.append(el('summary', 'Administrar todas as turmas'));
-            for (const cohort of data.cohorts) {
-                const row = el('div', undefined, 'ac-invite');
-                row.append(el('p', cohort.nome + ' · ' + cohort.ano_ingresso));
-                row.append(btn('Excluir turma', async (event) => {
-                    const clicked = event.currentTarget;
-                    if (!(await A.confirmAction({ title: 'Excluir turma?',
-                        message: 'Esta turma e suas ofertas serão arquivadas. Convites pendentes serão cancelados; histórico, matrículas e materiais serão preservados.',
-                        items: [cohort.nome], confirmLabel: 'Excluir turma' }))) return;
-                    await run(clicked, async () => {
-                        const result = await call('/cohorts/' + cohort.id_turma, 'DELETE', { confirmacao: 'EXCLUIR' });
-                        selected = null; await reload(); message(result.message);
-                    });
-                }));
-                management.append(row);
-            }
+        if (data.canAdminister) {
+            const management = el('a', 'Administrar turmas e arquivadas', 'ar-btn');
+            management.href = 'admin.html#turmas';
             nav.append(management);
         }
     }
@@ -347,7 +332,7 @@
         const turmaActions = group('Turma');
         const disciplineActions = group('Disciplina e professor');
         const linkActions = group('Meu vínculo');
-        const deleteActions = group('Ações de exclusão', true);
+        const deleteActions = group('Arquivamento', true);
         management.addEventListener('keydown', event => {
             if (event.key === 'Escape' && management.open) {
                 management.open = false;
@@ -385,29 +370,29 @@
             disciplineActions.append(btn('Editar disciplina e professor', subjectEditor));
         }
         if (!detail.aggregate && d.canManage && !data.canAdminister)
-            disciplineActions.append(btn('Editar período letivo', periodEditor));
+            disciplineActions.append(btn('Editar disciplina', periodEditor));
         if (!detail.aggregate && d.regime_letivo === 'legado') {
             infoHost.append(el('p', d.canManage
-                ? 'Período não informado. Complete em Gerenciar → ' + (data.canAdminister ? 'Editar disciplina e professor.' : 'Editar período letivo.')
+                ? 'Período não informado. Complete em Gerenciar → ' + (data.canAdminister ? 'Editar disciplina e professor.' : 'Editar disciplina.')
                 : 'O período letivo ainda não foi informado pelo responsável.', 'ac-meta'));
         }
         if (!detail.aggregate && d.canManage) {
             const actions = el('div', undefined, 'ac-actions');
             for (const cohort of data.canAdminister ? [false, true] : [false]) {
-                actions.append(btn(cohort ? 'Excluir turma' : 'Excluir oferta', async (event) => {
+                actions.append(btn(cohort ? 'Arquivar turma' : 'Arquivar oferta', async (event) => {
                     const clicked = event.currentTarget;
                     const confirmed = await A.confirmAction({
-                        title: cohort ? 'Excluir esta turma?' : 'Excluir esta oferta?',
+                        title: cohort ? 'Arquivar esta turma?' : 'Arquivar esta oferta?',
                         message: cohort
                             ? 'Todas as ofertas desta turma sairão da área ativa. Convites serão cancelados. Histórico, matrículas e materiais serão preservados em arquivo. Esta ação é diferente de sair da turma.'
                             : 'Somente esta oferta sairá da área ativa. Convites serão cancelados. Histórico, matrículas e materiais serão preservados em arquivo. Esta ação é diferente de sair da disciplina.',
                         items: [cohort ? d.turma : d.nome + ' · ' + periodLabel(d)],
-                        confirmLabel: cohort ? 'Excluir turma' : 'Excluir oferta'
+                        confirmLabel: cohort ? 'Arquivar turma' : 'Arquivar oferta'
                     });
                     if (!confirmed) return;
                     await run(clicked, async () => {
                         const result = await call(cohort ? '/cohorts/' + d.id_turma : '/' + d.id_disciplina,
-                            'DELETE', { confirmacao: 'EXCLUIR' });
+                            'DELETE', { confirmacao: 'ARQUIVAR' });
                         selected = null;
                         delete heading.dataset.appearanceKey;
                         heading.replaceChildren();
@@ -499,7 +484,7 @@
                         return slots.map(row => ({...row, nome:offer.nome, professor:offer.professor}));
                     }));
                     if (!weekly.isConnected || version !== weeklyGeneration) return;
-                    A.classSchedule.renderGrid(weekly, rows.flat(), d.turma + ' · ' + periodLabel(d));
+                    A.classSchedule.renderGrid(weekly, rows.flat(), d.turma + ' · ' + periodLabel(d), {turno:d.turno});
                     weeklyStatus.textContent = 'Grade das disciplinas às quais você tem acesso nesta turma e período.';
                 } catch (error) {
                     if (weeklyStatus.isConnected && version === weeklyGeneration) weeklyStatus.textContent = 'Não foi possível carregar a grade da turma: ' + error.message;
@@ -533,6 +518,12 @@
         }
         if (tab === 'people') {
             host.append(el('h3', 'Participantes desta disciplina'));
+            if(d.canManage) host.append(btn('Incluir membros ativos da turma', event=>run(event.currentTarget,async()=>{
+                if(!await A.confirmAction({title:'Incluir a turma nesta oferta?',message:'Somente membros ativos e aprovados desta turma serão incluídos em '+d.nome+'. As outras disciplinas não serão alteradas. Alunos já matriculados não serão duplicados.',confirmLabel:'Incluir turma'}))return;
+                const result=await call('/'+d.id_disciplina+'/enroll-cohort','POST',{confirmacao:'MATRICULAR_TURMA'});
+                await load(d.id_disciplina);message(result.message);
+            })));
+
             const listed = data.subjects.find((s) => s.id_disciplina === selected);
             if (listed) host.append(el('p', 'Professor: ' + listed.professor));
             for (const person of people) {
@@ -743,6 +734,8 @@
                 call('/cohorts'),
                 data.canAdminister ? call('/teachers') : Promise.resolve([])
             ]);
+            const features=await call('/academic/features');
+            const catalog=features.available?await call('/academic/catalog'):[];
             const e = editor('Criar disciplina em uma turma'),
                 now = new Date().getFullYear();
             e.fields.append(
@@ -775,7 +768,9 @@
             );
             course.required = true;
             course.selectedIndex = 0;
-            const name = e.field('Disciplina', { required: true, maxLength: 100 }),
+            const catalogPicker=features.available?e.select('Disciplina do catálogo',[['','Selecione uma disciplina'],...catalog.map(row=>[row.id_catalogo,row.nome+(row.legado?' · legado #'+row.id_catalogo:'')])]):null;
+            if(catalogPicker)catalogPicker.required=true;
+            const name = e.field('Título desta oferta', { required: true, maxLength: 100 }),
                 cohort = e.field('Nome da turma', { required: true, maxLength: 100 }),
                 start = e.field('Ano de ingresso da turma', {
                     type: 'number',
@@ -793,6 +788,7 @@
                     'manha'
                 ),
                 campus = e.field('Campus', { value: 'Belém', required: true, maxLength: 100 });
+            if(catalogPicker)catalogPicker.onchange=()=>{const row=catalog.find(item=>String(item.id_catalogo)===catalogPicker.value);if(row)name.value=row.nome;};
             const period = A.classPeriod.fields(e, {ano_letivo:now});
             start.min = '2000';
             start.max = '2100';
@@ -811,6 +807,7 @@
             e.submit(async () => {
                 const created = await call('', 'POST', {
                     ...(existing.value ? { id_turma: Number(existing.value) } : {}),
+                    ...(catalogPicker?{id_catalogo:Number(catalogPicker.value)}:{}),
                     id_curso: course.value,
                     nome: name.value,
                     turma: cohort.value,
@@ -831,7 +828,9 @@
             const subject = detail.subject,
                 teachers = await call('/teachers');
             const e = editor('Editar disciplina e professor');
-            const name = e.field('Disciplina', {
+            const catalogPicker=features.available?e.select('Disciplina do catálogo',[['','Selecione uma disciplina'],...catalog.map(row=>[row.id_catalogo,row.nome+(row.legado?' · legado #'+row.id_catalogo:'')])]):null;
+            if(catalogPicker)catalogPicker.required=true;
+            const name = e.field('Título desta oferta', {
                 value: subject.nome,
                 required: true,
                 maxLength: 100
@@ -865,12 +864,13 @@
         }
     }
     function periodEditor() {
-        const subject = detail.subject, e = editor('Editar período letivo');
+        const subject = detail.subject, e = editor('Editar disciplina');
+        const name=e.field('Título desta oferta',{value:subject.nome,required:true,maxLength:100});
+        e.fields.append(el('p','Este título vale apenas para esta oferta. O catálogo global e as outras turmas serão preservados.','ac-meta'));
         const period = A.classPeriod.fields(e, subject, true);
         e.submit(() => {
             const values = period.read();
-            if (!values.regime_letivo) throw new Error('Selecione o regime anual ou semestral para completar esta oferta.');
-            return call('/' + subject.id_disciplina + '/period', 'PUT', values);
+            return call('/' + subject.id_disciplina + '/offering', 'PATCH', {nome:name.value,...values});
         });
     }
     function cohortEditor() {
