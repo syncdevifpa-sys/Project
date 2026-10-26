@@ -1,6 +1,6 @@
 # Turmas, sala oficial e representantes
 
-Em desenvolvimento: a migração **1.1.30 está preparada, não aplicada**. Exige ensaio em MySQL 8.4, backup e aplicação autorizada antes da publicação. As migrações 1.1.27/28/29 confirmadas não foram alteradas.
+Em 26/10/2026, o responsável confirmou a execução da migração **1.1.30 sem problemas** na base usada pela Vercel. Não reaplicar nessa base; não houve execução nem inspeção independente do banco pelo agente. Outras bases exigem ensaio em MySQL 8.4, backup e aplicação autorizada antes da publicação. As migrações 1.1.27/28/29 confirmadas não foram alteradas.
 
 Novos Alunos, Professores e Servidores ficam externos até aprovação em Requisitos. E-mail confirmado ou Google não concedem vínculo. Alunos institucionais legados permanecem ativos, sem rebaixamento em massa.
 
