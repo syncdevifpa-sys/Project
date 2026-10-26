@@ -20,6 +20,7 @@ const classSchedule = require('../services/class-schedule.service').createClassS
 router.get('/schedule', action(async(q,s)=>s.json(await classSchedule.agenda(q.user.id_usuario,q.query.from,q.query.to))));
 router.get('/:id/schedule', action(async(q,s)=>s.json(await classSchedule.list(q.user.id_usuario,q.params.id))));
 router.post('/:id/schedule', action(async(q,s)=>s.status(201).json(await classSchedule.save(q.user.id_usuario,q.params.id,q.body||{}))));
+router.put('/:id/schedule/:schedule', action(async(q,s)=>s.json(await classSchedule.save(q.user.id_usuario,q.params.id,q.body||{},q.params.schedule))));
 router.delete('/:id/schedule/:schedule', action(async(q,s)=>s.json(await classSchedule.remove(q.user.id_usuario,q.params.id,q.params.schedule,q.body?.versao))));
 router.get('/:id/schedule/:schedule/exceptions', action(async(q,s)=>s.json(await classSchedule.exceptions(q.user.id_usuario,q.params.id,q.params.schedule))));
 router.put('/:id/schedule/:schedule/exceptions', action(async(q,s)=>s.json(await classSchedule.exception(q.user.id_usuario,q.params.id,q.params.schedule,q.body||{}))));
@@ -150,7 +151,7 @@ router.get(
         s.send(item.conteudo);
     })
 );
-router.use((e, _q, s, _next) => {
+router.use((e, q, s, _next) => {
     const status =
         e.status ||
         (['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'].includes(e.code)
@@ -163,7 +164,9 @@ router.use((e, _q, s, _next) => {
         error: e.status
             ? e.message
             : status === 503
-              ? 'Turmas precisa ser habilitado no banco. Aplique a migração com a equipe.'
+              ? q.path.includes('/schedule')
+                  ? 'Horários indisponíveis neste banco. Confira backend/db/checks/1.1.30.sql; a estrutura é preparada por backend/db/migrations/1.1.30.sql. Não reaplique uma migração já confirmada sem revisar o diagnóstico.'
+                  : 'Turmas precisa ser habilitado no banco. Aplique a migração com a equipe.'
               : status === 409
                 ? /uq_turma_nome_global/.test(e.sqlMessage || e.message || '')
                     ? 'Já existe uma turma com esse nome. Escolha outro nome ou use a turma existente.'

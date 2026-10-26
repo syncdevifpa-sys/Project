@@ -18,7 +18,8 @@
         material: 'Materiais',
         projeto: 'Projetos',
         agenda: 'Agenda',
-        people: 'Participantes'
+        people: 'Participantes',
+        horarios: 'Horários'
     };
     let data = { subjects: [], invites: [] },
         selected = null,
@@ -284,12 +285,16 @@
             if (version === generation) message(e.message);
         }
     }
-    function renderCohortInfo(host, info) {
+    document.addEventListener('click', event => {
+        const menu = document.querySelector('.ac-management[open]');
+        if (menu && !menu.contains(event.target)) menu.open = false;
+    });
+    function renderCohortInfo(host, info, actions) {
         if (info.descricao) host.append(el('p', info.descricao, 'ac-meta'));
         if (info.sala_oficial) host.append(el('p', 'Sala oficial: ' + info.sala_oficial, 'ac-meta'));
         if (info.representante) host.append(el('p', 'Representante da turma: ' + info.representante));
         for (const vice of info.vices || []) host.append(el('p', 'Vice-representante: ' + vice.nome));
-        if (info.canManageRepresentative || info.isRepresentative) host.append(btn('Identificar vice-representantes', event => run(event.currentTarget, async () => {
+        if (info.canManageRepresentative || info.isRepresentative) actions.append(btn('Identificar vice-representantes', event => run(event.currentTarget, async () => {
             const people = await call('/cohorts/' + info.id_turma + '/representative/candidates');
             const e = editor('Vice-representantes da turma');
             e.fields.append(el('p', 'Até duas pessoas indicadas pelo representante. Esta identificação não concede permissões adicionais.', 'ac-meta'));
@@ -303,21 +308,21 @@
             link.href = 'https://wa.me/' + info.whatsapp_representante.replace(/\D/g, '');
             link.rel = 'noopener noreferrer'; link.target = '_blank'; host.append(link);
         }
-        if (info.canEditRoom) host.append(btn(info.sala_oficial ? 'Atualizar sala' : 'Informar sala oficial', () => {
+        if (info.canEditRoom) actions.append(btn(info.sala_oficial ? 'Atualizar sala' : 'Informar sala oficial', () => {
             const e = editor('Sala oficial da turma');
             const room = e.field('Sala (opcional)', {value: info.sala_oficial || '', maxLength:100});
             e.fields.append(el('p', 'Informe a sala oficial com responsabilidade. Alterações ficam registradas. Falsificações e alterações indevidas poderão ser analisadas pela administração; enganos não geram punição automática.', 'ac-meta'));
             const confirm = e.field('Li o aviso e conferi a sala', {type:'checkbox', required:true});
             e.submit(() => call('/cohorts/' + info.id_turma + '/room', 'PATCH', {sala_oficial:room.value,versao:info.versao_sala,confirmado:confirm.checked}));
         }));
-        if (info.canManageRepresentative) host.append(btn('Informar representante', event => run(event.currentTarget, async () => {
+        if (info.canManageRepresentative) actions.append(btn('Informar representante', event => run(event.currentTarget, async () => {
             const candidates = await call('/cohorts/' + info.id_turma + '/representative/candidates');
             const e = editor('Representante escolhido pela turma');
             e.fields.append(el('p', 'Registre o aluno escolhido fora do site. Ser representante não concede permissões acadêmicas ou administrativas.', 'ac-meta'));
             const person = e.select('Aluno escolhido pela turma', [['','Nenhum representante'], ...candidates.map(row => [row.id_usuario,row.nome])],info.id_representante||'');
             e.submit(() => call('/cohorts/' + info.id_turma + '/representative','PUT',{id_representante:person.value?Number(person.value):null}));
         })));
-        if (info.isRepresentative) host.append(btn('Meu WhatsApp de representante', () => {
+        if (info.isRepresentative) actions.append(btn('Meu WhatsApp de representante', () => {
             const e = editor('WhatsApp do representante');
             const phone = e.field('WhatsApp com código do país (opcional)', {value:info.whatsapp_representante||'',maxLength:20});
             e.fields.append(el('p','O número será compartilhado apenas com participantes e responsáveis desta turma. Deixe vazio para remover e revogar a autorização. Nenhum telefone do perfil é importado.', 'ac-meta'));
@@ -328,12 +333,41 @@
     function render() {
         const { subject: d, posts, people, pending } = detail;
         const heading = q('#classContext');
+        const management = el('details', undefined, 'ac-management');
+        management.hidden = true;
+        const summary = el('summary', 'Gerenciar');
+        const panel = el('div', undefined, 'ac-management-panel');
+        management.append(summary, panel);
+        const group = (title, danger = false) => {
+            const section = el('section', undefined, 'ac-management-group' + (danger ? ' ac-management-danger' : ''));
+            section.append(el('h3', title));
+            panel.append(section);
+            return section;
+        };
+        const turmaActions = group('Turma');
+        const disciplineActions = group('Disciplina e professor');
+        const linkActions = group('Meu vínculo');
+        const deleteActions = group('Ações de exclusão', true);
+        management.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && management.open) {
+                management.open = false;
+                summary.focus();
+                event.stopPropagation();
+            }
+        });
+        panel.addEventListener('click', event => {
+            if (event.target.closest('button')) {
+                management.open = false;
+                summary.focus();
+            }
+        }, true);
         const infoGeneration = generation;
         const infoHost = el('section', undefined, 'ac-cohort-info');
         infoHost.setAttribute('aria-label', 'Sala e representante da turma');
         call('/cohorts/' + d.id_turma + '/info').then(info => {
             if (infoGeneration !== generation || !infoHost.isConnected) return;
-            renderCohortInfo(infoHost, info);
+            renderCohortInfo(infoHost, info, turmaActions);
+            management.hidden = !management.querySelector('button');
         }).catch(error => {
             if (infoGeneration === generation && infoHost.isConnected) infoHost.append(el('p', 'Sala e representante indisponíveis: ' + error.message));
         });
@@ -345,15 +379,10 @@
                 'ac-meta'
             )
         );
-        heading.append(infoHost);
-        if (d.id_disciplina && A.classSchedule) heading.append(btn('Horários semanais', () => A.classSchedule.open(d.id_disciplina, Boolean(d.canManage))));
+        heading.append(infoHost, management);
         if (data.canAdminister && !detail.aggregate) {
-            const actions = el('div', undefined, 'ac-actions');
-            actions.append(
-                btn('Editar turma', cohortEditor),
-                btn('Editar disciplina e professor', subjectEditor)
-            );
-            heading.append(actions);
+            turmaActions.append(btn('Editar turma', cohortEditor));
+            disciplineActions.append(btn('Editar disciplina e professor', subjectEditor));
         }
         if (!detail.aggregate && d.canManage) {
             const actions = el('div', undefined, 'ac-actions');
@@ -374,13 +403,13 @@
                             'DELETE', { confirmacao: 'EXCLUIR' });
                         selected = null;
                         delete heading.dataset.appearanceKey;
-        heading.replaceChildren();
+                        heading.replaceChildren();
                         await reload();
                         message(result.message);
                     });
                 }));
             }
-            heading.append(actions);
+            deleteActions.append(actions);
         }
         if (
             data.role === 'discente' ||
@@ -417,8 +446,9 @@
             leave.className = 'ar-btn ar-btn--quiet';
             const actions = el('div', undefined, 'ac-actions');
             actions.append(leave);
-            heading.append(actions);
+            linkActions.append(actions);
         }
+        management.hidden = !management.querySelector('button');
         heading.classList.add('ac-subject-banner');
         A.classAppearance.decorate(
             heading,
@@ -441,6 +471,49 @@
         }
         const host = q('#classContent');
         host.replaceChildren();
+        if (tab === 'horarios') {
+            if (!A.classSchedule) {
+                host.append(el('p', 'Os horários não carregaram. Atualize a página para tentar novamente.', 'ac-empty'));
+                return;
+            }
+            if (detail.aggregate) {
+                const offers = data.subjects.filter(row => row.id_turma === d.id_turma && periodKey(row) === periodKey(d));
+                const weekly = el('div');
+                const weeklyStatus = el('p', 'Carregando horários da turma…');
+                weeklyStatus.setAttribute('role', 'status');
+                host.append(weeklyStatus, weekly);
+                Promise.all(offers.map(async offer => {
+                    const rows = await call('/' + offer.id_disciplina + '/schedule');
+                    return rows.map(row => ({...row, nome:offer.nome, professor:offer.professor}));
+                })).then(rows => {
+                    if (!weekly.isConnected) return;
+                    A.classSchedule.renderGrid(weekly, rows.flat(), d.turma + ' · ' + periodLabel(d));
+                    weeklyStatus.textContent = '';
+                }).catch(error => {
+                    if (weeklyStatus.isConnected) weeklyStatus.textContent = 'Não foi possível carregar a grade da turma: ' + error.message;
+                });
+                const label = el('label', 'Disciplina');
+                label.className = 'ar-field';
+                const picker = el('select');
+                for (const offer of offers) {
+                    const option = el('option', offer.nome);
+                    option.value = offer.id_disciplina;
+                    picker.append(option);
+                }
+                const content = el('div');
+                label.append(picker);
+                host.append(label, content);
+                const choose = () => {
+                    const offer = offers.find(row => String(row.id_disciplina) === picker.value);
+                    if (offer) A.classSchedule.mount(content, {...offer, showGrid:false});
+                };
+                picker.addEventListener('change', choose);
+                choose();
+            } else {
+                A.classSchedule.mount(host, d);
+            }
+            return;
+        }
         if (tab === 'people') {
             host.append(el('h3', 'Participantes desta disciplina'));
             const listed = data.subjects.find((s) => s.id_disciplina === selected);

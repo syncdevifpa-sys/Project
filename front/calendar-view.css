@@ -509,3 +509,5 @@
     grid-column: auto;
   }
 }
+/* A consulta semanal é secundária ao calendário principal. */
+.ar-weekly-agenda { margin-top: 20px; padding: 16px; }

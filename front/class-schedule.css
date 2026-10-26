@@ -1,0 +1,12 @@
+.ac-week-grid-scroll { max-width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-md); }
+.ac-week-grid-scroll:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.ac-week-grid { border-collapse: separate; border-spacing: 0; width: 100%; color: var(--ink); background: var(--surface); font-size: 14px; }
+.ac-week-grid caption { text-align: start; padding: 16px; font-weight: 600; }
+.ac-week-grid :is(th,td) { padding: 12px; border-inline-end: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: top; text-align: start; }
+.ac-week-grid th { white-space: nowrap; background: var(--surface-sunken); }
+.ac-week-grid tbody th { position: sticky; inset-inline-start: 0; z-index: 1; }
+.ac-week-grid td { min-width: 140px; }
+.ac-week-class { display: grid; gap: 5px; padding: 10px; border-inline-start: 3px solid var(--cyan); border-radius: var(--radius-sm); background: var(--cyan-soft); color: var(--cyan-ink); overflow-wrap: anywhere; }
+.ac-week-class + .ac-week-class { margin-top: 8px; }
+.ac-week-class.ac-cancelled { border-color: var(--danger); }
+.ac-week-empty { color: var(--ink-muted); }
