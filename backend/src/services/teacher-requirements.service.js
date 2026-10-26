@@ -103,7 +103,7 @@ function createRequirements(database = db) {
             return request.tipo_solicitado;
         }
         const stored = profile.intencao_cadastro;
-        if (['docente','servidor'].includes(stored)) {
+        if (['discente','docente','servidor'].includes(stored)) {
             if (request && (request.tipo_solicitado || 'docente') !== stored) fail(409,'O vínculo do pedido precisa de revisão administrativa.');
             return stored;
         }

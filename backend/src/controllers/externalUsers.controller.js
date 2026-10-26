@@ -9,7 +9,7 @@ async function registerExternal(req, res) {
     try {
         const { nome, email, senha, telefone, organizacao } = req.body;
         const teacherRequest =
-            ['docente','servidor'].includes(req.body.tipo_usuario)
+            ['discente','docente','servidor'].includes(req.body.tipo_usuario)
                 ? require('../services/teacher-requirements.service').fields(req.body, req.body.tipo_usuario)
                 : null;
 
@@ -82,7 +82,7 @@ async function registerExternal(req, res) {
         return res
             .status(
                 error.status ||
-                    (['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(error.code)
+                    (['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR','WARN_DATA_TRUNCATED','ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code)
                         ? 503
                         : error.code === 'ER_DUP_ENTRY'
                           ? 409
@@ -91,7 +91,7 @@ async function registerExternal(req, res) {
             .json({
                 error: error.status
                     ? error.message
-                    : ['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(error.code)
+                    : ['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR','WARN_DATA_TRUNCATED','ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code)
                       ? 'Atualize o banco para registrar o vínculo solicitado.'
                       : error.code === 'ER_DUP_ENTRY'
                         ? 'E-mail ou nome de usuário já cadastrado. Confira os dados.'

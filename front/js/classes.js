@@ -24,7 +24,8 @@
         selected = null,
         detail = null,
         tab = 'aviso',
-        generation = 0;
+        generation = 0,
+        reloadGeneration = 0;
     const el = (tag, text, cls) => {
         const n = document.createElement(tag);
         if (text !== undefined) n.textContent = text;
@@ -72,9 +73,13 @@
         return b;
     }
     async function reload() {
+        const requestGeneration = ++reloadGeneration;
+        ++generation;
         message('Carregando turmas...');
+        status.setAttribute('aria-busy', 'true');
         try {
             const result = await call('');
+            if (requestGeneration !== reloadGeneration) return;
             if (
                 typeof result.canAdminister !== 'boolean' ||
                 typeof result.canCreate !== 'boolean'
@@ -84,6 +89,24 @@
                 );
             }
             data = result;
+            if (data.catalogOnly) {
+                q('#classCreate').hidden = true;
+                q('#classTabs').hidden = true;
+                q('#classSubjects').replaceChildren();
+                q('#classContext').replaceChildren(el('h2', 'Turmas do campus'));
+                q('.ar-hero-title').textContent = 'Turmas do campus';
+                q('#classIntro').textContent = 'Consulte a descrição e a sala oficial das turmas. Conteúdos e participantes são restritos.';
+                const cards = data.cohorts.map(row => {
+                    const card = el('article', undefined, 'ac-post');
+                    card.append(el('h3', row.nome));
+                    if (row.descricao) card.append(el('p', row.descricao));
+                    if (row.sala_oficial) card.append(el('p', 'Sala oficial: ' + row.sala_oficial));
+                    return card;
+                });
+                q('#classContent').replaceChildren(...cards);
+                message(cards.length + ' turma(s) disponível(is).');
+                return;
+            }
             q('#classCreate').hidden = !data.canCreate;
             q('.ar-hero-title').textContent = data.canAdminister
                 ? 'Administrar turmas'
@@ -124,7 +147,12 @@
                 message('Nenhuma disciplina vinculada.');
             }
         } catch (e) {
+            if (requestGeneration !== reloadGeneration) return;
             message(e.message);
+            const retry = btn('Tentar novamente', () => run(retry, reload));
+            status.append(' ', retry);
+        } finally {
+            if (requestGeneration === reloadGeneration) status.setAttribute('aria-busy', 'false');
         }
     }
     function renderSubjects() {
@@ -256,9 +284,59 @@
             if (version === generation) message(e.message);
         }
     }
+    function renderCohortInfo(host, info) {
+        if (info.descricao) host.append(el('p', info.descricao, 'ac-meta'));
+        if (info.sala_oficial) host.append(el('p', 'Sala oficial: ' + info.sala_oficial, 'ac-meta'));
+        if (info.representante) host.append(el('p', 'Representante da turma: ' + info.representante));
+        for (const vice of info.vices || []) host.append(el('p', 'Vice-representante: ' + vice.nome));
+        if (info.canManageRepresentative || info.isRepresentative) host.append(btn('Identificar vice-representantes', event => run(event.currentTarget, async () => {
+            const people = await call('/cohorts/' + info.id_turma + '/representative/candidates');
+            const e = editor('Vice-representantes da turma');
+            e.fields.append(el('p', 'Até duas pessoas indicadas pelo representante. Esta identificação não concede permissões adicionais.', 'ac-meta'));
+            const options = [['','Não informado'], ...people.filter(row => row.id_usuario !== info.id_representante).map(row => [row.id_usuario,row.nome])];
+            const first = e.select('Primeiro vice (opcional)',options,info.vices?.[0]?.id_usuario||'');
+            const second = e.select('Segundo vice (opcional)',options,info.vices?.[1]?.id_usuario||'');
+            e.submit(() => call('/cohorts/' + info.id_turma + '/vices','PUT',{ids:[first.value,second.value].filter(Boolean).map(Number)}));
+        })));
+        if (info.whatsapp_representante) {
+            const link = el('a', 'WhatsApp do representante');
+            link.href = 'https://wa.me/' + info.whatsapp_representante.replace(/\D/g, '');
+            link.rel = 'noopener noreferrer'; link.target = '_blank'; host.append(link);
+        }
+        if (info.canEditRoom) host.append(btn(info.sala_oficial ? 'Atualizar sala' : 'Informar sala oficial', () => {
+            const e = editor('Sala oficial da turma');
+            const room = e.field('Sala (opcional)', {value: info.sala_oficial || '', maxLength:100});
+            e.fields.append(el('p', 'Informe a sala oficial com responsabilidade. Alterações ficam registradas. Falsificações e alterações indevidas poderão ser analisadas pela administração; enganos não geram punição automática.', 'ac-meta'));
+            const confirm = e.field('Li o aviso e conferi a sala', {type:'checkbox', required:true});
+            e.submit(() => call('/cohorts/' + info.id_turma + '/room', 'PATCH', {sala_oficial:room.value,versao:info.versao_sala,confirmado:confirm.checked}));
+        }));
+        if (info.canManageRepresentative) host.append(btn('Informar representante', event => run(event.currentTarget, async () => {
+            const candidates = await call('/cohorts/' + info.id_turma + '/representative/candidates');
+            const e = editor('Representante escolhido pela turma');
+            e.fields.append(el('p', 'Registre o aluno escolhido fora do site. Ser representante não concede permissões acadêmicas ou administrativas.', 'ac-meta'));
+            const person = e.select('Aluno escolhido pela turma', [['','Nenhum representante'], ...candidates.map(row => [row.id_usuario,row.nome])],info.id_representante||'');
+            e.submit(() => call('/cohorts/' + info.id_turma + '/representative','PUT',{id_representante:person.value?Number(person.value):null}));
+        })));
+        if (info.isRepresentative) host.append(btn('Meu WhatsApp de representante', () => {
+            const e = editor('WhatsApp do representante');
+            const phone = e.field('WhatsApp com código do país (opcional)', {value:info.whatsapp_representante||'',maxLength:20});
+            e.fields.append(el('p','O número será compartilhado apenas com participantes e responsáveis desta turma. Deixe vazio para remover e revogar a autorização. Nenhum telefone do perfil é importado.', 'ac-meta'));
+            const consent = e.field('Autorizo compartilhar este WhatsApp com minha turma', {type:'checkbox'});
+            e.submit(() => call('/cohorts/' + info.id_turma + '/representative/whatsapp','PUT',{whatsapp:phone.value,consentimento:consent.checked}));
+        }));
+    }
     function render() {
         const { subject: d, posts, people, pending } = detail;
         const heading = q('#classContext');
+        const infoGeneration = generation;
+        const infoHost = el('section', undefined, 'ac-cohort-info');
+        infoHost.setAttribute('aria-label', 'Sala e representante da turma');
+        call('/cohorts/' + d.id_turma + '/info').then(info => {
+            if (infoGeneration !== generation || !infoHost.isConnected) return;
+            renderCohortInfo(infoHost, info);
+        }).catch(error => {
+            if (infoGeneration === generation && infoHost.isConnected) infoHost.append(el('p', 'Sala e representante indisponíveis: ' + error.message));
+        });
         heading.replaceChildren(
             el('h2', d.nome),
             el(
@@ -267,6 +345,8 @@
                 'ac-meta'
             )
         );
+        heading.append(infoHost);
+        if (d.id_disciplina && A.classSchedule) heading.append(btn('Horários semanais', () => A.classSchedule.open(d.id_disciplina, Boolean(d.canManage))));
         if (data.canAdminister && !detail.aggregate) {
             const actions = el('div', undefined, 'ac-actions');
             actions.append(
@@ -736,6 +816,7 @@
             subject.turno
         );
         const campus = e.field('Campus', { value: subject.campus, required: true, maxLength: 100 });
+        const description = e.field('Descrição da turma (opcional)', {type:'textarea',value:subject.descricao_turma||'',maxLength:1000});
         e.fields.append(
             el(
                 'p',
@@ -747,7 +828,8 @@
             call('/cohorts/' + subject.id_turma, 'PUT', {
                 nome: name.value,
                 turno: shift.value,
-                campus: campus.value
+                campus: campus.value,
+                descricao: description.value
             })
         );
     }
@@ -878,5 +960,20 @@
         setTimeout(() => URL.revokeObjectURL(address), 1000);
     }
     q('#classCreate').onclick = createEditor;
+    window.addEventListener('pageshow', event => {
+        if (!event.persisted) return;
+        ++generation;
+        if (!A.auth.estaLogado() || A.auth.getSessao().tipo_usuario === 'externo') {
+            q('#classContext').replaceChildren();
+            q('#classContent').replaceChildren();
+            A.auth.exigirLogin();
+            if (A.auth.getSessao().tipo_usuario === 'externo') window.location.replace('community.html');
+            return;
+        }
+        q('#classContext').replaceChildren();
+        q('#classContent').replaceChildren(el('p', 'Atualizando seus acessos e turmas…'));
+        selected = null;
+        reload();
+    });
     reload();
 })(window.Arcadia);

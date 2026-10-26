@@ -1,4 +1,11 @@
 /* Banners e resumos do painel; os demais cards preservam cores semânticas. */
+.ar-banner-site-default:not(.ar-banner-personal) {
+  background: var(--accent, var(--lime));
+  color: #182020;
+}
+.ar-banner-site-default:not(.ar-banner-personal) :is(.ar-hero-title,.ar-hero-desc,.ar-detail-title,.ar-detail-desc,.ac-meta,.hero-title,.hero-subtitle) {
+  color: inherit;
+}
 .ar-banner-editable { position: relative; padding-inline-end: max(58px, var(--space-6, 24px)); }
 .ar-banner-editable.ar-hero { padding-inline-end: max(58px, var(--space-6, 24px)); }
 .ar-banner-editable > .ar-banner-appearance-trigger {

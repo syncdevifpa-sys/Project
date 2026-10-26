@@ -129,6 +129,12 @@
         }
         if (!external) nav.append(link('index.html', 'Início', 'home'));
         const sections = [];
+        const stateKey = 'arcadia-sidebar-state:' + (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
+        let savedState = {};
+        try {
+            const value = JSON.parse(sessionStorage.getItem(stateKey) || '{}');
+            if (value && typeof value === 'object' && !Array.isArray(value)) savedState = value;
+        } catch {}
         let currentLabel = page === 'notice.html' ? 'Publicação' : 'Portal';
         groups.forEach((group) => {
             const active =
@@ -137,6 +143,8 @@
             const section = document.createElement('details');
             section.className = 'ar-sidebar-group';
             section.dataset.active = String(active);
+            section.dataset.group = group.name;
+            section.dataset.expanded = String(active || savedState.groups?.[group.name] === true);
             sections.push(section);
             if (group.name === 'Administração') section.classList.add('ar-sidebar-admin');
             const summary = document.createElement('summary');
@@ -145,6 +153,13 @@
             label.textContent = group.name;
             summary.append(label);
             section.append(summary);
+            summary.addEventListener('click', () => {
+                if (!media.matches && collapsed) return;
+                window.setTimeout(() => {
+                    section.dataset.expanded = String(section.open);
+                    saveState();
+                }, 0);
+            });
             const links = document.createElement('div');
             links.className = 'ar-sidebar-links';
             group.links.forEach(([href, name, glyph]) => {
@@ -208,9 +223,19 @@
             toggle.title = toggle.getAttribute('aria-label');
             toggle.hidden = mobile && mobileOpen;
             sections.forEach((section) => {
-                section.open = (!mobile && collapsed) || section.dataset.active === 'true';
+                section.open = (!mobile && collapsed) || section.dataset.expanded === 'true';
             });
         }
+        function saveState() {
+            try {
+                sessionStorage.setItem(stateKey, JSON.stringify({
+                    groups: Object.fromEntries(sections.map(section => [section.dataset.group, section.dataset.expanded === 'true'])),
+                    scroll: sidebar.scrollTop
+                }));
+            } catch {}
+        }
+        sidebar.addEventListener('scroll', saveState, { passive: true });
+        window.addEventListener('pagehide', saveState);
         function hide(restore = true) {
             mobileOpen = false;
             layout();
@@ -260,6 +285,7 @@
             layout();
         });
         layout();
+        sidebar.scrollTop = Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
         document.documentElement?.setAttribute('data-portal-navigation', 'ready');
     }
     if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();

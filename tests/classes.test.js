@@ -220,7 +220,7 @@ test('admin altera responsável e metadados da turma preservando matrículas e c
         id_curso: 99,
         ano_ingresso: 2020
     });
-    assert.deepEqual(admin.writes[1].args, ['2026 B', '2026 b', 'tarde', 'Belém', 2]);
+    assert.deepEqual(admin.writes[1].args, ['2026 B', '2026 b', 'tarde', 'Belém', null, 2]);
     assert.ok(
         !admin.writes.some((q) =>
             /DELETE|academico_matriculas|academico_publicacoes|id_curso=|ano_ingresso=/.test(q.sql)

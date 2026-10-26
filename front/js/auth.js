@@ -169,10 +169,27 @@ window.Arcadia = window.Arcadia || {};
             googlePreparing = null;
         }
     }
+    const googleForms = new WeakSet();
     async function initGoogleModal() {
         if (typeof document.querySelector !== 'function') return;
         const form = document.querySelector('form[data-acesso="login"]');
-        if (!form || estaLogado()) return;
+        if (!form || googleForms.has(form)) return;
+        googleForms.add(form);
+        if (estaLogado()) {
+            const notice = document.createElement('aside');
+            notice.className = 'ar-session-notice';
+            notice.setAttribute('aria-label', 'Sessão do Arcádia');
+            const message = document.createElement('p');
+            message.textContent = 'Você já está conectado ao Arcádia.';
+            const enter = document.createElement('button');
+            enter.type = 'button'; enter.textContent = 'Continuar para meu painel';
+            enter.addEventListener('click', irParaPortal);
+            const close = document.createElement('button');
+            close.type = 'button'; close.textContent = 'Fechar';
+            close.addEventListener('click', () => notice.remove());
+            notice.append(message, enter, close); document.body.append(notice);
+            return;
+        }
         let typing = false;
         form.addEventListener(
             'input',
@@ -194,6 +211,7 @@ window.Arcadia = window.Arcadia || {};
     }
     async function triggerRealGoogleOAuth(initial = {}) {
         if (document.querySelector('.ar-google-login-dialog')) return;
+        window.google?.accounts?.id?.cancel();
         const previous = document.activeElement;
         const dialog = document.createElement('dialog');
         dialog.className = 'ar-google-login-dialog';
@@ -551,7 +569,7 @@ window.Arcadia = window.Arcadia || {};
 
                     try {
                         const { ok, status, data } = await api.post(
-                            ['externo', 'docente', 'servidor'].includes(tipo_usuario)
+                            ['externo', 'discente', 'docente', 'servidor'].includes(tipo_usuario)
                                 ? '/api/external/register'
                                 : '/api/users',
                             {
@@ -559,12 +577,13 @@ window.Arcadia = window.Arcadia || {};
                                 email,
                                 senha,
                                 tipo_usuario,
-                                ...(['docente','servidor'].includes(tipo_usuario)
+                                ...(['discente','docente','servidor'].includes(tipo_usuario)
                                     ? {
                                           matricula: form.querySelector('#teacherMatricula')?.value,
                                           nome_usuario:
                                               form.querySelector('#teacherUsername')?.value,
-                                          formacao: form.querySelector('#teacherFormacao')?.value
+                                          formacao: form.querySelector('#teacherFormacao')?.value,
+                                          curso_informado: form.querySelector('#studentCourseInfo')?.value
                                       }
                                     : {}),
                                 telefone:
@@ -595,7 +614,7 @@ window.Arcadia = window.Arcadia || {};
                             return showError(data.error || 'Não foi possível realizar o cadastro.');
                         }
 
-                        const createdId = ['externo', 'docente', 'servidor'].includes(tipo_usuario)
+                        const createdId = ['externo', 'discente', 'docente', 'servidor'].includes(tipo_usuario)
                             ? data?.externalId
                             : data?.userId;
                         if (
@@ -767,28 +786,31 @@ window.Arcadia = window.Arcadia || {};
             const publicRole = ['discente','externo','docente','servidor'].includes(tipo);
             const teacherFields = document.getElementById('teacherSignupFields');
             if (teacherFields) {
-                teacherFields.hidden = !['docente','servidor'].includes(tipo);
+                const requestedRole = ['discente','docente','servidor'].includes(tipo);
+                teacherFields.hidden = !requestedRole;
                 for (const input of teacherFields.querySelectorAll('input')) {
-                    input.required = ['docente','servidor'].includes(tipo) && !(tipo === 'servidor' && input.id === 'teacherFormacao');
-                    input.disabled = !['docente','servidor'].includes(tipo);
+                    const applicable = input.id === 'studentCourseInfo' ? ehAluno : input.id === 'teacherFormacao' ? !ehAluno && requestedRole : requestedRole;
+                    input.required = applicable && !(tipo === 'servidor' && input.id === 'teacherFormacao');
+                    input.disabled = !applicable;
+                    if (['studentCourseInfo','teacherFormacao'].includes(input.id)) input.closest('.ar-input-group').hidden = !applicable;
                 }
                 const trainingLabel = document.getElementById('teacherFormacaoLabel');
                 if (trainingLabel) trainingLabel.textContent = tipo === 'servidor' ? 'Formação no SIGAA (opcional)' : 'Formação no SIGAA';
             }
-            const academicVisible = ehAluno;
+            const academicVisible = false;
             cursoWrap.style.display = academicVisible ? 'flex' : 'none';
             if (courseLabel)
                 courseLabel.textContent = ehAluno ? 'Curso' : 'Curso / formação (opcional)';
             if (cursoSelect) {
                 if (lastRole && lastRole !== tipo) cursoSelect.value = '';
-                cursoSelect.required = ehAluno;
+                cursoSelect.required = false;
                 cursoSelect.disabled = !academicVisible;
             }
             lastRole = tipo;
             if (signupSubmit) signupSubmit.disabled = !publicRole;
             if (roleHelp)
                 roleHelp.textContent = ehAluno
-                    ? 'Aluno: preencha seus dados e selecione o curso. O cadastro aceita e-mail pessoal, como Gmail.'
+                    ? 'Aluno: informe matrícula, usuário do SIGAA, curso e período. Confirme seu e-mail e aguarde a aprovação em Requisitos; até lá, o acesso será de Comunidade externa.'
                     : tipo === 'docente'
                       ? 'Professor: confirme seu e-mail e aguarde a análise dos Requisitos. Enquanto isso, sua conta terá acesso de Comunidade externa.'
                       : tipo === 'servidor'

@@ -1066,7 +1066,7 @@
             const category = calendar ? A.calendarCategories.canonical(r.categoria) : null;
             const metadata = [
                 category ? A.calendarCategories.options[category] : '',
-                r.resumo || r.descricao || ''
+                calendar ? [r.local, r.hora_inicio ? String(r.hora_inicio).slice(0, 5) : ''].filter(Boolean).join(' · ') : r.resumo || r.descricao || ''
             ]
                 .filter(Boolean)
                 .join(' · ');
@@ -1077,9 +1077,10 @@
                 ? results[3].value
                       .filter(
                           (r) =>
-                              String(r.data_evento).slice(0, 10) >=
+                              String(r.data_fim || r.data_evento).slice(0, 10) >=
                               new Date().toLocaleDateString('sv-SE')
                       )
+                      .sort((a,b) => String(a.data_evento).localeCompare(String(b.data_evento)))
                       .slice(0, 5)
                       .map((r) => row(r, 'calendar.html', r.data_evento, true))
                       .join('') || '<p>Nenhuma data próxima.</p>'

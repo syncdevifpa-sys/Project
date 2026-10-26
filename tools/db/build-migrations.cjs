@@ -35,3 +35,8 @@ schema+=`INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('${accou
 fs.writeFileSync(schemaPath,schema);
 
 console.log('Visibilidade e vínculo: 1.1.28 e 1.1.29 preparados offline. Nenhum banco acessado.');
+const cohortInfo=require('../../backend/db/migrations/1.1.30.json');
+fs.writeFileSync(path.join(base,'db/migrations/1.1.30.sql'),require('../lib/cohort-info-migration.cjs').generate(cohortInfo));
+schema+=`INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('${cohortInfo.version}','${checksum(cohortInfo)}');\n`;
+fs.writeFileSync(schemaPath,schema);
+console.log('Migracao 1.1.30 preparada offline; exige ensaio e aplicacao autorizada antes da publicacao.');

@@ -119,7 +119,7 @@ function createClasses(database = db) {
     }
     async function scope(c, actor, key, write = false) {
         const [rows] = await c.execute(
-            'SELECT d.*, t.id_curso, t.nome AS turma, t.ano_ingresso, t.turno, t.campus, t.arquivada_em AS turma_arquivada_em FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma = d.id_turma WHERE d.id_disciplina = ?' +
+            'SELECT d.*, t.id_curso, t.nome AS turma, t.descricao AS descricao_turma, t.ano_ingresso, t.turno, t.campus, t.arquivada_em AS turma_arquivada_em FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma = d.id_turma WHERE d.id_disciplina = ?' +
                 (write ? ' FOR UPDATE' : ''),
             [id(key)]
         );
@@ -144,6 +144,11 @@ function createClasses(database = db) {
     }
     async function list(owner) {
         const actor = await user(database, owner);
+        if (actor.tipo_usuario === 'servidor' && !isAdmin(actor)) {
+            const catalog = await require('./cohort-info.service').createCohortInfo(database).catalog(owner);
+            return { subjects: [], invites: [], canCreate: false, canAdminister: false,
+                role: actor.tipo_usuario, catalogOnly: true, cohorts: catalog.cohorts };
+        }
         const [subjects] = await database.execute(
             `SELECT d.*, t.nome AS turma, t.id_curso, t.ano_ingresso, t.turno, t.campus, c.nome AS curso, u.nome AS professor FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma=d.id_turma JOIN cursos c ON c.id_curso=t.id_curso JOIN usuarios u ON u.id_usuario=d.id_professor WHERE d.arquivada_em IS NULL AND t.arquivada_em IS NULL AND (? = 1 OR (d.id_professor = ? AND ? = 'docente' AND d.atribuicao_ativa = 1) OR (? = 'discente' AND EXISTS (SELECT 1 FROM academico_matriculas m WHERE m.id_disciplina=d.id_disciplina AND m.id_aluno=? AND m.ativa=1))) ORDER BY t.ano_ingresso DESC, t.nome, d.ano_letivo DESC, d.semestre DESC, d.nome`,
             [actor.is_admin ? 1 : 0, owner, actor.tipo_usuario, actor.tipo_usuario, owner]
@@ -177,7 +182,7 @@ function createClasses(database = db) {
         if (actor.tipo_usuario !== 'docente' && !isAdmin(actor))
             fail(403, 'Somente professores consultam turmas para criar disciplinas.');
         const [rows] = await database.execute(
-            'SELECT t.*, c.nome AS curso FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE (?=1 OR c.ativo=1) AND t.arquivada_em IS NULL ORDER BY t.ano_ingresso DESC, c.nome, t.nome',
+            'SELECT t.id_turma,t.nome,t.descricao,t.sala_oficial,t.id_curso,t.ano_ingresso,t.turno,t.campus,c.nome AS curso FROM academico_turmas t JOIN cursos c ON c.id_curso=t.id_curso WHERE (?=1 OR c.ativo=1) AND t.arquivada_em IS NULL ORDER BY t.ano_ingresso DESC, c.nome, t.nome',
             [isAdmin(actor) ? 1 : 0]
         );
         return rows;
@@ -292,12 +297,13 @@ function createClasses(database = db) {
             if (!rows.length) fail(404, 'Turma não encontrada.');
             try {
                 await c.execute(
-                    'UPDATE academico_turmas SET nome=?,nome_chave=?,turno=?,campus=? WHERE id_turma=?',
+                    'UPDATE academico_turmas SET nome=?,nome_chave=?,turno=?,campus=?,descricao=COALESCE(?,descricao) WHERE id_turma=?',
                     [
                         normalizeCohort(body.nome),
                         normalizeCohort(body.nome).toLowerCase(),
                         body.turno,
                         text(body.campus, 100, 'Campus'),
+                        body.descricao === undefined ? null : (body.descricao === '' ? '' : text(body.descricao,1000,'Descrição',true)),
                         id(key)
                     ]
                 );

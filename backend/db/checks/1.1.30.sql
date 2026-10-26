@@ -1,0 +1,5 @@
+-- Somente leitura. Conferir apos ensaio/aplicacao autorizada da 1.1.30.
+SELECT versao,checksum,verificado_em FROM arcadia_schema_migrations WHERE versao='1.1.30';
+SELECT TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE,COLUMN_DEFAULT FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND ((TABLE_NAME='publico_externo' AND COLUMN_NAME='intencao_cadastro') OR (TABLE_NAME='academico_turmas' AND COLUMN_NAME IN ('descricao','sala_oficial','versao_sala','id_representante','id_vice1','id_vice2','whatsapp_representante','consentimento_whatsapp_em')) OR TABLE_NAME IN ('academico_salas_historico','academico_horarios','academico_horario_excecoes'));
+SELECT CONSTRAINT_NAME,TABLE_NAME,REFERENCED_TABLE_NAME,DELETE_RULE FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_SCHEMA=DATABASE() AND TABLE_NAME IN ('academico_salas_historico','academico_turmas');
+SELECT COUNT(*) AS contatos_sem_consentimento FROM academico_turmas WHERE whatsapp_representante IS NOT NULL AND (id_representante IS NULL OR consentimento_whatsapp_em IS NULL);

@@ -16,8 +16,11 @@
         return contrast(background, text) >= 4.5 ? text :
             contrast(background, '#000000') >= contrast(background, '#ffffff') ? '#000000' : '#ffffff';
     }
+    function usesSiteDefault(page) {
+        return !['dashboard.html','tasks.html','documents.html','settings.html','community.html','community-settings.html'].includes(page);
+    }
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = { valid, contrast, readable };
+        module.exports = { valid, contrast, readable, usesSiteDefault };
         return;
     }
     if (!A) return;
@@ -49,6 +52,8 @@
     }
     function apply(node, key) {
         const style = resolve(preferences()[key]);
+        const page = location.pathname.split('/').pop() || 'index.html';
+        node.classList.toggle('ar-banner-site-default', style.mode === 'default' && usesSiteDefault(page));
         node.classList.remove('ac-personal-style', ...Object.keys(legacy).map((c) => 'ac-color-' + c), 'ac-color-neutral');
         node.classList.toggle('ar-banner-personal', style.mode !== 'default');
         node.style.removeProperty('--personal-banner-bg');

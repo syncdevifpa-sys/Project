@@ -7,6 +7,8 @@ function page({ login = true, loggedIn = false, challenge, explicitLogout = fals
     const events = {};
     const calls = { prompt: 0, cancel: 0, challenge: 0, initialize: [] };
     const form = { addEventListener(name, fn) { events[name] = fn; } };
+    const notices=[];
+    const element=()=>({children:[],setAttribute(){},addEventListener(){},append(...children){this.children.push(...children);},remove(){}});
     const context = {
         window: { Arcadia: {
             token: { get: () => loggedIn ? 'session' : null },
@@ -20,13 +22,14 @@ function page({ login = true, loggedIn = false, challenge, explicitLogout = fals
             prompt() { calls.prompt++; }, cancel() { calls.cancel++; }
         } } } },
         document: { readyState: 'loading', addEventListener() {},
+            createElement:element,body:{append:n=>notices.push(n)},
             querySelector: selector => selector === 'form[data-acesso="login"]' && login ? form : null },
         localStorage: { getItem: () => JSON.stringify({ logado: loggedIn }) },
         sessionStorage: { getItem: () => explicitLogout ? '1' : null },
         console
     };
     vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), context);
-    return { auth: context.window.Arcadia.auth, events, calls };
+    return { auth: context.window.Arcadia.auth, events, calls, notices };
 }
 test('One Tap solicita sugestão no login sem selecionar automaticamente e preserva nonce do servidor', async () => {
     const p = page();
@@ -37,6 +40,13 @@ test('One Tap solicita sugestão no login sem selecionar automaticamente e prese
     assert.equal(p.calls.initialize[0].nonce, 'nonce');
     p.events.input();
     assert.equal(p.calls.cancel, 1);
+});
+test('sessão existente mostra um aviso do Arcádia sem abrir One Tap; iniciar duas vezes não duplica a sugestão',async()=>{
+    const logged=page({loggedIn:true});await logged.auth.initGoogleSuggestion();
+    assert.equal(logged.calls.prompt,0);assert.equal(logged.notices.length,1);
+    assert.equal(logged.notices[0].children[1].textContent,'Continuar para meu painel');
+    await logged.auth.initGoogleSuggestion();assert.equal(logged.notices.length,1);
+    const login=page();await login.auth.initGoogleSuggestion();await login.auth.initGoogleSuggestion();assert.equal(login.calls.prompt,1);
 });
 test('não sugere no cadastro nem com sessão existente', async () => {
     for (const options of [{ login: false }, { loggedIn: true }]) {

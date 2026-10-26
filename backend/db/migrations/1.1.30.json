@@ -1,0 +1,58 @@
+{
+  "version": "1.1.30",
+  "previousVersion": "1.1.29",
+  "intentType": "enum('externo','docente','servidor','discente')",
+  "cohortColumns": [
+    [
+      "descricao",
+      "VARCHAR(1000) NULL",
+      "varchar(1000)",
+      "YES"
+    ],
+    [
+      "sala_oficial",
+      "VARCHAR(100) NULL",
+      "varchar(100)",
+      "YES"
+    ],
+    [
+      "versao_sala",
+      "INT UNSIGNED NOT NULL DEFAULT 0",
+      "int unsigned",
+      "NO"
+    ],
+    [
+      "id_representante",
+      "INT NULL",
+      "int",
+      "YES"
+    ],
+    [
+      "id_vice1",
+      "INT NULL",
+      "int",
+      "YES"
+    ],
+    [
+      "id_vice2",
+      "INT NULL",
+      "int",
+      "YES"
+    ],
+    [
+      "whatsapp_representante",
+      "VARCHAR(20) NULL",
+      "varchar(20)",
+      "YES"
+    ],
+    [
+      "consentimento_whatsapp_em",
+      "DATETIME NULL",
+      "datetime",
+      "YES"
+    ]
+  ],
+  "auditTable": "CREATE TABLE IF NOT EXISTS academico_salas_historico (id_alteracao INT AUTO_INCREMENT PRIMARY KEY,id_turma INT NULL,id_autor INT NULL,nome_autor VARCHAR(100) NOT NULL,sala_anterior VARCHAR(100) NULL,sala_nova VARCHAR(100) NULL,versao_anterior INT UNSIGNED NOT NULL,alterado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,INDEX idx_salas_turma(id_turma,id_alteracao),FOREIGN KEY(id_turma) REFERENCES academico_turmas(id_turma) ON DELETE SET NULL,FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;",
+  "scheduleTable": "CREATE TABLE IF NOT EXISTS academico_horarios (id_horario INT AUTO_INCREMENT PRIMARY KEY,id_disciplina INT NOT NULL,dia_semana TINYINT UNSIGNED NOT NULL,hora_inicio TIME NOT NULL,hora_fim TIME NOT NULL,vigencia_inicio DATE NOT NULL,vigencia_fim DATE NOT NULL,sala VARCHAR(100) NULL,id_autor INT NULL,ativo BOOLEAN NOT NULL DEFAULT TRUE,versao INT UNSIGNED NOT NULL DEFAULT 0,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,INDEX idx_horario_oferta(id_disciplina,ativo,dia_semana),FOREIGN KEY(id_disciplina) REFERENCES academico_disciplinas(id_disciplina) ON DELETE CASCADE,FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,CHECK(dia_semana BETWEEN 1 AND 7 AND hora_inicio<hora_fim AND vigencia_inicio<=vigencia_fim)) ENGINE=InnoDB;",
+  "exceptionTable": "CREATE TABLE IF NOT EXISTS academico_horario_excecoes (id_horario INT NOT NULL,data DATE NOT NULL,cancelada BOOLEAN NOT NULL DEFAULT TRUE,motivo VARCHAR(300) NULL,id_autor INT NULL,versao INT UNSIGNED NOT NULL DEFAULT 0,atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY(id_horario,data),FOREIGN KEY(id_horario) REFERENCES academico_horarios(id_horario) ON DELETE CASCADE,FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;"
+}

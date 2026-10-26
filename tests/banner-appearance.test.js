@@ -1,4 +1,9 @@
 const test = require('node:test');
+test('padrão configurado aplica-se às áreas de conteúdo, preservando Meu espaço',()=>{
+    const {usesSiteDefault}=require('../front/js/class-appearance.js');
+    for(const page of ['notices.html','calendar.html','projects.html','classes.html','people.html'])require('node:assert/strict').equal(usesSiteDefault(page),true);
+    for(const page of ['dashboard.html','tasks.html','documents.html','settings.html','community.html'])require('node:assert/strict').equal(usesSiteDefault(page),false);
+});
 const assert = require('node:assert/strict');
 const { readFileSync, readdirSync } = require('node:fs');
 const path = require('node:path');

@@ -189,3 +189,32 @@
 .ar-google-login-dialog .ar-google-login-enter[hidden] {
   display: none;
 }
+.ar-session-notice {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 100;
+  width: min(340px, calc(100vw - 40px));
+  box-sizing: border-box;
+  padding: 16px;
+  color: var(--ink, #182020);
+  background: var(--surface, #fff);
+  border: 1px solid var(--line, #aaa);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px #0002;
+}
+.ar-session-notice p { margin: 0 0 12px; }
+.ar-session-notice button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.ar-session-notice button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }

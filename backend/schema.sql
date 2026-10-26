@@ -67,7 +67,7 @@ CREATE TABLE publico_externo (
                         ON UPDATE CURRENT_TIMESTAMP,
     email_lembretes BOOLEAN NOT NULL DEFAULT FALSE,
     consentimento_lembretes_em DATETIME NULL,
-    intencao_cadastro ENUM('externo','docente','servidor') NOT NULL DEFAULT 'externo'
+    intencao_cadastro ENUM('externo','docente','servidor','discente') NOT NULL DEFAULT 'externo'
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -645,6 +645,17 @@ CREATE TABLE documento_salvos (
 ) ENGINE=InnoDB;
 
 CREATE TABLE academico_turmas (
+ descricao VARCHAR(1000) NULL,
+ sala_oficial VARCHAR(100) NULL,
+ versao_sala INT UNSIGNED NOT NULL DEFAULT 0,
+ id_representante INT NULL,
+ id_vice1 INT NULL,
+ id_vice2 INT NULL,
+ whatsapp_representante VARCHAR(20) NULL,
+ consentimento_whatsapp_em DATETIME NULL,
+ FOREIGN KEY(id_representante) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,
+ FOREIGN KEY(id_vice1) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,
+ FOREIGN KEY(id_vice2) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,
  nome_chave VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
  arquivada_em DATETIME NULL,
  UNIQUE KEY uq_turma_nome_global (nome_chave),
@@ -854,6 +865,12 @@ CREATE TABLE conta_vinculos (id_externo INT PRIMARY KEY,id_usuario INT NOT NULL 
 CREATE TABLE agenda_vinculos (id_evento_externo INT PRIMARY KEY,id_evento INT NOT NULL UNIQUE,FOREIGN KEY(id_evento_externo) REFERENCES agenda_externa(id_evento) ON DELETE CASCADE,FOREIGN KEY(id_evento) REFERENCES calendario(id_evento) ON DELETE CASCADE) ENGINE=InnoDB;
 CREATE TABLE vinculo_auditoria (id_auditoria INT AUTO_INCREMENT PRIMARY KEY,id_requisito INT NULL,id_externo INT NULL,id_admin INT NULL,acao VARCHAR(30) NOT NULL,motivo VARCHAR(1000) NOT NULL,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(id_requisito) REFERENCES docente_requisitos(id_requisito) ON DELETE SET NULL,FOREIGN KEY(id_externo) REFERENCES publico_externo(id_externo) ON DELETE SET NULL,FOREIGN KEY(id_admin) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;
 
+-- Novos recursos de Turmas, somente instalacao NOVA.
+CREATE TABLE academico_salas_historico (id_alteracao INT AUTO_INCREMENT PRIMARY KEY,id_turma INT NULL,id_autor INT NULL,nome_autor VARCHAR(100) NOT NULL,sala_anterior VARCHAR(100) NULL,sala_nova VARCHAR(100) NULL,versao_anterior INT UNSIGNED NOT NULL,alterado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,INDEX idx_salas_turma(id_turma,id_alteracao),FOREIGN KEY(id_turma) REFERENCES academico_turmas(id_turma) ON DELETE SET NULL,FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;
+CREATE TABLE academico_horarios (id_horario INT AUTO_INCREMENT PRIMARY KEY,id_disciplina INT NOT NULL,dia_semana TINYINT UNSIGNED NOT NULL,hora_inicio TIME NOT NULL,hora_fim TIME NOT NULL,vigencia_inicio DATE NOT NULL,vigencia_fim DATE NOT NULL,sala VARCHAR(100) NULL,id_autor INT NULL,ativo BOOLEAN NOT NULL DEFAULT TRUE,versao INT UNSIGNED NOT NULL DEFAULT 0,criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,INDEX idx_horario_oferta(id_disciplina,ativo,dia_semana),FOREIGN KEY(id_disciplina) REFERENCES academico_disciplinas(id_disciplina) ON DELETE CASCADE,FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,CHECK(dia_semana BETWEEN 1 AND 7 AND hora_inicio<hora_fim AND vigencia_inicio<=vigencia_fim)) ENGINE=InnoDB;
+
+CREATE TABLE academico_horario_excecoes (id_horario INT NOT NULL,data DATE NOT NULL,cancelada BOOLEAN NOT NULL DEFAULT TRUE,motivo VARCHAR(300) NULL,id_autor INT NULL,versao INT UNSIGNED NOT NULL DEFAULT 0,atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY(id_horario,data),FOREIGN KEY(id_horario) REFERENCES academico_horarios(id_horario) ON DELETE CASCADE,FOREIGN KEY(id_autor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL) ENGINE=InnoDB;
+
 -- Registro da instalacao consolidada (somente banco NOVO).
 CREATE TABLE arcadia_schema_migrations (
  versao VARCHAR(32) PRIMARY KEY,checksum CHAR(64) NOT NULL,verificado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -863,3 +880,4 @@ INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.26','775c0b6
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.27','d9fd23826f42a137bc3ccc4df312df48c6efd2e21d8d324aa62cf068a18135ad');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.28','9cdf3a5752095a953bdb79caf01a7774266d7588be89ae08d9fdff5a1634d70b');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.29','45b86a2a1a6303a7356c9e7c251144fd1b7cbd2fef24f1439747485b23f27907');
+INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.30','86a92153561f5572008da9e9d569b4878d98cbf1fc07cb807db580b23a449ef1');
