@@ -35,3 +35,5 @@ Sala efetiva: override não vazio da aula, ou sala oficial atual da turma. O fal
 ## Validação
 
 Testes de política, serviço, interfaces em DOM simulado e HTTP com banco simulado. Não equivalem a um ensaio real da migração nem a uma conferência visual em navegador. Fazer revisão final em desktop/mobile, tema claro/escuro, teclado, modais e grade com rolagem horizontal contida antes de publicar.
+
+Validação em 26/10/2026: **450 testes aprovados, sem falhas ou saltos**, com os três PDFs locais de teste; `npm run typecheck` e `npm run build` aprovados. O servidor local entregou `classes.html`, `js/campus-timetable.js`, `js/academic-ui.js` e `academic-management.css` com HTTP 200. A conferência visual em navegador e o ensaio real da migração continuam pendentes.
