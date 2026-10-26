@@ -35,6 +35,9 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
             append(...items) {
                 this.children.push(...items);
             },
+            prepend(...items) {
+                this.children.unshift(...items);
+            },
             replaceChildren(...items) {
                 this.children = items;
             },
@@ -76,6 +79,7 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
     });
     return {
         nodes,
+        A:Arcadia,
         body,
         app,
         media,
@@ -165,4 +169,14 @@ test('compact navigation has distinct semantic icons and accessible names', () =
     assert.equal(new Set(paths).size, links.length);
     assert.ok(links.every((n) => n.title && n.attributes['aria-label'] === n.title));
     assert.equal(links.find((n) => n.href === 'notices.html').title, 'Avisos e notícias');
+});
+
+test('sino acessível leva ao painel de lembretes sem badge fictício nem acesso anônimo',()=>{
+ const f=fixture('classes.html',{id_usuario:7,tipo_usuario:'docente'});
+ const bell=f.nodes.find(n=>n.className==='ar-iconbtn ar-reminders-link');
+ assert.equal(bell.href,'tasks.html#taskReminders');assert.equal(bell.attributes['aria-label'],'Meus lembretes e notificações');assert.equal(bell.children.length,1);
+ const calendar=fixture('calendar.html',{tipo_usuario:'discente'});let revealed=false,prevented=false;
+ calendar.A.reminderUI={reveal:()=>revealed=true};calendar.nodes.find(n=>n.className==='ar-iconbtn ar-reminders-link').events.click({preventDefault(){prevented=true;}});
+ assert.equal(revealed,true);assert.equal(prevented,true);
+ assert.equal(fixture('index.html',{}).nodes.some(n=>n.className==='ar-iconbtn ar-reminders-link'),false);
 });

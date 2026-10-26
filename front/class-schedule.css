@@ -10,3 +10,13 @@
 .ac-week-class + .ac-week-class { margin-top: 8px; }
 .ac-week-class.ac-cancelled { border-color: var(--danger); }
 .ac-week-empty { color: var(--ink-muted); }
+.ac-week-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-block: 16px; }
+.ac-week-toolbar .ar-field { display: grid; gap: 6px; flex: 0 1 auto; width: auto; max-width: 100%; margin: 0; }
+.ac-week-toolbar input[type='date'] { box-sizing: border-box; width: 12rem; max-width: 100%; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--control-border); border-radius: var(--radius-sm); background: var(--surface-sunken); color: var(--ink); font: inherit; }
+.ac-week-toolbar .ar-btn { flex: 0 0 auto; width: auto; min-height: 44px; }
+.ac-week-toolbar :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+@media (max-width: 480px) {
+  .ac-week-toolbar { gap: 10px; }
+  .ac-week-toolbar .ar-btn { flex-shrink: 1; white-space: normal; }
+  .ac-week-grid :is(th,td) { padding: 8px; }
+}

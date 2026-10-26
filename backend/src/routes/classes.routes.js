@@ -17,6 +17,7 @@ const action = (fn) => async (q, s, next) => {
 };
 const cohortInfo = require('../services/cohort-info.service').createCohortInfo();
 const classSchedule = require('../services/class-schedule.service').createClassSchedule();
+router.put('/:id/period', action(async(q,s)=>s.json(await service.updatePeriod(q.user.id_usuario,q.params.id,q.body||{}))));
 router.get('/schedule', action(async(q,s)=>s.json(await classSchedule.agenda(q.user.id_usuario,q.query.from,q.query.to))));
 router.get('/:id/schedule', action(async(q,s)=>s.json(await classSchedule.list(q.user.id_usuario,q.params.id))));
 router.post('/:id/schedule', action(async(q,s)=>s.status(201).json(await classSchedule.save(q.user.id_usuario,q.params.id,q.body||{}))));

@@ -10,6 +10,14 @@
             (document.querySelector('.ar-main')||document.querySelector('.ar-app')).append(host);
         }
         if(!host) return;
+        function reveal() {
+            host.open = true;
+            const summary = host.querySelector('summary');
+            if (summary) summary.focus({preventScroll:true});
+            host.scrollIntoView({block:'start',behavior:'auto'});
+        }
+        window.addEventListener('hashchange', () => {if (location.hash === '#taskReminders') reveal();});
+        if (location.hash === '#taskReminders') reveal();
         const base=external?'/api/external/reminders':'/api/reminders';
         const call = (path, method = 'GET', body) => A.api.expect(A.api.request(base + path, { method, body }));
         const make = (tag, text, cls) => {
@@ -158,7 +166,7 @@
             };
             dialog.showModal(); title.focus();
         }
-        A.reminderUI={open:async(event,source)=>{
+        A.reminderUI={reveal,open:async(event,source)=>{
             try {
                 await reload();
                 if(event && source!=='avulso') event=await call('/event/'+source+'/'+encodeURIComponent(event.id_evento));

@@ -97,6 +97,28 @@
             svg.append(line);
             return svg;
         }
+        const barEnd = document.querySelector('.ar-nav-end');
+        if (barEnd) {
+            const reminders = document.createElement('a');
+            reminders.className = 'ar-iconbtn ar-reminders-link';
+            reminders.href = ['tasks.html','calendar.html'].includes(page) ? '#taskReminders' : 'tasks.html#taskReminders';
+            reminders.title = 'Meus lembretes e notificações';
+            reminders.setAttribute('aria-label', reminders.title);
+            reminders.append(icon('M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4'));
+            reminders.addEventListener('click', event => {
+                if (['tasks.html','calendar.html'].includes(page) && Arcadia.reminderUI?.reveal) {
+                    event.preventDefault();
+                    Arcadia.reminderUI.reveal();
+                }
+            });
+            barEnd.prepend(reminders);
+        }
+        const bar = document.querySelector('.ar-nav');
+        if (bar && window.ResizeObserver) {
+            new window.ResizeObserver(() => {
+                document.documentElement.style.setProperty('--portal-header-offset', Math.ceil(bar.getBoundingClientRect().height + 20) + 'px');
+            }).observe(bar);
+        }
         const sidebar = document.createElement('aside');
         sidebar.id = 'portalSidebar';
         sidebar.className = 'ar-portal-sidebar';

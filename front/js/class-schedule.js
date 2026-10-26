@@ -150,6 +150,7 @@
                                 await call('/' + subject + '/schedule/' + row.id_horario, 'DELETE', {versao:row.versao});
                                 if (editing?.id_horario === row.id_horario) resetEditor();
                                 await refresh('Horário retirado da oferta e da Agenda.');
+                                offering.onChange?.();
                             } catch (error) { status.textContent = error.message; remove.disabled = false; }
                         };
                         actions.append(change, remove);
@@ -232,6 +233,7 @@
                     if (!Number.isSafeInteger(result?.id_horario) || result.id_horario <= 0) throw new Error('O servidor não confirmou a gravação do horário. Atualize a lista antes de tentar novamente.');
                     resetEditor();
                     await refresh(result.message || 'Horário salvo na oferta e na Agenda.');
+                    offering.onChange?.();
                 } catch (error) {status.textContent = error.message;}
                 finally {save.disabled = false;}
             };
@@ -253,7 +255,7 @@
 
     function initAgenda(){const host=document.querySelector('[data-class-weekly-agenda]');if(!host)return;const session=A.auth.getSessao();if(!A.auth.estaLogado()||session.tipo_usuario==='externo'||(session.tipo_usuario==='servidor'&&!session.is_admin)){host.remove();return;}
         const label=node('label','Semana a partir de');label.className='ar-field';const date=node('input');date.type='date';date.required=true;date.value=new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Belem'}).format(new Date());label.append(date);
-        const button=node('button','Consultar horários');button.type='submit';button.className='ar-btn';const form=node('form');form.className='ar-calendar-import-row';form.append(label,button);const status=node('p');status.setAttribute('role','status');const list=node('div');host.append(form,status,list);let generation=0;
+        const button=node('button','Consultar horários');button.type='submit';button.className='ar-btn';const form=node('form');form.className='ac-week-toolbar';form.append(label,button);const status=node('p');status.setAttribute('role','status');const list=node('div');host.append(form,status,list);let generation=0;
         async function load(){if(!date.value)return;const current=++generation;const from=date.value,to=new Date(Date.parse(from)+6*86400000).toISOString().slice(0,10);button.disabled=true;status.textContent='Carregando horários…';try{const rows=await call('/schedule?from='+from+'&to='+to);if(current!==generation)return;renderGrid(list,rows,'Horários das aulas · '+from.split('-').reverse().join('/')+' a '+to.split('-').reverse().join('/'));status.textContent=rows.length?'Fuso: Belém. Horários cadastrados nas ofertas de Turmas.':'Nenhuma aula cadastrada para esta semana.';}catch(e){if(current===generation)status.textContent=e.message;}finally{if(current===generation)button.disabled=false;}}
         form.onsubmit=event=>{event.preventDefault();load();};host.addEventListener('toggle',()=>{if(host.open)load();});
     }

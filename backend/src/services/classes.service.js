@@ -273,16 +273,55 @@ function createClasses(database = db) {
             : [[]];
         return { subject, posts, people, pending };
     }
+    async function preparePeriod(c, d, body) {
+        const academic = year(body.ano_letivo), period = offering(body);
+        if (academic < Number(d.ano_ingresso)) fail(400, 'Ano letivo anterior ao ingresso da turma.');
+        if (body.periodo_anterior !== undefined && body.periodo_anterior !== offeringPeriod(d))
+            fail(409, 'O período foi alterado. Atualize a disciplina antes de salvar.');
+        const changed = offeringPeriod({...period, ano_letivo:academic}) !== offeringPeriod(d);
+        if (changed) {
+            if (body.confirmar_periodo !== true) fail(400, 'Confirme a alteração do período. As datas e os registros vinculados serão preservados.');
+            const [schedules] = await c.execute("SELECT DATE_FORMAT(vigencia_inicio,'%Y-%m-%d') AS inicio,DATE_FORMAT(vigencia_fim,'%Y-%m-%d') AS fim FROM academico_horarios WHERE id_disciplina=? FOR UPDATE",[d.id_disciplina]);
+            const [events] = await c.execute("SELECT DATE_FORMAT(inicio,'%Y-%m-%d') AS inicio,DATE_FORMAT(fim,'%Y-%m-%d') AS fim FROM academico_publicacoes WHERE id_disciplina=? AND inicio IS NOT NULL FOR UPDATE",[d.id_disciplina]);
+            const from = academic + '-01-01', until = (academic + 1) + '-12-31';
+            if ([...schedules,...events].some(row => row.inicio < from || (row.fim || row.inicio) > until))
+                fail(409, 'Há horários ou eventos fora do ano letivo escolhido e de sua continuação no ano seguinte. Revise-os antes de alterar o período; nenhuma data será movida automaticamente.');
+        }
+        return {...period,ano_letivo:academic};
+    }
+    async function updatePeriod(owner, key, body) {
+        if (Object.keys(body).some(k => !['ano_letivo','regime_letivo','semestre','confirmar_periodo','periodo_anterior'].includes(k)))
+            fail(400, 'Envie somente os dados do período letivo.');
+        return transaction(owner, async (c, actor) => {
+            const d = await scope(c, actor, key, true);
+            const period = await preparePeriod(c,d,body);
+            try {
+                await c.execute('UPDATE academico_disciplinas SET ano_letivo=?,regime_letivo=?,semestre=? WHERE id_disciplina=?',
+                    [period.ano_letivo,period.regime_letivo,period.semestre,d.id_disciplina]);
+            } catch (error) {
+                if(error.code==='ER_DUP_ENTRY') fail(409,'Já existe uma oferta desta disciplina na turma e no período escolhido. Use a oferta existente.');
+                throw error;
+            }
+            return {message:'Período letivo atualizado. Horários, materiais, participantes e convites foram preservados.'};
+        });
+    }
     async function updateSubject(owner, key, body) {
         return transaction(owner, async (c, actor) => {
             if (!isAdmin(actor))
                 fail(403, 'Somente administradores alteram a disciplina e seu responsável.');
-            await scope(c, actor, key, true);
+            const d = await scope(c, actor, key, true);
             const professor = await teacher(c, body.id_professor);
-            await c.execute(
-                'UPDATE academico_disciplinas SET nome=?,id_professor=?,atribuicao_ativa=1 WHERE id_disciplina=?',
-                [text(body.nome, 100, 'Disciplina'), professor, id(key)]
-            );
+            const hasPeriod = ['ano_letivo','regime_letivo','semestre'].some(k=>Object.hasOwn(body,k));
+            const period = hasPeriod ? await preparePeriod(c,d,body) : null;
+            try {
+                await c.execute(
+                    'UPDATE academico_disciplinas SET nome=?,id_professor=?,atribuicao_ativa=1' + (period ? ',ano_letivo=?,regime_letivo=?,semestre=?' : '') + ' WHERE id_disciplina=?',
+                    [text(body.nome,100,'Disciplina'),professor,...(period ? [period.ano_letivo,period.regime_letivo,period.semestre] : []),id(key)]
+                );
+            } catch(error) {
+                if(error.code==='ER_DUP_ENTRY') fail(409,'Já existe uma oferta desta disciplina na turma e no período escolhido. Use a oferta existente.');
+                throw error;
+            }
         });
     }
     async function updateCohort(owner, key, body) {
@@ -551,6 +590,7 @@ function createClasses(database = db) {
         leaveCohort,
         leaveSubject,
         updateSubject,
+        updatePeriod,
         updateCohort,
         list,
         cohorts,

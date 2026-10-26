@@ -1,5 +1,11 @@
 .ar-task-reminders { margin-block: 24px; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
 .ar-task-reminders > summary { cursor: pointer; font-weight: 600; }
+.ar-task-reminders { scroll-margin-top: var(--portal-header-offset, 104px); min-width: 0; }
+.ar-task-reminders > summary { min-height: 44px; padding-block: 10px; box-sizing: border-box; }
+.ar-task-reminders > div > .ar-btn { min-height: 44px; margin: 4px 8px 4px 0; white-space: normal; }
+.ar-task-reminders label { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; line-height: 1.5; }
+.ar-task-reminders input[type='checkbox'] { flex-shrink: 0; }
+@media (max-width: 480px) { .ar-task-reminders { padding: 14px; } }
 .ar-task-reminders-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 12px; margin-top: 16px; }
 .ar-task-reminders article { padding: 16px; border: 1px solid var(--line); border-radius: 14px; min-width: 0; overflow-wrap: anywhere; }
 .ar-task-reminders h3 { margin: 0 0 8px; font-size: 18px; }

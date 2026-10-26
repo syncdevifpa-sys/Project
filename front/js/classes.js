@@ -384,6 +384,13 @@
             turmaActions.append(btn('Editar turma', cohortEditor));
             disciplineActions.append(btn('Editar disciplina e professor', subjectEditor));
         }
+        if (!detail.aggregate && d.canManage && !data.canAdminister)
+            disciplineActions.append(btn('Editar período letivo', periodEditor));
+        if (!detail.aggregate && d.regime_letivo === 'legado') {
+            infoHost.append(el('p', d.canManage
+                ? 'Período não informado. Complete em Gerenciar → ' + (data.canAdminister ? 'Editar disciplina e professor.' : 'Editar período letivo.')
+                : 'O período letivo ainda não foi informado pelo responsável.', 'ac-meta'));
+        }
         if (!detail.aggregate && d.canManage) {
             const actions = el('div', undefined, 'ac-actions');
             for (const cohort of data.canAdminister ? [false, true] : [false]) {
@@ -476,22 +483,30 @@
                 host.append(el('p', 'Os horários não carregaram. Atualize a página para tentar novamente.', 'ac-empty'));
                 return;
             }
-            if (detail.aggregate) {
-                const offers = data.subjects.filter(row => row.id_turma === d.id_turma && periodKey(row) === periodKey(d));
-                const weekly = el('div');
-                const weeklyStatus = el('p', 'Carregando horários da turma…');
-                weeklyStatus.setAttribute('role', 'status');
-                host.append(weeklyStatus, weekly);
-                Promise.all(offers.map(async offer => {
-                    const rows = await call('/' + offer.id_disciplina + '/schedule');
-                    return rows.map(row => ({...row, nome:offer.nome, professor:offer.professor}));
-                })).then(rows => {
-                    if (!weekly.isConnected) return;
+            // Only offers returned by the authorized catalogue, in this exact cohort/period.
+            const offers = data.subjects.filter(row => String(row.id_turma) === String(d.id_turma) && periodKey(row) === periodKey(d));
+            const weekly = el('div');
+            const weeklyStatus = el('p');
+            weeklyStatus.setAttribute('role', 'status');
+            host.append(weeklyStatus, weekly);
+            let weeklyGeneration = 0;
+            const loadWeekly = async () => {
+                const version = ++weeklyGeneration;
+                weeklyStatus.textContent = 'Carregando horários da turma…';
+                try {
+                    const rows = await Promise.all(offers.map(async offer => {
+                        const slots = await call('/' + offer.id_disciplina + '/schedule');
+                        return slots.map(row => ({...row, nome:offer.nome, professor:offer.professor}));
+                    }));
+                    if (!weekly.isConnected || version !== weeklyGeneration) return;
                     A.classSchedule.renderGrid(weekly, rows.flat(), d.turma + ' · ' + periodLabel(d));
-                    weeklyStatus.textContent = '';
-                }).catch(error => {
-                    if (weeklyStatus.isConnected) weeklyStatus.textContent = 'Não foi possível carregar a grade da turma: ' + error.message;
-                });
+                    weeklyStatus.textContent = 'Grade das disciplinas às quais você tem acesso nesta turma e período.';
+                } catch (error) {
+                    if (weeklyStatus.isConnected && version === weeklyGeneration) weeklyStatus.textContent = 'Não foi possível carregar a grade da turma: ' + error.message;
+                }
+            };
+            loadWeekly();
+            if (detail.aggregate) {
                 const label = el('label', 'Disciplina');
                 label.className = 'ar-field';
                 const picker = el('select');
@@ -505,12 +520,14 @@
                 host.append(label, content);
                 const choose = () => {
                     const offer = offers.find(row => String(row.id_disciplina) === picker.value);
-                    if (offer) A.classSchedule.mount(content, {...offer, showGrid:false});
+                    if (offer) A.classSchedule.mount(content, {...offer, showGrid:false, onChange:loadWeekly});
                 };
                 picker.addEventListener('change', choose);
                 choose();
             } else {
-                A.classSchedule.mount(host, d);
+                const content = el('div');
+                host.append(content);
+                A.classSchedule.mount(content, {...d, showGrid:false, onChange:loadWeekly});
             }
             return;
         }
@@ -765,11 +782,6 @@
                     value: now,
                     required: true
                 }),
-                year = e.field('Ano letivo da disciplina', {
-                    type: 'number',
-                    value: now,
-                    required: true
-                }),
                 shift = e.select(
                     'Turno',
                     [
@@ -781,27 +793,9 @@
                     'manha'
                 ),
                 campus = e.field('Campus', { value: 'Belém', required: true, maxLength: 100 });
-            const regime = e.select(
-                'Regime da oferta',
-                [
-                    ['semestral', 'Semestral'],
-                    ['anual', 'Anual']
-                ],
-                'semestral'
-            );
-            const semester = e.select(
-                'Semestre letivo',
-                [
-                    ['1', 'Primeiro semestre'],
-                    ['2', 'Segundo semestre']
-                ],
-                new Date().getMonth() < 6 ? '1' : '2'
-            );
-            regime.onchange = () => {
-                semester.disabled = regime.value !== 'semestral';
-            };
-            start.min = year.min = '2000';
-            start.max = year.max = '2100';
+            const period = A.classPeriod.fields(e, {ano_letivo:now});
+            start.min = '2000';
+            start.max = '2100';
             existing.onchange = () => {
                 const current = cohorts.find((c) => String(c.id_turma) === existing.value);
                 for (const field of [course, cohort, start, shift, campus])
@@ -821,9 +815,7 @@
                     nome: name.value,
                     turma: cohort.value,
                     ano_ingresso: Number(start.value),
-                    ano_letivo: Number(year.value),
-                    regime_letivo: regime.value,
-                    semestre: regime.value === 'semestral' ? Number(semester.value) : 0,
+                    ...period.read(),
                     turno: shift.value,
                     campus: campus.value,
                     ...(professor ? { id_professor: Number(professor.value) } : {})
@@ -844,6 +836,7 @@
                 required: true,
                 maxLength: 100
             });
+            const period = A.classPeriod.fields(e, subject, true);
             const professor = e.select(
                 'Professor responsável',
                 [
@@ -863,12 +856,22 @@
             e.submit(() =>
                 call('/' + subject.id_disciplina, 'PUT', {
                     nome: name.value,
-                    id_professor: Number(professor.value)
+                    id_professor: Number(professor.value),
+                    ...period.read()
                 })
             );
         } catch (e) {
             message(e.message);
         }
+    }
+    function periodEditor() {
+        const subject = detail.subject, e = editor('Editar período letivo');
+        const period = A.classPeriod.fields(e, subject, true);
+        e.submit(() => {
+            const values = period.read();
+            if (!values.regime_letivo) throw new Error('Selecione o regime anual ou semestral para completar esta oferta.');
+            return call('/' + subject.id_disciplina + '/period', 'PUT', values);
+        });
     }
     function cohortEditor() {
         const subject = detail.subject,
