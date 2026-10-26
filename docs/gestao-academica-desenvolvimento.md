@@ -37,3 +37,7 @@ Sala efetiva: override não vazio da aula, ou sala oficial atual da turma. O fal
 Testes de política, serviço, interfaces em DOM simulado e HTTP com banco simulado. Não equivalem a um ensaio real da migração nem a uma conferência visual em navegador. Fazer revisão final em desktop/mobile, tema claro/escuro, teclado, modais e grade com rolagem horizontal contida antes de publicar.
 
 Validação em 26/10/2026: **450 testes aprovados, sem falhas ou saltos**, com os três PDFs locais de teste; `npm run typecheck` e `npm run build` aprovados. O servidor local entregou `classes.html`, `js/campus-timetable.js`, `js/academic-ui.js` e `academic-management.css` com HTTP 200. A conferência visual em navegador e o ensaio real da migração continuam pendentes.
+
+## Atualização — retomada R1 da 1.1.31
+
+Após a tentativa manual relatada pelo responsável, o CALL parou no comparador de `turma_pendente`. A aplicação não está confirmada por este relato; DDL anterior ao SIGNAL pode existir. Não repetir o arquivo original ou o CALL isolado para contornar a falha. O SQL e o manifesto originais foram preservados. O gerador agora produz a recuperação separada e o diagnóstico de leitura; seguir [o roteiro R1](../backend/db/workbench/1.1.31/README.md), começando pelo diagnóstico. Suíte completa da recuperação: 453 testes aprovados, sem falhas ou saltos; o comparador ainda precisa ser confirmado nativamente no banco do responsável antes da retomada.
