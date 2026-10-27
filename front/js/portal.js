@@ -297,6 +297,7 @@
 
     // Destinos da busca rápida (Ctrl+K / ⌘K)
     var PALETTE_DATA = [
+        {type:'Campus',title:'Mapa do campus',meta:'Blocos e espaços · IFPA Belém',href:'campus-map.html',icon:'search'},
         {
             type: 'Notices',
             title: 'Avisos e notícias',

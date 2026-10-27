@@ -180,3 +180,10 @@ test('sino acessível leva ao painel de lembretes sem badge fictício nem acesso
  assert.equal(revealed,true);assert.equal(prevented,true);
  assert.equal(fixture('index.html',{}).nodes.some(n=>n.className==='ar-iconbtn ar-reminders-link'),false);
 });
+test('mapa é acessível na navegação pública, institucional e externa sem abrir áreas privadas',()=>{
+ for(const session of [{},{id_usuario:7,tipo_usuario:'docente'},{id_externo:7,tipo_usuario:'externo'}]){
+  const f=fixture('campus-map.html',session);
+  assert.ok(f.nodes.some(node=>node.tag==='a'&&node.href==='campus-map.html'));
+  if(session.tipo_usuario==='externo')assert.ok(!f.nodes.some(node=>node.tag==='a'&&['classes.html','admin.html','people.html','documents.html'].includes(node.href)));
+ }
+});

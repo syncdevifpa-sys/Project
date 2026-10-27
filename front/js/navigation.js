@@ -14,6 +14,7 @@
                 ['notices.html', 'Avisos e notícias'],
                 ['projects.html', 'Projetos'],
                 ['calendar.html', 'Agenda'],
+                ['campus-map.html', 'Mapa do campus'],
                 [
                     session.tipo_usuario === 'externo' ? 'community.html' : 'login.html',
                     session.tipo_usuario === 'externo' ? 'Minha conta' : 'Entrar'
@@ -33,6 +34,7 @@
             file: 'M6 3h8l4 4v14H6z M14 3v5h4 M9 12h6 M9 16h6',
             tasks: 'M9 6h11 M9 12h11 M9 18h11 M3 6h2 M3 12h2 M3 18h2',
             settings: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6',
+            map: 'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z M9 3v15 M15 6v15',
             calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 10h16',
             people: 'M16 21v-3a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v3 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M17 5a3 3 0 0 1 0 6 M17 14a4 4 0 0 1 4 4v3',
             class: 'M8 21v-3a4 4 0 0 1 8 0v3 M12 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6 M2 18v-2a3 3 0 0 1 4-3 M22 18v-2a3 3 0 0 0-4-3 M5 3a3 3 0 1 0 0 6 M19 3a3 3 0 1 1 0 6',
@@ -45,7 +47,7 @@
                 ['community-settings.html','Configurações','settings']
             ] },
             { name: 'Conteúdo', icon: 'file', links: [
-                ['notices.html','Avisos e notícias','news'],['calendar.html','Calendário','calendar'],['projects.html','Projetos','projects']
+                ['notices.html','Avisos e notícias','news'],['calendar.html','Calendário','calendar'],['projects.html','Projetos','projects'],['campus-map.html','Mapa do campus','map']
             ] }
         ] : [
             {
@@ -65,7 +67,8 @@
                     ['notices.html', 'Avisos e notícias', 'news'],
                     ['calendar.html', 'Calendário', 'calendar'],
                     ['people.html', 'Pessoas', 'people'],
-                    ['projects.html', 'Projetos', 'projects']
+                    ['projects.html', 'Projetos', 'projects'],
+                    ['campus-map.html', 'Mapa do campus', 'map']
                 ]
             }
         ];
