@@ -391,3 +391,24 @@
 .ac-schedule-next-day input[type='checkbox'] { flex: 0 0 20px; width: 20px; min-height: 20px; height: 20px; }
 .ac-fields label:has(input[type='checkbox']) { display: flex; align-items: center; gap: 10px; min-height: 44px; }
 .ac-fields input[type='checkbox'] { width: 20px; min-height: 20px; height: 20px; flex: 0 0 20px; }
+
+.ac-schedule-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.ac-schedule-toolbar h3 { margin: 0; flex: 1 1 180px; }
+.ac-schedule-help { position: relative; }
+.ac-schedule-help > summary { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; cursor: pointer; list-style: none; }
+.ac-schedule-help > summary::-webkit-details-marker { display: none; }
+.ac-schedule-help > summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.ac-schedule-help-content { position: absolute; z-index: 3; inset-inline-end: 0; top: calc(100% + 8px); width: min(320px, 75vw); padding: 16px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); box-shadow: 0 8px 24px var(--scrim); }
+.ac-schedule-help-content p { margin: 0; }
+.ac-schedule-help-content p + p { margin-top: 12px; }
+.ac-schedule-editor { padding: 0; overflow: hidden; max-height: 90dvh; }
+.ac-schedule-editor .ac-schedule-form { display: flex; flex-direction: column; max-height: calc(90dvh - 2px); margin: 0; }
+.ac-schedule-editor-body { padding: 20px; overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
+.ac-schedule-editor .ac-schedule-fields { margin: 0; border: 0; padding: 0; }
+.ac-schedule-editor legend { padding: 0 0 16px; font-size: 1.25rem; font-weight: 700; }
+.ac-schedule-editor-actions { flex-shrink: 0; justify-content: flex-end; margin: 0; padding: 16px 20px; border-top: 1px solid var(--line); background: var(--surface); }
+@media (max-width: 560px) {
+  .ac-schedule-editor .ac-schedule-fields { grid-template-columns: 1fr; }
+  .ac-schedule-toolbar > .ar-btn { width: 100%; }
+  .ac-schedule-editor-actions { padding: 12px; }
+}

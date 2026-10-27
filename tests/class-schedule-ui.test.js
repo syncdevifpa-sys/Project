@@ -7,7 +7,9 @@ class Element {
  append(...items){for(const item of items){item.parent=this;this.children.push(item);}}
  replaceChildren(...items){for(const child of this.children)child.parent=null;this.children=[];this.append(...items);}
  setAttribute(k,v){this.attributes[k]=v;}
- addEventListener(){}
+ addEventListener(type,fn){(this.listeners ||= {})[type]=fn;}
+ showModal(){this.open=true;}
+ close(){this.open=false;this.listeners?.close?.();}
  focus(){this.focused=true;}
  get isConnected(){return this.tag==='body'||!!this.parent?.isConnected;}
  get textContent(){return (this.text||'')+this.children.map(c=>c.textContent).join(' ');}
@@ -37,15 +39,15 @@ function fixture(){
  return {host,requests,records,mount,button,fill,submit,renderGrid:A.classSchedule.renderGrid,setFailWrite:v=>failWrite=v,setFailRead:v=>failRead=v};
 }
 test('aba de horários cria, edita e retira na oferta correta com retorno visível',async()=>{
- const f=fixture();f.mount();await settle();f.fill();await f.submit();
+ const f=fixture();f.mount();await settle();f.button('Adicionar horário').onclick();f.fill();await f.submit();
  assert.match(f.host.textContent,/Horário salvo/);assert.equal(f.requests.find(r=>r.method==='POST').path,'/api/classes/8/schedule');
- f.button('Editar horário').onclick();assert.equal(f.button('Cancelar edição').hidden,false);
+ f.button('Editar horário').onclick();assert.equal(f.button('Cancelar').hidden,false);
  await f.submit();const update=f.requests.find(r=>r.method==='PUT');assert.equal(update.path,'/api/classes/8/schedule/30');assert.equal(update.body.versao,0);
  await f.button('Retirar horário').onclick();assert.equal(f.records.length,0);assert.match(f.host.textContent,/retirado/);
 });
 test('falha ao salvar preserva formulário; gravação seguida de falha de leitura não é apresentada como perdida',async()=>{
- const f=fixture();f.mount();await settle();f.fill();f.setFailWrite(true);await f.submit();
- assert.match(f.host.textContent,/Horário sobreposto/);assert.equal(walk(f.host).find(n=>n.name==='hora_inicio').value,'08:00');
+ const f=fixture();f.mount();await settle();f.button('Adicionar horário').onclick();f.fill();f.setFailWrite(true);await f.submit();
+ assert.match(f.host.textContent,/Horário sobreposto/);assert.equal(walk(f.host).find(n=>n.tag==='dialog').open,true);assert.equal(walk(f.host).find(n=>n.name==='hora_inicio').value,'08:00');
  f.setFailWrite(false);f.setFailRead(true);await f.submit();assert.match(f.host.textContent,/Horário salvo.*Não foi possível atualizar/);
  f.setFailRead(false);await f.button('Tentar carregar novamente').onclick();assert.match(f.host.textContent,/Segunda-feira/);
 });
@@ -76,4 +78,14 @@ test('editar aula noturna mostra 00:20 com dia seguinte e mantém fim24:20 na gr
  const f=fixture();f.records.push({id_horario:30,id_disciplina:8,versao:0,dia_semana:7,hora_inicio:'23:30',hora_fim:'24:20',vigencia_inicio:'2026-10-01',vigencia_fim:'2026-10-31',sala:''});
  f.mount();await settle();f.button('Editar horário').onclick();assert.equal(walk(f.host).find(n=>n.name==='hora_fim').value,'00:20');assert.equal(walk(f.host).find(n=>n.type==='checkbox').checked,true);
  await f.submit();const write=f.requests.find(r=>r.method==='PUT');assert.equal(write.body.hora_fim,'24:20');assert.equal(write.body.fim_dia_seguinte,true);
+});
+
+test('cadastro abre pelo topo, ajuda é recolhida e cancelar devolve foco',async()=>{
+ const f=fixture();f.mount();await settle();
+ const dialog=walk(f.host).find(n=>n.tag==='dialog');assert.ok(!dialog.open);
+ const help=walk(f.host).find(n=>n.className==='ac-schedule-help');assert.ok(!help.open);
+ assert.equal(help.children[0].tag,'summary');assert.match(help.children[0].attributes['aria-label'],/Ajuda/);
+ const add=f.button('Adicionar horário');assert.equal(add.parent.className,'ac-schedule-toolbar');
+ add.onclick();assert.equal(dialog.open,true);assert.equal(walk(f.host).find(n=>n.name==='dia_semana').focused,true);
+ f.button('Cancelar').onclick();assert.equal(dialog.open,false);assert.equal(add.focused,true);
 });

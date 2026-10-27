@@ -473,7 +473,8 @@
             const weekly = el('div');
             const weeklyStatus = el('p');
             weeklyStatus.setAttribute('role', 'status');
-            host.append(weeklyStatus, weekly);
+            const scheduleControls = el('div');
+            host.append(scheduleControls, weeklyStatus, weekly);
             let weeklyGeneration = 0;
             const loadWeekly = async () => {
                 const version = ++weeklyGeneration;
@@ -502,7 +503,7 @@
                 }
                 const content = el('div');
                 label.append(picker);
-                host.append(label, content);
+                scheduleControls.append(label, content);
                 const choose = () => {
                     const offer = offers.find(row => String(row.id_disciplina) === picker.value);
                     if (offer) A.classSchedule.mount(content, {...offer, showGrid:false, onChange:loadWeekly});
@@ -511,7 +512,7 @@
                 choose();
             } else {
                 const content = el('div');
-                host.append(content);
+                scheduleControls.append(content);
                 A.classSchedule.mount(content, {...d, showGrid:false, onChange:loadWeekly});
             }
             return;

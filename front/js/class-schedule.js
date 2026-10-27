@@ -64,11 +64,17 @@
             root.append(node('p', 'Selecione uma disciplina para consultar seus horários.'));
             return;
         }
-        root.append(node('h3', 'Horários de ' + (offering.nome || 'aula')));
-        const hint = node('p', 'Fuso: Belém (America/Belem). A sala da aula é opcional; sem ela, a Agenda usa a sala oficial da turma.');
-        hint.className = 'ac-meta';
-        root.append(hint);
-        root.append(node('p','Grade do Arcádia para Belém: seis aulas de 50 minutos por turno e intervalo de 20 minutos após a terceira. Horários antigos fora da grade exigem revisão.'));
+        const toolbar = node('div'); toolbar.className = 'ac-schedule-toolbar';
+        toolbar.append(node('h3', 'Horários de ' + (offering.nome || 'aula')));
+        const help = node('details'); help.className = 'ac-schedule-help';
+        const helpToggle = node('summary', '?'); helpToggle.setAttribute('aria-label', 'Ajuda sobre os horários');
+        const hint = node('div'); hint.className = 'ac-schedule-help-content';
+        hint.append(node('p', 'Fuso: Belém (America/Belem). A sala da aula é opcional; sem ela, a Agenda usa a sala oficial da turma.'),
+            node('p', 'Seis aulas de 50 minutos por turno, com intervalo de 20 minutos após a terceira. Horários antigos fora da grade são preservados para revisão.'));
+        help.append(helpToggle, hint); toolbar.append(help); root.append(toolbar);
+        help.addEventListener('keydown', event => {
+            if (event.key === 'Escape') { help.open = false; helpToggle.focus(); event.stopPropagation(); }
+        });
         if (offering.regime_letivo === 'legado') {
             root.append(node('p', 'Esta oferta é de ' + offering.ano_letivo + ' e não tem semestre informado. Defina as datas reais de vigência; nenhum semestre será presumido.'));
         }
@@ -87,7 +93,12 @@
         root.append(status, retry, grid, actionsList);
         let generation = 0;
         let editing = null;
-        let inputs, weekday, save, legend, cancel, nextDay;
+        let inputs, weekday, save, legend, cancel, nextDay, dialog, feedback, add, returnFocus;
+        function showEditor(trigger) {
+            returnFocus = trigger || document.activeElement;
+            feedback.textContent = '';
+            dialog.showModal(); weekday.focus();
+        }
 
         function resetEditor() {
             editing = null;
@@ -97,10 +108,10 @@
             nextDay.checked = false;
             legend.textContent = 'Adicionar horário semanal';
             save.textContent = 'Adicionar horário';
-            cancel.hidden = true;
+            cancel.hidden = false;
         }
 
-        function edit(row) {
+        function edit(row, trigger) {
             editing = row;
             weekday.value = String(row.dia_semana);
             for (const [key, input] of Object.entries(inputs)) input.value = row[key] || '';
@@ -109,7 +120,7 @@
             legend.textContent = 'Editar horário semanal';
             save.textContent = 'Salvar alterações';
             cancel.hidden = false;
-            weekday.focus();
+            showEditor(trigger);
         }
 
         async function refresh(successMessage = '') {
@@ -138,7 +149,7 @@
                     if (canManage) {
                         const change = node('button', 'Editar horário');
                         change.type = 'button'; change.className = 'ar-btn';
-                        change.onclick = () => edit(row);
+                        change.onclick = () => edit(row, change);
                         const remove = node('button', 'Retirar horário');
                         remove.type = 'button'; remove.className = 'ar-btn ar-btn--quiet';
                         remove.onclick = async () => {
@@ -174,11 +185,19 @@
         retry.onclick = () => refresh();
 
         if (canManage) {
+            dialog = node('dialog'); dialog.className = 'ac-editor ac-schedule-editor';
+            dialog.setAttribute('aria-labelledby', 'scheduleEditorTitle-' + subject);
             const form = node('form');
             form.className = 'ac-schedule-form';
+            add = node('button', 'Adicionar horário'); add.type = 'button'; add.className = 'ar-btn ar-btn--primary';
+            add.onclick = () => { resetEditor(); showEditor(add); };
+            toolbar.append(add);
+            dialog.addEventListener('close', () => { if (returnFocus?.isConnected) returnFocus.focus(); });
+            dialog.addEventListener('cancel', event => { if (save.disabled) event.preventDefault(); });
             const fields = node('fieldset');
             fields.className = 'ac-schedule-fields';
             legend = node('legend', 'Adicionar horário semanal');
+            legend.id = 'scheduleEditorTitle-' + subject;
             fields.append(legend);
             inputs = {};
             function field(key, label, type) {
@@ -212,17 +231,22 @@
             field('sala','Sala desta aula (opcional)','text');
             const actions = node('div'); actions.className = 'ac-actions';
             save = node('button', 'Adicionar horário'); save.type = 'submit'; save.className = 'ar-btn ar-btn--primary';
-            cancel = node('button', 'Cancelar edição'); cancel.type = 'button'; cancel.className = 'ar-btn'; cancel.hidden = true;
-            cancel.onclick = resetEditor;
-            actions.append(save,cancel);
-            form.append(fields,actions);
+            cancel = node('button', 'Cancelar'); cancel.type = 'button'; cancel.className = 'ar-btn'; cancel.hidden = true;
+            cancel.onclick = () => dialog.close();
+            actions.className += ' ac-schedule-editor-actions';
+            actions.append(cancel,save);
+            feedback = node('p'); feedback.className = 'ac-feedback'; feedback.setAttribute('role', 'status');
+            const body = node('div'); body.className = 'ac-schedule-editor-body'; body.append(fields,feedback);
+            form.append(body,actions);
             form.onsubmit = async event => {
                 event.preventDefault();
                 if (!form.checkValidity()) {form.reportValidity();return;}
                 if (save.disabled) return;
                 const record = editing;
                 save.disabled = true;
-                status.textContent = 'Salvando horário…';
+                add.disabled = true;
+                feedback.textContent = 'Salvando horário…';
+                cancel.disabled = true;
                 try {
                     const result = await call('/' + subject + '/schedule' + (record ? '/' + record.id_horario : ''),record ? 'PUT':'POST',{
                         dia_semana:Number(weekday.value),
@@ -232,13 +256,15 @@
                         ...(record ? {versao:record.versao}:{})
                     });
                     if (!Number.isSafeInteger(result?.id_horario) || result.id_horario <= 0) throw new Error('O servidor não confirmou a gravação do horário. Atualize a lista antes de tentar novamente.');
+                    add.disabled = false;
+                    dialog.close();
                     resetEditor();
                     await refresh(result.message || 'Horário salvo na oferta e na Agenda.');
                     offering.onChange?.();
-                } catch (error) {status.textContent = error.message;}
-                finally {save.disabled = false;}
+                } catch (error) {feedback.textContent = error.message;}
+                finally {save.disabled = false;cancel.disabled = false;add.disabled = false;}
             };
-            root.append(form);
+            dialog.append(form); root.append(dialog);
         }
         refresh();
         return root;
