@@ -685,7 +685,7 @@
             dialog.remove();
             if (previous?.isConnected) previous.focus();
         });
-        dialog.showModal();
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         queueMicrotask(() => fields.querySelector('input, textarea, select')?.focus());
         const field = (label, { type = 'text', value = '', required = false, maxLength } = {}) => {
             const wrap = el('label', label),

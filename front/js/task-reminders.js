@@ -204,7 +204,7 @@
                 } catch (error) { (dialog.isConnected ? feedback : status).textContent = error.message; }
                 finally { save.disabled = false; }
             };
-            dialog.showModal(); title.focus();
+            (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal()); title.focus();
         }
         A.reminderUI={reveal,
             calendarCounts:()=>new Map([...index()].map(([day,items])=>[day,items.length])),

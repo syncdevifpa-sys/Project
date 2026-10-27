@@ -152,7 +152,7 @@
                 save.disabled = false;
             }
         };
-        dialog.showModal();
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         input.focus();
     }
     q('adminGeneralTab').onclick = () => show(false);

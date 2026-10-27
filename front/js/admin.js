@@ -346,7 +346,7 @@
             label.append(check);
             $('editorFields').append(label);
         }
-        $('adminEditor').showModal();
+        if(A.dialogShell)A.dialogShell.open($('adminEditor'));else $('adminEditor').showModal();
     }
     $('editorCancel').addEventListener('click', () => $('adminEditor').close());
     $('adminNew').addEventListener('click', () => openEditor(null));

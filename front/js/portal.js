@@ -257,6 +257,7 @@
 
     function openDialog(modalEl) {
         if (!modalEl) return;
+        if(window.Arcadia.dialogShell){window.Arcadia.dialogShell.openOverlay(modalEl);return;}
         modalEl.style.display = 'grid';
         var input = modalEl.querySelector('input, textarea, button:not([data-close-dialog])');
         if (input)
@@ -267,10 +268,12 @@
 
     function closeDialog(modalEl) {
         if (!modalEl) return;
+        if(window.Arcadia.dialogShell){window.Arcadia.dialogShell.closeOverlay(modalEl);return;}
         modalEl.style.display = 'none';
     }
 
     document.addEventListener('click', function (e) {
+        if (window.Arcadia.dialogShell && e.target.closest('.ar-scrim[data-shell-overlay]')) return;
         if (e.target.classList && e.target.classList.contains('ar-scrim')) {
             e.target.style.display = 'none';
         }
@@ -283,6 +286,7 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
+            if(window.Arcadia.dialogShell)return;
             document.querySelectorAll('.ar-scrim').forEach(function (scrim) {
                 if (scrim.style.display !== 'none') {
                     scrim.style.display = 'none';
@@ -521,7 +525,7 @@
 
     function openCommandPalette() {
         var scrim = buildCommandPalette();
-        scrim.style.display = 'grid';
+        if(window.Arcadia.dialogShell)window.Arcadia.dialogShell.openOverlay(scrim);else scrim.style.display = 'grid';
         var input = scrim.querySelector('#ar-pal-input');
         if (input) {
             input.value = '';

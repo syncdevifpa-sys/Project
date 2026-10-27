@@ -279,7 +279,7 @@ window.Arcadia = window.Arcadia || {};
             if (previous?.isConnected) previous.focus();
         });
         document.body.append(dialog);
-        dialog.showModal();
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         dialog.querySelector('[data-google-close]').focus();
         try {
             window.google?.accounts?.id?.cancel();

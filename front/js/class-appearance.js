@@ -129,7 +129,7 @@
                 if (trigger.isConnected) trigger.focus();
             });
             trigger.setAttribute('aria-expanded', 'true');
-            dialog.showModal(); select.focus();
+            (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal()); select.focus();
         };
         node.append(trigger);
     }

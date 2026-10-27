@@ -5,10 +5,11 @@
     const call=(path,method='GET',body)=>A.api.expect(A.api.request('/api/classes'+path,{method,body}));
     async function exceptions(subject,schedule,canManage){
         const dialog=node('dialog');dialog.className='ar-dialog ar-notice-editor';dialog.setAttribute('aria-labelledby','classExceptionsTitle');
-        const title=node('h2','Exceções de aula');title.id='classExceptionsTitle';const list=node('div'),status=node('p');status.setAttribute('role','status');const close=node('button','Fechar');close.type='button';close.className='ar-btn';close.onclick=()=>dialog.close();dialog.append(title,list,status,close);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();let current=[];
+        const title=node('h2','Exceções de aula');title.id='classExceptionsTitle';const list=node('div'),status=node('p');status.setAttribute('role','status');const close=node('button','Fechar');close.type='button';close.className='ar-btn';close.onclick=()=>dialog.close();dialog.append(title,list,status,close);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});let current=[];
         const endpoint='/'+subject+'/schedule/'+schedule.id_horario+'/exceptions';
         async function refresh(){try{current=await call(endpoint);if(!dialog.isConnected)return;list.replaceChildren(...current.map(row=>node('p',`${row.data.split('-').reverse().join('/')} · ${row.cancelada?'Aula cancelada':'Aula restabelecida'}${row.motivo?' · '+row.motivo:''}`)));status.textContent=current.length?'':'Nenhuma exceção registrada.';}catch(e){status.textContent=e.message;}}
         if(canManage){const form=node('form');form.className='ar-calendar-import-row';const dateLabel=node('label','Data da aula');dateLabel.className='ar-field';const date=node('input');date.type='date';date.required=true;date.min=schedule.vigencia_inicio;date.max=schedule.vigencia_fim;dateLabel.append(date);const reasonLabel=node('label','Motivo (opcional)');reasonLabel.className='ar-field';const reason=node('input');reason.maxLength=300;reasonLabel.append(reason);const label=node('label','Cancelar somente esta aula');const canceled=node('input');canceled.type='checkbox';canceled.checked=true;label.append(canceled);const save=node('button','Salvar exceção');save.type='submit';save.className='ar-btn';form.append(dateLabel,reasonLabel,label,save);form.onsubmit=async event=>{event.preventDefault();save.disabled=true;try{const previous=current.find(row=>row.data===date.value);await call(endpoint,'PUT',{data:date.value,cancelada:canceled.checked,motivo:reason.value,versao:previous?.versao||0});await refresh();}catch(e){status.textContent=e.message;}finally{save.disabled=false;}};dialog.insertBefore(form,close);}
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         await refresh();
     }
     const gridFilters = new WeakMap();
@@ -137,7 +138,7 @@
         function showEditor(trigger) {
             returnFocus = trigger || document.activeElement;
             feedback.textContent = '';
-            dialog.showModal(); weekday.focus();
+            (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal()); weekday.focus();
         }
 
         function resetEditor() {
@@ -315,7 +316,7 @@
         dialog.className='ar-dialog ar-notice-editor';
         const close=node('button','Fechar');close.type='button';close.className='ar-btn';close.onclick=()=>dialog.close();
         const host=node('div');dialog.append(host,close);document.body.append(dialog);
-        dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+        dialog.addEventListener('close',()=>dialog.remove(),{once:true});(window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         mount(host,{id_disciplina:subject,canManage});
         return dialog;
     }

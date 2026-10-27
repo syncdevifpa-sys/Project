@@ -9,7 +9,7 @@
   const previous=document.activeElement,box=node('dialog',undefined,'ar-academic-dialog'),heading=node('h2',title);heading.id='academicDialog'+(++sequence);box.setAttribute('aria-labelledby',heading.id);
   const form=node('form'),fields=node('div',undefined,'ar-academic-fields'),status=node('p'),actions=node('div',undefined,'ar-academic-actions');status.setAttribute('role','status');
   const save=node('button',saveLabel,'ar-btn ar-btn--primary');save.type='submit';actions.append(button('Cancelar',()=>box.close()),save);form.append(fields,status,actions);box.append(heading,form);document.body.append(box);
-  box.addEventListener('close',()=>{box.remove();if(previous?.isConnected)previous.focus();},{once:true});box.showModal();
+  box.addEventListener('close',()=>{box.remove();if(previous?.isConnected)previous.focus();},{once:true});(window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(box) : box.showModal());
   function field(label,value='',type='text',required=false){const wrap=node('label',label),input=node('input');input.type=type;input.required=required;if(type==='checkbox'){input.checked=!!value;wrap.className='ar-academic-check';}else input.value=value;wrap.append(input);fields.append(wrap);return input;}
   function submit(fn){form.onsubmit=async event=>{event.preventDefault();if(!form.checkValidity()){form.reportValidity();return;}if(save.disabled)return;save.disabled=true;status.textContent='Salvando…';try{await fn();box.close();}catch(error){status.textContent=error.message;}finally{save.disabled=false;}};queueMicrotask(()=>fields.querySelector('input,select,textarea')?.focus());}
   return {box,fields,field,submit};

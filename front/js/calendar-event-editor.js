@@ -147,7 +147,7 @@
         dialog.append(heading, visibilityForm, label, status, list, close);
         document.body.append(dialog);
         render();
-        dialog.showModal();
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         heading.tabIndex = -1;
         heading.focus({ preventScroll: true });
         dialog.scrollTop = 0;

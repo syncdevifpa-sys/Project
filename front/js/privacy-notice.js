@@ -114,7 +114,7 @@
             dialog.remove();
             if (link.isConnected) link.focus();
         });
-        dialog.showModal();
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         close.focus();
     });
 })();

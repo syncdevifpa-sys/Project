@@ -165,7 +165,7 @@
         });
         document.body.append(dialog);
         draw();
-        dialog.showModal();
+        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
         return new Promise((resolve) => {
             let result = null;
             dialog.querySelector('[data-avatar-confirm]').addEventListener('click', () => {

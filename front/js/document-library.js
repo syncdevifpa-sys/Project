@@ -346,7 +346,7 @@
             fields,
             submit,
             show() {
-                dialog.showModal();
+                (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
                 fields.querySelector('input, select')?.focus();
             }
         };
