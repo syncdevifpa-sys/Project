@@ -11,6 +11,7 @@
         if(canManage){const form=node('form');form.className='ar-calendar-import-row';const dateLabel=node('label','Data da aula');dateLabel.className='ar-field';const date=node('input');date.type='date';date.required=true;date.min=schedule.vigencia_inicio;date.max=schedule.vigencia_fim;dateLabel.append(date);const reasonLabel=node('label','Motivo (opcional)');reasonLabel.className='ar-field';const reason=node('input');reason.maxLength=300;reasonLabel.append(reason);const label=node('label','Cancelar somente esta aula');const canceled=node('input');canceled.type='checkbox';canceled.checked=true;label.append(canceled);const save=node('button','Salvar exceção');save.type='submit';save.className='ar-btn';form.append(dateLabel,reasonLabel,label,save);form.onsubmit=async event=>{event.preventDefault();save.disabled=true;try{const previous=current.find(row=>row.data===date.value);await call(endpoint,'PUT',{data:date.value,cancelada:canceled.checked,motivo:reason.value,versao:previous?.versao||0});await refresh();}catch(e){status.textContent=e.message;}finally{save.disabled=false;}};dialog.insertBefore(form,close);}
         await refresh();
     }
+    const gridFilters = new WeakMap();
     function renderGrid(host, rows, caption = 'Horários semanais das aulas', options = {}) {
         const policy = A.campusTimetable;
         host.replaceChildren();
@@ -20,37 +21,76 @@
             start:policy.minutes(row.hora_inicio),end:policy.minutes(row.hora_fim)
         })).filter(row => row.day >= 1 && row.day <= 7 && Number.isFinite(row.start) && row.end > row.start);
         const shift = options.turno || (new Set(entries.map(row=>row.turno).filter(Boolean)).size===1 ? entries.find(row=>row.turno)?.turno : undefined);
-        const frames = policy.slots(shift);
-        const weekdays=[...new Set([1,2,3,4,5,...entries.map(row=>row.day)])].sort((a,b)=>a-b);
-        const warnings=entries.filter(row=>!policy.validate(row,shift));
-        if(warnings.length){const warning=node('p','Há horários fora da grade de Belém. Eles foram preservados e precisam de revisão; confira as datas e horas originais nos detalhes.');warning.setAttribute('role','status');host.append(warning);}
-        const region=node('div');region.className='ac-week-grid-scroll';region.tabIndex=0;
-        region.setAttribute('role','region');region.setAttribute('aria-label',caption+'; role horizontalmente para consultar todos os dias');
-        const table=node('table');table.className='ac-week-grid';table.append(node('caption',caption));
-        const head=node('thead'),header=node('tr');const corner=node('th','Horário');corner.setAttribute('scope','col');header.append(corner);
-        for(const day of weekdays){const cell=node('th',days[day]);cell.setAttribute('scope','col');header.append(cell);}
-        head.append(header);table.append(head);const body=node('tbody');
-        for(const frame of frames){
-            const line=node('tr'),time=node('th',policy.label(frame.start)+'–'+policy.label(frame.end));time.setAttribute('scope','row');line.append(time);
-            if(frame.tipo==='intervalo'){
-                const interval=node('td','Intervalo · 20 minutos');interval.setAttribute('colspan',String(weekdays.length));interval.className='ac-week-break';line.append(interval);
-            }else for(const day of weekdays){
-                const cell=node('td'),matches=entries.filter(row=>row.day===day&&row.start<frame.end&&row.end>frame.start);
-                if(!matches.length){cell.className='ac-week-empty';cell.append(node('span','Sem aula'));}
-                for(const row of matches){
-                    const block=node('div');block.className='ac-week-class'+(row.cancelada?' ac-cancelled':'');
-                    block.append(node('strong',row.titulo || row.disciplina || row.nome || 'Aula'));
-                    if(row.cancelada)block.append(node('span','Aula cancelada'));
-                    if(row.professor)block.append(node('span',row.professor));
-                    const room=policy.room(row);if(room.value)block.append(node('span','Sala: '+room.value+(room.source==='turma'?' · oficial da turma':'')));
-                    if(!policy.validate(row,shift))block.append(node('span','Revisar: '+policy.label(row.start)+'–'+policy.label(row.end)));
-                    cell.append(block);
-                }
-                line.append(cell);
-            }
-            body.append(line);
+        const keys = Object.keys(policy.shifts);
+        let filter = gridFilters.get(host);
+        if (!filter) { filter = { all: true, selected: new Set(keys) }; gridFilters.set(host, filter); }
+        const controls = node('fieldset'); controls.className = 'ac-week-filters';
+        controls.append(node('legend', 'Exibir turnos'));
+        const fields = new Map();
+        for (const [key, text] of [['all', 'Tudo'], ...keys.map(key => [key, policy.shifts[key].label])]) {
+            const label = node('label'), input = node('input'); input.type = 'checkbox';
+            input.checked = key === 'all' ? filter.all : filter.selected.has(key);
+            label.append(input, node('span', text)); controls.append(label); fields.set(key, input);
+            input.onchange = () => {
+                if (key === 'all') filter.all = input.checked;
+                else if (input.checked) filter.selected.add(key);
+                else filter.selected.delete(key);
+                update();
+            };
         }
-        table.append(body);region.append(table);host.append(region);
+        const count = node('p'); count.className = 'ac-meta'; count.setAttribute('role', 'status');
+        const content = node('div'); host.append(controls, count, content);
+        function update() {
+            for (const key of keys) fields.get(key).disabled = filter.all;
+            const visible = filter.all ? keys : keys.filter(key => filter.selected.has(key));
+            content.replaceChildren();
+            if (!visible.length) {
+                count.textContent = 'Nenhum turno selecionado. Marque um turno ou Tudo para exibir a grade.';
+                return;
+            }
+            const frames = visible.flatMap(key => policy.slots(key));
+            const shown = entries.filter(row => frames.some(frame => frame.tipo === 'aula' && row.start < frame.end && row.end > frame.start));
+            count.textContent = shown.length + ' de ' + entries.length + ' horário(s) nesta visualização.';
+            const weekdays=[...new Set([1,2,3,4,5,...entries.map(row=>row.day)])].sort((a,b)=>a-b);
+            const warnings=entries.filter(row=>!policy.validate(row,shift));
+            if(warnings.length){const warning=node('p','Há horários fora da grade de Belém. Eles foram preservados e precisam de revisão; confira as datas e horas originais nos detalhes.');warning.setAttribute('role','status');content.append(warning);}
+            const region=node('div');region.className='ac-week-grid-scroll';region.tabIndex=0;
+            region.setAttribute('role','region');region.setAttribute('aria-label',caption+'; role horizontalmente para consultar todos os dias');
+            const table=node('table');table.className='ac-week-grid';table.append(node('caption',caption));
+            const head=node('thead'),header=node('tr');const corner=node('th','Horário');corner.setAttribute('scope','col');header.append(corner);
+            for(const day of weekdays){const cell=node('th',days[day]);cell.setAttribute('scope','col');header.append(cell);}
+            head.append(header);table.append(head);let body=node('tbody');
+            let previousShift;
+            for(const frame of frames){
+                if (visible.length > 1 && previousShift !== frame.turno) {
+                    if (previousShift) { table.append(body); body = node('tbody'); }
+                    const divider = node('tr'), label = node('th', policy.shifts[frame.turno].label);
+                    label.setAttribute('scope', 'rowgroup'); label.setAttribute('colspan', String(weekdays.length + 1));
+                    divider.className = 'ac-week-shift'; divider.append(label); body.append(divider);
+                    previousShift = frame.turno;
+                }
+                const line=node('tr'),time=node('th',policy.label(frame.start)+'–'+policy.label(frame.end));time.setAttribute('scope','row');line.append(time);
+                if(frame.tipo==='intervalo'){
+                    const interval=node('td','Intervalo · 20 minutos');interval.setAttribute('colspan',String(weekdays.length));interval.className='ac-week-break';line.append(interval);
+                }else for(const day of weekdays){
+                    const cell=node('td'),matches=entries.filter(row=>row.day===day&&row.start<frame.end&&row.end>frame.start);
+                    if(!matches.length){cell.className='ac-week-empty';cell.append(node('span','Sem aula'));}
+                    for(const row of matches){
+                        const block=node('div');block.className='ac-week-class'+(row.cancelada?' ac-cancelled':'');
+                        block.append(node('strong',row.titulo || row.disciplina || row.nome || 'Aula'));
+                        if(row.cancelada)block.append(node('span','Aula cancelada'));
+                        if(row.professor)block.append(node('span',row.professor));
+                        const room=policy.room(row);if(room.value)block.append(node('span','Sala: '+room.value+(room.source==='turma'?' · oficial da turma':'')));
+                        if(!policy.validate(row,shift))block.append(node('span','Revisar: '+policy.label(row.start)+'–'+policy.label(row.end)));
+                        cell.append(block);
+                    }
+                    line.append(cell);
+                }
+                body.append(line);
+            }
+            table.append(body);region.append(table);content.append(region);
+        }
+        update();
     }
 
     function mount(host, offering) {

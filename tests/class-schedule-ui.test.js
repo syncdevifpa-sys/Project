@@ -89,3 +89,25 @@ test('cadastro abre pelo topo, ajuda é recolhida e cancelar devolve foco',async
  add.onclick();assert.equal(dialog.open,true);assert.equal(walk(f.host).find(n=>n.name==='dia_semana').focused,true);
  f.button('Cancelar').onclick();assert.equal(dialog.open,false);assert.equal(add.focused,true);
 });
+
+test('filtros combinam turnos, Tudo prevalece e nenhum turno tem retorno explícito',()=>{
+ const f=fixture(), rows=['07:00','13:00','23:30'].map((time,i)=>({nome:['Cedo','Tarde real','Noturna'][i],dia_semana:7,hora_inicio:time,hora_fim:['07:50','13:50','24:20'][i]}));
+ const before=JSON.stringify(rows);f.renderGrid(f.host,rows);
+ const filters=()=>walk(f.host).find(n=>n.className==='ac-week-filters').children.filter(n=>n.tag==='label').map(n=>n.children[0]);
+ const change=(index,value)=>{const field=filters()[index];field.checked=value;field.onchange();};
+ const blocks=()=>walk(f.host).filter(n=>n.tag==='strong').map(n=>n.textContent);
+ const separators=()=>walk(f.host).filter(n=>n.className==='ac-week-shift');
+ assert.deepEqual(blocks(),['Cedo','Tarde real','Noturna']);assert.equal(separators().length,3);
+ assert.equal(walk(f.host).filter(n=>n.className==='ac-week-break').length,3);
+ assert.equal(walk(f.host).filter(n=>n.tag==='tbody').length,3);
+ assert.ok(separators().every(n=>n.children[0].attributes.scope==='rowgroup'&&n.children[0].attributes.colspan==='7'));
+ assert.equal(filters()[1].disabled,true);
+ change(0,false);change(2,false);assert.deepEqual(blocks(),['Cedo','Noturna']);assert.equal(separators().length,2);
+ assert.match(f.host.textContent,/00:20 \(\+1 dia\)/);assert.match(f.host.textContent,/2 de 3 horário/);
+ change(1,false);change(3,false);assert.match(f.host.textContent,/Nenhum turno selecionado/);assert.deepEqual(blocks(),[]);
+ change(0,true);assert.deepEqual(blocks(),['Cedo','Tarde real','Noturna']);
+ change(0,false);assert.deepEqual(blocks(),[]);change(3,true);assert.deepEqual(blocks(),['Noturna']);
+ f.renderGrid(f.host,rows,'Semana seguinte');assert.deepEqual(blocks(),['Noturna']);assert.equal(filters()[3].checked,true);
+ assert.equal(JSON.stringify(rows),before);assert.equal(f.requests.length,0);
+ const another=new Element('div');f.renderGrid(another,rows);assert.equal(walk(another).filter(n=>n.tag==='strong').length,3);
+});
