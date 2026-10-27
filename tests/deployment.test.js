@@ -5,6 +5,20 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { spawnSync } = require('node:child_process');
 
+test('pacote da Vercel inclui o manifesto usado em runtime e exclui SQL administrativo', () => {
+    const root = path.resolve(__dirname, '..');
+    const result = spawnSync('git', ['ls-files', '--cached', '--ignored', '--exclude-from=.vercelignore'], {
+        cwd: root, encoding: 'utf8'
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const excluded = new Set(result.stdout.trim().split(/\r?\n/));
+    assert.equal(excluded.has('backend/db/migrations/1.1.31.json'), false);
+    assert.equal(excluded.has('backend/db/migrations/1.1.31.sql'), true);
+    assert.equal(excluded.has('backend/db/checks/1.1.31.sql'), true);
+    assert.equal(excluded.has('backend/db/workbench/1.1.31/resume-generated-expression-r1.sql'), true);
+    assert.ok(fs.existsSync(path.join(root, 'backend/db/migrations/1.1.31.json')));
+});
+
 test('entrada da Vercel carrega sem .env e registra o pool MySQL compatível', () => {
     const result = spawnSync(
         process.execPath,
