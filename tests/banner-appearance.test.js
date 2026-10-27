@@ -56,8 +56,8 @@ test('cards de resumo usam chaves independentes, paleta do portal e restauram ap
     });
     const preferences = { 'page:dashboard.html:0': { toString: null }, 'dashboard:summary:unread-notices': { mode: 'custom', background: '#ffffff', text: '#ffffff' },
         'dashboard:summary:open-tasks': { mode: 'neutral' } };
-    const saved = new Map([['arcadia-class-banner-styles:7', JSON.stringify(preferences)]]);
-    const A = { auth: { getSessao: () => ({ id_usuario: 7 }) }, getIconSvg: (name) => '<svg data-icon="' + name + '"></svg>' };
+    const saved = new Map([['arcadiaToken','test'],['arcadia-class-banner-styles:7', JSON.stringify(preferences)]]);
+    const A = { bannerPreferences: require('../front/js/banner-preferences'), auth: { getSessao: () => ({ id_usuario: 7 }) }, getIconSvg: (name) => '<svg data-icon="' + name + '"></svg>' };
     const context = { window: { Arcadia: A }, location: { pathname: '/dashboard.html', search: '' },
         localStorage: { getItem: (key) => saved.get(key), setItem: (key, value) => saved.set(key, value) },
         document: { readyState: 'complete', querySelectorAll: (s) => s.includes('ar-stat') ? cards : [hero], createElement: () => node('') } };

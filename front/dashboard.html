@@ -2,6 +2,8 @@
 <html lang="pt-BR" data-theme="light">
   <head>
     <meta charset="UTF-8" />
+    <script src="js/banner-preferences.js"></script>
+    <script src="js/banner-bootstrap.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meu painel</title>
     <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -148,7 +150,7 @@
       </header>
 
       <!-- Page Hero Banner -->
-      <section class="ar-hero ar-hero--lime ar-hero--large">
+      <section class="ar-hero ar-hero--lime ar-hero--large" data-initial-banner-slot="page">
         <svg
           class="ar-hero-art"
           viewBox="0 0 1000 220"
@@ -202,7 +204,7 @@
 
       <!-- StatCard Grid (3 columns) -->
       <div class="ar-grid-3">
-        <div class="ar-stat ar-stat--cyan" data-appearance-id="unread-notices">
+        <div class="ar-stat ar-stat--cyan" data-appearance-id="unread-notices" data-initial-banner-slot="unread-notices">
           <div class="ar-stat-label">Avisos não lidos</div>
           <div class="ar-stat-value">—</div>
           <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
@@ -228,7 +230,7 @@
           </div>
         </div>
 
-        <div class="ar-stat ar-stat--yellow" data-appearance-id="open-tasks">
+        <div class="ar-stat ar-stat--yellow" data-appearance-id="open-tasks" data-initial-banner-slot="open-tasks">
           <div class="ar-stat-label">Tarefas em aberto</div>
           <div class="ar-stat-value">—</div>
           <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
@@ -254,7 +256,7 @@
           </div>
         </div>
 
-        <div class="ar-stat ar-stat--pink" data-appearance-id="pending-documents">
+        <div class="ar-stat ar-stat--pink" data-appearance-id="pending-documents" data-initial-banner-slot="pending-documents">
           <div class="ar-stat-label">Documentos em análise</div>
           <div class="ar-stat-value">—</div>
           <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>

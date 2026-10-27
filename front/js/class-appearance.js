@@ -1,59 +1,28 @@
 // Aparência pessoal por banner. Não altera dados compartilhados.
 (function (A) {
     'use strict';
-    const valid = (v) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);
-    function luminance(hex) {
-        const rgb = hex.slice(1).match(/../g).map((v) => parseInt(v, 16) / 255)
-            .map((v) => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
-        return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722;
-    }
-    function contrast(a, b) {
-        const x = luminance(a), y = luminance(b);
-        return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
-    }
-    function readable(background, text) {
-        if (!valid(background) || !valid(text)) return null;
-        return contrast(background, text) >= 4.5 ? text :
-            contrast(background, '#000000') >= contrast(background, '#ffffff') ? '#000000' : '#ffffff';
-    }
-    function usesSiteDefault(page) {
-        return !['dashboard.html','tasks.html','documents.html','settings.html','community.html','community-settings.html'].includes(page);
-    }
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = { valid, contrast, readable, usesSiteDefault };
-        return;
-    }
+    const policy = typeof module !== 'undefined' && module.exports ? require('./banner-preferences') : A?.bannerPreferences;
+    if (!policy) return;
+    const {valid, contrast, readable, usesSiteDefault, resolve, legacy} = policy;
+    if (typeof module !== 'undefined' && module.exports) { module.exports = policy; return; }
     if (!A) return;
     function session() {
         try { return A.auth?.getSessao() || JSON.parse(localStorage.getItem('arcadiaSessao') || '{}'); }
         catch { return {}; }
     }
-    const account = session();
-    const owner = account.tipo_usuario === 'externo'
-        ? 'externo:' + (account.id_externo || account.id_usuario || '')
-        : account.id_usuario;
-    if (!owner || owner === 'externo:') return;
-    const storageKey = 'arcadia-class-banner-styles:' + owner;
-    const legacy = { cyan: '#bdeafa', pink: '#f4c6dd', yellow: '#f7e895', green: '#c9edb0', orange: '#f4ceaa' };
+    function currentOwner() { try { return localStorage.getItem('arcadiaToken') ? policy.owner(session()) : null; } catch { return null; } }
+    if (!currentOwner()) return;
+    const storageKey = () => 'arcadia-class-banner-styles:' + currentOwner();
     function preferences() {
         try {
-            const value = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            const value = JSON.parse(localStorage.getItem(storageKey()) || '{}');
             return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
         } catch { return {}; }
     }
-    function resolve(style) {
-        if (style === 'neutral') return { mode: 'neutral' };
-        if (typeof style === 'string' && Object.hasOwn(legacy, style))
-            return { mode: 'custom', background: legacy[style], text: '#182020' };
-        if (style?.mode === 'neutral') return { mode: 'neutral' };
-        if (style?.mode === 'custom' && valid(style.background) && valid(style.text))
-            return { ...style, text: readable(style.background, style.text) };
-        return { mode: 'default' };
-    }
     function apply(node, key) {
-        const style = resolve(preferences()[key]);
+        const style = resolve(currentOwner() ? preferences()[key] : null);
         const page = location.pathname.split('/').pop() || 'index.html';
-        node.classList.toggle('ar-banner-site-default', style.mode === 'default' && usesSiteDefault(page));
+        node.classList.toggle('ar-banner-site-default', style.mode === 'default' && !!currentOwner() && usesSiteDefault(page));
         node.classList.remove('ac-personal-style', ...Object.keys(legacy).map((c) => 'ac-color-' + c), 'ac-color-neutral');
         node.classList.toggle('ar-banner-personal', style.mode !== 'default');
         node.style.removeProperty('--personal-banner-bg');
@@ -84,6 +53,7 @@
         trigger.setAttribute('aria-haspopup', 'dialog');
         trigger.setAttribute('aria-expanded', 'false');
         trigger.onclick = () => {
+            const dialogOwner = currentOwner();
             const dialog = document.createElement('dialog');
             dialog.className = 'ar-banner-appearance-dialog';
             const h = document.createElement('h2');
@@ -145,11 +115,12 @@
             form.onsubmit = (event) => {
                 event.preventDefault();
                 try {
+                    if (!dialogOwner || dialogOwner !== currentOwner()) throw new Error('A conta mudou. Atualize a página.');
                     const value = preferences();
                     if (select.value === 'default') delete value[key];
                     else value[key] = select.value === 'neutral' ? { mode: 'neutral' } :
                         { mode: 'custom', background: background.value, text: readable(background.value, text.value) };
-                    localStorage.setItem(storageKey, JSON.stringify(value));
+                    localStorage.setItem(storageKey(), JSON.stringify(value));
                     apply(node, key); dialog.close();
                 } catch { feedback.textContent = 'Não foi possível salvar neste navegador.'; }
             };
@@ -179,6 +150,10 @@
             }
         }
     }
+    window.addEventListener?.('storage', event => {
+        if (event.key === null || event.key === 'arcadiaSessao' || event.key === 'arcadiaToken' || event.key === storageKey())
+            document.querySelectorAll('[data-appearance-key]').forEach(node => apply(node, node.dataset.appearanceKey));
+    });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 })(typeof window === 'undefined' ? null : window.Arcadia);
