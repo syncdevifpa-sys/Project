@@ -5,7 +5,10 @@ test('planta preserva blocos identificados e não atribui ponto a informações 
  for(const id of ['a','b','c','d','e','f','g','g1','g2','h','i','j','l','m','n','n1','o','p','q','q1','r','s','t','u','v','x','z'])assert.ok(ids.includes(id));
  for(const row of m.places){if(row.kind==='pendente')assert.equal(row.path,'');else {assert.ok(row.path.startsWith('M'));assert.ok(row.x>=0&&row.x<=800&&row.y>=0&&row.y<=1580);}}
  assert.equal(m.search('DRIA')[0].id,'e');assert.equal(m.search('Telecomunicações')[0].id,'e');
- assert.deepEqual(Array.from(m.search('Design'),row=>row.id),['a','b']);assert.deepEqual(Array.from(m.search('Química'),row=>row.id),['c','d']);
+ assert.deepEqual(Array.from(m.search('Design'),row=>row.id),['a']);assert.deepEqual(Array.from(m.search('Química'),row=>row.id),['c','d']);
+ assert.deepEqual(Array.from(m.search('Auditório Central'),row=>row.id),['a']);
+ assert.match(m.places.find(row=>row.id==='a').notes[0],/térreo; Design no 1º andar/);
+ assert.equal(m.places.find(row=>row.id==='verde').path,'M421 830H587V1023H421Z');
  assert.equal(m.search('biblioteca')[0].id,'f');assert.equal(m.search('miniauditorio')[0].id,'m');
  assert.ok(m.search('sala de lutas').every(row=>row.kind==='pendente'&&!row.path));assert.equal(m.search('inexistente').length,0);
 });
