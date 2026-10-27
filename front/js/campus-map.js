@@ -5,7 +5,7 @@
     const $=id=>document.getElementById(id),viewport=$('mapViewport'),layer=$('mapBlocks'),info=$('mapInfo'),list=$('mapPlaceList'),status=$('mapStatus');
     const create=(tag,text)=>{const node=document.createElement(tag);if(text)node.textContent=text;return node;};
     const ns=(tag,attrs)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [key,value]of Object.entries(attrs))node.setAttribute(key,String(value));return node;};
-    const groups=new Map(),pointers=new Map();let view={...model.bounds},selected='',dragged=false,drag=null,pinch=null;
+    const groups=new Map(),pointers=new Map();let view={...model.bounds},selected='',category='todos',dragged=false,drag=null,pinch=null;
     function paintView(){svg.setAttribute('viewBox',[view.x,view.y,view.width,view.height].join(' '));$('mapZoom').textContent=Math.round(model.bounds.width/view.width*100)+'%';$('mapZoomIn').disabled=view.width<=model.bounds.width/6+.00001;$('mapZoomOut').disabled=view.width>=model.bounds.width-.00001;}
     function point(clientX,clientY){const p=svg.createSVGPoint();p.x=clientX;p.y=clientY;const matrix=svg.getScreenCTM();return matrix?p.matrixTransform(matrix.inverse()):{x:view.x+view.width/2,y:view.y+view.height/2};}
     function zoom(factor,anchor){view=model.zoom(view,factor,anchor);paintView();}
@@ -14,18 +14,18 @@
         const place=model.places.find(item=>item.id===id);if(!place)return;
         selected=id;info.replaceChildren(create('h2',place.name));
         const details=create('ul');for(const note of place.notes)details.append(create('li',note));info.append(details);
-        info.append(create('p',place.source==='equipe'?'Setores/andares: informações fornecidas pela equipe. Posição do bloco: referência de 2025.':'Informação da planta de referência de 2025; confirme a disponibilidade no campus.'));
+        info.append(create('p',place.source==='equipe'?'Informações de setores e andares fornecidas pela equipe.':'Informação da planta-base; confirme a disponibilidade no campus.'));
         if(place.references?.length){
-            info.append(create('h3','Fontes oficiais e alcance da confirmação'));
+            const referenceDetails=create('details');referenceDetails.className='ar-campus-map-references';referenceDetails.append(create('summary','Fontes consultadas'));
             const sources=create('ul');
             for(const reference of place.references){
                 const item=create('li'),link=create('a',reference.title);
                 link.href=reference.url;item.append(link);sources.append(item);
             }
-            info.append(sources);
+            referenceDetails.append(sources);info.append(referenceDetails);
         }
         if(place.path){
-            const focus=create('button','Centralizar no mapa');focus.type='button';focus.className='ar-btn';focus.onclick=()=>focusPlace(place);info.append(focus);
+            const focus=create('button','Localizar no mapa');focus.type='button';focus.className='ar-btn';focus.onclick=()=>focusPlace(place);info.append(focus);
             status.textContent=place.name+' selecionado. As informações estão no painel de detalhes.';
         }else status.textContent='Localização a confirmar: '+place.name+'. Este item não tem ponto atribuído no mapa.';
         if(focusMap){if(place.path)focusPlace(place);info.tabIndex=-1;info.focus();}
@@ -41,11 +41,17 @@
         layer.append(group);groups.set(place.id,group);
     }
     function filter(){
-        const matches=model.search($('mapSearch').value,$('mapKind').value),ids=new Set(matches.map(place=>place.id));list.replaceChildren();
+        const matches=model.search($('mapSearch').value,$('mapKind').value,category),ids=new Set(matches.map(place=>place.id));list.replaceChildren();
         for(const place of matches){const item=create('li'),button=create('button',place.name);button.type='button';button.dataset.place=place.id;button.setAttribute('aria-label','Ver detalhes de '+place.name);button.onclick=()=>select(place.id,{focusMap:true});item.append(button);list.append(item);}
-        $('mapResults').textContent=matches.length?matches.length+' local(is) encontrado(s). Selecione para ver detalhes.':'Nenhum local encontrado. Tente outro nome ou tipo de local.';
+        $('mapResults').textContent=matches.length?matches.length+' locais encontrados':'Nenhum local encontrado. Tente outro nome ou filtro.';
         for(const [id,group]of groups)group.dataset.matched=String(ids.has(id));mark();
     }
+    const categoryControls=$('mapCategories');
+    if(categoryControls)for(const button of categoryControls.querySelectorAll('button'))button.onclick=()=>{
+        category=button.dataset.category;
+        for(const item of categoryControls.querySelectorAll('button'))item.setAttribute('aria-pressed',String(item===button));
+        filter();
+    };
     $('mapSearch').addEventListener('input',filter);$('mapKind').addEventListener('change',filter);
     $('mapZoomIn').onclick=()=>zoom(1.3);$('mapZoomOut').onclick=()=>zoom(1/1.3);
     $('mapFit').onclick=()=>{view={...model.bounds};paintView();status.textContent='Campus inteiro. Selecione um bloco ou use a busca.';};

@@ -41,25 +41,36 @@
       <div class="ar-campus-map-toolbar">
         <label for="mapSearch">Buscar bloco, curso ou setor<input id="mapSearch" type="search" placeholder="Ex.: biblioteca, DRIA, Física" maxlength="100" /></label>
         <label for="mapKind">Mostrar<select id="mapKind"><option value="todos">Todos os locais</option><option value="bloco">Blocos</option><option value="espaco">Espaços</option><option value="acesso">Acessos</option><option value="pendente">Informações a confirmar</option></select></label>
-        <a class="ar-btn ar-btn--secondary" href="#mapPlaces">Consultar lista de locais</a>
+        <a class="ar-btn ar-btn--secondary" href="#mapPlaces">Ver locais</a>
+      </div>
+      <div id="mapCategories" class="ar-campus-map-categories" role="group" aria-label="Filtrar por atividade">
+        <button type="button" data-category="todos" aria-pressed="true">Todos</button>
+        <button type="button" data-category="ensino" aria-pressed="false">Ensino</button>
+        <button type="button" data-category="laboratorios" aria-pressed="false">Laboratórios</button>
+        <button type="button" data-category="servicos" aria-pressed="false">Serviços</button>
+        <button type="button" data-category="esporte" aria-pressed="false">Esporte</button>
+        <button type="button" data-category="convivencia" aria-pressed="false">Convivência</button>
       </div>
       <div class="ar-campus-map-layout">
         <div class="ar-campus-map-stage">
           <div class="ar-campus-map-controls" role="group" aria-label="Controles do mapa"><button type="button" id="mapZoomIn" class="ar-btn" aria-label="Ampliar mapa">+</button><output id="mapZoom" aria-label="Ampliação">100%</output><button type="button" id="mapZoomOut" class="ar-btn" aria-label="Reduzir mapa">−</button><button type="button" id="mapFit" class="ar-btn">Ver campus inteiro</button><details><summary aria-label="Ajuda para navegar no mapa">?</summary><p>Arraste para mover. Use dois dedos ou Ctrl + roleta para ampliar. No teclado: setas movem; + e − ampliam/reduzem; 0 ajusta. Selecione um bloco com Enter ou Espaço. A lista oferece as mesmas informações.</p></details></div>
           <div id="mapViewport" class="ar-campus-map-viewport" tabindex="0" role="region" aria-label="Mapa interativo do campus. Use os controles ou a lista de locais.">
             <svg id="campusMap" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1580" role="group" aria-labelledby="campusMapTitle campusMapDescription">
-              <title id="campusMapTitle">Blocos e espaços do IFPA Campus Belém</title><desc id="campusMapDescription">Planta esquemática de referência de 2025. Av. Rômulo Maiorana no topo, Av. Almirante Barroso embaixo, Trav. Timbó à esquerda e Trav. Estrella à direita. Não é um mapa de rotas nem uma planta oficial atualizada.</desc>
+              <title id="campusMapTitle">Blocos e espaços do IFPA Campus Belém</title><desc id="campusMapDescription">Planta esquemática do campus. Av. Rômulo Maiorana no topo, Av. Almirante Barroso embaixo, Trav. Timbó à esquerda e Trav. Estrella à direita. Não é um mapa de rotas nem uma planta oficial atualizada.</desc>
               <g class="ar-map-ground" aria-hidden="true"><rect x="42" y="52" width="708" height="1460" rx="8" /><path d="M430 420V630M430 820V1260M90 1000V1260M90 1450H710" class="ar-map-corridor" /></g>
               <g class="ar-map-streets" aria-hidden="true"><path d="M0 0H800V52H42V1510H800V1580H0ZM750 52H800V1510H750Z"/><text x="400" y="33">Av. Rômulo Maiorana</text><text x="400" y="1550">Av. Almirante Barroso, 1155 · Marco</text><text x="22" y="810" transform="rotate(-90 22 810)">Trav. Timbó</text><text x="779" y="810" transform="rotate(90 779 810)">Trav. Estrella</text></g>
               <g id="mapBlocks"></g>
             </svg>
           </div>
+          <div class="ar-campus-map-legend" aria-label="Legenda do mapa"><span><i data-kind="bloco" aria-hidden="true"></i>Blocos · letras</span><span><i data-kind="espaco" aria-hidden="true"></i>Espaços · nomes</span><span><i data-kind="acesso" aria-hidden="true"></i>Acessos</span><span><i data-kind="selecionado" aria-hidden="true"></i>Local selecionado · contorno forte</span></div>
           <p id="mapStatus" class="ar-campus-map-status" role="status">Carregando locais…</p>
         </div>
-        <aside id="mapInfo" class="ar-campus-map-info" aria-label="Informações do local"><h2>Explore o campus</h2><p>Selecione um bloco no mapa ou encontre um local na lista.</p><p>Algumas informações são conjuntas para dois blocos. Setores ainda sem localização confirmada aparecem na lista, sem ponto no desenho.</p></aside>
+        <div class="ar-campus-map-rail">
+          <aside id="mapInfo" class="ar-campus-map-info" aria-label="Informações do local"><h2>Onde você quer ir?</h2><p>Busque um setor ou selecione um bloco para consultar os detalhes.</p><p class="ar-campus-map-hint">As letras identificam os blocos. Locais sem posição confirmada aparecem somente na lista.</p></aside>
+          <section id="mapPlaces" class="ar-campus-map-places" tabindex="-1" aria-labelledby="mapPlacesTitle"><h2 id="mapPlacesTitle">Locais do campus</h2><p id="mapResults" role="status"></p><ul id="mapPlaceList"></ul></section>
+        </div>
       </div>
-      <section id="mapPlaces" class="ar-campus-map-places" tabindex="-1" aria-labelledby="mapPlacesTitle"><h2 id="mapPlacesTitle">Locais do campus</h2><p id="mapResults" role="status"></p><ul id="mapPlaceList"></ul></section>
-      <details class="ar-campus-map-source"><summary>Fonte e informações a confirmar</summary><p>Esquema adaptado da planta de localização fornecida para o engBRASIL25, realizado em 2025 no IFPA Campus Belém. A disposição de blocos e vias segue essa referência, com contornos aproximados. As informações de setores e andares fornecidas pela equipe estão identificadas nos detalhes de cada local. Não há validação de uma planta oficial atualizada.</p><p>Consulte as fontes oficiais nos detalhes de cada local. Elas confirmam somente os dados descritos, sem validar todos os andares informados pela equipe. A distribuição dos setores nos conjuntos C/D, N/M, G/S e S/T e alguns andares do bloco E precisam de confirmação. O bloco J tem informações divergentes sobre os setores; Matemática ainda não tem ponto atribuído.</p><a href="assets/campus-map-reference-2025.png">Consultar imagem de referência de 2025</a></details>
+      <details class="ar-campus-map-source"><summary>Fonte e informações a confirmar</summary><p>Esquema adaptado da planta de localização fornecida para o engBRASIL25, realizado em 2025 no IFPA Campus Belém. A disposição de blocos e vias segue essa referência, com contornos aproximados. As informações de setores e andares fornecidas pela equipe estão identificadas nos detalhes de cada local. Não há validação de uma planta oficial atualizada.</p><p>Consulte as fontes oficiais nos detalhes de cada local. Elas confirmam somente os dados descritos, sem validar todos os andares informados pela equipe. A distribuição dos setores nos conjuntos C/D, N/M e S/T e alguns andares do bloco E precisam de confirmação. Recursos Pesqueiros e Aquicultura ainda não têm ponto atribuído.</p><a href="assets/campus-map-reference-2025.png">Consultar planta-base</a></details>
       <noscript><p>Ative o JavaScript para usar busca e ampliação. A imagem de referência permanece disponível no link acima.</p></noscript>
     </section>
   </main>

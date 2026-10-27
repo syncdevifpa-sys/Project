@@ -6,10 +6,10 @@ test('planta preserva blocos identificados e não atribui ponto a informações 
  for(const row of m.places){if(row.kind==='pendente')assert.equal(row.path,'');else {assert.ok(row.path.startsWith('M'));assert.ok(row.x>=0&&row.x<=800&&row.y>=0&&row.y<=1580);}}
  assert.equal(m.search('DRIA')[0].id,'e');assert.equal(m.search('Telecomunicações')[0].id,'e');
  assert.deepEqual(Array.from(m.search('Design'),row=>row.id),['a']);assert.deepEqual(Array.from(m.search('Química'),row=>row.id),['c','d']);
- assert.deepEqual(Array.from(m.search('Auditório Central'),row=>row.id),['a']);
- assert.match(m.places.find(row=>row.id==='a').notes[0],/térreo; Design no 1º andar/);
+ assert.deepEqual(Array.from(m.search('Auditório Central'),row=>row.id),['b']);
+ assert.match(m.places.find(row=>row.id==='a').notes[1],/Design no 1º andar/);
  assert.equal(m.places.find(row=>row.id==='verde').path,'M421 830H587V1023H421Z');
- assert.equal(m.search('biblioteca')[0].id,'f');assert.ok(m.search('miniauditorio').some(row=>row.id==='m'));
+ assert.equal(m.search('biblioteca')[0].id,'f');assert.ok(m.search('miniauditorio').some(row=>row.id==='f'));
  assert.equal(m.search('sala de lutas')[0].id,'q');assert.equal(m.search('inexistente').length,0);
 });
 test('zoom limita ampliação e deslocamento sem sair do campus nem mudar dados dos locais',()=>{
@@ -33,7 +33,10 @@ function ui(){
   getScreenCTM(){return {a:1,d:1,inverse:()=>({})};}createSVGPoint(){return {x:0,y:0,matrixTransform(){return {x:this.x,y:this.y};}};}
   emit(type,args={}){this.events[type]?.({target:this,preventDefault(){},stopPropagation(){},button:0,pointerId:1,clientX:100,clientY:100,...args});}
  }
- for(const id of ['campusMap','mapViewport','mapBlocks','mapInfo','mapPlaceList','mapStatus','mapZoom','mapSearch','mapKind','mapResults','mapZoomIn','mapZoomOut','mapFit','mapAccountLink'])ids.set(id,new Element('div'));
+ for(const id of ['campusMap','mapViewport','mapBlocks','mapInfo','mapPlaceList','mapStatus','mapZoom','mapSearch','mapKind','mapResults','mapZoomIn','mapZoomOut','mapFit','mapAccountLink','mapCategories'])ids.set(id,new Element('div'));
+ for(const value of ['todos','ensino','laboratorios','servicos','esporte','convivencia']){
+  const button=new Element('button');button.dataset.category=value;ids.get('mapCategories').append(button);
+ }
  ids.get('mapKind').value='todos';
  vm.runInNewContext(fs.readFileSync('front/js/campus-map.js','utf8'),{window:{Arcadia:A},document:{getElementById:id=>ids.get(id),createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag)}});
  return {ids,A};
@@ -42,7 +45,7 @@ test('busca e lista oferecem os mesmos dados; local pendente não cria marcador 
  const f=ui(),get=id=>f.ids.get(id);assert.equal(get('mapBlocks').children.length,f.A.campusMapModel.places.filter(row=>row.path).length);
  get('mapSearch').value='DRIA';get('mapSearch').emit('input');assert.equal(get('mapPlaceList').children.length,1);get('mapPlaceList').children[0].children[0].onclick();
  assert.equal(get('mapInfo').children[0].textContent,'Bloco E · DRIA, DEN e laboratórios');assert.equal(get('mapInfo').focused,true);assert.equal(get('mapZoom').textContent,'250%');
- get('mapSearch').value='Matemática';get('mapSearch').emit('input');get('mapPlaceList').children[0].children[0].onclick();assert.match(get('mapStatus').textContent,/Localização a confirmar/);
+ get('mapSearch').value='Recursos Pesqueiros';get('mapSearch').emit('input');get('mapPlaceList').children[0].children[0].onclick();assert.match(get('mapStatus').textContent,/Localização a confirmar/);
  assert.equal(get('mapBlocks').children.some(row=>row.dataset.place==='esportes'),false);
  get('mapSearch').value='Nada aqui';get('mapSearch').emit('input');assert.equal(get('mapPlaceList').children.length,0);assert.match(get('mapResults').textContent,/Nenhum local/);
 });
@@ -69,13 +72,49 @@ test('setores mantêm andares informados, incertezas e alcance das fontes oficia
  for(const id of ['c','d'])assert.match(place(id).notes.join(' '),/Química no 1º andar/);
  assert.match(place('e').notes[0],/descanso.*1º andar/);
  assert.match(place('e').notes[1],/a confirmar/);
- assert.match(place('j').notes[0],/Ambulatório.*a confirmar/);
- assert.ok(place('j').notes[1].includes('14/02/2025'));
+ assert.match(place('j').notes[0],/Ambulatório no térreo.*porta de vidro/);
+ assert.match(place('j').notes[1],/corredor transversal.*escada/);
+ assert.match(place('n1').notes[0],/regência estudantil.*Achados e Perdidos/);
+ assert.match(place('m').notes[0],/professores.*ensino médio.*Geografia/);
+ assert.match(place('f').notes[0],/Miniauditório no 2º andar/);
  assert.equal(place('j').dashed,undefined);
  for(const id of ['c','e','j'])assert.ok(place(id).references.every(ref=>new URL(ref.url).hostname.endsWith('.ifpa.edu.br')));
- for(const id of ['c','d','e','g','j','m','n','s','t','professores'])assert.ok(m.search('', 'pendente').some(row=>row.id===id));
+ for(const id of ['c','d','e','m','n','s','t','pesqueiros'])assert.ok(m.search('', 'pendente').some(row=>row.id===id));
  assert.match(place('v').notes[0],/térreo; dormitórios no 1º e 2º/);
  assert.match(place('z').notes.join(' '),/restrito/);
  const f=ui();f.ids.get('mapSearch').value='DRIA';f.ids.get('mapSearch').emit('input');f.ids.get('mapPlaceList').children[0].children[0].onclick();
  assert.ok(f.ids.get('mapInfo').querySelectorAll('a').some(link=>link.href==='https://belem.ifpa.edu.br/secretaria-academica'));
+});
+
+test('correções da equipe distinguem Estradas, serviços e setores sem localização',()=>{
+ const m=model(),place=id=>m.places.find(row=>row.id===id);
+ for(const id of ['g','s','t'])assert.match(place(id).notes.join(' '),/único pavimento \(térreo\)/);
+ assert.equal(m.search('Estradas')[0].id,'g');
+ assert.deepEqual(Array.from(m.search('Matemática'),row=>row.id),['m']);
+ assert.ok(!m.places.some(row=>row.id==='professores'));
+ assert.equal(m.search('lanchonete')[0].id,'p');
+ for(const query of ['Recursos Pesqueiros','Aquicultura'])assert.deepEqual(Array.from(m.search(query),row=>row.id),['pesqueiros']);
+ assert.equal(place('pesqueiros').path,'');
+ assert.equal(place('pesqueiros').kind,'pendente');
+});
+
+test('filtros de atividade combinam busca e tipo sem atribuir ponto a local pendente',()=>{
+ const m=model();
+ assert.deepEqual(Array.from(m.search('','todos','esporte'),row=>row.id),['q','x','campo']);
+ assert.equal(m.search('lanchonete','todos','servicos')[0].id,'p');
+ assert.equal(m.search('lanchonete','todos','esporte').length,0);
+ assert.equal(m.search('Recursos Pesqueiros','pendente','ensino')[0].path,'');
+ const f=ui(),get=id=>f.ids.get(id),chips=get('mapCategories').children;
+ chips.find(row=>row.dataset.category==='esporte').onclick();
+ assert.equal(get('mapPlaceList').children.length,3);
+ assert.equal(chips.find(row=>row.dataset.category==='esporte').attrs['aria-pressed'],'true');
+ assert.equal(chips.find(row=>row.dataset.category==='todos').attrs['aria-pressed'],'false');
+ get('mapSearch').value='Ginásio';get('mapSearch').emit('input');
+ assert.equal(get('mapPlaceList').children.length,1);
+ get('mapPlaceList').children[0].children[0].onclick();
+ assert.equal(get('mapBlocks').children.find(row=>row.dataset.place==='q').attrs['aria-pressed'],'true');
+ assert.equal(get('mapPlaceList').children[0].children[0].attrs['aria-pressed'],'true');
+ get('mapSearch').value='';get('mapSearch').emit('input');
+ chips.find(row=>row.dataset.category==='todos').onclick();
+ assert.equal(get('mapPlaceList').children.length,f.A.campusMapModel.places.length);
 });
