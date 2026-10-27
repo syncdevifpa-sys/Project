@@ -1,14 +1,16 @@
 const {test,after}=require('node:test'),assert=require('node:assert/strict');
 const db=require('../backend/src/config/database');after(()=>db.end());
 const {createAcademicManagement,CHECKSUM,normalized}=require('../backend/src/services/academic-management.service');
-function fixture({enabled=true,representative=3,activeRep=true,dependency=1,other=false}={}){
+function fixture({enabled=true,representative=3,activeRep=true,dependency=1,other=false,catalogConflict=false}={}){
  const users=new Map([[1,{id_usuario:1,nome:'Admin',tipo_usuario:'servidor',is_admin:1,situacao:'ativo'}],[2,{id_usuario:2,nome:'Aluno',tipo_usuario:'discente',is_admin:0,situacao:'ativo'}],[3,{id_usuario:3,nome:'Representante',tipo_usuario:'discente',is_admin:0,situacao:'ativo'}],[4,{id_usuario:4,nome:'Vice',tipo_usuario:'discente',is_admin:0,situacao:'ativo'}],[9,{id_usuario:9,nome:'Professor',tipo_usuario:'docente',is_admin:0,situacao:'ativo'}],[10,{id_usuario:10,nome:'Outro professor',tipo_usuario:'docente',is_admin:0,situacao:'ativo'}]]);
  const turma={id_turma:10,id_curso:5,nome:'Turma A',nome_chave:'turma a',id_representante:representative,arquivada_em:null};
  const offer={id_disciplina:8,id_turma:10,id_professor:9,nome:'Dados',ano_letivo:2026,regime_letivo:'anual',semestre:0,atribuicao_ativa:1,arquivada_em:null};
  const request={id_pedido:20,id_turma:10,id_aluno:2,versao:0,estado:'pendente'};
  const members=activeRep?[{id_aluno:3,id_turma:10,id_curso:5,ativa:1}]:[];
- const enrolled=new Set(),calls=[];
+ const enrolled=new Set(),calls=[],catalogItems=[];
  const execute=async(sql,args=[])=>{calls.push({sql,args});
+  if(sql.startsWith('SELECT id_catalogo FROM academico_catalogo'))return [catalogItems.filter(row=>row.nome_chave===args[0]&&row.id_catalogo!==args[1])];
+  if(sql.startsWith('INSERT INTO academico_catalogo')){if(catalogConflict)throw Object.assign(new Error('duplicate'),{code:'ER_DUP_ENTRY'});catalogItems.push({id_catalogo:50,nome:args[0],nome_chave:args[1]});return [{insertId:50}];}
   if(sql.startsWith('SELECT checksum'))return [enabled?[{checksum:CHECKSUM}]:[]];
   if(sql.startsWith('SELECT id_usuario,tipo_usuario'))return [[users.get(args[0])].filter(Boolean)];
   if(sql.startsWith('SELECT d.*,t.'))return [[{...offer,turma_arquivada:turma.arquivada_em}]];
@@ -70,7 +72,17 @@ test('exclusão definitiva bloqueia vínculos e exige admin e nome exato; arquiv
  const f=fixture();await assert.rejects(f.service.destroy(9,'oferta',8,body),{status:403});await assert.rejects(f.service.destroy(1,'oferta',8,{...body,nome_confirmacao:'Errado'}),{status:400});await assert.rejects(f.service.destroy(1,'oferta',8,body),{status:409});assert.ok(!f.calls.some(c=>c.sql?.startsWith('DELETE')));
  const empty=fixture({dependency:0});await empty.service.destroy(1,'oferta',8,body);assert.ok(empty.calls.some(c=>c.sql?.startsWith('DELETE FROM academico_disciplinas')));assert.ok(empty.calls.some(c=>c.sql?.includes('academico_gestao_historico')));
 });
-test('catálogo global é administrativo e nomes normalizados são estáveis',async()=>{
- assert.equal(normalized('  Banco   de Dados '),'Banco de Dados');await assert.rejects(fixture().service.saveCatalog(9,{nome:'Dados'}),{status:403});await assert.rejects(fixture().service.catalog(2),{status:403});
+test('professor cadastra catálogo sem poder editar itens globais e nomes são únicos',async()=>{
+ assert.equal(normalized('  Banco   de Dados '),'Banco de Dados');await assert.rejects(fixture().service.saveCatalog(9,{nome:'Dados'},50),{status:403});await assert.rejects(fixture().service.saveCatalog(2,{nome:'Dados'}),{status:403});await assert.rejects(fixture().service.catalog(2),{status:403});
  const f=fixture();await f.service.saveCatalog(1,{nome:'  Dados   I '});assert.deepEqual(f.calls.find(c=>c.sql?.startsWith('INSERT INTO academico_catalogo')).args,['Dados I','dados i']);
+});
+
+test('catálogo novo respeita migração, normalização, duplicidade concorrente e campos permitidos',async()=>{
+ const f=fixture();const saved=await f.service.saveCatalog(9,{nome:'  Física   I '});assert.equal(saved.id_catalogo,50);assert.equal(saved.nome,'Física I');
+ assert.ok(f.calls.some(c=>c.sql?.includes('academico_gestao_historico')));
+ await assert.rejects(f.service.saveCatalog(9,{nome:'física i'}),{status:409});
+ await assert.rejects(fixture({catalogConflict:true}).service.saveCatalog(9,{nome:'Outra'}),{status:409});
+ await assert.rejects(fixture({enabled:false}).service.saveCatalog(9,{nome:'Outra'}),{status:503});
+ await assert.rejects(f.service.saveCatalog(9,{nome:'Outra',ativo:false}),{status:400});
+ await assert.rejects(f.service.saveCatalog(9,{nome:' '}),{status:400});
 });

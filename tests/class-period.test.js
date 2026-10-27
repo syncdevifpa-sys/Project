@@ -7,6 +7,8 @@ function fixture({role='docente',admin=false,professor=7,conflict=false,schedule
  const row={id_disciplina:3,id_turma:2,id_professor:professor,atribuicao_ativa:1,nome:'Dados',ano_ingresso:2024,ano_letivo:2026,regime_letivo:'legado',semestre:0};
  const writes=[],lifecycle=[];
  const execute=async(sql,args=[])=>{
+  if(sql.startsWith('SELECT checksum'))return [[{checksum:require('../backend/src/services/academic-management.service').CHECKSUM}]];
+  if(sql.startsWith('SELECT id_catalogo,nome'))return [[{id_catalogo:50,nome:'Dados'}]];
   if(sql.startsWith('SELECT id_usuario, tipo_usuario'))return [[{id_usuario:7,tipo_usuario:role,is_admin:admin,situacao:'ativo'}]];
   if(sql.startsWith('SELECT d.*, t.id_curso'))return [[{...row}]];
   if(sql.startsWith('SELECT t.*'))return [[{id_turma:2,ano_ingresso:2024}]];
@@ -26,7 +28,7 @@ function fixture({role='docente',admin=false,professor=7,conflict=false,schedule
 const period=(regime='semestral',semester=1)=>({ano_letivo:2026,regime_letivo:regime,semestre:semester,confirmar_periodo:true});
 test('ofertas criam 2026.1, 2026.2 e anual; editar legado mantém identidade e vínculos',async()=>{
  for(const [regime,semestre] of [['semestral',1],['semestral',2],['anual',0]]){
-  const f=fixture();await f.service.create(7,{id_turma:2,nome:'Dados',...period(regime,semestre)});
+  const f=fixture();await f.service.create(7,{id_catalogo:50,id_turma:2,nome:'Dados',...period(regime,semestre)});
   assert.equal(f.row.regime_letivo,regime);assert.equal(f.row.semestre,semestre);
   f.row.regime_letivo='legado';f.row.semestre=0;
   await f.service.updatePeriod(7,3,{...period(regime,semestre),periodo_anterior:'2026.legado'});

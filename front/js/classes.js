@@ -726,7 +726,7 @@
                     save.disabled = false;
                 }
             });
-        return { dialog, fields, field, select, submit };
+        return { dialog, fields, field, select, submit, save };
     }
     async function createEditor() {
         try {
@@ -736,7 +736,8 @@
                 data.canAdminister ? call('/teachers') : Promise.resolve([])
             ]);
             const features=await call('/academic/features');
-            const catalog=features.available?await call('/academic/catalog'):[];
+            if(!features.available)throw new Error(features.message || 'O catálogo aguarda a migração 1.1.31. Peça ao administrador para verificar o banco deste ambiente.');
+            const catalog=await call('/academic/catalog');
             const e = editor('Criar disciplina em uma turma'),
                 now = new Date().getFullYear();
             e.fields.append(
@@ -769,9 +770,9 @@
             );
             course.required = true;
             course.selectedIndex = 0;
-            const catalogPicker=features.available?e.select('Disciplina do catálogo',[['','Selecione uma disciplina'],...catalog.map(row=>[row.id_catalogo,row.nome+(row.legado?' · legado #'+row.id_catalogo:'')])]):null;
-            if(catalogPicker)catalogPicker.required=true;
-            const name = e.field('Título desta oferta', { required: true, maxLength: 100 }),
+            const catalogFields = A.classCatalog.mount(e, {items:catalog,canCreate:features.canCreateCatalog===true,call});
+            const catalogPicker = catalogFields.picker;
+            const name = catalogFields.title,
                 cohort = e.field('Nome da turma', { required: true, maxLength: 100 }),
                 start = e.field('Ano de ingresso da turma', {
                     type: 'number',
@@ -789,7 +790,6 @@
                     'manha'
                 ),
                 campus = e.field('Campus', { value: 'Belém', required: true, maxLength: 100 });
-            if(catalogPicker)catalogPicker.onchange=()=>{const row=catalog.find(item=>String(item.id_catalogo)===catalogPicker.value);if(row)name.value=row.nome;};
             const period = A.classPeriod.fields(e, {ano_letivo:now});
             start.min = '2000';
             start.max = '2100';
@@ -829,9 +829,7 @@
             const subject = detail.subject,
                 teachers = await call('/teachers');
             const e = editor('Editar disciplina e professor');
-            const catalogPicker=features.available?e.select('Disciplina do catálogo',[['','Selecione uma disciplina'],...catalog.map(row=>[row.id_catalogo,row.nome+(row.legado?' · legado #'+row.id_catalogo:'')])]):null;
-            if(catalogPicker)catalogPicker.required=true;
-            const name = e.field('Título desta oferta', {
+            const name = e.field('Título nesta turma', {
                 value: subject.nome,
                 required: true,
                 maxLength: 100

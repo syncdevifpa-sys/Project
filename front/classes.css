@@ -412,3 +412,10 @@
   .ac-schedule-toolbar > .ar-btn { width: 100%; }
   .ac-schedule-editor-actions { padding: 12px; }
 }
+
+.ac-catalog-help summary { cursor: pointer; width: 32px; min-height: 32px; border: 1px solid var(--line); border-radius: 50%; text-align: center; line-height: 30px; list-style: none; }
+.ac-catalog-help summary::-webkit-details-marker { display: none; }
+.ac-catalog-create { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px; }
+.ac-catalog-create summary { cursor: pointer; min-height: 32px; }
+.ac-catalog-create label { margin-block: 12px; }
+.ac-catalog-help summary:focus-visible, .ac-catalog-create summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }

@@ -193,8 +193,12 @@ function createClasses(database = db) {
             if (actor.tipo_usuario !== 'docente' && !isAdmin(actor))
                 fail(403, 'Somente professores criam suas disciplinas.');
             let catalogItem = null;
+            if(body.nome != null && typeof body.nome !== 'string')fail(400,'Título da oferta inválido.');
+            const catalogReady = await academicManagement.ready(c);
+            if(!catalogReady)fail(503,'O catálogo aguarda a migração 1.1.31. Peça à administração para verificar o banco deste ambiente.');
+            if(!body.id_catalogo)fail(400,'Selecione uma disciplina do catálogo ou cadastre uma nova.');
             if(body.id_catalogo){
-                if(!await academicManagement.ready(c))fail(503,'O catálogo aguarda a migração 1.1.31.');
+                if(!catalogReady)fail(503,'O catálogo aguarda a migração 1.1.31.');
                 const [items]=await c.execute('SELECT id_catalogo,nome FROM academico_catalogo_disciplinas WHERE id_catalogo=? AND ativo=1 FOR SHARE',[id(body.id_catalogo)]);
                 if(!items[0])fail(404,'Selecione uma disciplina ativa do catálogo.');
                 catalogItem=items[0];
@@ -254,7 +258,7 @@ function createClasses(database = db) {
                 [
                     turma.id_turma,
                     professor,
-                    text(body.nome, 100, 'Disciplina'),
+                    text((typeof body.nome==='string'&&body.nome.trim()) || catalogItem?.nome || body.nome, 100, 'Disciplina'),
                     academic,
                     period.regime_letivo,
                     period.semestre
