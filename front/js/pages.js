@@ -732,7 +732,7 @@
             let target = container,
                 list = visibleRows();
             if (viewPicker.value === 'month') {
-                const result = A.calendarView.render(container, list, monthState, render);
+                const result = A.calendarView.render(container, list, monthState, render, {reminderCounts:A.reminderUI?.calendarCounts?.()});
                 target = result.agenda;
                 list = result.events;
             }
@@ -814,10 +814,12 @@
                 (isList && !listAll
                     ? '<p>Nenhum evento para hoje nos filtros selecionados. Use “Todos os eventos” para consultar as outras datas.</p>'
                     : '<p>Nenhum evento encontrado.</p>');
+            A.reminderUI?.setCalendarDay?.(viewPicker.value === 'month' ? monthState.day : today());
             linkDescriptions('.ar-panel-body .ar-row-meta');
             syncSelection();
             bar.counts();
         }
+        window.addEventListener('arcadia:reminders-changed', render);
         function refreshSources() {
             const selected = sourcePicker.value;
             sourcePicker.replaceChildren();

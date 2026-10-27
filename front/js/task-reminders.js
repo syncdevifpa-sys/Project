@@ -2,6 +2,8 @@
     'use strict';
     async function init() {
         if(!A.auth.estaLogado()) return;
+        const ownerKey = () => { const session = A.auth.getSessao(); return [A.auth.estaLogado(), session.tipo_usuario, session.id_usuario, session.id_externo].join(':'); };
+        const owner = ownerKey();
         const external=A.auth.getSessao().tipo_usuario==='externo';
         let host=document.getElementById('taskReminders');
         if(!host && document.body.classList.contains('ar-calendar-page')) {
@@ -11,6 +13,7 @@
         }
         if(!host) return;
         function reveal() {
+            A.reminderUI?.setCalendarDay?.(null);
             host.open = true;
             const summary = host.querySelector('summary');
             if (summary) summary.focus({preventScroll:true});
@@ -29,7 +32,31 @@
         const status = make('p'); status.setAttribute('role', 'status');
         const controls = make('div'), list = make('div', undefined, 'ar-task-reminders-list');
         host.append(controls, status, list);
-        let prefs = {}, reminders = [];
+        let prefs = {}, reminders = [], calendarDate = null;
+        const dayHost = document.body?.classList?.contains('ar-calendar-page') ? document.getElementById('calendarDayReminders') : null;
+        const userZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Belem';
+        const index = () => owner === ownerKey() ? A.reminderTime?.calendarIndex(reminders, userZone) || new Map() : new Map();
+        function paintLists() {
+            list.replaceChildren();
+            const daily = dayHost && calendarDate ? index().get(calendarDate) || [] : [];
+            const selected = new Set(daily.map(row => row.id_lembrete));
+            if (dayHost) {
+                dayHost.replaceChildren(); dayHost.hidden = !calendarDate;
+                if (calendarDate) {
+                    dayHost.append(make('h3', 'Lembretes · ' + calendarDate.split('-').reverse().join('/')),
+                        make('p', 'Datas no seu fuso: ' + userZone + '. O sino indica lembretes salvos; não confirma envio de e-mail.'));
+                    dayHost.append(status);
+                    const dayList = make('div', undefined, 'ar-task-reminders-list');
+                    for (const row of daily) dayList.append(card(row));
+                    if (!daily.length) dayList.append(make('p', 'Nenhum lembrete ativo para este dia.'));
+                    dayHost.append(dayList);
+                }
+            }
+            if (!dayHost || !calendarDate) host.append(status);
+            const others = owner === ownerKey() ? reminders.filter(row => !selected.has(row.id_lembrete)) : [];
+            if (!others.length) list.append(make('p', daily.length ? 'Os lembretes deste dia estão na seção Lembretes acima.' : 'Nenhum lembrete cadastrado.'));
+            for (const row of others) list.append(card(row));
+        }
         function button(text, action) {
             const b = make('button', text, 'ar-btn ar-btn--secondary'); b.type = 'button';
             b.onclick = async () => { b.disabled = true; try { await action(b); } catch (e) { status.textContent = e.message; } finally { b.disabled = false; } };
@@ -40,8 +67,15 @@
             try { return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: row.fuso_horario }).format(new Date(row.agendado_utc)) + ' · ' + row.fuso_horario; }
             catch { return 'Revise a data do lembrete.'; }
         }
+        let loadGeneration = 0;
         async function reload() {
-            [prefs, reminders] = await Promise.all([call('/preferences'), call('')]);
+            if (owner !== ownerKey()) throw new Error('A conta mudou. Atualize a página para consultar seus lembretes.');
+            const generation = ++loadGeneration;
+            const [settings, items] = await Promise.all([call('/preferences'), call('')]);
+            if (owner !== ownerKey()) throw new Error('A conta mudou. Atualize a página para consultar seus lembretes.');
+            if (generation !== loadGeneration) return;
+            prefs = settings;
+            reminders = [...new Map(items.map(row => [row.id_lembrete, row])).values()];
             controls.replaceChildren(); list.replaceChildren();
             const consentLabel = make('label'), consent = make('input');
             consent.type = 'checkbox'; consent.checked = prefs.email_lembretes;
@@ -57,24 +91,30 @@
                 make('p', prefs.envio_mensagem || (prefs.envio_habilitado ? 'O envio depende do processamento periódico do servidor. Você pode desativar os avisos a qualquer momento.' : 'O envio por e-mail ainda não está disponível. Seus lembretes continuam salvos aqui.')),
                 make('p',prefs.aviso_frequencia||'Os avisos são processados diariamente e podem atrasar.'),
                 button('Criar lembrete', () => editor()));
-            if (!reminders.length) list.append(make('p', 'Nenhum lembrete cadastrado.'));
-            for (const row of reminders) {
-                const card = make('article');
-                card.append(make('h3', row.titulo), make('p', time(row)), make('p', row.ativo ? 'Ativo' : 'Desativado'));
-                if (row.tarefa) card.append(make('p', 'Tarefa: ' + row.tarefa));
-                if (row.descricao) card.append(make('p', row.descricao));
-                if (row.enviar_email) card.append(make('p', 'E-mail autorizado para este lembrete.'));
+            paintLists();
+            if (window.dispatchEvent) window.dispatchEvent(new Event('arcadia:reminders-changed'));
+        }
+        function card(row) {
+                const item = make('article');
+                item.append(make('h3', row.titulo), make('p', time(row)), make('p', row.ativo ? 'Ativo' : 'Desativado'));
+                if (row.tarefa) item.append(make('p', 'Tarefa: ' + row.tarefa));
+                if (row.descricao) item.append(make('p', row.descricao));
+                item.append(make('p', row.enviar_email && prefs.email_lembretes ? 'E-mail autorizado para este lembrete.' : 'Salvo no portal · e-mail desativado.'));
                 const delivery = { enviado: 'E-mail enviado.', reservado: 'Envio reservado. Se houve interrupção, revise antes de reagendar.',
                     falhou: 'Não foi possível confirmar o envio. Não haverá nova tentativa automática.', cancelado: 'Envio cancelado. Revise o lembrete para reagendar.', aguardando: 'Aguardando nova tentativa antes do envio; no máximo três tentativas.', enviando: 'Envio iniciado. Não haverá repetição automática se o resultado for incerto.' };
-                if (delivery[row.envio_estado]) card.append(make('p', delivery[row.envio_estado]));
+                if (delivery[row.envio_estado]) item.append(make('p', delivery[row.envio_estado]));
                 const actions = make('div', undefined, 'ar-reminder-actions');
-                if(!row.indisponivel) actions.append(button('Editar', () => editor(row)));
+                if(!row.indisponivel) actions.append(button('Editar', async () => {
+                    await reload();
+                    const current = reminders.find(item => item.id_lembrete === row.id_lembrete);
+                    if (!current || current.indisponivel) throw new Error('Este lembrete não está mais disponível.');
+                    await editor(current);
+                }));
                 actions.append(button('Excluir', async () => {
                     if (!(await A.confirmAction({ title: 'Excluir este lembrete?', message: 'O lembrete e o envio ainda não iniciado serão cancelados. Uma mensagem já entregue não pode ser recolhida.', items: [row.titulo], confirmLabel: 'Excluir lembrete' }))) return;
                     await call('/' + row.id_lembrete, 'DELETE'); await reload(); status.textContent = 'Lembrete excluído.';
                 }));
-                card.append(actions); list.append(card);
-            }
+                item.append(actions); return item;
         }
         async function editor(row = {}, binding = null) {
             const event=binding?.event || row.evento;
@@ -166,14 +206,24 @@
             };
             dialog.showModal(); title.focus();
         }
-        A.reminderUI={reveal,open:async(event,source)=>{
+        A.reminderUI={reveal,
+            calendarCounts:()=>new Map([...index()].map(([day,items])=>[day,items.length])),
+            setCalendarDay:day=>{ calendarDate = /^\d{4}-\d\d-\d\d$/.test(day || '') ? day : null; paintLists(); },
+            open:async(event,source)=>{
             try {
                 await reload();
                 if(event && source!=='avulso') event=await call('/event/'+source+'/'+encodeURIComponent(event.id_evento));
                 await editor({},event?{event,source}:null);
             }catch(e){status.textContent=e.message;A.showToast?.(e.message);}
         }};
-        try { await reload(); } catch (e) { status.textContent = e.message; }
+        const refresh = async () => { try { await reload(); } catch (e) {
+            reminders = []; prefs = {}; controls.replaceChildren(); paintLists();
+            if (window.dispatchEvent) window.dispatchEvent(new Event('arcadia:reminders-changed'));
+            status.textContent = e.message;
+        }};
+        window.addEventListener('focus', refresh);
+        window.addEventListener('storage', () => { if (owner !== ownerKey()) refresh(); });
+        await refresh();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();

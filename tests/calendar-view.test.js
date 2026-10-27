@@ -134,3 +134,15 @@ test('selecionar dia e navegar meses atualiza agenda e rótulos acessíveis', ()
     assert.equal(state.day, '2025-03-01');
     assert.equal(result.events.length, 0);
 });
+
+test('sino mensal usa contagem de lembretes sem expor conteúdo nem marcar dia vazio',()=>{
+ const {view,make}=fixture(),root=make('section'),state={month:'2026-10',day:'2026-10-26'};
+ view.render(root,[],state,()=>{},{reminderCounts:new Map([['2026-10-26',2]])});
+ const marked=root.querySelector('[data-day="2026-10-26"]'),empty=root.querySelector('[data-day="2026-10-27"]');
+ assert.match(marked.attrs['aria-label'],/2 lembrete\(s\) salvo\(s\)/);
+ assert.equal(marked.children.filter(n=>n.className==='ar-month-reminder').length,1);
+ assert.match(marked.children.find(n=>n.className==='ar-month-reminder').innerHTML,/<svg/);
+ assert.equal(empty.children.some(n=>n.className==='ar-month-reminder'),false);
+ view.render(root,[],state,()=>{},{reminderCounts:new Map()});
+ assert.equal(root.querySelector('[data-day="2026-10-26"]').children.some(n=>n.className==='ar-month-reminder'),false);
+});

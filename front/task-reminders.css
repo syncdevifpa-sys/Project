@@ -19,3 +19,11 @@
 .ar-reminder-editor .ar-reminder-check { display: flex; align-items: center; gap: 10px; }
 .ar-reminder-editor input[type='checkbox'], .ar-task-reminders input[type='checkbox'] { width: 20px; height: 20px; }
 .ar-reminder-editor :focus-visible, .ar-task-reminders :focus-visible { outline: 2px solid var(--action); outline-offset: 3px; }
+
+.ar-day-reminders[hidden] { display: none; }
+.ar-day-reminders { margin-block: 16px; padding: 16px; }
+.ar-day-reminders > h3 { margin-bottom: 6px; }
+.ar-day-reminders > p { margin-block: 4px; color: var(--ink-muted); }
+.ar-day-reminders .ar-task-reminders-list { margin-top: 10px; }
+.ar-month-reminder { display: inline-flex; align-self: flex-end; align-items: center; justify-content: center; width: 20px; min-height: 20px; color: var(--ink); border: 1px solid var(--line); border-radius: 50%; vertical-align: middle; }
+.ar-month-reminder svg { display: block; pointer-events: none; }

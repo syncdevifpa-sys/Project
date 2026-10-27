@@ -25,7 +25,20 @@
         }
         return new Date(guess).toISOString();
     }
-    const api={toUTC,fromUTC};
+    function calendarDay(row, zone = Intl.DateTimeFormat().resolvedOptions().timeZone) {
+        if (!row || ![true, 1].includes(row.ativo) || row.indisponivel || !row.agendado_utc) return null;
+        try { return fromUTC(row.agendado_utc, zone).slice(0, 10); } catch { return null; }
+    }
+    function calendarIndex(rows, zone) {
+        const days = new Map(), seen = new Set();
+        for (const row of rows) {
+            const id = Number(row.id_lembrete), day = calendarDay(row, zone);
+            if (!Number.isSafeInteger(id) || id <= 0 || !day || seen.has(id)) continue;
+            seen.add(id); if (!days.has(day)) days.set(day, []); days.get(day).push(row);
+        }
+        return days;
+    }
+    const api={toUTC,fromUTC,calendarDay,calendarIndex};
     if(typeof module!=='undefined'&&module.exports) module.exports=api;
     else A.reminderTime=api;
 })(typeof window==='undefined'?null:window.Arcadia);
