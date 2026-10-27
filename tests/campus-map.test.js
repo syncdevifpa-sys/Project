@@ -9,8 +9,8 @@ test('planta preserva blocos identificados e não atribui ponto a informações 
  assert.deepEqual(Array.from(m.search('Auditório Central'),row=>row.id),['a']);
  assert.match(m.places.find(row=>row.id==='a').notes[0],/térreo; Design no 1º andar/);
  assert.equal(m.places.find(row=>row.id==='verde').path,'M421 830H587V1023H421Z');
- assert.equal(m.search('biblioteca')[0].id,'f');assert.equal(m.search('miniauditorio')[0].id,'m');
- assert.ok(m.search('sala de lutas').every(row=>row.kind==='pendente'&&!row.path));assert.equal(m.search('inexistente').length,0);
+ assert.equal(m.search('biblioteca')[0].id,'f');assert.ok(m.search('miniauditorio').some(row=>row.id==='m'));
+ assert.equal(m.search('sala de lutas')[0].id,'q');assert.equal(m.search('inexistente').length,0);
 });
 test('zoom limita ampliação e deslocamento sem sair do campus nem mudar dados dos locais',()=>{
  const m=model(),before=JSON.stringify(m.places),view=m.zoom(m.bounds,2);assert.equal(view.width,400);assert.equal(view.height,790);assert.equal(view.x,200);
@@ -41,8 +41,8 @@ function ui(){
 test('busca e lista oferecem os mesmos dados; local pendente não cria marcador no SVG',()=>{
  const f=ui(),get=id=>f.ids.get(id);assert.equal(get('mapBlocks').children.length,f.A.campusMapModel.places.filter(row=>row.path).length);
  get('mapSearch').value='DRIA';get('mapSearch').emit('input');assert.equal(get('mapPlaceList').children.length,1);get('mapPlaceList').children[0].children[0].onclick();
- assert.equal(get('mapInfo').children[0].textContent,'Bloco E · DRIA e Telecomunicações');assert.equal(get('mapInfo').focused,true);assert.equal(get('mapZoom').textContent,'250%');
- get('mapSearch').value='sala de lutas';get('mapSearch').emit('input');get('mapPlaceList').children[0].children[0].onclick();assert.match(get('mapStatus').textContent,/Localização a confirmar/);
+ assert.equal(get('mapInfo').children[0].textContent,'Bloco E · DRIA, DEN e laboratórios');assert.equal(get('mapInfo').focused,true);assert.equal(get('mapZoom').textContent,'250%');
+ get('mapSearch').value='Matemática';get('mapSearch').emit('input');get('mapPlaceList').children[0].children[0].onclick();assert.match(get('mapStatus').textContent,/Localização a confirmar/);
  assert.equal(get('mapBlocks').children.some(row=>row.dataset.place==='esportes'),false);
  get('mapSearch').value='Nada aqui';get('mapSearch').emit('input');assert.equal(get('mapPlaceList').children.length,0);assert.match(get('mapResults').textContent,/Nenhum local/);
 });
@@ -60,4 +60,22 @@ test('página pública usa referência atribuída sem API paga nem rotas ou iden
  assert.ok(fs.statSync('front/assets/campus-map-reference-2025.png').size>0);
  assert.ok(html.includes('tabindex="0"'));assert.ok(html.includes('id="mapPlaceList"'));assert.doesNotMatch(html,/Google Maps|maps\.google|api_key|geolocation|syncdevifpa@gmail/);
  assert.ok(html.indexOf('js/campus-map-model.js')<html.indexOf('js/campus-map.js'));
+});
+
+test('setores mantêm andares informados, incertezas e alcance das fontes oficiais',()=>{
+ const m=model(),place=id=>m.places.find(row=>row.id===id);
+ assert.match(place('c').notes.join(' '),/ADS.*térreo/);
+ assert.match(place('d').notes.join(' '),/Física no térreo/);
+ for(const id of ['c','d'])assert.match(place(id).notes.join(' '),/Química no 1º andar/);
+ assert.match(place('e').notes[0],/descanso.*1º andar/);
+ assert.match(place('e').notes[1],/a confirmar/);
+ assert.match(place('j').notes[0],/Ambulatório.*a confirmar/);
+ assert.ok(place('j').notes[1].includes('14/02/2025'));
+ assert.equal(place('j').dashed,undefined);
+ for(const id of ['c','e','j'])assert.ok(place(id).references.every(ref=>new URL(ref.url).hostname.endsWith('.ifpa.edu.br')));
+ for(const id of ['c','d','e','g','j','m','n','s','t','professores'])assert.ok(m.search('', 'pendente').some(row=>row.id===id));
+ assert.match(place('v').notes[0],/térreo; dormitórios no 1º e 2º/);
+ assert.match(place('z').notes.join(' '),/restrito/);
+ const f=ui();f.ids.get('mapSearch').value='DRIA';f.ids.get('mapSearch').emit('input');f.ids.get('mapPlaceList').children[0].children[0].onclick();
+ assert.ok(f.ids.get('mapInfo').querySelectorAll('a').some(link=>link.href==='https://belem.ifpa.edu.br/secretaria-academica'));
 });

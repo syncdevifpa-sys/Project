@@ -15,6 +15,15 @@
         selected=id;info.replaceChildren(create('h2',place.name));
         const details=create('ul');for(const note of place.notes)details.append(create('li',note));info.append(details);
         info.append(create('p',place.source==='equipe'?'Setores/andares: informações fornecidas pela equipe. Posição do bloco: referência de 2025.':'Informação da planta de referência de 2025; confirme a disponibilidade no campus.'));
+        if(place.references?.length){
+            info.append(create('h3','Fontes oficiais e alcance da confirmação'));
+            const sources=create('ul');
+            for(const reference of place.references){
+                const item=create('li'),link=create('a',reference.title);
+                link.href=reference.url;item.append(link);sources.append(item);
+            }
+            info.append(sources);
+        }
         if(place.path){
             const focus=create('button','Centralizar no mapa');focus.type='button';focus.className='ar-btn';focus.onclick=()=>focusPlace(place);info.append(focus);
             status.textContent=place.name+' selecionado. As informações estão no painel de detalhes.';
