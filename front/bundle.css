@@ -290,15 +290,15 @@ body {
 }
 @supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
   .ar-nav {
-    background: color-mix(in srgb, var(--surface) 75%, transparent);
-    backdrop-filter: blur(20px) saturate(1.7);
-    -webkit-backdrop-filter: blur(20px) saturate(1.7);
+    background: color-mix(in srgb, var(--surface) 68%, transparent);
+    backdrop-filter: blur(24px) saturate(1.7);
+    -webkit-backdrop-filter: blur(24px) saturate(1.7);
   }
   .ar-nav[data-scrolled='true'] {
-    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
   }
   [data-theme='dark'] .ar-nav {
-    background: color-mix(in srgb, var(--surface) 96%, transparent);
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
   }
 }
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {

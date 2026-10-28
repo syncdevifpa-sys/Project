@@ -27,7 +27,7 @@ documentos e turmas. Guardas de acesso e validações do servidor foram preserva
 
 ## Correções desta rodada
 
-- Barras `.ar-nav` usam o tratamento do Início: desfoque de 20px, saturação 1,7,
+- Barras `.ar-nav` usam o tratamento inspirado no Início: desfoque de 24px, saturação 1,7,
   borda e sombra discretas; superfícies dos temas substituem cores brancas fixas.
   A barra fica mais sólida depois de rolar. Sem suporte ao desfoque, com redução
   de transparência ou cores forçadas, o fundo é sólido. A sidebar não mudou.
