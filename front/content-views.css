@@ -28,6 +28,11 @@
   max-width: 100%;
   overflow: auto;
 }
+:is(.ar-table-scroll, .ar-content-board):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
 .ar-view-content {
   min-width: 0;
 }

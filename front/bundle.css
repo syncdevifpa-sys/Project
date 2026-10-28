@@ -43,6 +43,8 @@ body {
   .ar-row--nav,
   .ar-card--link,
   .ar-field input,
+  .ar-field select,
+  .ar-field textarea,
   .ar-pal-item
 ):focus-visible {
   outline: 2px solid transparent;
@@ -272,6 +274,47 @@ body {
   background: var(--surface);
   border-radius: var(--radius-full);
 }
+/* Mesmo vidro do Início, usando as superfícies do tema do portal. */
+.ar-nav {
+  border: 1px solid var(--line);
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 5%, transparent);
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.ar-nav[data-scrolled='true'] {
+  border-color: color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--ink) 9%, transparent);
+}
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .ar-nav {
+    background: color-mix(in srgb, var(--surface) 75%, transparent);
+    backdrop-filter: blur(20px) saturate(1.7);
+    -webkit-backdrop-filter: blur(20px) saturate(1.7);
+  }
+  .ar-nav[data-scrolled='true'] {
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+  }
+  [data-theme='dark'] .ar-nav {
+    background: color-mix(in srgb, var(--surface) 96%, transparent);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  :root .ar-nav,
+  :root .ar-nav[data-scrolled='true'] {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ar-nav {
+    transition: none;
+  }
+}
 .ar-brand {
   display: flex;
   align-items: center;
@@ -355,6 +398,11 @@ body {
   align-items: center;
   gap: var(--space-2);
   padding-left: var(--space-2);
+}
+.ar-nav .ar-user .ar-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
 }
 .ar-user-name {
   font-size: 13px;
@@ -734,6 +782,7 @@ body {
   color: var(--ink-muted);
 }
 .ar-field input,
+.ar-field select,
 .ar-field textarea {
   font: inherit;
   font-size: 15px;
@@ -743,6 +792,13 @@ body {
   border: 1px solid transparent;
   background: var(--surface-sunken);
   color: var(--ink);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.ar-field select {
+  min-height: 44px;
+  border-color: var(--control-border);
 }
 .ar-field textarea {
   border-radius: var(--radius-md);
