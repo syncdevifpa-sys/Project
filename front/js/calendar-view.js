@@ -46,7 +46,7 @@
         const [year, number] = month.split('-').map(Number);
         return new Date(Date.UTC(year, number - 1 + offset, 1)).toISOString().slice(0, 7);
     }
-    function render(root, events, state, onChange) {
+    function render(root, events, state, onChange, options = {}) {
         root.replaceChildren();
         const make = (tag, text) => {
             const node = document.createElement(tag);
@@ -124,6 +124,7 @@
                 continue;
             }
             const matches = onDay(events, date);
+            const reminders = options.reminderCounts?.get(date) || 0;
             const button = make('button');
             button.type = 'button';
             button.className = 'ar-month-day';
@@ -134,13 +135,23 @@
                     ' — ' +
                     matches.length +
                     ' evento(s)' +
-                    (matches.length ? ': ' + matches.map((event) => event.titulo).join('; ') : '')
+                    (matches.length ? ': ' + matches.map((event) => event.titulo).join('; ') : '') +
+                    (reminders ? ' · ' + reminders + ' lembrete(s) salvo(s)' : '')
             );
             button.setAttribute('aria-pressed', String(date === state.day));
             if (date === today) button.setAttribute('aria-current', 'date');
             const number = make('span', String(Number(date.slice(8))));
             number.className = 'ar-month-number';
             button.append(number);
+            if (reminders) {
+                const marker = make('span');
+                marker.className = 'ar-month-reminder';
+                marker.innerHTML =
+                    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>';
+                marker.setAttribute('aria-hidden', 'true');
+                marker.title = reminders + ' lembrete(s) salvo(s)';
+                button.append(marker);
+            }
             if (matches.length) {
                 const count = make(
                     'span',

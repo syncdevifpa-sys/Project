@@ -203,7 +203,9 @@
   border-radius: 16px;
   box-shadow: 0 8px 24px #0002;
 }
-.ar-session-notice p { margin: 0 0 12px; }
+.ar-session-notice p {
+  margin: 0 0 12px;
+}
 .ar-session-notice button {
   display: block;
   width: 100%;
@@ -217,4 +219,7 @@
   border-radius: 999px;
   cursor: pointer;
 }
-.ar-session-notice button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.ar-session-notice button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

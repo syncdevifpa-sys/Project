@@ -1,0 +1,246 @@
+(function (A) {
+    'use strict';
+    if (!A.auth.getSessao().is_admin) return;
+    const host = document.getElementById('adminAcademicPanel'),
+        tab = document.getElementById('adminAcademicTab');
+    if (!host || !tab) return;
+    const { node, call, button, run, dialog, review, timestamp, reloadAfter } = A.academicUI;
+    const status = node('p');
+    status.setAttribute('role', 'status');
+    const list = node('div', undefined, 'ar-academic-grid'),
+        toolbar = node('div', undefined, 'ar-academic-toolbar');
+    const areaLabel = node('label', 'Gestão'),
+        area = node('select');
+    for (const [value, label] of [
+        ['records', 'Turmas e ofertas'],
+        ['catalog', 'Catálogo de disciplinas'],
+        ['requests', 'Pedidos de entrada']
+    ]) {
+        const option = node('option', label);
+        option.value = value;
+        area.append(option);
+    }
+    areaLabel.append(area);
+    const stateLabel = node('label', 'Situação'),
+        state = node('select');
+    for (const [value, label] of [
+        ['ativas', 'Ativas'],
+        ['arquivadas', 'Arquivadas'],
+        ['todas', 'Todas']
+    ]) {
+        const option = node('option', label);
+        option.value = value;
+        state.append(option);
+    }
+    stateLabel.append(state);
+    const add = button('Adicionar ao catálogo', () => catalogEditor());
+    toolbar.append(
+        areaLabel,
+        stateLabel,
+        add,
+        button('Atualizar', (event) => run(event.currentTarget, status, reload))
+    );
+    host.append(
+        node('h2', 'Turmas e disciplinas'),
+        node(
+            'p',
+            'Arquivar preserva o histórico. Restaurar reativa o registro escolhido. Exclusão definitiva exige ausência de vínculos e confirmação do nome.'
+        ),
+        toolbar,
+        status,
+        list
+    );
+    function show() {
+        for (const name of ['General', 'Requirements', 'Academic']) {
+            document.getElementById('admin' + name + 'Panel').hidden = name !== 'Academic';
+            document
+                .getElementById('admin' + name + 'Tab')
+                .setAttribute('aria-pressed', String(name === 'Academic'));
+        }
+        reload().catch((error) => (status.textContent = error.message));
+    }
+    tab.onclick = show;
+    area.onchange = () => reload().catch((error) => (status.textContent = error.message));
+    state.onchange = area.onchange;
+    async function reload() {
+        status.textContent = 'Carregando gestão acadêmica…';
+        list.replaceChildren();
+        stateLabel.hidden = area.value !== 'records';
+        add.hidden = area.value !== 'catalog';
+        if (area.value === 'requests') {
+            await review(list, status, reload);
+            status.textContent = '';
+            return;
+        }
+        if (area.value === 'catalog') {
+            const rows = await call('/catalog?todas=1');
+            for (const row of rows) {
+                const card = node('article', undefined, 'ar-academic-card');
+                card.append(
+                    node('h3', row.nome),
+                    node(
+                        'p',
+                        (row.ativo ? 'Ativa' : 'Desativada') +
+                            (row.legado ? ' · registro legado #' + row.id_catalogo : '')
+                    ),
+                    button('Editar catálogo', () => catalogEditor(row))
+                );
+                list.append(card);
+            }
+            status.textContent = rows.length ? '' : 'Nenhuma disciplina no catálogo.';
+            return;
+        }
+        const result = await call('/management?estado=' + state.value);
+        for (const [type, rows] of [
+            ['turma', result.cohorts],
+            ['oferta', result.offers]
+        ])
+            for (const row of rows) {
+                const key = type === 'turma' ? row.id_turma : row.id_disciplina,
+                    card = node('article', undefined, 'ar-academic-card');
+                card.append(node('h3', (type === 'turma' ? 'Turma: ' : 'Oferta: ') + row.nome));
+                if (type === 'oferta')
+                    card.append(
+                        node(
+                            'p',
+                            row.turma +
+                                ' · ' +
+                                row.ano_letivo +
+                                (row.regime_letivo === 'semestral'
+                                    ? '.' + row.semestre
+                                    : ' · ' +
+                                      (row.regime_letivo === 'anual'
+                                          ? 'anual'
+                                          : 'período não informado'))
+                        ),
+                        node('p', 'Professor: ' + (row.professor || 'Não disponível'))
+                    );
+                else card.append(node('p', row.curso + ' · ' + row.campus));
+                card.append(
+                    node(
+                        'p',
+                        row.arquivada_em ? 'Arquivada em ' + timestamp(row.arquivada_em) : 'Ativa'
+                    )
+                );
+                const actions = node('div', undefined, 'ar-academic-actions');
+                actions.append(
+                    button(row.arquivada_em ? 'Restaurar' : 'Arquivar', () =>
+                        archiveEditor(type, key, row, !!row.arquivada_em)
+                    ),
+                    button('Excluir definitivamente', () => deleteEditor(type, key, row))
+                );
+                const details = node('details');
+                details.append(node('summary', 'Detalhes e histórico'));
+                let loaded = false;
+                details.addEventListener('toggle', () => {
+                    if (!details.open || loaded) return;
+                    loaded = true;
+                    call('/history/' + type + '/' + key)
+                        .then((rows) => {
+                            if (!rows.length)
+                                details.append(
+                                    node(
+                                        'p',
+                                        'Nenhuma ação registrada. O arquivamento pode ser anterior à auditoria 1.1.31.'
+                                    )
+                                );
+                            for (const item of rows)
+                                details.append(
+                                    node(
+                                        'p',
+                                        ({
+                                            arquivar: 'Arquivamento',
+                                            restaurar: 'Restauração',
+                                            excluir_definitivamente: 'Exclusão definitiva',
+                                            matricular_turma: 'Inclusão de alunos'
+                                        }[item.acao] || item.acao) +
+                                            ' · ' +
+                                            item.nome_autor +
+                                            ' · ' +
+                                            timestamp(item.criado_em) +
+                                            (item.motivo ? ' · ' + item.motivo : '')
+                                    )
+                                );
+                        })
+                        .catch((error) => {
+                            loaded = false;
+                            status.textContent = error.message;
+                        });
+                });
+                card.append(actions, details);
+                list.append(card);
+            }
+        status.textContent = list.children.length ? '' : 'Nenhum registro nesta situação.';
+    }
+    function archiveEditor(type, key, row, restore) {
+        const e = dialog(
+            restore ? 'Restaurar registro' : 'Arquivar registro',
+            restore ? 'Restaurar' : 'Arquivar'
+        );
+        e.fields.append(
+            node('p', row.nome),
+            node(
+                'p',
+                restore && type === 'turma'
+                    ? 'As ofertas permanecerão arquivadas até serem restauradas individualmente. Convites cancelados não serão reativados.'
+                    : 'Histórico, participantes e materiais serão preservados.'
+            )
+        );
+        const reason = e.field('Motivo (opcional)');
+        reason.maxLength = 500;
+        e.submit(async () => {
+            const result = await call(
+                '/' + (restore ? 'restore' : 'archive') + '/' + type + '/' + key,
+                'POST',
+                { confirmacao: restore ? 'RESTAURAR' : 'ARQUIVAR', motivo: reason.value }
+            );
+            await reloadAfter(result, reload, status);
+        });
+    }
+    function deleteEditor(type, key, row) {
+        const e = dialog('Excluir definitivamente', 'Excluir definitivamente');
+        e.fields.append(
+            node(
+                'p',
+                'Esta ação não pode ser desfeita. Se houver qualquer vínculo ou histórico relacionado, o servidor bloqueará a exclusão; utilize Arquivar.'
+            ),
+            node('p', 'Nome exato: ' + row.nome)
+        );
+        const name = e.field('Digite o nome exato para confirmar', '', 'text', true),
+            reason = e.field('Motivo (opcional)');
+        reason.maxLength = 500;
+        e.submit(async () => {
+            const result = await call('/records/' + type + '/' + key, 'DELETE', {
+                confirmacao: 'EXCLUIR_DEFINITIVAMENTE',
+                nome_confirmacao: name.value,
+                motivo: reason.value
+            });
+            await reloadAfter(result, reload, status);
+        });
+    }
+    function catalogEditor(row) {
+        const e = dialog(
+            row ? 'Editar disciplina do catálogo' : 'Adicionar disciplina ao catálogo'
+        );
+        e.fields.append(
+            node(
+                'p',
+                'Este nome identifica a disciplina reutilizável. Os títulos, períodos e responsáveis das ofertas existentes não serão alterados.'
+            )
+        );
+        const name = e.field('Nome da disciplina', row?.nome || '', 'text', true);
+        name.maxLength = 100;
+        const active = row
+            ? e.field('Disponível para novas ofertas', !!row.ativo, 'checkbox')
+            : null;
+        e.submit(async () => {
+            const result = await call(
+                '/catalog' + (row ? '/' + row.id_catalogo : ''),
+                row ? 'PUT' : 'POST',
+                { nome: name.value, ...(row ? { ativo: active.checked, versao: row.versao } : {}) }
+            );
+            await reloadAfter(result, reload, status);
+        });
+    }
+    if (location.hash === '#turmas') show();
+})(window.Arcadia);

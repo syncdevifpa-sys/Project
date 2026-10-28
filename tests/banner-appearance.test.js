@@ -1,8 +1,22 @@
 const test = require('node:test');
-test('padrão configurado aplica-se às áreas de conteúdo, preservando Meu espaço',()=>{
-    const {usesSiteDefault}=require('../front/js/class-appearance.js');
-    for(const page of ['notices.html','calendar.html','projects.html','classes.html','people.html'])require('node:assert/strict').equal(usesSiteDefault(page),true);
-    for(const page of ['dashboard.html','tasks.html','documents.html','settings.html','community.html'])require('node:assert/strict').equal(usesSiteDefault(page),false);
+test('padrão configurado aplica-se às áreas de conteúdo, preservando Meu espaço', () => {
+    const { usesSiteDefault } = require('../front/js/class-appearance.js');
+    for (const page of [
+        'notices.html',
+        'calendar.html',
+        'projects.html',
+        'classes.html',
+        'people.html'
+    ])
+        require('node:assert/strict').equal(usesSiteDefault(page), true);
+    for (const page of [
+        'dashboard.html',
+        'tasks.html',
+        'documents.html',
+        'settings.html',
+        'community.html'
+    ])
+        require('node:assert/strict').equal(usesSiteDefault(page), false);
 });
 const assert = require('node:assert/strict');
 const { readFileSync, readdirSync } = require('node:fs');
@@ -37,31 +51,81 @@ test('todos os banners de página carregam personalização e estilos circulares
         assert.ok(html.includes('href="banner-appearance.css"'), page);
         assert.ok(html.includes('href="content-views.css"'), page);
     }
-    assert.equal(count, 13);
+    assert.equal(count, 14);
 });
 
 test('cards de resumo usam chaves independentes, paleta do portal e restauram apenas o item escolhido', () => {
     function node(title) {
-        const classes = new Set(), styles = new Map();
-        return { title, children: [], dataset: {}, styles,
-            classList: { add: (...names) => names.forEach((n) => classes.add(n)), remove: (...names) => names.forEach((n) => classes.delete(n)), toggle: (n, on) => on ? classes.add(n) : classes.delete(n) },
-            style: { setProperty: (k, v) => styles.set(k, v), removeProperty: (k) => styles.delete(k) },
-            setAttribute(k, v) { this[k] = v; },
-            querySelector(selector) { return selector === '.ar-banner-appearance-trigger' ? this.children.find((n) => n.className === 'ar-banner-appearance-trigger') : { textContent: title, setAttribute() {} }; },
-            append(n) { this.children.push(n); }
+        const classes = new Set(),
+            styles = new Map();
+        return {
+            title,
+            children: [],
+            dataset: {},
+            styles,
+            classList: {
+                add: (...names) => names.forEach((n) => classes.add(n)),
+                remove: (...names) => names.forEach((n) => classes.delete(n)),
+                toggle: (n, on) => (on ? classes.add(n) : classes.delete(n))
+            },
+            style: {
+                setProperty: (k, v) => styles.set(k, v),
+                removeProperty: (k) => styles.delete(k)
+            },
+            setAttribute(k, v) {
+                this[k] = v;
+            },
+            querySelector(selector) {
+                return selector === '.ar-banner-appearance-trigger'
+                    ? this.children.find((n) => n.className === 'ar-banner-appearance-trigger')
+                    : { textContent: title, setAttribute() {} };
+            },
+            append(n) {
+                this.children.push(n);
+            }
         };
     }
-    const hero = node('Olá, Usuário'), cards = ['unread-notices', 'open-tasks', 'pending-documents'].map((key) => {
-        const n = node(key); n.dataset.appearanceId = key; return n;
-    });
-    const preferences = { 'page:dashboard.html:0': { toString: null }, 'dashboard:summary:unread-notices': { mode: 'custom', background: '#ffffff', text: '#ffffff' },
-        'dashboard:summary:open-tasks': { mode: 'neutral' } };
-    const saved = new Map([['arcadia-class-banner-styles:7', JSON.stringify(preferences)]]);
-    const A = { auth: { getSessao: () => ({ id_usuario: 7 }) }, getIconSvg: (name) => '<svg data-icon="' + name + '"></svg>' };
-    const context = { window: { Arcadia: A }, location: { pathname: '/dashboard.html', search: '' },
-        localStorage: { getItem: (key) => saved.get(key), setItem: (key, value) => saved.set(key, value) },
-        document: { readyState: 'complete', querySelectorAll: (s) => s.includes('ar-stat') ? cards : [hero], createElement: () => node('') } };
-    vm.runInNewContext(readFileSync(path.join(__dirname, '../front/js/class-appearance.js'), 'utf8'), context);
+    const hero = node('Olá, Usuário'),
+        cards = ['unread-notices', 'open-tasks', 'pending-documents'].map((key) => {
+            const n = node(key);
+            n.dataset.appearanceId = key;
+            return n;
+        });
+    const preferences = {
+        'page:dashboard.html:0': { toString: null },
+        'dashboard:summary:unread-notices': {
+            mode: 'custom',
+            background: '#ffffff',
+            text: '#ffffff'
+        },
+        'dashboard:summary:open-tasks': { mode: 'neutral' }
+    };
+    const saved = new Map([
+        ['arcadiaToken', 'test'],
+        ['arcadia-class-banner-styles:7', JSON.stringify(preferences)]
+    ]);
+    const A = {
+        bannerPreferences: require('../front/js/banner-preferences'),
+        auth: { getSessao: () => ({ id_usuario: 7 }) },
+        getIconSvg: (name) => '<svg data-icon="' + name + '"></svg>'
+    };
+    const context = {
+        window: { Arcadia: A },
+        location: { pathname: '/dashboard.html', search: '' },
+        localStorage: {
+            getItem: (key) => saved.get(key),
+            setItem: (key, value) => saved.set(key, value)
+        },
+        document: {
+            readyState: 'complete',
+            querySelectorAll: (s) => (s.includes('ar-stat') ? cards : [hero]),
+            createElement: () => node('')
+        }
+    };
+    vm.runInNewContext(
+        readFileSync(path.join(__dirname, '../front/js/class-appearance.js'), 'utf8'),
+        context
+    );
     assert.equal(cards[0].styles.get('--personal-banner-ink'), '#000000');
     assert.match(cards[1].styles.get('--personal-banner-bg'), /var\(--surface/);
     assert.equal(cards[2].styles.size, 0);

@@ -2,6 +2,10 @@
 <html lang="pt-BR" data-theme="light">
   <head>
     <meta charset="UTF-8" />
+    <script src="js/banner-preferences.js"></script>
+    <script src="js/banner-bootstrap.js"></script>
+    <script src="js/dialog-shell.js"></script>
+    <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendário</title>
     <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -52,6 +56,7 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="task-reminders.css" />
+    <link rel="stylesheet" href="class-schedule.css" />
 </head>
 
   <body class="ar-calendar-page">
@@ -153,7 +158,7 @@
       </header>
 
       <!-- Compact Page Hero in Cyan -->
-      <section class="ar-hero ar-hero--cyan ar-hero--compact">
+      <section class="ar-hero ar-hero--cyan ar-hero--compact" data-initial-banner-slot="page">
         <svg
           class="ar-hero-art"
           viewBox="0 0 1000 220"
@@ -341,18 +346,19 @@
             >Público</span
           >
         </div>
-        <details class="ar-calendar-options" data-class-weekly-agenda>
-          <summary>Horários das minhas aulas</summary>
-        </details>
         <p id="calendarListStatus" role="status" hidden></p>
         <div class="ar-panel-body"><p role="status">Carregando calendário...</p></div>
       </section>
+      <section id="calendarDayReminders" class="ar-task-reminders ar-day-reminders" aria-label="Lembretes do dia selecionado" hidden></section>
+      <details class="ar-panel ar-calendar-options ar-weekly-agenda" data-class-weekly-agenda>
+        <summary>Horários das aulas</summary>
+      </details>
 
       <!-- Diálogo para adicionar evento -->
     </div>
 
     <script src="js/person-name.js"></script>
-<script src="js/api.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
     <script src="js/calendar-categories.js"></script>
@@ -370,6 +376,7 @@
     <script src="js/external-community.js"></script>
     <script src="js/reminder-time.js"></script>
     <script src="js/task-reminders.js"></script>
+    <script src="js/campus-timetable.js"></script>
     <script src="js/class-schedule.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/navigation.js"></script>

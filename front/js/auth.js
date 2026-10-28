@@ -145,8 +145,11 @@ window.Arcadia = window.Arcadia || {};
                     result.data?.error || 'Não foi possível preparar o acesso com Google.'
                 );
             await loadGoogleSdk();
-            const context = { ...result.data, expiresAt: Date.now() + 4 * 60 * 1000,
-                logoutEpoch: localStorage.getItem('arcadiaLogoutEpoch') };
+            const context = {
+                ...result.data,
+                expiresAt: Date.now() + 4 * 60 * 1000,
+                logoutEpoch: localStorage.getItem('arcadiaLogoutEpoch')
+            };
             window.google.accounts.id.initialize({
                 client_id: context.clientId,
                 nonce: context.nonce,
@@ -182,12 +185,15 @@ window.Arcadia = window.Arcadia || {};
             const message = document.createElement('p');
             message.textContent = 'Você já está conectado ao Arcádia.';
             const enter = document.createElement('button');
-            enter.type = 'button'; enter.textContent = 'Continuar para meu painel';
+            enter.type = 'button';
+            enter.textContent = 'Continuar para meu painel';
             enter.addEventListener('click', irParaPortal);
             const close = document.createElement('button');
-            close.type = 'button'; close.textContent = 'Fechar';
+            close.type = 'button';
+            close.textContent = 'Fechar';
             close.addEventListener('click', () => notice.remove());
-            notice.append(message, enter, close); document.body.append(notice);
+            notice.append(message, enter, close);
+            document.body.append(notice);
             return;
         }
         let typing = false;
@@ -202,7 +208,9 @@ window.Arcadia = window.Arcadia || {};
         try {
             await prepareGoogleAuth();
             let explicitLogout = false;
-            try { explicitLogout = !!sessionStorage.getItem('arcadiaExplicitLogout'); } catch {}
+            try {
+                explicitLogout = !!sessionStorage.getItem('arcadiaExplicitLogout');
+            } catch {}
             if (!typing && !explicitLogout && !document.querySelector('dialog[open]'))
                 window.google.accounts.id.prompt();
         } catch (_) {
@@ -279,7 +287,7 @@ window.Arcadia = window.Arcadia || {};
             if (previous?.isConnected) previous.focus();
         });
         document.body.append(dialog);
-        dialog.showModal();
+        window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal();
         dialog.querySelector('[data-google-close]').focus();
         try {
             window.google?.accounts?.id?.cancel();
@@ -471,16 +479,19 @@ window.Arcadia = window.Arcadia || {};
             const msgErro = form.querySelector('.mensagem-erro, .error-message');
             const msgSucesso = form.querySelector('.mensagem-sucesso, .success-message');
             const confirmationHelp = form.querySelector('[data-email-verification-help]');
-              const confirmedNotice = form.querySelector('[data-email-confirmation-notice]');
-              if (tipoAcesso === 'login' && confirmedNotice) {
-                  try {
-                      if (window.sessionStorage.getItem('arcadia.emailConfirmed') === '1') {
-                          confirmedNotice.hidden = false;
-                          confirmedNotice.textContent = 'E-mail confirmado. Entre com sua senha ou com o Google já vinculado à sua conta.';
-                          window.sessionStorage.removeItem('arcadia.emailConfirmed');
-                      }
-                  } catch { /* A confirmação não depende de armazenamento no navegador. */ }
-              }
+            const confirmedNotice = form.querySelector('[data-email-confirmation-notice]');
+            if (tipoAcesso === 'login' && confirmedNotice) {
+                try {
+                    if (window.sessionStorage.getItem('arcadia.emailConfirmed') === '1') {
+                        confirmedNotice.hidden = false;
+                        confirmedNotice.textContent =
+                            'E-mail confirmado. Entre com sua senha ou com o Google já vinculado à sua conta.';
+                        window.sessionStorage.removeItem('arcadia.emailConfirmed');
+                    }
+                } catch {
+                    /* A confirmação não depende de armazenamento no navegador. */
+                }
+            }
 
             const showError = (text) => {
                 if (msgErro) {
@@ -577,22 +588,24 @@ window.Arcadia = window.Arcadia || {};
                                 email,
                                 senha,
                                 tipo_usuario,
-                                ...(['discente','docente','servidor'].includes(tipo_usuario)
+                                ...(['discente', 'docente', 'servidor'].includes(tipo_usuario)
                                     ? {
                                           matricula: form.querySelector('#teacherMatricula')?.value,
                                           nome_usuario:
                                               form.querySelector('#teacherUsername')?.value,
                                           formacao: form.querySelector('#teacherFormacao')?.value,
-                                          curso_informado: form.querySelector('#studentCourseInfo')?.value
+                                          curso_informado:
+                                              form.querySelector('#studentCourseInfo')?.value
                                       }
                                     : {}),
                                 telefone:
                                     telefone ||
                                     (form.querySelector('#telefone')?.value || '').trim() ||
                                     null,
-                                id_curso: tipo_usuario === 'discente'
-                                    ? Number(form.querySelector('#curso')?.value) || null
-                                    : null
+                                id_curso:
+                                    tipo_usuario === 'discente'
+                                        ? Number(form.querySelector('#curso')?.value) || null
+                                        : null
                             },
                             { auth: false }
                         );
@@ -614,7 +627,9 @@ window.Arcadia = window.Arcadia || {};
                             return showError(data.error || 'Não foi possível realizar o cadastro.');
                         }
 
-                        const createdId = ['externo', 'discente', 'docente', 'servidor'].includes(tipo_usuario)
+                        const createdId = ['externo', 'discente', 'docente', 'servidor'].includes(
+                            tipo_usuario
+                        )
                             ? data?.externalId
                             : data?.userId;
                         if (
@@ -783,19 +798,28 @@ window.Arcadia = window.Arcadia || {};
         function atualizarCurso(tipo) {
             if (!cursoWrap) return;
             const ehAluno = tipo === 'discente';
-            const publicRole = ['discente','externo','docente','servidor'].includes(tipo);
+            const publicRole = ['discente', 'externo', 'docente', 'servidor'].includes(tipo);
             const teacherFields = document.getElementById('teacherSignupFields');
             if (teacherFields) {
-                const requestedRole = ['discente','docente','servidor'].includes(tipo);
+                const requestedRole = ['discente', 'docente', 'servidor'].includes(tipo);
                 teacherFields.hidden = !requestedRole;
                 for (const input of teacherFields.querySelectorAll('input')) {
-                    const applicable = input.id === 'studentCourseInfo' ? ehAluno : input.id === 'teacherFormacao' ? !ehAluno && requestedRole : requestedRole;
-                    input.required = applicable && !(tipo === 'servidor' && input.id === 'teacherFormacao');
+                    const applicable =
+                        input.id === 'studentCourseInfo'
+                            ? ehAluno
+                            : input.id === 'teacherFormacao'
+                              ? !ehAluno && requestedRole
+                              : requestedRole;
+                    input.required =
+                        applicable && !(tipo === 'servidor' && input.id === 'teacherFormacao');
                     input.disabled = !applicable;
-                    if (['studentCourseInfo','teacherFormacao'].includes(input.id)) input.closest('.ar-input-group').hidden = !applicable;
+                    if (['studentCourseInfo', 'teacherFormacao'].includes(input.id))
+                        input.closest('.ar-input-group').hidden = !applicable;
                 }
                 const trainingLabel = document.getElementById('teacherFormacaoLabel');
-                if (trainingLabel) trainingLabel.textContent = tipo === 'servidor' ? 'Formação no SIGAA (opcional)' : 'Formação no SIGAA';
+                if (trainingLabel)
+                    trainingLabel.textContent =
+                        tipo === 'servidor' ? 'Formação no SIGAA (opcional)' : 'Formação no SIGAA';
             }
             const academicVisible = false;
             cursoWrap.style.display = academicVisible ? 'flex' : 'none';
@@ -815,10 +839,10 @@ window.Arcadia = window.Arcadia || {};
                       ? 'Professor: confirme seu e-mail e aguarde a análise dos Requisitos. Enquanto isso, sua conta terá acesso de Comunidade externa.'
                       : tipo === 'servidor'
                         ? 'Servidor: confirme seu e-mail e aguarde a análise do vínculo. Formação é opcional; até a aprovação, seu acesso será de Comunidade externa.'
-                      : tipo === 'externo'
-                        ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
-                        : (tipo === 'docente' ? 'Professor' : 'Servidor') +
-                          ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
+                        : tipo === 'externo'
+                          ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
+                          : (tipo === 'docente' ? 'Professor' : 'Servidor') +
+                            ': utilize seu e-mail institucional e solicite a validação do cargo à administração do campus. O domínio do e-mail não comprova sua posse nem concede permissões. Este vínculo não permite cadastro público.';
         }
         atualizarCurso(paraTipoUsuario(vinculoInput?.value || 'Aluno'));
 

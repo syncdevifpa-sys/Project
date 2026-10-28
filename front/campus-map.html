@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="js/banner-preferences.js"></script>
+    <script src="js/banner-bootstrap.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mapa do campus · Arcádia</title>
+    <script src="js/theme.js"></script>
+    <script src="js/portal-bootstrap.js"></script>
+    <script src="js/dialog-shell.js"></script>
+    <script src="js/confirm-dialog.js"></script>
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="site-footer.css?v=3" />
+    <link rel="stylesheet" href="privacy-notice.css" />
+    <link rel="stylesheet" href="confirm-dialog.css" />
+    <link rel="stylesheet" href="dialog-shell.css" />
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="content-views.css" />
+    <link rel="stylesheet" href="campus-map.css" />
+  </head>
+  <body>
+    <div class="ar-app">
+      <!-- Navegação compartilhada do portal -->
+      <header class="ar-nav">
+        <a class="ar-brand" href="index.html">
+          <img
+            class="ar-brand-img"
+            src="assets/arcadia-emblem.png"
+            width="34"
+            height="34"
+            alt="Logo da Arcádia"
+          />
+          <span>
+            <span class="ar-brand-name">Arcádia</span>
+            <span class="ar-brand-sub">IFPA Campus Belém</span>
+          </span>
+        </a>
+        <nav class="ar-navpill" aria-label="Seções do portal">
+          <a href="index.html">Início</a>
+          <a href="dashboard.html">Meu painel</a>
+          <a href="notices.html">Avisos e notícias</a>
+          <a href="calendar.html">Calendário</a>
+          <a href="campus-map.html" aria-current="page">Mapa do campus</a>
+        </nav>
+        <div class="ar-nav-end">
+          <a id="mapAccountLink" class="ar-btn ar-btn--secondary" href="login.html">Entrar</a>
+        </div>
+      </header>
+      <main class="ar-main ar-campus-map-page">
+        <section class="ar-hero ar-hero--cyan ar-hero--compact" data-initial-banner-slot="page">
+          <h1 class="ar-hero-title">Mapa do campus</h1>
+          <div class="ar-hero-side">
+            <p class="ar-hero-desc">Encontre blocos e espaços do IFPA Campus Belém.</p>
+          </div>
+        </section>
+        <section class="ar-panel ar-campus-map-workspace" aria-label="Localização no campus">
+          <!-- Busca e filtros de locais -->
+          <div class="ar-campus-map-toolbar">
+            <label for="mapSearch">
+              Buscar bloco, curso ou setor
+              <input
+                id="mapSearch"
+                type="search"
+                placeholder="Ex.: biblioteca, DRIA, Física"
+                maxlength="100"
+              />
+            </label>
+            <label for="mapKind">
+              Mostrar
+              <select id="mapKind">
+                <option value="todos">Todos os locais</option>
+                <option value="bloco">Blocos</option>
+                <option value="espaco">Espaços</option>
+                <option value="acesso">Acessos</option>
+                <option value="pendente">Informações a confirmar</option>
+              </select>
+            </label>
+            <a class="ar-btn ar-btn--secondary" href="#mapPlaces">Ver locais</a>
+            <button type="button" id="mapClear" class="ar-btn ar-btn--secondary">Limpar filtros</button>
+          </div>
+          <div
+            id="mapCategories"
+            class="ar-campus-map-categories"
+            role="group"
+            aria-label="Filtrar por atividade"
+          >
+            <button type="button" data-category="todos" aria-pressed="true">Todos</button>
+            <button type="button" data-category="ensino" aria-pressed="false">Ensino</button>
+            <button type="button" data-category="laboratorios" aria-pressed="false">Laboratórios</button>
+            <button type="button" data-category="servicos" aria-pressed="false">Serviços</button>
+            <button type="button" data-category="esporte" aria-pressed="false">Esporte</button>
+            <button type="button" data-category="convivencia" aria-pressed="false">Convivência</button>
+          </div>
+          <!-- Planta interativa e painel de consulta -->
+          <div class="ar-campus-map-layout">
+            <div class="ar-campus-map-stage">
+              <div class="ar-campus-map-controls" role="group" aria-label="Controles do mapa">
+                <button type="button" id="mapZoomIn" class="ar-btn" aria-label="Ampliar mapa">+</button>
+                <output id="mapZoom" aria-label="Ampliação">100%</output>
+                <button type="button" id="mapZoomOut" class="ar-btn" aria-label="Reduzir mapa">−</button>
+                <button type="button" id="mapFit" class="ar-btn">Ver campus inteiro</button>
+                <button type="button" id="mapShowResults" class="ar-btn">Enquadrar resultados</button>
+                <details>
+                  <summary aria-label="Ajuda para navegar no mapa">?</summary>
+                  <p>
+                    Arraste para mover; dê dois cliques para ampliar. Use dois dedos ou Ctrl +
+                    roleta para ampliar. No teclado: setas movem; + e − ampliam/reduzem; 0 ajusta.
+                    Selecione um bloco com Enter ou Espaço. A lista oferece as mesmas informações.
+                  </p>
+                </details>
+              </div>
+              <p id="mapHover" class="ar-campus-map-hover" aria-live="off">
+                Passe pelo bloco ou selecione para explorar.
+              </p>
+              <div
+                id="mapViewport"
+                class="ar-campus-map-viewport"
+                tabindex="0"
+                role="region"
+                aria-label="Mapa interativo do campus. Use os controles ou a lista de locais."
+              >
+                <svg
+                  id="campusMap"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 800 1580"
+                  role="group"
+                  aria-labelledby="campusMapTitle campusMapDescription"
+                >
+                  <title id="campusMapTitle">Blocos e espaços do IFPA Campus Belém</title>
+                  <desc id="campusMapDescription">Planta esquemática do campus. Av. Rômulo Maiorana no topo, Av. Almirante Barroso embaixo, Trav. Timbó à esquerda e Trav. Estrella à direita. Não é um mapa de rotas nem uma planta oficial atualizada.</desc>
+                  <g class="ar-map-ground" aria-hidden="true">
+                    <rect x="42" y="52" width="708" height="1460" rx="8" />
+                    <path
+                      d="M430 420V630M430 820V1260M90 1000V1260M90 1450H710"
+                      class="ar-map-corridor"
+                    />
+                  </g>
+                  <g class="ar-map-streets" aria-hidden="true">
+                    <path d="M0 0H800V52H42V1510H800V1580H0ZM750 52H800V1510H750Z" />
+                    <text x="400" y="33">Av. Rômulo Maiorana</text>
+                    <text x="400" y="1550">Av. Almirante Barroso, 1155 · Marco</text>
+                    <text x="22" y="810" transform="rotate(-90 22 810)">Trav. Timbó</text>
+                    <text x="779" y="810" transform="rotate(90 779 810)">Trav. Estrella</text>
+                  </g>
+                  <g id="mapBlocks">
+                  </g>
+                </svg>
+              </div>
+              <!-- Visão geral sincronizada com o zoom -->
+              <div class="ar-campus-map-overview-row">
+                <button
+                  type="button"
+                  id="mapOverview"
+                  class="ar-campus-map-overview"
+                  aria-label="Visão geral do campus. Clique para recentralizar a área ampliada; no teclado, use as setas no mapa principal."
+                >
+                  <svg
+                    id="mapOverviewSvg"
+                    viewBox="0 0 800 1580"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <rect x="0" y="0" width="800" height="1580" class="ar-map-overview-ground" />
+                    <use href="#mapBlocks" pointer-events="none" />
+                    <rect
+                      id="mapCamera"
+                      x="0"
+                      y="0"
+                      width="800"
+                      height="1580"
+                      class="ar-map-overview-camera"
+                    />
+                  </svg>
+                  <span>Visão geral</span>
+                </button>
+                <p>
+                  A moldura mostra a área em exibição. Clique na miniatura para mudar o centro; use
+                  as setas no mapa principal se preferir o teclado.
+                </p>
+              </div>
+              <div class="ar-campus-map-legend" aria-label="Legenda do mapa">
+                <span>
+                  <i data-kind="bloco" aria-hidden="true">
+                  </i>
+                  Blocos · letras
+                </span>
+                <span>
+                  <i data-kind="espaco" aria-hidden="true">
+                  </i>
+                  Espaços · nomes
+                </span>
+                <span>
+                  <i data-kind="acesso" aria-hidden="true">
+                  </i>
+                  Acessos
+                </span>
+                <span>
+                  <i data-kind="selecionado" aria-hidden="true">
+                  </i>
+                  Local selecionado · contorno forte
+                </span>
+              </div>
+              <p id="mapStatus" class="ar-campus-map-status" role="status">Carregando locais…</p>
+            </div>
+            <!-- Detalhes da seleção e lista alternativa acessível -->
+            <div class="ar-campus-map-rail">
+              <aside id="mapInfo" class="ar-campus-map-info" aria-label="Informações do local">
+                <h2>Onde você quer ir?</h2>
+                <p>Busque um setor ou selecione um bloco para consultar os detalhes.</p>
+                <p class="ar-campus-map-hint">
+                  As letras identificam os blocos. Locais sem posição confirmada aparecem somente na
+                  lista.
+                </p>
+              </aside>
+              <section
+                id="mapPlaces"
+                class="ar-campus-map-places"
+                tabindex="-1"
+                aria-labelledby="mapPlacesTitle"
+              >
+                <h2 id="mapPlacesTitle">Locais do campus</h2>
+                <p id="mapResults" role="status">
+                </p>
+                <ul id="mapPlaceList">
+                </ul>
+              </section>
+            </div>
+          </div>
+          <!-- Pendências de atualização do mapa -->
+          <section class="ar-campus-map-improvements" aria-labelledby="mapImprovementsTitle">
+            <h2 id="mapImprovementsTitle">O que falta melhorar</h2>
+            <ul>
+              <li>Confirmar o bloco de Recursos Pesqueiros e Aquicultura.</li>
+              <li>
+                Detalhar as salas de Química no conjunto C/D, as demais áreas de Agrimensura,
+                Geografia e Cartografia em N/M e a divisão de Biologia e Microscopia entre S e T.
+              </li>
+              <li>
+                Completar os andares e números das salas, especialmente dos laboratórios do E,
+                Matemática e professores no M e dos serviços do N1.
+              </li>
+              <li>
+                Revisar a localização atual de ASCOM, Protocolo, Direção Geral, NEAB, DEX, DRCIN,
+                NAPNE e DQVAS, indicados no mapa histórico.
+              </li>
+              <li>Confirmar o uso atual da piscina e as áreas autorizadas de estacionamento.</li>
+              <li>
+                Refinar os contornos e cadastrar entradas, escadas e recursos de acessibilidade após
+                conferência no campus.
+              </li>
+            </ul>
+          </section>
+          <!-- Referências utilizadas -->
+          <details class="ar-campus-map-source">
+            <summary>Fonte e informações a confirmar</summary>
+            <p>
+              Esquema adaptado da planta de localização fornecida para o engBRASIL25, realizado em
+              2025 no IFPA Campus Belém. A disposição de blocos e vias segue essa referência, com
+              contornos aproximados. Não há validação de uma planta oficial atualizada.
+            </p>
+            <p>
+              Consulte as fontes oficiais nos detalhes de cada local. Elas confirmam somente os
+              dados descritos, sem validar todos os andares. A distribuição dos setores nos
+              conjuntos C/D, N/M e S/T e alguns andares do bloco E precisam de confirmação. Recursos
+              Pesqueiros e Aquicultura ainda não têm ponto atribuído.
+            </p>
+            <a href="assets/campus-map-reference-2025.png">Consultar planta-base</a>
+            ·
+            <a href="assets/campus-map-reference-2022.png">Mapa da Área Física de Ensino</a>
+            <p>
+              O mapa histórico acrescenta referências de setores e instalações. As atualizações mais
+              recentes prevalecem; itens ainda sem confirmação atual são identificados nos detalhes.
+            </p>
+          </details>
+          <noscript>
+            <p>
+              Ative o JavaScript para usar busca e ampliação. A imagem de referência permanece
+              disponível no link acima.
+            </p>
+          </noscript>
+        </section>
+      </main>
+    </div>
+    <!-- Contato e documentos do portal -->
+    <footer class="ar-site-footer" aria-label="Contato e informações legais">
+      <span>Arcádia · Portal acadêmico</span>
+      <nav aria-label="Contato e documentos">
+        <a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a>
+        <a href="privacy.html">Política de Privacidade</a>
+        <a href="terms.html">Termos de Uso</a>
+        <a href="cookies.html">Política de Cookies</a>
+      </nav>
+    </footer>
+    <!-- Dependências da página; o modelo deve carregar antes do controlador -->
+    <script src="js/person-name.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/portal.js"></script>
+    <script src="js/campus-map-model.js"></script>
+    <script src="js/campus-map.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/privacy-notice.js"></script>
+    <script src="js/class-appearance.js"></script>
+  </body>
+</html>

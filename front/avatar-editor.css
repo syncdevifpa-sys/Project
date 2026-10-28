@@ -58,7 +58,6 @@
 
 .ar-cover-crop canvas {
   width: 100%;
-
   object-fit: contain;
   border-radius: 12px;
 }

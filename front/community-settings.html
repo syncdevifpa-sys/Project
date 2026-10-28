@@ -2,6 +2,12 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8">
+    <script src="js/banner-preferences.js"></script>
+    <script src="js/banner-bootstrap.js"></script>
+    <script src="js/dialog-shell.js"></script>
+    <script src="js/confirm-dialog.js"></script>
+    <link rel="stylesheet" href="dialog-shell.css" />
+    <link rel="stylesheet" href="confirm-dialog.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <title>Configurações — Comunidade externa · Arcádia</title>
@@ -122,7 +128,7 @@
         </div>
       </header>
       <main id="mainContent" tabindex="-1">
-        <section class="ar-hero ar-hero--cyan ar-hero--compact" aria-labelledby="externalGreeting">
+        <section class="ar-hero ar-hero--cyan ar-hero--compact" aria-labelledby="externalGreeting" data-initial-banner-slot="page">
           <svg class="ar-hero-art" viewBox="0 0 1000 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"><path class="l" d="M420 214 C520 130 620 230 720 150 S900 96 1010 124"></path><circle class="s" cx="780" cy="180" r="65"></circle><circle class="s" cx="950" cy="60" r="30"></circle></svg>
           <div class="ar-hero-main"><p class="ar-hero-eyebrow">Configurações · Comunidade externa</p><h1 class="ar-hero-title" id="externalGreeting">Configurações</h1><p class="ar-hero-desc">Seus dados, preferências de acesso e segurança, reunidos em um só lugar.</p></div>
           <div class="ar-hero-actions"><a class="ar-btn ar-btn--primary" href="community.html">Voltar ao meu painel</a></div>
@@ -147,11 +153,7 @@
           <p
             >A exclusão é definitiva e só é permitida quando não existem ligações ou histórico. Se
             houver vínculos, solicite a desativação à administração.</p>
-          <form
-            id="accountRemoval"
-            data-endpoint="/api/external/account"
-
-          >
+          <form id="accountRemoval" data-endpoint="/api/external/account" >
             <label class="ar-field"
               >Senha atual<input
                 name="senha"

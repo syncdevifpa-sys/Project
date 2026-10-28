@@ -58,7 +58,10 @@
         visibilityForm.className = 'ar-calendar-visibility-form';
         const visibilityFields = make('fieldset');
         const visibilityTitle = make('legend', 'Visibilidade do calendário');
-        const visibilityHelp = make('p', 'Escolha o calendário e quem poderá consultar seus eventos. A alteração será confirmada antes de salvar.');
+        const visibilityHelp = make(
+            'p',
+            'Escolha o calendário e quem poderá consultar seus eventos. A alteração será confirmada antes de salvar.'
+        );
         visibilityHelp.id = 'calendarVisibilityHelp';
         visibilityHelp.className = 'ar-calendar-visibility-help';
         visibilityFields.setAttribute('aria-describedby', visibilityHelp.id);
@@ -66,37 +69,71 @@
         groupLabel.className = 'ar-field';
         const group = make('select');
         group.required = true;
-        const emptyGroup = make('option', 'Selecione um calendário'); emptyGroup.value = '';
+        const emptyGroup = make('option', 'Selecione um calendário');
+        emptyGroup.value = '';
         group.append(emptyGroup);
-        for (const name of [...new Set(editable.map(event => text(event.periodo_letivo)).filter(Boolean))]) {
-            const option = make('option', name); option.value = name; group.append(option);
+        for (const name of [
+            ...new Set(editable.map((event) => text(event.periodo_letivo)).filter(Boolean))
+        ]) {
+            const option = make('option', name);
+            option.value = name;
+            group.append(option);
         }
         groupLabel.append(group);
-        const scopeLabel = make('label', 'Quem pode consultar'); scopeLabel.className = 'ar-field';
+        const scopeLabel = make('label', 'Quem pode consultar');
+        scopeLabel.className = 'ar-field';
         const scope = make('select');
-        for (const [value,label] of Object.entries(A.contentFields.calendar.fields.find(field => field[0] === 'visibilidade')[2])) {
-            const option = make('option', label); option.value = value; scope.append(option);
+        for (const [value, label] of Object.entries(
+            A.contentFields.calendar.fields.find((field) => field[0] === 'visibilidade')[2]
+        )) {
+            const option = make('option', label);
+            option.value = value;
+            scope.append(option);
         }
-        scope.value = 'institucional'; scopeLabel.append(scope);
-        const apply = make('button', 'Aplicar visibilidade'); apply.type = 'submit';
+        scope.value = 'institucional';
+        scopeLabel.append(scope);
+        const apply = make('button', 'Aplicar visibilidade');
+        apply.type = 'submit';
         apply.className = 'ar-btn ar-btn--secondary';
         visibilityFields.append(visibilityTitle, visibilityHelp, groupLabel, scopeLabel, apply);
         visibilityForm.append(visibilityFields);
-        visibilityForm.addEventListener('submit', async event => {
+        visibilityForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const selected = events.filter(row => text(row.periodo_letivo) === group.value);
+            const selected = events.filter((row) => text(row.periodo_letivo) === group.value);
             if (!group.value || !selected.length) return;
-            if (selected.some(row => !A.contentEditor.canEdit('calendar', row))) {
-                status.textContent = 'Este calendário contém eventos de outros responsáveis. Edite somente seus eventos ou solicite à administração.';
+            if (selected.some((row) => !A.contentEditor.canEdit('calendar', row))) {
+                status.textContent =
+                    'Este calendário contém eventos de outros responsáveis. Edite somente seus eventos ou solicite à administração.';
                 return;
             }
-            if (!(await A.confirmAction({ title: 'Alterar visibilidade do calendário?', message: 'A mudança vale para os ' + selected.length + ' eventos deste calendário. Lembretes vinculados precisarão de revisão.', items: [group.value, scope.options[scope.selectedIndex].textContent], confirmLabel: 'Alterar visibilidade' }))) return;
+            if (
+                !(await A.confirmAction({
+                    title: 'Alterar visibilidade do calendário?',
+                    message:
+                        'A mudança vale para os ' +
+                        selected.length +
+                        ' eventos deste calendário. Lembretes vinculados precisarão de revisão.',
+                    items: [group.value, scope.options[scope.selectedIndex].textContent],
+                    confirmLabel: 'Alterar visibilidade'
+                }))
+            )
+                return;
             apply.disabled = true;
             try {
-                const result = await A.api.expect(A.api.put('/api/calendar/visibility', { ids: selected.map(row => Number(row.id_evento)), visibilidade: scope.value }));
-                await onSuccess({ visibilidade: scope.value }); status.textContent = result.message; dialog.close();
-            } catch (error) { status.textContent = error.message; }
-            finally { apply.disabled = false; }
+                const result = await A.api.expect(
+                    A.api.put('/api/calendar/visibility', {
+                        ids: selected.map((row) => Number(row.id_evento)),
+                        visibilidade: scope.value
+                    })
+                );
+                await onSuccess({ visibilidade: scope.value });
+                status.textContent = result.message;
+                dialog.close();
+            } catch (error) {
+                status.textContent = error.message;
+            } finally {
+                apply.disabled = false;
+            }
         });
         const list = make('div');
         list.className = 'ar-calendar-edit-list';
@@ -147,7 +184,7 @@
         dialog.append(heading, visibilityForm, label, status, list, close);
         document.body.append(dialog);
         render();
-        dialog.showModal();
+        window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal();
         heading.tabIndex = -1;
         heading.focus({ preventScroll: true });
         dialog.scrollTop = 0;

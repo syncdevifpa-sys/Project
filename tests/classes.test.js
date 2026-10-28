@@ -14,7 +14,9 @@ function fixture({
     uniqueConflict = false,
     offers = null,
     teacherActive = true,
-    archived = false
+    archived = false,
+    academicReady = false,
+    catalogDuplicate = false
 } = {}) {
     let membershipActive = enrolled,
         inviteValid = invite;
@@ -41,6 +43,24 @@ function fixture({
     const database = {
         async execute(sql, args = []) {
             queries.push({ sql, args });
+            if (sql.startsWith('SELECT checksum'))
+                return [
+                    academicReady
+                        ? [
+                              {
+                                  checksum:
+                                      require('../backend/src/services/academic-management.service')
+                                          .CHECKSUM
+                              }
+                          ]
+                        : []
+                ];
+            if (sql.startsWith('SELECT id_catalogo,nome'))
+                return [[{ id_catalogo: 50, nome: 'Programação' }]];
+            if (sql.startsWith('SELECT id_catalogo FROM academico_oferta_catalogo'))
+                return [[{ id_catalogo: 50 }]];
+            if (sql.startsWith('SELECT d.id_disciplina FROM academico_oferta_catalogo'))
+                return [catalogDuplicate ? [{ id_disciplina: 99 }] : []];
             if (sql.startsWith('SELECT id_usuario, tipo_usuario')) return [[actor]];
             if (sql.startsWith('SELECT id_usuario FROM usuarios WHERE id_usuario=?'))
                 return [teacherActive ? [{ id_usuario: args[0] }] : []];
@@ -150,9 +170,10 @@ function fixture({
     };
 }
 test('professor cria sua disciplina reutilizando a turma compartilhada e ignora proprietário forjado', async () => {
-    const f = fixture();
+    const f = fixture({ academicReady: true });
     await f.service.create(7, {
         id_curso: 1,
+        id_catalogo: 50,
         nome: 'Programação',
         turma: '2026 A',
         ano_ingresso: 2026,
@@ -167,13 +188,14 @@ test('professor cria sua disciplina reutilizando a turma compartilhada e ignora 
     assert.doesNotMatch(f.writes[0].sql, /ON DUPLICATE/);
     assert.deepEqual(f.writes[1].args, [2, 7, 'Programação', 2026, 'semestral', 1]);
     assert.ok(f.lifecycle.includes('commit'));
-    const student = fixture({ role: 'discente' });
+    const student = fixture({ academicReady: true, role: 'discente' });
     await assert.rejects(student.service.create(7, {}), { status: 403 });
     assert.equal(student.writes.length, 0);
 });
 test('admin cria disciplina com professor ativo; contas comuns não atribuem responsáveis', async () => {
     const body = {
         id_curso: 1,
+        id_catalogo: 50,
         nome: 'Programação',
         turma: '2026 A',
         ano_ingresso: 2026,
@@ -184,7 +206,7 @@ test('admin cria disciplina com professor ativo; contas comuns não atribuem res
         campus: 'Belém',
         id_professor: 8
     };
-    const admin = fixture({ role: 'servidor', admin: true });
+    const admin = fixture({ academicReady: true, role: 'servidor', admin: true });
     await admin.service.create(7, body);
     assert.deepEqual(admin.writes[1].args, [2, 8, 'Programação', 2026, 'semestral', 1]);
     const list = await admin.service.list(7);
@@ -192,11 +214,11 @@ test('admin cria disciplina com professor ativo; contas comuns não atribuem res
     assert.equal(list.canAdminister, true);
     assert.equal((await admin.service.teachers(7))[0].id_usuario, 8);
     await admin.service.cohorts(7);
-    const invalid = fixture({ admin: true, teacherActive: false });
+    const invalid = fixture({ academicReady: true, admin: true, teacherActive: false });
     await assert.rejects(invalid.service.create(7, body), { status: 400 });
     assert.equal(invalid.writes.length, 0);
     for (const role of ['discente', 'docente', 'servidor']) {
-        const common = fixture({ role });
+        const common = fixture({ academicReady: true, role });
         await assert.rejects(common.service.teachers(7), { status: 403 });
         await assert.rejects(
             common.service.updateSubject(7, 3, { nome: 'Outra', id_professor: 8 }),
@@ -263,7 +285,7 @@ test('remover aluno revoga apenas a matrícula da disciplina administrada', asyn
     await f.service.removeStudent(7, 3, 10);
     assert.equal(f.writes.length, 1);
     assert.deepEqual(f.writes[0].args, [3, 10]);
-    assert.match(f.writes[0].sql, /DELETE FROM academico_matriculas/);
+    assert.match(f.writes[0].sql, /UPDATE academico_matriculas SET ativa=0,encerrado_em=NOW/);
     const stranger = fixture({ teacher: 8 });
     await assert.rejects(stranger.service.removeStudent(7, 3, 10), { status: 403 });
     assert.equal(stranger.writes.length, 0);
@@ -426,9 +448,10 @@ test('ofertas semestrais usam a mesma turma e preservam opção anual sem invent
     assert.throws(() => offering({}), { status: 400 });
     assert.deepEqual(offering({ regime_letivo: 'anual' }), { regime_letivo: 'anual', semestre: 0 });
     assert.equal(offeringPeriod({ ano_letivo: 2025 }), '2025.legado');
-    const f = fixture(),
+    const f = fixture({ academicReady: true }),
         body = {
             id_curso: 1,
+            id_catalogo: 50,
             nome: 'Programação',
             turma: '2026 A',
             ano_ingresso: 2026,
@@ -520,6 +543,7 @@ test('nome de turma é normalizado, duplicidade é global e conflito concorrente
     assert.equal(normalizeCohort('  Turma   B  '), 'Turma B');
     const body = {
         id_curso: 1,
+        id_catalogo: 50,
         nome: 'Disciplina',
         turma: '  Turma   B ',
         ano_ingresso: 2026,
@@ -528,11 +552,11 @@ test('nome de turma é normalizado, duplicidade é global e conflito concorrente
         turno: 'manha',
         campus: 'Belém'
     };
-    const ok = fixture();
+    const ok = fixture({ academicReady: true });
     await ok.service.create(7, body);
     assert.deepEqual(ok.writes[0].args.slice(1, 3), ['Turma B', 'turma b']);
     for (const options of [{ duplicateName: true }, { uniqueConflict: true }]) {
-        const f = fixture(options);
+        const f = fixture({ ...options, academicReady: true });
         await assert.rejects(
             f.service.create(7, body),
             (e) => e.status === 409 && /turma com esse nome/.test(e.message)
@@ -540,7 +564,7 @@ test('nome de turma é normalizado, duplicidade é global e conflito concorrente
         assert.ok(f.lifecycle.includes('rollback'));
         assert.ok(!f.writes.some((q) => q.sql.startsWith('INSERT INTO academico_disciplinas')));
     }
-    const reuse = fixture();
+    const reuse = fixture({ academicReady: true });
     await reuse.service.create(7, { ...body, id_turma: 2 });
     assert.ok(!reuse.writes.some((q) => q.sql.startsWith('INSERT INTO academico_turmas')));
     assert.equal(reuse.writes[0].args[0], 2);
@@ -610,29 +634,116 @@ test('renomear turma normaliza o nome e não permite conflito com outra turma', 
     assert.ok(conflict.lifecycle.includes('rollback'));
 });
 
-
 test('exclusão lógica exige confirmação e permissão, sem apagar materiais ou matrículas', async () => {
     const own = fixture();
     await assert.rejects(own.service.archiveSubject(7, 3, {}), { status: 400 });
-    await assert.rejects(fixture({ teacher: 9 }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }), { status: 403 });
-    await assert.rejects(fixture({ role: 'discente', enrolled: true }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    await assert.rejects(
+        fixture({ teacher: 9 }).service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR' }),
+        { status: 403 }
+    );
+    await assert.rejects(
+        fixture({ role: 'discente', enrolled: true }).service.archiveSubject(7, 3, {
+            confirmacao: 'EXCLUIR'
+        }),
+        { status: 403 }
+    );
     await own.service.archiveSubject(7, 3, { confirmacao: 'EXCLUIR', id_professor: 99 });
     assert.ok(own.writes.some((w) => /SET arquivada_em=NOW/.test(w.sql)));
     assert.ok(own.writes.some((w) => /academico_convites SET estado='cancelado'/.test(w.sql)));
     assert.ok(!own.writes.some((w) => /DELETE|UPDATE academico_matriculas/.test(w.sql)));
     await assert.rejects(fixture({ archived: true }).service.download(7, 3, 5), { status: 404 });
-    await assert.rejects(fixture({ archived: true }).service.savePost(7, 3, { tipo: 'aviso', titulo: 'X' }), { status: 404 });
+    await assert.rejects(
+        fixture({ archived: true }).service.savePost(7, 3, { tipo: 'aviso', titulo: 'X' }),
+        { status: 404 }
+    );
 });
 test('somente administrador exclui turma inteira e cancela os convites de todas as ofertas', async () => {
-    await assert.rejects(fixture().service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' }), { status: 403 });
+    await assert.rejects(fixture().service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' }), {
+        status: 403
+    });
     const admin = fixture({ admin: true });
     await admin.service.archiveCohort(7, 2, { confirmacao: 'EXCLUIR' });
-    assert.ok(admin.writes.some((w) => w.sql.startsWith('UPDATE academico_turmas SET arquivada_em')));
-    assert.ok(admin.writes.some((w) => w.sql.startsWith('UPDATE academico_disciplinas SET arquivada_em')));
+    assert.ok(
+        admin.writes.some((w) => w.sql.startsWith('UPDATE academico_turmas SET arquivada_em'))
+    );
+    assert.ok(
+        admin.writes.some((w) => w.sql.startsWith('UPDATE academico_disciplinas SET arquivada_em'))
+    );
     assert.ok(admin.writes.some((w) => /UPDATE academico_convites v JOIN/.test(w.sql)));
     assert.ok(!admin.writes.some((w) => /DELETE/.test(w.sql)));
     assert.ok(admin.lifecycle.includes('commit'));
     await admin.service.list(7);
     const listing = admin.queries.find((q) => /SELECT d.\*, t.nome AS turma/.test(q.sql));
     assert.match(listing.sql, /d.arquivada_em IS NULL AND t.arquivada_em IS NULL/);
+});
+
+test('catálogo vincula nova oferta sem alterar item global; título alternativo não contorna unicidade do catálogo/período', async () => {
+    const body = {
+        id_turma: 2,
+        id_catalogo: 50,
+        nome: 'Programação especial',
+        ano_letivo: 2026,
+        regime_letivo: 'semestral',
+        semestre: 1
+    };
+    const f = fixture({ academicReady: true });
+    await f.service.create(7, body);
+    assert.deepEqual(
+        f.writes.find((w) => w.sql.startsWith('INSERT INTO academico_oferta_catalogo')).args,
+        [3, 50]
+    );
+    assert.ok(!f.writes.some((w) => /UPDATE academico_catalogo/.test(w.sql)));
+    const duplicate = fixture({ academicReady: true, catalogDuplicate: true });
+    await assert.rejects(duplicate.service.create(7, body), { status: 409 });
+    assert.equal(duplicate.writes.length, 0);
+    await assert.rejects(
+        fixture({ academicReady: true, catalogDuplicate: true }).service.updatePeriod(7, 3, {
+            ano_letivo: 2026,
+            regime_letivo: 'semestral',
+            semestre: 2,
+            confirmar_periodo: true
+        }),
+        { status: 409 }
+    );
+});
+test('professor renomeia somente a própria oferta; aluno e professor alheio não editam e atribuição forjada é rejeitada', async () => {
+    const f = fixture();
+    await f.service.updateOwnOffer(7, 3, { nome: 'Programação II' });
+    assert.deepEqual(f.writes[0].args, ['Programação II', 3]);
+    assert.ok(f.writes.every((w) => !w.sql.includes('catalogo')));
+    await assert.rejects(fixture({ teacher: 8 }).service.updateOwnOffer(7, 3, { nome: 'Outra' }), {
+        status: 403
+    });
+    await assert.rejects(
+        fixture({ role: 'discente', enrolled: true }).service.updateOwnOffer(7, 3, {
+            nome: 'Outra'
+        }),
+        { status: 403 }
+    );
+    await assert.rejects(f.service.updateOwnOffer(7, 3, { nome: 'Outra', id_professor: 99 }), {
+        status: 400
+    });
+});
+
+test('oferta exige catálogo disponível e usa seu nome quando título opcional fica vazio', async () => {
+    const body = {
+        id_turma: 2,
+        id_catalogo: 50,
+        nome: '',
+        ano_letivo: 2026,
+        regime_letivo: 'anual',
+        semestre: 0
+    };
+    const f = fixture({ academicReady: true });
+    await f.service.create(7, body);
+    assert.equal(
+        f.writes.find((row) => row.sql.startsWith('INSERT INTO academico_disciplinas')).args[2],
+        'Programação'
+    );
+    const missing = fixture({ academicReady: true });
+    await assert.rejects(missing.service.create(7, { ...body, id_catalogo: null, nome: 'Livre' }), {
+        status: 400
+    });
+    assert.equal(missing.writes.length, 0);
+    await assert.rejects(fixture().service.create(7, body), { status: 503 });
 });

@@ -44,3 +44,5 @@ Thumbs.db
 /tools/generated/
 /backend/generated/
 /front/js/person-name.js
+
+/front/js/campus-map-model.js

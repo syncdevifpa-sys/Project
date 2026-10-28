@@ -1,0 +1,128 @@
+.ar-academic-section {
+  margin-block: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  min-width: 0;
+}
+.ar-academic-section > summary {
+  min-height: 44px;
+  padding-block: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ar-academic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+}
+.ar-academic-card {
+  padding: 16px;
+  margin-block: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ar-academic-card h3 {
+  margin-top: 0;
+  font-size: 18px;
+}
+.ar-academic-card p {
+  line-height: 1.5;
+  font-size: 14px;
+}
+.ar-academic-card summary {
+  padding-block: 12px;
+  cursor: pointer;
+}
+.ar-academic-actions,
+.ar-academic-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+  margin-block: 12px;
+}
+.ar-academic-actions .ar-btn {
+  min-height: 44px;
+  white-space: normal;
+}
+.ar-academic-toolbar label {
+  display: grid;
+  gap: 6px;
+  max-width: 100%;
+  min-width: 0;
+}
+.ar-academic-toolbar :is(input, select) {
+  max-width: 100%;
+  width: min(28rem, 100%);
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font: inherit;
+}
+.ar-academic-dialog {
+  width: min(560px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+}
+.ar-academic-dialog::backdrop {
+  background: var(--scrim);
+}
+.ar-academic-fields {
+  display: grid;
+  gap: 16px;
+}
+.ar-academic-fields label {
+  display: grid;
+  gap: 6px;
+}
+.ar-academic-fields :is(input:not([type='checkbox']), select, textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font: inherit;
+}
+.ar-academic-fields .ar-academic-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.ar-academic-check input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+:is(.ar-academic-section, .ar-academic-dialog, #adminAcademicPanel) :focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .ar-academic-dialog {
+    padding: 16px;
+  }
+  .ar-academic-toolbar label {
+    width: 100%;
+  }
+}

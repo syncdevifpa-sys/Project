@@ -2,6 +2,12 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <script src="js/banner-preferences.js"></script>
+    <script src="js/banner-bootstrap.js"></script>
+    <script src="js/dialog-shell.js"></script>
+    <script src="js/confirm-dialog.js"></script>
+    <link rel="stylesheet" href="dialog-shell.css" />
+    <link rel="stylesheet" href="confirm-dialog.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="3PZ4Fij-cD3Jg2fTCUvty45bWIFZJc3bwiKSbrrr6XE" />
     <link rel="canonical" href="https://portalarcadia.vercel.app/" />
@@ -47,6 +53,7 @@
           <a href="index.html#public-news" class="nav-link">Notícias</a>
           <a href="index.html#public-projects" class="nav-link">Projetos</a>
           <a href="calendar.html" class="nav-link">Calendário</a>
+          <a href="campus-map.html" class="nav-link">Mapa do campus</a>
           <a href="index.html?sobre=1" class="nav-link">Sobre a Arcadia</a>
           <a href="#how-it-works" class="nav-link" data-home-intro>Como funciona</a>
           <a href="index.html?sobre=1#faq" class="nav-link">Ajuda</a>
@@ -81,6 +88,7 @@
           <a href="index.html#public-news" class="nav-link">Notícias</a>
           <a href="index.html#public-projects" class="nav-link">Projetos</a>
           <a href="calendar.html" class="nav-link">Calendário</a>
+          <a href="campus-map.html" class="nav-link">Mapa do campus</a>
           <a href="index.html?sobre=1" class="nav-link">Sobre a Arcadia</a>
           <a href="#how-it-works" class="nav-link" data-home-intro>Como funciona</a>
           <a href="index.html?sobre=1#faq" class="nav-link">Ajuda</a>
@@ -97,7 +105,7 @@
     </header>
 
     <!-- 2. Apresentação principal -->
-    <section data-home-intro class="hero-card" id="home">
+    <section data-home-intro class="hero-card" id="home" data-initial-banner-slot="page">
       <!-- Formas vetoriais decorativas -->
       <svg class="hero-deco-shape shape-star-yellow" viewBox="0 0 160 160" aria-hidden="true">
         <polygon
@@ -832,7 +840,7 @@
     </footer>
 
     <script src="js/person-name.js"></script>
-<script src="js/api.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/notice-text.js"></script>
     <link rel="stylesheet" href="avatar-editor.css" />
     <script src="js/avatar-editor.js"></script>

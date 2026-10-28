@@ -119,7 +119,7 @@
                 save.disabled = false;
             }
         };
-        view.showModal();
+        window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(view) : view.showModal();
         inputs.titulo.focus();
     }
     function choose(rows, onSuccess) {
@@ -135,7 +135,7 @@
             );
         list.append(button('Fechar', () => view.close()));
         view.append(list);
-        view.showModal();
+        window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(view) : view.showModal();
     }
     async function documents() {
         const root = document.getElementById('documentLibrary');

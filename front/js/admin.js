@@ -335,7 +335,12 @@
             $('editorFields').append(label);
         });
         if (select.value === 'users') {
-            $('editorFields').append(node('p', 'Aluno, Professor e Servidor são vínculos institucionais. A administração do aplicativo é uma permissão independente. Não é permitido retirar sua própria administração nem remover o último administrador ativo. Novos vínculos são aprovados em Requisitos.'));
+            $('editorFields').append(
+                node(
+                    'p',
+                    'Aluno, Professor e Servidor são vínculos institucionais. A administração do aplicativo é uma permissão independente. Não é permitido retirar sua própria administração nem remover o último administrador ativo. Novos vínculos são aprovados em Requisitos.'
+                )
+            );
             const label = node(
                     'label',
                     'Conferi a posse do e-mail institucional e o cargo com a instituição (necessário ao atribuir Professor/Servidor).'
@@ -346,7 +351,8 @@
             label.append(check);
             $('editorFields').append(label);
         }
-        $('adminEditor').showModal();
+        if (A.dialogShell) A.dialogShell.open($('adminEditor'));
+        else $('adminEditor').showModal();
     }
     $('editorCancel').addEventListener('click', () => $('adminEditor').close());
     $('adminNew').addEventListener('click', () => openEditor(null));

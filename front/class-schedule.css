@@ -1,0 +1,163 @@
+.ac-week-grid-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.ac-week-grid-scroll:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.ac-week-grid {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 14px;
+}
+.ac-week-grid caption {
+  text-align: start;
+  padding: 16px;
+  font-weight: 600;
+}
+.ac-week-grid :is(th, td) {
+  padding: 12px;
+  border-inline-end: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  text-align: start;
+}
+.ac-week-grid th {
+  white-space: nowrap;
+  background: var(--surface-sunken);
+}
+.ac-week-grid tbody th {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+}
+.ac-week-grid td {
+  min-width: 140px;
+}
+.ac-week-class {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border-inline-start: 3px solid var(--cyan);
+  border-radius: var(--radius-sm);
+  background: var(--cyan-soft);
+  color: var(--cyan-ink);
+  overflow-wrap: anywhere;
+}
+.ac-week-class + .ac-week-class {
+  margin-top: 8px;
+}
+.ac-week-class.ac-cancelled {
+  border-color: var(--danger);
+}
+.ac-week-empty {
+  color: var(--ink-muted);
+}
+.ac-week-break {
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+  text-align: center !important;
+  font-weight: 600;
+}
+.ac-week-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-block: 16px;
+}
+.ac-week-toolbar .ar-field {
+  display: grid;
+  gap: 6px;
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+}
+.ac-week-toolbar input[type='date'] {
+  box-sizing: border-box;
+  width: 12rem;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font: inherit;
+}
+.ac-week-toolbar .ar-btn {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 44px;
+}
+.ac-week-toolbar :focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .ac-week-toolbar {
+    gap: 10px;
+  }
+  .ac-week-toolbar .ar-btn {
+    flex-shrink: 1;
+    white-space: normal;
+  }
+  .ac-week-grid :is(th, td) {
+    padding: 8px;
+  }
+}
+
+.ac-week-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  margin: 16px 0 4px;
+  min-width: 0;
+}
+.ac-week-filters legend {
+  float: left;
+  margin-inline-end: 16px;
+  padding: 0;
+  font-weight: 600;
+  line-height: 44px;
+}
+.ac-week-filters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.ac-week-filters input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--cyan);
+}
+.ac-week-filters input:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.ac-week-filters label:has(input:disabled) {
+  color: var(--ink-muted);
+  cursor: default;
+}
+.ac-week-grid .ac-week-shift th {
+  position: static;
+  padding: 10px 12px;
+  border-top: 8px solid var(--surface);
+  background: var(--cyan-soft);
+  color: var(--cyan-ink);
+  font-weight: 700;
+}

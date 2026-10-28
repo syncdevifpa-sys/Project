@@ -83,7 +83,9 @@
                 }
             });
             document.body.append(dialog);
-            dialog.showModal();
+            window.Arcadia.dialogShell
+                ? window.Arcadia.dialogShell.open(dialog)
+                : dialog.showModal();
         });
         const controls = document.createElement('div');
         controls.className = 'ar-email-controls';

@@ -14,6 +14,7 @@
                 ['notices.html', 'Avisos e notícias'],
                 ['projects.html', 'Projetos'],
                 ['calendar.html', 'Agenda'],
+                ['campus-map.html', 'Mapa do campus'],
                 [
                     session.tipo_usuario === 'externo' ? 'community.html' : 'login.html',
                     session.tipo_usuario === 'externo' ? 'Minha conta' : 'Entrar'
@@ -33,47 +34,64 @@
             file: 'M6 3h8l4 4v14H6z M14 3v5h4 M9 12h6 M9 16h6',
             tasks: 'M9 6h11 M9 12h11 M9 18h11 M3 6h2 M3 12h2 M3 18h2',
             settings: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6',
+            map: 'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z M9 3v15 M15 6v15',
             calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 10h16',
             people: 'M16 21v-3a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v3 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M17 5a3 3 0 0 1 0 6 M17 14a4 4 0 0 1 4 4v3',
             class: 'M8 21v-3a4 4 0 0 1 8 0v3 M12 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6 M2 18v-2a3 3 0 0 1 4-3 M22 18v-2a3 3 0 0 0-4-3 M5 3a3 3 0 1 0 0 6 M19 3a3 3 0 1 1 0 6',
             projects: 'M3 7h7l2-3h9v17H3z',
             shield: 'M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z'
         };
-        const groups = external ? [
-            { name: 'Meu espaço', icon: 'panel', links: [
-                ['community.html','Meu painel','panel'],['tasks.html','Tarefas','tasks'],
-                ['community-settings.html','Configurações','settings']
-            ] },
-            { name: 'Conteúdo', icon: 'file', links: [
-                ['notices.html','Avisos e notícias','news'],['calendar.html','Calendário','calendar'],['projects.html','Projetos','projects']
-            ] }
-        ] : [
-            {
-                name: 'Meu espaço',
-                icon: 'panel',
-                links: [
-                    ['dashboard.html', 'Meu painel', 'panel'],
-                    ['tasks.html', 'Tarefas', 'tasks'],
-                    ['documents.html', 'Documentos', 'file'],
-                    ['settings.html', 'Configurações', 'settings']
-                ]
-            },
-            {
-                name: 'Conteúdo',
-                icon: 'file',
-                links: [
-                    ['notices.html', 'Avisos e notícias', 'news'],
-                    ['calendar.html', 'Calendário', 'calendar'],
-                    ['people.html', 'Pessoas', 'people'],
-                    ['projects.html', 'Projetos', 'projects']
-                ]
-            }
-        ];
-        if (!external) groups.push({
-            name: 'Turmas',
-            icon: 'class',
-            links: [['classes.html', 'Minhas turmas', 'class']]
-        });
+        const groups = external
+            ? [
+                  {
+                      name: 'Meu espaço',
+                      icon: 'panel',
+                      links: [
+                          ['community.html', 'Meu painel', 'panel'],
+                          ['tasks.html', 'Tarefas', 'tasks'],
+                          ['community-settings.html', 'Configurações', 'settings']
+                      ]
+                  },
+                  {
+                      name: 'Conteúdo',
+                      icon: 'file',
+                      links: [
+                          ['notices.html', 'Avisos e notícias', 'news'],
+                          ['calendar.html', 'Calendário', 'calendar'],
+                          ['projects.html', 'Projetos', 'projects'],
+                          ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  }
+              ]
+            : [
+                  {
+                      name: 'Meu espaço',
+                      icon: 'panel',
+                      links: [
+                          ['dashboard.html', 'Meu painel', 'panel'],
+                          ['tasks.html', 'Tarefas', 'tasks'],
+                          ['documents.html', 'Documentos', 'file'],
+                          ['settings.html', 'Configurações', 'settings']
+                      ]
+                  },
+                  {
+                      name: 'Conteúdo',
+                      icon: 'file',
+                      links: [
+                          ['notices.html', 'Avisos e notícias', 'news'],
+                          ['calendar.html', 'Calendário', 'calendar'],
+                          ['people.html', 'Pessoas', 'people'],
+                          ['projects.html', 'Projetos', 'projects'],
+                          ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  }
+              ];
+        if (!external)
+            groups.push({
+                name: 'Turmas',
+                icon: 'class',
+                links: [['classes.html', 'Minhas turmas', 'class']]
+            });
         if (session.is_admin && !external)
             groups.push({
                 name: 'Administração',
@@ -96,6 +114,33 @@
             line.setAttribute('d', path);
             svg.append(line);
             return svg;
+        }
+        const barEnd = document.querySelector('.ar-nav-end');
+        if (barEnd) {
+            const reminders = document.createElement('a');
+            reminders.className = 'ar-iconbtn ar-reminders-link';
+            reminders.href = ['tasks.html', 'calendar.html'].includes(page)
+                ? '#taskReminders'
+                : 'tasks.html#taskReminders';
+            reminders.title = 'Meus lembretes e notificações';
+            reminders.setAttribute('aria-label', reminders.title);
+            reminders.append(icon('M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4'));
+            reminders.addEventListener('click', (event) => {
+                if (['tasks.html', 'calendar.html'].includes(page) && Arcadia.reminderUI?.reveal) {
+                    event.preventDefault();
+                    Arcadia.reminderUI.reveal();
+                }
+            });
+            barEnd.prepend(reminders);
+        }
+        const bar = document.querySelector('.ar-nav');
+        if (bar && window.ResizeObserver) {
+            new window.ResizeObserver(() => {
+                document.documentElement.style.setProperty(
+                    '--portal-header-offset',
+                    Math.ceil(bar.getBoundingClientRect().height + 20) + 'px'
+                );
+            }).observe(bar);
         }
         const sidebar = document.createElement('aside');
         sidebar.id = 'portalSidebar';
@@ -129,7 +174,9 @@
         }
         if (!external) nav.append(link('index.html', 'Início', 'home'));
         const sections = [];
-        const stateKey = 'arcadia-sidebar-state:' + (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
+        const stateKey =
+            'arcadia-sidebar-state:' +
+            (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
         let savedState = {};
         try {
             const value = JSON.parse(sessionStorage.getItem(stateKey) || '{}');
@@ -228,10 +275,18 @@
         }
         function saveState() {
             try {
-                sessionStorage.setItem(stateKey, JSON.stringify({
-                    groups: Object.fromEntries(sections.map(section => [section.dataset.group, section.dataset.expanded === 'true'])),
-                    scroll: sidebar.scrollTop
-                }));
+                sessionStorage.setItem(
+                    stateKey,
+                    JSON.stringify({
+                        groups: Object.fromEntries(
+                            sections.map((section) => [
+                                section.dataset.group,
+                                section.dataset.expanded === 'true'
+                            ])
+                        ),
+                        scroll: sidebar.scrollTop
+                    })
+                );
             } catch {}
         }
         sidebar.addEventListener('scroll', saveState, { passive: true });
@@ -285,7 +340,8 @@
             layout();
         });
         layout();
-        sidebar.scrollTop = Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
+        sidebar.scrollTop =
+            Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
         document.documentElement?.setAttribute('data-portal-navigation', 'ready');
     }
     if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();
