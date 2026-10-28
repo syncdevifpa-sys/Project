@@ -18,7 +18,7 @@ test('zoom limita ampliação e deslocamento sem sair do campus nem mudar dados 
  assert.equal(m.zoom(view,.01).width,800);assert.equal(m.clamp({...view,x:-300,y:99999}).x,0);assert.equal(m.clamp({...view,x:0,y:99999}).y,790);
  assert.equal(JSON.stringify(m.places),before);
 });
-function ui(){
+function ui(hash=""){
  const A={campusMapModel:model(),auth:{getSessao:()=>({})}},ids=new Map();
  class Element{
   constructor(tag){this.tag=tag;this.children=[];this.dataset={};this.attrs={};this.events={};this.value='';this.classList={add(){}};this.captures=new Set();}
@@ -28,18 +28,19 @@ function ui(){
   querySelectorAll(tag){return this.children.flatMap(child=>[...(child.tag===tag?[child]:[]),...child.querySelectorAll(tag)]);}
   closest(){return this.dataset.place?this:this.parent?.closest()||null;}
   addEventListener(type,fn){this.events[type]=fn;}
-  focus(){this.focused=true;}click(){this.onclick?.();}
+  select(){this.selected=true;}focus(){this.focused=true;}click(){this.onclick?.();}
   setPointerCapture(id){this.captures.add(id);}hasPointerCapture(id){return this.captures.has(id);}releasePointerCapture(id){this.captures.delete(id);}
   getScreenCTM(){return {a:1,d:1,inverse:()=>({})};}createSVGPoint(){return {x:0,y:0,matrixTransform(){return {x:this.x,y:this.y};}};}
   emit(type,args={}){this.events[type]?.({target:this,preventDefault(){},stopPropagation(){},button:0,pointerId:1,clientX:100,clientY:100,...args});}
  }
- for(const id of ['campusMap','mapViewport','mapBlocks','mapInfo','mapPlaceList','mapStatus','mapZoom','mapSearch','mapKind','mapResults','mapZoomIn','mapZoomOut','mapFit','mapAccountLink','mapCategories'])ids.set(id,new Element('div'));
+ for(const id of ['campusMap','mapViewport','mapBlocks','mapInfo','mapPlaceList','mapStatus','mapZoom','mapSearch','mapKind','mapResults','mapZoomIn','mapZoomOut','mapFit','mapAccountLink','mapCategories','mapShowResults','mapHover','mapClear','mapOverview','mapOverviewSvg','mapCamera'])ids.set(id,new Element('div'));
  for(const value of ['todos','ensino','laboratorios','servicos','esporte','convivencia']){
   const button=new Element('button');button.dataset.category=value;ids.get('mapCategories').append(button);
  }
  ids.get('mapKind').value='todos';
- vm.runInNewContext(fs.readFileSync('front/js/campus-map.js','utf8'),{window:{Arcadia:A},document:{getElementById:id=>ids.get(id),createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag)}});
- return {ids,A};
+ const w={Arcadia:A,location:{hash,href:'http://localhost/campus-map.html'+hash},events:{},addEventListener(type,fn){this.events[type]=fn;},history:{replaceState(a,b,value){w.location.hash=value;w.location.href='http://localhost/campus-map.html'+value;}}};
+ vm.runInNewContext(fs.readFileSync('front/js/campus-map.js','utf8'),{window:w,document:{getElementById:id=>ids.get(id),createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag)}});
+ return {ids,A,w};
 }
 test('busca e lista oferecem os mesmos dados; local pendente não cria marcador no SVG',()=>{
  const f=ui(),get=id=>f.ids.get(id);assert.equal(get('mapBlocks').children.length,f.A.campusMapModel.places.filter(row=>row.path).length);
@@ -100,13 +101,13 @@ test('correções da equipe distinguem Estradas, serviços e setores sem localiz
 
 test('filtros de atividade combinam busca e tipo sem atribuir ponto a local pendente',()=>{
  const m=model();
- assert.deepEqual(Array.from(m.search('','todos','esporte'),row=>row.id),['q','x','campo']);
+ assert.deepEqual(Array.from(m.search('','todos','esporte'),row=>row.id),['q','x','campo','piscina']);
  assert.equal(m.search('lanchonete','todos','servicos')[0].id,'p');
  assert.equal(m.search('lanchonete','todos','esporte').length,0);
  assert.equal(m.search('Recursos Pesqueiros','pendente','ensino')[0].path,'');
  const f=ui(),get=id=>f.ids.get(id),chips=get('mapCategories').children;
  chips.find(row=>row.dataset.category==='esporte').onclick();
- assert.equal(get('mapPlaceList').children.length,3);
+ assert.equal(get('mapPlaceList').children.length,4);
  assert.equal(chips.find(row=>row.dataset.category==='esporte').attrs['aria-pressed'],'true');
  assert.equal(chips.find(row=>row.dataset.category==='todos').attrs['aria-pressed'],'false');
  get('mapSearch').value='Ginásio';get('mapSearch').emit('input');
@@ -117,4 +118,43 @@ test('filtros de atividade combinam busca e tipo sem atribuir ponto a local pend
  get('mapSearch').value='';get('mapSearch').emit('input');
  chips.find(row=>row.dataset.category==='todos').onclick();
  assert.equal(get('mapPlaceList').children.length,f.A.campusMapModel.places.length);
+});
+
+test('novos setores mantêm origem histórica sem alterar confirmações recentes',()=>{
+ const m=model();
+ for(const [query,id] of [['ASCOM','a'],['Protocolo','a'],['Direção Geral','a'],['NEAB','e'],['DEX','e'],['DRCIN','e'],['NAPNE','p'],['DQVAS','p']]){
+  const place=m.search(query).find(row=>row.id===id);assert.ok(place);assert.ok(place.notes.some(note=>note.includes(query)&&note.includes('a confirmar')));
+ }
+ assert.equal(m.search('Piscina')[0].source,'mapa-2022');
+ assert.equal(m.search('Estacionamento')[0].path,'');
+ assert.deepEqual(Array.from(m.search('Matemática'),row=>row.id),['m']);
+ assert.deepEqual(Array.from(m.search('Auditório Central'),row=>row.id),['b']);
+});
+test('enquadrar, explorar e compartilhar local funcionam com links diretos',()=>{
+ const f=ui(),get=id=>f.ids.get(id);
+ get('mapSearch').value='Biblioteca';get('mapSearch').emit('input');get('mapShowResults').onclick();
+ assert.notEqual(get('mapZoom').textContent,'100%');
+ const block=get('mapBlocks').children.find(row=>row.dataset.place==='f');block.emit('pointerenter');assert.match(get('mapHover').textContent,/Biblioteca/);
+ get('mapPlaceList').children[0].children[0].onclick();assert.equal(f.w.location.hash,'#local=f');
+ get('mapInfo').querySelectorAll('button').find(button=>button.textContent==='Compartilhar local').onclick();
+ const link=get('mapInfo').querySelectorAll('input')[0];assert.equal(link.readOnly,true);assert.equal(link.value,'http://localhost/campus-map.html#local=f');assert.equal(link.selected,true);
+ get('mapSearch').value='Estacionamento';get('mapSearch').emit('input');assert.equal(get('mapShowResults').disabled,true);
+ const direct=ui('#local=j');assert.match(direct.ids.get('mapInfo').children[0].textContent,/Bloco J/);
+ const invalid=ui('#local=desconhecido');assert.equal(invalid.ids.get('mapInfo').children.length,0);
+ get('mapFit').click();get('mapViewport').emit('dblclick');assert.equal(get('mapZoom').textContent,'200%');
+});
+
+test('visão geral acompanha zoom e recentraliza sem perder filtros; limpar restaura consulta',()=>{
+ const f=ui(),get=id=>f.ids.get(id);
+ get('mapSearch').value='Ginásio';get('mapSearch').emit('input');get('mapShowResults').onclick();
+ assert.equal(Number(get('mapCamera').attrs.width),Number(get('campusMap').attrs.viewBox.split(' ')[2]));
+ const width=get('mapCamera').attrs.width;
+ get('mapOverview').onclick({detail:1,clientX:400,clientY:790});
+ assert.equal(get('mapCamera').attrs.width,width);assert.equal(get('mapSearch').value,'Ginásio');
+ get('mapCategories').children.find(row=>row.dataset.category==='esporte').onclick();
+ get('mapKind').value='espaco';get('mapKind').emit('change');
+ get('mapClear').onclick();assert.equal(get('mapSearch').value,'');assert.equal(get('mapKind').value,'todos');
+ assert.equal(get('mapPlaceList').children.length,f.A.campusMapModel.places.length);
+ assert.equal(get('mapSearch').focused,true);
+ get('mapOverview').onclick({detail:0});assert.equal(get('mapZoom').textContent,'100%');
 });
