@@ -142,6 +142,8 @@ Avisos do `npm audit` são separados do erro fatal de build. A auditoria das dep
 
 Os testes usam HTTP local em portas temporárias, mocks de banco e mocks de SMTP. Não reiniciam o backend que estiver aberto. Para carregar mudanças de backend em uma sessão local existente, reinicie o processo quando for conveniente; depois abra as páginas com os nomes novos. Build e testes não comprovam conectividade com o MySQL externo nem entrega real de e-mail, e não fazem deploy.
 
+Nos arquivos-fonte, prefira formatação legível com a configuração de `.prettierrc.json`: HTML e CSS usam dois espaços; tags curtas, como `<script src="js/api.js"></script>`, ficam em uma linha quando couberem. Preserve blocos longos, scripts inline e espaços significativos em `pre`, `textarea` e textos. Formatação deve ter commit separado de mudanças funcionais; não reformate arquivos gerados, dependências ou migrações já aplicadas.
+
 ## Integração
 
 - `front/js/api.js`: requisições autenticadas, erros e operações CRUD. Atualizações parciais usam `PUT`; aprovação e rejeição de projetos usam `PATCH`.

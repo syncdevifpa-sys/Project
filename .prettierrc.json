@@ -13,7 +13,7 @@
     },
     {
       "files": "*.html",
-      "options": { "htmlWhitespaceSensitivity": "strict", "embeddedLanguageFormatting": "auto" }
+      "options": { "htmlWhitespaceSensitivity": "css", "embeddedLanguageFormatting": "auto" }
     }
   ]
 }
