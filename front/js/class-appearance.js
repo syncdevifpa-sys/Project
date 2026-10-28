@@ -227,6 +227,7 @@
             }
         }
     }
+    A.classAppearance.hydrate = init;
     window.addEventListener?.('storage', (event) => {
         if (
             event.key === null ||

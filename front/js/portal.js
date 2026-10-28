@@ -616,6 +616,12 @@
                 (A.token && A.token.get())
         );
 
+        document.querySelectorAll('[data-shell-user]').forEach(function (node) {
+            node.hidden = !hasValidSession;
+        });
+        document.querySelectorAll('[data-shell-signin]').forEach(function (node) {
+            node.hidden = hasValidSession;
+        });
         if (!hasValidSession) {
             document.querySelectorAll('[data-logout], [data-sign-out]').forEach(function (button) {
                 button.hidden = true;
@@ -756,7 +762,8 @@
         });
     }
 
-    function setupViewToolbar() {
+    function setupViewToolbar(root) {
+        const scope = root || document;
         var picker = document.getElementById('calendarViewMode');
         if (picker) {
             var group = document.createElement('div');
@@ -778,7 +785,7 @@
             picker.closest('label').before(group);
             styleViewSwitcher(group);
         }
-        document.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
+        scope.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
             styleViewSwitcher(seg);
             var buttons = seg.querySelectorAll('button');
             buttons.forEach(function (btn) {
@@ -790,7 +797,7 @@
                     var view =
                         btn.getAttribute('data-view') || btn.textContent.trim().toLowerCase();
 
-                    var container = document.getElementById('view-container');
+                    var container = scope.querySelector('#view-container');
                     if (!container) return;
 
                     container.querySelectorAll('[data-view-panel]').forEach(function (panel) {
@@ -824,6 +831,16 @@
         openCommandPalette: openCommandPalette,
         updateUserAvatar: updateUserAvatar,
         hydrateTopNav: hydrateTopNav,
-        styleViewSwitcher: styleViewSwitcher
+        styleViewSwitcher: styleViewSwitcher,
+        hydratePage: function (root) {
+            renderIcons(root);
+            setupViewToolbar(root);
+            const greeting = root.querySelector('#painelUserGreeting');
+            const person = window.Arcadia.auth?.getSessao()?.nome;
+            if (greeting && person)
+                greeting.textContent = (window.Arcadia.formatPersonName?.(person) || person).split(
+                    ' '
+                )[0];
+        }
     });
 })();

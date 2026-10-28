@@ -206,6 +206,9 @@ function ui(hash = '') {
         addEventListener(type, fn) {
             this.events[type] = fn;
         },
+        removeEventListener(type, fn) {
+            if (this.events[type] === fn) delete this.events[type];
+        },
         history: {
             replaceState(a, b, value) {
                 w.location.hash = value;
@@ -466,4 +469,39 @@ test('visão geral acompanha zoom e recentraliza sem perder filtros; limpar rest
     assert.equal(get('mapSearch').focused, true);
     get('mapOverview').onclick({ detail: 0 });
     assert.equal(get('mapZoom').textContent, '100%');
+});
+
+test('câmera acompanha a proporção de telas largas sem distorcer a planta', () => {
+    const m = model(),
+        aspect = 1.8,
+        fit = m.fit(aspect);
+    assert.ok(fit.width >= m.bounds.width && fit.height >= m.bounds.height);
+    const view = m.zoom(fit, 3, undefined, aspect);
+    assert.ok(Math.abs(view.width / view.height - aspect) < 1e-10);
+    const edge = m.clamp({ ...view, x: 99999, y: -99999 }, aspect);
+    assert.ok(Math.abs(edge.width / edge.height - aspect) < 1e-10);
+    assert.ok(edge.y <= 0);
+    assert.equal(m.fit().width, m.bounds.width);
+    assert.equal(m.fit().height, m.bounds.height);
+});
+
+test('montar o mapa novamente não duplica blocos e encerrar remove o listener de histórico', () => {
+    const f = ui(),
+        count = f.ids.get('mapBlocks').children.length;
+    f.A.campusMap.mount();
+    assert.equal(f.ids.get('mapBlocks').children.length, count);
+    assert.equal(Object.keys(f.w.events).filter((name) => name === 'hashchange').length, 1);
+    f.A.campusMap.dispose();
+    assert.equal(f.w.events.hashchange, undefined);
+});
+
+test('enquadrar resultados mantém os pontos visíveis também em uma tela larga', () => {
+    const m = model(),
+        rows = m.search('', 'todos', 'esporte'),
+        view = m.frame(rows, 1.8);
+    for (const row of rows) {
+        assert.ok(row.x >= view.x && row.x <= view.x + view.width);
+        assert.ok(row.y >= view.y && row.y <= view.y + view.height);
+    }
+    assert.ok(Math.abs(view.width / view.height - 1.8) < 1e-10);
 });

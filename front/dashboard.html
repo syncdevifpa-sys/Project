@@ -54,6 +54,7 @@
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="progressive-navigation.css" />
 </head>
   <body>
     <div class="ar-app">
@@ -152,196 +153,198 @@
           >
         </div>
       </header>
+      <main class="ar-main ar-route-main">
 
-      <!-- Page Hero Banner -->
-      <section class="ar-hero ar-hero--lime ar-hero--large" data-initial-banner-slot="page">
-        <svg
-          class="ar-hero-art"
-          viewBox="0 0 1000 220"
-          preserveAspectRatio="xMaxYMax meet"
-          aria-hidden="true"
-        >
-          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-          <rect
-            class="s"
-            x="770"
-            y="116"
-            width="180"
-            height="52"
-            rx="26"
-            opacity="0.75"
-            transform="rotate(-16 860 142)"
-          ></rect>
-          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-          <circle class="d" cx="752" cy="133" r="5"></circle>
-          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-        </svg>
-        <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
-        <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.</p
+        <!-- Page Hero Banner -->
+        <section class="ar-hero ar-hero--lime ar-hero--large" data-initial-banner-slot="page">
+          <svg
+            class="ar-hero-art"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="xMaxYMax meet"
+            aria-hidden="true"
           >
-          <div class="ar-hero-actions">
-            <a href="tasks.html" class="ar-btn ar-btn--primary">
-              <span>Ver tarefas</span>
-              <svg
-                class="ar-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
+            <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+            <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+            <rect
+              class="s"
+              x="770"
+              y="116"
+              width="180"
+              height="52"
+              rx="26"
+              opacity="0.75"
+              transform="rotate(-16 860 142)"
+            ></rect>
+            <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+            <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+            <circle class="d" cx="752" cy="133" r="5"></circle>
+            <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+          </svg>
+          <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
+          <div class="ar-hero-side">
+            <p class="ar-hero-desc"
+              >Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.</p
+            >
+            <div class="ar-hero-actions">
+              <a href="tasks.html" class="ar-btn ar-btn--primary">
+                <span>Ver tarefas</span>
+                <svg
+                  class="ar-icon"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <!-- StatCard Grid (3 columns) -->
-      <div class="ar-grid-3">
-        <div class="ar-stat ar-stat--cyan" data-appearance-id="unread-notices" data-initial-banner-slot="unread-notices">
-          <div class="ar-stat-label">Avisos não lidos</div>
-          <div class="ar-stat-value">—</div>
-          <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
-          <div class="ar-stat-foot">
-            <a href="notices.html" class="ar-link">
-              <span>Ver avisos</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="ar-stat ar-stat--yellow" data-appearance-id="open-tasks" data-initial-banner-slot="open-tasks">
-          <div class="ar-stat-label">Tarefas em aberto</div>
-          <div class="ar-stat-value">—</div>
-          <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
-          <div class="ar-stat-foot">
-            <a href="tasks.html" class="ar-link">
-              <span>Ver tarefas</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="ar-stat ar-stat--pink" data-appearance-id="pending-documents" data-initial-banner-slot="pending-documents">
-          <div class="ar-stat-label">Documentos em análise</div>
-          <div class="ar-stat-value">—</div>
-          <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
-          <div class="ar-stat-foot">
-            <a href="documents.html" class="ar-link">
-              <span>Ver documentos</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2 Column List Panels -->
-      <div class="ar-grid-2 ar-dashboard-summaries">
-        <!-- Panel: Upcoming Dates -->
-        <section class="ar-panel">
-          <div class="ar-panel-head">
-            <h3 class="ar-panel-label" style="margin: 0">Próximas datas</h3>
-            <a href="calendar.html" class="ar-link">
-              <span>Abrir calendário</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-          <div class="ar-panel-body"><p role="status">Carregando...</p></div>
         </section>
 
-        <!-- Panel: Recently Created -->
-        <section class="ar-panel">
-          <div class="ar-panel-head">
-            <h3 class="ar-panel-label" style="margin: 0">Avisos e notícias recentes</h3>
-            <a href="notices.html" class="ar-link">
-              <span>Ver avisos</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
+        <!-- StatCard Grid (3 columns) -->
+        <div class="ar-grid-3">
+          <div class="ar-stat ar-stat--cyan" data-appearance-id="unread-notices" data-initial-banner-slot="unread-notices">
+            <div class="ar-stat-label">Avisos não lidos</div>
+            <div class="ar-stat-value">—</div>
+            <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
+            <div class="ar-stat-foot">
+              <a href="notices.html" class="ar-link">
+                <span>Ver avisos</span>
+                <svg
+                  class="ar-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
           </div>
-          <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-        </section>
-      </div>
-    </div>
+
+          <div class="ar-stat ar-stat--yellow" data-appearance-id="open-tasks" data-initial-banner-slot="open-tasks">
+            <div class="ar-stat-label">Tarefas em aberto</div>
+            <div class="ar-stat-value">—</div>
+            <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
+            <div class="ar-stat-foot">
+              <a href="tasks.html" class="ar-link">
+                <span>Ver tarefas</span>
+                <svg
+                  class="ar-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="ar-stat ar-stat--pink" data-appearance-id="pending-documents" data-initial-banner-slot="pending-documents">
+            <div class="ar-stat-label">Documentos em análise</div>
+            <div class="ar-stat-value">—</div>
+            <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
+            <div class="ar-stat-foot">
+              <a href="documents.html" class="ar-link">
+                <span>Ver documentos</span>
+                <svg
+                  class="ar-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column List Panels -->
+        <div class="ar-grid-2 ar-dashboard-summaries">
+          <!-- Panel: Upcoming Dates -->
+          <section class="ar-panel">
+            <div class="ar-panel-head">
+              <h3 class="ar-panel-label" style="margin: 0">Próximas datas</h3>
+              <a href="calendar.html" class="ar-link">
+                <span>Abrir calendário</span>
+                <svg
+                  class="ar-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+            <div class="ar-panel-body"><p role="status">Carregando...</p></div>
+          </section>
+
+          <!-- Panel: Recently Created -->
+          <section class="ar-panel">
+            <div class="ar-panel-head">
+              <h3 class="ar-panel-label" style="margin: 0">Avisos e notícias recentes</h3>
+              <a href="notices.html" class="ar-link">
+                <span>Ver avisos</span>
+                <svg
+                  class="ar-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+            <div class="ar-panel-body"><p role="status">Carregando...</p></div>
+          </section>
+        </div>
+          </main>
+</div>
 
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
@@ -363,5 +366,6 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
+    <script src="js/progressive-navigation.js"></script>
 </body>
 </html>

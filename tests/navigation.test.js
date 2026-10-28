@@ -69,7 +69,7 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         createElementNS: (ns, t) => Object.assign(element(t), { namespaceURI: ns })
     };
     const Arcadia = { auth: { getSessao: () => session } };
-    vm.runInNewContext(code, {
+    const context = {
         window: {
             Arcadia,
             matchMedia: () => media,
@@ -84,8 +84,10 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         document,
         location: { pathname: '/front/' + page },
         localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v) }
-    });
+    };
+    vm.runInNewContext(code, context);
     return {
+        runAgain: () => vm.runInNewContext(code, context),
         nodes,
         A: Arcadia,
         body,
@@ -239,4 +241,50 @@ test('mapa é acessível na navegação pública, institucional e externa sem ab
                 )
             );
     }
+});
+
+test('atualização progressiva preserva a sidebar, sua posição e o item ativo sem duplicar init', () => {
+    const f = fixture('campus-map.html', { id_usuario: 7, tipo_usuario: 'discente' });
+    const walk = (node) => [node, ...(node.children || []).flatMap(walk)];
+    for (const node of f.nodes) {
+        const text = node.textContent;
+        Object.defineProperty(node, 'textContent', {
+            configurable: true,
+            get() {
+                return (
+                    this.ownText ??
+                    (this.children || []).map((child) => child.textContent || '').join('')
+                );
+            },
+            set(value) {
+                this.ownText = value;
+            }
+        });
+        if (text !== undefined) node.ownText = text;
+        node.querySelectorAll = (selector) =>
+            walk(node)
+                .slice(1)
+                .filter((child) =>
+                    selector === 'a[href]'
+                        ? child.tag === 'a' && child.href
+                        : selector === '[aria-current]'
+                          ? !!child.attributes['aria-current']
+                          : selector === '.ar-reminders-link'
+                            ? child.className === 'ar-iconbtn ar-reminders-link'
+                            : false
+                );
+        node.querySelector = (selector) => node.querySelectorAll(selector)[0] || null;
+    }
+    const original = f.sidebar,
+        count = f.nodes.length;
+    original.scrollTop = 120;
+    f.A.navigation.refresh('projects.html');
+    assert.equal(f.sidebar, original);
+    assert.equal(original.scrollTop, 120);
+    assert.equal(f.nodes.length, count);
+    const active = walk(original).filter((node) => node.attributes['aria-current']);
+    assert.equal(active.length, 1);
+    assert.equal(active[0].href, 'projects.html');
+    f.runAgain();
+    assert.equal(f.nodes.length, count);
 });

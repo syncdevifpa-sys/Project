@@ -554,32 +554,70 @@
                 normalize([place.name, ...place.notes].join(' ')).includes(text)
         );
     }
-    function clamp(view: View): View {
-        const width = Math.max(bounds.width / 6, Math.min(bounds.width, view.width)),
-            height = (width * bounds.height) / bounds.width;
+    // A câmera usa a proporção real da área visível, sem distorcer a planta.
+    function fit(aspect = bounds.width / bounds.height): View {
+        const width = Math.max(bounds.width, bounds.height * aspect);
+        return {
+            x: (bounds.width - width) / 2,
+            y: (bounds.height - width / aspect) / 2,
+            width,
+            height: width / aspect
+        };
+    }
+    function clamp(view: View, aspect = bounds.width / bounds.height): View {
+        const full = fit(aspect);
+        const width = Math.max(full.width / 6, Math.min(full.width, view.width));
+        const height = width / aspect;
+        const axis = (position: number, size: number, limit: number) =>
+            size >= limit ? (limit - size) / 2 : Math.max(0, Math.min(limit - size, position));
         return {
             width,
             height,
-            x: Math.max(0, Math.min(bounds.width - width, view.x)),
-            y: Math.max(0, Math.min(bounds.height - height, view.y))
+            x: axis(view.x, width, bounds.width),
+            y: axis(view.y, height, bounds.height)
         };
+    }
+    function frame(items: Place[], aspect = bounds.width / bounds.height): View {
+        const points = items.filter((place) => place.path);
+        if (!points.length) return fit(aspect);
+        const xs = points.map((place) => place.x),
+            ys = points.map((place) => place.y);
+        const left = Math.min(...xs),
+            right = Math.max(...xs),
+            top = Math.min(...ys),
+            bottom = Math.max(...ys);
+        const width = Math.max(240, right - left + 220, (bottom - top + 240) * aspect);
+        return clamp(
+            {
+                width,
+                height: width / aspect,
+                x: (left + right - width) / 2,
+                y: (top + bottom - width / aspect) / 2
+            },
+            aspect
+        );
     }
     function zoom(
         view: View,
         factor: number,
-        point = { x: view.x + view.width / 2, y: view.y + view.height / 2 }
+        point = { x: view.x + view.width / 2, y: view.y + view.height / 2 },
+        aspect = bounds.width / bounds.height
     ): View {
-        if (!Number.isFinite(factor) || factor <= 0) return clamp(view);
-        const width = Math.max(bounds.width / 6, Math.min(bounds.width, view.width / factor)),
+        if (!Number.isFinite(factor) || factor <= 0) return clamp(view, aspect);
+        const full = fit(aspect),
+            width = Math.max(full.width / 6, Math.min(full.width, view.width / factor)),
             ratio = width / view.width;
-        return clamp({
-            x: point.x - (point.x - view.x) * ratio,
-            y: point.y - (point.y - view.y) * ratio,
-            width,
-            height: (width * bounds.height) / bounds.width
-        });
+        return clamp(
+            {
+                x: point.x - (point.x - view.x) * ratio,
+                y: point.y - (point.y - view.y) * ratio,
+                width,
+                height: width / aspect
+            },
+            aspect
+        );
     }
-    const api = { bounds, places, categories, search, clamp, zoom };
+    const api = { bounds, places, categories, search, fit, clamp, frame, zoom };
     const target = window as Window & {
         Arcadia?: { [key: string]: unknown; campusMapModel?: typeof api };
     };
