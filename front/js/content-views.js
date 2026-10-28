@@ -48,6 +48,9 @@
         if (state.mode === 'table') {
             const wrap = make('div');
             wrap.className = 'ar-table-scroll';
+            wrap.tabIndex = 0;
+            wrap.setAttribute('role', 'region');
+            wrap.setAttribute('aria-label', 'Conteúdo em tabela');
             const table = make('table');
             table.className = 'ar-table';
             const head = make('thead'),
@@ -83,6 +86,9 @@
         }
         const board = make('div');
         board.className = 'ar-content-board';
+        board.tabIndex = 0;
+        board.setAttribute('role', 'region');
+        board.setAttribute('aria-label', 'Conteúdo em quadro');
         const groups = new Set([
             ...Object.keys(state.labels),
             ...state.rows.map((row) => row[state.groupKey] || '')

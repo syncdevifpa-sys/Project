@@ -54,6 +54,7 @@
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="progressive-navigation.css" />
 </head>
   <body>
     <div class="ar-app">
@@ -152,110 +153,112 @@
           >
         </div>
       </header>
+      <main class="ar-main ar-route-main">
 
-      <!-- PageHero Compact in Yellow -->
-      <section class="ar-hero ar-hero--yellow ar-hero--compact" data-initial-banner-slot="page">
-        <svg
-          class="ar-hero-art"
-          viewBox="0 0 1000 220"
-          preserveAspectRatio="xMaxYMax meet"
-          aria-hidden="true"
-        >
-          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-          <rect
-            class="s"
-            x="770"
-            y="116"
-            width="180"
-            height="52"
-            rx="26"
-            opacity="0.75"
-            transform="rotate(-16 860 142)"
-          ></rect>
-          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-          <circle class="d" cx="752" cy="133" r="5"></circle>
-          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-        </svg>
-        <h1 class="ar-hero-title">Projetos<sup class="ar-hero-count">(0)</sup></h1>
-        <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Projetos de pesquisa, extensão e inovação em andamento ou com inscrições abertas no
-            campus.</p
+        <!-- PageHero Compact in Yellow -->
+        <section class="ar-hero ar-hero--yellow ar-hero--compact" data-initial-banner-slot="page">
+          <svg
+            class="ar-hero-art"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="xMaxYMax meet"
+            aria-hidden="true"
           >
-          <div class="ar-hero-actions">
-            <button type="button" class="ar-btn ar-btn--primary" id="btnNovoProjeto">
-              <span>Enviar projeto</span>
-              <svg
-                class="ar-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </button>
+            <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+            <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+            <rect
+              class="s"
+              x="770"
+              y="116"
+              width="180"
+              height="52"
+              rx="26"
+              opacity="0.75"
+              transform="rotate(-16 860 142)"
+            ></rect>
+            <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+            <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+            <circle class="d" cx="752" cy="133" r="5"></circle>
+            <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+          </svg>
+          <h1 class="ar-hero-title">Projetos<sup class="ar-hero-count">(0)</sup></h1>
+          <div class="ar-hero-side">
+            <p class="ar-hero-desc"
+              >Projetos de pesquisa, extensão e inovação em andamento ou com inscrições abertas no
+              campus.</p
+            >
+            <div class="ar-hero-actions">
+              <button type="button" class="ar-btn ar-btn--primary" id="btnNovoProjeto">
+                <span>Enviar projeto</span>
+                <svg
+                  class="ar-icon"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
           </div>
+        </section>
+
+        <!-- ChipBar Thematic Area -->
+        <div class="ar-chipbar" role="group" aria-label="Eixo do projeto" id="chipbarProjetos">
+          <button
+            type="button"
+            class="ar-chip"
+            aria-pressed="true"
+            data-eixo="All"
+            data-filter-key="All"
+            >Todos<sup class="ar-sup">(0)</sup></button
+          >
+          <button
+            type="button"
+            class="ar-chip"
+            aria-pressed="false"
+            data-eixo="Research"
+            data-filter-key="Research"
+            >Pesquisa<sup class="ar-sup">(0)</sup></button
+          >
+          <button
+            type="button"
+            class="ar-chip"
+            aria-pressed="false"
+            data-eixo="Extension"
+            data-filter-key="Extension"
+            >Extensão<sup class="ar-sup">(0)</sup></button
+          >
+          <button
+            type="button"
+            class="ar-chip"
+            aria-pressed="false"
+            data-eixo="Teaching"
+            data-filter-key="Teaching"
+            >Ensino<sup class="ar-sup">(0)</sup></button
+          >
+          <button
+            type="button"
+            class="ar-chip"
+            aria-pressed="false"
+            data-eixo="Innovation"
+            data-filter-key="Innovation"
+            >Inovação<sup class="ar-sup">(0)</sup></button
+          >
         </div>
-      </section>
 
-      <!-- ChipBar Thematic Area -->
-      <div class="ar-chipbar" role="group" aria-label="Eixo do projeto" id="chipbarProjetos">
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="true"
-          data-eixo="All"
-          data-filter-key="All"
-          >Todos<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-eixo="Research"
-          data-filter-key="Research"
-          >Pesquisa<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-eixo="Extension"
-          data-filter-key="Extension"
-          >Extensão<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-eixo="Teaching"
-          data-filter-key="Teaching"
-          >Ensino<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-eixo="Innovation"
-          data-filter-key="Innovation"
-          >Inovação<sup class="ar-sup">(0)</sup></button
-        >
-      </div>
+        <!-- Projects Grid -->
+        <div class="ar-card-grid" id="gridProjetos"><p role="status">Carregando projetos...</p></div>
 
-      <!-- Projects Grid -->
-      <div class="ar-card-grid" id="gridProjetos"><p role="status">Carregando projetos...</p></div>
-
-      <!-- Modal Dialog: Submit Project -->
-    </div>
+        <!-- Modal Dialog: Submit Project -->
+          </main>
+</div>
 
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
@@ -281,5 +284,6 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
+    <script src="js/progressive-navigation.js"></script>
 </body>
 </html>

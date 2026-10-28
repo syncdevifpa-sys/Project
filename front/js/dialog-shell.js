@@ -69,6 +69,10 @@
                     state.sourceTitle = title;
                 }
             }
+            if (!node.hasAttribute('aria-label') && !node.hasAttribute('aria-labelledby')) {
+                if (!heading.id) heading.id = 'dialogShellTitle' + ++sequence;
+                node.setAttribute('aria-labelledby', heading.id);
+            }
             head.append(heading);
             state.heading = heading;
             const close =

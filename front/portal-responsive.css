@@ -1,6 +1,37 @@
 [hidden] {
   display: none !important;
 }
+.ar-content-shortcut {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1200;
+  transform: translateY(calc(-100% - 16px));
+  padding: 12px 20px;
+  border: 2px solid var(--focus);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+}
+.ar-content-shortcut:focus {
+  transform: none;
+}
+@media (pointer: coarse) {
+  .ar-btn,
+  .ar-iconbtn {
+    min-height: 44px;
+  }
+  .ar-iconbtn {
+    min-width: 44px;
+  }
+}
+@media (forced-colors: active) {
+  :is(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 3px;
+  }
+}
 .ar-navpill {
   min-width: 0;
 }

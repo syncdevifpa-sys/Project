@@ -3,11 +3,10 @@
     'use strict';
     const policy = A?.bannerPreferences;
     if (!policy) return;
-    const root = document.documentElement,
-        page = location.pathname.split('/').pop() || 'index.html';
-    const cards =
-        page === 'dashboard.html' ? ['unread-notices', 'open-tasks', 'pending-documents'] : [];
+    const root = document.documentElement;
+    const cards = ['unread-notices', 'open-tasks', 'pending-documents'];
     function apply() {
+        const page = location.pathname.split('/').pop() || 'index.html';
         for (const slot of ['page', ...cards]) {
             root.removeAttribute('data-initial-banner-' + slot);
             root.style.removeProperty('--initial-banner-' + slot + '-bg');
@@ -58,6 +57,7 @@
             /* Armazenamento indisponível ou inválido preserva o CSS original. */
         }
     }
+    A.bannerBootstrap = { apply };
     apply();
     window.addEventListener('storage', (event) => {
         if (

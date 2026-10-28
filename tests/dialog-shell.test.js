@@ -180,6 +180,8 @@ test('moldura separa cabeçalho do corpo rolável e restaura foco sem duplicar l
     assert.equal(dialog.children.length, 2);
     assert.equal(dialog.children[0].className, 'ar-dialog-shell-head');
     assert.equal(dialog.children[1].className, 'ar-dialog-shell-body');
+    assert.equal(dialog.attrs['aria-labelledby'], dialog.children[0].children[0].id);
+    assert.ok(dialog.attrs['aria-labelledby']);
     const close = dialog.children[0].children[1];
     assert.equal(close.attrs['aria-label'], 'Fechar janela');
     assert.equal(f.classes.has('ar-dialog-open'), true);

@@ -55,6 +55,7 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="content-views.css" />
   <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="progressive-navigation.css" />
 </head>
   <body>
     <div class="ar-app">
@@ -155,70 +156,72 @@
           >
         </div>
       </header>
+      <main class="ar-main ar-route-main">
 
-      <!-- Breadcrumb -->
-      <nav class="ar-crumbs" aria-label="Caminho de navegação">
-        <ol>
-          <li
-            ><a href="notices.html">Avisos e notícias</a
-            ><svg
-              class="ar-icon"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m9 18 6-6-6-6"></path></svg
-          ></li>
+        <!-- Breadcrumb -->
+        <nav class="ar-crumbs" aria-label="Caminho de navegação">
+          <ol>
+            <li
+              ><a href="notices.html">Avisos e notícias</a
+              ><svg
+                class="ar-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m9 18 6-6-6-6"></path></svg
+            ></li>
 
-          <li><span aria-current="page">Publicação</span></li>
-        </ol>
-      </nav>
+            <li><span aria-current="page">Publicação</span></li>
+          </ol>
+        </nav>
 
-      <!-- RecordDetailHero in Pink -->
-      <section class="ar-detail ar-detail--pink" data-initial-banner-slot="page">
-        <svg
-          class="ar-hero-art"
-          viewBox="0 0 1000 220"
-          preserveAspectRatio="xMaxYMax meet"
-          aria-hidden="true"
-        >
-          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-          <rect
-            class="s"
-            x="770"
-            y="116"
-            width="180"
-            height="52"
-            rx="26"
-            opacity="0.75"
-            transform="rotate(-16 860 142)"
-          ></rect>
-          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-          <circle class="d" cx="752" cy="133" r="5"></circle>
-          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-        </svg>
-        <div class="ar-detail-eyebrow"></div>
-        <h1 class="ar-detail-title">Carregando publicação...</h1>
-        <p class="ar-detail-desc"></p>
-        <div class="ar-detail-actions"></div>
-        <span class="ar-detail-status"></span>
-      </section>
+        <!-- RecordDetailHero in Pink -->
+        <section class="ar-detail ar-detail--pink" data-initial-banner-slot="page">
+          <svg
+            class="ar-hero-art"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="xMaxYMax meet"
+            aria-hidden="true"
+          >
+            <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+            <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+            <rect
+              class="s"
+              x="770"
+              y="116"
+              width="180"
+              height="52"
+              rx="26"
+              opacity="0.75"
+              transform="rotate(-16 860 142)"
+            ></rect>
+            <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+            <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+            <circle class="d" cx="752" cy="133" r="5"></circle>
+            <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+          </svg>
+          <div class="ar-detail-eyebrow"></div>
+          <h1 class="ar-detail-title">Carregando publicação...</h1>
+          <p class="ar-detail-desc"></p>
+          <div class="ar-detail-actions"></div>
+          <span class="ar-detail-status"></span>
+        </section>
 
-      <!-- InfoStrip -->
-      <div class="ar-info"></div>
+        <!-- InfoStrip -->
+        <div class="ar-info"></div>
 
-      <!-- Descrição -->
-      <h2 class="ar-h2">Sobre esta publicação</h2>
-      <p class="body" style="margin: 0; max-width: 720px"></p>
-    </div>
+        <!-- Descrição -->
+        <h2 class="ar-h2">Sobre esta publicação</h2>
+        <p class="body" style="margin: 0; max-width: 720px"></p>
+          </main>
+</div>
 
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
@@ -248,5 +251,6 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
+    <script src="js/progressive-navigation.js"></script>
 </body>
 </html>

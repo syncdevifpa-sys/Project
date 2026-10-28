@@ -2,10 +2,11 @@
 (function () {
     'use strict';
     function init() {
+        if (window.Arcadia?.navigation?.mounted) return;
         const host = document.querySelector('.ar-nav .ar-navpill');
         if (!host || !window.Arcadia?.auth) return;
-        const session = Arcadia.auth.getSessao(),
-            page = location.pathname.split('/').pop();
+        const session = Arcadia.auth.getSessao();
+        let page = location.pathname.split('/').pop();
         const external = session.tipo_usuario === 'externo';
         if (!session.tipo_usuario) {
             host.replaceChildren();
@@ -25,6 +26,19 @@
                 item.textContent = label;
                 host.append(item);
             }
+            Arcadia.navigation = {
+                mounted: true,
+                refresh(next) {
+                    for (const item of host.children) {
+                        if (
+                            item.href?.endsWith(next) ||
+                            (next === 'notice.html' && item.href?.endsWith('notices.html'))
+                        )
+                            item.setAttribute('aria-current', 'page');
+                        else item.removeAttribute('aria-current');
+                    }
+                }
+            };
             return;
         }
         const paths = {
@@ -342,6 +356,40 @@
         layout();
         sidebar.scrollTop =
             Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
+        Arcadia.navigation = {
+            mounted: true,
+            refresh(next) {
+                page = next;
+                let label = 'Portal';
+                for (const item of nav.querySelectorAll('a[href]')) {
+                    const href = item.getAttribute('href') || item.href.split('/').pop();
+                    const active =
+                        href === next || (next === 'notice.html' && href === 'notices.html');
+                    if (active) {
+                        item.setAttribute('aria-current', href === next ? 'page' : 'true');
+                        label = next === 'notice.html' ? 'Publicação' : item.textContent.trim();
+                    } else item.removeAttribute('aria-current');
+                }
+                for (const section of sections) {
+                    const active = !!section.querySelector('[aria-current]');
+                    section.dataset.active = String(active);
+                    if (active) {
+                        section.dataset.expanded = 'true';
+                        section.open = true;
+                    }
+                }
+                current.textContent = label;
+                reminderLink();
+                saveState();
+            }
+        };
+        function reminderLink() {
+            const reminder = barEnd?.querySelector('.ar-reminders-link');
+            if (reminder)
+                reminder.href = ['tasks.html', 'calendar.html'].includes(page)
+                    ? '#taskReminders'
+                    : 'tasks.html#taskReminders';
+        }
         document.documentElement?.setAttribute('data-portal-navigation', 'ready');
     }
     if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();

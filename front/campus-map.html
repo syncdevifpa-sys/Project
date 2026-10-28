@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="scrollbars.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="content-views.css" />
-    <link rel="stylesheet" href="campus-map.css" />
+    <link rel="stylesheet" href="campus-map.css?v=20261028-2" />
+    <link rel="stylesheet" href="progressive-navigation.css" />
   </head>
   <body>
     <div class="ar-app">
@@ -50,7 +51,16 @@
           <a href="campus-map.html" aria-current="page">Mapa do campus</a>
         </nav>
         <div class="ar-nav-end">
-          <a id="mapAccountLink" class="ar-btn ar-btn--secondary" href="login.html">Entrar</a>
+          <button type="button" class="ar-iconbtn" data-search-trigger aria-label="Buscar no portal" title="Buscar (Ctrl+K)"><span data-icon="search" aria-hidden="true"></span></button>
+          <a class="ar-user" href="settings.html" data-shell-user hidden>
+            <span class="ar-avatar ar-avatar--cyan" style="width: 36px; height: 36px"></span>
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+          <button type="button" class="ar-btn ar-btn--secondary" data-sign-out data-shell-user hidden>Sair</button>
+          <a id="mapAccountLink" class="ar-btn ar-btn--secondary" data-shell-signin href="login.html">Entrar</a>
         </div>
       </header>
       <main class="ar-main ar-campus-map-page">
@@ -82,8 +92,10 @@
                 <option value="pendente">Informações a confirmar</option>
               </select>
             </label>
-            <a class="ar-btn ar-btn--secondary" href="#mapPlaces">Ver locais</a>
-            <button type="button" id="mapClear" class="ar-btn ar-btn--secondary">Limpar filtros</button>
+            <div class="ar-campus-map-search-actions">
+              <button type="button" id="mapClear" class="ar-btn ar-btn--secondary">Limpar</button>
+              <a class="ar-btn ar-btn--secondary" href="#mapPlaces">Locais</a>
+            </div>
           </div>
           <div
             id="mapCategories"
@@ -101,6 +113,7 @@
           <!-- Planta interativa e painel de consulta -->
           <div class="ar-campus-map-layout">
             <div class="ar-campus-map-stage">
+              <div class="ar-campus-map-canvas">
               <div class="ar-campus-map-controls" role="group" aria-label="Controles do mapa">
                 <button type="button" id="mapZoomIn" class="ar-btn" aria-label="Ampliar mapa">+</button>
                 <output id="mapZoom" aria-label="Ampliação">100%</output>
@@ -184,6 +197,7 @@
                   A moldura mostra a área em exibição. Clique na miniatura para mudar o centro; use
                   as setas no mapa principal se preferir o teclado.
                 </p>
+              </div>
               </div>
               <div class="ar-campus-map-legend" aria-label="Legenda do mapa">
                 <span>
@@ -308,5 +322,6 @@
     <script src="js/navigation.js"></script>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-  </body>
+      <script src="js/progressive-navigation.js"></script>
+</body>
 </html>

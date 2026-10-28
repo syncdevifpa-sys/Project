@@ -32,11 +32,28 @@ window.Arcadia = window.Arcadia || {};
     // Oculta a fotografia do documento antes de o navegador guardá-lo no histórico.
     // Ao restaurar, valida também a sessão no servidor, não apenas o JWT armazenado.
     const pageToken = Token.get();
-    const privatePages = new Set(['dashboard.html','tasks.html','settings.html','admin.html','classes.html','community.html','community-settings.html']);
+    const privatePages = new Set([
+        'dashboard.html',
+        'tasks.html',
+        'settings.html',
+        'admin.html',
+        'classes.html',
+        'community.html',
+        'community-settings.html'
+    ]);
     const privatePage = privatePages.has((location.pathname || '').split('/').pop());
     let externalSession = false;
-    try { externalSession = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario === 'externo'; } catch {}
-    const externalRestricted = new Set(['documents.html','people.html','profile.html','classes.html','admin.html']);
+    try {
+        externalSession =
+            JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario === 'externo';
+    } catch {}
+    const externalRestricted = new Set([
+        'documents.html',
+        'people.html',
+        'profile.html',
+        'classes.html',
+        'admin.html'
+    ]);
     function discardPage() {
         document.body?.replaceChildren();
         window.location.replace('login.html');
@@ -44,13 +61,19 @@ window.Arcadia = window.Arcadia || {};
     if (typeof window.addEventListener === 'function') {
         if (externalSession && pageToken) {
             const page = (location.pathname || '').split('/').pop();
-            if (externalRestricted.has(page) || ['dashboard.html','settings.html'].includes(page)) {
+            if (
+                externalRestricted.has(page) ||
+                ['dashboard.html', 'settings.html'].includes(page)
+            ) {
                 document.body?.replaceChildren();
-                window.location.replace((page === 'settings.html' ? 'community-settings.html' : 'community.html'));
+                window.location.replace(
+                    page === 'settings.html' ? 'community-settings.html' : 'community.html'
+                );
             }
         }
         window.addEventListener('pagehide', () => {
-            if (pageToken && document.documentElement) document.documentElement.style.visibility = 'hidden';
+            if (pageToken && document.documentElement)
+                document.documentElement.style.visibility = 'hidden';
         });
         window.addEventListener('pageshow', async (event) => {
             if (!event.persisted) return;
@@ -60,15 +83,22 @@ window.Arcadia = window.Arcadia || {};
             }
             if (pageToken) {
                 try {
-                    const external = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario === 'externo';
-                    const result = await request(external ? '/api/external/me' : '/api/auth/perfil');
+                    const external =
+                        JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario ===
+                        'externo';
+                    const result = await request(
+                        external ? '/api/external/me' : '/api/auth/perfil'
+                    );
                     if (!result.ok || Token.get() !== pageToken) return discardPage();
-                } catch { return discardPage(); }
+                } catch {
+                    return discardPage();
+                }
             } else if (privatePage) return discardPage();
             if (document.documentElement) document.documentElement.style.visibility = '';
         });
         window.addEventListener('storage', (event) => {
-            if ((event.key === 'arcadiaToken' || event.key === null) && pageToken !== Token.get()) discardPage();
+            if ((event.key === 'arcadiaToken' || event.key === null) && pageToken !== Token.get())
+                discardPage();
         });
         if (privatePage && !pageToken) window.location.replace('login.html');
     }
@@ -81,7 +111,14 @@ window.Arcadia = window.Arcadia || {};
      */
     async function request(
         path,
-        { method = 'GET', body, auth = true, raw = false, contentType = 'application/pdf' } = {}
+        {
+            method = 'GET',
+            body,
+            auth = true,
+            raw = false,
+            contentType = 'application/pdf',
+            signal
+        } = {}
     ) {
         const headers = {};
         if (body !== undefined) headers['Content-Type'] = raw ? contentType : 'application/json';
@@ -91,6 +128,7 @@ window.Arcadia = window.Arcadia || {};
 
         const res = await fetch(`${API_BASE}${path}`, {
             method,
+            signal,
             cache: auth ? 'no-store' : 'default',
             headers,
             body: body !== undefined ? (raw ? body : JSON.stringify(body)) : undefined

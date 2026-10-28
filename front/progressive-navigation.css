@@ -1,0 +1,27 @@
+/* O shell permanece montado durante as transições compatíveis. */
+.ar-route-status {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+html[data-route-loading]::after {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: 3px;
+  z-index: 9999;
+  background: var(--action, var(--cyan));
+}
+.ar-main[aria-busy='true'] {
+  cursor: progress;
+}
+
+.ar-route-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
