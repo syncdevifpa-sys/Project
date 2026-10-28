@@ -1,12 +1,22 @@
-[hidden] { display: none !important; }
-.ar-navpill { min-width: 0; }
-.ar-nav-end { flex-shrink: 0; }
-.ar-brand { flex-shrink: 0; }
+[hidden] {
+  display: none !important;
+}
+.ar-navpill {
+  min-width: 0;
+}
+.ar-nav-end {
+  flex-shrink: 0;
+}
+.ar-brand {
+  flex-shrink: 0;
+}
 .ar-brand img {
   background: transparent;
   border-radius: var(--radius-xs);
 }
-.ar-brand img.ar-brand-img--home { background: transparent; }
+.ar-brand img.ar-brand-img--home {
+  background: transparent;
+}
 .ar-profile-text,
 .ar-srow-text,
 .ar-main {
@@ -33,20 +43,40 @@
   color: var(--ink);
   font: inherit;
 }
-.ar-row-date { flex-shrink: 0; }
+.ar-row-date {
+  flex-shrink: 0;
+}
 .ar-row-main details summary {
   cursor: pointer;
   font-size: 13px;
   color: var(--ink-muted);
 }
-.ar-dashboard-row { grid-template-columns: minmax(0, 1fr) auto; }
-.ar-dashboard-row .ar-row-meta { overflow-wrap: anywhere; }
-.ar-dashboard-row .ar-row-trail { min-width: 0; overflow-wrap: anywhere; }
-.ar-dashboard-summaries .ar-panel-head { flex-wrap: wrap; gap: 12px; }
-.ar-dashboard-summaries .ar-panel-head .ar-link { white-space: nowrap; flex-shrink: 0; }
+.ar-dashboard-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.ar-dashboard-row .ar-row-meta {
+  overflow-wrap: anywhere;
+}
+.ar-dashboard-row .ar-row-trail {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ar-dashboard-summaries .ar-panel-head {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ar-dashboard-summaries .ar-panel-head .ar-link {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 @media (max-width: 600px) {
-  .ar-dashboard-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .ar-dashboard-row .ar-row-trail { text-align: left; }
+  .ar-dashboard-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .ar-dashboard-row .ar-row-trail {
+    text-align: left;
+  }
 }
 #accountRemoval input {
   width: 100%;
@@ -58,7 +88,9 @@
   color: var(--ink);
   font: inherit;
 }
-#accountRemoval button { white-space: normal; }
+#accountRemoval button {
+  white-space: normal;
+}
 #campoCursoServidor {
   width: 100%;
   min-width: 0;
@@ -70,9 +102,15 @@
   font: inherit;
 }
 @media (min-width: 761px) and (max-width: 1024px) {
-  .ar-navpill { flex: 1; }
-  .ar-split { grid-template-columns: 200px minmax(0, 1fr); }
-  .ar-form-grid { grid-template-columns: 1fr; }
+  .ar-navpill {
+    flex: 1;
+  }
+  .ar-split {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+  .ar-form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 @media (max-width: 760px) {
   .ar-profile {
@@ -83,8 +121,12 @@
     flex-wrap: wrap;
     gap: var(--space-3);
   }
-  .ar-srow-control { max-width: 100%; }
-  .ar-srow-control .ar-btn { white-space: normal; }
+  .ar-srow-control {
+    max-width: 100%;
+  }
+  .ar-srow-control .ar-btn {
+    white-space: normal;
+  }
   .ar-nav-end {
     gap: var(--space-1);
   }

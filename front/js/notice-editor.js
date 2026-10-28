@@ -283,7 +283,9 @@
                 }
             });
             document.body.append(dialog);
-            (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
+            window.Arcadia.dialogShell
+                ? window.Arcadia.dialogShell.open(dialog)
+                : dialog.showModal();
             inputs.titulo.focus();
             return dialog;
         }

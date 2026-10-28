@@ -144,8 +144,10 @@
             number.className = 'ar-month-number';
             button.append(number);
             if (reminders) {
-                const marker = make('span'); marker.className = 'ar-month-reminder';
-                marker.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>';
+                const marker = make('span');
+                marker.className = 'ar-month-reminder';
+                marker.innerHTML =
+                    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>';
                 marker.setAttribute('aria-hidden', 'true');
                 marker.title = reminders + ' lembrete(s) salvo(s)';
                 button.append(marker);

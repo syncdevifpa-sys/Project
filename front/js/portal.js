@@ -257,7 +257,10 @@
 
     function openDialog(modalEl) {
         if (!modalEl) return;
-        if(window.Arcadia.dialogShell){window.Arcadia.dialogShell.openOverlay(modalEl);return;}
+        if (window.Arcadia.dialogShell) {
+            window.Arcadia.dialogShell.openOverlay(modalEl);
+            return;
+        }
         modalEl.style.display = 'grid';
         var input = modalEl.querySelector('input, textarea, button:not([data-close-dialog])');
         if (input)
@@ -268,7 +271,10 @@
 
     function closeDialog(modalEl) {
         if (!modalEl) return;
-        if(window.Arcadia.dialogShell){window.Arcadia.dialogShell.closeOverlay(modalEl);return;}
+        if (window.Arcadia.dialogShell) {
+            window.Arcadia.dialogShell.closeOverlay(modalEl);
+            return;
+        }
         modalEl.style.display = 'none';
     }
 
@@ -286,7 +292,7 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            if(window.Arcadia.dialogShell)return;
+            if (window.Arcadia.dialogShell) return;
             document.querySelectorAll('.ar-scrim').forEach(function (scrim) {
                 if (scrim.style.display !== 'none') {
                     scrim.style.display = 'none';
@@ -297,7 +303,13 @@
 
     // Destinos da busca rápida (Ctrl+K / ⌘K)
     var PALETTE_DATA = [
-        {type:'Campus',title:'Mapa do campus',meta:'Blocos e espaços · IFPA Belém',href:'campus-map.html',icon:'search'},
+        {
+            type: 'Campus',
+            title: 'Mapa do campus',
+            meta: 'Blocos e espaços · IFPA Belém',
+            href: 'campus-map.html',
+            icon: 'search'
+        },
         {
             type: 'Notices',
             title: 'Avisos e notícias',
@@ -335,7 +347,10 @@
         }
     ];
     var externalPalette = window.Arcadia?.auth?.getSessao()?.tipo_usuario === 'externo';
-    if (externalPalette) PALETTE_DATA = PALETTE_DATA.filter(function(item) { return item.type !== 'Documents'; });
+    if (externalPalette)
+        PALETTE_DATA = PALETTE_DATA.filter(function (item) {
+            return item.type !== 'Documents';
+        });
     var SCOPE_LABELS = {
         Notices: 'Avisos e notícias',
         Tasks: 'Tarefas',
@@ -368,7 +383,9 @@
             '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos e notícias</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tarefas</button>' +
-            (externalPalette ? '' : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
+            (externalPalette
+                ? ''
+                : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
             '</div>' +
             '</div>' +
@@ -526,7 +543,8 @@
 
     function openCommandPalette() {
         var scrim = buildCommandPalette();
-        if(window.Arcadia.dialogShell)window.Arcadia.dialogShell.openOverlay(scrim);else scrim.style.display = 'grid';
+        if (window.Arcadia.dialogShell) window.Arcadia.dialogShell.openOverlay(scrim);
+        else scrim.style.display = 'grid';
         var input = scrim.querySelector('#ar-pal-input');
         if (input) {
             input.value = '';
@@ -582,16 +600,20 @@
         var A = window.Arcadia;
         var sessao = (A.auth && A.auth.getSessao()) || {};
         if (sessao.tipo_usuario === 'externo') {
-            document.querySelectorAll('.ar-nav-end a[href="settings.html"], .ar-topbar a[href="settings.html"]').forEach(function(link) {
-                link.href = 'community-settings.html';
-            });
+            document
+                .querySelectorAll(
+                    '.ar-nav-end a[href="settings.html"], .ar-topbar a[href="settings.html"]'
+                )
+                .forEach(function (link) {
+                    link.href = 'community-settings.html';
+                });
         }
 
         var hasValidSession = Boolean(
             sessao.id_usuario ||
-            sessao.tipo_usuario === 'externo' ||
-            (A.auth && A.auth.estaLogado()) ||
-            (A.token && A.token.get())
+                sessao.tipo_usuario === 'externo' ||
+                (A.auth && A.auth.estaLogado()) ||
+                (A.token && A.token.get())
         );
 
         if (!hasValidSession) {
@@ -604,7 +626,9 @@
                     link.href = 'login.html';
                 });
         }
-        var userName = A.formatPersonName ? A.formatPersonName(sessao.nome) || 'Visitante' : sessao.nome || 'Visitante';
+        var userName = A.formatPersonName
+            ? A.formatPersonName(sessao.nome) || 'Visitante'
+            : sessao.nome || 'Visitante';
         var userRole = sessao.is_admin
             ? 'Administrador'
             : sessao.vinculo || (A.auth ? A.auth.paraVinculo(sessao.tipo_usuario) : 'Usuário');
@@ -626,7 +650,11 @@
             el.textContent = userRole;
         });
         updateUserAvatar(sessao.foto, userName, userInitials);
-        if (sessao.is_admin && sessao.tipo_usuario !== 'externo' && !document.getElementById('adminAccess')) {
+        if (
+            sessao.is_admin &&
+            sessao.tipo_usuario !== 'externo' &&
+            !document.getElementById('adminAccess')
+        ) {
             var end =
                 document.querySelector('.ar-navpill') || document.querySelector('.ar-nav-end');
             if (end) {

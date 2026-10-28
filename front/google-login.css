@@ -36,11 +36,15 @@
   font-weight: 700;
   letter-spacing: -0.6px;
 }
-.ar-google-login-dialog p { margin: 0 0 16px; }
+.ar-google-login-dialog p {
+  margin: 0 0 16px;
+}
 .ar-google-login-intro {
   color: var(--ink-muted, #55685e);
 }
-.ar-google-login-provider { padding: 8px 0 4px; }
+.ar-google-login-provider {
+  padding: 8px 0 4px;
+}
 .ar-google-login-dialog [data-google-button] {
   min-height: 44px;
   min-width: 0;
@@ -52,7 +56,9 @@
   overflow: hidden;
   isolation: isolate;
 }
-.ar-google-login-dialog [data-google-button] iframe { border-radius: 999px; }
+.ar-google-login-dialog [data-google-button] iframe {
+  border-radius: 999px;
+}
 .ar-google-login-status {
   color: var(--ink-muted, #55685e);
   font-size: 13px;
@@ -72,14 +78,23 @@
   margin-top: 20px;
   border-top: 1px solid var(--line, #d6dfda);
 }
-.ar-google-login-dialog form[hidden] { display: none; }
-.ar-google-login-dialog h3 { margin: 0; font-size: 17px; font-weight: 650; }
+.ar-google-login-dialog form[hidden] {
+  display: none;
+}
+.ar-google-login-dialog h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
 .ar-google-login-dialog form p {
   font-size: 13px;
   color: var(--ink-muted, #55685e);
   margin: 0 0 4px;
 }
-.ar-google-login-dialog label { font-size: 13px; font-weight: 600; }
+.ar-google-login-dialog label {
+  font-size: 13px;
+  font-weight: 600;
+}
 .ar-google-login-dialog input {
   box-sizing: border-box;
   width: 100%;
@@ -149,8 +164,14 @@
   outline-offset: 3px;
 }
 @media (max-width: 480px) {
-  .ar-google-login-dialog { padding: 20px; width: calc(100vw - 24px); border-radius: 28px; }
-  .ar-google-login-dialog h2 { font-size: 24px; }
+  .ar-google-login-dialog {
+    padding: 20px;
+    width: calc(100vw - 24px);
+    border-radius: 28px;
+  }
+  .ar-google-login-dialog h2 {
+    font-size: 24px;
+  }
 }
 
 .ar-google-login-dialog .ar-google-login-enter {
@@ -182,7 +203,9 @@
   border-radius: 16px;
   box-shadow: 0 8px 24px #0002;
 }
-.ar-session-notice p { margin: 0 0 12px; }
+.ar-session-notice p {
+  margin: 0 0 12px;
+}
 .ar-session-notice button {
   display: block;
   width: 100%;
@@ -196,4 +219,7 @@
   border-radius: 999px;
   cursor: pointer;
 }
-.ar-session-notice button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.ar-session-notice button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

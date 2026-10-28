@@ -1,9 +1,15 @@
 /* Estilos complementares para seções da landing page */
 
-.secao { display: block; width: 100%; padding-block: 96px; }
+.secao {
+  display: block;
+  width: 100%;
+  padding-block: 96px;
+}
 
 @media (min-width: 768px) {
-  .secao { padding-block: 100px; }
+  .secao {
+    padding-block: 100px;
+  }
 }
 
 .secao-titulo {
@@ -40,10 +46,17 @@
 }
 
 /* Seção com estatísticas do semestre acadêmico */
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
 
 @media (max-width: 767px) {
-  .stats { grid-template-columns: 1fr; gap: 16px; }
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .stat-card {
@@ -83,7 +96,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-.stat-card .stat-desc { font-size: 15px; line-height: 1.5; max-width: 32ch; }
+.stat-card .stat-desc {
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 32ch;
+}
 
 .stat-linha {
   display: flex;
@@ -95,7 +112,10 @@
 }
 
 @media (max-width: 767px) {
-  .stat-linha { flex-direction: column; gap: 16px; }
+  .stat-linha {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .stat-linha-num {

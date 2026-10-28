@@ -20,8 +20,14 @@
 .ar-privacy-reopen[hidden] {
   display: none;
 }
-.ar-privacy-notice h2 { font-size: 19px; line-height: 1.3; margin: 0 0 12px; }
-.ar-privacy-notice p { margin: 0 0 12px; }
+.ar-privacy-notice h2 {
+  font-size: 19px;
+  line-height: 1.3;
+  margin: 0 0 12px;
+}
+.ar-privacy-notice p {
+  margin: 0 0 12px;
+}
 .ar-privacy-notice-actions {
   display: flex;
   align-items: center;
@@ -95,7 +101,11 @@
   line-height: 1.5;
   margin: 12px 0;
 }
-.ar-signup-legal-links { display: flex; flex-wrap: wrap; gap: 0 20px; }
+.ar-signup-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
 .ar-signup-legal a {
   color: var(--ink-muted, #55685e);
   font-size: 13px;
@@ -117,7 +127,9 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.ar-signup-legal a span { font-size: 12px; }
+.ar-signup-legal a span {
+  font-size: 12px;
+}
 .ar-signup-legal :focus-visible {
   outline: 3px solid var(--ink, #23352d);
   outline-offset: 3px;
@@ -156,7 +168,10 @@
   color: var(--ink, #23352d);
   overflow: hidden;
 }
-.ar-legal-dialog[open] { display: flex; flex-direction: column; }
+.ar-legal-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
 .ar-legal-dialog::backdrop {
   background: #0009;
 }

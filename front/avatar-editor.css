@@ -12,7 +12,10 @@
 .ar-avatar-editor::backdrop {
   background: var(--scrim);
 }
-.ar-avatar-editor h2 { font-size: 24px; margin: 0 0 8px; }
+.ar-avatar-editor h2 {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
 .ar-avatar-editor p {
   color: var(--ink-muted);
   font-size: 13px;
@@ -33,7 +36,11 @@
   display: grid;
   gap: var(--space-3);
 }
-.ar-avatar-controls label { display: grid; gap: 4px; font-size: 13px; }
+.ar-avatar-controls label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
 .ar-avatar-controls input {
   width: 100%;
   accent-color: var(--action);
@@ -45,6 +52,12 @@
   gap: var(--space-2);
   margin-top: var(--space-5);
 }
-.ar-avatar-actions button { white-space: normal; }
+.ar-avatar-actions button {
+  white-space: normal;
+}
 
-.ar-cover-crop canvas { width: 100%; object-fit: contain; border-radius: 12px; }
+.ar-cover-crop canvas {
+  width: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+}

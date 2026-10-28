@@ -478,11 +478,11 @@
                 'Calendários publicados para todos e seus compromissos pessoais. Eventos privados e ocultos não aparecem nesta agenda.';
             $('#calendarSourceFilter').closest('label').hidden = false;
         }
-        container.addEventListener('click',(event)=>{
-            const button=event.target.closest('[data-calendar-remind]');
-            if(!button) return;
-            const row=scoped().find((r)=>String(r.id_evento)===button.dataset.calendarRemind);
-            if(row && A.reminderUI) A.reminderUI.open(row,button.dataset.reminderSource);
+        container.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-calendar-remind]');
+            if (!button) return;
+            const row = scoped().find((r) => String(r.id_evento) === button.dataset.calendarRemind);
+            if (row && A.reminderUI) A.reminderUI.open(row, button.dataset.reminderSource);
             else A.showToast('Os lembretes ainda estão carregando. Tente novamente.');
         });
         const audience = $('#calendarAudience');
@@ -732,7 +732,9 @@
             let target = container,
                 list = visibleRows();
             if (viewPicker.value === 'month') {
-                const result = A.calendarView.render(container, list, monthState, render, {reminderCounts:A.reminderUI?.calendarCounts?.()});
+                const result = A.calendarView.render(container, list, monthState, render, {
+                    reminderCounts: A.reminderUI?.calendarCounts?.()
+                });
                 target = result.agenda;
                 list = result.events;
             }
@@ -795,12 +797,22 @@
                             details +
                             '</span><span class="ar-badge">' +
                             esc(A.calendarCategories.options[r.categoria]) +
-                            '</span><span class="ar-calendar-event-actions" role="group" aria-label="Ações de ' + esc(r.titulo) + '">' +
+                            '</span><span class="ar-calendar-event-actions" role="group" aria-label="Ações de ' +
+                            esc(r.titulo) +
+                            '">' +
                             (external && personal()
                                 ? `<button type="button" class="ar-btn ar-btn--secondary" data-external-event="${esc(r.id_evento)}">Editar</button>`
                                 : editAction('calendar', r, r.id_evento)) +
                             ((institutional || external) && !r.oculto
-                                ? '<button type="button" class="ar-btn ar-btn--secondary ar-btn--sm" data-calendar-remind="'+esc(r.id_evento)+'" data-reminder-source="'+(r.automatico?'avulso':external&&personal()?'agenda_externa':'calendario')+'">Criar lembrete</button>'
+                                ? '<button type="button" class="ar-btn ar-btn--secondary ar-btn--sm" data-calendar-remind="' +
+                                  esc(r.id_evento) +
+                                  '" data-reminder-source="' +
+                                  (r.automatico
+                                      ? 'avulso'
+                                      : external && personal()
+                                        ? 'agenda_externa'
+                                        : 'calendario') +
+                                  '">Criar lembrete</button>'
                                 : '') +
                             (canDelete && !r.automatico
                                 ? '<button type="button" class="ar-btn ar-btn--quiet ar-btn--sm" data-calendar-delete="' +
@@ -1068,7 +1080,11 @@
             const category = calendar ? A.calendarCategories.canonical(r.categoria) : null;
             const metadata = [
                 category ? A.calendarCategories.options[category] : '',
-                calendar ? [r.local, r.hora_inicio ? String(r.hora_inicio).slice(0, 5) : ''].filter(Boolean).join(' · ') : r.resumo || r.descricao || ''
+                calendar
+                    ? [r.local, r.hora_inicio ? String(r.hora_inicio).slice(0, 5) : '']
+                          .filter(Boolean)
+                          .join(' · ')
+                    : r.resumo || r.descricao || ''
             ]
                 .filter(Boolean)
                 .join(' · ');
@@ -1082,7 +1098,7 @@
                               String(r.data_fim || r.data_evento).slice(0, 10) >=
                               new Date().toLocaleDateString('sv-SE')
                       )
-                      .sort((a,b) => String(a.data_evento).localeCompare(String(b.data_evento)))
+                      .sort((a, b) => String(a.data_evento).localeCompare(String(b.data_evento)))
                       .slice(0, 5)
                       .map((r) => row(r, 'calendar.html', r.data_evento, true))
                       .join('') || '<p>Nenhuma data próxima.</p>'

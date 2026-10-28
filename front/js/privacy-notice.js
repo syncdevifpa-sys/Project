@@ -8,7 +8,23 @@
         return;
     }
     const legalPages = new Set(['privacy.html', 'terms.html', 'cookies.html']);
-    const returnPages = new Set(['index.html','login.html','signup.html','dashboard.html','community.html','settings.html','tasks.html','calendar.html','notices.html','projects.html','documents.html','classes.html','admin.html','people.html','profile.html']);
+    const returnPages = new Set([
+        'index.html',
+        'login.html',
+        'signup.html',
+        'dashboard.html',
+        'community.html',
+        'settings.html',
+        'tasks.html',
+        'calendar.html',
+        'notices.html',
+        'projects.html',
+        'documents.html',
+        'classes.html',
+        'admin.html',
+        'people.html',
+        'profile.html'
+    ]);
     const currentPage = location.pathname.split('/').pop();
     if (legalPages.has(currentPage)) {
         try {
@@ -84,7 +100,11 @@
             event.altKey
         )
             return;
-        if (typeof HTMLDialogElement === 'undefined' || typeof HTMLDialogElement.prototype.showModal !== 'function') return;
+        if (
+            typeof HTMLDialogElement === 'undefined' ||
+            typeof HTMLDialogElement.prototype.showModal !== 'function'
+        )
+            return;
         event.preventDefault();
         const title = {
             'terms.html': 'Termos de Uso',
@@ -114,7 +134,7 @@
             dialog.remove();
             if (link.isConnected) link.focus();
         });
-        (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
+        window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal();
         close.focus();
     });
 })();

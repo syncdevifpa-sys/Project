@@ -55,8 +55,10 @@
             });
             dialog.addEventListener('close', () => finish(false));
             document.body.append(dialog);
-            (window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal());
-            cancel.focus({preventScroll:true});
+            window.Arcadia.dialogShell
+                ? window.Arcadia.dialogShell.open(dialog)
+                : dialog.showModal();
+            cancel.focus({ preventScroll: true });
         });
     };
 })(window.Arcadia);

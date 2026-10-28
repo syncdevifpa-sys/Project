@@ -70,8 +70,16 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
     };
     const Arcadia = { auth: { getSessao: () => session } };
     vm.runInNewContext(code, {
-        window: { Arcadia, matchMedia: () => media, addEventListener() {}, setTimeout: fn => fn() },
-        sessionStorage: { getItem:k=>sessionValues.get(k),setItem:(k,v)=>sessionValues.set(k,v) },
+        window: {
+            Arcadia,
+            matchMedia: () => media,
+            addEventListener() {},
+            setTimeout: (fn) => fn()
+        },
+        sessionStorage: {
+            getItem: (k) => sessionValues.get(k),
+            setItem: (k, v) => sessionValues.set(k, v)
+        },
         Arcadia,
         document,
         location: { pathname: '/front/' + page },
@@ -79,7 +87,7 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
     });
     return {
         nodes,
-        A:Arcadia,
+        A: Arcadia,
         body,
         app,
         media,
@@ -91,18 +99,26 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         backdrop: nodes.find((n) => n.className === 'ar-sidebar-backdrop')
     };
 }
-test('sidebar preserva grupos expandidos e posição ao trocar de página, separados por conta',()=>{
-    const session={id_usuario:7,tipo_usuario:'discente'};
-    const first=fixture('dashboard.html',session);
-    const content=first.nodes.find(n=>n.dataset.group==='Conteúdo');
-    content.open=true;content.children[0].events.click();
-    first.sidebar.scrollTop=145;first.sidebar.events.scroll();
-    const next=fixture('classes.html',session,false,'0',first.sessionValues);
-    assert.equal(next.nodes.find(n=>n.dataset.group==='Conteúdo').open,true);
-    assert.equal(next.sidebar.scrollTop,145);
-    const other=fixture('classes.html',{id_usuario:8,tipo_usuario:'discente'},false,'0',first.sessionValues);
-    assert.equal(other.nodes.find(n=>n.dataset.group==='Conteúdo').open,false);
-    assert.equal(other.sidebar.scrollTop,0);
+test('sidebar preserva grupos expandidos e posição ao trocar de página, separados por conta', () => {
+    const session = { id_usuario: 7, tipo_usuario: 'discente' };
+    const first = fixture('dashboard.html', session);
+    const content = first.nodes.find((n) => n.dataset.group === 'Conteúdo');
+    content.open = true;
+    content.children[0].events.click();
+    first.sidebar.scrollTop = 145;
+    first.sidebar.events.scroll();
+    const next = fixture('classes.html', session, false, '0', first.sessionValues);
+    assert.equal(next.nodes.find((n) => n.dataset.group === 'Conteúdo').open, true);
+    assert.equal(next.sidebar.scrollTop, 145);
+    const other = fixture(
+        'classes.html',
+        { id_usuario: 8, tipo_usuario: 'discente' },
+        false,
+        '0',
+        first.sessionValues
+    );
+    assert.equal(other.nodes.find((n) => n.dataset.group === 'Conteúdo').open, false);
+    assert.equal(other.sidebar.scrollTop, 0);
 });
 test('sidebar marks current section, gates administration and remembers icon rail', () => {
     const f = fixture('admin.html', { is_admin: true, tipo_usuario: 'servidor' });
@@ -125,9 +141,18 @@ test('sidebar marks current section, gates administration and remembers icon rai
     );
     const external = fixture('community.html', { tipo_usuario: 'externo', is_admin: true });
     assert.ok(external.sidebar);
-    const destinations = external.nodes.filter(node=>node.tag==='a').map(node=>node.href);
-    for(const path of ['community.html','community-settings.html','tasks.html','notices.html','calendar.html','projects.html']) assert.ok(destinations.includes(path));
-    for(const path of ['documents.html','people.html','classes.html','admin.html']) assert.ok(!destinations.includes(path));
+    const destinations = external.nodes.filter((node) => node.tag === 'a').map((node) => node.href);
+    for (const path of [
+        'community.html',
+        'community-settings.html',
+        'tasks.html',
+        'notices.html',
+        'calendar.html',
+        'projects.html'
+    ])
+        assert.ok(destinations.includes(path));
+    for (const path of ['documents.html', 'people.html', 'classes.html', 'admin.html'])
+        assert.ok(!destinations.includes(path));
 });
 test('mobile drawer closes with Escape, backdrop and navigation; restores background access', () => {
     const f = fixture('settings.html', { tipo_usuario: 'discente' }, true);
@@ -171,19 +196,47 @@ test('compact navigation has distinct semantic icons and accessible names', () =
     assert.equal(links.find((n) => n.href === 'notices.html').title, 'Avisos e notícias');
 });
 
-test('sino acessível leva ao painel de lembretes sem badge fictício nem acesso anônimo',()=>{
- const f=fixture('classes.html',{id_usuario:7,tipo_usuario:'docente'});
- const bell=f.nodes.find(n=>n.className==='ar-iconbtn ar-reminders-link');
- assert.equal(bell.href,'tasks.html#taskReminders');assert.equal(bell.attributes['aria-label'],'Meus lembretes e notificações');assert.equal(bell.children.length,1);
- const calendar=fixture('calendar.html',{tipo_usuario:'discente'});let revealed=false,prevented=false;
- calendar.A.reminderUI={reveal:()=>revealed=true};calendar.nodes.find(n=>n.className==='ar-iconbtn ar-reminders-link').events.click({preventDefault(){prevented=true;}});
- assert.equal(revealed,true);assert.equal(prevented,true);
- assert.equal(fixture('index.html',{}).nodes.some(n=>n.className==='ar-iconbtn ar-reminders-link'),false);
+test('sino acessível leva ao painel de lembretes sem badge fictício nem acesso anônimo', () => {
+    const f = fixture('classes.html', { id_usuario: 7, tipo_usuario: 'docente' });
+    const bell = f.nodes.find((n) => n.className === 'ar-iconbtn ar-reminders-link');
+    assert.equal(bell.href, 'tasks.html#taskReminders');
+    assert.equal(bell.attributes['aria-label'], 'Meus lembretes e notificações');
+    assert.equal(bell.children.length, 1);
+    const calendar = fixture('calendar.html', { tipo_usuario: 'discente' });
+    let revealed = false,
+        prevented = false;
+    calendar.A.reminderUI = { reveal: () => (revealed = true) };
+    calendar.nodes
+        .find((n) => n.className === 'ar-iconbtn ar-reminders-link')
+        .events.click({
+            preventDefault() {
+                prevented = true;
+            }
+        });
+    assert.equal(revealed, true);
+    assert.equal(prevented, true);
+    assert.equal(
+        fixture('index.html', {}).nodes.some((n) => n.className === 'ar-iconbtn ar-reminders-link'),
+        false
+    );
 });
-test('mapa é acessível na navegação pública, institucional e externa sem abrir áreas privadas',()=>{
- for(const session of [{},{id_usuario:7,tipo_usuario:'docente'},{id_externo:7,tipo_usuario:'externo'}]){
-  const f=fixture('campus-map.html',session);
-  assert.ok(f.nodes.some(node=>node.tag==='a'&&node.href==='campus-map.html'));
-  if(session.tipo_usuario==='externo')assert.ok(!f.nodes.some(node=>node.tag==='a'&&['classes.html','admin.html','people.html','documents.html'].includes(node.href)));
- }
+test('mapa é acessível na navegação pública, institucional e externa sem abrir áreas privadas', () => {
+    for (const session of [
+        {},
+        { id_usuario: 7, tipo_usuario: 'docente' },
+        { id_externo: 7, tipo_usuario: 'externo' }
+    ]) {
+        const f = fixture('campus-map.html', session);
+        assert.ok(f.nodes.some((node) => node.tag === 'a' && node.href === 'campus-map.html'));
+        if (session.tipo_usuario === 'externo')
+            assert.ok(
+                !f.nodes.some(
+                    (node) =>
+                        node.tag === 'a' &&
+                        ['classes.html', 'admin.html', 'people.html', 'documents.html'].includes(
+                            node.href
+                        )
+                )
+            );
+    }
 });

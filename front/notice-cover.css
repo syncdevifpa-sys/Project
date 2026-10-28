@@ -13,7 +13,11 @@
 .ar-notice-with-cover.public-card > h3 {
   margin-top: 155px;
 }
-.ar-notice-cover { height: 225px; overflow: hidden; pointer-events: none; }
+.ar-notice-cover {
+  height: 225px;
+  overflow: hidden;
+  pointer-events: none;
+}
 .ar-notice-with-cover > .ar-notice-cover {
   position: absolute;
   inset: 0 0 auto;
@@ -35,17 +39,32 @@
     var(--cover-surface, var(--surface, #fff)) 100%
   );
 }
-.ar-cover-editor { min-width: 0; display: grid; gap: 12px; }
-.ar-cover-editor label { display: grid; gap: 10px; }
-.ar-cover-editor input { max-width: 100%; width: 100%; }
-.ar-cover-editor p { margin: 0; line-height: 1.5; }
+.ar-cover-editor {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+.ar-cover-editor label {
+  display: grid;
+  gap: 10px;
+}
+.ar-cover-editor input {
+  max-width: 100%;
+  width: 100%;
+}
+.ar-cover-editor p {
+  margin: 0;
+  line-height: 1.5;
+}
 .ar-cover-preview {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
   background: var(--surface);
 }
-.ar-cover-preview[hidden] { display: none; }
+.ar-cover-preview[hidden] {
+  display: none;
+}
 .ar-detail > .ar-notice-cover {
   position: relative;
   border-radius: 16px;
@@ -56,7 +75,9 @@
   --cover-surface: var(--surface, #fff);
 }
 @media (max-width: 600px) {
-  .ar-notice-cover { height: 190px; }
+  .ar-notice-cover {
+    height: 190px;
+  }
   .ar-notice-with-cover > .ar-card-title,
   .ar-notice-with-cover.public-card > h3 {
     margin-top: 125px;
@@ -97,7 +118,9 @@
 .ar-detail > .ar-notice-cover img {
   max-height: 720px;
 }
-.ar-cover-preview .ar-notice-cover img { max-height: 420px; }
+.ar-cover-preview .ar-notice-cover img {
+  max-height: 420px;
+}
 @media (max-width: 600px) {
   .ar-notice-with-cover > .ar-card-title,
   .ar-notice-with-cover.public-card > h3 {

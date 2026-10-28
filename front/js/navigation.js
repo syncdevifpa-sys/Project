@@ -41,42 +41,57 @@
             projects: 'M3 7h7l2-3h9v17H3z',
             shield: 'M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z'
         };
-        const groups = external ? [
-            { name: 'Meu espaço', icon: 'panel', links: [
-                ['community.html','Meu painel','panel'],['tasks.html','Tarefas','tasks'],
-                ['community-settings.html','Configurações','settings']
-            ] },
-            { name: 'Conteúdo', icon: 'file', links: [
-                ['notices.html','Avisos e notícias','news'],['calendar.html','Calendário','calendar'],['projects.html','Projetos','projects'],['campus-map.html','Mapa do campus','map']
-            ] }
-        ] : [
-            {
-                name: 'Meu espaço',
-                icon: 'panel',
-                links: [
-                    ['dashboard.html', 'Meu painel', 'panel'],
-                    ['tasks.html', 'Tarefas', 'tasks'],
-                    ['documents.html', 'Documentos', 'file'],
-                    ['settings.html', 'Configurações', 'settings']
-                ]
-            },
-            {
-                name: 'Conteúdo',
-                icon: 'file',
-                links: [
-                    ['notices.html', 'Avisos e notícias', 'news'],
-                    ['calendar.html', 'Calendário', 'calendar'],
-                    ['people.html', 'Pessoas', 'people'],
-                    ['projects.html', 'Projetos', 'projects'],
-                    ['campus-map.html', 'Mapa do campus', 'map']
-                ]
-            }
-        ];
-        if (!external) groups.push({
-            name: 'Turmas',
-            icon: 'class',
-            links: [['classes.html', 'Minhas turmas', 'class']]
-        });
+        const groups = external
+            ? [
+                  {
+                      name: 'Meu espaço',
+                      icon: 'panel',
+                      links: [
+                          ['community.html', 'Meu painel', 'panel'],
+                          ['tasks.html', 'Tarefas', 'tasks'],
+                          ['community-settings.html', 'Configurações', 'settings']
+                      ]
+                  },
+                  {
+                      name: 'Conteúdo',
+                      icon: 'file',
+                      links: [
+                          ['notices.html', 'Avisos e notícias', 'news'],
+                          ['calendar.html', 'Calendário', 'calendar'],
+                          ['projects.html', 'Projetos', 'projects'],
+                          ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  }
+              ]
+            : [
+                  {
+                      name: 'Meu espaço',
+                      icon: 'panel',
+                      links: [
+                          ['dashboard.html', 'Meu painel', 'panel'],
+                          ['tasks.html', 'Tarefas', 'tasks'],
+                          ['documents.html', 'Documentos', 'file'],
+                          ['settings.html', 'Configurações', 'settings']
+                      ]
+                  },
+                  {
+                      name: 'Conteúdo',
+                      icon: 'file',
+                      links: [
+                          ['notices.html', 'Avisos e notícias', 'news'],
+                          ['calendar.html', 'Calendário', 'calendar'],
+                          ['people.html', 'Pessoas', 'people'],
+                          ['projects.html', 'Projetos', 'projects'],
+                          ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  }
+              ];
+        if (!external)
+            groups.push({
+                name: 'Turmas',
+                icon: 'class',
+                links: [['classes.html', 'Minhas turmas', 'class']]
+            });
         if (session.is_admin && !external)
             groups.push({
                 name: 'Administração',
@@ -104,12 +119,14 @@
         if (barEnd) {
             const reminders = document.createElement('a');
             reminders.className = 'ar-iconbtn ar-reminders-link';
-            reminders.href = ['tasks.html','calendar.html'].includes(page) ? '#taskReminders' : 'tasks.html#taskReminders';
+            reminders.href = ['tasks.html', 'calendar.html'].includes(page)
+                ? '#taskReminders'
+                : 'tasks.html#taskReminders';
             reminders.title = 'Meus lembretes e notificações';
             reminders.setAttribute('aria-label', reminders.title);
             reminders.append(icon('M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4'));
-            reminders.addEventListener('click', event => {
-                if (['tasks.html','calendar.html'].includes(page) && Arcadia.reminderUI?.reveal) {
+            reminders.addEventListener('click', (event) => {
+                if (['tasks.html', 'calendar.html'].includes(page) && Arcadia.reminderUI?.reveal) {
                     event.preventDefault();
                     Arcadia.reminderUI.reveal();
                 }
@@ -119,7 +136,10 @@
         const bar = document.querySelector('.ar-nav');
         if (bar && window.ResizeObserver) {
             new window.ResizeObserver(() => {
-                document.documentElement.style.setProperty('--portal-header-offset', Math.ceil(bar.getBoundingClientRect().height + 20) + 'px');
+                document.documentElement.style.setProperty(
+                    '--portal-header-offset',
+                    Math.ceil(bar.getBoundingClientRect().height + 20) + 'px'
+                );
             }).observe(bar);
         }
         const sidebar = document.createElement('aside');
@@ -154,7 +174,9 @@
         }
         if (!external) nav.append(link('index.html', 'Início', 'home'));
         const sections = [];
-        const stateKey = 'arcadia-sidebar-state:' + (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
+        const stateKey =
+            'arcadia-sidebar-state:' +
+            (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
         let savedState = {};
         try {
             const value = JSON.parse(sessionStorage.getItem(stateKey) || '{}');
@@ -253,10 +275,18 @@
         }
         function saveState() {
             try {
-                sessionStorage.setItem(stateKey, JSON.stringify({
-                    groups: Object.fromEntries(sections.map(section => [section.dataset.group, section.dataset.expanded === 'true'])),
-                    scroll: sidebar.scrollTop
-                }));
+                sessionStorage.setItem(
+                    stateKey,
+                    JSON.stringify({
+                        groups: Object.fromEntries(
+                            sections.map((section) => [
+                                section.dataset.group,
+                                section.dataset.expanded === 'true'
+                            ])
+                        ),
+                        scroll: sidebar.scrollTop
+                    })
+                );
             } catch {}
         }
         sidebar.addEventListener('scroll', saveState, { passive: true });
@@ -310,7 +340,8 @@
             layout();
         });
         layout();
-        sidebar.scrollTop = Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
+        sidebar.scrollTop =
+            Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
         document.documentElement?.setAttribute('data-portal-navigation', 'ready');
     }
     if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();
