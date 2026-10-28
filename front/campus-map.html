@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="scrollbars.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="content-views.css" />
-    <link rel="stylesheet" href="campus-map.css?v=20261028" />
+    <link rel="stylesheet" href="campus-map.css?v=20261028-2" />
     <link rel="stylesheet" href="progressive-navigation.css" />
   </head>
   <body>
@@ -52,7 +52,13 @@
         </nav>
         <div class="ar-nav-end">
           <button type="button" class="ar-iconbtn" data-search-trigger aria-label="Buscar no portal" title="Buscar (Ctrl+K)"><span data-icon="search" aria-hidden="true"></span></button>
-          <a class="ar-user" href="settings.html" data-shell-user hidden><span class="ar-avatar ar-avatar--cyan"></span><span><span class="ar-user-name">Minha conta</span><span class="ar-user-role"></span></span></a>
+          <a class="ar-user" href="settings.html" data-shell-user hidden>
+            <span class="ar-avatar ar-avatar--cyan" style="width: 36px; height: 36px"></span>
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
           <button type="button" class="ar-btn ar-btn--secondary" data-sign-out data-shell-user hidden>Sair</button>
           <a id="mapAccountLink" class="ar-btn ar-btn--secondary" data-shell-signin href="login.html">Entrar</a>
         </div>

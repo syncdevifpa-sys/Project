@@ -127,13 +127,13 @@
 
 /* Controles e área interativa */
 .ar-campus-map-controls {
-  position: absolute;
-  inset: 12px 12px auto;
+  position: relative;
   z-index: 3;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
+  margin-bottom: 10px;
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -615,7 +615,6 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
   .ar-campus-map-controls {
-    inset: 8px 8px auto;
     padding: 6px;
   }
   .ar-campus-map-controls .ar-btn {
