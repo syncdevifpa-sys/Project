@@ -7,11 +7,7 @@
   min-width: 0;
   padding-block: 4px;
 }
-.notice-filter-content .ar-filter-group {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-}
+.notice-filter-content .ar-filter-group { display: grid; gap: 8px; min-width: 0; }
 .notice-filter-content .ar-filter-title {
   margin-block-end: 8px;
   font-size: 13px;
@@ -84,45 +80,24 @@
   opacity: 0.6;
 }
 @media (max-width: 600px) {
-  .ar-app {
-    padding: 12px;
-  }
-  .ar-hero {
-    padding: 20px 16px;
-    gap: 12px;
-    min-height: 0;
-  }
+  .ar-app { padding: 12px; }
+  .ar-hero { padding: 20px 16px; gap: 12px; min-height: 0; }
   .ar-hero-title,
   .ar-hero--compact .ar-hero-title {
     font-size: 30px;
     line-height: 1.15;
   }
-  .ar-hero-desc {
-    font-size: 13px;
-    line-height: 1.45;
-  }
-  .ar-hero .ar-btn {
-    font-size: 13px;
-    padding: 10px 12px;
-    gap: 6px;
-  }
-  .ar-chipbar {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
+  .ar-hero-desc { font-size: 13px; line-height: 1.45; }
+  .ar-hero .ar-btn { font-size: 13px; padding: 10px 12px; gap: 6px; }
+  .ar-chipbar { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
   .ar-chipbar .ar-chip {
     flex-shrink: 0;
     min-height: 44px;
     font-size: 12px;
     padding: 8px 12px;
   }
-  .ar-split {
-    gap: 12px;
-  }
-  .ar-filter {
-    gap: 8px;
-  }
+  .ar-split { gap: 12px; }
+  .ar-filter { gap: 8px; }
   .notice-filter-details {
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
@@ -150,35 +125,17 @@
     font-size: 12px;
     color: var(--ink-muted);
   }
-  .notice-filter-content {
-    padding: 0 12px 12px;
-    gap: 12px;
-  }
+  .notice-filter-content { padding: 0 12px 12px; gap: 12px; }
   .notice-filter-content fieldset {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 4px 12px;
   }
-  .notice-filter-content .ar-check {
-    min-height: 44px;
-    margin: 0;
-    font-size: 13px;
-  }
-  .ar-card {
-    padding: 16px;
-  }
-  .ar-card-title {
-    font-size: 18px;
-  }
-  .ar-toolbar {
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .ar-btn {
-    min-height: 44px;
-  }
-  .ar-search {
-    min-height: 44px;
-  }
+  .notice-filter-content .ar-check { min-height: 44px; margin: 0; font-size: 13px; }
+  .ar-card { padding: 16px; }
+  .ar-card-title { font-size: 18px; }
+  .ar-toolbar { gap: 8px; flex-wrap: wrap; }
+  .ar-btn { min-height: 44px; }
+  .ar-search { min-height: 44px; }
 }

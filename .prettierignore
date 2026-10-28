@@ -21,3 +21,6 @@ front/public/
 **/*.svg
 **/*.woff2
 **/*.png
+
+# CSS próprio usa regras simples curtas em uma linha; preservar essa convenção.
+front/*.css

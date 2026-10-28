@@ -1,7 +1,5 @@
 /* Quadros agrupam o fluxo; tabelas alinham os campos para comparação. */
-.ar-content-views {
-  margin: 16px 0;
-}
+.ar-content-views { margin: 16px 0; }
 .ar-content-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(240px, 1fr));
@@ -24,13 +22,8 @@
 .ar-board-column > .ar-card {
   margin-bottom: 12px;
 }
-.ar-table-scroll {
-  max-width: 100%;
-  overflow: auto;
-}
-.ar-view-content {
-  min-width: 0;
-}
+.ar-table-scroll { max-width: 100%; overflow: auto; }
+.ar-view-content { min-width: 0; }
 .ar-view-content td .ar-card {
   padding: 8px;
   border: 0;
@@ -38,9 +31,7 @@
   box-shadow: none;
 }
 @media (max-width: 640px) {
-  .ar-content-board {
-    grid-template-columns: repeat(3, minmax(230px, 85vw));
-  }
+  .ar-content-board { grid-template-columns: repeat(3, minmax(230px, 85vw)); }
 }
 
 /* A cor complementa o nome da categoria, nunca substitui o texto. */
@@ -143,12 +134,8 @@
 #kanbanGrid > .ar-col:nth-child(3) {
   border-top-color: #32814a;
 }
-.ar-board-column[data-status='rascunho'] {
-  border-top-color: #b77b20;
-}
-.ar-board-column[data-status='arquivado'] {
-  border-top-color: #7854a1;
-}
+.ar-board-column[data-status='rascunho'] { border-top-color: #b77b20; }
+.ar-board-column[data-status='arquivado'] { border-top-color: #7854a1; }
 
 /* Categorias da legenda e registros acadêmicos, com cores personalizáveis. */
 [data-event-category='atividades_campus'] {
@@ -170,11 +157,7 @@
   border-inline-start: 4px solid var(--event-registro_academico, #8652b3);
 }
 
-.ar-event-color-preview {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
+.ar-event-color-preview { display: flex; align-items: center; gap: 0.6rem; }
 .ar-color-swatch {
   display: inline-block;
   width: 1rem;
@@ -183,15 +166,9 @@
   border-radius: 50%;
   border: 1px solid currentColor;
 }
-.ar-calendar-legend {
-  margin-block: 1rem;
-}
-.ar-calendar-legend summary {
-  cursor: pointer;
-}
-[data-event-category] {
-  padding-inline-start: 8px;
-}
+.ar-calendar-legend { margin-block: 1rem; }
+.ar-calendar-legend summary { cursor: pointer; }
+[data-event-category] { padding-inline-start: 8px; }
 
 [data-event-category='ponto_facultativo'] {
   border-inline-start: 4px solid var(--event-ponto_facultativo, #b84a52);
@@ -213,21 +190,11 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
 }
-.ar-color-setting-copy {
-  display: grid;
-  gap: 5px;
-  min-width: 0;
-}
-.ar-color-setting-copy strong {
-  font-size: 14px;
-}
+.ar-color-setting-copy { display: grid; gap: 5px; min-width: 0; }
+.ar-color-setting-copy strong { font-size: 14px; }
 .ar-color-setting-copy small {
   color: var(--ink-muted);
   font-size: 13px;
   line-height: 1.45;
 }
-.ar-calendar-color-settings input[type='color'] {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-}
+.ar-calendar-color-settings input[type='color'] { width: 44px; height: 44px; flex: 0 0 44px; }

@@ -53,14 +53,8 @@
   color: var(--ink-muted);
   margin: 0 0 16px;
 }
-.ar-email-page form {
-  display: grid;
-  gap: 16px;
-  margin: 24px 0 0;
-}
-.ar-email-page form p {
-  margin: 0;
-}
+.ar-email-page form { display: grid; gap: 16px; margin: 24px 0 0; }
+.ar-email-page form p { margin: 0; }
 #resendEmailForm {
   border-top: 1px solid var(--line);
   padding-top: 24px;
@@ -100,9 +94,7 @@
   justify-content: center;
   line-height: 1.4;
 }
-.ar-email-page button {
-  width: 100%;
-}
+.ar-email-page button { width: 100%; }
 .ar-email-page button:disabled,
 .ar-email-dialog button:disabled,
 .ar-account-email button:disabled {
@@ -124,10 +116,7 @@
 .ar-email-dialog [role='status']:empty {
   display: none;
 }
-.ar-email-footer {
-  margin: 24px 0 0 !important;
-  text-align: center;
-}
+.ar-email-footer { margin: 24px 0 0 !important; text-align: center; }
 .ar-email-page a:not(.ar-email-brand),
 .ar-email-help a {
   color: var(--ink);
@@ -139,10 +128,7 @@
   line-height: 1.6;
   margin: 20px 0 0;
 }
-.ar-email-help a {
-  display: inline-block;
-  padding: 8px 4px;
-}
+.ar-email-help a { display: inline-block; padding: 8px 4px; }
 .ar-account-email {
   margin: 24px 0;
   padding: 24px;
@@ -157,9 +143,7 @@
   gap: 10px;
   margin-top: 20px;
 }
-.ar-email-controls button {
-  margin: 0;
-}
+.ar-email-controls button { margin: 0; }
 .ar-email-dialog {
   width: min(480px, calc(100vw - 32px));
   max-height: calc(100svh - 32px);
@@ -171,14 +155,8 @@
   background: var(--surface);
   color: var(--ink);
 }
-.ar-email-dialog h2 {
-  font-size: 24px;
-  line-height: 1.2;
-  margin: 0 0 12px;
-}
-.ar-email-dialog label {
-  margin-top: 20px;
-}
+.ar-email-dialog h2 { font-size: 24px; line-height: 1.2; margin: 0 0 12px; }
+.ar-email-dialog label { margin-top: 20px; }
 .ar-email-dialog::backdrop {
   background: #0009;
   backdrop-filter: blur(3px);
@@ -192,22 +170,11 @@
   display: none !important;
 }
 @media (max-width: 480px) {
-  .ar-email-body {
-    padding: 20px 12px;
-    align-items: start;
-  }
-  .ar-email-page {
-    border-radius: 20px;
-  }
-  .ar-account-email {
-    padding: 20px;
-  }
-  .ar-email-controls {
-    flex-direction: column;
-  }
-  .ar-email-controls button {
-    width: 100%;
-  }
+  .ar-email-body { padding: 20px 12px; align-items: start; }
+  .ar-email-page { border-radius: 20px; }
+  .ar-account-email { padding: 20px; }
+  .ar-email-controls { flex-direction: column; }
+  .ar-email-controls button { width: 100%; }
   .ar-email-dialog form > button {
     width: 100%;
     margin-right: 0;

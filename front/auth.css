@@ -86,10 +86,7 @@ body {
   border: 1.5px solid #000;
 }
 
-.logo-text {
-  display: flex;
-  flex-direction: column;
-}
+.logo-text { display: flex; flex-direction: column; }
 
 .logo-title {
   font-size: 19px;
@@ -151,9 +148,7 @@ body {
 }
 
 @media (max-width: 860px) {
-  .auth-container {
-    grid-template-columns: 1fr;
-  }
+  .auth-container { grid-template-columns: 1fr; }
 }
 
 /* Coluna do Formulário */
@@ -165,9 +160,7 @@ body {
 }
 
 @media (max-width: 640px) {
-  .auth-form-col {
-    padding: 28px 20px;
-  }
+  .auth-form-col { padding: 28px 20px; }
 }
 
 .eyebrow {
@@ -281,11 +274,7 @@ body {
 }
 
 /* Grupo de Filtro / Vínculo (Pills Neo-Brutalistas) */
-.pills-group {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+.pills-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .pill-btn {
   padding: 8px 18px;
@@ -534,11 +523,7 @@ body {
   letter-spacing: 0.08em;
 }
 
-.aside-footer-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.aside-footer-badge { display: flex; align-items: center; gap: 6px; }
 
 .status-dot {
   width: 7px;
