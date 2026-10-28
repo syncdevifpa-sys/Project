@@ -25,3 +25,7 @@ A recuperação usa correspondência da expressão inteira, com regras específi
 O literal não é convertido para minúsculas nem tem espaços/parênteses apagados. Condição `!=`, literal diferente, retorno diferente, operadores extras e inversão dos ramos são recusados. O padrão é transmitido por hexadecimal convertido para utf8mb4, sem depender do escape de strings da sessão (`NO_BACKSLASH_ESCAPES`). O parâmetro `c` mantém o literal sensível à caixa conforme [REGEXP_LIKE no MySQL 8.4](https://dev.mysql.com/doc/refman/8.4/en/regexp.html).
 
 Geração offline: `node tools/db/build-academic-access.cjs`. O comando agora verifica os originais e gera a recuperação separada, sem sobrescrevê-los. Os testes verificam representações aceitas, contraexemplos semânticos e que apenas os dois asserts foram substituídos. Não foi executado SQL pelo agente; o resultado nativo do comparador ainda deve ser confirmado na etapa 1.
+
+## Estado após a retomada — 27/10/2026
+
+O responsável confirmou a conclusão e enviou quatro CSVs do diagnóstico. Eles identificam `defaultdb`, MySQL `8.4.11`, `expressao_compativel_r1=1`, a coluna `turma_pendente` como `int STORED GENERATED`, o índice único esperado e as versões 1.1.30/1.1.31 com os checksums correspondentes. A 1.1.31 aparece verificada em `2026-10-27 00:24:47` (valor do banco; fuso não informado). Não reaplicar nesta base. O agente conferiu os arquivos, sem executar SQL ou conectar ao banco real. Este roteiro continua destinado à recuperação de outras bases que ainda estejam interrompidas.

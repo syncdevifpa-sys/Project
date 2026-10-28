@@ -2,7 +2,7 @@
 
 ## Entrega e limite de publicação
 
-A migração **1.1.30** foi confirmada pelo responsável em 26/10/2026. Não a reaplicar nem editar seus arquivos/checksum. A **1.1.31 é nova e não foi aplicada pelo agente**. Não enviar esta rodada ao main nem fazer deploy antes da validação em cópia descartável MySQL 8.4 e da aplicação manual autorizada da nova migração. O agente não conectou ao banco real.
+A migração **1.1.30** foi confirmada pelo responsável em 26/10/2026. Não a reaplicar nem editar seus arquivos/checksum. A aplicação manual da **1.1.31 foi confirmada pelo responsável em 27/10/2026**, com os CSVs do diagnóstico em `defaultdb`, MySQL 8.4.11: expressão compatível com R1 e registro/checksum `65b9e91ba1ee9ae3025c3078ee3a8e61e278640c482d384a0f35d154bd0ad326`. O agente conferiu os arquivos, sem conectar ou executar SQL no banco real. Para outras bases, a validação e aplicação manual autorizada continuam necessárias; não reaplicar versões confirmadas.
 
 Os novos endpoints de catálogo, ingresso, arquivamento/restauração e gestão verificam o registro/checksum 1.1.31 e respondem indisponibilidade antes de qualquer escrita se essa base estiver ausente. Não executam DDL pela aplicação. A grade e a edição de horários continuam usando a estrutura 1.1.30.
 
@@ -41,3 +41,7 @@ Validação em 26/10/2026: **450 testes aprovados, sem falhas ou saltos**, com o
 ## Atualização — retomada R1 da 1.1.31
 
 Após a tentativa manual relatada pelo responsável, o CALL parou no comparador de `turma_pendente`. A aplicação não está confirmada por este relato; DDL anterior ao SIGNAL pode existir. Não repetir o arquivo original ou o CALL isolado para contornar a falha. O SQL e o manifesto originais foram preservados. O gerador agora produz a recuperação separada e o diagnóstico de leitura; seguir [o roteiro R1](../backend/db/workbench/1.1.31/README.md), começando pelo diagnóstico. Suíte completa da recuperação: 453 testes aprovados, sem falhas ou saltos; o comparador ainda precisa ser confirmado nativamente no banco do responsável antes da retomada.
+
+## Confirmação após a retomada
+
+Os CSVs recebidos em 27/10/2026 registram a 1.1.30 e a 1.1.31 com os checksums esperados e `expressao_compativel_r1=1`. Essa evidência substitui a pendência de aplicação relatada acima. A verificação é documental; não comprova entrega de e-mail nem equivale a uma conexão independente ao banco pelo agente.
