@@ -138,10 +138,10 @@ test('início público usa projeções públicas e independe da sessão', async 
         if (file === 'classes-preview.html') continue;
         const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
         if (!html.includes('class="ar-navpill"')) continue;
-        if (['community.html','community-settings.html'].includes(file)) {
-            assert.match(html,/href="community.html"[^>]*>Meu painel<\/a>/);
-            assert.match(html,/href="community-settings.html"/);
-            assert.doesNotMatch(html,/href="(?:documents|people|classes|admin)\.html"/);
+        if (['community.html', 'community-settings.html'].includes(file)) {
+            assert.match(html, /href="community.html"[^>]*>Meu painel<\/a>/);
+            assert.match(html, /href="community-settings.html"/);
+            assert.doesNotMatch(html, /href="(?:documents|people|classes|admin)\.html"/);
             continue;
         }
         assert.match(html, /href="index.html">Início<\/a>/, file);
@@ -380,7 +380,11 @@ test('cadastro converte os vínculos em inglês para os valores do banco', () =>
 });
 
 test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios', async (t) => {
-    t.mock.method(require('../backend/src/models/externalUsers.model'),'findInstitutionalByEmail',async()=>null);
+    t.mock.method(
+        require('../backend/src/models/externalUsers.model'),
+        'findInstitutionalByEmail',
+        async () => null
+    );
     t.mock.method(
         require('../backend/src/models/externalUsers.model'),
         'findExternalByEmail',
@@ -392,11 +396,15 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
     }));
     const bcrypt = require('bcrypt');
     let saved;
-    t.mock.method(require('../backend/src/services/email-verification.service'), 'register', async (kind,data) => {
-        assert.equal(kind,'external');
-        saved = data;
-        return { insertId: 8 };
-    });
+    t.mock.method(
+        require('../backend/src/services/email-verification.service'),
+        'register',
+        async (kind, data) => {
+            assert.equal(kind, 'external');
+            saved = data;
+            return { insertId: 8 };
+        }
+    );
     for (const email of ['aluno@gmail.com', 'aluno@example.test']) {
         const res = await fetch(base + '/api/users', {
             method: 'POST',
@@ -406,7 +414,9 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
                 email,
                 senha: 'senha-segura',
                 tipo_usuario: 'discente',
-                matricula:'202600001',nome_usuario:'aluno.teste',curso_informado:'Informática · 1º semestre',
+                matricula: '202600001',
+                nome_usuario: 'aluno.teste',
+                etapa_atual: 1,
                 id_curso: 1,
                 is_admin: true,
                 situacao: 'ativo'
@@ -420,7 +430,9 @@ test('cadastro aceita Gmail e outro domínio válido sem permitir privilégios',
         assert.equal(saved.situacao, undefined);
         assert.ok(await bcrypt.compare('senha-segura', saved.senha));
     }
-    t.mock.method(require('../backend/src/services/email-verification.service'), 'register', () => assert.fail('Cadastro inválido não pode gravar'));
+    t.mock.method(require('../backend/src/services/email-verification.service'), 'register', () =>
+        assert.fail('Cadastro inválido não pode gravar')
+    );
     for (const tipo_usuario of ['docente', 'servidor']) {
         const res = await fetch(base + '/api/users', {
             method: 'POST',

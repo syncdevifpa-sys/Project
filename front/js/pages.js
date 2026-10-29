@@ -421,7 +421,32 @@
             if (external) $('#btnNovoProjeto').hidden = true;
             let rows = [];
             const grid = $('#gridProjetos');
-            const bar = filterBar('#chipbarProjetos', tracks, () => rows, 'eixo', render);
+            const situations = A.contentFields.projects.fields.find(
+                (field) => field[0] === 'situacao'
+            )[2];
+            const situation = document.createElement('select');
+            situation.className = 'ar-content-scope';
+            for (const [value, title] of [
+                ['', 'Todas as situações'],
+                ...Object.entries(situations)
+            ]) {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = title;
+                situation.append(option);
+            }
+            const situationLabel = document.createElement('label');
+            situationLabel.className = 'ar-field';
+            situationLabel.append('Situação do projeto', situation);
+            $('#chipbarProjetos').after(situationLabel);
+            situation.addEventListener('change', render);
+            const bar = filterBar(
+                '#chipbarProjetos',
+                tracks,
+                () => rows.filter((row) => !situation.value || row.situacao === situation.value),
+                'eixo',
+                render
+            );
             function projectActions(r) {
                 if (external) {
                     const registration = registrations.find(
@@ -447,14 +472,17 @@
                 grid.innerHTML =
                     bar
                         .visible()
-                        .map((r) =>
-                            card(
+                        .map((r) => {
+                            const markup = card(
                                 r.titulo,
                                 r.descricao,
-                                `${esc(label(tracks, r.eixo))} · ${esc(r.responsavel_nome || '')} · ${esc(r.vagas)} vagas`,
+                                `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}`,
                                 projectActions(r) + editAction('projects', r, r.id_projeto)
-                            )
-                        )
+                            );
+                            return A.noticeCover?.valid(r.capa)
+                                ? markup.replace('<h3', A.noticeCover.markup(r.capa) + '<h3')
+                                : markup;
+                        })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
                 linkDescriptions('#gridProjetos .ar-card-desc');
                 contentViews(grid, bar.visible(), 'aprovacao', {

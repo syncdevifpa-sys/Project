@@ -81,6 +81,71 @@ html[data-portal-navigation='pending'] .ar-navpill {
   flex-shrink: 0;
   text-decoration: none;
 }
+.ar-notifications {
+  position: fixed;
+  z-index: 45;
+  top: var(--notification-top, 96px);
+  right: 20px;
+  box-sizing: border-box;
+  width: min(400px, calc(100vw - 24px));
+  max-height: calc(100dvh - var(--notification-top, 96px) - 16px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 20px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-float);
+}
+.ar-notifications[hidden] {
+  display: none;
+}
+.ar-notifications-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: -20px;
+  padding-block: 8px;
+  background: var(--surface);
+}
+.ar-notifications h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.ar-notifications-help,
+.ar-notifications-list p {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.ar-notifications-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+.ar-notifications-list li {
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.ar-notifications-list h3 {
+  font-size: 15px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .ar-notifications {
+    top: auto;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 12px;
+    width: auto;
+    max-height: 75dvh;
+  }
+}
 .ar-reminders-link:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 3px;

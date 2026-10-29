@@ -1,6 +1,12 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
-module.exports = function signupClient(role, email, post, access = 'cadastro', initialSession = {}) {
+module.exports = function signupClient(
+    role,
+    email,
+    post,
+    access = 'cadastro',
+    initialSession = {}
+) {
     const error = { textContent: '', style: {} },
         success = { textContent: '', style: {} },
         help = { hidden: true },
@@ -13,9 +19,9 @@ module.exports = function signupClient(role, email, post, access = 'cadastro', i
         '#telefone, #phone': { value: '' },
         '#vinculoInput, #affiliationInput': { value: role === 'users' ? 'Student' : 'External' },
         '#curso': { value: '1' },
-        '#teacherMatricula': {value:'202600001'},
-        '#teacherUsername': {value:'pessoa.teste'},
-        '#studentCourseInfo': {value:'Informática · 1º semestre'},
+        '#teacherMatricula': { value: '202600001' },
+        '#teacherUsername': { value: 'pessoa.teste' },
+        '#studentCourseInfo': { value: '1' },
         '.mensagem-erro, .error-message': error,
         '.mensagem-sucesso, .success-message': success,
         '[data-signup-verification]': help,

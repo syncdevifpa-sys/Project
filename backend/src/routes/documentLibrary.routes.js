@@ -1,8 +1,20 @@
 const express = require('express');
+const multer = require('multer');
 const { authenticateToken } = require('../middlewares/auth.middleware');
 const { createLibrary, LIMITS } = require('../services/document-library.service');
 const library = createLibrary();
 const router = express.Router();
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: LIMITS.file,
+        files: 1,
+        fields: 6,
+        parts: 8,
+        fieldSize: 12000,
+        fieldNameSize: 100
+    }
+}).single('arquivo');
 router.use(authenticateToken);
 router.use((_req, res, next) => {
     res.set('Cache-Control', 'no-store');
@@ -15,6 +27,26 @@ const action = (fn) => async (req, res, next) => {
         next(error);
     }
 };
+for (const scope of ['items', 'reviews']) {
+    router.get(
+        `/${scope}/:id/preview`,
+        action(async (q, s) => {
+            // Reutiliza a autorização do download, inclusive a verificação de admin.
+            const item =
+                scope === 'reviews'
+                    ? await library.reviewDownload(q.user.id_usuario, q.params.id)
+                    : await library.download(q.user.id_usuario, q.params.id);
+            const image = await require('../services/document-preview.service').preview(item);
+            s.set({
+                'Content-Type': 'image/png',
+                'X-Content-Type-Options': 'nosniff',
+                'Content-Disposition': 'inline',
+                'Content-Security-Policy': "default-src 'none'; sandbox"
+            });
+            s.send(image);
+        })
+    );
+}
 router.get(
     '/reviews',
     action(async (q, s) => s.json(await library.reviewList(q.user.id_usuario)))
@@ -103,7 +135,18 @@ router.post(
 router.post(
     '/files',
     express.raw({ type: 'application/octet-stream', limit: LIMITS.file }),
+    upload,
     action(async (q, s) => {
+        if (q.file) {
+            s.status(201).json(
+                await library.create(
+                    q.user.id_usuario,
+                    { ...q.body, nome_arquivo: q.body.nome_arquivo || q.file.originalname },
+                    q.file.buffer
+                )
+            );
+            return;
+        }
         if (!Buffer.isBuffer(q.body))
             return s.status(400).json({ error: 'Envie o arquivo em formato binário.' });
         s.status(201).json(await library.create(q.user.id_usuario, q.query, q.body));
@@ -144,13 +187,15 @@ router.get(
 );
 router.use((error, _req, res, _next) => {
     if (['ER_ROW_IS_REFERENCED', 'ER_ROW_IS_REFERENCED_2'].includes(error.code))
-        return res
-            .status(409)
-            .json({
-                error: 'Este documento está anexado a uma disciplina. Remova o anexo em Turmas antes de excluir o original.'
-            });
+        return res.status(409).json({
+            error: 'Este documento está anexado a uma disciplina. Remova o anexo em Turmas antes de excluir o original.'
+        });
     const missing = error.code === 'ER_NO_SUCH_TABLE';
-    const tooLarge = error.type === 'entity.too.large';
+    const tooLarge = error.type === 'entity.too.large' || error.code === 'LIMIT_FILE_SIZE';
+    if (error instanceof multer.MulterError && !tooLarge)
+        return res
+            .status(400)
+            .json({ error: 'Envie um único arquivo e confira os campos do documento.' });
     if (error.code === 'ER_DUP_ENTRY')
         return res.status(409).json({ error: 'Já existe uma pasta com esse nome.' });
     res.status(missing ? 503 : tooLarge ? 413 : error.status || 500).json({

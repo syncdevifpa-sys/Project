@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Projetos</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inline script to apply theme and accessibility before first paint without flicker -->
@@ -43,6 +49,8 @@
 
     <link rel="stylesheet" href="tokens.css" />
     <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="avatar-editor.css" />
+    <link rel="stylesheet" href="notice-cover.css" />
     <link rel="stylesheet" href="portal-responsive.css" />
     <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
     <link rel="stylesheet" href="scrollbars.css" />
@@ -55,7 +63,7 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="progressive-navigation.css" />
-</head>
+  </head>
   <body>
     <div class="ar-app">
       <!-- Navegação superior -->
@@ -148,13 +156,12 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
       <main class="ar-main ar-route-main">
-
         <!-- PageHero Compact in Yellow -->
         <section class="ar-hero ar-hero--yellow ar-hero--compact" data-initial-banner-slot="page">
           <svg
@@ -182,10 +189,10 @@
           </svg>
           <h1 class="ar-hero-title">Projetos<sup class="ar-hero-count">(0)</sup></h1>
           <div class="ar-hero-side">
-            <p class="ar-hero-desc"
-              >Projetos de pesquisa, extensão e inovação em andamento ou com inscrições abertas no
-              campus.</p
-            >
+            <p class="ar-hero-desc">
+              Projetos de pesquisa, extensão e inovação em andamento ou com inscrições abertas no
+              campus.
+            </p>
             <div class="ar-hero-actions">
               <button type="button" class="ar-btn ar-btn--primary" id="btnNovoProjeto">
                 <span>Enviar projeto</span>
@@ -217,48 +224,55 @@
             aria-pressed="true"
             data-eixo="All"
             data-filter-key="All"
-            >Todos<sup class="ar-sup">(0)</sup></button
           >
+            Todos<sup class="ar-sup">(0)</sup>
+          </button>
           <button
             type="button"
             class="ar-chip"
             aria-pressed="false"
             data-eixo="Research"
             data-filter-key="Research"
-            >Pesquisa<sup class="ar-sup">(0)</sup></button
           >
+            Pesquisa<sup class="ar-sup">(0)</sup>
+          </button>
           <button
             type="button"
             class="ar-chip"
             aria-pressed="false"
             data-eixo="Extension"
             data-filter-key="Extension"
-            >Extensão<sup class="ar-sup">(0)</sup></button
           >
+            Extensão<sup class="ar-sup">(0)</sup>
+          </button>
           <button
             type="button"
             class="ar-chip"
             aria-pressed="false"
             data-eixo="Teaching"
             data-filter-key="Teaching"
-            >Ensino<sup class="ar-sup">(0)</sup></button
           >
+            Ensino<sup class="ar-sup">(0)</sup>
+          </button>
           <button
             type="button"
             class="ar-chip"
             aria-pressed="false"
             data-eixo="Innovation"
             data-filter-key="Innovation"
-            >Inovação<sup class="ar-sup">(0)</sup></button
           >
+            Inovação<sup class="ar-sup">(0)</sup>
+          </button>
         </div>
 
         <!-- Projects Grid -->
-        <div class="ar-card-grid" id="gridProjetos"><p role="status">Carregando projetos...</p></div>
+        <div class="ar-card-grid" id="gridProjetos">
+          <p role="status">Carregando projetos...</p>
+        </div>
 
         <!-- Modal Dialog: Submit Project -->
-          </main>
-</div>
+      </main>
+    </div>
 
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
@@ -267,6 +281,8 @@
     <script src="js/content-fields.js"></script>
     <script src="js/confirm-dialog.js"></script>
     <script src="js/notice-actions.js"></script>
+    <script src="js/avatar-editor.js"></script>
+    <script src="js/notice-cover.js"></script>
     <script src="js/notice-editor.js"></script>
     <script src="js/notice-text.js"></script>
     <script src="js/content-views.js"></script>
@@ -285,5 +301,5 @@
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
     <script src="js/progressive-navigation.js"></script>
-</body>
+  </body>
 </html>

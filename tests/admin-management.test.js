@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const db = require('../backend/src/config/database');
 const service = require('../backend/src/services/admin.service');
 after(() => db.end());
-function transaction(t, person, admins, history = false) {
+function transaction(t, person, admins, history = false, options = {}) {
     const calls = [];
     const connection = {
         beginTransaction: async () => calls.push('begin'),
@@ -12,6 +12,10 @@ function transaction(t, person, admins, history = false) {
         release: () => calls.push('release'),
         execute: async (sql, params) => {
             calls.push({ sql, params });
+            if (sql.startsWith('SELECT id_curso FROM cursos'))
+                return [options.invalidCourse ? [] : [{ id_curso: 2 }]];
+            if (sql.includes('information_schema.TABLES'))
+                return [options.audit ? [{ TABLE_NAME: 'cadastro_auditoria' }] : []];
             if (sql.includes('SELECT id_usuario FROM usuarios WHERE is_admin')) return [admins];
             if (sql.includes('FOR UPDATE')) return [[person]];
             if (sql.startsWith('SELECT 1')) return [history ? [{ used: 1 }] : []];
@@ -44,14 +48,24 @@ test('atribuir Professor diretamente pela edição administrativa é bloqueado e
     );
     assert.ok(!calls.some((c) => c.sql?.startsWith('UPDATE usuarios')));
 });
-test('permissão administrativa pode ser atribuída a outra conta sem trocar seu vínculo institucional', async t => {
-    const calls=transaction(t,{id_usuario:8,email:'pessoa@gmail.com',situacao:'ativo',tipo_usuario:'discente',is_admin:0},[{id_usuario:4}]);
-    await service.changePerson('users',8,{is_admin:true},4);
-    const update=calls.find(c=>c.sql?.startsWith('UPDATE usuarios'));
-    assert.match(update.sql,/is_admin = \?/);
-    assert.doesNotMatch(update.sql,/tipo_usuario/);
-    assert.equal(update.params[0],true);
-    assert.ok(calls.some(c=>c.sql?.startsWith('DELETE FROM tokens')));
+test('permissão administrativa pode ser atribuída a outra conta sem trocar seu vínculo institucional', async (t) => {
+    const calls = transaction(
+        t,
+        {
+            id_usuario: 8,
+            email: 'pessoa@gmail.com',
+            situacao: 'ativo',
+            tipo_usuario: 'discente',
+            is_admin: 0
+        },
+        [{ id_usuario: 4 }]
+    );
+    await service.changePerson('users', 8, { is_admin: true }, 4);
+    const update = calls.find((c) => c.sql?.startsWith('UPDATE usuarios'));
+    assert.match(update.sql, /is_admin = \?/);
+    assert.doesNotMatch(update.sql, /tipo_usuario/);
+    assert.equal(update.params[0], true);
+    assert.ok(calls.some((c) => c.sql?.startsWith('DELETE FROM tokens')));
 });
 
 test('admin desativa outra pessoa e encerra suas sessões sem excluir histórico', async (t) => {
@@ -218,6 +232,38 @@ test('último administrador e conta de outra pessoa não podem ser excluídos pe
         (e) => e.status === 403
     );
 });
+test('edição de matrícula exige auditoria, mantém limites e não permite alterar email de acesso', async (t) => {
+    const person = {
+        id_usuario: 8,
+        email: 'conta@example.test',
+        situacao: 'ativo',
+        is_admin: 0,
+        tipo_usuario: 'discente',
+        matricula: null
+    };
+    let calls = transaction(t, person, [{ id_usuario: 4 }]);
+    await assert.rejects(service.changePerson('users', 8, { matricula: '12345' }, 4), {
+        status: 503
+    });
+    assert.ok(!calls.some((c) => c.sql?.startsWith('UPDATE usuarios')));
+    calls = transaction(t, person, [{ id_usuario: 4 }], false, { audit: true });
+    await service.changePerson(
+        'users',
+        8,
+        { matricula: '12345', telefone: '91999990000', email_confirmado: true },
+        4
+    );
+    const audit = calls.find((c) => c.sql?.startsWith('INSERT INTO cadastro_auditoria'));
+    assert.equal(audit.params[0], 4);
+    assert.equal(audit.params[1], 8);
+    assert.deepEqual(JSON.parse(audit.params[2]), ['matricula', 'telefone']);
+    const update = calls.find((c) => c.sql?.startsWith('UPDATE usuarios'));
+    assert.doesNotMatch(update.sql, /email_confirmado/);
+    await assert.rejects(service.changePerson('users', 8, { email: 'outra@example.test' }, 4), {
+        status: 409
+    });
+});
+
 test('curso opcional válido de servidor é preservado e valor inválido é recusado', async (t) => {
     const calls = transaction(
         t,

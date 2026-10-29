@@ -48,6 +48,10 @@ function fileInfo(buffer, filename) {
     if (/[\\/]/.test(name)) fail(400, 'Nome do arquivo inválido.');
     const ext = name.split('.').pop().toLowerCase();
     let mime;
+    // O campo MIME legado tem 50 caracteres. DOCX é servido como anexo binário;
+    // sua estrutura interna é validada antes de qualquer gravação em create().
+    if (ext === 'docx' && buffer.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])))
+        mime = 'application/octet-stream';
     if (
         ext === 'pdf' &&
         buffer.subarray(0, 5).toString() === '%PDF-' &&
@@ -70,7 +74,8 @@ function fileInfo(buffer, filename) {
         buffer[buffer.length - 1] === 217
     )
         mime = 'image/jpeg';
-    if (!mime) fail(400, 'Formato inválido. Envie PDF, PNG ou JPEG compatível com a extensão.');
+    if (!mime)
+        fail(400, 'Formato inválido. Envie PDF, DOCX, PNG ou JPEG compatível com a extensão.');
     return { name, mime, size: buffer.length };
 }
 function publication(body, current = {}) {
@@ -88,11 +93,33 @@ function description(body, current = {}) {
         fail(400, 'Descrição inválida. Remova os caracteres de controle e tente novamente.');
     return normalized.trim() || null;
 }
+function authors(body, current = {}) {
+    const value = body.autor_obra ?? current.autor_obra ?? '';
+    if (typeof value !== 'string') fail(400, 'Autoria inválida. Informe os nomes dos autores.');
+    if (value.length > 500) fail(400, 'Autoria muito longa. Use até 500 caracteres.');
+    if (/[\x00-\x1f\x7f]/.test(value))
+        fail(400, 'Informe os autores em uma linha, separados por ponto e vírgula.');
+    return value.trim() || null;
+}
 const publisher = (user) =>
     user.tipo_usuario === 'docente' || user.is_admin === 1 || user.is_admin === true;
 const publicAuthor =
     "u.situacao = 'ativo' AND (u.tipo_usuario = 'docente' OR u.is_admin = 1 OR i.revisao = 'aprovado')";
 function createLibrary(database = db) {
+    async function authorship() {
+        try {
+            const [rows] = await database.execute(
+                "SELECT COLUMN_TYPE, IS_NULLABLE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'documento_itens' AND COLUMN_NAME = 'autor_obra'"
+            );
+            return (
+                Array.isArray(rows) &&
+                rows[0]?.COLUMN_TYPE === 'varchar(500)' &&
+                rows[0]?.IS_NULLABLE === 'YES'
+            );
+        } catch {
+            return false;
+        }
+    }
     async function transaction(owner, action) {
         const connection = await database.getConnection();
         try {
@@ -124,6 +151,7 @@ function createLibrary(database = db) {
         return folder;
     }
     async function list(owner) {
+        const hasAuthors = await authorship();
         const [users] = await database.execute(
             'SELECT tipo_usuario, is_admin FROM usuarios WHERE id_usuario = ?',
             [owner]
@@ -133,7 +161,7 @@ function createLibrary(database = db) {
             [owner]
         );
         const [items] = await database.execute(
-            `SELECT ${columns} FROM documento_itens WHERE id_usuario = ? ORDER BY atualizado_em DESC, id_item DESC`,
+            `SELECT ${columns}, ${hasAuthors ? 'autor_obra' : 'NULL AS autor_obra'} FROM documento_itens WHERE id_usuario = ? ORDER BY atualizado_em DESC, id_item DESC`,
             [owner]
         );
         return {
@@ -142,6 +170,7 @@ function createLibrary(database = db) {
             saved: await savedList(owner),
             used: items.reduce((n, item) => n + Number(item.tamanho), 0),
             limits: LIMITS,
+            canSetAuthorship: hasAuthors,
             canPublish: publisher(users[0] || {}),
             canReview: users[0]?.is_admin === 1 || users[0]?.is_admin === true
         };
@@ -185,8 +214,14 @@ function createLibrary(database = db) {
         });
     }
     async function create(owner, body, buffer) {
+        const hasAuthors = await authorship(),
+            authorNames = authors(body);
+        if (authorNames && !hasAuthors)
+            fail(503, 'O campo Autor(es) precisa ser habilitado no banco pela equipe.');
         const title = text(body.titulo, 150, 'Título');
         const info = buffer ? fileInfo(buffer, body.nome_arquivo) : null;
+        if (info && info.name.toLowerCase().endsWith('.docx'))
+            await require('./document-docx.service').readDocx(buffer);
         const link = info ? null : url(body.url);
         const visibility = publication(body),
             details = description(body);
@@ -220,7 +255,7 @@ function createLibrary(database = db) {
                     );
             }
             const [result] = await c.execute(
-                'INSERT INTO documento_itens (id_usuario, id_pasta, titulo, descricao, visibilidade, tipo, url, nome_arquivo, mime, tamanho, conteudo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                `INSERT INTO documento_itens (id_usuario, id_pasta, titulo, descricao, visibilidade, tipo, url, nome_arquivo, mime, tamanho, conteudo${hasAuthors ? ', autor_obra' : ''}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${hasAuthors ? ', ?' : ''})`,
                 [
                     owner,
                     folder,
@@ -232,23 +267,28 @@ function createLibrary(database = db) {
                     info?.name || null,
                     info?.mime || null,
                     info?.size || 0,
-                    buffer || null
+                    buffer || null,
+                    ...(hasAuthors ? [authorNames] : [])
                 ]
             );
             return { id_item: result.insertId };
         });
     }
-    async function item(connection, owner, key, binary = false) {
+    async function item(connection, owner, key, binary = false, hasAuthors = false) {
         const [rows] = await connection.execute(
-            `SELECT ${columns}${binary ? ', conteudo' : ''} FROM documento_itens WHERE id_item = ? AND id_usuario = ? FOR UPDATE`,
+            `SELECT ${columns}${binary ? ', conteudo' : ''}, ${hasAuthors ? 'autor_obra' : 'NULL AS autor_obra'} FROM documento_itens WHERE id_item = ? AND id_usuario = ? FOR UPDATE`,
             [id(key), owner]
         );
         if (!rows.length) fail(404, 'Documento não encontrado.');
         return rows[0];
     }
     async function update(owner, key, body) {
+        const hasAuthors = await authorship();
+        if (!hasAuthors && authors(body))
+            fail(503, 'O campo Autor(es) precisa ser habilitado no banco pela equipe.');
         return transaction(owner, async (c, user) => {
-            const current = await item(c, owner, key);
+            const current = await item(c, owner, key, false, hasAuthors);
+            const authorNames = authors(body, current);
             const visibility = publication(body, current),
                 details = description(body, current);
             if (visibility === 'publico' && !publisher(user))
@@ -261,8 +301,17 @@ function createLibrary(database = db) {
             );
             const link = current.tipo === 'link' ? url(body.url ?? current.url) : null;
             await c.execute(
-                "UPDATE documento_itens SET titulo = ?, descricao = ?, visibilidade = ?, id_pasta = ?, url = ?, revisao = 'nenhuma', versao_revisao = versao_revisao + 1, motivo_revisao = NULL, enviado_em = NULL, revisado_em = NULL, revisado_por = NULL WHERE id_item = ? AND id_usuario = ?",
-                [title, details, visibility, folder, link, id(key), owner]
+                `UPDATE documento_itens SET titulo = ?, descricao = ?, visibilidade = ?, id_pasta = ?, url = ?, revisao = 'nenhuma', versao_revisao = versao_revisao + 1, motivo_revisao = NULL, enviado_em = NULL, revisado_em = NULL, revisado_por = NULL${hasAuthors ? ', autor_obra = ?' : ''} WHERE id_item = ? AND id_usuario = ?`,
+                [
+                    title,
+                    details,
+                    visibility,
+                    folder,
+                    link,
+                    ...(hasAuthors ? [authorNames] : []),
+                    id(key),
+                    owner
+                ]
             );
         });
     }
@@ -276,8 +325,9 @@ function createLibrary(database = db) {
         });
     }
     async function publicList() {
+        const hasAuthors = await authorship();
         const [items] = await database.execute(
-            `SELECT i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, i.criado_em, i.atualizado_em, u.nome AS autor FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.visibilidade = 'publico' AND ${publicAuthor} ORDER BY i.atualizado_em DESC, i.id_item DESC`
+            `SELECT i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, i.criado_em, i.atualizado_em, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.visibilidade = 'publico' AND ${publicAuthor} ORDER BY i.atualizado_em DESC, i.id_item DESC`
         );
         return items;
     }
@@ -290,8 +340,9 @@ function createLibrary(database = db) {
         return items[0];
     }
     async function savedList(owner) {
+        const hasAuthors = await authorship();
         const [rows] = await database.execute(
-            `SELECT s.id_salvo, s.id_pasta, i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, u.nome AS autor FROM documento_salvos s LEFT JOIN documento_itens i ON i.id_item = s.id_item AND i.visibilidade = 'publico' AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id_usuario = i.id_usuario AND ${publicAuthor}) LEFT JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE s.id_usuario = ? ORDER BY s.criado_em DESC`,
+            `SELECT s.id_salvo, s.id_pasta, i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_salvos s LEFT JOIN documento_itens i ON i.id_item = s.id_item AND i.visibilidade = 'publico' AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id_usuario = i.id_usuario AND ${publicAuthor}) LEFT JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE s.id_usuario = ? ORDER BY s.criado_em DESC`,
             [owner]
         );
         return rows.map((row) => ({ ...row, reference: true }));
@@ -352,6 +403,7 @@ function createLibrary(database = db) {
         });
     }
     async function reviewList(owner) {
+        const hasAuthors = await authorship();
         const [users] = await database.execute(
             'SELECT is_admin FROM usuarios WHERE id_usuario = ?',
             [owner]
@@ -359,7 +411,7 @@ function createLibrary(database = db) {
         if (!(users[0]?.is_admin === 1 || users[0]?.is_admin === true))
             fail(403, 'Somente administradores avaliam publicações.');
         const [rows] = await database.execute(
-            "SELECT i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.tamanho, i.enviado_em, i.versao_revisao, u.nome AS autor FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.revisao = 'pendente' AND u.situacao = 'ativo' ORDER BY i.enviado_em, i.id_item"
+            `SELECT i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.tamanho, i.enviado_em, i.versao_revisao, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.revisao = 'pendente' AND u.situacao = 'ativo' ORDER BY i.enviado_em, i.id_item`
         );
         return rows;
     }

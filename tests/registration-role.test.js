@@ -10,7 +10,18 @@ function registration() {
         course = {},
         help = {},
         submit = {},
-        teacherInputs = ['teacherMatricula','teacherUsername','teacherFormacao','studentCourseInfo'].map(id=>({id,wrapper:{hidden:false},closest(){return this.wrapper;}})),
+        teacherInputs = [
+            'teacherMatricula',
+            'teacherUsername',
+            'teacherFormacao',
+            'studentCourseInfo'
+        ].map((id) => ({
+            id,
+            wrapper: { hidden: false },
+            closest() {
+                return this.wrapper;
+            }
+        })),
         teacherFields = { hidden: true, querySelectorAll: () => teacherInputs };
     const buttons = ['Student', 'Professor', 'Staff', 'External'].map((value, index) => {
         const attributes = {
@@ -76,9 +87,9 @@ function registration() {
 
 test('clique seleciona professor/servidor e volta para aluno sem conceder cadastro privilegiado', () => {
     const r = registration();
-    assert.equal(r.course.required, false);
+    assert.equal(r.course.required, true);
     assert.equal(r.teacherFields.hidden, false);
-    assert.equal(r.teacherInputs.find(input=>input.id==='studentCourseInfo').required,true);
+    assert.equal(r.teacherInputs.find((input) => input.id === 'studentCourseInfo').required, true);
     assert.equal(r.submit.disabled, false);
     for (const index of [1, 2]) {
         r.course.value = '7';
@@ -93,8 +104,11 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
         assert.equal(r.submit.disabled, false);
         assert.equal(r.teacherFields.hidden, false);
         assert.ok(
-            r.teacherInputs.every(
-                (input) => input.id==='studentCourseInfo' ? input.disabled : input.required === !(index === 2 && input.id === 'teacherFormacao') && input.disabled === false
+            r.teacherInputs.every((input) =>
+                input.id === 'studentCourseInfo'
+                    ? input.disabled
+                    : input.required === !(index === 2 && input.id === 'teacherFormacao') &&
+                      input.disabled === false
             )
         );
         assert.match(
@@ -104,9 +118,9 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
     }
     r.buttons[0].click();
     assert.equal(r.input.value, 'Student');
-    assert.equal(r.wrapper.style.display, 'none');
-    assert.equal(r.course.required, false);
-    assert.match(r.help.textContent,/aprovação em Requisitos/);
+    assert.equal(r.wrapper.style.display, 'flex');
+    assert.equal(r.course.required, true);
+    assert.match(r.help.textContent, /aprovação em Requisitos/);
     assert.equal(r.submit.disabled, false);
     r.buttons[3].click();
     assert.equal(r.input.value, 'External');
@@ -143,8 +157,8 @@ test('cadastro de todos os vínculos usa conta externa até aprovação, incluin
             '#curso': { value: '1' },
             '#teacherMatricula': { value: '12345' },
             '#teacherUsername': { value: 'professor.teste' },
-            '#teacherFormacao': { value: 'Licenciatura' }
-            ,'#studentCourseInfo': {value:'Informática · 1º semestre'}
+            '#teacherFormacao': { value: 'Licenciatura' },
+            '#studentCourseInfo': { value: 'Informática · 1º semestre' }
         };
         let submit, request;
         const form = {

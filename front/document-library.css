@@ -102,6 +102,99 @@
   padding: 18px 0;
   border-bottom: 1px solid var(--line);
 }
+.ar-library-views {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+}
+.ar-library-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
+  gap: 12px;
+  margin-top: 20px;
+}
+@media (max-width: 600px) {
+  .ar-library-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ar-library-views [aria-pressed='true'] {
+  background: var(--cyan-soft);
+  color: var(--cyan-ink);
+  border-color: var(--cyan-ink);
+  font-weight: 650;
+}
+.ar-library-items[data-view='board'] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 16px;
+  padding-top: 16px;
+}
+.ar-library-items[data-view='board'] .ar-library-item {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  min-width: 0;
+}
+.ar-library-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+  font-size: 13px;
+  text-align: center;
+}
+.ar-library-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top;
+}
+.ar-library-items[data-view='board'] .ar-library-item-info > p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.ar-library-items[data-view='board'] .ar-library-actions {
+  margin-top: auto;
+}
+.ar-library-table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.ar-library-table-scroll:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.ar-library-table-scroll table {
+  width: 100%;
+  min-width: 580px;
+}
+.ar-library-table-scroll caption {
+  text-align: left;
+  padding: 12px 0;
+  color: var(--ink-muted);
+}
+.ar-library-table-scroll td:first-child {
+  min-width: 220px;
+}
+.ar-library-empty {
+  grid-column: 1 / -1;
+}
 .ar-library-item-info {
   flex: 1;
   min-width: 0;
@@ -115,6 +208,19 @@
   font-size: 13px;
   color: var(--ink-muted);
   margin: 4px 0 0;
+}
+.ar-library-item-info .ar-library-authors {
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.ar-library-publisher {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 .ar-library .ar-btn {
   min-height: 44px;

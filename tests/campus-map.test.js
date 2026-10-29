@@ -282,7 +282,10 @@ test('controles de teclado, pan e toque não abrem bloco ao arrastar', () => {
 });
 test('página pública usa referência atribuída sem API paga nem rotas ou identidades inventadas', () => {
     const html = fs.readFileSync('front/campus-map.html', 'utf8');
-    assert.match(html, /Não é um mapa de rotas nem uma planta oficial atualizada/);
+    assert.match(
+        html.replace(/\s+/g, ' '),
+        /Não é um mapa de rotas nem uma planta oficial atualizada/
+    );
     assert.match(html, /engBRASIL25/);
     assert.match(html, /assets\/campus-map-reference-2025.png/);
     assert.ok(fs.statSync('front/assets/campus-map-reference-2025.png').size > 0);

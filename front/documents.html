@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documentos</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inicialização do tema antes da exibição -->
@@ -55,7 +61,7 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="document-library.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
-</head>
+  </head>
   <body>
     <div class="ar-app">
       <!-- Navegação superior -->
@@ -148,9 +154,9 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
 
@@ -179,62 +185,94 @@
           <circle class="d" cx="752" cy="133" r="5"></circle>
           <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
         </svg>
-        <h1 class="ar-hero-title"
-          >Documentos<sup class="ar-library-hero-count" id="libraryHeroCount">(0)</sup></h1
-        >
+        <h1 class="ar-hero-title">
+          Documentos<sup class="ar-library-hero-count" id="libraryHeroCount">(0)</sup>
+        </h1>
         <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Sua biblioteca pessoal de arquivos e links, solicitações acadêmicas e recursos do
-            campus.</p
-          >
+          <p class="ar-hero-desc">
+            Sua biblioteca pessoal de arquivos e links, solicitações acadêmicas e recursos do
+            campus.
+          </p>
           <div class="ar-hero-actions">
             <button type="button" class="ar-btn" data-library-folder>Adicionar pasta</button
-            ><button type="button" class="ar-btn ar-btn--primary" data-library-document
-              >Adicionar documento</button
-            >
+            ><button type="button" class="ar-btn ar-btn--primary" data-library-document>
+              Adicionar documento
+            </button>
           </div>
         </div>
       </section>
 
       <section class="ar-library" id="documentLibrary" aria-labelledby="libraryTitle">
         <div class="ar-library-head">
-          <div
-            ><h2 id="libraryTitle">Minha biblioteca</h2
-            ><p data-library-description>Arquivos e links privados, organizados em pastas.</p></div
-          >
-          <nav class="ar-library-tabs" aria-label="Áreas de documentos"
-            ><button type="button" class="ar-btn" data-library-mode="mine" aria-pressed="true"
-              >Meus documentos</button
-            ><button type="button" class="ar-btn" data-library-mode="public" aria-pressed="false"
-              >Materiais públicos</button
+          <div>
+            <h2 id="libraryTitle">Biblioteca de estudo</h2>
+            <p data-library-description>Documentos e apostilas organizados por assuntos.</p>
+          </div>
+          <nav class="ar-library-tabs" aria-label="Áreas de documentos">
+            <button type="button" class="ar-btn" data-library-mode="mine" aria-pressed="true">
+              Meus documentos</button
+            ><button type="button" class="ar-btn" data-library-mode="public" aria-pressed="false">
+              Materiais públicos</button
             ><button
               type="button"
               class="ar-btn"
               data-library-mode="review"
               data-library-review
               hidden
-              >Para avaliação</button
-            ></nav
+            >
+              Revisão de publicação
+            </button>
+          </nav>
+        </div>
+        <div class="ar-library-filters">
+          <label class="ar-field"
+            >Buscar material<input
+              type="search"
+              maxlength="150"
+              data-library-search
+              placeholder="Título, assunto, autoria ou descrição"
+          /></label>
+          <label class="ar-field"
+            >Formato<select data-library-format>
+              <option value="all">Todos os formatos</option>
+              <option value="pdf">PDF</option>
+              <option value="docx">DOCX</option>
+              <option value="image">Imagens</option>
+              <option value="link">Links</option>
+            </select></label
           >
         </div>
+        <div class="ar-library-views" role="group" aria-label="Visualização da biblioteca">
+          <button class="ar-btn" type="button" data-library-view="board" aria-pressed="true">
+            Quadro
+          </button>
+          <button class="ar-btn" type="button" data-library-view="table" aria-pressed="false">
+            Tabela
+          </button>
+          <button class="ar-btn" type="button" data-library-view="list" aria-pressed="false">
+            Lista
+          </button>
+        </div>
         <p class="ar-library-status" role="status" data-library-status>Carregando biblioteca...</p>
-        <div class="ar-library-layout"
-          ><nav aria-label="Pastas da biblioteca" data-library-folders></nav
-          ><div
-            ><div class="ar-library-location" data-library-location></div
-            ><div class="ar-library-items" data-library-items></div></div
-        ></div>
-        <p class="ar-library-help"
-          >PDF, PNG e JPEG: até 2 MB por arquivo e 20 MB por pessoa. Os links não ocupam esse
-          espaço. Limite de 500 documentos e 100 pastas. O compartilhamento no site de destino de um
-          link depende desse serviço.</p
-        >
+        <div class="ar-library-layout">
+          <nav aria-label="Assuntos e pastas da biblioteca" data-library-folders></nav>
+          <div>
+            <div class="ar-library-location" data-library-location></div>
+            <div class="ar-library-items" data-library-items></div>
+          </div>
+        </div>
+        <p class="ar-library-help">
+          PDF, DOCX, PNG e JPEG: até 2 MB por arquivo e 20 MB por pessoa. As capas dos PDFs mostram
+          a primeira página; DOCX tem prévia de texto aproximada, sem reproduzir a paginação do
+          Word. Os links não ocupam esse espaço. Limite de 500 documentos e 100 pastas. O
+          compartilhamento no site de destino de um link depende desse serviço.
+        </p>
       </section>
-      <details class="ar-library-requests"
-        ><summary>Solicitações acadêmicas e protocolos</summary
-        ><div class="ar-library-request-head"
-          ><h2 class="ar-library-request-title">Minhas solicitações</h2
-          ><button type="button" class="ar-btn ar-btn--primary" id="btnNovoDoc">
+      <details class="ar-library-requests">
+        <summary>Solicitações acadêmicas e protocolos</summary>
+        <div class="ar-library-request-head">
+          <h2 class="ar-library-request-title">Minhas solicitações</h2>
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNovoDoc">
             <span>Nova solicitação</span>
             <svg
               class="ar-icon"
@@ -250,25 +288,26 @@
             >
               <path d="M5 12h14"></path>
               <path d="m12 5 7 7-7 7"></path>
-            </svg> </button
-        ></div>
+            </svg>
+          </button>
+        </div>
         <!-- ChipBar Status -->
         <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
-          <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
-            >Todos<sup class="ar-sup">(0)</sup></button
-          >
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready"
-            >Pronto<sup class="ar-sup">(0)</sup></button
-          >
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review"
-            >Em análise<sup class="ar-sup">(0)</sup></button
-          >
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested"
-            >Solicitado<sup class="ar-sup">(0)</sup></button
-          >
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending"
-            >Pendente<sup class="ar-sup">(0)</sup></button
-          >
+          <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">
+            Todos<sup class="ar-sup">(0)</sup>
+          </button>
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready">
+            Pronto<sup class="ar-sup">(0)</sup>
+          </button>
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review">
+            Em análise<sup class="ar-sup">(0)</sup>
+          </button>
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested">
+            Solicitado<sup class="ar-sup">(0)</sup>
+          </button>
+          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending">
+            Pendente<sup class="ar-sup">(0)</sup>
+          </button>
         </div>
 
         <!-- Documents Grid -->
@@ -289,9 +328,9 @@
               rel="noopener"
             >
               <span class="ar-row-main">
-                <div class="ar-row-title"
-                  >SIGAA · Sistema Integrado de Gestão de Atividades Acadêmicas</div
-                >
+                <div class="ar-row-title">
+                  SIGAA · Sistema Integrado de Gestão de Atividades Acadêmicas
+                </div>
                 <div class="ar-row-meta">Notas, frequência e turmas virtuais</div>
               </span>
               <span class="ar-row-chev">
@@ -437,5 +476,5 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-</body>
+  </body>
 </html>

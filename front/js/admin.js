@@ -20,6 +20,9 @@
         id_usuario: 'ID',
         id_externo: 'ID',
         nome: 'Nome',
+        nome_social: 'Nome social',
+        telefone: 'Telefone',
+        matricula: 'Matrícula / SIAPE',
         email: 'E-mail',
         tipo_usuario: 'Vínculo',
         situacao: 'Situação',
@@ -93,6 +96,21 @@
             id: external ? 'id_externo' : 'id_usuario',
             fields: [
                 { name: 'nome', label: 'Nome', type: 'varchar(100)', required: true },
+                ...(!external
+                    ? [
+                          {
+                              name: 'nome_social',
+                              label: 'Nome social (opcional)',
+                              type: 'varchar(100)'
+                          },
+                          { name: 'telefone', label: 'Telefone (opcional)', type: 'varchar(20)' },
+                          {
+                              name: 'matricula',
+                              label: 'Matrícula / SIAPE (opcional, único)',
+                              type: 'varchar(30)'
+                          }
+                      ]
+                    : []),
                 { name: 'email', label: 'E-mail', type: 'varchar(150)', required: true },
                 {
                     name: 'situacao',

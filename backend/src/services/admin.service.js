@@ -48,9 +48,11 @@ const resources = {
         'Links úteis',
         'id_usuario titulo descricao url categoria ordem'
     ],
-    courses: ['cursos', 'id_curso', 'Cursos', 'nome nivel ativo']
+    courses: ['cursos', 'id_curso', 'Cursos', 'nome nivel ativo regime_etapas total_etapas']
 };
 const labels = {
+    regime_etapas: 'Regime das etapas (semestral ou anual)',
+    total_etapas: 'Quantidade de etapas do curso',
     capa: 'Imagem de capa',
     tipo_publicacao: 'Tipo de publicação',
     titulo: 'Título',
@@ -132,6 +134,7 @@ async function catalog() {
 async function list(key) {
     const [table, id, , names] = config(key);
     let selected = names.split(' ');
+    if (key === 'courses') selected = (await fields(key)).map((field) => field.name);
     if (key === 'notices' && !(await require('./notice-schema.service').hasNoticeType()))
         selected = selected.filter((name) => name !== 'tipo_publicacao');
     if (key === 'notices' && !(await require('./notice-schema.service').hasNoticeCover()))
@@ -176,6 +179,26 @@ async function save(key, id, body, actor) {
                 fail(400, 'Use uma URL HTTP ou HTTPS.');
         }
         values[field.name] = value;
+    }
+    if (
+        key === 'courses' &&
+        ['regime_etapas', 'total_etapas'].some((key) => Object.hasOwn(values, key))
+    ) {
+        const [current] = id
+            ? await db.execute('SELECT regime_etapas,total_etapas FROM cursos WHERE id_curso = ?', [
+                  id
+              ])
+            : [[]];
+        const stage = { ...(current[0] || {}), ...values };
+        if (stage.regime_etapas || stage.total_etapas) {
+            if (
+                !['semestral', 'anual'].includes(stage.regime_etapas) ||
+                !Number.isInteger(stage.total_etapas) ||
+                stage.total_etapas < 1 ||
+                stage.total_etapas > 20
+            )
+                fail(400, 'Informe o regime e uma quantidade de 1 a 20 etapas.');
+        }
     }
     if (key === 'projects' && (!id || values.aprovacao === 'aprovado')) values.aprovado_por = actor;
     const names = Object.keys(values);
@@ -226,7 +249,7 @@ async function people(kind) {
     const table = kind === 'users' ? 'usuarios' : 'publico_externo';
     const columns =
         kind === 'users'
-            ? 'id_usuario, nome, email, tipo_usuario, situacao, is_admin, id_curso, periodo, setor'
+            ? 'id_usuario, nome, nome_social, telefone, matricula, email, tipo_usuario, situacao, is_admin, id_curso, periodo, setor'
             : 'id_externo, nome, email, situacao, organizacao';
     const [rows] = await db.execute(
         `SELECT ${columns} FROM ${table}${kind === 'external-users' ? ' WHERE NOT EXISTS(SELECT 1 FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo)' : ''} ORDER BY nome`
@@ -261,7 +284,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
             "SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE"
         );
         const [rows] = await connection.execute(
-            `SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
+            `SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem, nome_social, telefone, matricula' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
             [id]
         );
         const person = rows[0];
@@ -423,6 +446,9 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
             const allowed = institutional
                 ? [
                       'nome',
+                      'nome_social',
+                      'telefone',
+                      'matricula',
                       'email',
                       'tipo_usuario',
                       'situacao',
@@ -441,6 +467,9 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
             )
                 fail(400, 'Nome inválido.');
             for (const [column, limit] of [
+                ['nome_social', 100],
+                ['telefone', 20],
+                ['matricula', 30],
                 ['setor', 100],
                 ['organizacao', 120]
             ])
@@ -512,6 +541,39 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 )
                     fail(400, 'Valor acadêmico inválido.');
             if (data.periodo > 127) fail(400, 'Período inválido.');
+            for (const key of ['nome_social', 'telefone', 'matricula']) {
+                if (typeof data[key] === 'string') {
+                    if (/[\x00-\x1f\x7f]/.test(data[key]))
+                        fail(400, 'Texto inválido em ' + key + '.');
+                    data[key] = data[key].trim() || null;
+                }
+            }
+            if (data.id_curso) {
+                const [courses] = await connection.execute(
+                    'SELECT id_curso FROM cursos WHERE id_curso = ? AND ativo = TRUE',
+                    [data.id_curso]
+                );
+                if (!courses.length) fail(400, 'Selecione um curso ativo válido.');
+            }
+            const newFields = ['nome_social', 'telefone', 'matricula'].filter(
+                (key) =>
+                    Object.hasOwn(data, key) &&
+                    String(data[key] ?? '') !== String(person[key] ?? '')
+            );
+            if (newFields.length) {
+                const [audit] = await connection.execute(
+                    "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'cadastro_auditoria'"
+                );
+                if (!audit.length)
+                    fail(
+                        503,
+                        'A equipe precisa habilitar a auditoria cadastral no banco antes de alterar matrícula, telefone ou nome social.'
+                    );
+                await connection.execute(
+                    'INSERT INTO cadastro_auditoria(id_admin,id_usuario,campos) VALUES (?,?,?)',
+                    [actor, id, JSON.stringify(Object.keys(data))]
+                );
+            }
             const fields = Object.keys(data);
             if (!fields.length) fail(400, 'Nenhum campo para salvar.');
             await connection.execute(

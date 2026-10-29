@@ -11,7 +11,9 @@ CREATE TABLE cursos (
     id_curso    INT AUTO_INCREMENT PRIMARY KEY,
     nome        VARCHAR(120) NOT NULL UNIQUE,
     nivel       ENUM('tecnico', 'graduacao', 'pos_graduacao') NOT NULL DEFAULT 'tecnico',
-    ativo       BOOLEAN NOT NULL DEFAULT TRUE
+    ativo       BOOLEAN NOT NULL DEFAULT TRUE,
+    regime_etapas ENUM('semestral','anual') NULL,
+    total_etapas TINYINT UNSIGNED NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -310,6 +312,7 @@ CREATE TABLE projetos (
     id_usuario        INT NULL,                        -- quem cadastrou/submeteu
     titulo            VARCHAR(150) NOT NULL,
     descricao         TEXT NOT NULL,                   -- "Resumo da proposta"
+    capa              MEDIUMTEXT NULL,
     eixo              ENUM('pesquisa', 'extensao', 'ensino', 'inovacao') NOT NULL DEFAULT 'pesquisa',
     responsavel_nome  VARCHAR(100),                    -- "Larissa Menezes" (pode não ser usuária do site)
     rotulo_responsavel VARCHAR(20) NOT NULL DEFAULT 'Coordenação',  -- "Orientação" | "Coordenação"
@@ -605,6 +608,7 @@ CREATE TABLE documento_itens (
  id_pasta INT NULL,
  titulo VARCHAR(150) NOT NULL,
  descricao VARCHAR(3000) NULL,
+ autor_obra VARCHAR(500) NULL,
  visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado',
  revisao ENUM('nenhuma','pendente','aprovado','recusado') NOT NULL DEFAULT 'nenhuma',
  versao_revisao INT UNSIGNED NOT NULL DEFAULT 0,
@@ -728,6 +732,8 @@ CREATE TABLE academico_publicacoes (
 
 -- Não promove contas existentes nem altera confirmação de e-mail.
 CREATE TABLE docente_requisitos (
+ id_curso INT NULL,
+ etapa_atual TINYINT UNSIGNED NULL,
  curso_informado VARCHAR(150) NULL,
  origem_solicitacao ENUM('cadastro','configuracoes') NOT NULL DEFAULT 'cadastro',
  tipo_solicitado ENUM('docente','servidor','discente') NOT NULL DEFAULT 'docente',
@@ -881,3 +887,13 @@ INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.27','d9fd238
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.28','9cdf3a5752095a953bdb79caf01a7774266d7588be89ae08d9fdff5a1634d70b');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.29','45b86a2a1a6303a7356c9e7c251144fd1b7cbd2fef24f1439747485b23f27907');
 INSERT INTO arcadia_schema_migrations(versao,checksum) VALUES ('1.1.30','86a92153561f5572008da9e9d569b4878d98cbf1fc07cb807db580b23a449ef1');
+
+CREATE TABLE cadastro_auditoria (
+ id_auditoria BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ id_admin INT NULL,
+ id_usuario INT NOT NULL,
+ campos JSON NOT NULL,
+ criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ INDEX idx_cadastro_usuario (id_usuario, criado_em),
+ FOREIGN KEY (id_admin) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
+) ENGINE=InnoDB;

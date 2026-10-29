@@ -792,7 +792,8 @@
                   id="registrationRoleHelp"
                   role="status"
                   aria-live="polite"
-                  >Aluno, professor e servidor: o vínculo depende de aprovação da administração. Até a aprovação, a conta terá acesso de Comunidade externa.</span
+                  >Aluno, professor e servidor: o vínculo depende de aprovação da administração. Até
+                  a aprovação, a conta terá acesso de Comunidade externa.</span
                 >
               </div>
 
@@ -854,44 +855,55 @@
 
               <div id="teacherSignupFields" hidden>
                 <div class="ar-input-group" hidden>
-                  <label class="ar-input-label" for="studentCourseInfo">Curso e período no SIGAA</label>
-                  <div class="ar-input-wrap"><input id="studentCourseInfo" name="curso_informado" maxlength="150" placeholder="Ex.: Informática · 2º semestre" disabled /></div>
+                  <label class="ar-input-label" for="studentCourseInfo">Etapa atual no curso</label>
+                  <div class="ar-input-wrap">
+                    <select id="studentCourseInfo" name="etapa_atual" disabled>
+                      <option value="">Selecione o curso primeiro</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="ar-input-group"
-                  ><label class="ar-input-label" for="teacherMatricula"
+                <div class="ar-input-group">
+                  <label class="ar-input-label" for="teacherMatricula"
                     >Matrícula / SIAPE no SIGAA</label
-                  ><div class="ar-input-wrap"
-                    ><input id="teacherMatricula" name="matricula" maxlength="30" disabled /></div
-                ></div>
-                <div class="ar-input-group"
-                  ><label class="ar-input-label" for="teacherUsername"
+                  >
+                  <div class="ar-input-wrap">
+                    <input id="teacherMatricula" name="matricula" maxlength="30" disabled />
+                  </div>
+                </div>
+                <div class="ar-input-group">
+                  <label class="ar-input-label" for="teacherUsername"
                     >Nome de usuário no SIGAA</label
-                  ><div class="ar-input-wrap"
-                    ><input
+                  >
+                  <div class="ar-input-wrap">
+                    <input
                       id="teacherUsername"
                       name="nome_usuario"
                       autocomplete="username"
                       minlength="3"
                       maxlength="40"
                       pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,39}"
-                      disabled /></div
-                  ><span class="ar-field-hint"
+                      disabled
+                    />
+                  </div>
+                  <span class="ar-field-hint"
                     >Informe seu usuário institucional, como aparece no SIGAA. O acesso ao Arcádia
                     continua pelo e-mail.</span
-                  ></div
-                >
-                <div class="ar-input-group"
-                  ><label class="ar-input-label" for="teacherFormacao" id="teacherFormacaoLabel"
+                  >
+                </div>
+                <div class="ar-input-group">
+                  <label class="ar-input-label" for="teacherFormacao" id="teacherFormacaoLabel"
                     >Formação registrada no SIGAA</label
-                  ><div class="ar-input-wrap"
-                    ><input id="teacherFormacao" name="formacao" maxlength="300" disabled /></div
-                ></div>
-                <p class="ar-field-hint"
-                  >Informe os dados do vínculo solicitado como aparecem no SIGAA. A
-                  administração autorizada conferirá essas informações no sistema institucional
-                  antes de aprovar. Estes dados são restritos à análise do vínculo e não aparecem no
-                  perfil público. Não informe sua senha do SIGAA.</p
-                >
+                  >
+                  <div class="ar-input-wrap">
+                    <input id="teacherFormacao" name="formacao" maxlength="300" disabled />
+                  </div>
+                </div>
+                <p class="ar-field-hint">
+                  Informe os dados do vínculo solicitado como aparecem no SIGAA. A administração
+                  autorizada conferirá essas informações no sistema institucional antes de aprovar.
+                  Estes dados são restritos à análise do vínculo e não aparecem no perfil público.
+                  Não informe sua senha do SIGAA.
+                </p>
               </div>
               <!-- Course Selection -->
               <div class="ar-input-group" id="campoCursoWrapper">
@@ -900,48 +912,7 @@
                 </label>
                 <div class="ar-input-wrap">
                   <select id="curso" name="curso" required>
-                    <option value="" disabled selected>Selecione seu curso no IFPA</option>
-                    <optgroup label="Cursos técnicos — Campus Belém">
-                      <option value="Systems Development"
-                        >Técnico em Desenvolvimento de Sistemas</option
-                      >
-                      <option value="Computer Science">Técnico em Informática</option>
-                      <option value="Telecommunications">Técnico em Telecomunicações</option>
-                      <option value="Electronics">Técnico em Eletrônica</option>
-                      <option value="Electrotechnics">Técnico em Eletrotécnica</option>
-                      <option value="Mechanics">Técnico em Mecânica</option>
-                      <option value="Chemistry">Técnico em Química</option>
-                      <option value="Civil Construction">Técnico em Edificações</option>
-                      <option value="Mining">Técnico em Mineração</option>
-                      <option value="Design">Técnico em Design de Interiores</option>
-                    </optgroup>
-                    <optgroup label="Graduação">
-                      <option value="Systems Analysis and Development (TADS)"
-                        >Tecnologia em Análise e Desenvolvimento de Sistemas (TADS)</option
-                      >
-                      <option value="Public Management">Tecnologia em Gestão Pública</option>
-                      <option value="Control and Automation Engineering"
-                        >Engenharia de Controle e Automação</option
-                      >
-                      <option value="Electrical Engineering">Engenharia Elétrica</option>
-                      <option value="Materials Engineering">Engenharia de Materiais</option>
-                      <option value="Biological Sciences"
-                        >Licenciatura em Ciências Biológicas</option
-                      >
-                      <option value="Physics">Licenciatura em Física</option>
-                      <option value="Mathematics">Licenciatura em Matemática</option>
-                      <option value="Computer Networks">Tecnologia em Redes de Computadores</option>
-                    </optgroup>
-                    <optgroup label="Pós-graduação">
-                      <option value="ProfEPT Master"
-                        >Mestrado Profissional em Educação Profissional e Tecnológica
-                        (ProfEPT)</option
-                      >
-                      <option value="PPGEMAT Master"
-                        >Mestrado em Engenharia de Materiais (PPGEMAT)</option
-                      >
-                      <option value="Postgraduate Specialization">Especialização</option>
-                    </optgroup>
+                    <option value="">Carregando cursos do IFPA...</option>
                   </select>
                 </div>
               </div>
@@ -995,10 +966,10 @@
                     >Li e aceito os Termos de Uso e estou ciente da Política de Privacidade.</span
                   >
                 </label>
-                <p id="legalAcceptanceHelp"
-                  >Para criar sua conta, leia os documentos e marque a opção acima. O aceite começa
-                  desmarcado.</p
-                >
+                <p id="legalAcceptanceHelp">
+                  Para criar sua conta, leia os documentos e marque a opção acima. O aceite começa
+                  desmarcado.
+                </p>
                 <div class="ar-signup-legal-links">
                   <a href="terms.html">Ler Termos de Uso</a>
                   <a href="privacy.html">Ler Política de Privacidade</a>
@@ -1029,22 +1000,22 @@
                   <path d="m12 5 7 7-7 7"></path>
                 </svg>
               </button>
-              <p class="ar-email-help" data-signup-verification hidden
-                ><a href="verify-email.html">Confirmar cadastro criado ou reenviar link</a></p
-              ></form
-            >
+              <p class="ar-email-help" data-signup-verification hidden>
+                <a href="verify-email.html">Confirmar cadastro criado ou reenviar link</a>
+              </p>
+            </form>
 
-            <p class="ar-switch-text"> Já tem uma conta? <a href="login.html">Entrar</a> </p>
+            <p class="ar-switch-text">Já tem uma conta? <a href="login.html">Entrar</a></p>
           </section>
 
           <!-- Showcase Column -->
           <aside class="ar-auth-showcase-col">
             <div class="ar-showcase-intro">
               <h2 class="ar-showcase-title">Seu espaço acadêmico em um só lugar</h2>
-              <p class="ar-showcase-desc"
-                >Acesse avisos oficiais, editais de pesquisa, documentos e o calendário do IFPA
-                Campus Belém em um só lugar.</p
-              >
+              <p class="ar-showcase-desc">
+                Acesse avisos oficiais, editais de pesquisa, documentos e o calendário do IFPA
+                Campus Belém em um só lugar.
+              </p>
             </div>
 
             <div class="ar-features-list">
@@ -1268,6 +1239,7 @@
     <script src="auth-config.js"></script>
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/course-stages.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
 

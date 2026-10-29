@@ -26,6 +26,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
     const hero = { textContent: '' };
     let load;
     const document = {
+        createElement: () => ({ append() {}, addEventListener() {}, value: '' }),
         addEventListener(event, fn) {
             load = fn;
         },
@@ -34,7 +35,9 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
                 ? grid
                 : selector === '.ar-hero-count'
                   ? hero
-                  : null;
+                  : selector === '#chipbarProjetos'
+                    ? { after() {} }
+                    : null;
         },
         querySelectorAll(selector) {
             return selector === '#chipbarProjetos .ar-chip' ? chips : [];
@@ -48,6 +51,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
         location: { pathname: '/projects.html' },
         window: {
             Arcadia: {
+                contentFields: require('../front/js/content-fields'),
                 auth: { getSessao: () => ({ tipo_usuario: 'docente' }) },
                 showToast: (message) => assert.fail(message),
                 api: {

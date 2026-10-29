@@ -61,7 +61,12 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
                 this.change = fn;
             }
         };
+    const documentEvents = {},
+        windowEvents = {};
     const document = {
+        addEventListener: (name, handler) => {
+            documentEvents[name] = handler;
+        },
         readyState: 'complete',
         body,
         querySelector: (s) => (s === '.ar-nav-end' ? end : s === '.ar-app' ? app : host),
@@ -73,7 +78,10 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         window: {
             Arcadia,
             matchMedia: () => media,
-            addEventListener() {},
+            addEventListener(name, handler) {
+                windowEvents[name] = handler;
+            },
+            AbortController,
             setTimeout: (fn) => fn()
         },
         sessionStorage: {
@@ -90,6 +98,8 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         runAgain: () => vm.runInNewContext(code, context),
         nodes,
         A: Arcadia,
+        documentEvents,
+        windowEvents,
         body,
         app,
         media,
@@ -198,29 +208,70 @@ test('compact navigation has distinct semantic icons and accessible names', () =
     assert.equal(links.find((n) => n.href === 'notices.html').title, 'Avisos e notícias');
 });
 
-test('sino acessível leva ao painel de lembretes sem badge fictício nem acesso anônimo', () => {
+test('sino abre quadro sobre a página, carrega lembretes reais e fecha com Escape sem navegar', async () => {
     const f = fixture('classes.html', { id_usuario: 7, tipo_usuario: 'docente' });
     const bell = f.nodes.find((n) => n.className === 'ar-iconbtn ar-reminders-link');
-    assert.equal(bell.href, 'tasks.html#taskReminders');
-    assert.equal(bell.attributes['aria-label'], 'Meus lembretes e notificações');
+    assert.equal(bell.tag, 'button');
+    assert.equal(bell.href, undefined);
+    assert.equal(bell.attributes['aria-label'], 'Notificações');
     assert.equal(bell.children.length, 1);
-    const calendar = fixture('calendar.html', { tipo_usuario: 'discente' });
-    let revealed = false,
-        prevented = false;
-    calendar.A.reminderUI = { reveal: () => (revealed = true) };
-    calendar.nodes
-        .find((n) => n.className === 'ar-iconbtn ar-reminders-link')
-        .events.click({
-            preventDefault() {
-                prevented = true;
-            }
-        });
-    assert.equal(revealed, true);
+    let endpoint;
+    f.A.api = {
+        expect: (p) => p,
+        get: async (path) => {
+            endpoint = path;
+            return [
+                { titulo: 'Meu lembrete', ativo: 1 },
+                { titulo: 'Desativado', ativo: 0 }
+            ];
+        }
+    };
+    const panel = f.nodes.find((n) => n.id === 'arNotifications');
+    assert.equal(panel.hidden, true);
+    bell.events.click();
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(panel.hidden, false);
+    assert.equal(endpoint, '/api/reminders');
+    assert.equal(bell.attributes['aria-expanded'], 'true');
+    assert.match(bell.attributes['aria-label'], /1 lembrete/);
+    const list = f.nodes.find((n) => n.className === 'ar-notifications-list');
+    assert.equal(list.children.length, 1);
+    let prevented = false;
+    f.documentEvents.keydown({
+        key: 'Escape',
+        preventDefault() {
+            prevented = true;
+        }
+    });
     assert.equal(prevented, true);
+    assert.equal(panel.hidden, true);
+    assert.equal(bell.focused, true);
     assert.equal(
         fixture('index.html', {}).nodes.some((n) => n.className === 'ar-iconbtn ar-reminders-link'),
         false
     );
+});
+test('quadro de notificações não exibe resposta da conta anterior e externo usa sua API', async () => {
+    const account = { id_externo: 7, tipo_usuario: 'externo' };
+    const f = fixture('community.html', account);
+    let resolve, endpoint;
+    f.A.api = {
+        expect: (p) => p,
+        get: (path) => {
+            endpoint = path;
+            return new Promise((done) => (resolve = done));
+        }
+    };
+    const bell = f.nodes.find((n) => n.className === 'ar-iconbtn ar-reminders-link');
+    bell.events.click();
+    assert.equal(endpoint, '/api/external/reminders');
+    account.id_externo = 8;
+    f.windowEvents.storage();
+    resolve([{ titulo: 'Não mostrar', ativo: 1 }]);
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(bell.hidden, true);
+    assert.equal(f.nodes.find((n) => n.id === 'arNotifications').hidden, true);
+    assert.equal(f.nodes.find((n) => n.className === 'ar-notifications-list').children.length, 0);
 });
 test('mapa é acessível na navegação pública, institucional e externa sem abrir áreas privadas', () => {
     for (const session of [

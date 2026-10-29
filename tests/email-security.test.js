@@ -127,7 +127,8 @@ test('transporte restringe destinatários, rede, arquivos e TLS; erro SMTP é su
     assert.equal(options.tls.rejectUnauthorized, true);
     assert.equal(message.to, 'recipient@example.test');
     assert.deepEqual(message.envelope.to, ['recipient@example.test']);
-    assert.equal(message.html, undefined);
+    assert.match(message.html, /Redefinir senha<\/a>/);
+    assert.doesNotMatch(message.html, /<form|<script|onclick/i);
     assert.equal(message.provider, undefined);
     assert.equal(message.raw, undefined);
     t.mock.method(nodemailer, 'createTransport', () => ({
@@ -197,7 +198,10 @@ test('navegador não envia boas-vindas nem cria sessão Google fictícia', async
         email: 'one@example.test'
     });
     assert.equal(result.success, false);
-    await assert.rejects(context.window.Arcadia.auth.completeGoogleAuth('Nome', 'one@example.test', ''), /botão oficial do Google/);
+    await assert.rejects(
+        context.window.Arcadia.auth.completeGoogleAuth('Nome', 'one@example.test', ''),
+        /botão oficial do Google/
+    );
     for (const file of ['front/login.html', 'front/signup.html'])
         assert.ok(!fs.readFileSync(file, 'utf8').includes('@emailjs/browser'));
 });
@@ -238,7 +242,8 @@ test('Nodemailer compõe recuperação em texto e confirmação multipart em mem
         assert.match(message, /Content-Type: text\/plain/);
         assert.doesNotMatch(message, /^Bcc:/m);
     }
-    assert.doesNotMatch(messages[0], /Content-Type: text\/html/);
+    assert.match(messages[0], /Content-Type: multipart\/alternative/);
+    assert.match(messages[0], /Content-Type: text\/html/);
     assert.match(messages[1], /Content-Type: multipart\/alternative/);
     assert.match(messages[1], /Content-Type: text\/html/);
 });

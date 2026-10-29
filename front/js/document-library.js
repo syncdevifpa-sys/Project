@@ -6,6 +6,139 @@
         endpoint = '/api/document-library';
     const find = (selector) => root.querySelector(selector);
     const status = find('[data-library-status]');
+    let layout = 'board';
+    let searchText = '',
+        formatFilter = 'all';
+    const normalizeSearch = (text) =>
+        String(text || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+    try {
+        const saved = localStorage.getItem('arcadia-library-view');
+        if (['board', 'table', 'list'].includes(saved)) layout = saved;
+    } catch {
+        /* Preferência opcional. */
+    }
+    let previewEpoch = 0,
+        previewObserver,
+        previewQueue = [],
+        previewActive = 0;
+    const previewRequests = new Set(),
+        previewUrls = new Set();
+    function clearPreviews() {
+        previewEpoch++;
+        previewObserver?.disconnect();
+        previewQueue = [];
+        for (const controller of previewRequests) controller.abort();
+        for (const url of previewUrls) URL.revokeObjectURL(url);
+        previewUrls.clear();
+    }
+    function drainPreviews() {
+        while (previewActive < 2 && previewQueue.length) {
+            const job = previewQueue.shift();
+            if (job.epoch !== previewEpoch) continue;
+            previewActive++;
+            loadPreview(job).finally(() => {
+                previewActive--;
+                drainPreviews();
+            });
+        }
+    }
+    async function loadPreview({ cover, item, epoch, review }) {
+        const controller = new AbortController(),
+            owner = A.token?.get();
+        previewRequests.add(controller);
+        cover.replaceChildren(element('span', 'Carregando prévia…'));
+        try {
+            const response = await fetch(
+                api.BASE +
+                    endpoint +
+                    '/' +
+                    (review ? 'reviews' : 'items') +
+                    '/' +
+                    item.id_item +
+                    '/preview',
+                {
+                    headers: { Authorization: 'Bearer ' + owner },
+                    signal: controller.signal,
+                    cache: 'no-store'
+                }
+            );
+            if (!response.ok || !response.headers.get('content-type')?.startsWith('image/png'))
+                throw Error();
+            const blob = await response.blob();
+            if (epoch !== previewEpoch || owner !== A.token?.get() || controller.signal.aborted)
+                return;
+            if (blob.size > 2 * 1024 * 1024) throw Error();
+            const url = URL.createObjectURL(blob);
+            previewUrls.add(url);
+            const image = element('img');
+            image.src = url;
+            image.alt = item.nome_arquivo?.toLowerCase().endsWith('.docx')
+                ? 'Prévia de texto aproximada de ' + item.titulo
+                : 'Primeira página de ' + item.titulo;
+            image.decoding = 'async';
+            cover.replaceChildren(image);
+        } catch {
+            if (epoch !== previewEpoch || controller.signal.aborted) return;
+            cover.replaceChildren(
+                element('span', 'Prévia indisponível'),
+                button('Tentar novamente', () => {
+                    previewQueue.push({ cover, item, epoch, review });
+                    drainPreviews();
+                })
+            );
+        } finally {
+            previewRequests.delete(controller);
+        }
+    }
+    function coverFor(item) {
+        const cover = element('div', undefined, 'ar-library-cover');
+        if (item.tipo !== 'arquivo' || !item.id_item) {
+            cover.append(
+                icon(item.tipo),
+                element('span', item.tipo === 'link' ? 'Link externo' : 'Arquivo indisponível')
+            );
+            return cover;
+        }
+        const job = { cover, item, epoch: previewEpoch, review: mode === 'review' };
+        cover.append(element('span', 'Prévia do documento'));
+        if (typeof IntersectionObserver === 'function') {
+            if (!previewObserver)
+                previewObserver = new IntersectionObserver(
+                    (entries, observer) => {
+                        for (const entry of entries)
+                            if (entry.isIntersecting) {
+                                observer.unobserve(entry.target);
+                                const pending = entry.target.previewJob;
+                                if (pending) {
+                                    previewQueue.push(pending);
+                                    delete entry.target.previewJob;
+                                }
+                            }
+                        drainPreviews();
+                    },
+                    { rootMargin: '100px' }
+                );
+            cover.previewJob = job;
+            previewObserver.observe(cover);
+        } else
+            cover.append(
+                button('Carregar prévia', () => {
+                    previewQueue.push(job);
+                    drainPreviews();
+                })
+            );
+        return cover;
+    }
+    window.addEventListener?.('pagehide', clearPreviews);
+    window.addEventListener?.('storage', (event) => {
+        if (!event.key || ['arcadiaToken', 'arcadiaSessao'].includes(event.key)) {
+            clearPreviews();
+            for (const cover of root.querySelectorAll('.ar-library-cover')) cover.replaceChildren();
+        }
+    });
     let data = { folders: [], items: [], used: 0 },
         active = 'all',
         mode = 'mine',
@@ -86,10 +219,14 @@
         }
     }
     function render() {
+        clearPreviews();
+        previewObserver = null;
+        for (const control of root.querySelectorAll('[data-library-view]'))
+            control.setAttribute('aria-pressed', String(control.dataset.libraryView === layout));
         find('[data-library-description]').textContent = {
-            mine: 'Organize seus arquivos, links e materiais salvos em pastas.',
+            mine: 'Estude por assuntos: organize documentos, apostilas e links em suas pastas.',
             public: 'Materiais publicados para a comunidade institucional. Salve referências na sua biblioteca.',
-            review: 'Confira os materiais enviados antes de aprovar a publicação. A recusa exige um motivo.'
+            review: 'Revisão administrativa para publicar materiais no portal. Não é avaliação acadêmica da disciplina.'
         }[mode];
         const hero = document.getElementById('libraryHeroCount');
         if (hero) hero.textContent = '(' + data.items.length + ')';
@@ -132,7 +269,7 @@
             element(
                 'h3',
                 mode === 'review'
-                    ? 'Envios para avaliação'
+                    ? 'Revisão de publicação'
                     : mode === 'public'
                       ? 'Materiais compartilhados do campus'
                       : current
@@ -152,7 +289,8 @@
         }
         const items = find('[data-library-items]');
         items.replaceChildren();
-        const visible =
+        items.dataset.view = layout;
+        const scopeItems =
             mode === 'review'
                 ? reviews
                 : mode === 'public'
@@ -164,21 +302,53 @@
                                 ? i.id_pasta === null
                                 : String(i.id_pasta) === active)
                     );
+        const visible = scopeItems.filter((item) => {
+            const folder = data.folders.find((f) => f.id_pasta === item.id_pasta);
+            const matches = normalizeSearch(
+                [item.titulo, item.autor_obra, item.descricao, folder?.nome].join(' ')
+            ).includes(normalizeSearch(searchText));
+            const ext = item.nome_arquivo?.split('.').pop().toLowerCase();
+            const format =
+                formatFilter === 'all' ||
+                (formatFilter === 'link'
+                    ? item.tipo === 'link'
+                    : formatFilter === 'image'
+                      ? ['png', 'jpg', 'jpeg'].includes(ext)
+                      : ext === formatFilter);
+            return matches && format;
+        });
+        if (searchText || formatFilter !== 'all')
+            status.textContent += ` · ${visible.length} resultado(s)`;
         if (!visible.length) {
             const empty = element('div', undefined, 'ar-library-empty');
             empty.append(
                 icon('file'),
-                element('h4', 'Nenhum documento aqui'),
+                element(
+                    'h4',
+                    searchText || formatFilter !== 'all'
+                        ? 'Nenhum material encontrado'
+                        : 'Nenhum documento aqui'
+                ),
                 element(
                     'p',
                     mode === 'review'
-                        ? 'Não há materiais aguardando avaliação.'
+                        ? 'Não há materiais aguardando revisão de publicação.'
                         : mode === 'public'
                           ? 'Os materiais publicados pelos professores e pela administração aparecerão aqui.'
                           : 'Adicione um arquivo ou link para começar.'
                 )
             );
-            if (mode !== 'review' && (mode === 'mine' || data.canPublish))
+            if (searchText || formatFilter !== 'all')
+                empty.append(
+                    button('Limpar filtros', () => {
+                        searchText = '';
+                        formatFilter = 'all';
+                        find('[data-library-search]').value = '';
+                        find('[data-library-format]').value = 'all';
+                        render();
+                    })
+                );
+            else if (mode !== 'review' && (mode === 'mine' || data.canPublish))
                 empty.append(
                     button(
                         mode === 'public' ? 'Publicar material' : 'Adicionar documento',
@@ -188,10 +358,33 @@
                 );
             items.append(empty);
         }
+        let tableBody;
+        if (layout === 'table' && visible.length) {
+            const scroll = element('div', undefined, 'ar-library-table-scroll');
+            scroll.tabIndex = 0;
+            scroll.setAttribute('role', 'region');
+            scroll.setAttribute('aria-label', 'Documentos em tabela');
+            const table = element('table', undefined, 'ar-table');
+            table.append(element('caption', 'Documentos desta área'));
+            const head = element('thead'),
+                header = element('tr');
+            for (const name of ['Documento', 'Formato', 'Ações']) {
+                const cell = element('th', name);
+                cell.scope = 'col';
+                header.append(cell);
+            }
+            head.append(header);
+            tableBody = element('tbody');
+            table.append(head, tableBody);
+            scroll.append(table);
+            items.append(scroll);
+        }
         for (const item of visible) {
             const row = element('article', undefined, 'ar-library-item');
             const info = element('div', undefined, 'ar-library-item-info');
             info.append(element('h4', item.titulo || 'Material indisponível'));
+            if (item.autor_obra)
+                info.append(element('p', 'Autor(es): ' + item.autor_obra, 'ar-library-authors'));
             const folder = data.folders.find((f) => f.id_pasta === item.id_pasta);
             info.append(
                 element(
@@ -199,7 +392,7 @@
                     [
                         item.tipo === 'link' ? 'Link' : item.tamanho ? size(item.tamanho) : '',
                         mode === 'review'
-                            ? 'Em avaliação'
+                            ? 'Em revisão para publicação'
                             : mode === 'public'
                               ? 'Material público'
                               : folder?.nome || 'Sem pasta'
@@ -209,15 +402,22 @@
                 )
             );
             if (item.descricao) info.append(element('p', item.descricao));
-            if (mode === 'public') info.append(element('p', 'Publicado por ' + item.autor));
-            else if (mode === 'review') info.append(element('p', 'Enviado por ' + item.autor));
+            if (mode === 'public' && item.publicador)
+                info.append(
+                    element('small', 'Publicado por ' + item.publicador, 'ar-library-publisher')
+                );
+            else if (mode === 'review' && item.publicador)
+                info.append(
+                    element('small', 'Enviado por ' + item.publicador, 'ar-library-publisher')
+                );
             else if (item.reference)
                 info.append(
                     element(
                         'p',
                         item.id_item
-                            ? 'Salvo de ' + item.autor
-                            : 'O material de origem não está mais disponível publicamente.'
+                            ? 'Publicado por ' + (item.publicador || 'conta do portal')
+                            : 'O material de origem não está mais disponível publicamente.',
+                        'ar-library-publisher'
                     )
                 );
             else
@@ -227,12 +427,22 @@
                         item.visibilidade === 'publico' ? 'Público no portal' : 'Privado'
                     )
                 );
+            if (mode === 'mine' && !item.reference)
+                info.append(
+                    element(
+                        'small',
+                        item.visibilidade === 'publico'
+                            ? 'Publicado por você'
+                            : 'Adicionado por você',
+                        'ar-library-publisher'
+                    )
+                );
             if (mode === 'mine' && !item.reference && item.revisao && item.revisao !== 'nenhuma')
                 info.append(
                     element(
                         'p',
                         {
-                            pendente: 'Em avaliação',
+                            pendente: 'Em revisão para publicação',
                             aprovado: 'Publicação aprovada',
                             recusado: 'Publicação recusada'
                         }[item.revisao] + (item.motivo_revisao ? ' · ' + item.motivo_revisao : '')
@@ -274,7 +484,7 @@
                     item.visibilidade === 'privado' &&
                     item.revisao !== 'pendente'
                 )
-                    actions.append(button('Enviar para avaliação', () => submitForReview(item)));
+                    actions.append(button('Solicitar publicação', () => submitForReview(item)));
             }
             if (mode === 'public') {
                 const saved =
@@ -287,9 +497,29 @@
                 actions.append(save);
             }
             if (mode === 'review')
-                actions.append(button('Avaliar', () => reviewEditor(item), 'ar-btn'));
-            row.append(icon(item.tipo), info, actions);
-            items.append(row);
+                actions.append(button('Revisar publicação', () => reviewEditor(item), 'ar-btn'));
+            if (tableBody) {
+                const line = element('tr'),
+                    details = element('td'),
+                    format = element(
+                        'td',
+                        item.tipo === 'link'
+                            ? 'Link'
+                            : item.nome_arquivo?.split('.').pop().toUpperCase() || 'Arquivo'
+                    ),
+                    commands = element('td');
+                details.append(info);
+                commands.append(actions);
+                line.append(details, format, commands);
+                tableBody.append(line);
+            } else {
+                if (layout === 'board') {
+                    row.append(coverFor(item), info, actions);
+                    if (item.nome_arquivo?.toLowerCase().endsWith('.docx'))
+                        info.append(element('small', 'DOCX · prévia de texto aproximada'));
+                } else row.append(icon(item.tipo), info, actions);
+                items.append(row);
+            }
         }
     }
     function editor(title) {
@@ -379,6 +609,21 @@
         const view = editor(item ? 'Editar documento' : 'Adicionar documento');
         const title = input('text', item?.titulo, 150);
         view.field('Título', title);
+        const authorNames = input('text', item?.autor_obra, 500);
+        authorNames.required = false;
+        authorNames.disabled = !data.canSetAuthorship;
+        authorNames.placeholder = 'Nomes dos autores, separados por ponto e vírgula';
+        view.field('Autor(es) da obra (opcional)', authorNames);
+        const authorHelp = element(
+            'p',
+            data.canSetAuthorship
+                ? 'Até 500 caracteres. Informe a autoria da obra; quem publica é identificado pela conta. Orientador não é incluído automaticamente.'
+                : 'A equipe precisa habilitar o campo de autoria no banco. A descrição e o documento podem ser salvos normalmente.',
+            'ar-library-help'
+        );
+        authorHelp.id = 'libraryAuthorHelp';
+        authorNames.setAttribute('aria-describedby', authorHelp.id);
+        view.fields.append(authorHelp);
         const details = element('textarea');
         details.value = item?.descricao || '';
         const descriptionLimit = data.limits?.description || 3000;
@@ -436,8 +681,8 @@
         link.placeholder = 'https://';
         const linkWrap = view.field('Endereço do documento', link);
         const file = input('file');
-        file.accept = '.pdf,.png,.jpg,.jpeg';
-        const fileWrap = view.field('Arquivo PDF, PNG ou JPEG de até 2 MB', file);
+        file.accept = '.pdf,.docx,.png,.jpg,.jpeg';
+        const fileWrap = view.field('Arquivo PDF, DOCX, PNG ou JPEG de até 2 MB', file);
         file.addEventListener('change', () => {
             if (!title.value && file.files[0]) title.value = file.files[0].name.slice(0, 150);
         });
@@ -473,6 +718,7 @@
             const body = {
                 titulo: title.value,
                 descricao: details.value,
+                ...(data.canSetAuthorship ? { autor_obra: authorNames.value } : {}),
                 visibilidade: visibility.value,
                 id_pasta: folder.value || null
             };
@@ -482,19 +728,23 @@
             const selected = file.files[0];
             if (!selected || selected.size > 2 * 1024 * 1024)
                 throw Error('Envie um arquivo de até 2 MB.');
-            const query = new URLSearchParams({
+            const metadata = {
                 titulo: title.value,
                 descricao: details.value,
+                ...(data.canSetAuthorship ? { autor_obra: authorNames.value } : {}),
                 visibilidade: visibility.value,
                 id_pasta: folder.value,
                 nome_arquivo: selected.name
-            });
+            };
+            const upload = new FormData();
+            for (const [key, value] of Object.entries(metadata)) upload.append(key, value);
+            upload.append('arquivo', selected, selected.name);
             return api.expect(
-                api.request(endpoint + '/files?' + query, {
+                api.request(endpoint + '/files', {
                     method: 'POST',
-                    body: selected,
+                    body: upload,
                     raw: true,
-                    contentType: 'application/octet-stream'
+                    contentType: null
                 })
             );
         });
@@ -552,7 +802,7 @@
         view.show();
     }
     function submitForReview(item) {
-        const view = editor('Enviar para avaliação');
+        const view = editor('Solicitar publicação');
         view.fields.append(
             element(
                 'p',
@@ -565,17 +815,25 @@
             'Autorizo a administração a avaliar e, se aprovado, publicar este material com minha autoria.',
             agree
         );
-        view.save.textContent = 'Enviar para avaliação';
+        view.save.textContent = 'Solicitar publicação';
         view.submit(() =>
             api.expect(api.post(endpoint + '/items/' + item.id_item + '/submit', {}))
         );
         view.show();
     }
     function reviewEditor(item) {
-        const view = editor('Avaliar publicação');
+        const view = editor('Revisar publicação');
         view.fields.append(
-            element('p', item.titulo + ' — autoria: ' + item.autor, 'ar-library-help')
+            element(
+                'p',
+                item.titulo + (item.autor_obra ? ' — Autor(es): ' + item.autor_obra : ''),
+                'ar-library-authors'
+            )
         );
+        if (item.publicador)
+            view.fields.append(
+                element('small', 'Enviado por ' + item.publicador, 'ar-library-publisher')
+            );
         const decision = element('select');
         decision.required = true;
         for (const [value, label] of [
@@ -686,6 +944,24 @@
             mode = tab.dataset.libraryMode;
             render();
         });
+    for (const control of root.querySelectorAll('[data-library-view]'))
+        control.addEventListener('click', () => {
+            layout = control.dataset.libraryView;
+            try {
+                localStorage.setItem('arcadia-library-view', layout);
+            } catch {
+                /* Opcional. */
+            }
+            render();
+        });
+    find('[data-library-search]')?.addEventListener('input', (event) => {
+        searchText = event.target.value;
+        render();
+    });
+    find('[data-library-format]')?.addEventListener('change', (event) => {
+        formatFilter = event.target.value;
+        render();
+    });
     for (const node of document.querySelectorAll('[data-library-folder]'))
         node.addEventListener('click', () => {
             if (!loading) {

@@ -6,6 +6,19 @@ const { validateNotice } = require('../backend/src/services/notice-edit.service'
 const png =
     'data:image/png;base64,' +
     fs.readFileSync('front/public/arcadia-logo-64.png').toString('base64');
+test('Projetos reutiliza a validação raster de Avisos e preserva a situação no contrato compartilhado', () => {
+    const { validateContent } = require('../backend/src/services/content-edit.service');
+    assert.equal(validateContent('projects', { capa: png, situacao: 'em_selecao' }).capa, png);
+    assert.equal(validateContent('projects', { capa: null }).capa, null);
+    for (const capa of ['https://example.test/photo.jpg', 'data:image/svg+xml;base64,PHN2Zz4=', {}])
+        assert.throws(() => validateContent('projects', { capa }), { status: 400 });
+    const states = require('../front/js/content-fields').projects.fields.find(
+        (field) => field[0] === 'situacao'
+    )[2];
+    for (const situacao of Object.keys(states))
+        assert.equal(validateContent('projects', { situacao }).situacao, situacao);
+    assert.throws(() => validateContent('projects', { situacao: 'inventado' }), { status: 400 });
+});
 test('capa aceita raster válido e remoção explícita; recusa URL, SVG, assinatura falsa e tipo inválido', () => {
     assert.equal(validateNotice({ capa: png }).capa, png);
     assert.equal(validateNotice({ capa: '' }).capa, null);

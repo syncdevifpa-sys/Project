@@ -16,7 +16,7 @@
     const labels = {
         aviso: 'Avisos',
         material: 'Materiais',
-        projeto: 'Projetos',
+        projeto: 'Projetos e atividades',
         agenda: 'Agenda',
         people: 'Participantes',
         horarios: 'Horários'
@@ -756,6 +756,14 @@
             }
             return;
         }
+        if (tab === 'projeto')
+            host.append(
+                el(
+                    'p',
+                    'Projetos e atividades desta disciplina. Consulte as orientações e o prazo do professor. Envie trabalhos pelo canal indicado na atividade.',
+                    'ac-note'
+                )
+            );
         if (d.canManage)
             host.append(
                 btn(
@@ -763,7 +771,7 @@
                         {
                             aviso: 'aviso',
                             material: 'material',
-                            projeto: 'projeto',
+                            projeto: 'projeto ou atividade',
                             agenda: 'evento'
                         }[tab],
                     () => postEditor()

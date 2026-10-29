@@ -71,6 +71,50 @@ test('descrição distingue tipo inválido e controles proibidos, sem recusar te
     });
     assert.equal(f.writes[0].args[3], null);
 });
+test('autoria da obra é declarada, opcional e independente do publicador e permissões', async () => {
+    const f = database({ withAuthors: true, currentAuthor: 'Autoria original' });
+    const author = 'Autora & Autor 😀';
+    await f.library.create(7, {
+        titulo: 'Obra',
+        url: 'https://example.com',
+        autor_obra: author,
+        publicador: 'Nome forjado',
+        id_usuario: 99
+    });
+    assert.equal(f.writes[0].args[0], 7);
+    assert.equal(f.writes[0].args.at(-1), author);
+    await f.library.update(7, 3, { descricao: 'Resumo atualizado' });
+    assert.equal(f.writes.at(-1).args[5], 'Autoria original');
+    await f.library.update(7, 3, { autor_obra: '' });
+    assert.equal(f.writes.at(-1).args[5], null);
+    assert.equal((await f.library.list(7)).canSetAuthorship, true);
+    await f.library.publicList();
+    const projection = f.queries.at(-1).sql.split(' FROM ')[0];
+    assert.match(projection, /i.autor_obra/);
+    assert.match(projection, /u.nome AS publicador/);
+    assert.doesNotMatch(projection, /email|senha/);
+});
+test('autoria valida Unicode e base legada não perde descrição nem inventa autor', async () => {
+    const old = database();
+    assert.equal((await old.library.list(7)).canSetAuthorship, false);
+    await assert.rejects(
+        old.library.create(7, { titulo: 'Obra', url: 'https://example.com', autor_obra: 'Autora' }),
+        { status: 503 }
+    );
+    assert.equal(old.writes.length, 0);
+    const f = database({ withAuthors: true });
+    await f.library.create(7, {
+        titulo: 'Obra',
+        url: 'https://example.com',
+        autor_obra: '😀'.repeat(250)
+    });
+    for (const autor_obra of ['a'.repeat(501), 'Nome\nOutro', {}, ['Nome']])
+        await assert.rejects(
+            f.library.create(7, { titulo: 'Obra', url: 'https://example.com', autor_obra }),
+            { status: 400 }
+        );
+    assert.equal(f.writes.length, 1);
+});
 function database({
     teacher = false,
     admin = false,
@@ -83,7 +127,9 @@ function database({
     inactive = false,
     missing = false,
     reviewState = 'nenhuma',
-    savedForeign = false
+    savedForeign = false,
+    withAuthors = false,
+    currentAuthor = null
 } = {}) {
     const writes = [],
         queries = [],
@@ -98,6 +144,8 @@ function database({
     const db = {
         async execute(sql, args = []) {
             queries.push({ sql, args });
+            if (sql.includes('information_schema.COLUMNS'))
+                return [withAuthors ? [{ COLUMN_TYPE: 'varchar(500)', IS_NULLABLE: 'YES' }] : []];
             if (missing) throw Object.assign(Error('missing'), { code: 'ER_NO_SUCH_TABLE' });
             if (/^SELECT .+ FROM usuarios WHERE id_usuario = \?/.test(sql)) return [[user]];
             if (sql.includes('FROM documento_pastas')) {
@@ -156,6 +204,7 @@ function database({
                                       versao_revisao: 1,
                                       id_pasta: 2,
                                       titulo: 'Material',
+                                      autor_obra: currentAuthor,
                                       tipo: 'link',
                                       url: 'https://example.com',
                                       visibilidade: 'privado'
@@ -306,7 +355,9 @@ test('catálogo público usa projeção sem blobs, contatos ou pastas e exige au
     const f = database();
     const rows = await f.library.publicList();
     assert.equal(rows.length, 1);
-    const query = f.queries[0].sql;
+    const query = f.queries.find((entry) =>
+        entry.sql.includes('FROM documento_itens i JOIN usuarios')
+    ).sql;
     assert.match(query, /visibilidade = 'publico'/);
     assert.match(query, /u.situacao = 'ativo'/);
     assert.match(query, /u.tipo_usuario = 'docente' OR u.is_admin = 1/);
@@ -377,7 +428,9 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
     t.mock.method(db, 'execute', async (sql, args) =>
         sql.includes('FROM tokens t')
             ? [args[0] === hash && args[1] === 7 ? [{ id_token: 1, is_admin: 0 }] : []]
-            : f.db.execute(sql, args)
+            : sql.includes('i.id_item =') && args[0] === 900
+              ? [[]]
+              : f.db.execute(sql, args)
     );
     t.mock.method(db, 'getConnection', () => f.db.getConnection());
     const express = require('express');
@@ -394,8 +447,24 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
             })
     );
     const base = `http://127.0.0.1:${server.address().port}/api/document-library`;
+    const previews = require('../backend/src/services/document-preview.service');
+    let rendered = 0;
+    t.mock.method(previews, 'preview', async () => {
+        rendered++;
+        return Buffer.from('thumbnail');
+    });
     assert.equal((await fetch(base)).status, 401);
     const headers = { Authorization: 'Bearer ' + token };
+    assert.equal((await fetch(base + '/items/3/preview')).status, 401);
+    assert.equal((await fetch(base + '/items/900/preview', { headers })).status, 404);
+    assert.equal((await fetch(base + '/reviews/3/preview', { headers })).status, 403);
+    assert.equal(rendered, 0);
+    const thumbnail = await fetch(base + '/items/3/preview', { headers });
+    assert.equal(thumbnail.status, 200);
+    assert.equal(thumbnail.headers.get('Cache-Control'), 'no-store');
+    assert.equal(thumbnail.headers.get('Content-Type'), 'image/png');
+    assert.equal(thumbnail.headers.get('X-Content-Type-Options'), 'nosniff');
+    assert.equal(rendered, 1);
     const summary = 'Primeiro parágrafo: ação, ç e 😀.\n\nSegundo parágrafo do documento.';
     const metadata = new URLSearchParams({
         titulo: 'Aula',
@@ -411,6 +480,14 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
     assert.equal(upload.status, 201);
     assert.equal(f.writes[0].args[0], 7);
     assert.equal(f.writes[0].args[3], summary);
+    const form = new FormData();
+    form.append('titulo', 'Texto Unicode');
+    form.append('descricao', '漢'.repeat(2998) + '\n\n');
+    form.append('nome_arquivo', 'aula.pdf');
+    form.append('arquivo', new Blob([pdf]), 'aula.pdf');
+    const multipart = await fetch(base + '/files', { method: 'POST', headers, body: form });
+    assert.equal(multipart.status, 201);
+    assert.equal(f.writes.at(-1).args[3], '漢'.repeat(2998));
     const download = await fetch(base + '/items/3/download', { headers });
     assert.equal(download.status, 200);
     assert.equal(download.headers.get('Content-Type'), 'application/octet-stream');

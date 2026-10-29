@@ -16,12 +16,32 @@ function getFallbackCourses() {
                 ativo: 1
             }));
         } catch (error) {
-        if (!developmentFallbackEnabled()) throw error;
+            if (!developmentFallbackEnabled()) throw error;
             fallbackCourses = [
-                { id_curso: 1, nome: 'Técnico em Desenvolvimento de Sistemas (Integrado)', nivel: 'tecnico', ativo: 1 },
-                { id_curso: 2, nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas', nivel: 'graduacao', ativo: 1 },
-                { id_curso: 3, nome: 'Engenharia de Controle e Automação', nivel: 'graduacao', ativo: 1 },
-                { id_curso: 4, nome: 'Técnico em Informática (Subsequente)', nivel: 'tecnico', ativo: 1 },
+                {
+                    id_curso: 1,
+                    nome: 'Técnico em Desenvolvimento de Sistemas (Integrado)',
+                    nivel: 'tecnico',
+                    ativo: 1
+                },
+                {
+                    id_curso: 2,
+                    nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas',
+                    nivel: 'graduacao',
+                    ativo: 1
+                },
+                {
+                    id_curso: 3,
+                    nome: 'Engenharia de Controle e Automação',
+                    nivel: 'graduacao',
+                    ativo: 1
+                },
+                {
+                    id_curso: 4,
+                    nome: 'Técnico em Informática (Subsequente)',
+                    nivel: 'tecnico',
+                    ativo: 1
+                },
                 { id_curso: 5, nome: 'Licenciatura em Física', nivel: 'graduacao', ativo: 1 }
             ];
         }
@@ -31,7 +51,7 @@ function getFallbackCourses() {
 
 async function listCourses() {
     try {
-        const [courses] = await db.execute(`
+        const query = `
             SELECT
                 id_curso,
                 nome,
@@ -39,7 +59,23 @@ async function listCourses() {
                 ativo
             FROM cursos
             ORDER BY nome ASC
-        `);
+        `;
+        let courses;
+        try {
+            [courses] = await db.execute(
+                query.replace(
+                    '                ativo',
+                    '                ativo, regime_etapas, total_etapas'
+                )
+            );
+        } catch (error) {
+            if (
+                error.code !== 'ER_BAD_FIELD_ERROR' ||
+                !/regime_etapas|total_etapas/.test(error.sqlMessage || error.message || '')
+            )
+                throw error;
+            [courses] = await db.execute(query);
+        }
 
         if (Array.isArray(courses) && courses.length > 0) {
             return courses;

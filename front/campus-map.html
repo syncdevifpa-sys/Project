@@ -51,7 +51,15 @@
           <a href="campus-map.html" aria-current="page">Mapa do campus</a>
         </nav>
         <div class="ar-nav-end">
-          <button type="button" class="ar-iconbtn" data-search-trigger aria-label="Buscar no portal" title="Buscar (Ctrl+K)"><span data-icon="search" aria-hidden="true"></span></button>
+          <button
+            type="button"
+            class="ar-iconbtn"
+            data-search-trigger
+            aria-label="Buscar no portal"
+            title="Buscar (Ctrl+K)"
+          >
+            <span data-icon="search" aria-hidden="true"></span>
+          </button>
           <a class="ar-user" href="settings.html" data-shell-user hidden>
             <span class="ar-avatar ar-avatar--cyan" style="width: 36px; height: 36px"></span>
             <div>
@@ -59,12 +67,49 @@
               <div class="ar-user-role"></div>
             </div>
           </a>
-          <button type="button" class="ar-btn ar-btn--secondary" data-sign-out data-shell-user hidden>Sair</button>
-          <a id="mapAccountLink" class="ar-btn ar-btn--secondary" data-shell-signin href="login.html">Entrar</a>
+          <button
+            type="button"
+            class="ar-btn ar-btn--secondary"
+            data-sign-out
+            data-shell-user
+            hidden
+          >
+            Sair
+          </button>
+          <a
+            id="mapAccountLink"
+            class="ar-btn ar-btn--secondary"
+            data-shell-signin
+            href="login.html"
+            >Entrar</a
+          >
         </div>
       </header>
       <main class="ar-main ar-campus-map-page">
         <section class="ar-hero ar-hero--cyan ar-hero--compact" data-initial-banner-slot="page">
+          <svg
+            class="ar-hero-art"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="xMaxYMax meet"
+            aria-hidden="true"
+          >
+            <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+            <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+            <rect
+              class="s"
+              x="770"
+              y="116"
+              width="180"
+              height="52"
+              rx="26"
+              opacity="0.75"
+              transform="rotate(-16 860 142)"
+            ></rect>
+            <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+            <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+            <circle class="d" cx="752" cy="133" r="5"></circle>
+            <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+          </svg>
           <h1 class="ar-hero-title">Mapa do campus</h1>
           <div class="ar-hero-side">
             <p class="ar-hero-desc">Encontre blocos e espaços do IFPA Campus Belém.</p>
@@ -105,119 +150,128 @@
           >
             <button type="button" data-category="todos" aria-pressed="true">Todos</button>
             <button type="button" data-category="ensino" aria-pressed="false">Ensino</button>
-            <button type="button" data-category="laboratorios" aria-pressed="false">Laboratórios</button>
+            <button type="button" data-category="laboratorios" aria-pressed="false">
+              Laboratórios
+            </button>
             <button type="button" data-category="servicos" aria-pressed="false">Serviços</button>
             <button type="button" data-category="esporte" aria-pressed="false">Esporte</button>
-            <button type="button" data-category="convivencia" aria-pressed="false">Convivência</button>
+            <button type="button" data-category="convivencia" aria-pressed="false">
+              Convivência
+            </button>
           </div>
           <!-- Planta interativa e painel de consulta -->
           <div class="ar-campus-map-layout">
             <div class="ar-campus-map-stage">
               <div class="ar-campus-map-canvas">
-              <div class="ar-campus-map-controls" role="group" aria-label="Controles do mapa">
-                <button type="button" id="mapZoomIn" class="ar-btn" aria-label="Ampliar mapa">+</button>
-                <output id="mapZoom" aria-label="Ampliação">100%</output>
-                <button type="button" id="mapZoomOut" class="ar-btn" aria-label="Reduzir mapa">−</button>
-                <button type="button" id="mapFit" class="ar-btn">Ver campus inteiro</button>
-                <button type="button" id="mapShowResults" class="ar-btn">Enquadrar resultados</button>
-                <details>
-                  <summary aria-label="Ajuda para navegar no mapa">?</summary>
-                  <p>
-                    Arraste para mover; dê dois cliques para ampliar. Use dois dedos ou Ctrl +
-                    roleta para ampliar. No teclado: setas movem; + e − ampliam/reduzem; 0 ajusta.
-                    Selecione um bloco com Enter ou Espaço. A lista oferece as mesmas informações.
-                  </p>
-                </details>
-              </div>
-              <p id="mapHover" class="ar-campus-map-hover" aria-live="off">
-                Passe pelo bloco ou selecione para explorar.
-              </p>
-              <div
-                id="mapViewport"
-                class="ar-campus-map-viewport"
-                tabindex="0"
-                role="region"
-                aria-label="Mapa interativo do campus. Use os controles ou a lista de locais."
-              >
-                <svg
-                  id="campusMap"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 800 1580"
-                  role="group"
-                  aria-labelledby="campusMapTitle campusMapDescription"
-                >
-                  <title id="campusMapTitle">Blocos e espaços do IFPA Campus Belém</title>
-                  <desc id="campusMapDescription">Planta esquemática do campus. Av. Rômulo Maiorana no topo, Av. Almirante Barroso embaixo, Trav. Timbó à esquerda e Trav. Estrella à direita. Não é um mapa de rotas nem uma planta oficial atualizada.</desc>
-                  <g class="ar-map-ground" aria-hidden="true">
-                    <rect x="42" y="52" width="708" height="1460" rx="8" />
-                    <path
-                      d="M430 420V630M430 820V1260M90 1000V1260M90 1450H710"
-                      class="ar-map-corridor"
-                    />
-                  </g>
-                  <g class="ar-map-streets" aria-hidden="true">
-                    <path d="M0 0H800V52H42V1510H800V1580H0ZM750 52H800V1510H750Z" />
-                    <text x="400" y="33">Av. Rômulo Maiorana</text>
-                    <text x="400" y="1550">Av. Almirante Barroso, 1155 · Marco</text>
-                    <text x="22" y="810" transform="rotate(-90 22 810)">Trav. Timbó</text>
-                    <text x="779" y="810" transform="rotate(90 779 810)">Trav. Estrella</text>
-                  </g>
-                  <g id="mapBlocks">
-                  </g>
-                </svg>
-              </div>
-              <!-- Visão geral sincronizada com o zoom -->
-              <div class="ar-campus-map-overview-row">
-                <button
-                  type="button"
-                  id="mapOverview"
-                  class="ar-campus-map-overview"
-                  aria-label="Visão geral do campus. Clique para recentralizar a área ampliada; no teclado, use as setas no mapa principal."
+                <div class="ar-campus-map-controls" role="group" aria-label="Controles do mapa">
+                  <button type="button" id="mapZoomIn" class="ar-btn" aria-label="Ampliar mapa">
+                    +
+                  </button>
+                  <output id="mapZoom" aria-label="Ampliação">100%</output>
+                  <button type="button" id="mapZoomOut" class="ar-btn" aria-label="Reduzir mapa">
+                    −
+                  </button>
+                  <button type="button" id="mapFit" class="ar-btn">Ver campus inteiro</button>
+                  <button type="button" id="mapShowResults" class="ar-btn">
+                    Enquadrar resultados
+                  </button>
+                  <details>
+                    <summary aria-label="Ajuda para navegar no mapa">?</summary>
+                    <p>
+                      Arraste para mover; dê dois cliques para ampliar. Use dois dedos ou Ctrl +
+                      roleta para ampliar. No teclado: setas movem; + e − ampliam/reduzem; 0 ajusta.
+                      Selecione um bloco com Enter ou Espaço. A lista oferece as mesmas informações.
+                    </p>
+                  </details>
+                </div>
+                <p id="mapHover" class="ar-campus-map-hover" aria-live="off">
+                  Passe pelo bloco ou selecione para explorar.
+                </p>
+                <div
+                  id="mapViewport"
+                  class="ar-campus-map-viewport"
+                  tabindex="0"
+                  role="region"
+                  aria-label="Mapa interativo do campus. Use os controles ou a lista de locais."
                 >
                   <svg
-                    id="mapOverviewSvg"
+                    id="campusMap"
+                    xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 800 1580"
-                    aria-hidden="true"
-                    focusable="false"
+                    role="group"
+                    aria-labelledby="campusMapTitle campusMapDescription"
                   >
-                    <rect x="0" y="0" width="800" height="1580" class="ar-map-overview-ground" />
-                    <use href="#mapBlocks" pointer-events="none" />
-                    <rect
-                      id="mapCamera"
-                      x="0"
-                      y="0"
-                      width="800"
-                      height="1580"
-                      class="ar-map-overview-camera"
-                    />
+                    <title id="campusMapTitle">Blocos e espaços do IFPA Campus Belém</title>
+                    <desc id="campusMapDescription">
+                      Planta esquemática do campus. Av. Rômulo Maiorana no topo, Av. Almirante
+                      Barroso embaixo, Trav. Timbó à esquerda e Trav. Estrella à direita. Não é um
+                      mapa de rotas nem uma planta oficial atualizada.
+                    </desc>
+                    <g class="ar-map-ground" aria-hidden="true">
+                      <rect x="42" y="52" width="708" height="1460" rx="8" />
+                      <path
+                        d="M430 420V630M430 820V1260M90 1000V1260M90 1450H710"
+                        class="ar-map-corridor"
+                      />
+                    </g>
+                    <g class="ar-map-streets" aria-hidden="true">
+                      <path d="M0 0H800V52H42V1510H800V1580H0ZM750 52H800V1510H750Z" />
+                      <text x="400" y="33">Av. Rômulo Maiorana</text>
+                      <text x="400" y="1550">Av. Almirante Barroso, 1155 · Marco</text>
+                      <text x="22" y="810" transform="rotate(-90 22 810)">Trav. Timbó</text>
+                      <text x="779" y="810" transform="rotate(90 779 810)">Trav. Estrella</text>
+                    </g>
+                    <g id="mapBlocks"></g>
                   </svg>
-                  <span>Visão geral</span>
-                </button>
-                <p>
-                  A moldura mostra a área em exibição. Clique na miniatura para mudar o centro; use
-                  as setas no mapa principal se preferir o teclado.
-                </p>
-              </div>
+                </div>
+                <!-- Visão geral sincronizada com o zoom -->
+                <div class="ar-campus-map-overview-row">
+                  <button
+                    type="button"
+                    id="mapOverview"
+                    class="ar-campus-map-overview"
+                    aria-label="Visão geral do campus. Clique para recentralizar a área ampliada; no teclado, use as setas no mapa principal."
+                  >
+                    <svg
+                      id="mapOverviewSvg"
+                      viewBox="0 0 800 1580"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <rect x="0" y="0" width="800" height="1580" class="ar-map-overview-ground" />
+                      <use href="#mapBlocks" pointer-events="none" />
+                      <rect
+                        id="mapCamera"
+                        x="0"
+                        y="0"
+                        width="800"
+                        height="1580"
+                        class="ar-map-overview-camera"
+                      />
+                    </svg>
+                    <span>Visão geral</span>
+                  </button>
+                  <p>
+                    A moldura mostra a área em exibição. Clique na miniatura para mudar o centro;
+                    use as setas no mapa principal se preferir o teclado.
+                  </p>
+                </div>
               </div>
               <div class="ar-campus-map-legend" aria-label="Legenda do mapa">
                 <span>
-                  <i data-kind="bloco" aria-hidden="true">
-                  </i>
+                  <i data-kind="bloco" aria-hidden="true"> </i>
                   Blocos · letras
                 </span>
                 <span>
-                  <i data-kind="espaco" aria-hidden="true">
-                  </i>
+                  <i data-kind="espaco" aria-hidden="true"> </i>
                   Espaços · nomes
                 </span>
                 <span>
-                  <i data-kind="acesso" aria-hidden="true">
-                  </i>
+                  <i data-kind="acesso" aria-hidden="true"> </i>
                   Acessos
                 </span>
                 <span>
-                  <i data-kind="selecionado" aria-hidden="true">
-                  </i>
+                  <i data-kind="selecionado" aria-hidden="true"> </i>
                   Local selecionado · contorno forte
                 </span>
               </div>
@@ -240,10 +294,8 @@
                 aria-labelledby="mapPlacesTitle"
               >
                 <h2 id="mapPlacesTitle">Locais do campus</h2>
-                <p id="mapResults" role="status">
-                </p>
-                <ul id="mapPlaceList">
-                </ul>
+                <p id="mapResults" role="status"></p>
+                <ul id="mapPlaceList"></ul>
               </section>
             </div>
           </div>
@@ -322,6 +374,6 @@
     <script src="js/navigation.js"></script>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-      <script src="js/progressive-navigation.js"></script>
-</body>
+    <script src="js/progressive-navigation.js"></script>
+  </body>
 </html>

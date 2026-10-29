@@ -40,6 +40,7 @@
     <script defer src="js/api.js"></script>
     <script defer src="js/auth.js"></script>
     <script defer src="js/community.js"></script>
+    <script defer src="js/course-stages.js"></script>
     <script defer src="js/teacher-requirements.js"></script>
     <script defer src="js/avatar-editor.js"></script>
     <script defer src="js/profile-sharing.js"></script>
@@ -303,12 +304,20 @@
                     <option value="discente">Aluno</option>
                   </select>
                 </label>
-                <label id="requestedCourseLabel" hidden
-                  >Curso e período de ingresso / letivo no SIGAA<input
-                    name="curso_informado"
-                    maxlength="150"
-                  />
-                </label>
+                <div id="requestedCourseLabel" class="ar-teacher-wide" hidden>
+                  <label
+                    >Curso no IFPA<select name="id_curso">
+                      <option value="">Carregando cursos...</option>
+                    </select></label
+                  ><label
+                    >Etapa atual no curso<select name="etapa_atual">
+                      <option value="">Selecione o curso primeiro</option>
+                    </select></label
+                  >
+                  <p>
+                    As opções podem ser semestres ou anos, conforme o regime configurado do curso.
+                  </p>
+                </div>
                 <label>Nome da conta<input name="nome" readonly /> </label>
                 <label>E-mail da conta<input name="email" type="email" readonly /> </label>
                 <label

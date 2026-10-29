@@ -13,7 +13,8 @@ test('pedido de vínculo contém formulário e controles HTML reais, não texto 
         'nome_usuario',
         'formacao',
         'tipo_solicitado',
-        'curso_informado'
+        'id_curso',
+        'etapa_atual'
     ]) {
         assert.match(form[1], new RegExp('<(?:input|select)\\b[^>]*name="' + name + '"'));
     }
@@ -56,7 +57,8 @@ function fixture() {
         'nome_usuario',
         'formacao',
         'tipo_solicitado',
-        'curso_informado'
+        'id_curso',
+        'etapa_atual'
     ])
         form.elements[name] = make();
     nodes.teacherRequestForm = form;
@@ -91,11 +93,12 @@ test('externo inicia pedido somente pela ação discreta, com campos de Aluno e 
     assert.equal(f.nodes.teacherRequestSection.hidden, false);
     f.form.elements.tipo_solicitado.value = 'discente';
     f.form.elements.tipo_solicitado.events.change();
-    assert.equal(f.form.elements.curso_informado.required, true);
+    assert.equal(f.form.elements.id_curso.required, true);
     assert.equal(f.form.elements.formacao.required, false);
     f.form.elements.matricula.value = '123';
     f.form.elements.nome_usuario.value = 'pessoa';
-    f.form.elements.curso_informado.value = 'Informática 2027.1';
+    f.form.elements.id_curso.value = '1';
+    f.form.elements.etapa_atual.value = '2';
     await f.form.events.submit({ preventDefault() {} });
     assert.equal(f.calls[0].path, '/api/teacher-requirements/mine/change');
     assert.equal(f.calls[0].body.tipo_solicitado, 'discente');

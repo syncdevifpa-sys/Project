@@ -94,6 +94,13 @@ function validateContent(kind, body, creation = false) {
             (kind === 'calendar' && values.data_evento && values.data_fim < values.data_evento))
     )
         fail(400, 'A data final deve ser posterior à inicial.');
+    if (kind === 'projects' && Object.hasOwn(body, 'capa')) {
+        if (body.capa !== null && typeof body.capa !== 'string')
+            fail(400, 'Imagem de capa inválida.');
+        const cover = body.capa || '';
+        require('./profile-photo.service').validateProfilePhoto({ foto: cover });
+        values.capa = cover || null;
+    }
     return values;
 }
 async function editContent(kind, id, body, actorId) {
@@ -119,13 +126,22 @@ async function editContent(kind, id, body, actorId) {
         );
         if (!rows.length) fail(404, 'Registro não encontrado.');
         const row = rows[0];
+        if (kind === 'projects' && Object.hasOwn(values, 'capa') && row && row.capa === undefined) {
+            if (values.capa)
+                fail(
+                    409,
+                    'A equipe precisa habilitar imagens de Projetos no banco. Seus dados continuam no formulário.'
+                );
+            delete values.capa;
+        }
         if (kind === 'calendar') {
             const owner = Number(row.id_usuario) === Number(actorId);
             if ((row.visibilidade === 'pessoal' || values.visibilidade === 'pessoal') && !owner)
                 fail(403, 'Somente o autor pode acessar um evento pessoal.');
             if (
                 row.visibilidade === 'pessoal' &&
-                values.visibilidade && values.visibilidade !== 'pessoal' &&
+                values.visibilidade &&
+                values.visibilidade !== 'pessoal' &&
                 !admin &&
                 !['docente', 'servidor'].includes(actor.tipo_usuario)
             )
@@ -167,6 +183,7 @@ async function editContent(kind, id, body, actorId) {
         if (kind === 'calendar' && row.oculto === undefined && values.oculto === false)
             delete values.oculto;
         const keys = Object.keys(values);
+        if (!keys.length) fail(400, 'Nenhum campo para salvar.');
         const [result] = await connection.execute(
             `UPDATE ${tables[kind]} SET ${keys.map((key) => key + ' = ?').join(', ')} WHERE ${config.id} = ?`,
             [...Object.values(values), id]
@@ -175,7 +192,11 @@ async function editContent(kind, id, body, actorId) {
         return result;
     } catch (error) {
         await connection.rollback();
-        if (['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) && /visibilidade/.test(error.sqlMessage || error.message || '')) fail(409, 'A visibilidade ampliada exige a migração 1.1.28.');
+        if (
+            ['WARN_DATA_TRUNCATED', 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD'].includes(error.code) &&
+            /visibilidade/.test(error.sqlMessage || error.message || '')
+        )
+            fail(409, 'A visibilidade ampliada exige a migração 1.1.28.');
         if (
             kind === 'calendar' &&
             error.code === 'ER_BAD_FIELD_ERROR' &&
