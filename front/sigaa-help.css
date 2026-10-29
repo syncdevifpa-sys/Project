@@ -1,0 +1,88 @@
+.ar-sigaa-help {
+  margin-block: 8px 16px;
+  min-width: 0;
+  color: var(--ink, #182820);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.ar-sigaa-help > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--ink-muted, #46584c);
+  font-weight: 600;
+}
+.ar-sigaa-help > summary::-webkit-details-marker {
+  display: none;
+}
+.ar-sigaa-help > summary > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.ar-sigaa-help > summary:focus-visible {
+  outline: 2px solid var(--focus, #182820);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.ar-sigaa-help[open] > summary {
+  color: var(--ink, #182820);
+}
+.ar-sigaa-help-body {
+  padding: 16px;
+  border: 1px solid var(--line, #d8e3db);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  overflow-wrap: anywhere;
+}
+.ar-sigaa-help-body ol {
+  margin: 0;
+  padding-left: 22px;
+}
+.ar-sigaa-help-body li + li {
+  margin-top: 8px;
+}
+.ar-sigaa-help-body p:last-child {
+  margin-bottom: 0;
+}
+.ar-sigaa-example {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid var(--line, #d8e3db);
+  border-radius: 10px;
+  background: var(--surface-sunken, #f4f4f4);
+}
+.ar-sigaa-example figcaption {
+  font-size: 12px;
+  color: var(--ink-muted, #46584c);
+}
+.ar-sigaa-example dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 16px;
+}
+.ar-sigaa-example dd {
+  margin: 0;
+}
+.ar-sigaa-example mark {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--yellow-soft, #fff1b3);
+  color: var(--yellow-ink, #634b00);
+  font-weight: 700;
+}
+@media (max-width: 420px) {
+  .ar-sigaa-example dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .ar-sigaa-example dd + dt {
+    margin-top: 8px;
+  }
+}
