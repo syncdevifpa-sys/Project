@@ -381,9 +381,19 @@
         view.field('Título', title);
         const details = element('textarea');
         details.value = item?.descricao || '';
-        details.maxLength = 3000;
+        const descriptionLimit = data.limits?.description || 3000;
+        details.maxLength = descriptionLimit;
         details.rows = 3;
         view.field('Descrição (opcional)', details);
+        const descriptionHelp = element('p', '', 'ar-library-help');
+        descriptionHelp.id = 'libraryDescriptionHelp';
+        details.setAttribute('aria-describedby', descriptionHelp.id);
+        const updateDescriptionCount = () => {
+            descriptionHelp.textContent = `${details.value.length}/${descriptionLimit} caracteres. Pode usar parágrafos.`;
+        };
+        details.addEventListener('input', updateDescriptionCount);
+        updateDescriptionCount();
+        view.fields.append(descriptionHelp);
         const visibility = element('select');
         for (const [value, label] of [
             ['privado', 'Privado — só eu'],
@@ -456,6 +466,10 @@
         kind.addEventListener('change', update);
         update();
         view.submit(async () => {
+            if (details.value.length > descriptionLimit) {
+                details.focus();
+                throw Error(`Descrição muito longa. Use até ${descriptionLimit} caracteres.`);
+            }
             const body = {
                 titulo: title.value,
                 descricao: details.value,

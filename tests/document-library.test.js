@@ -9,6 +9,68 @@ const {
     LIMITS
 } = require('../backend/src/services/document-library.service');
 const pdf = Buffer.from('%PDF-1.7\nmaterial\n%%EOF');
+test('descrição aceita parágrafos, CRLF, tabulações e Unicode em PDF e edição', async () => {
+    const f = database();
+    const details = 'Resumo acadêmico com ação e 😀.\r\n\r\nSegundo parágrafo.\tReferência.';
+    await f.library.create(
+        7,
+        { titulo: 'Resumo', nome_arquivo: 'resumo.pdf', descricao: details },
+        pdf
+    );
+    assert.equal(f.writes[0].args[3], details.replace(/\r\n/g, '\n'));
+    await f.library.update(7, 3, { descricao: details });
+    assert.equal(f.writes.at(-1).args[1], details.replace(/\r\n/g, '\n'));
+    assert.equal((await f.library.list(7)).limits.description, LIMITS.description);
+});
+test('descrição respeita limite Unicode compatível com maxlength sem truncar', async () => {
+    for (const details of ['á'.repeat(3000), '😀'.repeat(1500)]) {
+        const f = database();
+        await f.library.create(7, {
+            titulo: 'Limite',
+            url: 'https://example.com',
+            descricao: details
+        });
+        assert.equal(f.writes[0].args[3], details);
+    }
+    for (const details of ['á'.repeat(3001), '😀'.repeat(1500) + 'x']) {
+        const f = database();
+        await assert.rejects(
+            f.library.create(7, {
+                titulo: 'Limite',
+                url: 'https://example.com',
+                descricao: details
+            }),
+            { status: 400, message: 'Descrição muito longa. Use até 3000 caracteres.' }
+        );
+        await assert.rejects(f.library.update(7, 3, { descricao: details }), {
+            status: 400,
+            message: 'Descrição muito longa. Use até 3000 caracteres.'
+        });
+        assert.equal(f.writes.length, 0);
+    }
+});
+test('descrição distingue tipo inválido e controles proibidos, sem recusar texto opcional vazio', async () => {
+    const f = database();
+    for (const value of [[], {}, 7])
+        await assert.rejects(
+            f.library.create(7, { titulo: 'Resumo', url: 'https://example.com', descricao: value }),
+            { status: 400, message: 'Descrição inválida. Informe um texto.' }
+        );
+    for (const value of ['a\0b', 'a\x1bb', 'a\x7fb'])
+        await assert.rejects(
+            f.library.create(7, { titulo: 'Resumo', url: 'https://example.com', descricao: value }),
+            {
+                status: 400,
+                message: 'Descrição inválida. Remova os caracteres de controle e tente novamente.'
+            }
+        );
+    await f.library.create(7, {
+        titulo: 'Resumo',
+        url: 'https://example.com',
+        descricao: ' \n\t '
+    });
+    assert.equal(f.writes[0].args[3], null);
+});
 function database({
     teacher = false,
     admin = false,
@@ -334,13 +396,21 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
     const base = `http://127.0.0.1:${server.address().port}/api/document-library`;
     assert.equal((await fetch(base)).status, 401);
     const headers = { Authorization: 'Bearer ' + token };
-    const upload = await fetch(base + '/files?titulo=Aula&nome_arquivo=aula.pdf&id_usuario=99', {
+    const summary = 'Primeiro parágrafo: ação, ç e 😀.\n\nSegundo parágrafo do documento.';
+    const metadata = new URLSearchParams({
+        titulo: 'Aula',
+        nome_arquivo: 'aula.pdf',
+        id_usuario: '99',
+        descricao: summary
+    });
+    const upload = await fetch(base + '/files?' + metadata, {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/octet-stream' },
         body: pdf
     });
     assert.equal(upload.status, 201);
     assert.equal(f.writes[0].args[0], 7);
+    assert.equal(f.writes[0].args[3], summary);
     const download = await fetch(base + '/items/3/download', { headers });
     assert.equal(download.status, 200);
     assert.equal(download.headers.get('Content-Type'), 'application/octet-stream');

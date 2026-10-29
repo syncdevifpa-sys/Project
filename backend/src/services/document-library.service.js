@@ -1,5 +1,6 @@
 const db = require('../config/database');
 const LIMITS = Object.freeze({
+    description: 3000,
     file: 2 * 1024 * 1024,
     user: 20 * 1024 * 1024,
     total: 200 * 1024 * 1024,
@@ -79,7 +80,13 @@ function publication(body, current = {}) {
 }
 function description(body, current = {}) {
     const value = body.descricao ?? current.descricao ?? '';
-    return value === '' || value === null ? null : text(value, 3000, 'Descrição');
+    if (typeof value !== 'string') fail(400, 'Descrição inválida. Informe um texto.');
+    const normalized = value.replace(/\r\n?/g, '\n');
+    if (normalized.length > LIMITS.description)
+        fail(400, `Descrição muito longa. Use até ${LIMITS.description} caracteres.`);
+    if (/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(normalized))
+        fail(400, 'Descrição inválida. Remova os caracteres de controle e tente novamente.');
+    return normalized.trim() || null;
 }
 const publisher = (user) =>
     user.tipo_usuario === 'docente' || user.is_admin === 1 || user.is_admin === true;
