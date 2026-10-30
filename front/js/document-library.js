@@ -401,7 +401,16 @@
                         .join(' · ')
                 )
             );
-            if (item.descricao) info.append(element('p', item.descricao));
+            if (item.descricao) {
+                if (layout === 'list') {
+                    const description = element('details', undefined, 'ar-library-description');
+                    description.append(
+                        element('summary', 'Ver descrição'),
+                        element('p', item.descricao)
+                    );
+                    info.append(description);
+                } else info.append(element('p', item.descricao));
+            }
             if (mode === 'public' && item.publicador)
                 info.append(
                     element('small', 'Publicado por ' + item.publicador, 'ar-library-publisher')
@@ -514,7 +523,15 @@
                 tableBody.append(line);
             } else {
                 if (layout === 'board') {
-                    row.append(coverFor(item), info, actions);
+                    const frame = element('div', undefined, 'ar-library-cover-frame');
+                    const coverTitle = element(
+                        'span',
+                        item.titulo || 'Material indisponível',
+                        'ar-library-cover-title'
+                    );
+                    coverTitle.setAttribute('aria-hidden', 'true');
+                    frame.append(coverFor(item), coverTitle);
+                    row.append(frame, info, actions);
                     if (item.nome_arquivo?.toLowerCase().endsWith('.docx'))
                         info.append(element('small', 'DOCX · prévia de texto aproximada'));
                 } else row.append(icon(item.tipo), info, actions);

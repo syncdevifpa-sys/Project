@@ -169,6 +169,7 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
         titulo: 'Documento',
         nome_arquivo: 'aula.pdf',
         tamanho: 1234,
+        descricao: 'Descrição completa com parágrafos.\n\nSegundo parágrafo.',
         visibilidade: 'privado',
         id_pasta: null
     });
@@ -176,6 +177,8 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
     views[0].events.click();
     assert.equal(items.dataset.view, 'board');
     assert.ok(items.querySelector('.ar-library-cover'));
+    assert.equal(items.querySelector('.ar-library-cover-title').textContent, 'Documento');
+    assert.equal(items.querySelector('.ar-library-cover-title').attrs['aria-hidden'], 'true');
     assert.equal(
         items.querySelector('.ar-library-authors').textContent,
         'Autor(es): Autoria <declarada>'
@@ -202,5 +205,10 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
     views[2].events.click();
     assert.equal(items.dataset.view, 'list');
     assert.ok(items.querySelector('article'));
+    assert.equal(items.querySelector('.ar-library-description').tagName, 'details');
+    assert.match(
+        items.querySelector('.ar-library-description').querySelector('p').textContent,
+        /Segundo parágrafo/
+    );
     assert.equal(items.querySelector('.ar-library-cover'), undefined);
 });
