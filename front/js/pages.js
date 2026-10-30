@@ -215,12 +215,7 @@
                 render
             );
             const filterDetails = $('#noticeFilterDetails');
-            const filterMedia = window.matchMedia('(max-width: 600px)');
-            function filterLayout() {
-                filterDetails.open = false;
-            }
-            listen(filterMedia, 'change', filterLayout);
-            filterLayout();
+            filterDetails.open = false;
             function visible() {
                 const text = value('filterTextNotices').toLowerCase();
                 const type = $('#filterNoticeType').value;

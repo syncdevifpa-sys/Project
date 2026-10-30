@@ -21,7 +21,9 @@
         }
         if (/settings\.html$/.test(location.pathname)) {
             const host =
-                document.getElementById('profileSharing') || document.querySelector('main');
+                document.getElementById('accountNames') ||
+                document.getElementById('profileSharing') ||
+                document.querySelector('main');
             if (!host) return;
             const section = make('section');
             section.className = 'ar-card ar-account-names';
@@ -66,7 +68,8 @@
             requestForm.append(requestFields);
             const history = make('p');
             section.append(form, requestForm, history, status);
-            host.after(section);
+            if (host.id === 'accountNames') host.replaceChildren(section);
+            else host.after(section);
             async function load() {
                 const result = await call(endpoint);
                 if (!valid()) return;

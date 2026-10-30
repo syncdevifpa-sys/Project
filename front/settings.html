@@ -223,6 +223,9 @@
               <small>Nome, contato e foto</small>
             </span>
           </a>
+          <a href="#accountNames" data-nav-target="accountNames"
+            ><span><b>Nomes da conta</b><small>Nome de exibição e nome completo</small></span></a
+          >
           <a href="#profileSharing" data-nav-target="profileSharing"
             ><span><b>Compartilhamento</b><small>Contatos e foto em Pessoas</small></span></a
           >
@@ -382,13 +385,14 @@
 
               <!-- Dados pessoais editáveis; vínculo e permissões seguem as regras da instituição. -->
               <p>
-                Edite seu nome, nome social, e-mail, telefone e apresentação nos campos abaixo.
-                Confirme em Salvar alterações.
+                Edite seus contatos, nome social e apresentação nos campos abaixo. Para escolher um
+                nome de exibição ou solicitar a correção do nome completo, abra Nomes da conta.
               </p>
               <div class="ar-form-grid" style="margin-top: 24px" id="formDadosPessoais">
                 <label class="ar-field">
                   <span class="ar-field-label">Nome completo</span>
                   <input type="text" id="campoNome" value="" readonly />
+                  <small>Para alterar, acesse <a href="#accountNames">Nomes da conta</a>.</small>
                 </label>
 
                 <label class="ar-field">
@@ -498,6 +502,10 @@
             </div>
           </section>
 
+          <section id="accountNames" aria-label="Nomes da conta">
+            <h2>Nomes da conta</h2>
+            <p>Carregando as opções de nome…</p>
+          </section>
           <section
             id="accountEmail"
             class="ar-account-email"
