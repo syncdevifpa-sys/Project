@@ -723,6 +723,8 @@
         seg.setAttribute('role', 'group');
         seg.setAttribute('aria-label', 'Modo de exibição');
         var modes = {
+            cards: [0, 'layout-grid', 'Quadro'],
+            status: [3, 'columns-3', 'Situação'],
             board: [0, 'layout-grid', 'Quadro'],
             quadro: [0, 'layout-grid', 'Quadro'],
             table: [1, 'table-2', 'Tabela'],

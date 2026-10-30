@@ -476,7 +476,7 @@
                             const markup = card(
                                 r.titulo,
                                 r.descricao,
-                                `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}`,
+                                `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
                                 projectActions(r) + editAction('projects', r, r.id_projeto)
                             );
                             return A.noticeCover?.valid(r.capa)
@@ -485,11 +485,7 @@
                         })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
                 linkDescriptions('#gridProjetos .ar-card-desc');
-                contentViews(grid, bar.visible(), 'aprovacao', {
-                    pendente: 'Em análise',
-                    aprovado: 'Aprovados',
-                    recusado: 'Recusados'
-                });
+                contentViews(grid, bar.visible(), 'situacao', situations);
                 bar.counts();
             }
             async function reload() {

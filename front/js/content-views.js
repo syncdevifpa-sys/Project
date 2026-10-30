@@ -13,11 +13,12 @@
             const toolbar = make('div');
             toolbar.className = 'ar-content-views';
             toolbar.setAttribute('aria-label', 'Modo de exibição');
-            state = { mode: 'list', toolbar, rows, groupKey, labels };
+            state = { mode: 'cards', toolbar, rows, groupKey, labels };
             for (const [value, label] of [
-                ['list', 'Lista'],
+                ['cards', 'Quadro'],
                 ['table', 'Tabela'],
-                ['board', 'Quadro']
+                ['list', 'Lista'],
+                ['status', 'Situação']
             ]) {
                 const button = make('button', label);
                 button.type = 'button';
@@ -37,12 +38,39 @@
         render(root, state);
     }
     function render(root, state) {
+        for (const card of state.cards) {
+            const disclosure = card.querySelector?.('[data-view-description]');
+            if (disclosure) disclosure.replaceWith(disclosure.lastElementChild);
+        }
         for (const button of state.toolbar.children)
             button.setAttribute('aria-pressed', String(button.dataset.mode === state.mode));
         root.replaceChildren();
-        root.className = state.mode === 'list' ? 'ar-card-grid' : 'ar-view-content';
-        if (state.mode === 'list') {
+        root.className = state.mode === 'cards' ? 'ar-card-grid' : 'ar-view-content';
+        if (!state.rows.length) {
             root.append(...state.cards);
+            return;
+        }
+        if (state.mode === 'cards') {
+            root.append(...state.cards);
+            return;
+        }
+        if (state.mode === 'list') {
+            const list = make('ul');
+            list.className = 'ar-content-list';
+            state.cards.forEach((card) => {
+                const item = make('li');
+                const description = card.querySelector?.('.ar-card-desc');
+                if (description?.textContent.trim()) {
+                    const disclosure = make('details');
+                    disclosure.dataset.viewDescription = 'true';
+                    disclosure.append(make('summary', 'Ver descrição'));
+                    description.replaceWith(disclosure);
+                    disclosure.append(description);
+                }
+                item.append(card);
+                list.append(item);
+            });
+            root.append(list);
             return;
         }
         if (state.mode === 'table') {
