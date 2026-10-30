@@ -2,8 +2,6 @@ const { developmentFallbackEnabled } = require('../services/development-mode.ser
 const db = require('../config/database');
 const devStore = require('../services/dev-memory-store.service');
 
-
-
 async function listUsers() {
     try {
         const [users] = await db.execute(`
@@ -90,7 +88,10 @@ async function createUser(userData) {
     try {
         return await require('../services/email-verification.service').register('users', userData);
     } catch (err) {
-        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)) {
+        if (
+            developmentFallbackEnabled() &&
+            (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)
+        ) {
             return devStore.createUser(userData);
         }
         throw err;
@@ -98,6 +99,16 @@ async function createUser(userData) {
 }
 
 async function updateUser(userId, userData) {
+    if (Object.hasOwn(userData, 'nome')) {
+        const current = await findUserById(userId, true);
+        if (!current || userData.nome !== current.nome)
+            throw Object.assign(
+                new Error('Solicite a alteração do nome completo para análise administrativa.'),
+                { status: 409 }
+            );
+        userData = { ...userData };
+        delete userData.nome;
+    }
     if (Object.hasOwn(userData, 'email')) {
         const current = await findUserById(userId, true);
         if (

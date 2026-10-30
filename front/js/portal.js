@@ -656,6 +656,23 @@
             el.textContent = userRole;
         });
         updateUserAvatar(sessao.foto, userName, userInitials);
+        if (hasValidSession && A.api && A.token?.get()) {
+            var nameToken = A.token.get();
+            A.api
+                .get(sessao.tipo_usuario === 'externo' ? '/api/external/nomes' : '/api/auth/nomes')
+                .then(function (response) {
+                    if (!response.ok || A.token.get() !== nameToken) return;
+                    var identity = response.data;
+                    var display = identity.nome_exibicao || identity.nome;
+                    display = A.formatPersonName?.(display) || display;
+                    if (!display) return;
+                    document.querySelectorAll('.ar-user-name').forEach(function (node) {
+                        node.textContent = display;
+                    });
+                    updateUserAvatar(sessao.foto, display);
+                })
+                .catch(function () {});
+        }
         if (
             sessao.is_admin &&
             sessao.tipo_usuario !== 'externo' &&
@@ -734,6 +751,11 @@
             month: [0, 'calendar', 'Mês']
         };
         var buttons = Array.from(seg.querySelectorAll('button'));
+        if (seg.hasAttribute('data-notice-views')) {
+            modes.lista = [0, 'layout-grid', 'Quadro'];
+            modes.compacta = [2, 'list', 'Lista'];
+            modes.quadro = [3, 'columns-3', 'Situação'];
+        }
         buttons.sort(function (a, b) {
             return (
                 (modes[a.dataset.view || a.dataset.mode]?.[0] ?? 9) -

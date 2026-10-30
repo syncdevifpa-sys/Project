@@ -254,15 +254,15 @@ test('cliente API envia JWT, usa PUT para atualização parcial e propaga erros'
     await assert.rejects(api.crud('/api/tasks').get(999), (e) => e.status === 404);
 });
 
-test('salvar nome preserva campos omitidos e ignora colunas desconhecidas', async (t) => {
+test('salvar perfil preserva campos omitidos e ignora colunas desconhecidas', async (t) => {
     let query;
     t.mock.method(db, 'execute', async (sql, values) => {
         query = { sql, values };
         return [{ affectedRows: 1 }];
     });
-    await users.updateUser(7, { nome: 'Novo nome', is_admin: true });
-    assert.equal(query.sql, 'UPDATE usuarios SET nome = ? WHERE id_usuario = ?');
-    assert.deepEqual(query.values, ['Novo nome', 7]);
+    await users.updateUser(7, { nome_social: 'Nome social', is_admin: true });
+    assert.equal(query.sql, 'UPDATE usuarios SET nome_social = ? WHERE id_usuario = ?');
+    assert.deepEqual(query.values, ['Nome social', 7]);
     await users.updateUser(7, { nome_social: null, telefone: '999', foto: '' });
     assert.deepEqual(query.values, [null, '999', '', 7]);
 });
@@ -322,6 +322,9 @@ test('rotas de configurações existem e exigem autenticação', async () => {
     for (const [method, route] of [
         ['GET', 'perfil'],
         ['PUT', 'perfil'],
+        ['GET', 'nomes'],
+        ['PUT', 'nomes'],
+        ['POST', 'nomes/solicitacoes'],
         ['POST', 'logout'],
         ['POST', 'logout-outros'],
         ['POST', 'alterar-senha'],

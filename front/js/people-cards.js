@@ -8,7 +8,7 @@
         };
         const card = make('article');
         card.className = 'ar-card ar-person-card';
-        const rawName = person.nome_social || person.nome || 'Pessoa';
+        const rawName = person.nome_exibicao || person.nome_social || person.nome || 'Pessoa';
         const name = A.formatPersonName ? A.formatPersonName(rawName) : rawName;
         const avatar = make('div');
         avatar.className = 'ar-person-avatar';
@@ -40,6 +40,14 @@
         const meta = make('p', role);
         meta.className = 'ar-card-meta';
         card.append(avatar, title, description, meta);
+        if (person.nome_completo && person.nome_completo !== rawName) {
+            const original = make(
+                'small',
+                A.formatPersonName?.(person.nome_completo) || person.nome_completo
+            );
+            original.className = 'ar-card-meta';
+            title.after(original);
+        }
         const contacts = make('div');
         contacts.className = 'ar-person-contacts';
         if (

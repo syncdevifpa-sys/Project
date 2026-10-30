@@ -10,7 +10,13 @@
     <link rel="stylesheet" href="confirm-dialog.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Configurações</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inline script to apply theme and accessibility before first paint without flicker -->
@@ -57,7 +63,8 @@
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
-</head>
+    <link rel="stylesheet" href="account-names.css" />
+  </head>
   <body>
     <div class="ar-app">
       <!-- TopNav with active gear icon -->
@@ -151,9 +158,9 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
 
@@ -184,10 +191,10 @@
         </svg>
         <h1 class="ar-hero-title">Configurações</h1>
         <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Gerencie seus dados, a aparência do portal e suas preferências de notificação. Tema e
-            cores mudam na hora. Confirme para salvar seus dados pessoais.</p
-          >
+          <p class="ar-hero-desc">
+            Gerencie seus dados, a aparência do portal e suas preferências de notificação. Tema e
+            cores mudam na hora. Confirme para salvar seus dados pessoais.
+          </p>
         </div>
       </section>
 
@@ -299,11 +306,11 @@
           <section class="ar-sset" id="dados" aria-labelledby="dados-t">
             <header class="ar-sset-head">
               <h2 id="dados-t">Seus dados</h2>
-              <p
-                >Seu nome, apresentação e vínculo aparecem em Pessoas. E-mail de login, telefone da
+              <p>
+                Seu nome, apresentação e vínculo aparecem em Pessoas. E-mail de login, telefone da
                 conta e foto não são publicados automaticamente. Escolha os contatos e a
-                visibilidade da foto em Compartilhamento.</p
-              >
+                visibilidade da foto em Compartilhamento.
+              </p>
             </header>
 
             <div class="ar-sset-body">
@@ -366,21 +373,22 @@
                       class="ar-btn ar-btn--ghost ar-btn--xs"
                       id="btnRemoverFoto"
                       style="display: none; height: 24px; padding: 0 8px; font-size: 11px"
-                      >Remover foto</button
                     >
+                      Remover foto
+                    </button>
                   </div>
                 </div>
               </div>
 
               <!-- Dados pessoais editáveis; vínculo e permissões seguem as regras da instituição. -->
-              <p
-                >Edite seu nome, nome social, e-mail, telefone e apresentação nos campos abaixo.
-                Confirme em Salvar alterações.</p
-              >
+              <p>
+                Edite seu nome, nome social, e-mail, telefone e apresentação nos campos abaixo.
+                Confirme em Salvar alterações.
+              </p>
               <div class="ar-form-grid" style="margin-top: 24px" id="formDadosPessoais">
                 <label class="ar-field">
                   <span class="ar-field-label">Nome completo</span>
-                  <input type="text" id="campoNome" value="" />
+                  <input type="text" id="campoNome" value="" readonly />
                 </label>
 
                 <label class="ar-field">
@@ -509,9 +517,9 @@
               <div class="ar-srow ar-srow--stacked">
                 <div class="ar-srow-text">
                   <div class="ar-srow-label">Tema</div>
-                  <div class="ar-srow-desc"
-                    >O modo automático acompanha o tema claro ou escuro do seu sistema.</div
-                  >
+                  <div class="ar-srow-desc">
+                    O modo automático acompanha o tema claro ou escuro do seu sistema.
+                  </div>
                 </div>
                 <div class="ar-srow-control">
                   <div
@@ -665,7 +673,11 @@
               <div class="ar-srow">
                 <div class="ar-srow-text">
                   <div class="ar-srow-label">Cor de destaque</div>
-                  <div class="ar-srow-desc">Define a cor padrão dos banners das áreas de conteúdo. Cores personalizadas e as preferências de Meu espaço são preservadas. Para voltar ao padrão, escolha “Padrão do site” no banner.</div>
+                  <div class="ar-srow-desc">
+                    Define a cor padrão dos banners das áreas de conteúdo. Cores personalizadas e as
+                    preferências de Meu espaço são preservadas. Para voltar ao padrão, escolha
+                    “Padrão do site” no banner.
+                  </div>
                 </div>
                 <div class="ar-srow-control">
                   <div
@@ -774,19 +786,19 @@
           <section class="ar-sset" id="notificacoes" aria-labelledby="notificacoes-t">
             <header class="ar-sset-head">
               <h2 id="notificacoes-t">Notificações</h2>
-              <p
-                >Escolha suas preferências de notificação. Os avisos no portal permanecem
-                disponíveis.</p
-              >
+              <p>
+                Escolha suas preferências de notificação. Os avisos no portal permanecem
+                disponíveis.
+              </p>
             </header>
 
             <div class="ar-sset-body" id="notificacoesGroup">
               <div class="ar-srow">
                 <div class="ar-srow-text">
                   <div class="ar-srow-label">Avisos urgentes</div>
-                  <div class="ar-srow-desc"
-                    >Cancelamentos de aula, mudanças de sala e alterações de prazo.</div
-                  >
+                  <div class="ar-srow-desc">
+                    Cancelamentos de aula, mudanças de sala e alterações de prazo.
+                  </div>
                 </div>
                 <div class="ar-srow-control">
                   <button
@@ -805,9 +817,9 @@
               <div class="ar-srow">
                 <div class="ar-srow-text">
                   <div class="ar-srow-label">Novos editais</div>
-                  <div class="ar-srow-desc"
-                    >Quando um edital ou uma bolsa para seu curso for publicado.</div
-                  >
+                  <div class="ar-srow-desc">
+                    Quando um edital ou uma bolsa para seu curso for publicado.
+                  </div>
                 </div>
                 <div class="ar-srow-control">
                   <button
@@ -861,8 +873,9 @@
                     type="button"
                     class="ar-btn ar-btn--sm ar-btn--secondary"
                     id="btnAlterarSenha"
-                    >Alterar senha</button
                   >
+                    Alterar senha
+                  </button>
                 </div>
               </div>
 
@@ -876,8 +889,9 @@
                     type="button"
                     class="ar-btn ar-btn--sm ar-btn--secondary"
                     id="btnVerSessoes"
-                    >Ver sessões</button
                   >
+                    Ver sessões
+                  </button>
                 </div>
               </div>
 
@@ -912,10 +926,10 @@
               <div class="ar-srow">
                 <div class="ar-srow-text">
                   <div class="ar-srow-label">Sair dos outros dispositivos</div>
-                  <div class="ar-srow-desc"
-                    >Encerra as sessões no celular e em outros computadores. Mantém este navegador
-                    conectado.</div
-                  >
+                  <div class="ar-srow-desc">
+                    Encerra as sessões no celular e em outros computadores. Mantém este navegador
+                    conectado.
+                  </div>
                 </div>
                 <div class="ar-srow-control">
                   <button type="button" class="ar-btn ar-btn--sm ar-btn--danger" id="btnSairOutros">
@@ -942,14 +956,14 @@
             </div>
           </section>
 
-          <details class="ar-account-management" id="excluir-conta"
-            ><summary>Gerenciar conta <span>Opções da conta</span></summary
-            ><h3 id="remove-title">Excluir minha conta</h3>
+          <details class="ar-account-management" id="excluir-conta">
+            <summary>Gerenciar conta <span>Opções da conta</span></summary>
+            <h3 id="remove-title">Excluir minha conta</h3>
             <div class="ar-sset-body">
-              <p
-                >A exclusão é definitiva e só é permitida quando não existem ligações ou histórico.
-                Se houver vínculos, solicite a desativação à administração.</p
-              >
+              <p>
+                A exclusão é definitiva e só é permitida quando não existem ligações ou histórico.
+                Se houver vínculos, solicite a desativação à administração.
+              </p>
               <form
                 id="accountRemoval"
                 data-endpoint="/api/auth/account"
@@ -969,9 +983,9 @@
                     autocomplete="off"
                     required
                 /></label>
-                <button class="ar-btn ar-btn--danger" type="submit"
-                  >Excluir minha conta definitivamente</button
-                >
+                <button class="ar-btn ar-btn--danger" type="submit">
+                  Excluir minha conta definitivamente
+                </button>
                 <p id="accountRemovalStatus" role="status" aria-live="polite"></p>
               </form>
             </div>
@@ -980,12 +994,12 @@
           <div class="ar-savebar-dock" id="saveBarDock" style="display: none">
             <div class="ar-savebar ar-savebar--dirty" id="saveBar" role="status" aria-live="polite">
               <span class="ar-savebar-msg" id="saveBarMsg">Você tem alterações não salvas</span>
-              <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnDiscardSave"
-                >Descartar</button
-              >
-              <button type="button" class="ar-btn ar-btn--sm ar-btn--save" id="btnConfirmSave"
-                >Salvar alterações</button
-              >
+              <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnDiscardSave">
+                Descartar
+              </button>
+              <button type="button" class="ar-btn ar-btn--sm ar-btn--save" id="btnConfirmSave">
+                Salvar alterações
+              </button>
             </div>
           </div>
         </div>
@@ -1002,10 +1016,10 @@
           <div class="ar-dialog-head">
             <div>
               <h2 class="ar-dialog-title">Sair dos outros dispositivos?</h2>
-              <p class="ar-dialog-desc"
-                >Você precisará entrar novamente no celular e em outros computadores. Este navegador
-                continuará conectado.</p
-              >
+              <p class="ar-dialog-desc">
+                Você precisará entrar novamente no celular e em outros computadores. Este navegador
+                continuará conectado.
+              </p>
             </div>
             <button
               type="button"
@@ -1031,9 +1045,9 @@
             </button>
           </div>
           <div class="ar-dialog-foot">
-            <button type="button" class="ar-btn ar-btn--primary" id="btnConfirmarLogoutOutros"
-              >Sair dos outros dispositivos</button
-            >
+            <button type="button" class="ar-btn ar-btn--primary" id="btnConfirmarLogoutOutros">
+              Sair dos outros dispositivos
+            </button>
             <button type="button" class="ar-btn ar-btn--ghost" data-close-dialog>Cancelar</button>
           </div>
         </div>
@@ -1121,8 +1135,8 @@
               </svg>
             </button>
           </div>
-          <div style="display: flex; flex-direction: column; gap: var(--space-2)" id="listaSessoes"
-            ><p role="status">Carregando sessões...</p>
+          <div style="display: flex; flex-direction: column; gap: var(--space-2)" id="listaSessoes">
+            <p role="status">Carregando sessões...</p>
           </div>
           <div class="ar-dialog-foot">
             <button type="button" class="ar-btn ar-btn--secondary" data-close-dialog>Fechar</button>
@@ -1774,5 +1788,6 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-</body>
+    <script src="js/account-names.js"></script>
+  </body>
 </html>

@@ -134,9 +134,11 @@ async function publicPeople(users) {
         rows = [];
     }
     const byId = new Map(rows.map((row) => [String(row.id_usuario), row]));
-    return users
-        .filter((user) => !user.situacao || user.situacao === 'ativo')
-        .map((user) => publicPerson(user, byId.get(String(user.id_usuario))));
+    return require('./account-names.service').publicNames(
+        users
+            .filter((user) => !user.situacao || user.situacao === 'ativo')
+            .map((user) => publicPerson(user, byId.get(String(user.id_usuario))))
+    );
 }
 function handlers(kind) {
     const id = (req) => (kind === 'external' ? req.externalUser.id_externo : req.user.id_usuario);

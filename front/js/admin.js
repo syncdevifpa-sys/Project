@@ -341,6 +341,10 @@
                 input.value = value;
             }
             input.required = Boolean(field.required);
+            if (people() && field.name === 'nome') {
+                input.readOnly = true;
+                label.textContent = 'Nome completo (alteração por solicitação)';
+            }
             if (field.name === 'is_admin' && row?.id_usuario === session.id_usuario)
                 input.disabled = true;
             if (

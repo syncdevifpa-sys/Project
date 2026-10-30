@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Avisos e notícias</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inicialização do tema antes da exibição -->
@@ -57,7 +63,7 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="progressive-navigation.css" />
-</head>
+  </head>
   <body>
     <div class="ar-app">
       <!-- Navegação superior -->
@@ -152,13 +158,12 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
       <main class="ar-main ar-route-main">
-
         <!-- Compact Page Hero in Cyan -->
         <section class="ar-hero ar-hero--cyan ar-hero--compact" data-initial-banner-slot="page">
           <svg
@@ -186,10 +191,10 @@
           </svg>
           <h1 class="ar-hero-title">Avisos e notícias<sup class="ar-hero-count">(0)</sup></h1>
           <div class="ar-hero-side">
-            <p class="ar-hero-desc"
-              >Avisos oficiais sobre matrículas, bolsas de pesquisa, eventos e calendário. Os avisos
-              fixados aparecem primeiro.</p
-            >
+            <p class="ar-hero-desc">
+              Avisos oficiais sobre matrículas, bolsas de pesquisa, eventos e calendário. Os avisos
+              fixados aparecem primeiro.
+            </p>
             <div class="ar-hero-actions">
               <button type="button" class="ar-btn ar-btn--primary" id="btnNewNotice">
                 <span>Criar publicação</span>
@@ -233,56 +238,6 @@
         </section>
 
         <!-- ChipBar Categories -->
-        <div class="ar-chipbar" role="group" aria-label="Categorias de avisos" id="chipbarCategories">
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="true"
-            data-cat="All"
-            data-filter-key="All"
-            >Todos<sup class="ar-sup">(0)</sup></button
-          >
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-cat="Enrollment"
-            data-filter-key="Enrollment"
-            >Matrícula<sup class="ar-sup">(0)</sup></button
-          >
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-cat="Calls"
-            data-filter-key="Calls"
-            >Editais<sup class="ar-sup">(0)</sup></button
-          >
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-cat="Events"
-            data-filter-key="Events"
-            >Eventos<sup class="ar-sup">(0)</sup></button
-          >
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-cat="Cancellations"
-            data-filter-key="Cancellations"
-            >Cancelamentos<sup class="ar-sup">(0)</sup></button
-          >
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-cat="Calendar"
-            data-filter-key="Calendar"
-            >Calendário<sup class="ar-sup">(0)</sup></button
-          >
-        </div>
 
         <!-- 2 Column Layout: Filters + Content -->
         <div class="ar-split">
@@ -308,17 +263,76 @@
               <input type="search" id="filterTextNotices" placeholder="Buscar avisos..." />
             </label>
 
-            <details class="notice-filter-details" id="noticeFilterDetails" open>
-              <summary
-                >Filtros <span id="noticeFilterSummary">Todos os públicos · Publicados</span></summary
-              >
+            <details class="notice-filter-details" id="noticeFilterDetails">
+              <summary>Filtros <span id="noticeFilterSummary"></span></summary>
               <div class="notice-filter-content">
+                <div
+                  class="ar-chipbar"
+                  role="group"
+                  aria-label="Categorias de avisos"
+                  id="chipbarCategories"
+                >
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="true"
+                    data-cat="All"
+                    data-filter-key="All"
+                  >
+                    Todos<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-cat="Enrollment"
+                    data-filter-key="Enrollment"
+                  >
+                    Matrícula<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-cat="Calls"
+                    data-filter-key="Calls"
+                  >
+                    Editais<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-cat="Events"
+                    data-filter-key="Events"
+                  >
+                    Eventos<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-cat="Cancellations"
+                    data-filter-key="Cancellations"
+                  >
+                    Cancelamentos<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-cat="Calendar"
+                    data-filter-key="Calendar"
+                  >
+                    Calendário<sup class="ar-sup">(0)</sup>
+                  </button>
+                </div>
                 <label class="ar-field notice-type-filter"
-                  >Tipo de publicação<select id="filterNoticeType"
-                    ><option value="">Avisos e notícias</option
-                    ><option value="aviso">Avisos</option
-                    ><option value="noticia">Notícias</option></select
-                  ></label
+                  >Tipo de publicação<select id="filterNoticeType">
+                    <option value="">Avisos e notícias</option>
+                    <option value="aviso">Avisos</option>
+                    <option value="noticia">Notícias</option>
+                  </select></label
                 >
                 <fieldset class="ar-filter-group" style="border: 0; margin: 0; padding: 0">
                   <legend class="ar-filter-title" style="float: left; width: 100%">Público</legend>
@@ -487,102 +501,33 @@
           <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
             <!-- ViewToolbar -->
             <div class="ar-toolbar">
-              <div class="ar-seg" role="group" aria-label="Visualizações">
-                <button type="button" aria-pressed="true" data-view="lista">
-                  <svg
-                    class="ar-icon"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M3 5h.01"></path>
-                    <path d="M3 12h.01"></path>
-                    <path d="M3 19h.01"></path>
-                    <path d="M8 5h13"></path>
-                    <path d="M8 12h13"></path>
-                    <path d="M8 19h13"></path>
-                  </svg>
-                  <span>Lista</span>
-                </button>
-                <button type="button" aria-pressed="false" data-view="tabela">
-                  <svg
-                    class="ar-icon"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M3 9h18"></path>
-                    <path d="M9 3v18"></path>
-                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                  </svg>
-                  <span>Tabela</span>
-                </button>
-                <button type="button" aria-pressed="false" data-view="quadro">
-                  <svg
-                    class="ar-icon"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect width="7" height="7" x="3" y="3" rx="1"></rect>
-                    <rect width="7" height="7" x="14" y="3" rx="1"></rect>
-                    <rect width="7" height="7" x="14" y="14" rx="1"></rect>
-                    <rect width="7" height="7" x="3" y="14" rx="1"></rect>
-                  </svg>
-                  <span>Quadro</span>
-                </button>
+              <div class="ar-seg" role="group" aria-label="Visualizações" data-notice-views>
+                <button type="button" aria-pressed="true" data-view="lista">Quadro</button>
+                <button type="button" aria-pressed="false" data-view="tabela">Tabela</button>
+                <button type="button" aria-pressed="false" data-view="compacta">Lista</button>
+                <button type="button" aria-pressed="false" data-view="quadro">Situação</button>
               </div>
               <span class="ar-toolbar-sum" id="noticesSummary">Carregando avisos...</span>
-              <button
-                type="button"
-                class="ar-btn ar-btn--secondary ar-btn--sm"
-                style="margin-left: auto"
+              <label class="ar-field"
+                >Ordenar por<select id="noticeSort">
+                  <option value="recent">Mais recentes</option>
+                  <option value="oldest">Mais antigos</option>
+                  <option value="title">Título A–Z</option>
+                  <option value="title-desc">Título Z–A</option>
+                  <option value="deadline">Prazo mais próximo</option>
+                </select></label
               >
-                <svg
-                  class="ar-icon"
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="m21 16-4 4-4-4"></path>
-                  <path d="M17 20V4"></path>
-                  <path d="m3 8 4-4 4 4"></path>
-                  <path d="M7 4v16"></path>
-                </svg>
-                <span>Mais recentes</span>
-              </button>
             </div>
 
             <div id="view-container">
+              <div data-view-panel="compacta" style="display: none">
+                <ul class="ar-content-list" id="noticeCompactList"></ul>
+              </div>
               <!-- 1. LIST VIEW -->
               <div data-view-panel="lista">
-                <div class="ar-card-grid" id="noticesCardsGrid"
-                  ><p role="status">Carregando publicações...</p></div
-                >
+                <div class="ar-card-grid" id="noticesCardsGrid">
+                  <p role="status">Carregando publicações...</p>
+                </div>
               </div>
 
               <!-- 2. TABLE VIEW -->
@@ -629,9 +574,9 @@
               </div>
 
               <!-- 3. BOARD VIEW -->
-              <div data-view-panel="quadro" style="display: none"
-                ><p role="status">Carregando publicações...</p></div
-              >
+              <div data-view-panel="quadro" style="display: none">
+                <p role="status">Carregando publicações...</p>
+              </div>
             </div>
           </div>
         </div>
@@ -650,12 +595,12 @@
         >
           <div class="ar-selbar">
             <span id="selCountText">1 registro selecionado</span>
-            <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnExportSel"
-              >Exportar seleção</button
-            >
-            <button type="button" class="ar-btn ar-btn--sm ar-btn--flag" id="btnDeleteSel"
-              >Excluir</button
-            >
+            <button type="button" class="ar-btn ar-btn--sm ar-btn--secondary" id="btnExportSel">
+              Exportar seleção
+            </button>
+            <button type="button" class="ar-btn ar-btn--sm ar-btn--flag" id="btnDeleteSel">
+              Excluir
+            </button>
             <button
               type="button"
               class="ar-iconbtn ar-iconbtn--sm"
@@ -680,8 +625,8 @@
             </button>
           </div>
         </div>
-          </main>
-</div>
+      </main>
+    </div>
 
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
@@ -712,5 +657,5 @@
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
     <script src="js/progressive-navigation.js"></script>
-</body>
+  </body>
 </html>

@@ -284,7 +284,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
             "SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE"
         );
         const [rows] = await connection.execute(
-            `SELECT ${primary}, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem, nome_social, telefone, matricula' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
+            `SELECT ${primary}, nome, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem, nome_social, telefone, matricula' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
             [id]
         );
         const person = rows[0];
@@ -431,9 +431,19 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 institutional ? 'users' : 'external',
                 id
             );
+            await require('./account-names.service').remove(
+                connection,
+                institutional ? 'users' : 'external',
+                id
+            );
             await connection.execute(`DELETE FROM ${table} WHERE ${primary} = ?`, [id]);
             if (institutional && person.id_externo_origem) {
                 await require('./email-verification.service').removeAccountState(
+                    connection,
+                    'external',
+                    person.id_externo_origem
+                );
+                await require('./account-names.service').remove(
                     connection,
                     'external',
                     person.id_externo_origem
@@ -443,6 +453,8 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 ]);
             }
         } else {
+            if (Object.hasOwn(body, 'nome') && body.nome !== person.nome)
+                fail(409, 'Use a solicitação de alteração do nome completo.');
             const allowed = institutional
                 ? [
                       'nome',

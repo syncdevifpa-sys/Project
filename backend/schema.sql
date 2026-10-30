@@ -897,3 +897,24 @@ CREATE TABLE cadastro_auditoria (
  INDEX idx_cadastro_usuario (id_usuario, criado_em),
  FOREIGN KEY (id_admin) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
 ) ENGINE=InnoDB;
+
+-- Executar separadamente após revisão e backup. Não modifica nomes existentes.
+CREATE TABLE conta_nomes (
+  tipo ENUM('users','external') NOT NULL,
+  id_conta INT NOT NULL,
+  nome_exibicao VARCHAR(100) NULL,
+  PRIMARY KEY (tipo, id_conta)
+);
+CREATE TABLE conta_nome_pedidos (
+  id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+  tipo ENUM('users','external') NOT NULL,
+  id_conta INT NOT NULL,
+  nome_anterior VARCHAR(100) NOT NULL,
+  nome_solicitado VARCHAR(100) NOT NULL,
+  estado ENUM('pendente','aprovado','recusado') NOT NULL DEFAULT 'pendente',
+  motivo VARCHAR(1000) NULL,
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  revisado_por INT NULL,
+  revisado_em DATETIME NULL,
+  INDEX idx_nome_pendente (tipo,id_conta,estado)
+);
