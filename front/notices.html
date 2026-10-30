@@ -266,67 +266,70 @@
             <details class="notice-filter-details" id="noticeFilterDetails">
               <summary>Filtros <span id="noticeFilterSummary"></span></summary>
               <div class="notice-filter-content">
-                <div
-                  class="ar-chipbar"
-                  role="group"
-                  aria-label="Categorias de avisos"
-                  id="chipbarCategories"
-                >
-                  <button
-                    type="button"
-                    class="ar-chip"
-                    aria-pressed="true"
-                    data-cat="All"
-                    data-filter-key="All"
+                <details class="notice-filter-options notice-filter-categories">
+                  <summary>Categoria<span id="noticeCategorySelection">Todas</span></summary>
+                  <div
+                    class="ar-chipbar"
+                    role="group"
+                    aria-label="Categorias de avisos"
+                    id="chipbarCategories"
                   >
-                    Todos<sup class="ar-sup">(0)</sup>
-                  </button>
-                  <button
-                    type="button"
-                    class="ar-chip"
-                    aria-pressed="false"
-                    data-cat="Enrollment"
-                    data-filter-key="Enrollment"
-                  >
-                    Matrícula<sup class="ar-sup">(0)</sup>
-                  </button>
-                  <button
-                    type="button"
-                    class="ar-chip"
-                    aria-pressed="false"
-                    data-cat="Calls"
-                    data-filter-key="Calls"
-                  >
-                    Editais<sup class="ar-sup">(0)</sup>
-                  </button>
-                  <button
-                    type="button"
-                    class="ar-chip"
-                    aria-pressed="false"
-                    data-cat="Events"
-                    data-filter-key="Events"
-                  >
-                    Eventos<sup class="ar-sup">(0)</sup>
-                  </button>
-                  <button
-                    type="button"
-                    class="ar-chip"
-                    aria-pressed="false"
-                    data-cat="Cancellations"
-                    data-filter-key="Cancellations"
-                  >
-                    Cancelamentos<sup class="ar-sup">(0)</sup>
-                  </button>
-                  <button
-                    type="button"
-                    class="ar-chip"
-                    aria-pressed="false"
-                    data-cat="Calendar"
-                    data-filter-key="Calendar"
-                  >
-                    Calendário<sup class="ar-sup">(0)</sup>
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      class="ar-chip"
+                      aria-pressed="true"
+                      data-cat="All"
+                      data-filter-key="All"
+                    >
+                      Todos<sup class="ar-sup">(0)</sup>
+                    </button>
+                    <button
+                      type="button"
+                      class="ar-chip"
+                      aria-pressed="false"
+                      data-cat="Enrollment"
+                      data-filter-key="Enrollment"
+                    >
+                      Matrícula<sup class="ar-sup">(0)</sup>
+                    </button>
+                    <button
+                      type="button"
+                      class="ar-chip"
+                      aria-pressed="false"
+                      data-cat="Calls"
+                      data-filter-key="Calls"
+                    >
+                      Editais<sup class="ar-sup">(0)</sup>
+                    </button>
+                    <button
+                      type="button"
+                      class="ar-chip"
+                      aria-pressed="false"
+                      data-cat="Events"
+                      data-filter-key="Events"
+                    >
+                      Eventos<sup class="ar-sup">(0)</sup>
+                    </button>
+                    <button
+                      type="button"
+                      class="ar-chip"
+                      aria-pressed="false"
+                      data-cat="Cancellations"
+                      data-filter-key="Cancellations"
+                    >
+                      Cancelamentos<sup class="ar-sup">(0)</sup>
+                    </button>
+                    <button
+                      type="button"
+                      class="ar-chip"
+                      aria-pressed="false"
+                      data-cat="Calendar"
+                      data-filter-key="Calendar"
+                    >
+                      Calendário<sup class="ar-sup">(0)</sup>
+                    </button>
+                  </div>
+                </details>
                 <label class="ar-field notice-type-filter"
                   >Tipo de publicação<select id="filterNoticeType">
                     <option value="">Avisos e notícias</option>
@@ -334,164 +337,170 @@
                     <option value="noticia">Notícias</option>
                   </select></label
                 >
-                <fieldset class="ar-filter-group">
-                  <legend class="ar-filter-title">Público</legend>
-                  <label class="ar-check">
-                    <input type="checkbox" checked data-filter-publico="All" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Todos <span class="ar-check-count">0</span>
-                  </label>
-                  <label class="ar-check">
-                    <input type="checkbox" checked data-filter-publico="Student" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Aluno <span class="ar-check-count">0</span>
-                  </label>
-                  <label class="ar-check">
-                    <input type="checkbox" data-filter-publico="Professor" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Professor
-                  </label>
-                  <label class="ar-check">
-                    <input type="checkbox" data-filter-publico="Staff" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Servidor
-                  </label>
-                  <label class="ar-check">
-                    <input type="checkbox" data-filter-publico="External" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Público externo <span class="ar-check-count">0</span>
-                  </label>
-                </fieldset>
+                <details class="notice-filter-options">
+                  <summary>Público<span id="noticePublicSelection">Todos</span></summary>
+                  <fieldset class="ar-filter-group">
+                    <legend class="ar-filter-title ar-sr">Público</legend>
+                    <label class="ar-check">
+                      <input type="checkbox" checked data-filter-publico="All" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Todos <span class="ar-check-count">0</span>
+                    </label>
+                    <label class="ar-check">
+                      <input type="checkbox" checked data-filter-publico="Student" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Aluno <span class="ar-check-count">0</span>
+                    </label>
+                    <label class="ar-check">
+                      <input type="checkbox" data-filter-publico="Professor" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Professor
+                    </label>
+                    <label class="ar-check">
+                      <input type="checkbox" data-filter-publico="Staff" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Servidor
+                    </label>
+                    <label class="ar-check">
+                      <input type="checkbox" data-filter-publico="External" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Público externo <span class="ar-check-count">0</span>
+                    </label>
+                  </fieldset>
+                </details>
 
-                <fieldset class="ar-filter-group">
-                  <legend class="ar-filter-title">Situação</legend>
-                  <label class="ar-check">
-                    <input type="checkbox" checked data-filter-situacao="Published" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Publicado <span class="ar-check-count">0</span>
-                  </label>
-                  <label class="ar-check">
-                    <input type="checkbox" data-filter-situacao="Draft" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Rascunho <span class="ar-check-count">0</span>
-                  </label>
-                  <label class="ar-check">
-                    <input type="checkbox" data-filter-situacao="Archived" />
-                    <span class="ar-check-box" aria-hidden="true"
-                      ><svg
-                        class="ar-icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6 9 17l-5-5"></path></svg
-                    ></span>
-                    Arquivado <span class="ar-check-count">0</span>
-                  </label>
-                </fieldset>
+                <details class="notice-filter-options">
+                  <summary>Situação<span id="noticeStatusSelection">Publicado</span></summary>
+                  <fieldset class="ar-filter-group">
+                    <legend class="ar-filter-title ar-sr">Situação</legend>
+                    <label class="ar-check">
+                      <input type="checkbox" checked data-filter-situacao="Published" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Publicado <span class="ar-check-count">0</span>
+                    </label>
+                    <label class="ar-check">
+                      <input type="checkbox" data-filter-situacao="Draft" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Rascunho <span class="ar-check-count">0</span>
+                    </label>
+                    <label class="ar-check">
+                      <input type="checkbox" data-filter-situacao="Archived" />
+                      <span class="ar-check-box" aria-hidden="true"
+                        ><svg
+                          class="ar-icon"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 6 9 17l-5-5"></path></svg
+                      ></span>
+                      Arquivado <span class="ar-check-count">0</span>
+                    </label>
+                  </fieldset>
+                </details>
                 <p class="notice-filter-hint" id="noticeAudienceHint" role="status"></p>
               </div>
             </details>

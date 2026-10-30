@@ -654,6 +654,10 @@
         document.querySelectorAll('.ar-user-name').forEach(function (el) {
             el.textContent = userName;
         });
+        document.querySelectorAll('.ar-nav .ar-user').forEach(function (link) {
+            link.setAttribute('aria-label', 'Meu perfil');
+            link.title = 'Meu perfil';
+        });
         document.querySelectorAll('.ar-user-role').forEach(function (el) {
             el.textContent = userRole;
         });

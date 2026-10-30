@@ -137,6 +137,16 @@ html[data-portal-navigation='pending'] .ar-navpill {
   overflow-wrap: anywhere;
 }
 @media (max-width: 600px) {
+  html[data-portal-navigation='pending'] .ar-nav {
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 8px 8px 8px 48px;
+    min-height: 60px;
+  }
+  html[data-portal-navigation='pending'] .ar-navpill,
+  html[data-portal-navigation='pending'] .ar-brand > span {
+    display: none;
+  }
   .ar-notifications {
     top: auto;
     right: 12px;
@@ -399,7 +409,10 @@ html[data-portal-navigation='pending'] .ar-navpill {
 }
 @media (max-width: 600px) {
   .ar-has-sidebar .ar-nav {
-    gap: 8px;
+    gap: 4px;
+    flex-wrap: nowrap;
+    padding: 8px 8px 8px 48px;
+    min-height: 60px;
   }
   .ar-nav-end > a[aria-label='Configurações'] {
     display: none;
@@ -408,24 +421,54 @@ html[data-portal-navigation='pending'] .ar-navpill {
     width: 44px;
     height: 44px;
   }
+  .ar-nav-end .ar-iconbtn svg {
+    width: 16px;
+    height: 16px;
+  }
+  .ar-nav .ar-brand-img {
+    max-width: 26px;
+    max-height: 26px;
+  }
+  .ar-nav .ar-user .ar-avatar {
+    max-width: 28px;
+    max-height: 28px;
+  }
   .ar-nav-end .ar-user {
     min-width: 44px;
     min-height: 44px;
     justify-content: center;
+    padding: 0;
   }
   .ar-has-sidebar .ar-brand > span {
     display: none;
   }
   .ar-has-sidebar .ar-grouped-nav {
-    order: 0;
-    width: auto;
-    flex: 1;
-    min-width: 0;
+    display: none;
   }
   .ar-has-sidebar .ar-nav-end {
-    order: 2;
-    flex: 1 0 100%;
+    order: 0;
+    flex: 0 1 auto;
+    margin-left: auto;
+    gap: 2px;
     justify-content: flex-end;
     min-width: 0;
+  }
+  .ar-nav-end > [data-sign-out],
+  .ar-nav-end > [data-logout] {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 6px;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .ar-sidebar-toggle {
+    top: 20px;
+    width: 44px;
+    height: 44px;
+  }
+  .ar-sidebar-toggle svg {
+    width: 16px;
+    height: 16px;
   }
 }

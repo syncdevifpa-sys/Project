@@ -262,6 +262,32 @@
                     specific.filter((input) => input.checked).length
                 );
                 const selectedStatuses = $$('[data-filter-situacao]:checked');
+                const categorySummary = $('#noticeCategorySelection');
+                const selectedCategory = $$('#chipbarCategories [aria-pressed="true"]')[0]?.dataset
+                    .filterKey;
+                if (categorySummary)
+                    categorySummary.textContent =
+                        !selectedCategory || selectedCategory === 'All'
+                            ? 'Todas'
+                            : label(categories, categories[selectedCategory]);
+                const publicSummary = $('#noticePublicSelection');
+                if (publicSummary)
+                    publicSummary.textContent = all
+                        ? 'Todos'
+                        : specific
+                              .filter((input) => input.checked)
+                              .map((input) =>
+                                  label(audiences, audiences[input.dataset.filterPublico])
+                              )
+                              .join(', ') || 'Nenhum';
+                const statusSummary = $('#noticeStatusSelection');
+                if (statusSummary)
+                    statusSummary.textContent =
+                        selectedStatuses
+                            .map((input) =>
+                                label(noticeStatuses, noticeStatuses[input.dataset.filterSituacao])
+                            )
+                            .join(', ') || 'Nenhuma';
                 const activeFilters =
                     Number(!!value('filterTextNotices')) +
                     Number(!!$('#filterNoticeType').value) +
