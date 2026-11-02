@@ -61,8 +61,9 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="document-library.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
   </head>
-  <body>
+  <body class="ar-filter-page">
     <div class="ar-app">
       <!-- Navegação superior -->
       <header class="ar-nav">
@@ -232,15 +233,20 @@
               data-library-search
               placeholder="Título, assunto, autoria ou descrição"
           /></label>
-          <label class="ar-field"
-            >Formato<select data-library-format>
-              <option value="all">Todos os formatos</option>
-              <option value="pdf">PDF</option>
-              <option value="docx">DOCX</option>
-              <option value="image">Imagens</option>
-              <option value="link">Links</option>
-            </select></label
-          >
+          <details class="ar-compact-filters">
+            <summary>Filtros</summary>
+            <div class="ar-compact-filter-body">
+              <label class="ar-field"
+                >Formato<select data-library-format>
+                  <option value="all">Todos os formatos</option>
+                  <option value="pdf">PDF</option>
+                  <option value="docx">DOCX</option>
+                  <option value="image">Imagens</option>
+                  <option value="link">Links</option>
+                </select></label
+              >
+            </div>
+          </details>
         </div>
         <div class="ar-library-views" role="group" aria-label="Visualização da biblioteca">
           <button class="ar-btn" type="button" data-library-view="board" aria-pressed="true">
@@ -292,23 +298,38 @@
           </button>
         </div>
         <!-- ChipBar Status -->
-        <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
-          <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">
-            Todos<sup class="ar-sup">(0)</sup>
-          </button>
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready">
-            Pronto<sup class="ar-sup">(0)</sup>
-          </button>
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="In review">
-            Em análise<sup class="ar-sup">(0)</sup>
-          </button>
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Requested">
-            Solicitado<sup class="ar-sup">(0)</sup>
-          </button>
-          <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending">
-            Pendente<sup class="ar-sup">(0)</sup>
-          </button>
-        </div>
+        <details class="ar-compact-filters">
+          <summary>Filtrar solicitações</summary>
+          <div class="ar-compact-filter-body">
+            <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
+              <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">
+                Todos<sup class="ar-sup">(0)</sup>
+              </button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready">
+                Pronto<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-filter-key="In review"
+              >
+                Em análise<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-filter-key="Requested"
+              >
+                Solicitado<sup class="ar-sup">(0)</sup>
+              </button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending">
+                Pendente<sup class="ar-sup">(0)</sup>
+              </button>
+            </div>
+          </div>
+        </details>
 
         <!-- Documents Grid -->
         <div class="ar-card-grid"><p role="status">Carregando solicitações...</p></div>
@@ -454,6 +475,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script src="js/content-fields.js"></script>
     <script src="js/confirm-dialog.js"></script>
     <script src="js/notice-actions.js"></script>

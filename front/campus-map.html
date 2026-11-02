@@ -25,8 +25,9 @@
     <link rel="stylesheet" href="content-views.css" />
     <link rel="stylesheet" href="campus-map.css?v=20261028-2" />
     <link rel="stylesheet" href="progressive-navigation.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
   </head>
-  <body>
+  <body class="ar-filter-page">
     <div class="ar-app">
       <!-- Navegação compartilhada do portal -->
       <header class="ar-nav">
@@ -127,38 +128,49 @@
                 maxlength="100"
               />
             </label>
-            <label for="mapKind">
-              Mostrar
-              <select id="mapKind">
-                <option value="todos">Todos os locais</option>
-                <option value="bloco">Blocos</option>
-                <option value="espaco">Espaços</option>
-                <option value="acesso">Acessos</option>
-                <option value="pendente">Informações a confirmar</option>
-              </select>
-            </label>
+            <details class="ar-compact-filters">
+              <summary>Filtros de locais</summary>
+              <div class="ar-compact-filter-body">
+                <label for="mapKind">
+                  Mostrar
+                  <select id="mapKind">
+                    <option value="todos">Todos os locais</option>
+                    <option value="bloco">Blocos</option>
+                    <option value="espaco">Espaços</option>
+                    <option value="acesso">Acessos</option>
+                    <option value="pendente">Informações a confirmar</option>
+                  </select>
+                </label>
+                <h3 class="ar-compact-filter-heading">Atividade</h3>
+                <div
+                  id="mapCategories"
+                  class="ar-campus-map-categories"
+                  role="group"
+                  aria-label="Filtrar por atividade"
+                >
+                  <button type="button" data-category="todos" aria-pressed="true">Todos</button>
+                  <button type="button" data-category="ensino" aria-pressed="false">Ensino</button>
+                  <button type="button" data-category="laboratorios" aria-pressed="false">
+                    Laboratórios
+                  </button>
+                  <button type="button" data-category="servicos" aria-pressed="false">
+                    Serviços
+                  </button>
+                  <button type="button" data-category="esporte" aria-pressed="false">
+                    Esporte
+                  </button>
+                  <button type="button" data-category="convivencia" aria-pressed="false">
+                    Convivência
+                  </button>
+                </div>
+              </div>
+            </details>
             <div class="ar-campus-map-search-actions">
               <button type="button" id="mapClear" class="ar-btn ar-btn--secondary">Limpar</button>
               <a class="ar-btn ar-btn--secondary" href="#mapPlaces">Locais</a>
             </div>
           </div>
-          <div
-            id="mapCategories"
-            class="ar-campus-map-categories"
-            role="group"
-            aria-label="Filtrar por atividade"
-          >
-            <button type="button" data-category="todos" aria-pressed="true">Todos</button>
-            <button type="button" data-category="ensino" aria-pressed="false">Ensino</button>
-            <button type="button" data-category="laboratorios" aria-pressed="false">
-              Laboratórios
-            </button>
-            <button type="button" data-category="servicos" aria-pressed="false">Serviços</button>
-            <button type="button" data-category="esporte" aria-pressed="false">Esporte</button>
-            <button type="button" data-category="convivencia" aria-pressed="false">
-              Convivência
-            </button>
-          </div>
+
           <!-- Planta interativa e painel de consulta -->
           <div class="ar-campus-map-layout">
             <div class="ar-campus-map-stage">
@@ -369,6 +381,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script src="js/campus-map-model.js"></script>
     <script src="js/campus-map.js"></script>
     <script src="js/navigation.js"></script>

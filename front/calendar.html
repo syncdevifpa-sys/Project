@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendário</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inicialização do tema antes da exibição -->
@@ -57,7 +63,8 @@
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="task-reminders.css" />
     <link rel="stylesheet" href="class-schedule.css" />
-</head>
+    <link rel="stylesheet" href="compact-filters.css" />
+  </head>
 
   <body class="ar-calendar-page">
     <div class="ar-app">
@@ -151,9 +158,9 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
 
@@ -184,13 +191,13 @@
         </svg>
         <h1 class="ar-hero-title">Calendário<sup class="ar-hero-count">(0)</sup></h1>
         <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Datas do semestre letivo, feriados do campus e prazos de matrícula em um só lugar.</p
-          >
+          <p class="ar-hero-desc">
+            Datas do semestre letivo, feriados do campus e prazos de matrícula em um só lugar.
+          </p>
           <div class="ar-hero-actions">
-            <button type="button" class="ar-btn ar-btn--secondary" id="btnImportCalendar"
-              >Importar PDF</button
-            >
+            <button type="button" class="ar-btn ar-btn--secondary" id="btnImportCalendar">
+              Importar PDF
+            </button>
             <button type="button" class="ar-btn ar-btn--primary" id="btnNewEvent">
               <span>Adicionar evento</span>
               <svg
@@ -215,94 +222,106 @@
 
       <div class="ar-calendar-toolbar" aria-label="Controles do calendário">
         <label class="ar-field ar-calendar-audience"
-          >Modo<select id="calendarAudience" aria-label="Calendários compartilhados ou privados"
-            ><option value="publico">Compartilhados comigo</option
-            ><option value="pessoal">Pessoal · meus eventos</option></select
-          ></label
+          >Modo<select id="calendarAudience" aria-label="Calendários compartilhados ou privados">
+            <option value="publico">Compartilhados comigo</option>
+            <option value="pessoal">Pessoal · meus eventos</option>
+          </select></label
         >
         <label class="ar-field"
-          >Calendário / período<select id="calendarSourceFilter" class="ar-content-scope"
-            ><option value="">Todos os calendários</option></select
-          ></label
+          >Calendário / período<select id="calendarSourceFilter" class="ar-content-scope">
+            <option value="">Todos os calendários</option>
+          </select></label
         >
         <label class="ar-field"
-          >Visualização<select id="calendarViewMode"
-            ><option value="month" selected>Calendário mensal</option
-            ><option value="list">Lista</option></select
-          ></label
+          >Visualização<select id="calendarViewMode">
+            <option value="month" selected>Calendário mensal</option>
+            <option value="list">Lista</option>
+          </select></label
         >
-        <button type="button" class="ar-btn ar-btn--secondary" id="btnEditEvents" hidden
-          >Editar eventos</button
-        >
+        <button type="button" class="ar-btn ar-btn--secondary" id="btnEditEvents" hidden>
+          Editar eventos
+        </button>
         <button
           type="button"
           class="ar-btn ar-btn--secondary"
           id="btnCalendarListScope"
           aria-pressed="false"
           hidden
-          >Todos os eventos</button
         >
-        <details class="ar-calendar-options" id="calendarOptions">
+          Todos os eventos
+        </button>
+        <details class="ar-calendar-options ar-compact-filters" id="calendarOptions">
           <summary>Filtros e opções</summary>
-          <div class="ar-calendar-options-body">
+          <div class="ar-calendar-options-body ar-compact-filter-body">
             <p id="calendarFilterStatus" role="status">Todas as categorias</p>
-            <fieldset class="ar-calendar-filter-group"
-              ><legend>Categorias</legend>
+            <fieldset class="ar-calendar-filter-group">
+              <legend>Categorias</legend>
               <div class="ar-chipbar" role="group" aria-label="Filtrar categorias do calendário">
-                <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All"
-                  >Todos<sup class="ar-sup">(0)</sup></button
-                >
-                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="evento"
-                  >Eventos<sup class="ar-sup">(0)</sup></button
-                >
+                <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">
+                  Todos<sup class="ar-sup">(0)</sup>
+                </button>
+                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="evento">
+                  Eventos<sup class="ar-sup">(0)</sup>
+                </button>
                 <button
                   type="button"
                   class="ar-chip"
                   aria-pressed="false"
                   data-filter-key="atividades_campus"
-                  >Atividades do Campus<sup class="ar-sup">(0)</sup></button
                 >
+                  Atividades do Campus<sup class="ar-sup">(0)</sup>
+                </button>
                 <button
                   type="button"
                   class="ar-chip"
                   aria-pressed="false"
                   data-filter-key="matricula"
-                  >Matrículas<sup class="ar-sup">(0)</sup></button
                 >
+                  Matrículas<sup class="ar-sup">(0)</sup>
+                </button>
                 <button
                   type="button"
                   class="ar-chip"
                   aria-pressed="false"
                   data-filter-key="registro_academico"
-                  >Prazos e registros acadêmicos<sup class="ar-sup">(0)</sup></button
                 >
+                  Prazos e registros acadêmicos<sup class="ar-sup">(0)</sup>
+                </button>
                 <button
                   type="button"
                   class="ar-chip"
                   aria-pressed="false"
                   data-filter-key="avaliacao"
-                  >Avaliações<sup class="ar-sup">(0)</sup></button
                 >
-                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="feriado"
-                  >Feriados<sup class="ar-sup">(0)</sup></button
+                  Avaliações<sup class="ar-sup">(0)</sup>
+                </button>
+                <button
+                  type="button"
+                  class="ar-chip"
+                  aria-pressed="false"
+                  data-filter-key="feriado"
                 >
+                  Feriados<sup class="ar-sup">(0)</sup>
+                </button>
                 <button
                   type="button"
                   class="ar-chip"
                   aria-pressed="false"
                   data-filter-key="ponto_facultativo"
-                  >Pontos facultativos<sup class="ar-sup">(0)</sup></button
                 >
-                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="ferias"
-                  >Férias e recessos<sup class="ar-sup">(0)</sup></button
-                >
+                  Pontos facultativos<sup class="ar-sup">(0)</sup>
+                </button>
+                <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="ferias">
+                  Férias e recessos<sup class="ar-sup">(0)</sup>
+                </button>
                 <button
                   type="button"
                   class="ar-chip"
                   aria-pressed="false"
                   data-filter-key="cancelamento"
-                  >Alterações e cancelamentos<sup class="ar-sup">(0)</sup></button
                 >
+                  Alterações e cancelamentos<sup class="ar-sup">(0)</sup>
+                </button>
               </div>
             </fieldset>
             <div class="ar-calendar-holiday-options">
@@ -315,26 +334,27 @@
                   step="1"
               /></label>
               <label class="ar-field"
-                >Abrangência dos feriados<select id="holidayRegion"
-                  ><option value="brasil">Brasil</option
-                  ><option value="para">Brasil e Pará</option
-                  ><option value="belem" selected>Brasil, Pará e Belém</option></select
-                ></label
+                >Abrangência dos feriados<select id="holidayRegion">
+                  <option value="brasil">Brasil</option>
+                  <option value="para">Brasil e Pará</option>
+                  <option value="belem" selected>Brasil, Pará e Belém</option>
+                </select></label
               >
             </div>
-            <p class="small"
-              >Os feriados se repetem automaticamente. No modo mensal, use o campo Mês exibido para
+            <p class="small">
+              Os feriados se repetem automaticamente. No modo mensal, use o campo Mês exibido para
               mudar mês e ano. Carnaval, pontos facultativos, férias e atividades acadêmicas seguem
-              o calendário aprovado pelo IFPA.</p
-            >
-            <details class="ar-calendar-legend"
-              ><summary>Legenda das cores</summary
-              ><p
-                >Cor e nome identificam a categoria. Você pode personalizar as cores nas
+              o calendário aprovado pelo IFPA.
+            </p>
+            <details class="ar-calendar-legend">
+              <summary>Legenda das cores</summary>
+              <p>
+                Cor e nome identificam a categoria. Você pode personalizar as cores nas
                 <a href="settings.html">configurações</a>. A cor do PDF é uma referência da fonte; a
-                cor escolhida identifica o evento no portal.</p
-              ><div id="calendarColorLegend" class="ar-color-fields"></div
-            ></details>
+                cor escolhida identifica o evento no portal.
+              </p>
+              <div id="calendarColorLegend" class="ar-color-fields"></div>
+            </details>
           </div>
         </details>
       </div>
@@ -349,7 +369,12 @@
         <p id="calendarListStatus" role="status" hidden></p>
         <div class="ar-panel-body"><p role="status">Carregando calendário...</p></div>
       </section>
-      <section id="calendarDayReminders" class="ar-task-reminders ar-day-reminders" aria-label="Lembretes do dia selecionado" hidden></section>
+      <section
+        id="calendarDayReminders"
+        class="ar-task-reminders ar-day-reminders"
+        aria-label="Lembretes do dia selecionado"
+        hidden
+      ></section>
       <details class="ar-panel ar-calendar-options ar-weekly-agenda" data-class-weekly-agenda>
         <summary>Horários das aulas</summary>
       </details>
@@ -361,6 +386,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script src="js/calendar-categories.js"></script>
     <script src="js/calendar-colors.js"></script>
     <script src="js/content-fields.js"></script>
@@ -392,5 +418,5 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-</body>
+  </body>
 </html>

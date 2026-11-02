@@ -64,8 +64,9 @@
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="progressive-navigation.css" />
     <link rel="stylesheet" href="collection-controls.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
   </head>
-  <body>
+  <body class="ar-filter-page">
     <div class="ar-app">
       <!-- Navegação superior -->
       <header class="ar-nav">
@@ -164,7 +165,7 @@
           </button>
         </div>
       </header>
-      <main class="ar-main ar-route-main">
+      <main class="ar-main ar-route-main ar-filter-page">
         <!-- Compact Page Hero in Cyan -->
         <section class="ar-hero ar-hero--cyan ar-hero--compact" data-initial-banner-slot="page">
           <svg
@@ -266,13 +267,15 @@
               </label>
 
               <details
-                class="notice-filter-details ar-collection-filter-panel"
+                class="notice-filter-details ar-collection-filter-panel ar-compact-filters"
                 id="noticeFilterDetails"
               >
                 <summary>Filtros <span id="noticeFilterSummary"></span></summary>
-                <div class="notice-filter-content">
-                  <details class="notice-filter-options notice-filter-categories">
-                    <summary>Categoria<span id="noticeCategorySelection">Todas</span></summary>
+                <div class="notice-filter-content ar-compact-filter-body">
+                  <section class="notice-filter-options notice-filter-categories">
+                    <h3 class="ar-compact-filter-heading">
+                      Categoria<span id="noticeCategorySelection">Todas</span>
+                    </h3>
                     <div
                       class="ar-chipbar"
                       role="group"
@@ -334,7 +337,7 @@
                         Calendário<sup class="ar-sup">(0)</sup>
                       </button>
                     </div>
-                  </details>
+                  </section>
                   <label class="ar-field notice-type-filter"
                     >Tipo de publicação<select id="filterNoticeType">
                       <option value="">Avisos e notícias</option>
@@ -342,8 +345,10 @@
                       <option value="noticia">Notícias</option>
                     </select></label
                   >
-                  <details class="notice-filter-options">
-                    <summary>Público<span id="noticePublicSelection">Todos</span></summary>
+                  <section class="notice-filter-options">
+                    <h3 class="ar-compact-filter-heading">
+                      Público<span id="noticePublicSelection">Todos</span>
+                    </h3>
                     <fieldset class="ar-filter-group">
                       <legend class="ar-filter-title ar-sr">Público</legend>
                       <label class="ar-check">
@@ -441,10 +446,12 @@
                         Público externo <span class="ar-check-count">0</span>
                       </label>
                     </fieldset>
-                  </details>
+                  </section>
 
-                  <details class="notice-filter-options">
-                    <summary>Situação<span id="noticeStatusSelection">Publicado</span></summary>
+                  <section class="notice-filter-options">
+                    <h3 class="ar-compact-filter-heading">
+                      Situação<span id="noticeStatusSelection">Publicado</span>
+                    </h3>
                     <fieldset class="ar-filter-group">
                       <legend class="ar-filter-title ar-sr">Situação</legend>
                       <label class="ar-check">
@@ -505,7 +512,7 @@
                         Arquivado <span class="ar-check-count">0</span>
                       </label>
                     </fieldset>
-                  </details>
+                  </section>
                   <p class="notice-filter-hint" id="noticeAudienceHint" role="status"></p>
                 </div>
               </details>
@@ -648,6 +655,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script src="js/confirm-dialog.js"></script>
     <script src="js/notice-actions.js"></script>
     <script src="js/notice-audiences.js"></script>

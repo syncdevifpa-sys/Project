@@ -10,7 +10,13 @@
     <link rel="stylesheet" href="confirm-dialog.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pessoas</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inline script to apply theme and accessibility before first paint without flicker -->
@@ -54,9 +60,10 @@
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="content-views.css" />
-  <link rel="stylesheet" href="banner-appearance.css" />
-</head>
-  <body>
+    <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
+  </head>
+  <body class="ar-filter-page">
     <div class="ar-app">
       <!-- Navegação superior -->
       <header class="ar-nav">
@@ -148,9 +155,9 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
 
@@ -181,56 +188,66 @@
         </svg>
         <h1 class="ar-hero-title">Pessoas<sup class="ar-hero-count">(0)</sup></h1>
         <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Encontre colegas, professores, orientadores e servidores do campus.</p
-          >
+          <p class="ar-hero-desc">
+            Encontre colegas, professores, orientadores e servidores do campus.
+          </p>
         </div>
       </section>
 
       <!-- ChipBar Affiliation -->
-      <div class="ar-chipbar" role="group" aria-label="Filtrar pessoas" id="chipbarPessoas">
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="true"
-          data-vinculo="All"
-          data-filter-key="All"
-          >Todos<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-vinculo="Student"
-          data-filter-key="Students"
-          >Alunos<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-vinculo="Professor"
-          data-filter-key="Professors"
-          >Professores<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-vinculo="Staff"
-          data-filter-key="Staff"
-          >Servidor<sup class="ar-sup">(0)</sup></button
-        >
-      </div>
+      <details class="ar-compact-filters">
+        <summary>Filtros</summary>
+        <div class="ar-compact-filter-body">
+          <div class="ar-chipbar" role="group" aria-label="Filtrar pessoas" id="chipbarPessoas">
+            <button
+              type="button"
+              class="ar-chip"
+              aria-pressed="true"
+              data-vinculo="All"
+              data-filter-key="All"
+            >
+              Todos<sup class="ar-sup">(0)</sup>
+            </button>
+            <button
+              type="button"
+              class="ar-chip"
+              aria-pressed="false"
+              data-vinculo="Student"
+              data-filter-key="Students"
+            >
+              Alunos<sup class="ar-sup">(0)</sup>
+            </button>
+            <button
+              type="button"
+              class="ar-chip"
+              aria-pressed="false"
+              data-vinculo="Professor"
+              data-filter-key="Professors"
+            >
+              Professores<sup class="ar-sup">(0)</sup>
+            </button>
+            <button
+              type="button"
+              class="ar-chip"
+              aria-pressed="false"
+              data-vinculo="Staff"
+              data-filter-key="Staff"
+            >
+              Servidor<sup class="ar-sup">(0)</sup>
+            </button>
+          </div>
+        </div>
+      </details>
 
       <!-- People Grid -->
-      <div class="ar-card-grid" id="gridPessoas"><p role="status">Carregando pessoas...</p> </div>
+      <div class="ar-card-grid" id="gridPessoas"><p role="status">Carregando pessoas...</p></div>
     </div>
 
     <script src="js/person-name.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script src="js/people-cards.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/navigation.js"></script>
@@ -246,5 +263,5 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-</body>
+  </body>
 </html>

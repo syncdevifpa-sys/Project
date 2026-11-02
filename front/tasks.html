@@ -62,8 +62,9 @@
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="task-reminders.css" />
     <link rel="stylesheet" href="collection-controls.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
   </head>
-  <body>
+  <body class="ar-filter-page">
     <div class="ar-app">
       <!-- Navegação superior -->
       <header class="ar-nav">
@@ -224,9 +225,9 @@
               ><span class="ar-sr">Buscar tarefas</span
               ><input type="search" id="taskSearch" placeholder="Buscar tarefas…"
             /></label>
-            <details class="ar-collection-filter-panel" id="taskFilterDetails">
+            <details class="ar-collection-filter-panel ar-compact-filters" id="taskFilterDetails">
               <summary>Filtros<span id="taskFilterSummary">Todas</span></summary>
-              <div class="ar-collection-filter-body">
+              <div class="ar-collection-filter-body ar-compact-filter-body">
                 <div
                   class="ar-chipbar"
                   role="group"
@@ -358,6 +359,7 @@
     <script src="js/reminder-time.js"></script>
     <script src="js/task-reminders.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var A = window.Arcadia;

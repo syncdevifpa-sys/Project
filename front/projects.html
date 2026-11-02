@@ -63,8 +63,9 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="progressive-navigation.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
   </head>
-  <body>
+  <body class="ar-filter-page">
     <div class="ar-app">
       <!-- Navegação superior -->
       <header class="ar-nav">
@@ -161,7 +162,7 @@
           </button>
         </div>
       </header>
-      <main class="ar-main ar-route-main">
+      <main class="ar-main ar-route-main ar-filter-page">
         <!-- PageHero Compact in Yellow -->
         <section class="ar-hero ar-hero--yellow ar-hero--compact" data-initial-banner-slot="page">
           <svg
@@ -217,53 +218,58 @@
         </section>
 
         <!-- ChipBar Thematic Area -->
-        <div class="ar-chipbar" role="group" aria-label="Eixo do projeto" id="chipbarProjetos">
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="true"
-            data-eixo="All"
-            data-filter-key="All"
-          >
-            Todos<sup class="ar-sup">(0)</sup>
-          </button>
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-eixo="Research"
-            data-filter-key="Research"
-          >
-            Pesquisa<sup class="ar-sup">(0)</sup>
-          </button>
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-eixo="Extension"
-            data-filter-key="Extension"
-          >
-            Extensão<sup class="ar-sup">(0)</sup>
-          </button>
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-eixo="Teaching"
-            data-filter-key="Teaching"
-          >
-            Ensino<sup class="ar-sup">(0)</sup>
-          </button>
-          <button
-            type="button"
-            class="ar-chip"
-            aria-pressed="false"
-            data-eixo="Innovation"
-            data-filter-key="Innovation"
-          >
-            Inovação<sup class="ar-sup">(0)</sup>
-          </button>
-        </div>
+        <details class="ar-compact-filters">
+          <summary>Filtros</summary>
+          <div class="ar-compact-filter-body">
+            <div class="ar-chipbar" role="group" aria-label="Eixo do projeto" id="chipbarProjetos">
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="true"
+                data-eixo="All"
+                data-filter-key="All"
+              >
+                Todos<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-eixo="Research"
+                data-filter-key="Research"
+              >
+                Pesquisa<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-eixo="Extension"
+                data-filter-key="Extension"
+              >
+                Extensão<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-eixo="Teaching"
+                data-filter-key="Teaching"
+              >
+                Ensino<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-eixo="Innovation"
+                data-filter-key="Innovation"
+              >
+                Inovação<sup class="ar-sup">(0)</sup>
+              </button>
+            </div>
+          </div>
+        </details>
 
         <!-- Projects Grid -->
         <div class="ar-card-grid" id="gridProjetos">
@@ -278,6 +284,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
     <script src="js/content-fields.js"></script>
     <script src="js/confirm-dialog.js"></script>
     <script src="js/notice-actions.js"></script>
