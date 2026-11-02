@@ -7,8 +7,14 @@
     <script src="js/dialog-shell.js"></script>
     <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tarefas </title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <title>Tarefas</title>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <!-- Inline script to apply theme and accessibility before first paint without flicker -->
@@ -55,7 +61,8 @@
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="task-reminders.css" />
-</head>
+    <link rel="stylesheet" href="collection-controls.css" />
+  </head>
   <body>
     <div class="ar-app">
       <!-- Navegação superior -->
@@ -148,9 +155,9 @@
             </div>
           </a>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
         </div>
       </header>
 
@@ -181,9 +188,9 @@
         </svg>
         <h1 class="ar-hero-title">Tarefas<sup class="ar-hero-count">(0)</sup></h1>
         <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Acompanhe atividades acadêmicas, relatórios de estágio e prazos da secretaria.</p
-          >
+          <p class="ar-hero-desc">
+            Acompanhe atividades acadêmicas, relatórios de estágio e prazos da secretaria.
+          </p>
           <div class="ar-hero-actions">
             <button type="button" class="ar-btn ar-btn--primary" id="btnNovaTarefa">
               <span>Nova tarefa</span>
@@ -208,149 +215,129 @@
       </section>
 
       <!-- ChipBar Categories -->
-      <div class="ar-chipbar" role="group" aria-label="Filtrar tarefas" id="chipbarTarefas">
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="true"
-          data-status="All"
-          data-filter-key="All"
-          >Todos<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-status="Open"
-          data-filter-key="Open"
-          >Aberta<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-status="In Progress"
-          data-filter-key="In Progress"
-          >Em andamento<sup class="ar-sup">(0)</sup></button
-        >
-        <button
-          type="button"
-          class="ar-chip"
-          aria-pressed="false"
-          data-status="Completed"
-          data-filter-key="Completed"
-          >Concluída<sup class="ar-sup">(0)</sup></button
-        >
-      </div>
 
       <!-- ViewToolbar -->
-      <div class="ar-toolbar">
-        <div class="ar-seg" role="group" aria-label="Escolher visualização">
-          <button type="button" aria-pressed="true" data-view="board">
-            <svg
-              class="ar-icon"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+      <section class="ar-collection-layout ar-collection-stack" aria-label="Tarefas e controles">
+        <section class="ar-collection-controls" aria-label="Controles de tarefas">
+          <div class="ar-collection-filters">
+            <label class="ar-search"
+              ><span class="ar-sr">Buscar tarefas</span
+              ><input type="search" id="taskSearch" placeholder="Buscar tarefas…"
+            /></label>
+            <details class="ar-collection-filter-panel" id="taskFilterDetails">
+              <summary>Filtros<span id="taskFilterSummary">Todas</span></summary>
+              <div class="ar-collection-filter-body">
+                <div
+                  class="ar-chipbar"
+                  role="group"
+                  aria-label="Filtrar tarefas"
+                  id="chipbarTarefas"
+                >
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="true"
+                    data-status="All"
+                    data-filter-key="All"
+                  >
+                    Todos<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-status="Open"
+                    data-filter-key="Open"
+                  >
+                    Aberta<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-status="In Progress"
+                    data-filter-key="In Progress"
+                  >
+                    Em andamento<sup class="ar-sup">(0)</sup>
+                  </button>
+                  <button
+                    type="button"
+                    class="ar-chip"
+                    aria-pressed="false"
+                    data-status="Completed"
+                    data-filter-key="Completed"
+                  >
+                    Concluída<sup class="ar-sup">(0)</sup>
+                  </button>
+                </div>
+              </div>
+            </details>
+          </div>
+          <div class="ar-toolbar ar-collection-viewbar">
+            <div class="ar-seg" role="group" aria-label="Escolher visualização" data-task-views>
+              <button type="button" aria-pressed="true" data-view="list">Quadro</button>
+              <button type="button" aria-pressed="false" data-view="table">Tabela</button>
+              <button type="button" aria-pressed="false" data-view="compacta">Lista</button>
+              <button type="button" aria-pressed="false" data-view="board">Situação</button>
+            </div>
+            <label class="ar-collection-sort" for="taskSort"
+              >Ordenar por<select id="taskSort">
+                <option value="deadline">Prazo mais próximo</option>
+                <option value="recent">Mais recentes</option>
+                <option value="oldest">Mais antigas</option>
+                <option value="title">Título A–Z</option>
+                <option value="title-desc">Título Z–A</option>
+                <option value="priority">Maior prioridade</option>
+              </select></label
             >
-              <rect width="7" height="7" x="3" y="3" rx="1"></rect>
-              <rect width="7" height="7" x="14" y="3" rx="1"></rect>
-              <rect width="7" height="7" x="14" y="14" rx="1"></rect>
-              <rect width="7" height="7" x="3" y="14" rx="1"></rect>
-            </svg>
-            <span>Quadro</span>
-          </button>
-          <button type="button" aria-pressed="false" data-view="table">
-            <svg
-              class="ar-icon"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M3 9h18"></path>
-              <path d="M9 3v18"></path>
-              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-            </svg>
-            <span>Tabela</span>
-          </button>
-          <button type="button" aria-pressed="false" data-view="list">
-            <svg
-              class="ar-icon"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M3 5h.01"></path>
-              <path d="M3 12h.01"></path>
-              <path d="M3 19h.01"></path>
-              <path d="M8 5h13"></path>
-              <path d="M8 12h13"></path>
-              <path d="M8 19h13"></path>
-            </svg>
-            <span>Lista</span>
-          </button>
-        </div>
-        <span class="ar-toolbar-sum" id="tarefasSummary">Carregando tarefas...</span>
-      </div>
+          </div>
+        </section>
+        <p class="ar-collection-count" id="tarefasSummary" role="status">Carregando tarefas…</p>
 
-      <!-- Tab Panels Container -->
-      <div id="view-container">
-        <!-- 1. KANBAN BOARD (renderizado por JS a partir de GET /api/tasks) -->
-        <div data-view-panel="board">
-          <div
-            id="kanbanGrid"
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-              gap: var(--space-3);
-              align-items: start;
-            "
-          >
-            <p class="ar-card-meta">Carregando tarefas...</p>
+        <!-- Tab Panels Container -->
+        <div id="view-container">
+          <div data-view-panel="compacta" style="display: none">
+            <ul class="ar-content-list" id="taskCompactList"></ul>
+          </div>
+          <!-- 1. KANBAN BOARD (renderizado por JS a partir de GET /api/tasks) -->
+          <div data-view-panel="board" style="display: none">
+            <div
+              id="kanbanGrid"
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: var(--space-3);
+                align-items: start;
+              "
+            >
+              <p class="ar-card-meta">Carregando tarefas...</p>
+            </div>
+          </div>
+
+          <!-- 2. TABLE (DataTable) -->
+          <div data-view-panel="table" style="display: none">
+            <div class="ar-table-wrap">
+              <table class="ar-table">
+                <thead>
+                  <tr>
+                    <th>Título</th>
+                    <th>Responsável</th>
+                    <th>Prazo</th>
+                    <th>Situação</th>
+                    <th style="text-align: right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tarefasTbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 3. LIST (RecordCards) -->
+          <div data-view-panel="list">
+            <div class="ar-card-grid" id="tarefasCards"></div>
           </div>
         </div>
-
-        <!-- 2. TABLE (DataTable) -->
-        <div data-view-panel="table" style="display: none">
-          <div class="ar-table-wrap">
-            <table class="ar-table">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Responsável</th>
-                  <th>Prazo</th>
-                  <th>Situação</th>
-                  <th style="text-align: right">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="tarefasTbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- 3. LIST (RecordCards) -->
-        <div data-view-panel="list" style="display: none">
-          <div class="ar-card-grid" id="tarefasCards"></div>
-        </div>
-      </div>
+      </section>
 
       <details class="ar-task-reminders" id="taskReminders">
         <summary>Meus lembretes e notificações</summary>
@@ -367,6 +354,7 @@
     <script src="js/notice-editor.js"></script>
     <script src="js/notice-text.js"></script>
     <script src="js/tasks.js"></script>
+    <script src="js/task-filters.js"></script>
     <script src="js/reminder-time.js"></script>
     <script src="js/task-reminders.js"></script>
     <script src="js/portal.js"></script>
@@ -432,8 +420,9 @@
                 return t.status === status;
               })
             : tarefas.slice();
-          return lista.sort(function (a, b) {
-            return String(a.data_entrega || '').localeCompare(String(b.data_entrega || ''));
+          return A.taskFilters.visible(lista, {
+            query: document.getElementById('taskSearch').value,
+            sort: document.getElementById('taskSort').value
           });
         }
 
@@ -599,7 +588,37 @@
               .join('') || '<p class="ar-card-meta">Nenhuma tarefa</p>';
         }
 
+        function renderCompact(lista) {
+          document.getElementById('taskCompactList').innerHTML =
+            lista
+              .map(function (t) {
+                return (
+                  '<li><article class="ar-card"><h3 class="ar-card-title">' +
+                  esc(t.titulo) +
+                  '</h3><p class="ar-card-meta">' +
+                  esc(statusUi(t).label) +
+                  ' · Prazo: ' +
+                  fmtData(t.data_entrega) +
+                  ' · Responsável: ' +
+                  esc(t.responsavel || 'Não informado') +
+                  '</p>' +
+                  (t.observacao
+                    ? '<details><summary>Ver observação</summary><p class="ar-card-desc">' +
+                      esc(t.observacao) +
+                      '</p></details>'
+                    : '') +
+                  botoes(t) +
+                  '</article></li>'
+                );
+              })
+              .join('') || '<li>Nenhuma tarefa encontrada.</li>';
+        }
+
         function renderContagens(lista) {
+          var status = FILTRO_STATUS[filtro];
+          document.getElementById('taskFilterSummary').textContent =
+            (status ? STATUS_UI[status].label : 'Todas') +
+            (document.getElementById('taskSearch').value.trim() ? ' · busca ativa' : '');
           var total = tarefas.length;
           document
             .querySelectorAll('.ar-navpill a[href="tasks.html"] .ar-sup, .ar-hero-count')
@@ -625,10 +644,13 @@
           renderBoard(lista);
           renderTabela(lista);
           renderCards(lista);
+          renderCompact(lista);
           renderContagens(lista);
-          document.querySelectorAll('#tarefasCards .ar-card-desc').forEach(function (element) {
-            A.noticeText.render(element, element.textContent);
-          });
+          document
+            .querySelectorAll('#tarefasCards .ar-card-desc, #taskCompactList .ar-card-desc')
+            .forEach(function (element) {
+              A.noticeText.render(element, element.textContent);
+            });
         }
 
         function carregar() {
@@ -690,6 +712,8 @@
           });
         });
 
+        document.getElementById('taskSearch').addEventListener('input', render);
+        document.getElementById('taskSort').addEventListener('change', render);
         carregar();
       });
     </script>
@@ -706,5 +730,5 @@
     </footer>
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
-</body>
+  </body>
 </html>

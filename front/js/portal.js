@@ -762,6 +762,11 @@
             modes.compacta = [2, 'list', 'Lista'];
             modes.quadro = [3, 'columns-3', 'Situação'];
         }
+        if (seg.hasAttribute('data-task-views')) {
+            modes.list = [0, 'layout-grid', 'Quadro'];
+            modes.compacta = [2, 'list', 'Lista'];
+            modes.board = [3, 'columns-3', 'Situação'];
+        }
         buttons.sort(function (a, b) {
             return (
                 (modes[a.dataset.view || a.dataset.mode]?.[0] ?? 9) -
@@ -818,6 +823,11 @@
         scope.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
             styleViewSwitcher(seg);
             var buttons = seg.querySelectorAll('button');
+            var preference = seg.hasAttribute('data-notice-views')
+                ? 'arcadia-view:notices'
+                : seg.hasAttribute('data-task-views')
+                  ? 'arcadia-view:tasks'
+                  : null;
             buttons.forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     buttons.forEach(function (b) {
@@ -826,6 +836,10 @@
                     btn.setAttribute('aria-pressed', 'true');
                     var view =
                         btn.getAttribute('data-view') || btn.textContent.trim().toLowerCase();
+                    if (preference)
+                        try {
+                            localStorage.setItem(preference, view);
+                        } catch {}
 
                     var container = scope.querySelector('#view-container');
                     if (!container) return;
@@ -839,6 +853,14 @@
                     });
                 });
             });
+            if (preference)
+                try {
+                    var saved = localStorage.getItem(preference);
+                    var selected = Array.from(buttons).find(
+                        (button) => button.getAttribute('data-view') === saved
+                    );
+                    if (selected) selected.click();
+                } catch {}
         });
     }
 
