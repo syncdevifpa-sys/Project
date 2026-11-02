@@ -1,12 +1,26 @@
 const db = require('../config/database');
 async function publicQuery(sql, params = []) {
     for (;;) {
-        try { return await db.execute(sql, params); }
-        catch(e) {
-            const message=e.sqlMessage || e.message || '';
-            if(e.code!=='ER_BAD_FIELD_ERROR') throw e;
-            if(/visibilidade/.test(message) && sql.includes('            visibilidade,')) sql=sql.replace('            visibilidade,',"            'privado' AS visibilidade,");
-            else if(/permite_externos/.test(message) && sql.includes('            permite_externos,')) sql=sql.replace('            permite_externos,','            0 AS permite_externos,');
+        try {
+            return await db.execute(sql, params);
+        } catch (e) {
+            const message = e.sqlMessage || e.message || '';
+            if (e.code !== 'ER_BAD_FIELD_ERROR') throw e;
+            if (/visibilidade/.test(message) && sql.includes('            visibilidade,'))
+                sql = sql.replace(
+                    '            visibilidade,',
+                    "            'privado' AS visibilidade,"
+                );
+            else if (
+                /permite_externos/.test(message) &&
+                sql.includes('            permite_externos,')
+            )
+                sql = sql.replace(
+                    '            permite_externos,',
+                    '            0 AS permite_externos,'
+                );
+            else if (/capa/.test(message) && sql.includes('            capa,'))
+                sql = sql.replace('            capa,', '            NULL AS capa,');
             else throw e;
         }
     }
@@ -19,6 +33,7 @@ async function listProjects(options = {}) {
             id_usuario,
             titulo,
             descricao,
+            capa,
             eixo,
             responsavel_nome,
             rotulo_responsavel,
@@ -39,7 +54,9 @@ async function listProjects(options = {}) {
         ORDER BY criado_em DESC
     `);
 
-    return options.institutional ? projects : projects.filter(project=>project.visibilidade==='publico');
+    return options.institutional
+        ? projects
+        : projects.filter((project) => project.visibilidade === 'publico');
 }
 
 async function findProjectById(projectId) {
@@ -50,6 +67,7 @@ async function findProjectById(projectId) {
             id_usuario,
             titulo,
             descricao,
+            capa,
             eixo,
             responsavel_nome,
             rotulo_responsavel,
@@ -91,6 +109,18 @@ async function createProject(userId, projectData) {
         visibilidade = 'privado'
     } = projectData;
 
+    let coverAvailable = false;
+    if (projectData.capa) {
+        const [columns] = await db.execute("SHOW COLUMNS FROM projetos LIKE 'capa'");
+        coverAvailable = columns.some((column) => column.Field === 'capa');
+        if (!coverAvailable)
+            throw Object.assign(
+                new Error(
+                    'A equipe precisa habilitar imagens de Projetos no banco. Seus dados continuam no formulário.'
+                ),
+                { status: 409 }
+            );
+    }
     const [result] = await db.execute(
         `
         INSERT INTO projetos (
@@ -107,9 +137,9 @@ async function createProject(userId, projectData) {
             situacao,
             data_inicio,
             data_fim,
-            visibilidade
+            visibilidade${coverAvailable ? ', capa' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${coverAvailable ? ', ?' : ''})
     `,
         [
             userId,
@@ -125,7 +155,8 @@ async function createProject(userId, projectData) {
             situacao,
             data_inicio,
             data_fim,
-            visibilidade
+            visibilidade,
+            ...(coverAvailable ? [projectData.capa] : [])
         ]
     );
 

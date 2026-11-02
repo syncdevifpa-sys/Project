@@ -121,7 +121,8 @@ window.Arcadia = window.Arcadia || {};
         } = {}
     ) {
         const headers = {};
-        if (body !== undefined) headers['Content-Type'] = raw ? contentType : 'application/json';
+        if (body !== undefined && (!raw || contentType))
+            headers['Content-Type'] = raw ? contentType : 'application/json';
 
         const token = auth ? Token.get() : null;
         if (auth && token) headers.Authorization = `Bearer ${token}`;

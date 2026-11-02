@@ -31,6 +31,16 @@ function id(req) {
     return value;
 }
 router.get(
+    '/name-requests',
+    action(() => require('../services/account-names.service').list())
+);
+router.patch(
+    '/name-requests/:id',
+    action((req) =>
+        require('../services/account-names.service').review(id(req), req.user.id_usuario, req.body)
+    )
+);
+router.get(
     '/resources',
     action(() => service.catalog())
 );

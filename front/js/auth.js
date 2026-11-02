@@ -594,8 +594,10 @@ window.Arcadia = window.Arcadia || {};
                                           nome_usuario:
                                               form.querySelector('#teacherUsername')?.value,
                                           formacao: form.querySelector('#teacherFormacao')?.value,
-                                          curso_informado:
-                                              form.querySelector('#studentCourseInfo')?.value
+                                          etapa_atual:
+                                              Number(
+                                                  form.querySelector('#studentCourseInfo')?.value
+                                              ) || null
                                       }
                                     : {}),
                                 telefone:
@@ -803,7 +805,7 @@ window.Arcadia = window.Arcadia || {};
             if (teacherFields) {
                 const requestedRole = ['discente', 'docente', 'servidor'].includes(tipo);
                 teacherFields.hidden = !requestedRole;
-                for (const input of teacherFields.querySelectorAll('input')) {
+                for (const input of teacherFields.querySelectorAll('input, select')) {
                     const applicable =
                         input.id === 'studentCourseInfo'
                             ? ehAluno
@@ -821,13 +823,16 @@ window.Arcadia = window.Arcadia || {};
                     trainingLabel.textContent =
                         tipo === 'servidor' ? 'Formação no SIGAA (opcional)' : 'Formação no SIGAA';
             }
-            const academicVisible = false;
+            const academicVisible = ehAluno;
             cursoWrap.style.display = academicVisible ? 'flex' : 'none';
             if (courseLabel)
                 courseLabel.textContent = ehAluno ? 'Curso' : 'Curso / formação (opcional)';
             if (cursoSelect) {
-                if (lastRole && lastRole !== tipo) cursoSelect.value = '';
-                cursoSelect.required = false;
+                if (lastRole && lastRole !== tipo) {
+                    cursoSelect.value = '';
+                    cursoSelect.dispatchEvent?.(new Event('change'));
+                }
+                cursoSelect.required = academicVisible;
                 cursoSelect.disabled = !academicVisible;
             }
             lastRole = tipo;
@@ -938,31 +943,15 @@ window.Arcadia = window.Arcadia || {};
         select.innerHTML = '<option value="">Carregando cursos...</option>';
         try {
             const cursos = await api.expect(api.get('/api/courses', { auth: false }));
-            select.innerHTML = '<option value="">Selecione seu curso</option>';
-            cursos
-                .filter((c) => c.ativo)
-                .forEach((c) => {
-                    const option = document.createElement('option');
-                    option.value = c.id_curso;
-                    option.textContent = c.nome;
-                    select.appendChild(option);
-                });
+            if (window.Arcadia?.courseStages)
+                window.Arcadia.courseStages.attach(
+                    select,
+                    document.getElementById('studentCourseInfo'),
+                    cursos
+                );
         } catch (error) {
-            console.warn('Falha na API de cursos, carregando opções institucionais locais:', error);
-            const fallback = [
-                { id_curso: 1, nome: 'Técnico em Desenvolvimento de Sistemas (Integrado)' },
-                { id_curso: 2, nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas' },
-                { id_curso: 3, nome: 'Engenharia de Controle e Automação' },
-                { id_curso: 4, nome: 'Técnico em Informática (Subsequente)' },
-                { id_curso: 5, nome: 'Licenciatura em Física' }
-            ];
-            select.innerHTML = '<option value="">Selecione seu curso</option>';
-            fallback.forEach((c) => {
-                const option = document.createElement('option');
-                option.value = c.id_curso;
-                option.textContent = c.nome;
-                select.appendChild(option);
-            });
+            select.innerHTML =
+                '<option value="">Cursos indisponíveis. Tente novamente mais tarde.</option>';
         }
     }
 

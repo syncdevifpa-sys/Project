@@ -6,7 +6,13 @@
     <link rel="stylesheet" href="dialog-shell.css" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Administração — Arcádia</title>
-    <link rel="preload" href="fonts/Onest-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script src="js/portal-bootstrap.js"></script>
 
     <script src="js/theme.js"></script>
@@ -24,8 +30,9 @@
     <link rel="stylesheet" href="notice-cover.css" />
     <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
-      <link rel="stylesheet" href="academic-management.css" />
-</head>
+    <link rel="stylesheet" href="academic-management.css" />
+    <link rel="stylesheet" href="account-names.css" />
+  </head>
 
   <body>
     <main class="ar-app">
@@ -44,47 +51,49 @@
           </span>
         </a>
 
-        <div class="ar-navpill"
-          ><a href="index.html">Início</a>
+        <div class="ar-navpill">
+          <a href="index.html">Início</a>
           <a href="dashboard.html">Meu painel</a>
           <a href="settings.html">Minha conta</a>
           <a href="admin.html" aria-current="page">Administração</a>
         </div>
         <div class="ar-nav-end">
-          <button class="ar-btn ar-btn--secondary ar-btn--sm" id="adminLogout" type="button"
-            >Sair</button
-          >
+          <button class="ar-btn ar-btn--secondary ar-btn--sm" id="adminLogout" type="button">
+            Sair
+          </button>
         </div>
       </nav>
       <section class="admin-intro">
         <h1>Administração do aplicativo</h1>
-        <p
-          >Gerencie pessoas e conteúdo do portal. Desativar uma pessoa preserva o histórico e
-          encerra suas sessões. A exclusão definitiva remove a conta e os dados vinculados, mesmo
-          com histórico.</p
-        >
+        <p>
+          Gerencie pessoas e conteúdo do portal. Desativar uma pessoa preserva o histórico e encerra
+          suas sessões. A exclusão definitiva remove a conta e os dados vinculados, mesmo com
+          histórico.
+        </p>
       </section>
-      <nav class="ar-requirement-tabs" aria-label="Áreas administrativas"
-        ><button type="button" class="ar-btn" id="adminGeneralTab" aria-pressed="true"
-          >Pessoas e conteúdo</button
-        ><button type="button" class="ar-btn" id="adminRequirementsTab" aria-pressed="false"
-          >Requisitos</button
-        ><button type="button" class="ar-btn" id="adminAcademicTab" aria-pressed="false">Turmas e disciplinas</button></nav
-      >
+      <nav class="ar-requirement-tabs" aria-label="Áreas administrativas">
+        <button type="button" class="ar-btn" id="adminGeneralTab" aria-pressed="true">
+          Pessoas e conteúdo</button
+        ><button type="button" class="ar-btn" id="adminRequirementsTab" aria-pressed="false">
+          Requisitos</button
+        ><button type="button" class="ar-btn" id="adminAcademicTab" aria-pressed="false">
+          Turmas e disciplinas
+        </button>
+      </nav>
       <section class="admin-panel" id="adminAcademicPanel" hidden></section>
       <section class="admin-panel" id="adminGeneralPanel">
-        <div class="actions"
-          ><label
+        <div class="actions">
+          <label
             >Área
             <select id="adminResource">
               <option value="users">Pessoas do campus</option>
               <option value="external-users">Comunidade externa</option>
               <option value="registrations">Inscrições em projetos</option>
             </select></label
-          ><button class="ar-btn ar-btn--primary" id="adminNew" type="button" hidden
-            >Criar registro</button
-          ></div
-        >
+          ><button class="ar-btn ar-btn--primary" id="adminNew" type="button" hidden>
+            Criar registro
+          </button>
+        </div>
         <p id="adminStatus" role="status" aria-live="polite"></p>
         <div class="table-wrap" tabindex="0" role="region" aria-label="Registros administrativos">
           <table>
@@ -93,29 +102,30 @@
           </table>
         </div>
       </section>
-      <section class="admin-panel" id="adminRequirementsPanel" hidden
-        ><h2>Requisitos</h2
-        ><p
-          >Solicitações para Professor. Com seu acesso institucional autorizado ao SIGAA, confira
+      <section class="admin-panel" id="adminRequirementsPanel" hidden>
+        <h2>Requisitos</h2>
+        <p>
+          Solicitações para Professor. Com seu acesso institucional autorizado ao SIGAA, confira
           nome, matrícula / SIAPE, usuário, formação e vínculo. A confirmação do e-mail também é
-          obrigatória. A conferência no SIGAA é manual.</p
-        ><p id="requirementsAdminStatus" role="status" aria-live="polite"></p
-        ><div id="requirementsAdminList"></div
-      ></section>
+          obrigatória. A conferência no SIGAA é manual.
+        </p>
+        <p id="requirementsAdminStatus" role="status" aria-live="polite"></p>
+        <div id="requirementsAdminList"></div>
+      </section>
       <dialog id="adminEditor" aria-labelledby="editorTitle">
         <form id="adminForm">
           <h2 id="editorTitle">Editar registro</h2>
-          <p id="editorHint"
-            >Alterar vínculo institucional exige conferência administrativa de posse do e-mail e
-            cargo. Nenhuma confirmação automática é anunciada.</p
-          >
+          <p id="editorHint">
+            Alterar vínculo institucional exige conferência administrativa de posse do e-mail e
+            cargo. Nenhuma confirmação automática é anunciada.
+          </p>
           <div id="editorFields"></div>
           <p id="editorError" role="alert"></p>
-          <div class="actions"
-            ><button class="ar-btn ar-btn--secondary" id="editorCancel" type="button"
-              >Cancelar</button
-            ><button class="ar-btn ar-btn--primary" type="submit">Salvar alterações</button></div
-          >
+          <div class="actions">
+            <button class="ar-btn ar-btn--secondary" id="editorCancel" type="button">
+              Cancelar</button
+            ><button class="ar-btn ar-btn--primary" type="submit">Salvar alterações</button>
+          </div>
         </form>
       </dialog>
     </main>
@@ -144,5 +154,6 @@
       </nav>
     </footer>
     <script src="js/privacy-notice.js"></script>
+    <script src="js/account-names.js"></script>
   </body>
 </html>

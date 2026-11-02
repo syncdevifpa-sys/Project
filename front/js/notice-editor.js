@@ -174,7 +174,9 @@
                 update();
                 inputs.categoria.parentElement.after(preview);
             }
-            const cover = resource === 'notices' ? A.noticeCover?.editor(form, notice.capa) : null;
+            const cover = ['notices', 'projects'].includes(resource)
+                ? A.noticeCover?.editor(form, notice.capa)
+                : null;
             const error = document.createElement('p');
             error.className = 'ar-notice-editor-error ar-span-2';
             error.setAttribute('role', 'alert');

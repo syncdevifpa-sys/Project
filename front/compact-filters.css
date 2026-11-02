@@ -1,0 +1,182 @@
+/* Filtros de coleções: busca visível, opções recolhidas e painel contextual. */
+.ar-compact-filters {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  align-self: start;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+.ar-collection-controls .ar-compact-filters[open] {
+  flex: 0 0 auto;
+}
+.ar-compact-filters > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 8px 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+}
+.ar-compact-filters > summary::-webkit-details-marker {
+  display: none;
+}
+.ar-compact-filters > summary::before {
+  content: '☷';
+  font-size: 18px;
+  line-height: 1;
+}
+.ar-compact-filters > summary::after {
+  content: '⌄';
+  margin-left: 4px;
+}
+.ar-compact-filters[open] > summary {
+  background: var(--surface-sunken);
+}
+.ar-compact-filters[open] > summary::after {
+  content: '⌃';
+}
+.ar-compact-filters > summary:focus-visible,
+.ar-compact-filter-body :focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.ar-compact-filters > .ar-compact-filter-body {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(360px, calc(100vw - 32px));
+  max-height: min(60dvh, 420px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 16px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 8px 24px #0002;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.ar-compact-filter-body .ar-chipbar,
+.ar-compact-filter-body .ar-campus-map-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.ar-compact-filter-body .ar-chip {
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.ar-compact-filter-body .notice-filter-options {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  min-width: 0;
+}
+.ar-compact-filter-body > .notice-filter-categories {
+  grid-column: auto;
+}
+.ar-compact-filter-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ar-compact-filter-heading span {
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+.ar-compact-filter-body .ar-filter-group {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.ar-compact-filter-body .ar-check {
+  min-height: 44px;
+  margin: 0;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.ar-compact-filter-body .notice-filter-hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+}
+.ar-compact-filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.ar-compact-filter-actions button {
+  font: inherit;
+  font-size: 13px;
+  min-height: 44px;
+}
+.ar-compact-filter-selection {
+  font-size: 12px;
+  color: var(--ink-muted);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .ar-compact-filters > .ar-compact-filter-body {
+    position: fixed;
+    inset: auto auto 12px 12px;
+    width: min(360px, calc(100vw - 24px));
+    max-height: min(60dvh, 420px);
+    grid-template-columns: minmax(0, 1fr);
+    overscroll-behavior: contain;
+  }
+}
+
+/* Um único ritmo entre banner, controles, visualizações e resultados. */
+.ar-filter-page .ar-app,
+.ar-filter-page .ar-route-main,
+.ar-route-main.ar-filter-page {
+  gap: 12px;
+}
+.ar-filter-page .ar-hero {
+  margin-block-end: 4px;
+}
+.ar-filter-page .ar-content-views {
+  margin-block: 0;
+}
+.ar-filter-page .ar-library-filters,
+.ar-filter-page .ar-library-views {
+  margin-top: 12px;
+}
+.ar-filter-page .ar-library-status {
+  margin-block: 12px;
+}

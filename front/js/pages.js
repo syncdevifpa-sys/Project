@@ -201,6 +201,7 @@
             const grid = $('#noticesCardsGrid');
             const table = $('[data-view-panel="tabela"] tbody');
             const board = $('[data-view-panel="quadro"]');
+            const compact = $('#noticeCompactList');
             const canManage =
                 Boolean(A.auth.getSessao().is_admin) ||
                 ['docente', 'servidor'].includes(A.auth.getSessao().tipo_usuario);
@@ -214,12 +215,7 @@
                 render
             );
             const filterDetails = $('#noticeFilterDetails');
-            const filterMedia = window.matchMedia('(max-width: 600px)');
-            function filterLayout() {
-                filterDetails.open = !filterMedia.matches;
-            }
-            listen(filterMedia, 'change', filterLayout);
-            filterLayout();
+            filterDetails.open = false;
             function visible() {
                 const text = value('filterTextNotices').toLowerCase();
                 const type = $('#filterNoticeType').value;
@@ -229,15 +225,18 @@
                 const status = $$('[data-filter-situacao]:checked').map(
                     (c) => noticeStatuses[c.dataset.filterSituacao]
                 );
-                return bar
-                    .visible()
-                    .filter(
-                        (r) =>
-                            (!type || (r.tipo_publicacao || 'aviso') === type) &&
-                            (!text || `${r.titulo} ${r.resumo}`.toLowerCase().includes(text)) &&
-                            A.noticeFilters.audienceMatches(r, audience) &&
-                            status.includes(r.situacao)
-                    );
+                return A.noticeFilters.sort(
+                    bar
+                        .visible()
+                        .filter(
+                            (r) =>
+                                (!type || (r.tipo_publicacao || 'aviso') === type) &&
+                                (!text || `${r.titulo} ${r.resumo}`.toLowerCase().includes(text)) &&
+                                A.noticeFilters.audienceMatches(r, audience) &&
+                                status.includes(r.situacao)
+                        ),
+                    $('#noticeSort')?.value || 'recent'
+                );
             }
             function noticeCard(r) {
                 const html = card(
@@ -263,10 +262,59 @@
                     specific.filter((input) => input.checked).length
                 );
                 const selectedStatuses = $$('[data-filter-situacao]:checked');
-                $('#noticeFilterSummary').textContent =
-                    `${all ? 'Todos os públicos' : specific.filter((input) => input.checked).length + ' públicos'} · ${selectedStatuses.map((input) => label(noticeStatuses, noticeStatuses[input.dataset.filterSituacao])).join(', ') || 'Nenhuma situação'} · ${$('#filterNoticeType').value === 'noticia' ? 'Notícias' : $('#filterNoticeType').value === 'aviso' ? 'Avisos' : 'Avisos e notícias'}`;
+                const categorySummary = $('#noticeCategorySelection');
+                const selectedCategory = $$('#chipbarCategories [aria-pressed="true"]')[0]?.dataset
+                    .filterKey;
+                if (categorySummary)
+                    categorySummary.textContent =
+                        !selectedCategory || selectedCategory === 'All'
+                            ? 'Todas'
+                            : label(categories, categories[selectedCategory]);
+                const publicSummary = $('#noticePublicSelection');
+                if (publicSummary)
+                    publicSummary.textContent = all
+                        ? 'Todos'
+                        : specific
+                              .filter((input) => input.checked)
+                              .map((input) =>
+                                  label(audiences, audiences[input.dataset.filterPublico])
+                              )
+                              .join(', ') || 'Nenhum';
+                const statusSummary = $('#noticeStatusSelection');
+                if (statusSummary)
+                    statusSummary.textContent =
+                        selectedStatuses
+                            .map((input) =>
+                                label(noticeStatuses, noticeStatuses[input.dataset.filterSituacao])
+                            )
+                            .join(', ') || 'Nenhuma';
+                const activeFilters =
+                    Number(!!value('filterTextNotices')) +
+                    Number(!!$('#filterNoticeType').value) +
+                    Number(!all) +
+                    Number(
+                        selectedStatuses.length !== 1 ||
+                            selectedStatuses[0]?.dataset.filterSituacao !== 'Published'
+                    ) +
+                    Number(
+                        $$('#chipbarCategories [aria-pressed="true"]').some(
+                            (chip) => chip.dataset.filterKey !== 'All'
+                        )
+                    );
+                $('#noticeFilterSummary').textContent = activeFilters
+                    ? activeFilters + (activeFilters === 1 ? ' ativo' : ' ativos')
+                    : '';
                 const list = visible();
                 grid.innerHTML = list.map(noticeCard).join('') || '<p>Nenhum aviso encontrado.</p>';
+                if (compact) {
+                    compact.innerHTML =
+                        list
+                            .map(
+                                (r) =>
+                                    `<li><article class="ar-card"><h3 class="ar-card-title"><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></h3><p class="ar-card-meta">${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${date(r.data_publicacao)} · ${esc(label(noticeStatuses, r.situacao))}</p>${r.resumo ? `<details><summary>Ver resumo</summary><p class="ar-card-desc">${esc(r.resumo)}</p></details>` : ''}<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button>` : ''}</article></li>`
+                            )
+                            .join('') || '<li>Nenhuma publicação encontrada.</li>';
+                }
                 table.innerHTML = list
                     .map(
                         (r) =>
@@ -293,7 +341,7 @@
                         .join('') +
                     '</div>';
                 $$(
-                    '#noticesCardsGrid .ar-card-desc, [data-view-panel="quadro"] .ar-card-desc'
+                    '#noticesCardsGrid .ar-card-desc, #noticeCompactList .ar-card-desc, [data-view-panel="quadro"] .ar-card-desc'
                 ).forEach((element) => A.noticeText.render(element, element.textContent));
                 $('#noticesSummary').textContent =
                     `${list.length} ${list.length === 1 ? 'publicação' : 'publicações'}`;
@@ -373,11 +421,12 @@
             });
             $('#filterTextNotices').addEventListener('input', render);
             $('#filterNoticeType').addEventListener('change', render);
+            $('#noticeSort')?.addEventListener('change', render);
             $$('[data-filter-publico], [data-filter-situacao]').forEach((c) =>
                 c.addEventListener('change', render)
             );
             table.addEventListener('change', selection);
-            [table, grid, board].forEach((panel) =>
+            [table, grid, board, compact].filter(Boolean).forEach((panel) =>
                 panel.addEventListener('click', (e) => {
                     const edit = e.target.closest('.btn-edit');
                     if (edit) {
@@ -421,7 +470,32 @@
             if (external) $('#btnNovoProjeto').hidden = true;
             let rows = [];
             const grid = $('#gridProjetos');
-            const bar = filterBar('#chipbarProjetos', tracks, () => rows, 'eixo', render);
+            const situations = A.contentFields.projects.fields.find(
+                (field) => field[0] === 'situacao'
+            )[2];
+            const situation = document.createElement('select');
+            situation.className = 'ar-content-scope';
+            for (const [value, title] of [
+                ['', 'Todas as situações'],
+                ...Object.entries(situations)
+            ]) {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = title;
+                situation.append(option);
+            }
+            const situationLabel = document.createElement('label');
+            situationLabel.className = 'ar-field';
+            situationLabel.append('Situação do projeto', situation);
+            $('#chipbarProjetos').after(situationLabel);
+            situation.addEventListener('change', render);
+            const bar = filterBar(
+                '#chipbarProjetos',
+                tracks,
+                () => rows.filter((row) => !situation.value || row.situacao === situation.value),
+                'eixo',
+                render
+            );
             function projectActions(r) {
                 if (external) {
                     const registration = registrations.find(
@@ -447,21 +521,20 @@
                 grid.innerHTML =
                     bar
                         .visible()
-                        .map((r) =>
-                            card(
+                        .map((r) => {
+                            const markup = card(
                                 r.titulo,
                                 r.descricao,
-                                `${esc(label(tracks, r.eixo))} · ${esc(r.responsavel_nome || '')} · ${esc(r.vagas)} vagas`,
+                                `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
                                 projectActions(r) + editAction('projects', r, r.id_projeto)
-                            )
-                        )
+                            );
+                            return A.noticeCover?.valid(r.capa)
+                                ? markup.replace('<h3', A.noticeCover.markup(r.capa) + '<h3')
+                                : markup;
+                        })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
                 linkDescriptions('#gridProjetos .ar-card-desc');
-                contentViews(grid, bar.visible(), 'aprovacao', {
-                    pendente: 'Em análise',
-                    aprovado: 'Aprovados',
-                    recusado: 'Recusados'
-                });
+                contentViews(grid, bar.visible(), 'situacao', situations);
                 bar.counts();
             }
             async function reload() {

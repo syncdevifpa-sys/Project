@@ -358,6 +358,7 @@
                 const installedMain = currentMain;
                 await mounted?.ready;
                 if (installedMain !== currentMain || !installedMain.isConnected) return;
+                A.setupCompactFilters?.(currentMain);
                 currentMain.inert = false;
                 focus(currentMain);
                 live.textContent = 'Tela carregada: ' + document.title + '.';

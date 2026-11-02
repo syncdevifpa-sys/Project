@@ -2,8 +2,6 @@ const { developmentFallbackEnabled } = require('../services/development-mode.ser
 const db = require('../config/database');
 const devStore = require('../services/dev-memory-store.service');
 
-
-
 async function listUsers() {
     try {
         const [users] = await db.execute(`
@@ -90,7 +88,10 @@ async function createUser(userData) {
     try {
         return await require('../services/email-verification.service').register('users', userData);
     } catch (err) {
-        if (developmentFallbackEnabled() && (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)) {
+        if (
+            developmentFallbackEnabled() &&
+            (err.code === 'ECONNREFUSED' || err.fatal || err.status === 503)
+        ) {
             return devStore.createUser(userData);
         }
         throw err;
@@ -98,6 +99,24 @@ async function createUser(userData) {
 }
 
 async function updateUser(userId, userData) {
+    const protectedFields = ['nome', 'matricula', 'periodo'];
+    if (protectedFields.some((key) => Object.hasOwn(userData, key))) {
+        const current = await findUserById(userId, true);
+        userData = { ...userData };
+        for (const key of protectedFields) {
+            if (!Object.hasOwn(userData, key)) continue;
+            if (!current || String(userData[key] ?? '') !== String(current[key] ?? ''))
+                throw Object.assign(
+                    new Error(
+                        key === 'nome'
+                            ? 'Solicite a alteração do nome completo para análise administrativa.'
+                            : 'Matrícula e etapa atual só podem ser corrigidas pela administração.'
+                    ),
+                    { status: 409 }
+                );
+            delete userData[key];
+        }
+    }
     if (Object.hasOwn(userData, 'email')) {
         const current = await findUserById(userId, true);
         if (
@@ -112,14 +131,11 @@ async function updateUser(userId, userData) {
         delete userData.email;
     }
     const allowed = [
-        'nome',
         'nome_social',
         'email',
         'telefone',
         'tipo_usuario',
-        'matricula',
         'id_curso',
-        'periodo',
         'setor',
         'sobre',
         'foto',

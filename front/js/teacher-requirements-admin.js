@@ -153,6 +153,17 @@
             evidence.append(abuse);
             form.append(evidence);
         }
+        const reply = el('textarea');
+        reply.maxLength = 1000;
+        reply.rows = 4;
+        if (decision === 'aprovar') {
+            const replyLabel = el(
+                'label',
+                'Resposta ao solicitante (opcional, até 1000 caracteres)'
+            );
+            replyLabel.append(reply);
+            form.append(replyLabel);
+        }
         form.append(info, label, feedback, actions);
         dialog.append(h, form);
         document.body.append(dialog);
@@ -170,6 +181,7 @@
                         versao: r.versao,
                         conferencia: decision === 'aprovar' && input.checked,
                         justificativa: decision !== 'aprovar' ? input.value : undefined,
+                        resposta: decision === 'aprovar' ? reply.value : undefined,
                         abuso_confirmado: decision === 'desativar' && abuse.checked
                     })
                 );

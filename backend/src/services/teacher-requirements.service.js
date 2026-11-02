@@ -18,24 +18,72 @@ function text(value, max, label) {
     return value.trim();
 }
 function fields(body, type = 'docente') {
-    if (!['docente','servidor','discente'].includes(type)) fail(400,'Vínculo solicitado inválido.');
+    if (!['docente', 'servidor', 'discente'].includes(type))
+        fail(400, 'Vínculo solicitado inválido.');
     const name = text(body.nome_usuario, 40, 'Nome de usuário').toLowerCase();
     if (!/^[a-z0-9][a-z0-9._-]{2,39}$/.test(name))
         fail(400, 'Use de 3 a 40 letras, números, ponto, hífen ou sublinhado no nome de usuário.');
+    if (type === 'discente') {
+        try {
+            id(body.id_curso);
+            id(body.etapa_atual);
+        } catch {
+            fail(400, 'Selecione um curso e sua etapa atual, em semestre ou ano.');
+        }
+    }
     return {
         matricula: text(body.matricula, 30, 'Matrícula'),
         nome_usuario: name,
-        formacao: type === 'discente' ? '' : type === 'servidor' && (body.formacao == null || (typeof body.formacao === 'string' && !body.formacao.trim())) ? '' : text(body.formacao, 300, 'Formação'),
+        formacao:
+            type === 'discente'
+                ? ''
+                : type === 'servidor' &&
+                    (body.formacao == null ||
+                        (typeof body.formacao === 'string' && !body.formacao.trim()))
+                  ? ''
+                  : text(body.formacao, 300, 'Formação'),
         tipo_solicitado: type,
-        curso_informado: type === 'discente' ? text(body.curso_informado, 150, 'Curso e período letivo') : null
+        id_curso: type === 'discente' ? id(body.id_curso) : null,
+        etapa_atual: type === 'discente' ? id(body.etapa_atual) : null,
+        curso_informado: null
+    };
+}
+async function courseDetails(c, details) {
+    if (details.tipo_solicitado !== 'discente') return details;
+    let courses;
+    try {
+        [courses] = await c.execute(
+            'SELECT id_curso,nome,ativo,regime_etapas,total_etapas FROM cursos WHERE id_curso = ?',
+            [details.id_curso]
+        );
+    } catch (error) {
+        if (error.code === 'ER_BAD_FIELD_ERROR')
+            fail(503, 'A equipe precisa configurar os cursos e suas etapas no banco.');
+        throw error;
+    }
+    const course = courses[0];
+    if (!course || ![1, true].includes(course.ativo)) fail(400, 'Selecione um curso ativo válido.');
+    if (
+        !['semestral', 'anual'].includes(course.regime_etapas) ||
+        !Number.isInteger(course.total_etapas) ||
+        course.total_etapas < 1 ||
+        course.total_etapas > 20
+    )
+        fail(409, 'A equipe precisa configurar o regime e o número de etapas deste curso.');
+    if (details.etapa_atual > course.total_etapas)
+        fail(400, 'Selecione uma etapa válida para o curso.');
+    return {
+        ...details,
+        curso_informado: `${course.nome} · ${details.etapa_atual}º ${course.regime_etapas === 'anual' ? 'ano' : 'semestre'}`
     };
 }
 async function insertRequest(c, external, details, profile) {
-    const f = fields(details, details.tipo_solicitado || 'docente');
+    const f = await courseDetails(c, fields(details, details.tipo_solicitado || 'docente'));
+    const student = f.tipo_solicitado === 'discente';
     let result;
     try {
         [result] = await c.execute(
-            'INSERT INTO docente_requisitos (id_externo,nome,email,matricula,nome_usuario,formacao,tipo_solicitado,curso_informado,origem_solicitacao) VALUES (?,?,?,?,?,?,?,?,?)',
+            `INSERT INTO docente_requisitos (id_externo,nome,email,matricula,nome_usuario,formacao,tipo_solicitado,curso_informado,origem_solicitacao${student ? ',id_curso,etapa_atual' : ''}) VALUES (?,?,?,?,?,?,?,?,?${student ? ',?,?' : ''})`,
             [
                 external,
                 text(profile.nome, 100, 'Nome'),
@@ -45,7 +93,8 @@ async function insertRequest(c, external, details, profile) {
                 f.formacao,
                 f.tipo_solicitado,
                 f.curso_informado,
-                details.origem_solicitacao === 'configuracoes' ? 'configuracoes' : 'cadastro'
+                details.origem_solicitacao === 'configuracoes' ? 'configuracoes' : 'cadastro',
+                ...(student ? [f.id_curso, f.etapa_atual] : [])
             ]
         );
     } catch (error) {
@@ -94,21 +143,28 @@ function createRequirements(database = db) {
             [id(key)]
         );
         const intent = requestedType(profile, rows[0]);
-        return { profile: { nome: profile.nome, email: profile.email }, request: rows[0] || null,
-            can_request: !!intent, can_start_change: true, tipo_solicitado: intent };
+        return {
+            profile: { nome: profile.nome, email: profile.email },
+            request: rows[0] || null,
+            can_request: !!intent,
+            can_start_change: true,
+            tipo_solicitado: intent
+        };
     }
     function requestedType(profile, request) {
         if (request?.origem_solicitacao === 'configuracoes') {
-            if (!['docente','servidor','discente'].includes(request.tipo_solicitado)) fail(409, 'Vínculo do pedido inválido.');
+            if (!['docente', 'servidor', 'discente'].includes(request.tipo_solicitado))
+                fail(409, 'Vínculo do pedido inválido.');
             return request.tipo_solicitado;
         }
         const stored = profile.intencao_cadastro;
-        if (['discente','docente','servidor'].includes(stored)) {
-            if (request && (request.tipo_solicitado || 'docente') !== stored) fail(409,'O vínculo do pedido precisa de revisão administrativa.');
+        if (['discente', 'docente', 'servidor'].includes(stored)) {
+            if (request && (request.tipo_solicitado || 'docente') !== stored)
+                fail(409, 'O vínculo do pedido precisa de revisão administrativa.');
             return stored;
         }
         // Legado: somente um pedido realmente existente comprova a intencao anterior.
-        return request ? (request.tipo_solicitado || 'docente') : null;
+        return request ? request.tipo_solicitado || 'docente' : null;
     }
     async function submit(key, body, explicitChange = false) {
         return transaction(async (c) => {
@@ -119,17 +175,23 @@ function createRequirements(database = db) {
             );
             let type = requestedType(profile, rows[0]);
             if (explicitChange) {
-                if (!['docente','servidor','discente'].includes(body.tipo_solicitado)) fail(400, 'Escolha o vínculo solicitado.');
-                if (rows[0]?.estado === 'pendente' && type !== body.tipo_solicitado) fail(409, 'Já existe um pedido pendente de outro vínculo. Aguarde a análise.');
+                if (!['docente', 'servidor', 'discente'].includes(body.tipo_solicitado))
+                    fail(400, 'Escolha o vínculo solicitado.');
+                if (rows[0]?.estado === 'pendente' && type !== body.tipo_solicitado)
+                    fail(409, 'Já existe um pedido pendente de outro vínculo. Aguarde a análise.');
                 type = body.tipo_solicitado;
             }
-            if (!type) fail(403,'Esta conta foi criada como Comunidade externa e não solicita vínculo institucional.');
-            const details = fields(body, type);
+            if (!type)
+                fail(
+                    403,
+                    'Esta conta foi criada como Comunidade externa e não solicita vínculo institucional.'
+                );
+            const details = await courseDetails(c, fields(body, type));
             if (rows[0]?.estado === 'aprovado')
                 fail(409, 'Solicitação já aprovada. Entre novamente.');
             if (rows[0]) {
                 await c.execute(
-                    "UPDATE docente_requisitos SET nome=?,email=?,matricula=?,nome_usuario=?,formacao=?,tipo_solicitado=?,curso_informado=?,origem_solicitacao=?,estado='pendente',versao=versao+1,justificativa=NULL,revisado_por=NULL,revisado_em=NULL WHERE id_requisito=?",
+                    `UPDATE docente_requisitos SET nome=?,email=?,matricula=?,nome_usuario=?,formacao=?,tipo_solicitado=?,curso_informado=?,origem_solicitacao=?,estado='pendente',versao=versao+1,justificativa=NULL,revisado_por=NULL,revisado_em=NULL${type === 'discente' ? ',id_curso=?,etapa_atual=?' : ''} WHERE id_requisito=?`,
                     [
                         profile.nome,
                         profile.email,
@@ -139,12 +201,18 @@ function createRequirements(database = db) {
                         type,
                         details.curso_informado,
                         explicitChange ? 'configuracoes' : rows[0].origem_solicitacao || 'cadastro',
+                        ...(type === 'discente' ? [details.id_curso, details.etapa_atual] : []),
                         rows[0].id_requisito
                     ]
                 );
                 return { id_requisito: rows[0].id_requisito };
             }
-            const result = await insertRequest(c, id(key), { ...details, origem_solicitacao: explicitChange ? 'configuracoes' : 'cadastro' }, profile);
+            const result = await insertRequest(
+                c,
+                id(key),
+                { ...details, origem_solicitacao: explicitChange ? 'configuracoes' : 'cadastro' },
+                profile
+            );
             return { id_requisito: result.insertId };
         });
     }
@@ -164,9 +232,22 @@ function createRequirements(database = db) {
             body.versao < 1
         )
             fail(400, 'Decisão ou versão inválida. Atualize a lista.');
+        const reply = body.decisao === 'aprovar' ? body.resposta : body.justificativa;
+        if (
+            (reply !== undefined && reply !== null && typeof reply !== 'string') ||
+            (typeof reply === 'string' &&
+                (reply.length > 1000 || /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(reply)))
+        )
+            fail(
+                400,
+                'Resposta inválida. Use até 1000 caracteres; quebras de linha são permitidas.'
+            );
         const reason =
-            body.decisao !== 'aprovar' ? text(body.justificativa, 1000, 'Justificativa') : null;
-        if (body.decisao === 'desativar' && body.abuso_confirmado !== true) fail(400, 'Confirme a comprovação de abuso antes de desativar.');
+            typeof reply === 'string' ? reply.replace(/\r\n?/g, '\n').trim() || null : null;
+        if (body.decisao !== 'aprovar' && !reason)
+            fail(400, 'Escreva uma justificativa para esta decisão.');
+        if (body.decisao === 'desativar' && body.abuso_confirmado !== true)
+            fail(400, 'Confirme a comprovação de abuso antes de desativar.');
         return transaction(async (c) => {
             await admin(c, actor);
             const [sources] = await c.execute(
@@ -187,7 +268,8 @@ function createRequirements(database = db) {
             if (r.id_externo !== account.id_externo)
                 fail(409, 'A identidade da solicitação mudou. Atualize a lista.');
             const requested = requestedType(account, r);
-            if (!['docente','servidor','discente'].includes(requested)) fail(409,'Vínculo solicitado inválido.');
+            if (!['docente', 'servidor', 'discente'].includes(requested))
+                fail(409, 'Vínculo solicitado inválido.');
             if (account.email !== r.email || account.nome !== r.nome)
                 fail(
                     409,
@@ -199,12 +281,25 @@ function createRequirements(database = db) {
                     [reason, actor, r.id_requisito]
                 );
                 if (body.decisao === 'desativar') {
-                    await c.execute("UPDATE publico_externo SET situacao='bloqueado' WHERE id_externo=?", [account.id_externo]);
+                    await c.execute(
+                        "UPDATE publico_externo SET situacao='bloqueado' WHERE id_externo=?",
+                        [account.id_externo]
+                    );
                     await c.execute('DELETE FROM tokens WHERE id_externo=?', [account.id_externo]);
-                    await c.execute("INSERT INTO vinculo_auditoria(id_requisito,id_externo,id_admin,acao,motivo) VALUES (?,?,?,'desativar',?)", [r.id_requisito,account.id_externo,actor,reason]);
-                }
+                    await c.execute(
+                        "INSERT INTO vinculo_auditoria(id_requisito,id_externo,id_admin,acao,motivo) VALUES (?,?,?,'desativar',?)",
+                        [r.id_requisito, account.id_externo, actor, reason]
+                    );
+                } else
+                    await c.execute(
+                        "INSERT INTO vinculo_auditoria(id_requisito,id_externo,id_admin,acao,motivo) VALUES (?,?,?,'recusar',?)",
+                        [r.id_requisito, account.id_externo, actor, reason]
+                    );
                 return {
-                    message: body.decisao === 'desativar' ? 'Conta desativada por abuso comprovado. Sessões encerradas; dados preservados.' : 'Solicitação recusada. A conta permanece na Comunidade externa.'
+                    message:
+                        body.decisao === 'desativar'
+                            ? 'Conta desativada por abuso comprovado. Sessões encerradas; dados preservados.'
+                            : 'Solicitação recusada. A conta permanece na Comunidade externa.'
                 };
             }
             if (body.conferencia !== true)
@@ -226,8 +321,14 @@ function createRequirements(database = db) {
                 'SELECT foto FROM perfil_compartilhamento WHERE id_externo=? FOR UPDATE',
                 [account.id_externo]
             );
+            if (requested === 'discente')
+                await courseDetails(c, {
+                    tipo_solicitado: requested,
+                    id_curso: r.id_curso,
+                    etapa_atual: r.etapa_atual
+                });
             const [created] = await c.execute(
-                "INSERT INTO usuarios (nome,email,telefone,senha,tipo_usuario,matricula,foto,criado_em,id_externo_origem) VALUES (?,?,?,?,?,?,?,?,?)",
+                `INSERT INTO usuarios (nome,email,telefone,senha,tipo_usuario,matricula,foto,criado_em,id_externo_origem${requested === 'discente' ? ',id_curso,periodo' : ''}) VALUES (?,?,?,?,?,?,?,?,?${requested === 'discente' ? ',?,?' : ''})`,
                 [
                     account.nome,
                     account.email,
@@ -237,12 +338,16 @@ function createRequirements(database = db) {
                     r.matricula,
                     sharing[0]?.foto || null,
                     account.criado_em,
-                    account.id_externo
+                    account.id_externo,
+                    ...(requested === 'discente' ? [r.id_curso, r.etapa_atual] : [])
                 ]
             );
             const user = created.insertId;
             // O ID externo permanece a origem estável da mesma conta; usuarios é a projeção institucional.
-            await c.execute('INSERT INTO conta_vinculos (id_externo,id_usuario,id_requisito) VALUES (?,?,?)', [account.id_externo,user,r.id_requisito]);
+            await c.execute(
+                'INSERT INTO conta_vinculos (id_externo,id_usuario,id_requisito) VALUES (?,?,?)',
+                [account.id_externo, user, r.id_requisito]
+            );
             await c.execute(
                 "INSERT INTO email_estado (tipo,identidade,email,regime,confirmado_em) VALUES ('users',?,?,?,?)",
                 [user, account.email, state.regime, state.confirmado_em]
@@ -262,10 +367,19 @@ function createRequirements(database = db) {
                     [user, r.nome_usuario]
                 );
             await c.execute(
-                "UPDATE docente_requisitos SET id_usuario=?,estado='aprovado',justificativa=NULL,revisado_por=?,revisado_em=NOW() WHERE id_requisito=?",
-                [user, actor, r.id_requisito]
+                "UPDATE docente_requisitos SET id_usuario=?,estado='aprovado',justificativa=?,revisado_por=?,revisado_em=NOW() WHERE id_requisito=?",
+                [user, reason, actor, r.id_requisito]
             );
             await require('./account-link-transfer.service').transfer(c, account.id_externo, user);
+            await c.execute(
+                "INSERT INTO vinculo_auditoria(id_requisito,id_externo,id_admin,acao,motivo) VALUES (?,?,?,'aprovar',?)",
+                [
+                    r.id_requisito,
+                    account.id_externo,
+                    actor,
+                    reason || 'Aprovação com conferência institucional.'
+                ]
+            );
             await c.execute('DELETE FROM tokens WHERE id_externo=?', [account.id_externo]);
             await c.execute('DELETE FROM recuperacao_senha WHERE id_externo=?', [
                 account.id_externo
@@ -276,10 +390,14 @@ function createRequirements(database = db) {
                 account.id_externo
             );
             // Retém origem e histórico; impede um segundo acesso externo à mesma identidade.
-            await c.execute("UPDATE publico_externo SET situacao='bloqueado' WHERE id_externo=?", [account.id_externo]);
+            await c.execute("UPDATE publico_externo SET situacao='bloqueado' WHERE id_externo=?", [
+                account.id_externo
+            ]);
             return {
                 message:
-                    ({servidor:'Servidor',docente:'Professor',discente:'Aluno'}[requested] + ' aprovado.') + ' O solicitante deve entrar novamente com o mesmo e-mail e senha ou Google.'
+                    { servidor: 'Servidor', docente: 'Professor', discente: 'Aluno' }[requested] +
+                    ' aprovado.' +
+                    ' O solicitante deve entrar novamente com o mesmo e-mail e senha ou Google.'
             };
         });
     }

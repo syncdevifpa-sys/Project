@@ -34,6 +34,8 @@
             '<path d="m21 16-4 4-4-4" /> <path d="M17 20V4" /> <path d="m3 8 4-4 4 4" /> <path d="M7 4v16" />',
         'layout-grid':
             '<rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" />',
+        'columns-3':
+            '<rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18M15 3v18M5 7h2M11 7h2M17 7h2" />',
         'list': '<path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" />',
         'table-2':
             '<path d="M3 9h18" /> <path d="M9 3v18" /> <rect x="3" y="3" width="18" height="18" rx="2" />',
@@ -652,10 +654,31 @@
         document.querySelectorAll('.ar-user-name').forEach(function (el) {
             el.textContent = userName;
         });
+        document.querySelectorAll('.ar-nav .ar-user').forEach(function (link) {
+            link.setAttribute('aria-label', 'Meu perfil');
+            link.title = 'Meu perfil';
+        });
         document.querySelectorAll('.ar-user-role').forEach(function (el) {
             el.textContent = userRole;
         });
         updateUserAvatar(sessao.foto, userName, userInitials);
+        if (hasValidSession && A.api && A.token?.get()) {
+            var nameToken = A.token.get();
+            A.api
+                .get(sessao.tipo_usuario === 'externo' ? '/api/external/nomes' : '/api/auth/nomes')
+                .then(function (response) {
+                    if (!response.ok || A.token.get() !== nameToken) return;
+                    var identity = response.data;
+                    var display = identity.nome_exibicao || identity.nome;
+                    display = A.formatPersonName?.(display) || display;
+                    if (!display) return;
+                    document.querySelectorAll('.ar-user-name').forEach(function (node) {
+                        node.textContent = display;
+                    });
+                    updateUserAvatar(sessao.foto, display);
+                })
+                .catch(function () {});
+        }
         if (
             sessao.is_admin &&
             sessao.tipo_usuario !== 'externo' &&
@@ -723,6 +746,8 @@
         seg.setAttribute('role', 'group');
         seg.setAttribute('aria-label', 'Modo de exibição');
         var modes = {
+            cards: [0, 'layout-grid', 'Quadro'],
+            status: [3, 'columns-3', 'Situação'],
             board: [0, 'layout-grid', 'Quadro'],
             quadro: [0, 'layout-grid', 'Quadro'],
             table: [1, 'table-2', 'Tabela'],
@@ -732,14 +757,24 @@
             month: [0, 'calendar', 'Mês']
         };
         var buttons = Array.from(seg.querySelectorAll('button'));
+        if (seg.hasAttribute('data-notice-views')) {
+            modes.lista = [0, 'layout-grid', 'Quadro'];
+            modes.compacta = [2, 'list', 'Lista'];
+            modes.quadro = [3, 'columns-3', 'Situação'];
+        }
+        if (seg.hasAttribute('data-task-views')) {
+            modes.list = [0, 'layout-grid', 'Quadro'];
+            modes.compacta = [2, 'list', 'Lista'];
+            modes.board = [3, 'columns-3', 'Situação'];
+        }
         buttons.sort(function (a, b) {
             return (
-                (modes[a.dataset.view || a.dataset.mode]?.[0] ?? 9) -
-                (modes[b.dataset.view || b.dataset.mode]?.[0] ?? 9)
+                (modes[a.dataset.view || a.dataset.mode || a.dataset.libraryView]?.[0] ?? 9) -
+                (modes[b.dataset.view || b.dataset.mode || b.dataset.libraryView]?.[0] ?? 9)
             );
         });
         buttons.forEach(function (button) {
-            var mode = modes[button.dataset.view || button.dataset.mode];
+            var mode = modes[button.dataset.view || button.dataset.mode || button.dataset.libraryView];
             if (mode) {
                 button.innerHTML = getIconSvg(mode[1], 16) + '<span>' + mode[2] + '</span>';
                 button.querySelector('svg')?.setAttribute('aria-hidden', 'true');
@@ -764,6 +799,7 @@
 
     function setupViewToolbar(root) {
         const scope = root || document;
+        scope.querySelectorAll('.ar-library-views').forEach(styleViewSwitcher);
         var picker = document.getElementById('calendarViewMode');
         if (picker) {
             var group = document.createElement('div');
@@ -788,6 +824,11 @@
         scope.querySelectorAll('.ar-toolbar .ar-seg').forEach(function (seg) {
             styleViewSwitcher(seg);
             var buttons = seg.querySelectorAll('button');
+            var preference = seg.hasAttribute('data-notice-views')
+                ? 'arcadia-view:notices'
+                : seg.hasAttribute('data-task-views')
+                  ? 'arcadia-view:tasks'
+                  : null;
             buttons.forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     buttons.forEach(function (b) {
@@ -796,6 +837,10 @@
                     btn.setAttribute('aria-pressed', 'true');
                     var view =
                         btn.getAttribute('data-view') || btn.textContent.trim().toLowerCase();
+                    if (preference)
+                        try {
+                            localStorage.setItem(preference, view);
+                        } catch {}
 
                     var container = scope.querySelector('#view-container');
                     if (!container) return;
@@ -809,6 +854,14 @@
                     });
                 });
             });
+            if (preference)
+                try {
+                    var saved = localStorage.getItem(preference);
+                    var selected = Array.from(buttons).find(
+                        (button) => button.getAttribute('data-view') === saved
+                    );
+                    if (selected) selected.click();
+                } catch {}
         });
     }
 

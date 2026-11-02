@@ -1,0 +1,46 @@
+.ar-account-names {
+  margin-block: 20px;
+  padding: 24px;
+  min-width: 0;
+}
+.ar-account-names form {
+  margin-block: 20px;
+}
+.ar-account-names fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+.ar-account-names fieldset > label:not(.ar-field) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+.ar-account-names input[type='checkbox'] {
+  flex: 0 0 auto;
+  margin-top: 4px;
+}
+.ar-account-names p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.ar-account-names > summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+  font-weight: 600;
+}
+.ar-account-names textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  font: inherit;
+}
+.ar-account-names :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}

@@ -17,6 +17,10 @@ const sharing = require('../services/profile-sharing.service').handlers('users')
 router.get('/compartilhamento', authenticateToken, sharing.get);
 router.put('/compartilhamento', authenticateToken, sharing.put);
 router.put('/perfil', authenticateToken, profile.updateProfile);
+const names = require('../services/account-names.service').handlers('users');
+router.get('/nomes', authenticateToken, names.get);
+router.put('/nomes', authenticateToken, names.put);
+router.post('/nomes/solicitacoes', authenticateToken, names.post);
 router.post(
     '/email-change',
     authenticateToken,

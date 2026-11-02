@@ -1,6 +1,166 @@
 // Barra lateral com grupos acessíveis e preferência de recolhimento no desktop.
 (function () {
     'use strict';
+    function notificationPanel(host, icon, external) {
+        const make = (tag, text, className) => {
+            const node = document.createElement(tag);
+            if (text) node.textContent = text;
+            if (className) node.className = className;
+            return node;
+        };
+        const bell = make('button', '', 'ar-iconbtn ar-reminders-link');
+        bell.type = 'button';
+        bell.title = 'Notificações';
+        bell.setAttribute('aria-label', 'Notificações');
+        bell.setAttribute('aria-expanded', 'false');
+        bell.setAttribute('aria-controls', 'arNotifications');
+        bell.append(icon('M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4'));
+        const panel = make('section', '', 'ar-notifications');
+        panel.id = 'arNotifications';
+        panel.hidden = true;
+        panel.setAttribute('aria-labelledby', 'arNotificationsTitle');
+        const head = make('div', '', 'ar-notifications-head'),
+            title = make('h2', 'Notificações');
+        title.id = 'arNotificationsTitle';
+        const close = make('button', '×', 'ar-iconbtn');
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Fechar notificações');
+        head.append(title, close);
+        const description = make(
+            'p',
+            'Seus lembretes ativos. Esta lista não confirma envio por e-mail.',
+            'ar-notifications-help'
+        );
+        const status = make('p');
+        status.setAttribute('role', 'status');
+        const refresh = make('button', 'Atualizar', 'ar-btn ar-btn--secondary');
+        refresh.type = 'button';
+        const list = make('ul', '', 'ar-notifications-list');
+        const manage = make('a', 'Gerenciar lembretes', 'ar-link');
+        manage.href = 'tasks.html#taskReminders';
+        panel.append(head, description, refresh, status, list, manage);
+        document.body.append(panel);
+        host.prepend(bell);
+        const identity = () =>
+            JSON.stringify(window.Arcadia.auth.getSessao()) +
+            '|' +
+            (window.Arcadia.token?.get() || '');
+        const owner = identity();
+        let generation = 0,
+            request,
+            loaded = false;
+        function dismiss(restore = true) {
+            panel.hidden = true;
+            bell.setAttribute('aria-expanded', 'false');
+            generation++;
+            request?.abort();
+            refresh.disabled = false;
+            if (restore) bell.focus();
+        }
+        function position() {
+            const box = bell.getBoundingClientRect?.();
+            if (box)
+                panel.style?.setProperty(
+                    '--notification-top',
+                    Math.min(box.bottom + 12, window.innerHeight / 2) + 'px'
+                );
+        }
+        async function load() {
+            if (identity() !== owner) return;
+            request?.abort();
+            const ticket = ++generation;
+            request = window.AbortController ? new window.AbortController() : null;
+            refresh.disabled = true;
+            status.textContent = 'Carregando lembretes…';
+            list.replaceChildren();
+            try {
+                const A = window.Arcadia;
+                const rows = await A.api.expect(
+                    A.api.get(external ? '/api/external/reminders' : '/api/reminders', {
+                        signal: request?.signal
+                    })
+                );
+                if (ticket !== generation || identity() !== owner) return;
+                if (!Array.isArray(rows)) throw Error('Resposta indisponível.');
+                const active = rows.filter((row) => row.ativo === true || Number(row.ativo) === 1);
+                loaded = true;
+                bell.setAttribute(
+                    'aria-label',
+                    `Notificações: ${active.length} lembrete(s) ativo(s)`
+                );
+                status.textContent = active.length
+                    ? `${active.length} lembrete(s) ativo(s)`
+                    : 'Nenhum lembrete ativo.';
+                for (const row of active.slice(0, 30)) {
+                    const item = make('li'),
+                        heading = make('h3', row.titulo || 'Lembrete');
+                    item.append(heading);
+                    if (row.descricao) item.append(make('p', row.descricao));
+                    const instant = row.agendado_utc;
+                    if (instant) {
+                        const date = new Date(
+                            /[zZ]|[+-]\d\d:\d\d$/.test(instant)
+                                ? instant
+                                : instant.replace(' ', 'T') + 'Z'
+                        );
+                        if (Number.isFinite(date.getTime()))
+                            item.append(make('p', 'Agendado: ' + date.toLocaleString('pt-BR')));
+                    }
+                    list.append(item);
+                }
+                if (active.length > 30)
+                    list.append(make('li', 'Abra Gerenciar lembretes para consultar os demais.'));
+            } catch (error) {
+                if (ticket !== generation || identity() !== owner) return;
+                bell.setAttribute('aria-label', 'Notificações');
+                status.textContent = 'Não foi possível carregar os lembretes. Tente Atualizar.';
+            } finally {
+                if (ticket === generation) refresh.disabled = false;
+            }
+        }
+        bell.addEventListener('click', () => {
+            if (!panel.hidden) return dismiss();
+            if (identity() !== owner) return;
+            panel.hidden = false;
+            bell.setAttribute('aria-expanded', 'true');
+            position();
+            close.focus();
+            load();
+        });
+        close.addEventListener('click', () => dismiss());
+        refresh.addEventListener('click', load);
+        document.addEventListener?.('keydown', (event) => {
+            if (!panel.hidden && event.key === 'Escape') {
+                event.preventDefault();
+                dismiss();
+            }
+        });
+        document.addEventListener?.('pointerdown', (event) => {
+            if (!panel.hidden && !panel.contains(event.target) && !bell.contains(event.target))
+                dismiss(false);
+        });
+        document.addEventListener?.('focusin', (event) => {
+            if (!panel.hidden && !panel.contains(event.target) && !bell.contains(event.target))
+                dismiss(false);
+        });
+        window.addEventListener('resize', position);
+        window.addEventListener('arcadia:reminders-changed', () => {
+            if (loaded || !panel.hidden) load();
+        });
+        window.addEventListener('storage', () => {
+            if (identity() !== owner) {
+                dismiss(false);
+                loaded = false;
+                list.replaceChildren();
+                status.textContent = '';
+                bell.hidden = true;
+            }
+        });
+        window.addEventListener('pagehide', () => {
+            dismiss(false);
+            list.replaceChildren();
+        });
+    }
     function init() {
         if (window.Arcadia?.navigation?.mounted) return;
         const host = document.querySelector('.ar-nav .ar-navpill');
@@ -130,23 +290,7 @@
             return svg;
         }
         const barEnd = document.querySelector('.ar-nav-end');
-        if (barEnd) {
-            const reminders = document.createElement('a');
-            reminders.className = 'ar-iconbtn ar-reminders-link';
-            reminders.href = ['tasks.html', 'calendar.html'].includes(page)
-                ? '#taskReminders'
-                : 'tasks.html#taskReminders';
-            reminders.title = 'Meus lembretes e notificações';
-            reminders.setAttribute('aria-label', reminders.title);
-            reminders.append(icon('M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4'));
-            reminders.addEventListener('click', (event) => {
-                if (['tasks.html', 'calendar.html'].includes(page) && Arcadia.reminderUI?.reveal) {
-                    event.preventDefault();
-                    Arcadia.reminderUI.reveal();
-                }
-            });
-            barEnd.prepend(reminders);
-        }
+        if (barEnd) notificationPanel(barEnd, icon, external);
         const bar = document.querySelector('.ar-nav');
         if (bar && window.ResizeObserver) {
             new window.ResizeObserver(() => {
@@ -379,17 +523,9 @@
                     }
                 }
                 current.textContent = label;
-                reminderLink();
                 saveState();
             }
         };
-        function reminderLink() {
-            const reminder = barEnd?.querySelector('.ar-reminders-link');
-            if (reminder)
-                reminder.href = ['tasks.html', 'calendar.html'].includes(page)
-                    ? '#taskReminders'
-                    : 'tasks.html#taskReminders';
-        }
         document.documentElement?.setAttribute('data-portal-navigation', 'ready');
     }
     if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();

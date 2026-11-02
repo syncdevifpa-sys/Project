@@ -124,6 +124,11 @@
   position: relative;
   min-width: 0;
 }
+.ar-campus-map-page .ar-hero-art {
+  opacity: 0.28;
+  width: 46%;
+  pointer-events: none;
+}
 
 /* Controles e área interativa */
 .ar-campus-map-controls {
