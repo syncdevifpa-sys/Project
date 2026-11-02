@@ -57,11 +57,21 @@ async function save(kind, id, body) {
     if (!body || Object.keys(body).some((key) => key !== 'nome_exibicao'))
         fail('Use a solicitação para alterar o nome completo.');
     const display = name(body.nome_exibicao, true);
-    await current(db, kind, id);
-    await db.execute(
-        'INSERT INTO conta_nomes (tipo,id_conta,nome_exibicao) VALUES (?,?,?) ON DUPLICATE KEY UPDATE nome_exibicao=VALUES(nome_exibicao)',
-        [kind, id, display || null]
-    );
+    const c = await db.getConnection();
+    try {
+        await c.beginTransaction();
+        await current(c, kind, id, true);
+        await c.execute(
+            'INSERT INTO conta_nomes (tipo,id_conta,nome_exibicao) VALUES (?,?,?) ON DUPLICATE KEY UPDATE nome_exibicao=VALUES(nome_exibicao)',
+            [kind, id, display || null]
+        );
+        await c.commit();
+    } catch (error) {
+        await c.rollback();
+        throw error;
+    } finally {
+        c.release();
+    }
     return read(kind, id);
 }
 async function request(kind, id, body) {
@@ -122,6 +132,9 @@ async function review(id, actor, body) {
         );
         const row = rows[0];
         if (
+            !row ||
+            row.tipo !== lookup[0].tipo ||
+            row.id_conta !== lookup[0].id_conta ||
             row.estado !== 'pendente' ||
             (body.estado === 'aprovado' && original !== row.nome_anterior)
         )
@@ -201,4 +214,29 @@ async function remove(c, kind, id) {
         }
     }
 }
-module.exports = { name, read, save, request, list, review, publicNames, handlers, remove };
+// As tabelas de nomes são opcionais até a migração ser aplicada. Outros erros
+// precisam abortar a aprovação para não transferir apenas parte da identidade.
+async function transfer(c, external, user) {
+    for (const table of ['conta_nomes', 'conta_nome_pedidos']) {
+        try {
+            await c.execute(
+                `UPDATE ${table} SET tipo='users',id_conta=? WHERE tipo='external' AND id_conta=?`,
+                [user, external]
+            );
+        } catch (error) {
+            if (error.code !== 'ER_NO_SUCH_TABLE') throw error;
+        }
+    }
+}
+module.exports = {
+    name,
+    read,
+    save,
+    request,
+    list,
+    review,
+    publicNames,
+    handlers,
+    remove,
+    transfer
+};

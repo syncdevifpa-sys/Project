@@ -284,7 +284,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
             "SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE"
         );
         const [rows] = await connection.execute(
-            `SELECT ${primary}, nome, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem, nome_social, telefone, matricula' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
+            `SELECT ${primary}, nome, email, situacao${institutional ? ', is_admin, tipo_usuario, id_externo_origem, nome_social, telefone, matricula, id_curso, periodo' : ', (SELECT v.id_usuario FROM conta_vinculos v WHERE v.id_externo=publico_externo.id_externo) AS id_usuario_vinculado'}${selfRemoval ? ', senha' : ''} FROM ${table} WHERE ${primary} = ? FOR UPDATE`,
             [id]
         );
         const person = rows[0];
@@ -567,7 +567,20 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 );
                 if (!courses.length) fail(400, 'Selecione um curso ativo válido.');
             }
-            const newFields = ['nome_social', 'telefone', 'matricula'].filter(
+            if (institutional)
+                await require('./profile-course.service').validateAcademicEdit(
+                    connection,
+                    person,
+                    data,
+                    targetRole
+                );
+            const newFields = [
+                'nome_social',
+                'telefone',
+                'matricula',
+                'id_curso',
+                'periodo'
+            ].filter(
                 (key) =>
                     Object.hasOwn(data, key) &&
                     String(data[key] ?? '') !== String(person[key] ?? '')
@@ -579,11 +592,19 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 if (!audit.length)
                     fail(
                         503,
-                        'A equipe precisa habilitar a auditoria cadastral no banco antes de alterar matrícula, telefone ou nome social.'
+                        'A equipe precisa habilitar a auditoria cadastral no banco antes de alterar matrícula, telefone, nome social, curso ou etapa.'
                     );
                 await connection.execute(
                     'INSERT INTO cadastro_auditoria(id_admin,id_usuario,campos) VALUES (?,?,?)',
-                    [actor, id, JSON.stringify(Object.keys(data))]
+                    [
+                        actor,
+                        id,
+                        JSON.stringify(
+                            Object.keys(data).filter(
+                                (key) => String(data[key] ?? '') !== String(person[key] ?? '')
+                            )
+                        )
+                    ]
                 );
             }
             const fields = Object.keys(data);

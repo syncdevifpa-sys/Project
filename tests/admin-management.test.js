@@ -274,9 +274,15 @@ test('curso opcional válido de servidor é preservado e valor inválido é recu
             is_admin: 0,
             tipo_usuario: 'servidor'
         },
-        [{ id_usuario: 4 }]
+        [{ id_usuario: 4 }],
+        false,
+        { audit: true }
     );
     await service.changePerson('users', 8, { id_curso: 2, periodo: null }, 4);
+    const courseAudit = calls.find((call) =>
+        call.sql?.startsWith('INSERT INTO cadastro_auditoria')
+    );
+    assert.deepEqual(JSON.parse(courseAudit.params[2]), ['id_curso']);
     assert.ok(
         calls.some((call) => call.sql?.startsWith('UPDATE usuarios') && call.params[0] === 2)
     );

@@ -99,15 +99,23 @@ async function createUser(userData) {
 }
 
 async function updateUser(userId, userData) {
-    if (Object.hasOwn(userData, 'nome')) {
+    const protectedFields = ['nome', 'matricula', 'periodo'];
+    if (protectedFields.some((key) => Object.hasOwn(userData, key))) {
         const current = await findUserById(userId, true);
-        if (!current || userData.nome !== current.nome)
-            throw Object.assign(
-                new Error('Solicite a alteração do nome completo para análise administrativa.'),
-                { status: 409 }
-            );
         userData = { ...userData };
-        delete userData.nome;
+        for (const key of protectedFields) {
+            if (!Object.hasOwn(userData, key)) continue;
+            if (!current || String(userData[key] ?? '') !== String(current[key] ?? ''))
+                throw Object.assign(
+                    new Error(
+                        key === 'nome'
+                            ? 'Solicite a alteração do nome completo para análise administrativa.'
+                            : 'Matrícula e etapa atual só podem ser corrigidas pela administração.'
+                    ),
+                    { status: 409 }
+                );
+            delete userData[key];
+        }
     }
     if (Object.hasOwn(userData, 'email')) {
         const current = await findUserById(userId, true);
@@ -123,14 +131,11 @@ async function updateUser(userId, userData) {
         delete userData.email;
     }
     const allowed = [
-        'nome',
         'nome_social',
         'email',
         'telefone',
         'tipo_usuario',
-        'matricula',
         'id_curso',
-        'periodo',
         'setor',
         'sobre',
         'foto',

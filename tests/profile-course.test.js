@@ -6,6 +6,26 @@ const courses = require('../backend/src/models/courses.model');
 const profile = require('../backend/src/controllers/profile.controller');
 const controller = require('../backend/src/controllers/users.controller');
 after(() => db.end());
+test('rotas de perfil não permitem forjar matrícula ou etapa; valores acadêmicos inalterados não são regravados', async (t) => {
+    const calls = [];
+    t.mock.method(db, 'execute', async (sql, args) => {
+        calls.push({ sql, args });
+        if (sql.trim().startsWith('SELECT'))
+            return [[{ id_usuario: 7, nome: 'Pessoa', matricula: '2026001', periodo: 3 }]];
+        return [{ affectedRows: 1 }];
+    });
+    for (const body of [{ matricula: '2026999' }, { periodo: 127 }]) {
+        await assert.rejects(users.updateUser(7, body), { status: 409 });
+    }
+    assert.equal(
+        calls.some((c) => c.sql.startsWith('UPDATE')),
+        false
+    );
+    await users.updateUser(7, { matricula: '2026001', periodo: 3, telefone: '999' });
+    const update = calls.find((c) => c.sql.startsWith('UPDATE'));
+    assert.equal(update.sql, 'UPDATE usuarios SET telefone = ? WHERE id_usuario = ?');
+    assert.deepEqual(update.args, ['999', 7]);
+});
 test('cadastro de Aluno exige curso ativo cadastrado, sem limitar a lista a dois', async (t) => {
     const service = require('../backend/src/services/profile-course.service');
     t.mock.method(courses, 'findCourseById', async (id) =>

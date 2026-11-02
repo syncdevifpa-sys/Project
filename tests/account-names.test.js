@@ -87,3 +87,102 @@ test('API legada recusa alteração direta do nome completo', async (t) => {
         (e) => e.status === 409
     );
 });
+test('transferência institucional mantém nome de exibição e histórico no mesmo namespace', async () => {
+    const calls = [];
+    await names.transfer(
+        {
+            execute: async (sql, args) => {
+                calls.push({ sql, args });
+                return [{ affectedRows: 1 }];
+            }
+        },
+        5,
+        20
+    );
+    assert.equal(calls.length, 2);
+    assert.match(calls[0].sql, /UPDATE conta_nomes SET tipo='users'/);
+    assert.match(calls[1].sql, /UPDATE conta_nome_pedidos/);
+    assert.deepEqual(
+        calls.map((call) => call.args),
+        [
+            [20, 5],
+            [20, 5]
+        ]
+    );
+});
+test('transferência tolera somente tabela opcional ausente e propaga outros erros', async () => {
+    await names.transfer(
+        {
+            execute: async () => {
+                throw Object.assign(new Error(), { code: 'ER_NO_SUCH_TABLE' });
+            }
+        },
+        5,
+        20
+    );
+    await assert.rejects(
+        names.transfer(
+            {
+                execute: async () => {
+                    throw Object.assign(new Error(), { code: 'ER_DUP_ENTRY' });
+                }
+            },
+            5,
+            20
+        ),
+        { code: 'ER_DUP_ENTRY' }
+    );
+});
+test('pedido movido durante a aprovação de vínculo não altera a conta errada', async (t) => {
+    let changed = false,
+        rolledBack = false;
+    t.mock.method(db, 'getConnection', async () => ({
+        beginTransaction: async () => {},
+        commit: async () => {},
+        rollback: async () => {
+            rolledBack = true;
+        },
+        release() {},
+        execute: async (sql) => {
+            if (sql.startsWith('SELECT tipo')) return [[{ tipo: 'external', id_conta: 5 }]];
+            if (sql.startsWith('SELECT nome')) return [[{ nome: 'Nome Original' }]];
+            if (sql.startsWith('SELECT *'))
+                return [
+                    [
+                        {
+                            tipo: 'users',
+                            id_conta: 20,
+                            nome_anterior: 'Nome Original',
+                            nome_solicitado: 'Nome Novo',
+                            estado: 'pendente'
+                        }
+                    ]
+                ];
+            changed = true;
+            return [[]];
+        }
+    }));
+    await assert.rejects(names.review(1, 90, { estado: 'aprovado' }), { status: 409 });
+    assert.equal(changed, false);
+    assert.equal(rolledBack, true);
+});
+test('gravação do nome bloqueia a conta e reverte se ela deixou de existir', async (t) => {
+    let changed = false,
+        rolledBack = false;
+    t.mock.method(db, 'getConnection', async () => ({
+        beginTransaction: async () => {},
+        commit: async () => {},
+        rollback: async () => {
+            rolledBack = true;
+        },
+        release() {},
+        execute: async (sql) => {
+            assert.match(sql, /SELECT nome.*FOR UPDATE/);
+            if (sql.startsWith('INSERT')) changed = true;
+            return [[]];
+        }
+    }));
+    await assert.rejects(names.save('users', 7, { nome_exibicao: 'Ana' }), { status: 404 });
+    assert.equal(changed, false);
+    assert.equal(rolledBack, true);
+});
