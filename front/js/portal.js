@@ -769,12 +769,12 @@
         }
         buttons.sort(function (a, b) {
             return (
-                (modes[a.dataset.view || a.dataset.mode]?.[0] ?? 9) -
-                (modes[b.dataset.view || b.dataset.mode]?.[0] ?? 9)
+                (modes[a.dataset.view || a.dataset.mode || a.dataset.libraryView]?.[0] ?? 9) -
+                (modes[b.dataset.view || b.dataset.mode || b.dataset.libraryView]?.[0] ?? 9)
             );
         });
         buttons.forEach(function (button) {
-            var mode = modes[button.dataset.view || button.dataset.mode];
+            var mode = modes[button.dataset.view || button.dataset.mode || button.dataset.libraryView];
             if (mode) {
                 button.innerHTML = getIconSvg(mode[1], 16) + '<span>' + mode[2] + '</span>';
                 button.querySelector('svg')?.setAttribute('aria-hidden', 'true');
@@ -799,6 +799,7 @@
 
     function setupViewToolbar(root) {
         const scope = root || document;
+        scope.querySelectorAll('.ar-library-views').forEach(styleViewSwitcher);
         var picker = document.getElementById('calendarViewMode');
         if (picker) {
             var group = document.createElement('div');
