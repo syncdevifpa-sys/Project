@@ -6,7 +6,7 @@ function fail(status, message) {
 }
 async function validateProfileCourse(current, body) {
     if (!Object.hasOwn(body, 'id_curso')) return;
-    // O vínculo atual vem do banco, nunca do corpo ou de um JWT antigo.
+    /* O vínculo atual vem do banco, nunca do corpo ou de um JWT antigo. */
     if (current.tipo_usuario !== 'servidor')
         fail(403, 'A alteração própria de curso está disponível para Servidor.');
     await validateCourseSelection(body.id_curso, false);

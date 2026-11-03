@@ -23,3 +23,9 @@
 - [Histórico de revisões](history/README.md): diagnósticos e relatórios datados, com evidências e limitações da época.
 
 As capturas e saídas de testes em `tmp/` são artefatos locais e podem ser regeneradas. Não contêm confirmação automática de que um banco remoto, SMTP ou deploy está funcionando.
+
+## Organização e comportamento do portal
+
+- [Estrutura de pastas e arquivos gerados](organizacao-do-projeto.md).
+- [Conexão, tentativas de leitura e entrada no topo](conexao-e-entrada.md).
+- [Nome no perfil e solicitação de correção](ajustes-nomes-noticias.md).

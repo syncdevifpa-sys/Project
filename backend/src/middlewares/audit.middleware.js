@@ -22,7 +22,7 @@ function auditLog(actionName) {
             try {
                 fs.appendFileSync(logFile, logEntry);
             } catch {
-                // Silencioso em caso de permissão de escrita
+                /* Silencioso em caso de permissão de escrita */
             }
         });
 

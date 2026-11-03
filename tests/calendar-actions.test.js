@@ -18,7 +18,7 @@ function fixture({ admin = true, confirm = true, fail = false } = {}) {
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/calendar-actions.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/calendar-actions.js', 'utf8'), {
         window: { Arcadia: A, confirm: () => confirm }
     });
     return {
@@ -68,7 +68,7 @@ test('confirmação da exclusão informa quantidade e calendário selecionado an
         },
         api: { expect: (p) => p, del: async (path) => calls.push(path) }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/calendar-actions.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/calendar-actions.js', 'utf8'), {
         window: {
             Arcadia: A,
             confirm: (text) => {

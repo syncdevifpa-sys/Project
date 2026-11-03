@@ -4,7 +4,7 @@ const { test } = require('node:test'),
     vm = require('node:vm');
 function model() {
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/campus-map-model.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/campus-map-model.js', 'utf8'), {
         window: { Arcadia: A }
     });
     return A.campusMapModel;
@@ -216,7 +216,7 @@ function ui(hash = '') {
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/campus-map.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/campus-map.js', 'utf8'), {
         window: w,
         document: {
             getElementById: (id) => ids.get(id),
@@ -281,14 +281,14 @@ test('controles de teclado, pan e toque não abrem bloco ao arrastar', () => {
     viewport.emit('pointerup', { pointerId: 2 });
 });
 test('página pública usa referência atribuída sem API paga nem rotas ou identidades inventadas', () => {
-    const html = fs.readFileSync('front/campus-map.html', 'utf8');
+    const html = fs.readFileSync('frontend/campus-map.html', 'utf8');
     assert.match(
         html.replace(/\s+/g, ' '),
         /Não é um mapa de rotas nem uma planta oficial atualizada/
     );
     assert.match(html, /engBRASIL25/);
     assert.match(html, /assets\/campus-map-reference-2025.png/);
-    assert.ok(fs.statSync('front/assets/campus-map-reference-2025.png').size > 0);
+    assert.ok(fs.statSync('frontend/assets/campus-map-reference-2025.png').size > 0);
     assert.ok(html.includes('tabindex="0"'));
     assert.ok(html.includes('id="mapPlaceList"'));
     assert.doesNotMatch(html, /Google Maps|maps\.google|api_key|geolocation|syncdevifpa@gmail/);

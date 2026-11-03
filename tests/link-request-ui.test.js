@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 test('pedido de vínculo contém formulário e controles HTML reais, não texto de tags incompletas', () => {
-    const html = fs.readFileSync('front/community-settings.html', 'utf8');
+    const html = fs.readFileSync('frontend/community-settings.html', 'utf8');
     const form = html.match(/<form\b[^>]*id="teacherRequestForm"[^>]*>([\s\S]*?)<\/form>/);
     assert.ok(form, 'formulário deve existir no DOM');
     for (const name of [
@@ -79,7 +79,7 @@ function fixture() {
         }
     };
     const started = vm.runInNewContext(
-        fs.readFileSync('front/js/teacher-requirements.js', 'utf8'),
+        fs.readFileSync('frontend/js/teacher-requirements.js', 'utf8'),
         { window: { Arcadia: A }, document: { getElementById: (id) => nodes[id] } }
     );
     return { calls, nodes, form, button, started };
@@ -102,12 +102,12 @@ test('externo inicia pedido somente pela ação discreta, com campos de Aluno e 
     await f.form.events.submit({ preventDefault() {} });
     assert.equal(f.calls[0].path, '/api/teacher-requirements/mine/change');
     assert.equal(f.calls[0].body.tipo_solicitado, 'discente');
-    for (const file of ['front/community-settings.html']) {
+    for (const file of ['frontend/community-settings.html']) {
         const html = fs.readFileSync(file, 'utf8');
         assert.match(html, /id="requestedRolePicker"/);
         assert.match(html, /id="requestedCourseLabel"/);
         assert.match(html.replace(/\s+/g, ' '), /não desativa sua conta automaticamente/);
     }
-    assert.ok(!fs.readFileSync('front/community.html', 'utf8').includes('id="startLinkRequest"'));
-    assert.ok(!fs.readFileSync('front/community.html', 'utf8').includes('id="teacherRequestForm"'));
+    assert.ok(!fs.readFileSync('frontend/community.html', 'utf8').includes('id="startLinkRequest"'));
+    assert.ok(!fs.readFileSync('frontend/community.html', 'utf8').includes('id="teacherRequestForm"'));
 });

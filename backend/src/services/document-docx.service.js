@@ -1,4 +1,4 @@
-// Lê somente XML textual: não executa macros, não extrai arquivos e não segue relações externas.
+/* Lê somente XML textual: não executa macros, não extrai arquivos e não segue relações externas. */
 const yauzl = require('yauzl');
 const { SaxesParser } = require('saxes');
 const invalid = () =>

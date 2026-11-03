@@ -2,7 +2,7 @@ const { test } = require('node:test'),
     assert = require('node:assert/strict'),
     fs = require('node:fs'),
     vm = require('node:vm');
-const policy = require('../front/js/banner-preferences');
+const policy = require('../frontend/js/banner-preferences');
 function fixture(page = 'calendar.html', preferences = {}) {
     const attrs = new Map(),
         styles = new Map(),
@@ -31,7 +31,7 @@ function fixture(page = 'calendar.html', preferences = {}) {
         localStorage: { getItem: (key) => storage.get(key) }
     };
     const apply = () =>
-        vm.runInNewContext(fs.readFileSync('front/js/banner-bootstrap.js', 'utf8'), context);
+        vm.runInNewContext(fs.readFileSync('frontend/js/banner-bootstrap.js', 'utf8'), context);
     apply();
     return { attrs, styles, storage, listeners, context, apply };
 }
@@ -90,8 +90,8 @@ test('troca de conta, logout e armazenamento inválido não reaproveitam cores d
     assert.equal(policy.pageKey('index.html'), 'page:index.html:home');
 });
 test('todos os banners estáticos preparam variáveis antes do CSS sem esconder o documento', () => {
-    for (const page of fs.readdirSync('front').filter((name) => name.endsWith('.html'))) {
-        const html = fs.readFileSync('front/' + page, 'utf8');
+    for (const page of fs.readdirSync('frontend').filter((name) => name.endsWith('.html'))) {
+        const html = fs.readFileSync('frontend/' + page, 'utf8');
         if (!html.includes('src="js/class-appearance.js"')) continue;
         assert.equal((html.match(/src="js\/banner-bootstrap.js"/g) || []).length, 1, page);
         assert.ok(
@@ -101,7 +101,7 @@ test('todos os banners estáticos preparam variáveis antes do CSS sem esconder 
         assert.ok(html.indexOf('js/banner-bootstrap.js') < html.indexOf('rel="stylesheet"'), page);
         assert.ok(html.includes('data-initial-banner-slot="page"'), page);
     }
-    const source = fs.readFileSync('front/js/banner-bootstrap.js', 'utf8');
+    const source = fs.readFileSync('frontend/js/banner-bootstrap.js', 'utf8');
     assert.doesNotMatch(
         source,
         /MutationObserver|location\.reload|setTimeout|visibility|display\s*=/

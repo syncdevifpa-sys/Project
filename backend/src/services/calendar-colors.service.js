@@ -1,5 +1,5 @@
 /* Geometria e legendas: a cor só é aplicada quando todos os dias são inequívocos. */
-// Reconhece somente células vetoriais e legendas próximas, dentro da modalidade.
+/* Reconhece somente células vetoriais e legendas próximas, dentro da modalidade. */
 const { classifyHoliday } = require('./calendar-holiday-classification.service');
 const norm = (value) =>
     String(value || '')
@@ -56,7 +56,7 @@ function filledRectangles(list, OPS) {
         else if (fn === OPS.setFillRGBColor)
             state.color = typeof args[0] === 'string' ? args[0].toLowerCase() : null;
         else if (fn === OPS.constructPath && paints.includes(args[0])) {
-            // Uma bounding box conjunta de vários caminhos pode cobrir células de outras cores.
+            /* Uma bounding box conjunta de vários caminhos pode cobrir células de outras cores. */
             for (const p of args[1] || []) {
                 if (
                     p.length !== 13 ||
@@ -145,7 +145,7 @@ function extractColoredDays(pages, { year, level }) {
         scoped.push(page);
         for (const marker of page.items.filter((i) => /^legendas?:?$/.test(norm(i.text)))) {
             for (const box of page.fills || []) {
-                // Exclui quadros estatísticos: a amostra deve ser curta, junto ao marcador.
+                /* Exclui quadros estatísticos: a amostra deve ser curta, junto ao marcador. */
                 if (
                     box.y >= marker.y ||
                     box.y < marker.y - 125 ||
@@ -261,7 +261,7 @@ function extractColoredDays(pages, { year, level }) {
                     group.items.push(digit);
             }
             for (const group of dayCells.values()) {
-                // O PDF pode armazenar "22" como dois glifos "2" na mesma célula.
+                /* O PDF pode armazenar "22" como dois glifos "2" na mesma célula. */
                 const number = group.items
                     .sort((a, b) => a.x - b.x)
                     .map((i) => i.text.trim())
@@ -311,8 +311,10 @@ function textMeaning(title, date = '', region = 'brasil') {
             /^(?:confraternizacao universal|ano[- ]novo|reveillon)(?:\s*[-–—:(]|$)/.test(value))
     )
         return { kind: 'sem_aula', categoria: 'feriado' };
-    // A portaria federal de 2026 prevê expediente facultativo após as 13h nas vésperas.
-    // Não presume que essa regra administrativa se repita em outros anos.
+    /*
+     * A portaria federal de 2026 prevê expediente facultativo após as 13h nas vésperas.
+     * Não presume que essa regra administrativa se repita em outros anos.
+     */
     if (
         date.startsWith('2026-') &&
         ((monthDay === '12-24' && /^vespera (?:de|do) natal\b/.test(value)) ||
@@ -460,7 +462,7 @@ function mergeColorCandidates(parsed, analysis, { region = 'brasil' } = {}) {
     }
     const runs = [];
     for (const day of analysis.days) {
-        // Não cria outra ocorrência genérica quando uma descrição compatível já cobre o dia.
+        /* Não cria outra ocorrência genérica quando uma descrição compatível já cobre o dia. */
         const covered = candidates.some(
             (c) =>
                 c.data_evento <= day.date &&

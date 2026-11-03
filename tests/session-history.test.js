@@ -7,7 +7,7 @@ function browser({page='dashboard.html',token='one',status=200,external=false}={
     const redirects=[],calls=[],body={replaceChildren(){this.cleared=true;}},root={style:{}};
     const location={hostname:'portal.example',origin:'https://portal.example',pathname:'/'+page,replace:p=>redirects.push(p),reload:()=>redirects.push('reload')};
     const window={Arcadia:{},location,addEventListener:(name,fn)=>handlers[name]=fn};
-    vm.runInNewContext(fs.readFileSync('front/js/api.js','utf8'),{window,location,document:{body,documentElement:root},
+    vm.runInNewContext(fs.readFileSync('frontend/js/api.js','utf8'),{window,location,document:{body,documentElement:root},
         localStorage:{getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v),removeItem:k=>stored.delete(k)},
         fetch:async(url,options)=>{calls.push({url,options});return{ok:status===200,status,json:async()=>({private:'data'})};}});
     return{window,handlers,stored,redirects,calls,body,root};
@@ -51,7 +51,7 @@ test('resposta Google pendente não restaura sessão depois de logout',async()=>
     const window={Arcadia:{token:{get:()=>stored.get('arcadiaToken'),set:t=>stored.set('arcadiaToken',t),clear:()=>stored.delete('arcadiaToken')},
         api:{post:path=>{calls.push(path);return path==='/api/auth/google'?new Promise(r=>resolveGoogle=r):Promise.resolve({ok:true});}}},
         google:{accounts:{id:{cancel:()=>events.push('cancel'),disableAutoSelect:()=>events.push('disable')}}},location:{replace:p=>events.push(p)}};
-    vm.runInNewContext(fs.readFileSync('front/js/auth.js','utf8'),{window,console,
+    vm.runInNewContext(fs.readFileSync('frontend/js/auth.js','utf8'),{window,console,
         localStorage:{getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v),removeItem:k=>stored.delete(k)},
         sessionStorage:{setItem(){},removeItem(){}},document:{readyState:'loading',addEventListener(){},body:{replaceChildren:()=>events.push('clear')}}});
     const login=window.Arcadia.auth.completeGoogleAuth('a.b.c','d.e.f');

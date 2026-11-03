@@ -111,7 +111,9 @@ router.put(
 router.get(
     '/schedule',
     action(async (q, s) =>
-        s.json(await classSchedule.agenda(q.user.id_usuario, q.query.from, q.query.to))
+        s.json(
+            await classSchedule.agenda(q.user.id_usuario, q.query.from, q.query.to, q.query.turma)
+        )
     )
 );
 router.get(

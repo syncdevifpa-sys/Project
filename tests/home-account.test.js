@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const source = fs.readFileSync(path.join(__dirname, '../front/js/landing.js'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '../frontend/js/landing.js'), 'utf8');
 
 function home(session, token = 'test-token') {
     const storage = { arcadiaToken: token, arcadiaSessao: JSON.stringify(session) };

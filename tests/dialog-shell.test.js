@@ -137,7 +137,7 @@ function fixture() {
             return consent;
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/dialog-shell.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/dialog-shell.js', 'utf8'), {
         window: { Arcadia: A },
         document,
         queueMicrotask,
@@ -254,7 +254,7 @@ test('apenas janela superior fecha e a rolagem continua bloqueada até fechar a 
     assert.equal(f.classes.size, 0);
 });
 test('CSS mantém controle no cabeçalho e limita conteúdo à viewport móvel', () => {
-    const css = fs.readFileSync('front/dialog-shell.css', 'utf8');
+    const css = fs.readFileSync('frontend/dialog-shell.css', 'utf8');
     assert.match(css, /100dvh/);
     assert.match(css, /\.ar-dialog-shell-body[^}]*overflow: auto/s);
     assert.match(css, /\.ar-dialog-shell-head[^}]*flex: 0 0 auto/s);

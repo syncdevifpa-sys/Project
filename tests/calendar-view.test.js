@@ -38,7 +38,7 @@ function fixture() {
         nodes.push(node);
         return node;
     }
-    vm.runInNewContext(fs.readFileSync('front/js/calendar-view.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/calendar-view.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: make },
         Date,

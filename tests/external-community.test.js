@@ -9,6 +9,8 @@ function fixture(options = {}) {
     const database = {
         async execute(sql, args = []) {
             if (options.failAt && sql.includes(options.failAt)) throw Error('falha simulada');
+            if (sql.startsWith('SELECT nome FROM publico_externo'))
+                return [[{ nome: 'Nome Original' }]];
             if (sql.startsWith('SELECT id_externo'))
                 return [[{ id_externo: 5, situacao: options.inactive ? 'bloqueado' : 'ativo' }]];
             if (sql.startsWith('SELECT id_projeto,aprovacao'))
@@ -19,7 +21,9 @@ function fixture(options = {}) {
                             aprovacao: options.aprovacao || 'aprovado',
                             situacao: options.situacao || 'inscricoes',
                             permite_externos: options.allow === false ? 0 : 1,
-                            visibilidade: Object.hasOwn(options, 'visibility') ? options.visibility : 'publico',
+                            visibilidade: Object.hasOwn(options, 'visibility')
+                                ? options.visibility
+                                : 'publico',
                             vagas: options.full ? 1 : 0
                         }
                     ]
@@ -212,7 +216,7 @@ test('HTTP permite calendário explicitamente público, inclusive IFPA público,
 test('edição do próprio perfil externo não altera e-mail, vínculo, situação nem administração', async () => {
     const f = fixture();
     await f.service.updateProfile(5, {
-        nome: 'Nome atualizado',
+        nome: 'Nome Original',
         telefone: '91999999999',
         organizacao: 'Organização',
         id_externo: 99,
@@ -222,10 +226,17 @@ test('edição do próprio perfil externo não altera e-mail, vínculo, situaç�
         situacao: 'ativo',
         intencao_cadastro: 'docente'
     });
-    assert.deepEqual(f.writes[0].args, ['Nome atualizado', '91999999999', 'Organização', 5]);
+    assert.deepEqual(f.writes[0].args, ['91999999999', 'Organização', 5]);
     assert.doesNotMatch(
         f.writes[0].sql.split(' WHERE ')[0],
         /email=|tipo_usuario=|is_admin=|situacao=|intencao_cadastro=/
     );
     assert.ok(f.writes[0].sql.includes("WHERE id_externo=? AND situacao='ativo'"));
+});
+
+test('nome completo externo exige solicitação; tentativa direta reverte sem escrita', async () => {
+    const f = fixture();
+    await assert.rejects(f.service.updateProfile(5, { nome: 'Outro Nome' }), { status: 409 });
+    assert.equal(f.writes.length, 0);
+    assert.ok(f.lifecycle.includes('rollback'));
 });

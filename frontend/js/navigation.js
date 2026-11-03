@@ -1,0 +1,534 @@
+/* Barra lateral com grupos acessíveis e preferência de recolhimento no desktop. */
+(function () {
+    'use strict';
+    function notificationPanel(host, icon, external) {
+        const make = (tag, text, className) => {
+            const node = document.createElement(tag);
+            if (text) node.textContent = text;
+            if (className) node.className = className;
+            return node;
+        };
+        const bell = make('button', '', 'ar-iconbtn ar-reminders-link');
+        bell.type = 'button';
+        bell.title = 'Notificações';
+        bell.setAttribute('aria-label', 'Notificações');
+        bell.setAttribute('aria-expanded', 'false');
+        bell.setAttribute('aria-controls', 'arNotifications');
+        bell.append(icon('M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4'));
+        const panel = make('section', '', 'ar-notifications');
+        panel.id = 'arNotifications';
+        panel.hidden = true;
+        panel.setAttribute('aria-labelledby', 'arNotificationsTitle');
+        const head = make('div', '', 'ar-notifications-head'),
+            title = make('h2', 'Notificações');
+        title.id = 'arNotificationsTitle';
+        const close = make('button', '×', 'ar-iconbtn');
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Fechar notificações');
+        head.append(title, close);
+        const description = make(
+            'p',
+            'Seus lembretes ativos. Esta lista não confirma envio por e-mail.',
+            'ar-notifications-help'
+        );
+        const status = make('p');
+        status.setAttribute('role', 'status');
+        const refresh = make('button', 'Atualizar', 'ar-btn ar-btn--secondary');
+        refresh.type = 'button';
+        const list = make('ul', '', 'ar-notifications-list');
+        const manage = make('a', 'Gerenciar lembretes', 'ar-link');
+        manage.href = 'tasks.html#taskReminders';
+        panel.append(head, description, refresh, status, list, manage);
+        document.body.append(panel);
+        host.prepend(bell);
+        const identity = () =>
+            JSON.stringify(window.Arcadia.auth.getSessao()) +
+            '|' +
+            (window.Arcadia.token?.get() || '');
+        const owner = identity();
+        let generation = 0,
+            request,
+            loaded = false;
+        function dismiss(restore = true) {
+            panel.hidden = true;
+            bell.setAttribute('aria-expanded', 'false');
+            generation++;
+            request?.abort();
+            refresh.disabled = false;
+            if (restore) bell.focus();
+        }
+        function position() {
+            const box = bell.getBoundingClientRect?.();
+            if (box)
+                panel.style?.setProperty(
+                    '--notification-top',
+                    Math.min(box.bottom + 12, window.innerHeight / 2) + 'px'
+                );
+        }
+        async function load() {
+            if (identity() !== owner) return;
+            request?.abort();
+            const ticket = ++generation;
+            request = window.AbortController ? new window.AbortController() : null;
+            refresh.disabled = true;
+            status.textContent = 'Carregando lembretes…';
+            list.replaceChildren();
+            try {
+                const A = window.Arcadia;
+                const rows = await A.api.expect(
+                    A.api.get(external ? '/api/external/reminders' : '/api/reminders', {
+                        signal: request?.signal
+                    })
+                );
+                if (ticket !== generation || identity() !== owner) return;
+                if (!Array.isArray(rows)) throw Error('Resposta indisponível.');
+                const active = rows.filter((row) => row.ativo === true || Number(row.ativo) === 1);
+                loaded = true;
+                bell.setAttribute(
+                    'aria-label',
+                    `Notificações: ${active.length} lembrete(s) ativo(s)`
+                );
+                status.textContent = active.length
+                    ? `${active.length} lembrete(s) ativo(s)`
+                    : 'Nenhum lembrete ativo.';
+                for (const row of active.slice(0, 30)) {
+                    const item = make('li'),
+                        heading = make('h3', row.titulo || 'Lembrete');
+                    item.append(heading);
+                    if (row.descricao) item.append(make('p', row.descricao));
+                    const instant = row.agendado_utc;
+                    if (instant) {
+                        const date = new Date(
+                            /[zZ]|[+-]\d\d:\d\d$/.test(instant)
+                                ? instant
+                                : instant.replace(' ', 'T') + 'Z'
+                        );
+                        if (Number.isFinite(date.getTime()))
+                            item.append(make('p', 'Agendado: ' + date.toLocaleString('pt-BR')));
+                    }
+                    list.append(item);
+                }
+                if (active.length > 30)
+                    list.append(make('li', 'Abra Gerenciar lembretes para consultar os demais.'));
+            } catch (error) {
+                if (ticket !== generation || identity() !== owner) return;
+                bell.setAttribute('aria-label', 'Notificações');
+                status.textContent = 'Não foi possível carregar os lembretes. Tente Atualizar.';
+            } finally {
+                if (ticket === generation) refresh.disabled = false;
+            }
+        }
+        bell.addEventListener('click', () => {
+            if (!panel.hidden) return dismiss();
+            if (identity() !== owner) return;
+            panel.hidden = false;
+            bell.setAttribute('aria-expanded', 'true');
+            position();
+            close.focus();
+            load();
+        });
+        close.addEventListener('click', () => dismiss());
+        refresh.addEventListener('click', load);
+        document.addEventListener?.('keydown', (event) => {
+            if (!panel.hidden && event.key === 'Escape') {
+                event.preventDefault();
+                dismiss();
+            }
+        });
+        document.addEventListener?.('pointerdown', (event) => {
+            if (!panel.hidden && !panel.contains(event.target) && !bell.contains(event.target))
+                dismiss(false);
+        });
+        document.addEventListener?.('focusin', (event) => {
+            if (!panel.hidden && !panel.contains(event.target) && !bell.contains(event.target))
+                dismiss(false);
+        });
+        window.addEventListener('resize', position);
+        window.addEventListener('arcadia:reminders-changed', () => {
+            if (loaded || !panel.hidden) load();
+        });
+        window.addEventListener('storage', () => {
+            if (identity() !== owner) {
+                dismiss(false);
+                loaded = false;
+                list.replaceChildren();
+                status.textContent = '';
+                bell.hidden = true;
+            }
+        });
+        window.addEventListener('pagehide', () => {
+            dismiss(false);
+            list.replaceChildren();
+        });
+    }
+    function init() {
+        if (window.Arcadia?.navigation?.mounted) return;
+        const host = document.querySelector('.ar-nav .ar-navpill');
+        if (!host || !window.Arcadia?.auth) return;
+        const session = Arcadia.auth.getSessao();
+        let page = location.pathname.split('/').pop();
+        const external = session.tipo_usuario === 'externo';
+        if (!session.tipo_usuario) {
+            host.replaceChildren();
+            for (const [href, label] of [
+                ['index.html', 'Início'],
+                ['notices.html', 'Avisos e notícias'],
+                ['projects.html', 'Projetos'],
+                ['calendar.html', 'Agenda'],
+                ['campus-map.html', 'Mapa do campus'],
+                [
+                    session.tipo_usuario === 'externo' ? 'community.html' : 'login.html',
+                    session.tipo_usuario === 'externo' ? 'Minha conta' : 'Entrar'
+                ]
+            ]) {
+                const item = document.createElement('a');
+                item.href = href;
+                item.textContent = label;
+                host.append(item);
+            }
+            Arcadia.navigation = {
+                mounted: true,
+                refresh(next) {
+                    for (const item of host.children) {
+                        if (
+                            item.href?.endsWith(next) ||
+                            (next === 'notice.html' && item.href?.endsWith('notices.html'))
+                        )
+                            item.setAttribute('aria-current', 'page');
+                        else item.removeAttribute('aria-current');
+                    }
+                }
+            };
+            return;
+        }
+        const paths = {
+            panel: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
+            news: 'M3 4h18v16H3z M6 7h5v5H6z M14 7h4 M14 11h4 M6 16h12',
+            home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
+            file: 'M6 3h8l4 4v14H6z M14 3v5h4 M9 12h6 M9 16h6',
+            tasks: 'M9 6h11 M9 12h11 M9 18h11 M3 6h2 M3 12h2 M3 18h2',
+            settings: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6',
+            map: 'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z M9 3v15 M15 6v15',
+            calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 10h16',
+            people: 'M16 21v-3a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v3 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M17 5a3 3 0 0 1 0 6 M17 14a4 4 0 0 1 4 4v3',
+            class: 'M8 21v-3a4 4 0 0 1 8 0v3 M12 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6 M2 18v-2a3 3 0 0 1 4-3 M22 18v-2a3 3 0 0 0-4-3 M5 3a3 3 0 1 0 0 6 M19 3a3 3 0 1 1 0 6',
+            projects: 'M3 7h7l2-3h9v17H3z',
+            shield: 'M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z'
+        };
+        const groups = external
+            ? [
+                  {
+                      name: 'Meu espaço',
+                      icon: 'panel',
+                      links: [
+                          ['community.html', 'Meu painel', 'panel'],
+                          ['tasks.html', 'Tarefas', 'tasks'],
+                          ['community-settings.html', 'Configurações', 'settings']
+                      ]
+                  },
+                  {
+                      name: 'Conteúdo',
+                      icon: 'file',
+                      links: [
+                          ['notices.html', 'Avisos e notícias', 'news'],
+                          ['calendar.html', 'Calendário', 'calendar'],
+                          ['projects.html', 'Projetos', 'projects'],
+                          ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  }
+              ]
+            : [
+                  {
+                      name: 'Meu espaço',
+                      icon: 'panel',
+                      links: [
+                          ['dashboard.html', 'Meu painel', 'panel'],
+                          ['tasks.html', 'Tarefas', 'tasks'],
+                          ['documents.html', 'Documentos', 'file'],
+                          ['settings.html', 'Configurações', 'settings']
+                      ]
+                  },
+                  {
+                      name: 'Conteúdo',
+                      icon: 'file',
+                      links: [
+                          ['notices.html', 'Avisos e notícias', 'news'],
+                          ['calendar.html', 'Calendário', 'calendar'],
+                          ['people.html', 'Pessoas', 'people'],
+                          ['projects.html', 'Projetos', 'projects'],
+                          ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  }
+              ];
+        if (!external)
+            groups.push({
+                name: 'Turmas',
+                icon: 'class',
+                links: [['classes.html', 'Minhas turmas', 'class']]
+            });
+        if (session.is_admin && !external)
+            groups.push({
+                name: 'Administração',
+                icon: 'shield',
+                links: [['admin.html', 'Gerenciar aplicativo', 'shield']]
+            });
+        function icon(path) {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            for (const [key, value] of Object.entries({
+                viewBox: '0 0 24 24',
+                width: '20',
+                height: '20',
+                fill: 'none',
+                stroke: 'currentColor',
+                'stroke-width': '1.7',
+                'aria-hidden': 'true'
+            }))
+                svg.setAttribute(key, value);
+            const line = document.createElementNS(svg.namespaceURI, 'path');
+            line.setAttribute('d', path);
+            svg.append(line);
+            return svg;
+        }
+        const barEnd = document.querySelector('.ar-nav-end');
+        if (barEnd) notificationPanel(barEnd, icon, external);
+        const bar = document.querySelector('.ar-nav');
+        if (bar && window.ResizeObserver) {
+            new window.ResizeObserver(() => {
+                document.documentElement.style.setProperty(
+                    '--portal-header-offset',
+                    Math.ceil(bar.getBoundingClientRect().height + 20) + 'px'
+                );
+            }).observe(bar);
+        }
+        const sidebar = document.createElement('aside');
+        sidebar.id = 'portalSidebar';
+        sidebar.className = 'ar-portal-sidebar';
+        const heading = document.createElement('div');
+        heading.className = 'ar-sidebar-head';
+        const title = document.createElement('span');
+        title.id = 'sidebarTitle';
+        title.textContent = 'Portal Arcádia';
+        heading.append(title);
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'ar-iconbtn ar-sidebar-close';
+        close.setAttribute('aria-label', 'Fechar navegação');
+        close.append(icon('M15 5l-7 7 7 7'));
+        heading.append(close);
+        sidebar.append(heading);
+        const nav = document.createElement('nav');
+        nav.setAttribute('aria-label', 'Navegação do portal');
+        sidebar.append(nav);
+        function link(href, label, glyph) {
+            const item = document.createElement('a');
+            item.href = href;
+            item.title = label;
+            item.setAttribute('aria-label', label);
+            item.append(icon(paths[glyph]));
+            const text = document.createElement('span');
+            text.textContent = label;
+            item.append(text);
+            return item;
+        }
+        if (!external) nav.append(link('index.html', 'Início', 'home'));
+        const sections = [];
+        const stateKey =
+            'arcadia-sidebar-state:' +
+            (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
+        let savedState = {};
+        try {
+            const value = JSON.parse(sessionStorage.getItem(stateKey) || '{}');
+            if (value && typeof value === 'object' && !Array.isArray(value)) savedState = value;
+        } catch {}
+        let currentLabel = page === 'notice.html' ? 'Publicação' : 'Portal';
+        groups.forEach((group) => {
+            const active =
+                group.links.some(([href]) => href === page) ||
+                (group.name === 'Conteúdo' && page === 'notice.html');
+            const section = document.createElement('details');
+            section.className = 'ar-sidebar-group';
+            section.dataset.active = String(active);
+            section.dataset.group = group.name;
+            section.dataset.expanded = String(active || savedState.groups?.[group.name] === true);
+            sections.push(section);
+            if (group.name === 'Administração') section.classList.add('ar-sidebar-admin');
+            const summary = document.createElement('summary');
+            summary.append(icon(paths[group.icon]));
+            const label = document.createElement('span');
+            label.textContent = group.name;
+            summary.append(label);
+            section.append(summary);
+            summary.addEventListener('click', () => {
+                if (!media.matches && collapsed) return;
+                window.setTimeout(() => {
+                    section.dataset.expanded = String(section.open);
+                    saveState();
+                }, 0);
+            });
+            const links = document.createElement('div');
+            links.className = 'ar-sidebar-links';
+            group.links.forEach(([href, name, glyph]) => {
+                const item = link(href, name, glyph);
+                if (href === 'admin.html') item.id = 'adminAccess';
+                if (href === page || (page === 'notice.html' && href === 'notices.html')) {
+                    item.setAttribute('aria-current', href === page ? 'page' : 'true');
+                    currentLabel = page === 'notice.html' ? 'Publicação' : name;
+                }
+                links.append(item);
+            });
+            section.append(links);
+            nav.append(section);
+        });
+        const current = document.createElement('span');
+        current.className = 'ar-nav-current';
+        current.textContent = currentLabel;
+        host.className = 'ar-grouped-nav';
+        host.removeAttribute('aria-label');
+        host.replaceChildren(current);
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'ar-iconbtn ar-sidebar-toggle';
+        toggle.setAttribute('aria-controls', 'portalSidebar');
+        toggle.append(icon('M9 5l7 7-7 7'));
+        document.body.append(toggle);
+        const backdrop = document.createElement('div');
+        backdrop.className = 'ar-sidebar-backdrop';
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.append(backdrop, sidebar);
+        document.body.classList.add('ar-has-sidebar');
+        const media = window.matchMedia('(max-width: 1100px)'),
+            app = document.querySelector('.ar-app');
+        let mobileOpen = false,
+            collapsed = false;
+        try {
+            collapsed = localStorage.getItem('arcadia-sidebar-collapsed') === '1';
+        } catch {}
+        function layout() {
+            const mobile = media.matches;
+            document.body.classList.toggle('ar-sidebar-collapsed', collapsed);
+            document.body.classList.toggle('ar-sidebar-open', mobile && mobileOpen);
+            sidebar.inert = mobile && !mobileOpen;
+            if (app) app.inert = mobile && mobileOpen;
+            sidebar.setAttribute('aria-hidden', String(mobile && !mobileOpen));
+            sidebar.setAttribute('role', mobile && mobileOpen ? 'dialog' : 'complementary');
+            sidebar.setAttribute('aria-labelledby', 'sidebarTitle');
+            if (mobile && mobileOpen) sidebar.setAttribute('aria-modal', 'true');
+            else sidebar.removeAttribute('aria-modal');
+            toggle.setAttribute('aria-expanded', String(mobile ? mobileOpen : !collapsed));
+            toggle.setAttribute(
+                'aria-label',
+                mobile
+                    ? mobileOpen
+                        ? 'Fechar navegação'
+                        : 'Abrir navegação'
+                    : collapsed
+                      ? 'Expandir navegação'
+                      : 'Recolher navegação'
+            );
+            toggle.title = toggle.getAttribute('aria-label');
+            toggle.hidden = mobile && mobileOpen;
+            sections.forEach((section) => {
+                section.open = (!mobile && collapsed) || section.dataset.expanded === 'true';
+            });
+        }
+        function saveState() {
+            try {
+                sessionStorage.setItem(
+                    stateKey,
+                    JSON.stringify({
+                        groups: Object.fromEntries(
+                            sections.map((section) => [
+                                section.dataset.group,
+                                section.dataset.expanded === 'true'
+                            ])
+                        ),
+                        scroll: sidebar.scrollTop
+                    })
+                );
+            } catch {}
+        }
+        sidebar.addEventListener('scroll', saveState, { passive: true });
+        window.addEventListener('pagehide', saveState);
+        function hide(restore = true) {
+            mobileOpen = false;
+            layout();
+            if (restore) toggle.focus();
+        }
+        toggle.addEventListener('click', () => {
+            if (media.matches) {
+                mobileOpen = !mobileOpen;
+                layout();
+                if (mobileOpen) close.focus();
+            } else {
+                collapsed = !collapsed;
+                try {
+                    localStorage.setItem('arcadia-sidebar-collapsed', collapsed ? '1' : '0');
+                } catch {}
+                layout();
+            }
+        });
+        close.addEventListener('click', () => hide());
+        backdrop.addEventListener('click', () => hide());
+        nav.addEventListener('click', (event) => {
+            if (media.matches && event.target.closest('a')) hide(false);
+        });
+        sidebar.addEventListener('keydown', (event) => {
+            if (!media.matches || !mobileOpen) return;
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                hide();
+            }
+            if (event.key === 'Tab') {
+                const items = [...sidebar.querySelectorAll('a,summary,button')].filter(
+                    (item) => item.getClientRects().length
+                );
+                const first = items[0],
+                    last = items[items.length - 1];
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+        media.addEventListener('change', () => {
+            mobileOpen = false;
+            layout();
+        });
+        layout();
+        sidebar.scrollTop =
+            Number.isFinite(savedState.scroll) && savedState.scroll >= 0 ? savedState.scroll : 0;
+        Arcadia.navigation = {
+            mounted: true,
+            refresh(next) {
+                page = next;
+                let label = 'Portal';
+                for (const item of nav.querySelectorAll('a[href]')) {
+                    const href = item.getAttribute('href') || item.href.split('/').pop();
+                    const active =
+                        href === next || (next === 'notice.html' && href === 'notices.html');
+                    if (active) {
+                        item.setAttribute('aria-current', href === next ? 'page' : 'true');
+                        label = next === 'notice.html' ? 'Publicação' : item.textContent.trim();
+                    } else item.removeAttribute('aria-current');
+                }
+                for (const section of sections) {
+                    const active = !!section.querySelector('[aria-current]');
+                    section.dataset.active = String(active);
+                    if (active) {
+                        section.dataset.expanded = 'true';
+                        section.open = true;
+                    }
+                }
+                current.textContent = label;
+                saveState();
+            }
+        };
+        document.documentElement?.setAttribute('data-portal-navigation', 'ready');
+    }
+    if (document.querySelector('.ar-nav .ar-navpill') && window.Arcadia?.auth) init();
+    else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();

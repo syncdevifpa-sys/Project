@@ -59,7 +59,7 @@ module.exports = function signupClient(
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/auth.js', 'utf8'), {
         window,
         localStorage: {
             getItem: (key) => storage.get(key) || null,

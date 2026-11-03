@@ -4,7 +4,7 @@ const { authenticateExternal } = require('./externalAuth.middleware');
 
 function authenticateSubject(req, res, next) {
     if (req.externalUser) return next();
-    // Decodificar escolhe somente o autenticador; assinatura e sessao sao verificadas nele.
+    /* Decodificar escolhe somente o autenticador; assinatura e sessao sao verificadas nele. */
     const claims = jwt.decode((req.headers.authorization || '').split(' ')[1] || '');
     return claims?.tipo_usuario === 'externo'
         ? authenticateExternal(req, res, next)

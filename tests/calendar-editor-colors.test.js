@@ -35,16 +35,16 @@ test('formulário manual atualiza amostra e borda ao trocar categoria e usa a co
         return node;
     }
     const A = {
-        calendarCategories: require('../front/js/calendar-categories'),
+        calendarCategories: require('../frontend/js/calendar-categories'),
         auth: { getSessao: () => ({ id_usuario: 1, tipo_usuario: 'docente' }) },
         noticeActions: { canDelete: () => true },
-        contentFields: require('../front/js/content-fields'),
+        contentFields: require('../frontend/js/content-fields'),
         calendarColors: {
             read: () => ({ evento: '#123456', registro_academico: '#aabbcc' }),
             labels: { evento: 'Eventos', registro_academico: 'Registros acadêmicos' }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/notice-editor.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-editor.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: make, body: make('body') }
     });
@@ -92,8 +92,8 @@ test('editar um evento antigo preserva o tipo específico se o grupo não foi al
         return node;
     };
     const A = {
-        calendarCategories: require('../front/js/calendar-categories'),
-        contentFields: require('../front/js/content-fields'),
+        calendarCategories: require('../frontend/js/calendar-categories'),
+        contentFields: require('../frontend/js/content-fields'),
         auth: { getSessao: () => ({ id_usuario: 4, tipo_usuario: 'servidor' }) },
         noticeActions: { canDelete: () => true },
         api: {
@@ -105,7 +105,7 @@ test('editar um evento antigo preserva o tipo específico se o grupo não foi al
         },
         showToast() {}
     };
-    vm.runInNewContext(fs.readFileSync('front/js/notice-editor.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-editor.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: make, body: make('body') }
     });

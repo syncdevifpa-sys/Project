@@ -77,7 +77,7 @@ function createReminders(db = database) {
             const who=identity(owner);
             if (who.external) await c.execute('UPDATE publico_externo SET email_lembretes=?,consentimento_lembretes_em=IF(?,UTC_TIMESTAMP(),NULL) WHERE id_externo=?', [body.email_lembretes,body.email_lembretes,who.id]);
             else await c.execute('INSERT INTO preferencias_notificacao(id_usuario,email_lembretes,consentido_em) VALUES (?,?,IF(?,UTC_TIMESTAMP(),NULL)) ON DUPLICATE KEY UPDATE email_lembretes=VALUES(email_lembretes),consentido_em=VALUES(consentido_em)', [who.id, body.email_lembretes, body.email_lembretes]);
-            // Retirar consentimento também desmarca lembretes; reativar exige nova escolha por item.
+            /* Retirar consentimento também desmarca lembretes; reativar exige nova escolha por item. */
             if (!body.email_lembretes) await c.execute('UPDATE lembretes SET enviar_email=0,versao=versao+1 WHERE '+who.column+'=? AND enviar_email=1', [who.id]);
             return { message: body.email_lembretes ? 'Notificações por e-mail autorizadas.' : 'Notificações por e-mail desativadas.' };
         });
@@ -129,7 +129,7 @@ function createReminders(db = database) {
             }
             if (mail && active && !Object.hasOwn(body, 'agendado_utc'))
                 fail(400, 'Informe uma data futura e o fuso ao agendar ou reagendar e-mail.');
-            // Uma edição de horário exige um instante UTC explícito, sem interpretar datas legadas.
+            /* Uma edição de horário exige um instante UTC explícito, sem interpretar datas legadas. */
             let when = current.agendado_utc;
             if (Object.hasOwn(body, 'agendado_utc') || key === null) when = schedule(body);
             if (mail && !when) fail(400, 'Revise a data e o fuso antes de ativar o envio.');
@@ -140,7 +140,7 @@ function createReminders(db = database) {
                 const [result] = await c.execute('INSERT INTO lembretes(id_tarefa,titulo,descricao,tipo,data_lembrete,agendado_utc,fuso_horario,enviar_email,ativo,'+who.column+',id_evento,id_evento_externo,contexto) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', [...values, who.id, merged.id_evento ? id(merged.id_evento) : null, merged.id_evento_externo ? id(merged.id_evento_externo) : null, source.kind]);
                 return result;
             }
-            // Remover ou editar invalida versões antigas já reservadas pelo processador.
+            /* Remover ou editar invalida versões antigas já reservadas pelo processador. */
             const [result] = await c.execute('UPDATE lembretes SET id_tarefa=?,titulo=?,descricao=?,tipo=?,data_lembrete=?,agendado_utc=?,fuso_horario=?,enviar_email=?,ativo=?,id_evento=?,id_evento_externo=?,contexto=?,versao=versao+1 WHERE id_lembrete=? AND '+who.column+'=?', [...values, merged.id_evento ? id(merged.id_evento) : null, merged.id_evento_externo ? id(merged.id_evento_externo) : null, source.kind, id(key), who.id]);
             return result;
         });

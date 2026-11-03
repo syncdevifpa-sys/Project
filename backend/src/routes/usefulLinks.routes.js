@@ -12,11 +12,11 @@ const {
 
 const { authenticateToken, authorizeAdmin } = require('../middlewares/auth.middleware');
 
-// Public routes
+/* Public routes */
 router.get('/', listUsefulLinks);
 router.get('/:id', getUsefulLinkById);
 
-// Administrator routes
+/* Administrator routes */
 router.post('/', authenticateToken, authorizeAdmin, createUsefulLink);
 
 router.put('/:id', authenticateToken, authorizeAdmin, updateUsefulLink);

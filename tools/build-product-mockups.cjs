@@ -1,9 +1,11 @@
-// Ilustrações SVG de interface, com tokens reais e dados inteiramente demonstrativos.
-// Não inicia servidor, consulta API/banco ou altera fotos de usuários.
+/*
+ * Ilustrações SVG de interface, com tokens reais e dados inteiramente demonstrativos.
+ * Não inicia servidor, consulta API/banco ou altera fotos de usuários.
+ */
 const fs = require('node:fs');
 const path = require('node:path');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
-const root = path.resolve(__dirname, '../front');
+const root = path.resolve(__dirname, '../frontend');
 const tokens = fs.readFileSync(path.join(root, 'tokens.css'), 'utf8').split("[data-theme='dark']")[0];
 const color = (name) => tokens.match(new RegExp('--' + name + ':\\s*(#[a-f0-9]+)', 'i'))[1];
 const escape = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));

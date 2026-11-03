@@ -82,7 +82,7 @@ async function listCourses() {
         }
     } catch (error) {
         if (!developmentFallbackEnabled()) throw error;
-        // Fallback quando o banco não estiver disponível
+        /* Fallback quando o banco não estiver disponível */
     }
 
     return developmentFallbackEnabled() ? getFallbackCourses() : [];
@@ -108,7 +108,7 @@ async function findCourseById(courseId) {
         }
     } catch (error) {
         if (!developmentFallbackEnabled()) throw error;
-        // Fallback quando o banco não estiver disponível
+        /* Fallback quando o banco não estiver disponível */
     }
 
     if (!developmentFallbackEnabled()) return null;

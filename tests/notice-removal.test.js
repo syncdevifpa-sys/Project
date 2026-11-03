@@ -78,7 +78,7 @@ function ui(confirm = true, fail = false) {
             expect: (p) => p
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/notice-actions.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-actions.js', 'utf8'), {
         window: {
             Arcadia: A,
             confirm: (text) => {
@@ -157,18 +157,18 @@ test('API-backed HTML keeps dynamic containers without sample records', () => {
         ['people', 'gridPessoas'],
         ['settings', 'listaSessoes']
     ]) {
-        const html = fs.readFileSync('front/' + name + '.html', 'utf8');
+        const html = fs.readFileSync('frontend/' + name + '.html', 'utf8');
         assert.ok(html.includes('id="' + container + '"'));
         assert.doesNotMatch(
             html,
             /Ana Ribeiro|ana\.ribeiro|Navegador \(Linux\)|Conectado ontem às 19h40/
         );
     }
-    const detail = fs.readFileSync('front/notice.html', 'utf8');
+    const detail = fs.readFileSync('frontend/notice.html', 'utf8');
     assert.doesNotMatch(detail, /PIBIC|20 horas semanais|Etapas da inscrição/);
     assert.match(detail, /class="ar-detail-actions"/);
-    const documents = fs.readFileSync('front/documents.html', 'utf8');
+    const documents = fs.readFileSync('frontend/documents.html', 'utf8');
     assert.match(documents, /sigaa\.ifpa\.edu\.br/);
     assert.ok(documents.includes('js/content-fields.js'));
-    assert.match(fs.readFileSync('front/js/content-fields.js', 'utf8'), /documents:/);
+    assert.match(fs.readFileSync('frontend/js/content-fields.js', 'utf8'), /documents:/);
 });

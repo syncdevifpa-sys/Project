@@ -2,7 +2,7 @@
 
 ## Escopo e evidências
 
-Inventário dos 23 HTMLs e 36 folhas CSS de `front/`. Os 59 arquivos passaram pelo
+Inventário dos 23 HTMLs e 36 folhas CSS de `frontend/`. Os 59 arquivos passaram pelo
 parser de HTML/CSS. A inspeção estrutural procurou IDs duplicados, imagens sem
 `alt`, recursos locais ausentes, controles sem rótulos e tags desbalanceadas.
 Após as correções, não foram encontrados esses problemas nos controles visíveis

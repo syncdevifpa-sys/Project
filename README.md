@@ -8,7 +8,7 @@ TypeScript foi iniciado em um utilitário delimitado das ferramentas, sem conver
 
 | Pasta | Conteúdo |
 | --- | --- |
-| `front/` | Páginas, estilos, scripts e imagens do portal |
+| `frontend/` | Páginas, estilos, scripts e imagens do portal |
 | `backend/src/` | Rotas, regras e persistência da API |
 | `backend/db/` | Migrações, diagnóstico, passos do Workbench e histórico SQL |
 | `docs/` | Guias atuais e documentos jurídicos; relatórios anteriores em `docs/history/` |
@@ -26,7 +26,7 @@ Comece pelo [índice da documentação](docs/README.md) ou pelo [guia do banco](
 4. Na raiz do projeto, execute `npm start`.
 5. Abra [a aplicação](http://localhost:3001) ou [o status da API](http://localhost:3001/api).
 
-O servidor entrega os arquivos de `front/` e as rotas `/api/*`. Para abrir o frontend em outra porta, configure `window.ARCADIA_API_BASE` antes de carregar `front/js/api.js`. Na porta padrão, também é possível usar Live Server com a API em `http://localhost:3001`.
+O servidor entrega os arquivos de `frontend/` e as rotas `/api/*`. Para abrir o frontend em outra porta, configure `window.ARCADIA_API_BASE` antes de carregar `frontend/js/api.js`. Na porta padrão, também é possível usar Live Server com a API em `http://localhost:3001`.
 
 Em produção, o endereço padrão da API é o próprio domínio HTTPS. Em localhost/127.0.0.1, outra porta de frontend continua usando a API na porta 3001. Para uma API separada ou uma porta local personalizada, defina `window.ARCADIA_API_BASE` antes de `api.js`; `ARCADIA_CONFIG.backendUrl` também aceita uma URL pública. Esses parâmetros são configuração pública do navegador, não variáveis secretas.
 
@@ -51,11 +51,11 @@ As páginas HTML usam nomes em inglês; os textos e rótulos da interface contin
 
 `index.html` e `login.html` mantêm os nomes. Não existem cópias das páginas antigas: redirects permanentes 308 preservam parâmetros de consulta no Express e na Vercel. `page-redirects.json` define o mapa usado pelo Express; o build verifica que `vercel.json` contém os mesmos redirects. O link de recuperação enviado por e-mail já aponta para `reset-password.html`. Live Server não executa os redirects do Express; nele, abra diretamente as páginas novas.
 
-A padronização também cobre assets e auxiliares: `front/illustrations/`, nomes ingleses dos SVGs, mockups `illustrations/product/notices.svg`, `illustrations/product/documents.svg`, `print-calendar.png` e `illustrations/product/projects.svg`, `backend/schema.sql` e `backend/test-database.js`. Os scripts, configurações, regras de arquivos ignorados e documentação usam esses caminhos. Os nomes antigos dos HTMLs aparecem somente no mapa/redirects, nos testes de compatibilidade e nesta tabela. Nomes de tabelas, campos do banco, rótulos da interface e contratos da API mantêm sua semântica existente.
+A padronização também cobre assets e auxiliares: `frontend/illustrations/`, nomes ingleses dos SVGs, mockups `illustrations/product/notices.svg`, `illustrations/product/documents.svg`, `print-calendar.png` e `illustrations/product/projects.svg`, `backend/schema.sql` e `backend/test-database.js`. Os scripts, configurações, regras de arquivos ignorados e documentação usam esses caminhos. Os nomes antigos dos HTMLs aparecem somente no mapa/redirects, nos testes de compatibilidade e nesta tabela. Nomes de tabelas, campos do banco, rótulos da interface e contratos da API mantêm sua semântica existente.
 
 Use inglês para novos nomes de arquivos e caminhos, mantendo comentários novos ou revisados em português. A interface do portal continua em português.
 
-Importe a raiz deste repositório (não `front/` nem `backend/`) como projeto Express. `vercel.json` define instalação com `npm ci` e build com `npm run build`; não configure Output Directory manualmente. A entrada `server.js` exporta o Express, mantendo todas as rotas `/api/*`. O build copia apenas `front/` para `public/`, que é entregue pela CDN; localmente `npm start` continua servindo `front/`. Não há fallback de SPA: as páginas mantêm suas URLs `.html`, `/` abre a página inicial e recursos inexistentes retornam 404.
+Importe a raiz deste repositório (não `frontend/` nem `backend/`) como projeto Express. `vercel.json` define instalação com `npm ci` e build com `npm run build`; não configure Output Directory manualmente. A entrada `server.js` exporta o Express, mantendo todas as rotas `/api/*`. O build copia apenas `frontend/` para `public/`, que é entregue pela CDN; localmente `npm start` continua servindo `frontend/`. Não há fallback de SPA: as páginas mantêm suas URLs `.html`, `/` abre a página inicial e recursos inexistentes retornam 404.
 
 O `package-lock.json` da raiz é a fonte de instalação para desenvolvimento, testes e deploy. O manifesto do backend é mantido para uso isolado legado e não é usado pela configuração da Vercel. Não envie `node_modules` ou `.env`; `.vercelignore` também exclui arquivos locais e SQL do pacote de deploy. Nenhuma migração roda durante instalação/build.
 
@@ -68,7 +68,7 @@ Configure nos ambientes Production e Preview apenas os nomes abaixo, com os valo
 | Recuperação por e-mail | `SMTP_USER`, `SMTP_PASS`, `SMTP_SERVICE`, `APP_URL`                     |
 | Execução               | `NODE_ENV`, `PORT` (porta para execução local)                          |
 
-`APP_URL` deve ser a origem HTTPS confiável do portal que receberá o link, configurada explicitamente para cada ambiente. Não é derivada de cabeçalhos enviados pelo cliente. HTTP só é aceito em localhost durante desenvolvimento. `SMTP_SERVICE` identifica um serviço suportado pelo Nodemailer; a implementação atual usa autenticação de serviço SMTP, não um endpoint HTTP de envio. Não use credenciais de produção em previews não confiáveis. Não coloque segredos em `front/auth-config.js`.
+`APP_URL` deve ser a origem HTTPS confiável do portal que receberá o link, configurada explicitamente para cada ambiente. Não é derivada de cabeçalhos enviados pelo cliente. HTTP só é aceito em localhost durante desenvolvimento. `SMTP_SERVICE` identifica um serviço suportado pelo Nodemailer; a implementação atual usa autenticação de serviço SMTP, não um endpoint HTTP de envio. Não use credenciais de produção em previews não confiáveis. Não coloque segredos em `frontend/auth-config.js`.
 
 Sem SMTP ou `APP_URL` válidos, a recuperação responde 503 antes de procurar a conta. Com o serviço configurado, contas existentes e inexistentes recebem a mesma mensagem genérica. Falhas de entrega são registradas sem token nem detalhes SMTP sensíveis, e o link não confirmado é invalidado; a resposta permanece genérica para evitar revelar contas. O link expira em 30 minutos, usa um fragmento que o navegador remove da barra de endereço e não fica em localStorage. A redefinição consome o token e altera a senha em uma transação, invalidando outros links e sessões da conta. Sessões externas agora também são armazenadas e verificadas; usuários externos com tokens emitidos antes desta atualização precisarão entrar novamente.
 
@@ -119,7 +119,7 @@ O projeto deve ser instalado e construído a partir da raiz do repositório. O `
 
 No painel do projeto, abra **Settings → Build and Deployment** e confira:
 
-- **Root Directory:** raiz do repositório, sem `backend` nem `front` (campo vazio ou `.` conforme a tela).
+- **Root Directory:** raiz do repositório, sem `backend` nem `frontend` (campo vazio ou `.` conforme a tela).
 - **Framework Preset:** Express; **Node.js Version:** 24.x.
 - **Install Command:** `npm ci`, sem `--prefix backend` ou `cd backend`.
 - **Build Command:** `npm run build`, sem prefixo ou mudança de diretório.
@@ -146,11 +146,11 @@ Nos arquivos-fonte, prefira formatação legível com a configuração de `.pret
 
 ## Integração
 
-- `front/js/api.js`: requisições autenticadas, erros e operações CRUD. Atualizações parciais usam `PUT`; aprovação e rejeição de projetos usam `PATCH`.
-- `front/js/auth.js`: cadastro, cursos carregados da API, login e logout.
-- `front/js/pages.js`: listagens e formulários, pessoas, painel inicial e detalhe do aviso.
-- `front/tasks.html` e `front/js/tasks.js`: tarefas pessoais.
-- `front/settings.html`: perfil, foto, preferências, senha e sessões.
+- `frontend/js/api.js`: requisições autenticadas, erros e operações CRUD. Atualizações parciais usam `PUT`; aprovação e rejeição de projetos usam `PATCH`.
+- `frontend/js/auth.js`: cadastro, cursos carregados da API, login e logout.
+- `frontend/js/pages.js`: listagens e formulários, pessoas, painel inicial e detalhe do aviso.
+- `frontend/tasks.html` e `frontend/js/tasks.js`: tarefas pessoais.
+- `frontend/settings.html`: perfil, foto, preferências, senha e sessões.
 - `backend/src/`: rotas, autorização, controllers e models.
 
 Documentos pessoais usam `GET /api/documents/my`; a listagem administrativa em `GET /api/documents` exige servidor. Avisos e eventos só podem ser criados por docentes ou servidores. O backend verifica as permissões.
@@ -167,7 +167,7 @@ Em **Avisos e notícias**, o autor institucional pode excluir sua publicação n
 
 Os contêineres alimentados pela API mantêm estados de carregamento/vazio/erro, sem cartões, sessões, contagens ou perfis de demonstração embutidos. Formulários, textos explicativos, ilustrações e links institucionais que não são substituídos pela API permanecem. A barra lateral usa SVGs distintos para cada destino, com nomes acessíveis, tooltip nativo e destaque do item atual, inclusive no trilho compacto.
 
-A administração utiliza os tokens, tipografia, superfícies e botões do portal, com estilos em `front/admin.css`. `front/portal-responsive.css` ajusta os cabeçalhos, perfil e formulários: tabela administrativa com rolagem local no tablet e cartões no celular. `front/scrollbars.css` suaviza as barras nativas nos temas claro/escuro e respeita o modo de cores forçadas do sistema. Todas as páginas HTML têm favicon `public/arcadia-logo-64.png`, copiado para o build.
+A administração utiliza os tokens, tipografia, superfícies e botões do portal, com estilos em `frontend/admin.css`. `frontend/portal-responsive.css` ajusta os cabeçalhos, perfil e formulários: tabela administrativa com rolagem local no tablet e cartões no celular. `frontend/scrollbars.css` suaviza as barras nativas nos temas claro/escuro e respeita o modo de cores forçadas do sistema. Todas as páginas HTML têm favicon `public/arcadia-logo-64.png`, copiado para o build.
 
 Em Configurações, contas de Servidor podem escolher um curso ativo cadastrado ou **Sem curso**. A alteração usa a mesma confirmação de salvar/descartar do perfil. O backend verifica o vínculo atual no banco, valida o curso e recusa mudanças de vínculo, administração ou situação por essa área. Cursos desativados já vinculados podem ser preservados quando o curso não é alterado; novas escolhas precisam estar ativas. Os demais vínculos mantêm o curso somente para leitura.
 

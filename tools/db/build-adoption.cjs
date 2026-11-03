@@ -1,4 +1,4 @@
-// Offline: valida uma base existente antes de registrar a consolidacao. Nao conecta a banco.
+/* Offline: valida uma base existente antes de registrar a consolidacao. Nao conecta a banco. */
 const fs = require('node:fs');
 const path = require('node:path');
 const { helpers, column, index, fk, triggerCheck, checksum } = require('../lib/migration-sql.cjs');
@@ -22,7 +22,7 @@ const output = [
         assert(`EXISTS(SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=${quote(table)} AND ENGINE='InnoDB' AND TABLE_TYPE='BASE TABLE')`, 'Tabela ausente/incompativel: ' + table)),
     ...columns.flatMap(col => [
         assert(`EXISTS(SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=${quote(col.table)} AND COLUMN_NAME=${quote(col.name)})`, 'Coluna ausente: ' + col.table + '.' + col.name),
-        // COLUMN_TYPE inclui UNSIGNED; alguns campos do manifesto guardam apenas o tipo-base.
+        /* COLUMN_TYPE inclui UNSIGNED; alguns campos do manifesto guardam apenas o tipo-base. */
         column({...col, type: /\bUNSIGNED\b/i.test(col.definition) && !/ unsigned$/i.test(col.type) ? col.type+' unsigned' : col.type}, false)
     ]),
     ...indexes.flatMap(idx => [

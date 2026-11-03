@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const { visible } = require('../front/js/task-filters');
+const { visible } = require('../frontend/js/task-filters');
 const rows = [
     {
         id_tarefa: 1,
@@ -95,7 +95,7 @@ test('controles de Tarefas atualizam quadro, tabela, lista e contagem pela mesma
             if (k === 'DOMContentLoaded') boot = fn;
         }
     };
-    const html = fs.readFileSync('front/tasks.html', 'utf8');
+    const html = fs.readFileSync('frontend/tasks.html', 'utf8');
     const script = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
         .map((m) => m[1])
         .find((s) => s.includes('var FILTRO_STATUS'));

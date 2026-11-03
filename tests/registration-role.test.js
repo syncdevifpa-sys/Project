@@ -78,7 +78,7 @@ function registration() {
         }
     };
     vm.runInNewContext(
-        fs.readFileSync(path.join(__dirname, '../front/js/auth.js'), 'utf8'),
+        fs.readFileSync(path.join(__dirname, '../frontend/js/auth.js'), 'utf8'),
         context
     );
     ready();
@@ -203,7 +203,7 @@ test('cadastro de todos os vínculos usa conta externa até aprovação, incluin
             }
         };
         vm.runInNewContext(
-            fs.readFileSync(path.join(__dirname, '../front/js/auth.js'), 'utf8'),
+            fs.readFileSync(path.join(__dirname, '../frontend/js/auth.js'), 'utf8'),
             context
         );
         ready();

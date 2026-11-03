@@ -21,14 +21,14 @@ async function requestRecovery(req, res) {
             });
         }
 
-        // Verifique a configuração antes de consultar a conta: a resposta não revela sua existência.
+        /* Verifique a configuração antes de consultar a conta: a resposta não revela sua existência. */
         if (!emailService.recoveryConfigured()) {
             return res.status(503).json({
                 error: 'A recuperação por e-mail está indisponível. Entre em contato com a secretaria.'
             });
         }
 
-        // A cota por endereço é aplicada inclusive a contas inexistentes.
+        /* A cota por endereço é aplicada inclusive a contas inexistentes. */
         await limits.requestRecovery(req, email);
         let user = await recoveryModel.findInstitutionalByEmail(email);
 
@@ -45,7 +45,7 @@ async function requestRecovery(req, res) {
             }
         }
 
-        // Não revela se o email existe ou não.
+        /* Não revela se o email existe ou não. */
         if (!user) {
             return res.json({
                 message:
@@ -56,7 +56,7 @@ async function requestRecovery(req, res) {
         try {
             await limits.delivery();
         } catch {
-            // Cota global ou proteção indisponível não revela a existência desta conta.
+            /* Cota global ou proteção indisponível não revela a existência desta conta. */
             return res.json({
                 message:
                     'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.'
@@ -78,7 +78,7 @@ async function requestRecovery(req, res) {
         try {
             await emailService.sendPasswordRecovery(user.email, recoveryToken);
         } catch {
-            // Invalide links cuja entrega não foi confirmada; não registre token nem erro SMTP bruto.
+            /* Invalide links cuja entrega não foi confirmada; não registre token nem erro SMTP bruto. */
             await recoveryModel.markAsUsed(recovery.insertId);
             console.error('Password recovery email delivery failed.');
         }

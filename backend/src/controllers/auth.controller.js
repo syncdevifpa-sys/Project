@@ -13,22 +13,22 @@ async function login(req, res) {
             });
         }
 
-        // 1. Buscar usuário
+        /* 1. Buscar usuário */
         const user = await authModel.findUserByEmail(email);
 
         if (!user) {
-            // A mesma tela de login atende contas externas, mantendo suas permissões mínimas.
+            /* A mesma tela de login atende contas externas, mantendo suas permissões mínimas. */
             return require('./externalUsers.controller').loginExternal(req, res);
         }
 
-        // 2. Verificar situação da conta
+        /* 2. Verificar situação da conta */
         if (user.situacao !== 'ativo') {
             return res.status(403).json({
                 error: 'Conta do usuário não está ativa.'
             });
         }
 
-        // 3. Verificar senha
+        /* 3. Verificar senha */
         const passwordValid = await authModel.comparePassword(senha, user.senha);
 
         if (!passwordValid) {
@@ -57,7 +57,7 @@ async function login(req, res) {
                 error: 'Confirme seu e-mail antes de entrar. Você pode reenviar o link na página de confirmação.',
                 emailVerificationRequired: true
             });
-        // 4. Gerar JWT
+        /* 4. Gerar JWT */
         const token = jwt.sign(
             {
                 id_usuario: user.id_usuario,
@@ -71,13 +71,13 @@ async function login(req, res) {
             }
         );
 
-        // 5. Gerar hash do JWT para armazenar no banco
+        /* 5. Gerar hash do JWT para armazenar no banco */
         const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-        // Mesma duração do JWT: 8 horas
+        /* Mesma duração do JWT: 8 horas */
         const expiration = new Date(Date.now() + 8 * 60 * 60 * 1000);
 
-        // 6. Registrar sessão
+        /* 6. Registrar sessão */
         const sessionResult = await sessionsModel.createSession({
             expectedEmail: user.email,
             expectedPasswordHash: user.senha,
@@ -92,7 +92,7 @@ async function login(req, res) {
 
         console.log('Sessão criada:', sessionResult.insertId);
 
-        // 7. Resposta
+        /* 7. Resposta */
         return res.json({
             message: 'Login realizado com sucesso.',
             token,

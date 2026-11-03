@@ -27,17 +27,12 @@ async function read(kind, id) {
     account(kind);
     const full = await current(db, kind, id);
     try {
-        const [rows] = await db.execute(
-            'SELECT nome_exibicao FROM conta_nomes WHERE tipo=? AND id_conta=?',
-            [kind, id]
-        );
         const [requests] = await db.execute(
             'SELECT id_pedido,nome_solicitado,estado,motivo,criado_em FROM conta_nome_pedidos WHERE tipo=? AND id_conta=? ORDER BY id_pedido DESC LIMIT 1',
             [kind, id]
         );
         return {
             nome: full,
-            nome_exibicao: rows[0]?.nome_exibicao || '',
             pedido: requests[0] || null,
             disponivel: true
         };
@@ -45,34 +40,11 @@ async function read(kind, id) {
         if (error.code === 'ER_NO_SUCH_TABLE')
             return {
                 nome: full,
-                nome_exibicao: '',
                 pedido: null,
                 disponivel: false
             };
         throw error;
     }
-}
-async function save(kind, id, body) {
-    account(kind);
-    if (!body || Object.keys(body).some((key) => key !== 'nome_exibicao'))
-        fail('Use a solicitação para alterar o nome completo.');
-    const display = name(body.nome_exibicao, true);
-    const c = await db.getConnection();
-    try {
-        await c.beginTransaction();
-        await current(c, kind, id, true);
-        await c.execute(
-            'INSERT INTO conta_nomes (tipo,id_conta,nome_exibicao) VALUES (?,?,?) ON DUPLICATE KEY UPDATE nome_exibicao=VALUES(nome_exibicao)',
-            [kind, id, display || null]
-        );
-        await c.commit();
-    } catch (error) {
-        await c.rollback();
-        throw error;
-    } finally {
-        c.release();
-    }
-    return read(kind, id);
 }
 async function request(kind, id, body) {
     if (!body || Object.keys(body).some((key) => key !== 'nome_solicitado'))
@@ -119,7 +91,7 @@ async function review(id, actor, body) {
     const c = await db.getConnection();
     try {
         await c.beginTransaction();
-        // Mesma ordem de bloqueio usada no envio: conta antes do pedido.
+        /* Mesma ordem de bloqueio usada no envio: conta antes do pedido. */
         const [lookup] = await c.execute(
             'SELECT tipo,id_conta FROM conta_nome_pedidos WHERE id_pedido=?',
             [id]
@@ -159,30 +131,9 @@ async function review(id, actor, body) {
         c.release();
     }
 }
+/* Pessoas usa sempre o nome completo do cadastro, sem apelido de exibição. */
 async function publicNames(people) {
-    try {
-        const [rows] = await db.execute(
-            "SELECT id_conta,nome_exibicao FROM conta_nomes WHERE tipo='users'"
-        );
-        const prefs = new Map(rows.map((row) => [Number(row.id_conta), row]));
-        return people.map((person) => {
-            const p = prefs.get(Number(person.id_usuario));
-            const display = p?.nome_exibicao || person.nome_social || person.nome;
-            return {
-                ...person,
-                nome_exibicao: p?.nome_exibicao || '',
-                ...(display !== person.nome ? { nome_completo: person.nome } : {})
-            };
-        });
-    } catch (e) {
-        if (e.code === 'ER_NO_SUCH_TABLE')
-            return people.map((person) =>
-                person.nome_social && person.nome_social !== person.nome
-                    ? { ...person, nome_completo: person.nome }
-                    : person
-            );
-        throw e;
-    }
+    return people;
 }
 function handlers(kind) {
     const wrap = (fn) => async (req, res) => {
@@ -201,7 +152,6 @@ function handlers(kind) {
     const id = (req) => (kind === 'users' ? req.user.id_usuario : req.externalUser.id_externo);
     return {
         get: wrap((req) => read(kind, id(req))),
-        put: wrap((req) => save(kind, id(req), req.body)),
         post: wrap((req) => request(kind, id(req), req.body))
     };
 }
@@ -214,8 +164,10 @@ async function remove(c, kind, id) {
         }
     }
 }
-// As tabelas de nomes são opcionais até a migração ser aplicada. Outros erros
-// precisam abortar a aprovação para não transferir apenas parte da identidade.
+/*
+ * As tabelas de nomes são opcionais até a migração ser aplicada. Outros erros
+ * precisam abortar a aprovação para não transferir apenas parte da identidade.
+ */
 async function transfer(c, external, user) {
     for (const table of ['conta_nomes', 'conta_nome_pedidos']) {
         try {
@@ -231,7 +183,6 @@ async function transfer(c, external, user) {
 module.exports = {
     name,
     read,
-    save,
     request,
     list,
     review,

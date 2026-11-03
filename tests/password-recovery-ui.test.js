@@ -30,7 +30,7 @@ function client(hash = '', blocked = false) {
             }
         };
     let resolve;
-    vm.runInNewContext(fs.readFileSync('front/js/password-recovery.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/password-recovery.js', 'utf8'), {
         URLSearchParams,
         TextEncoder,
         location: { hash, pathname: '/reset-password.html', search: '' },

@@ -132,7 +132,7 @@ test('todas as disciplinas autorizadas da turma compartilham a grade, inclusive 
             expect: (p) => p
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/classes.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/classes.js', 'utf8'), {
         window: { Arcadia: A, addEventListener() {} },
         document: {
             body,

@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const source = fs.readFileSync('front/js/home-view.js', 'utf8');
+const source = fs.readFileSync('frontend/js/home-view.js', 'utf8');
 
 test('início distingue visitante, sessão conectada, apresentação e saída em outra aba', () => {
     const storage = {};

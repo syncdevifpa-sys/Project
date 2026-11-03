@@ -1,4 +1,4 @@
-// Offline: divisao para Workbench; nao conecta a banco nem executa SQL.
+/* Offline: divisao para Workbench; nao conecta a banco nem executa SQL. */
 const fs=require('node:fs');
 const path=require('node:path');
 const {helpers,column,index,fk,triggerCheck,checksum}=require('../lib/migration-sql.cjs');

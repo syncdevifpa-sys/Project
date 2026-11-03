@@ -3,7 +3,7 @@ const { developmentFallbackEnabled } = require('./development-mode.service');
 const fs = require('fs');
 const path = require('path');
 
-// Hash bcrypt de 'senha123'
+/* Hash bcrypt de 'senha123' */
 const DEFAULT_PASSWORD_HASH = '$2b$10$DbB0EUw5VXWNa2m7IGY9FuqhS3dn/bJfc9vf.gQLvc7eFSMKf8Fx.';
 const DEV_DATA_FILE = path.join(__dirname, '..', '.dev-store.json');
 
@@ -161,14 +161,14 @@ let users = [...defaultUsers];
 let externalUsers = [...defaultExternalUsers];
 let notices = [...defaultNotices];
 
-// Carregar dados salvos em disco (se existirem)
+/* Carregar dados salvos em disco (se existirem) */
 function loadFromDisk() {
     try {
         if (developmentFallbackEnabled() && fs.existsSync(DEV_DATA_FILE)) {
             const raw = fs.readFileSync(DEV_DATA_FILE, 'utf8');
             const data = JSON.parse(raw);
             if (Array.isArray(data.users)) {
-                // Mesclar preservando novos usuários
+                /* Mesclar preservando novos usuários */
                 const map = new Map(defaultUsers.map(u => [u.id_usuario, u]));
                 data.users.forEach(u => map.set(u.id_usuario, u));
                 users = Array.from(map.values());

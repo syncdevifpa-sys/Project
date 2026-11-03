@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict'),
     vm = require('node:vm'),
     fs = require('node:fs');
-const code = fs.readFileSync('front/js/navigation.js', 'utf8');
+const code = fs.readFileSync('frontend/js/navigation.js', 'utf8');
 function fixture(page, session, mobile = false, saved = '0', sessionValues = new Map()) {
     const nodes = [],
         storage = new Map([['arcadia-sidebar-collapsed', saved]]);
@@ -90,7 +90,7 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         },
         Arcadia,
         document,
-        location: { pathname: '/front/' + page },
+        location: { pathname: '/frontend/' + page },
         localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v) }
     };
     vm.runInNewContext(code, context);
@@ -194,7 +194,7 @@ test('notice detail marks its parent and production pages do not embed fictional
     assert.equal(f.nodes.find((n) => n.attributes['aria-current'] === 'true').href, 'notices.html');
     for (const p of ['people', 'settings', 'projects', 'tasks'])
         assert.doesNotMatch(
-            fs.readFileSync('front/' + p + '.html', 'utf8'),
+            fs.readFileSync('frontend/' + p + '.html', 'utf8'),
             /Ana Ribeiro|ana\.ribeiro/i
         );
 });

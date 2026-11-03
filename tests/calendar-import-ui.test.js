@@ -83,8 +83,8 @@ function fixture(
         };
     }
     const A = {
-        calendarCategories: require('../front/js/calendar-categories'),
-        contentFields: require('../front/js/content-fields'),
+        calendarCategories: require('../frontend/js/calendar-categories'),
+        contentFields: require('../frontend/js/content-fields'),
         calendarColors: {
             read: () => ({
                 evento: '#176b9a',
@@ -108,7 +108,7 @@ function fixture(
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/calendar-import.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/calendar-import.js', 'utf8'), {
         window: { Arcadia: A },
         document: { body: make('body'), createElement: make },
         URL: { createObjectURL: () => 'blob:test', revokeObjectURL: () => revoked++ },
@@ -321,7 +321,7 @@ test('importação compartilha todas as categorias e muda o retorno visual sem a
     f.nodes.find((n) => n.name === 'metadataConfirmed').checked = true;
     await f.nodes.find((n) => n.tag === 'form').events.submit({ preventDefault() {} });
     const category = f.findLabel('Categoria');
-    const expected = require('../front/js/calendar-categories').options;
+    const expected = require('../frontend/js/calendar-categories').options;
     assert.deepEqual(category.children.map((n) => n.value).sort(), Object.keys(expected).sort());
     assert.equal(Object.keys(expected).length, 9);
     const feedback = f.nodes.find((n) => n.className === 'ar-calendar-category-feedback');

@@ -18,12 +18,12 @@ const {
 } = require('../middlewares/auth.middleware');
 
 const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
-// Visitantes e Comunidade externa recebem somente eventos explicitamente publicos.
+/* Visitantes e Comunidade externa recebem somente eventos explicitamente publicos. */
 router.get('/', optionalNoticeViewer, listEvents);
 router.get('/manage', authenticateToken, listManagedEvents);
 router.get('/:id', optionalNoticeViewer, getEventById);
 
-// Teacher and staff routes
+/* Rotas de professores e servidores */
 router.post('/', authenticateToken, createEvent);
 
 router.put('/visibility', authenticateToken, async (req, res) => {
@@ -38,7 +38,7 @@ router.put('/visibility', authenticateToken, async (req, res) => {
 
 router.put('/:id', authenticateToken, updateEvent);
 
-// Administrator route
+/* Administrator route */
 router.delete('/:id', authenticateToken, authorizeAdmin, deleteEvent);
 
 module.exports = router;

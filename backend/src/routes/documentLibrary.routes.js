@@ -31,7 +31,7 @@ for (const scope of ['items', 'reviews']) {
     router.get(
         `/${scope}/:id/preview`,
         action(async (q, s) => {
-            // Reutiliza a autorização do download, inclusive a verificação de admin.
+            /* Reutiliza a autorização do download, inclusive a verificação de admin. */
             const item =
                 scope === 'reviews'
                     ? await library.reviewDownload(q.user.id_usuario, q.params.id)

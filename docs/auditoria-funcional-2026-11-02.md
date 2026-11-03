@@ -1,6 +1,6 @@
 # Auditoria funcional — 02/11/2026
 
-Escopo: backend, validação, permissões, transações e persistência. Nenhum refinamento visual, configuração externa, envio real de e-mail ou operação no banco foi realizado. Alterações locais preexistentes em `front/notices.html`, `front/tasks.html` e exclusões de `.env.example` e de um anexo foram preservadas e não pertencem a esta entrega.
+Escopo: backend, validação, permissões, transações e persistência. Nenhum refinamento visual, configuração externa, envio real de e-mail ou operação no banco foi realizado. Alterações locais preexistentes em `frontend/notices.html`, `frontend/tasks.html` e exclusões de `.env.example` e de um anexo foram preservadas e não pertencem a esta entrega.
 
 ## Correções verificáveis
 

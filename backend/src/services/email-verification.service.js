@@ -119,7 +119,7 @@ async function deliver(ticket) {
                     error.status === 429 ? 'DELIVERY_QUOTA' : 'DELIVERY_LIMIT_STORAGE_UNAVAILABLE'
             });
         }
-        // Uma falha de envio não publica tokens nem bloqueia o reenvio posterior.
+        /* Uma falha de envio não publica tokens nem bloqueia o reenvio posterior. */
         await db
             .execute('UPDATE email_tokens SET usado_em = NOW() WHERE id_token_email = ?', [
                 ticket.id
@@ -182,7 +182,7 @@ async function loginStatus(kind, id, email) {
             status: verified ? 'confirmado' : state.regime === 'legado' ? 'legado' : 'pendente'
         };
     } catch (error) {
-        // Antes da migração, nenhuma conta antiga é promovida nem bloqueada silenciosamente.
+        /* Antes da migração, nenhuma conta antiga é promovida nem bloqueada silenciosamente. */
         if (
             (error.code === 'ER_NO_SUCH_TABLE' ||
                 (developmentFallbackEnabled() && (error.code === 'ECONNREFUSED' || error.fatal))) &&

@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="js/post-login-scroll.js"></script>
+    <script src="js/banner-preferences.js"></script>
+    <script src="js/banner-bootstrap.js"></script>
+    <script src="js/dialog-shell.js"></script>
+    <link rel="stylesheet" href="dialog-shell.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentos</title>
+    <link
+      rel="preload"
+      href="fonts/Onest-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <script src="js/portal-bootstrap.js"></script>
+
+    <!-- Inicialização do tema antes da exibição -->
+    <script>
+      (function () {
+        var THEME_KEY = 'arcadia-theme';
+        var root = document.documentElement;
+        var mode = 'light';
+        try {
+          mode = localStorage.getItem(THEME_KEY) || 'light';
+        } catch (e) {}
+        var dark =
+          mode === 'auto'
+            ? !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            : mode === 'dark';
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        root.setAttribute('data-theme-mode', mode);
+
+        try {
+          var accent = localStorage.getItem(THEME_KEY + '-accent') || 'lime';
+          root.setAttribute('data-accent', accent);
+        } catch (e) {}
+
+        try {
+          if (localStorage.getItem(THEME_KEY + '-text') === 'large')
+            root.setAttribute('data-text', 'large');
+          if (localStorage.getItem(THEME_KEY + '-motion') === 'reduced')
+            root.setAttribute('data-motion', 'reduced');
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="portal-responsive.css" />
+    <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
+    <link rel="stylesheet" href="scrollbars.css" />
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="notice-editor.css" />
+    <link rel="stylesheet" href="confirm-dialog.css" />
+    <link rel="stylesheet" href="brand-logo.css" />
+    <link rel="stylesheet" href="content-views.css" />
+    <link rel="stylesheet" href="site-footer.css?v=3" />
+    <link rel="stylesheet" href="privacy-notice.css" />
+    <link rel="stylesheet" href="document-library.css" />
+    <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="compact-filters.css" />
+    <link rel="stylesheet" href="connection-feedback.css" />
+  </head>
+  <body class="ar-filter-page">
+    <div class="ar-app">
+      <!-- Navegação superior -->
+      <header class="ar-nav">
+        <a class="ar-brand" href="index.html">
+          <img
+            src="assets/arcadia-emblem.png"
+            alt="Logo da Arcadia"
+            class="ar-brand-img"
+            width="34"
+            height="34"
+          />
+          <span>
+            <div class="ar-brand-name">Arcadia</div>
+            <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
+          </span>
+        </a>
+
+        <nav class="ar-navpill" aria-label="Seções do portal">
+          <a href="index.html">Início</a>
+          <a href="dashboard.html">Meu painel</a>
+          <a href="notices.html">Avisos e notícias</a>
+          <a href="tasks.html">Tarefas</a>
+          <a href="documents.html" aria-current="page">Documentos<sup class="ar-sup">(0)</sup></a>
+          <a href="calendar.html">Calendário</a>
+          <span class="ar-sep" aria-hidden="true"></span>
+          <a href="people.html">Pessoas</a>
+          <a href="projects.html">Projetos</a>
+        </nav>
+
+        <div class="ar-nav-end">
+          <button
+            type="button"
+            class="ar-iconbtn"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            data-search-trigger
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
+          </button>
+
+          <a
+            class="ar-iconbtn"
+            href="settings.html"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M14 17H5"></path>
+              <path d="M19 7h-9"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </a>
+
+          <a class="ar-user" href="settings.html">
+            <span
+              class="ar-avatar ar-avatar--cyan"
+              style="width: 34px; height: 34px; font-size: 13px"
+              >ST</span
+            >
+            <div>
+              <div class="ar-user-name">Minha conta</div>
+              <div class="ar-user-role"></div>
+            </div>
+          </a>
+
+          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out>
+            Sair
+          </button>
+        </div>
+      </header>
+
+      <!-- Banner compacto da página em rosa -->
+      <section class="ar-hero ar-hero--pink ar-hero--compact" data-initial-banner-slot="page">
+        <svg
+          class="ar-hero-art"
+          viewBox="0 0 1000 220"
+          preserveAspectRatio="xMaxYMax meet"
+          aria-hidden="true"
+        >
+          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+          <rect
+            class="s"
+            x="770"
+            y="116"
+            width="180"
+            height="52"
+            rx="26"
+            opacity="0.75"
+            transform="rotate(-16 860 142)"
+          ></rect>
+          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+          <circle class="d" cx="752" cy="133" r="5"></circle>
+          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+        </svg>
+        <h1 class="ar-hero-title">
+          Documentos<sup class="ar-library-hero-count" id="libraryHeroCount">(0)</sup>
+        </h1>
+        <div class="ar-hero-side">
+          <p class="ar-hero-desc">
+            Sua biblioteca pessoal de arquivos e links, solicitações acadêmicas e recursos do
+            campus.
+          </p>
+          <div class="ar-hero-actions">
+            <button type="button" class="ar-btn" data-library-folder>Adicionar pasta</button
+            ><button type="button" class="ar-btn ar-btn--primary" data-library-document>
+              Adicionar documento
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="ar-library" id="documentLibrary" aria-labelledby="libraryTitle">
+        <div class="ar-library-head">
+          <div>
+            <h2 id="libraryTitle">Biblioteca de estudo</h2>
+            <p data-library-description>Documentos e apostilas organizados por assuntos.</p>
+          </div>
+          <nav class="ar-library-tabs" aria-label="Áreas de documentos">
+            <button type="button" class="ar-btn" data-library-mode="mine" aria-pressed="true">
+              Meus documentos</button
+            ><button type="button" class="ar-btn" data-library-mode="public" aria-pressed="false">
+              Materiais públicos</button
+            ><button
+              type="button"
+              class="ar-btn"
+              data-library-mode="review"
+              data-library-review
+              hidden
+            >
+              Revisão de publicação
+            </button>
+          </nav>
+        </div>
+        <div class="ar-library-filters">
+          <label class="ar-field"
+            >Buscar material<input
+              type="search"
+              maxlength="150"
+              data-library-search
+              placeholder="Título, assunto, autoria ou descrição"
+          /></label>
+          <details class="ar-compact-filters">
+            <summary>Filtros</summary>
+            <div class="ar-compact-filter-body">
+              <label class="ar-field"
+                >Formato<select data-library-format>
+                  <option value="all">Todos os formatos</option>
+                  <option value="pdf">PDF</option>
+                  <option value="docx">DOCX</option>
+                  <option value="image">Imagens</option>
+                  <option value="link">Links</option>
+                </select></label
+              >
+            </div>
+          </details>
+        </div>
+        <div class="ar-library-views" role="group" aria-label="Visualização da biblioteca">
+          <button class="ar-btn" type="button" data-library-view="board" aria-pressed="true">
+            Quadro
+          </button>
+          <button class="ar-btn" type="button" data-library-view="table" aria-pressed="false">
+            Tabela
+          </button>
+          <button class="ar-btn" type="button" data-library-view="list" aria-pressed="false">
+            Lista
+          </button>
+        </div>
+        <p class="ar-library-status" role="status" data-library-status>Carregando biblioteca...</p>
+        <div class="ar-library-layout">
+          <nav aria-label="Assuntos e pastas da biblioteca" data-library-folders></nav>
+          <div>
+            <div class="ar-library-location" data-library-location></div>
+            <div class="ar-library-items" data-library-items></div>
+          </div>
+        </div>
+        <p class="ar-library-help">
+          PDF, DOCX, PNG e JPEG: até 2 MB por arquivo e 20 MB por pessoa. As capas dos PDFs mostram
+          a primeira página; DOCX tem prévia de texto aproximada, sem reproduzir a paginação do
+          Word. Os links não ocupam esse espaço. Limite de 500 documentos e 100 pastas. O
+          compartilhamento no site de destino de um link depende desse serviço.
+        </p>
+      </section>
+      <details class="ar-library-requests">
+        <summary>Solicitações acadêmicas e protocolos</summary>
+        <div class="ar-library-request-head">
+          <h2 class="ar-library-request-title">Minhas solicitações</h2>
+          <button type="button" class="ar-btn ar-btn--primary" id="btnNovoDoc">
+            <span>Nova solicitação</span>
+            <svg
+              class="ar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+        <!-- Filtros por situação -->
+        <details class="ar-compact-filters">
+          <summary>Filtrar solicitações</summary>
+          <div class="ar-compact-filter-body">
+            <div class="ar-chipbar" role="group" aria-label="Filtrar situação dos documentos">
+              <button type="button" class="ar-chip" aria-pressed="true" data-filter-key="All">
+                Todos<sup class="ar-sup">(0)</sup>
+              </button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Ready">
+                Pronto<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-filter-key="In review"
+              >
+                Em análise<sup class="ar-sup">(0)</sup>
+              </button>
+              <button
+                type="button"
+                class="ar-chip"
+                aria-pressed="false"
+                data-filter-key="Requested"
+              >
+                Solicitado<sup class="ar-sup">(0)</sup>
+              </button>
+              <button type="button" class="ar-chip" aria-pressed="false" data-filter-key="Pending">
+                Pendente<sup class="ar-sup">(0)</sup>
+              </button>
+            </div>
+          </div>
+        </details>
+
+        <!-- Quadro de documentos -->
+        <div class="ar-card-grid"><p role="status">Carregando solicitações...</p></div>
+      </details>
+      <!-- Painel de sistemas acadêmicos -->
+      <h2 class="ar-h2">Sistemas e portais acadêmicos</h2>
+      <div class="ar-grid-2">
+        <section class="ar-panel">
+          <div class="ar-panel-head">
+            <h3 class="ar-panel-label" style="margin: 0">Acadêmico</h3>
+          </div>
+          <div class="ar-panel-body">
+            <a
+              class="ar-row ar-row--nav"
+              href="https://sigaa.ifpa.edu.br"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="ar-row-main">
+                <div class="ar-row-title">
+                  SIGAA · Sistema Integrado de Gestão de Atividades Acadêmicas
+                </div>
+                <div class="ar-row-meta">Notas, frequência e turmas virtuais</div>
+              </span>
+              <span class="ar-row-chev">
+                <svg
+                  class="ar-icon"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 7h10v10"></path>
+                  <path d="M7 17 17 7"></path>
+                </svg>
+              </span>
+            </a>
+            <a
+              class="ar-row ar-row--nav"
+              href="https://biblioteca.ifpa.edu.br"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="ar-row-main">
+                <div class="ar-row-title">Biblioteca virtual do IFPA</div>
+                <div class="ar-row-meta">Livros digitais, periódicos e artigos acadêmicos</div>
+              </span>
+              <span class="ar-row-chev">
+                <svg
+                  class="ar-icon"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 7h10v10"></path>
+                  <path d="M7 17 17 7"></path>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </section>
+
+        <section class="ar-panel">
+          <div class="ar-panel-head">
+            <h3 class="ar-panel-label" style="margin: 0">Regulamentos e ouvidoria</h3>
+          </div>
+          <div class="ar-panel-body">
+            <a
+              class="ar-row ar-row--nav"
+              href="https://belem.ifpa.edu.br/documentos-normativos"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="ar-row-main">
+                <div class="ar-row-title">Regulamento Didático-Pedagógico (RDP)</div>
+                <div class="ar-row-meta">Normas acadêmicas, avaliação e afastamentos</div>
+              </span>
+              <span class="ar-row-chev">
+                <svg
+                  class="ar-icon"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 7h10v10"></path>
+                  <path d="M7 17 17 7"></path>
+                </svg>
+              </span>
+            </a>
+            <a
+              class="ar-row ar-row--nav"
+              href="https://falabr.cgu.gov.br"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="ar-row-main">
+                <div class="ar-row-title">Ouvidoria do IFPA</div>
+                <div class="ar-row-meta">Portal oficial Fala.BR para dúvidas e sugestões</div>
+              </span>
+              <span class="ar-row-chev">
+                <svg
+                  class="ar-icon"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 7h10v10"></path>
+                  <path d="M7 17 17 7"></path>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <!-- Diálogo para nova solicitação -->
+    </div>
+
+    <script src="js/person-name.js"></script>
+    <script src="js/connection-feedback.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/portal.js"></script>
+    <script src="js/compact-filters.js"></script>
+    <script src="js/content-fields.js"></script>
+    <script src="js/confirm-dialog.js"></script>
+    <script src="js/notice-actions.js"></script>
+    <script src="js/notice-editor.js"></script>
+    <script src="js/notice-text.js"></script>
+    <script src="js/content-views.js"></script>
+    <script src="js/external-community.js"></script>
+    <script src="js/pages.js"></script>
+    <script src="js/document-library.js"></script>
+    <script src="js/navigation.js"></script>
+
+    <footer class="ar-site-footer" aria-label="Contato e informações legais">
+      <span>Arcádia · Portal acadêmico</span>
+      <nav aria-label="Contato e documentos">
+        <a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a>
+        <a href="privacy.html">Política de Privacidade</a>
+        <a href="terms.html">Termos de Uso</a>
+        <a href="cookies.html">Política de Cookies</a>
+      </nav>
+    </footer>
+    <script src="js/privacy-notice.js"></script>
+    <script src="js/class-appearance.js"></script>
+  </body>
+</html>

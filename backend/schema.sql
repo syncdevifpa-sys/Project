@@ -899,12 +899,6 @@ CREATE TABLE cadastro_auditoria (
 ) ENGINE=InnoDB;
 
 -- Executar separadamente após revisão e backup. Não modifica nomes existentes.
-CREATE TABLE conta_nomes (
-  tipo ENUM('users','external') NOT NULL,
-  id_conta INT NOT NULL,
-  nome_exibicao VARCHAR(100) NULL,
-  PRIMARY KEY (tipo, id_conta)
-);
 CREATE TABLE conta_nome_pedidos (
   id_pedido INT AUTO_INCREMENT PRIMARY KEY,
   tipo ENUM('users','external') NOT NULL,

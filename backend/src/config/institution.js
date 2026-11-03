@@ -1,4 +1,4 @@
-// Identifica somente o domínio; não comprova posse do e-mail nem cargo no campus.
+/* Identifica somente o domínio; não comprova posse do e-mail nem cargo no campus. */
 function institutionalDomain() {
     return (process.env.INSTITUTIONAL_EMAIL_DOMAIN || 'ifpa.edu.br').trim().toLowerCase();
 }

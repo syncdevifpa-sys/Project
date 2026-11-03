@@ -40,13 +40,13 @@ function fixture() {
         return node;
     };
     const A = {
-        contentFields: require('../front/js/content-fields'),
+        contentFields: require('../frontend/js/content-fields'),
         contentEditor: {
             canEdit: (_kind, event) => !event.automatico && event.id_usuario === 4,
             open: (...args) => calls.push(args)
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/calendar-event-editor.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/calendar-event-editor.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: make, body: make('body') }
     });

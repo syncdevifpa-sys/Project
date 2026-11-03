@@ -22,7 +22,7 @@ test('etapas usam regime e quantidade de cada curso sem inferir semestre de ofer
     const A = {},
         course = new Select(),
         stage = new Select();
-    vm.runInNewContext(fs.readFileSync('front/js/course-stages.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/course-stages.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: () => ({}) }
     });

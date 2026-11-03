@@ -5,7 +5,7 @@ async function publicProjects() {
     catch(error) { if(error.code==='ER_BAD_FIELD_ERROR') return [[]]; throw error; }
 }
 
-// Public projections deliberately exclude account and registration information.
+/* As projeções públicas excluem dados de conta e inscrição. */
 router.get('/', async (req, res, next) => {
     try {
         const coverColumn = (await require('../services/notice-schema.service').hasNoticeCover())

@@ -1,4 +1,4 @@
-// Inclusão explícita apenas em conexão local. Sem UPDATE, DELETE ou troca de IDs.
+/* Inclusão explícita apenas em conexão local. Sem UPDATE, DELETE ou troca de IDs. */
 const fs = require('node:fs'),
     path = require('node:path'),
     dotenv = require('dotenv'),

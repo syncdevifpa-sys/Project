@@ -60,7 +60,7 @@ function fixture({
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/profile-sharing.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/profile-sharing.js', 'utf8'), {
         window: { Arcadia: A },
         document: { readyState: 'complete', getElementById: () => root, createElement: make }
     });
@@ -146,13 +146,15 @@ test('card usa contatos autorizados como texto e links seguros, sem buscar foto 
         return node;
     }
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/people-cards.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/people-cards.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: make }
     });
     A.personCard(
         {
             nome: 'Ana Silva',
+            nome_exibicao: 'Apelido antigo',
+            nome_social: 'Outro nome',
             contato_email: 'public@test.test',
             contato_handle: '<img src=x onerror=alert(1)>',
             contato_telefone: '+5591999999999'
@@ -161,6 +163,8 @@ test('card usa contatos autorizados como texto e links seguros, sem buscar foto 
     );
     assert.equal(nodes.filter((node) => node.tag === 'img').length, 0);
     assert.ok(nodes.some((node) => node.textContent === 'AS'));
+    assert.ok(nodes.some((node) => node.tag === 'h3' && node.textContent === 'Ana Silva'));
+    assert.ok(!nodes.some((node) => node.textContent === 'Apelido antigo'));
     assert.ok(
         nodes.some(
             (node) => node.tag === 'span' && node.textContent === '<img src=x onerror=alert(1)>'

@@ -47,7 +47,7 @@ test('link de lembretes abre painel existente e move foco sem duplicar ou autori
                 expect: (p) => p
             }
         };
-    vm.runInNewContext(fs.readFileSync('front/js/task-reminders.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/task-reminders.js', 'utf8'), {
         window: { Arcadia: A, addEventListener: (k, fn) => (listeners[k] = fn) },
         location: { hash: '#taskReminders' },
         document: {

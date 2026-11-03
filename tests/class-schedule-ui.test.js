@@ -81,10 +81,10 @@ function fixture() {
         },
         confirmAction: async () => true
     };
-    vm.runInNewContext(fs.readFileSync('front/js/campus-timetable.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/campus-timetable.js', 'utf8'), {
         window: { Arcadia: A }
     });
-    vm.runInNewContext(fs.readFileSync('front/js/class-schedule.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/class-schedule.js', 'utf8'), {
         window: { Arcadia: A },
         document: {
             body,

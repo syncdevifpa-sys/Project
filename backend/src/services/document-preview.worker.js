@@ -7,7 +7,7 @@ async function renderPreview(buffer, filename) {
     if (ext === 'docx') {
         const text = await readDocx(buffer);
         GlobalFonts.registerFromPath(
-            require.resolve('../../../front/fonts/Onest-Variable-latin.woff2'),
+            require.resolve('../../../frontend/fonts/Onest-Variable-latin.woff2'),
             'ArcadiaPreview'
         );
         const canvas = createCanvas(420, 594),
@@ -29,7 +29,7 @@ async function renderPreview(buffer, filename) {
                     line = '';
                 }
                 if (y > 536) break;
-                // fillText com maxWidth mantém palavras muito longas dentro da folha.
+                /* fillText com maxWidth mantém palavras muito longas dentro da folha. */
                 line += word + ' ';
             }
             if (y > 536) break;

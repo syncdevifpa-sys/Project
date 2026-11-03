@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ==============================
-// Routes
+/* Rotas da aplicação */
 // ==============================
 
 const noticesRoutes = require('./src/routes/notices.routes');
@@ -31,7 +31,7 @@ const sessionsRoutes = require('./src/routes/sessions.routes');
 const passwordRecoveryRoutes = require('./src/routes/passwordRecovery.routes');
 
 // ==============================
-// CORS
+/* CORS */
 // ==============================
 
 app.use((req, res, next) => {
@@ -52,12 +52,12 @@ app.use((req, res, next) => {
 });
 
 // ==============================
-// JSON
+/* JSON */
 // ==============================
 
 app.use(express.json({ limit: '2mb' }));
 app.use('/api', require('./src/middlewares/subject.middleware').externalScope);
-// Respostas autenticadas e de autenticação nunca devem persistir no cache HTTP.
+/* Respostas autenticadas e de autenticação nunca devem persistir no cache HTTP. */
 app.use('/api', (req, res, next) => {
     if (req.headers.authorization || /^\/(auth|external)(\/|$)/.test(req.path))
         res.set('Cache-Control', 'private, no-store');
@@ -65,7 +65,7 @@ app.use('/api', (req, res, next) => {
 });
 
 // ==============================
-// Main API route
+/* Main API route */
 // ==============================
 
 app.get('/api', (req, res) => {
@@ -75,7 +75,7 @@ app.get('/api', (req, res) => {
 });
 
 // ==============================
-// Application routes
+/* Rotas da aplicação */
 // ==============================
 
 app.use('/api/notices', noticesRoutes);
@@ -103,7 +103,7 @@ app.use('/api/email-verification', require('./src/routes/emailVerification.route
 app.use('/api/admin', require('./src/routes/admin.routes'));
 app.use('/api/upload', require('./src/routes/upload.routes'));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-// URLs antigas continuam válidas sem manter cópias das páginas.
+/* URLs antigas continuam válidas sem manter cópias das páginas. */
 const pageRedirects = require('../page-redirects.json');
 for (const [oldPage, newPage] of Object.entries(pageRedirects)) {
     app.get('/' + oldPage, (req, res) => {
@@ -115,11 +115,11 @@ if (process.env.VERCEL || process.env.NODE_ENV === 'production')
         ['/classes-preview.html', '/classes-preview.css', '/js/classes-preview.js'],
         (_req, res) => res.sendStatus(404)
     );
-app.use(express.static(path.join(__dirname, '../front')));
+app.use(express.static(path.join(__dirname, '../frontend')));
 console.log('Application routes configured.');
 
 // ==============================
-// 404
+/* 404 */
 // ==============================
 
 app.use((req, res) => {
@@ -129,7 +129,7 @@ app.use((req, res) => {
 });
 
 // ==============================
-// Start server
+/* Inicialização do servidor */
 // ==============================
 
 app.use((error, req, res, next) => {

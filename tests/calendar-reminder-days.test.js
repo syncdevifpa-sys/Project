@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const time = require('../front/js/reminder-time');
+const time = require('../frontend/js/reminder-time');
 
 test('dia do lembrete usa instante e fuso do usuário, sem usar intervalo do evento', () => {
     const row = {
@@ -114,7 +114,7 @@ test('lista diária reutiliza ações, atualiza exclusão e remove dados quando 
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/task-reminders.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/task-reminders.js', 'utf8'), {
         window: {
             Arcadia: A,
             addEventListener: (type, fn) => (listeners[type] = fn),
@@ -157,7 +157,7 @@ test('lista diária reutiliza ações, atualiza exclusão e remove dados quando 
 });
 
 test('seção diária fica entre eventos e horários sem duplicar painel ou formulário', () => {
-    const html = fs.readFileSync('front/calendar.html', 'utf8');
+    const html = fs.readFileSync('frontend/calendar.html', 'utf8');
     assert.equal((html.match(/id="calendarDayReminders"/g) || []).length, 1);
     assert.ok(html.indexOf('ar-panel-body') < html.indexOf('id="calendarDayReminders"'));
     assert.ok(html.indexOf('id="calendarDayReminders"') < html.indexOf('data-class-weekly-agenda'));

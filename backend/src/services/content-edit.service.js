@@ -1,6 +1,6 @@
 /* Validação compartilhada e edição transacional com verificação do autor atual. */
 const db = require('../config/database');
-const definitions = require('../../../front/js/content-fields');
+const definitions = require('../../../frontend/js/content-fields');
 const tables = {
     tasks: 'tarefas',
     documents: 'documentos',

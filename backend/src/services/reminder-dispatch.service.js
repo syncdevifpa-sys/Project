@@ -1,7 +1,7 @@
 const database = require('../config/database');
 const email = require('./email.service');
 const { authorizeContext,context }=require('./reminder-context.service');
-// Reserva e fase SMTP persistidas: somente falhas comprovadamente anteriores ao SMTP podem repetir.
+/* Reserva e fase SMTP persistidas: somente falhas comprovadamente anteriores ao SMTP podem repetir. */
 function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),budget=45000}={}) {
     async function run() {
         if(process.env.REMINDER_EMAIL_ENABLED!=='true' || !mail.recoveryConfigured())
@@ -15,7 +15,7 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
             ORDER BY l.agendado_utc,l.id_lembrete LIMIT 20`);
         const result={sent:0,failed:0,cancelled:0,deferred:0};
         for(let i=0;i<due.length;i++) {
-            // Reservar margem para o limite absoluto de 15s do SMTP e finalização.
+            /* Reservar margem para o limite absoluto de 15s do SMTP e finalização. */
             if(clock()-started>budget-17000) { result.deferred=due.length-i;break; }
             const item=due[i],keys=[item.id_lembrete,item.versao];
             let [claim]=await db.execute('INSERT IGNORE INTO lembrete_envios(id_lembrete,versao) SELECT id_lembrete,versao FROM lembretes WHERE id_lembrete=? AND versao=?',keys);
@@ -50,7 +50,7 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
                     await c.commit();result.cancelled++;continue;
                 }
                 if(clock()-started>budget-17000) { budgetDeferred=true;throw new Error('BUDGET_DEFERRED'); }
-                // Fora da transação de leitura: a fase anterior ao SMTP precisa sobreviver a rollback/queda.
+                /* Fora da transação de leitura: a fase anterior ao SMTP precisa sobreviver a rollback/queda. */
                 const [phase]=await db.execute("UPDATE lembrete_envios SET estado='enviando' WHERE id_lembrete=? AND versao=? AND estado='reservado'",keys);
                 if(!phase.affectedRows) throw new Error('RESERVATION_LOST');
                 attempted=true;
@@ -61,7 +61,7 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
             } catch {
                 try { await c?.rollback(); } catch {}
                 if(attempted) {
-                    // SMTP/commit incerto nunca recebe repetição automática.
+                    /* SMTP/commit incerto nunca recebe repetição automática. */
                     await db.execute("UPDATE lembrete_envios SET estado='falhou',finalizado_em=UTC_TIMESTAMP() WHERE id_lembrete=? AND versao=?",keys);
                 } else {
                     await db.execute("UPDATE lembrete_envios SET estado=IF(tentativas<3,'aguardando','falhou'),proxima_tentativa_utc=IF(tentativas<3,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 15 MINUTE),NULL),finalizado_em=IF(tentativas<3,NULL,UTC_TIMESTAMP()) WHERE id_lembrete=? AND versao=?",keys);

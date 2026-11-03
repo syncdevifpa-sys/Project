@@ -1,4 +1,4 @@
-// Executado somente dentro da transação de aprovação e com as duas identidades travadas.
+/* Executado somente dentro da transação de aprovação e com as duas identidades travadas. */
 async function transfer(c, external, user) {
     await require('./account-names.service').transfer(c, external, user);
     await c.execute(
@@ -9,7 +9,7 @@ async function transfer(c, external, user) {
         'INSERT INTO projeto_inscricoes(id_projeto,id_usuario,status,criado_em) SELECT id_projeto,?,status,criado_em FROM projeto_inscricoes_externas WHERE id_externo=?',
         [user, external]
     );
-    // A inscrição muda de namespace, mantendo status e data e sem dobrar a contagem de vagas.
+    /* A inscrição muda de namespace, mantendo status e data e sem dobrar a contagem de vagas. */
     await c.execute('DELETE FROM projeto_inscricoes_externas WHERE id_externo=?', [external]);
     const [events] = await c.execute(
         'SELECT * FROM agenda_externa WHERE id_externo=? ORDER BY id_evento FOR UPDATE',

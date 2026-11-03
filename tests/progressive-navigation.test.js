@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { eligible, createNavigator } = require('../front/js/progressive-navigation');
+const { eligible, createNavigator } = require('../frontend/js/progressive-navigation');
 const current = new URL('https://portal.example/campus-map.html');
 function anchor(href, attributes = {}) {
     return {

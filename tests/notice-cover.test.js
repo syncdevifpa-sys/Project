@@ -5,14 +5,14 @@ const fs = require('node:fs'),
 const { validateNotice } = require('../backend/src/services/notice-edit.service');
 const png =
     'data:image/png;base64,' +
-    fs.readFileSync('front/public/arcadia-logo-64.png').toString('base64');
+    fs.readFileSync('frontend/public/arcadia-logo-64.png').toString('base64');
 test('Projetos reutiliza a validação raster de Avisos e preserva a situação no contrato compartilhado', () => {
     const { validateContent } = require('../backend/src/services/content-edit.service');
     assert.equal(validateContent('projects', { capa: png, situacao: 'em_selecao' }).capa, png);
     assert.equal(validateContent('projects', { capa: null }).capa, null);
     for (const capa of ['https://example.test/photo.jpg', 'data:image/svg+xml;base64,PHN2Zz4=', {}])
         assert.throws(() => validateContent('projects', { capa }), { status: 400 });
-    const states = require('../front/js/content-fields').projects.fields.find(
+    const states = require('../frontend/js/content-fields').projects.fields.find(
         (field) => field[0] === 'situacao'
     )[2];
     for (const situacao of Object.keys(states))
@@ -34,7 +34,7 @@ test('capa aceita raster válido e remoção explícita; recusa URL, SVG, assina
 });
 test('renderização ignora fontes executáveis e só adiciona capa quando há imagem', () => {
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/notice-cover.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-cover.js', 'utf8'), {
         window: { Arcadia: A }
     });
     assert.equal(A.noticeCover.markup('javascript:alert(1)'), '');

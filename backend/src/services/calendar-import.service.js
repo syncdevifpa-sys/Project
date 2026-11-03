@@ -145,7 +145,7 @@ async function commit(body, actorId) {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
-        // Imports serialize across authorized actors, including an initially empty calendar.
+        /* Imports serialize across authorized actors, including an initially empty calendar. */
         await connection.execute(
             "SELECT id_usuario FROM usuarios WHERE situacao = 'ativo' AND (tipo_usuario IN ('docente','servidor') OR is_admin = 1) ORDER BY id_usuario FOR UPDATE"
         );

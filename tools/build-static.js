@@ -14,14 +14,14 @@ if (JSON.stringify(vercel.redirects) !== JSON.stringify(expected)) {
 }
 for (const [oldPage, newPage] of Object.entries(redirects)) {
     if (
-        fs.existsSync(path.join(root, 'front', oldPage)) ||
-        !fs.existsSync(path.join(root, 'front', newPage))
+        fs.existsSync(path.join(root, 'frontend', oldPage)) ||
+        !fs.existsSync(path.join(root, 'frontend', newPage))
     ) {
         throw new Error('Página antiga duplicada ou nova página ausente: ' + newPage);
     }
 }
 const target = path.resolve(root, 'public');
-// Somente o diretório gerado nesta raiz pode ser removido; nunca siga atalhos.
+/* Somente o diretório gerado nesta raiz pode ser removido; nunca siga atalhos. */
 if (path.dirname(target) !== root || path.basename(target) !== 'public') {
     throw new Error('Diretório de saída inválido.');
 }
@@ -42,7 +42,7 @@ const localPreviews = new Set([
     'classes-preview.css',
     'classes-preview.js'
 ]);
-fs.cpSync(path.join(root, 'front'), target, {
+fs.cpSync(path.join(root, 'frontend'), target, {
     recursive: true,
     filter: (source) => !localPreviews.has(path.basename(source))
 });

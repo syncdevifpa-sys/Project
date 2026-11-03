@@ -42,7 +42,7 @@ async function getUserById(req, res) {
 async function createUser(req, res) {
     if (!['discente','docente','servidor'].includes(req.body?.tipo_usuario))
         return res.status(400).json({error:'Escolha Aluno, Professor ou Servidor para solicitar um vínculo institucional.'});
-    // Novas contas só recebem vínculo após aprovação administrativa; legado permanece intacto.
+    /* Novas contas só recebem vínculo após aprovação administrativa; legado permanece intacto. */
     return require('./externalUsers.controller').registerExternal(req, res);
 }
 
@@ -59,7 +59,7 @@ async function updateUser(req, res) {
             );
             return res.json({ message: 'Pessoa atualizada.' });
         }
-        // Alterações de administração/situação usam somente a área administrativa protegida.
+        /* Alterações de administração/situação usam somente a área administrativa protegida. */
         delete userData.is_admin;
         delete userData.situacao;
         if (userData.tipo_usuario !== req.user.tipo_usuario) delete userData.tipo_usuario;

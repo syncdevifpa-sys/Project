@@ -13,22 +13,22 @@ const {
 
 const { authenticateToken, authorizeRoles } = require('../middlewares/auth.middleware');
 
-// Logged user documents
+/* Logged user documents */
 router.get('/my', authenticateToken, listMyDocuments);
 
-// Staff management
+/* Staff management */
 router.get('/', authenticateToken, authorizeRoles('servidor'), listAllDocuments);
 
-// Specific document
+/* Specific document */
 router.get('/:id', authenticateToken, getDocumentById);
 
-// Create request
+/* Create request */
 router.post('/', authenticateToken, createDocument);
 
-// Staff processes request
+/* Staff processes request */
 router.put('/:id', authenticateToken, authorizeRoles('servidor'), updateDocument);
 
-// Owner can cancel initial request
+/* Owner can cancel initial request */
 router.delete('/:id', authenticateToken, deleteDocument);
 
 module.exports = router;

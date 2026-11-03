@@ -48,8 +48,10 @@ function fileInfo(buffer, filename) {
     if (/[\\/]/.test(name)) fail(400, 'Nome do arquivo inválido.');
     const ext = name.split('.').pop().toLowerCase();
     let mime;
-    // O campo MIME legado tem 50 caracteres. DOCX é servido como anexo binário;
-    // sua estrutura interna é validada antes de qualquer gravação em create().
+    /*
+     * O campo MIME legado tem 50 caracteres. DOCX é servido como anexo binário;
+     * sua estrutura interna é validada antes de qualquer gravação em create().
+     */
     if (ext === 'docx' && buffer.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])))
         mime = 'application/octet-stream';
     if (

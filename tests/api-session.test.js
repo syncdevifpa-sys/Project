@@ -8,7 +8,7 @@ function client(fetch, blocked = false) {
         ['arcadiaSessao', '{"logado":true}']
     ]);
     const window = { Arcadia: {}, location: { href: 'calendar.html' } };
-    vm.runInNewContext(fs.readFileSync('front/js/api.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/api.js', 'utf8'), {
         window,
         location: { hostname: 'portal.vercel.app', port: '', origin: 'https://portal.vercel.app' },
         localStorage: {

@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 function bootstrap(stored,blocked=false) {
     const attrs={},timers=[];
-    vm.runInNewContext(fs.readFileSync('front/js/portal-bootstrap.js','utf8'),{
+    vm.runInNewContext(fs.readFileSync('frontend/js/portal-bootstrap.js','utf8'),{
         document:{documentElement:{setAttribute:(k,v)=>attrs[k]=v,getAttribute:k=>attrs[k],removeAttribute:k=>delete attrs[k]}},
         localStorage:{getItem:k=>{if(blocked)throw Error('blocked');return stored[k]||null;}},
         window:{setTimeout:fn=>timers.push(fn)}
@@ -22,7 +22,7 @@ test('espaço da navegação é reservado antes do conteúdo e possui fallback q
 });
 test('estrutura externa tem um conteúdo principal, controles separados e carregamento sem ocultar a página',()=>{
     for(const page of ['community.html','community-settings.html']) {
-        const html=fs.readFileSync('front/'+page,'utf8');
+        const html=fs.readFileSync('frontend/'+page,'utf8');
         assert.equal((html.match(/<main\b/g)||[]).length,1);
         assert.ok(html.indexOf('id="mainContent"')<html.indexOf('id="externalGreeting"'));
         assert.ok(html.indexOf('src="js/portal-bootstrap.js"')<html.indexOf('href="tokens.css"'));
@@ -31,7 +31,7 @@ test('estrutura externa tem um conteúdo principal, controles separados e carreg
         const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length,page);
         assert.doesNotMatch(html,/href="(?:documents|people|classes|admin)\.html"/);
     }
-    const panel=fs.readFileSync('front/community.html','utf8');
+    const panel=fs.readFileSync('frontend/community.html','utf8');
     assert.doesNotMatch(panel,/id="(?:teacherRequestForm|profileSharing|accountRemoval)"/);
-    assert.match(fs.readFileSync('front/community-settings.html','utf8'),/id="teacherRequestForm"/);
+    assert.match(fs.readFileSync('frontend/community-settings.html','utf8'),/id="teacherRequestForm"/);
 });

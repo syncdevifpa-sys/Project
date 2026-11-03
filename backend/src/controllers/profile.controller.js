@@ -30,7 +30,7 @@ async function updateProfile(req, res) {
         if (body.nomeSocial !== undefined) body.nome_social = body.nomeSocial;
         const current = await users.findUserById(req.user.id_usuario);
         if (!current) return res.status(404).json({ error: 'Usuário não encontrado.' });
-        // O vínculo não é editável pelo formulário de perfil.
+        /* O vínculo não é editável pelo formulário de perfil. */
         delete body.tipo_usuario;
         delete body.is_admin;
         delete body.situacao;

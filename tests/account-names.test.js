@@ -3,27 +3,24 @@ const assert = require('node:assert/strict');
 const db = require('../backend/src/config/database');
 const names = require('../backend/src/services/account-names.service');
 after(() => db.end());
-test('nome de exibição é opcional e não aceita conteúdo de controle', () => {
+test('validação de nome completo recusa conteúdo de controle', () => {
     assert.equal(names.name('  ANA  SOUZA '), 'ANA SOUZA');
     assert.equal(names.name('', true), '');
     for (const value of [null, '', 'a'.repeat(101), 'Ana\nSouza', '<script>'])
         assert.throws(() => names.name(value));
 });
-test('Pessoas sempre mantém o nome completo junto do nome de exibição', async (t) => {
-    t.mock.method(db, 'execute', async () => [
-        [
-            { id_conta: 1, nome_exibicao: 'Ana', mostrar_nome_completo: 0 },
-            { id_conta: 2, nome_exibicao: 'Bia', mostrar_nome_completo: 1 }
-        ]
-    ]);
-    const result = await names.publicNames([
-        { id_usuario: 1, nome: 'Ana Privada' },
-        { id_usuario: 2, nome: 'Beatriz Pública' }
-    ]);
-    assert.equal(result[0].nome_exibicao, 'Ana');
-    assert.equal(result[0].nome_completo, 'Ana Privada');
-    assert.equal(result[1].nome_completo, 'Beatriz Pública');
+test('Pessoas usa o nome completo sem consultar preferências de apelido', async (t) => {
+    t.mock.method(db, 'execute', async () => {
+        throw new Error('Apelidos não devem ser consultados');
+    });
+    const people = [
+        { id_usuario: 1, nome: 'Ana Souza' },
+        { id_usuario: 2, nome: 'Beatriz Lima' }
+    ];
+    assert.deepEqual(await names.publicNames(people), people);
+    assert.equal(names.handlers('users').put, undefined);
 });
+
 test('aprovação bloqueia a conta, atualiza o nome e guarda decisão e autor na mesma transação', async (t) => {
     const writes = [];
     const c = {
@@ -87,7 +84,7 @@ test('API legada recusa alteração direta do nome completo', async (t) => {
         (e) => e.status === 409
     );
 });
-test('transferência institucional mantém nome de exibição e histórico no mesmo namespace', async () => {
+test('transferência institucional mantém registros legados e pedidos no mesmo namespace', async () => {
     const calls = [];
     await names.transfer(
         {
@@ -166,7 +163,7 @@ test('pedido movido durante a aprovação de vínculo não altera a conta errada
     assert.equal(changed, false);
     assert.equal(rolledBack, true);
 });
-test('gravação do nome bloqueia a conta e reverte se ela deixou de existir', async (t) => {
+test('solicitação de correção bloqueia a conta e reverte se ela deixou de existir', async (t) => {
     let changed = false,
         rolledBack = false;
     t.mock.method(db, 'getConnection', async () => ({
@@ -182,7 +179,9 @@ test('gravação do nome bloqueia a conta e reverte se ela deixou de existir', a
             return [[]];
         }
     }));
-    await assert.rejects(names.save('users', 7, { nome_exibicao: 'Ana' }), { status: 404 });
+    await assert.rejects(names.request('users', 7, { nome_solicitado: 'Ana Souza' }), {
+        status: 404
+    });
     assert.equal(changed, false);
     assert.equal(rolledBack, true);
 });

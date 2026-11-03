@@ -1,4 +1,4 @@
-// Executado por agendador do servidor, nunca pelo navegador. Não inicia o site.
+/* Executado por agendador do servidor, nunca pelo navegador. Não inicia o site. */
 if (!process.env.VERCEL) require('dotenv').config();
 const db = require('../backend/src/config/database');
 const { createDispatcher } = require('../backend/src/services/reminder-dispatch.service');

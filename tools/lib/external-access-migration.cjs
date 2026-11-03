@@ -1,4 +1,4 @@
-// Somente geracao offline. Nao altera dados de contas, papeis ou projetos legados.
+/* Somente geracao offline. Nao altera dados de contas, papeis ou projetos legados. */
 const {helpers,column,index,fk,checksum}=require('./migration-sql.cjs');
 const q=s=>"'"+String(s).replace(/'/g,"''")+"'";
 function generate(spec){

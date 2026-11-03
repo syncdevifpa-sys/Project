@@ -30,7 +30,7 @@ function validateNotice(body, creation = false) {
         }
     if (creation && (!values.titulo || !values.resumo)) fail(400, 'Preencha título e resumo.');
     if (Object.hasOwn(body, 'publico_alvo')) {
-        const audience = require('../../../front/js/notice-audiences').parse(body.publico_alvo);
+        const audience = require('../../../frontend/js/notice-audiences').parse(body.publico_alvo);
         if (!audience.length) fail(400, 'Selecione ao menos um público-alvo válido.');
         values.publico_alvo = audience.join(',');
     }

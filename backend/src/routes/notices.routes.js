@@ -16,14 +16,14 @@ const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware
 router.get('/', optionalNoticeViewer, listNotices);
 router.get('/:id', optionalNoticeViewer, getNoticeById);
 
-// Teacher/staff routes
+/* Teacher/staff routes */
 router.post('/', authenticateToken, authorizeRoles('docente', 'servidor'), createNotice);
 
 router.put('/:id', authenticateToken, updateNotice);
 
 router.delete('/:id', authenticateToken, deleteNotice);
 
-// Notice applications
+/* Notice applications */
 const applications = require('../controllers/noticeApplications.controller');
 router.post('/:id/apply', authenticateToken, applications.apply);
 router.get('/:id/applications', authenticateToken, authorizeRoles('docente', 'servidor'), applications.listByNotice);

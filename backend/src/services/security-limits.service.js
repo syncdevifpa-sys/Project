@@ -47,7 +47,7 @@ async function consume(scope, rules) {
     } catch (error) {
         if (connection) await connection.rollback().catch(() => {});
         if (error.status === 429) throw error;
-        // Tabela ausente, indisponibilidade ou configuração incompleta bloqueiam o fluxo protegido.
+        /* Tabela ausente, indisponibilidade ou configuração incompleta bloqueiam o fluxo protegido. */
         throw unavailable();
     } finally {
         connection?.release();
@@ -74,8 +74,10 @@ function reset(req, token) {
     ]);
 }
 async function verification() {
-    // Cadastro, reenvio e troca de e-mail não exigem espera por endereço ou IP.
-    // As cotas globais do transporte permanecem em delivery().
+    /*
+     * Cadastro, reenvio e troca de e-mail não exigem espera por endereço ou IP.
+     * As cotas globais do transporte permanecem em delivery().
+     */
 }
 function confirmation(req) {
     return consume('email-confirmation', [

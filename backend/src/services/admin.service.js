@@ -4,7 +4,7 @@ function fail(status, message) {
     error.status = status;
     throw error;
 }
-// Identificadores SQL vêm apenas deste catálogo fixo, nunca do cliente.
+/* Identificadores SQL vêm apenas deste catálogo fixo, nunca do cliente. */
 const resources = {
     notices: [
         'avisos',
@@ -279,7 +279,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
     try {
         await connection.beginTransaction();
         await require('./email-verification.service').lock(connection);
-        // Todos os caminhos de gestão de pessoas usam esta trava para proteger o último admin.
+        /* Todos os caminhos de gestão de pessoas usam esta trava para proteger o último admin. */
         const [admins] = await connection.execute(
             "SELECT id_usuario FROM usuarios WHERE is_admin = TRUE AND situacao = 'ativo' ORDER BY id_usuario FOR UPDATE"
         );
@@ -392,7 +392,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 if (error.code !== 'ER_NO_SUCH_TABLE') throw error;
             }
             if (!selfRemoval) {
-                // Limpeza na mesma transação; módulos ainda não instalados são opcionais.
+                /* Limpeza na mesma transação; módulos ainda não instalados são opcionais. */
                 const optional = async (sql, values = [id]) => {
                     try {
                         await connection.execute(sql, values);
@@ -403,7 +403,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                 await optional(`DELETE FROM docente_requisitos WHERE ${primary} = ?`);
                 await optional('DELETE FROM academico_convites WHERE email = ?', [person.email]);
                 if (institutional) {
-                    // Excluir disciplinas primeiro libera seus anexos e demais dependências.
+                    /* Excluir disciplinas primeiro libera seus anexos e demais dependências. */
                     await optional('DELETE FROM academico_disciplinas WHERE id_professor = ?');
                     await optional(
                         'DELETE p FROM academico_publicacoes p JOIN documento_itens i ON i.id_item = p.id_item WHERE i.id_usuario = ?'
@@ -424,7 +424,7 @@ async function changePerson(kind, id, body, actor, deletion = false, selfRemoval
                         ]);
                     }
                 }
-                // As demais relações usam CASCADE ou SET NULL conforme o esquema.
+                /* As demais relações usam CASCADE ou SET NULL conforme o esquema. */
             }
             await require('./email-verification.service').removeAccountState(
                 connection,
@@ -640,7 +640,7 @@ async function registrations(project, person, body, deletion = false) {
     }
     if (!['inscrito', 'aprovado', 'recusado', 'cancelado'].includes(body.status))
         fail(400, 'Situação de inscrição inválida.');
-    // Mantém o histórico da inscrição ao alterar sua situação.
+    /* Mantém o histórico da inscrição ao alterar sua situação. */
     const [result] = await db.execute(
         'INSERT INTO projeto_inscricoes (id_projeto, id_usuario, status) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE status = ?',
         [project, person, body.status, body.status]

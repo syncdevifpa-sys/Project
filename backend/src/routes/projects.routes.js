@@ -33,15 +33,15 @@ router.get('/my', authenticateToken, async (req, res) => {
     }
 });
 
-// Public
+/* Public */
 const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
 router.get('/', optionalNoticeViewer, listProjects);
 router.get('/:id', optionalNoticeViewer, getProjectById);
 
-// Authenticated institutional user
+/* Authenticated institutional user */
 router.post('/', authenticateToken, createProject);
 
-// Teacher/staff
+/* Teacher/staff */
 router.put('/:id', authenticateToken, updateProject);
 
 router.get(
@@ -51,12 +51,12 @@ router.get(
     listProjectRegistrations
 );
 
-// Student
+/* Student */
 router.post('/:id/register', authenticateToken, authorizeRoles('discente'), registerForProject);
 
 router.delete('/:id/register', authenticateToken, authorizeRoles('discente'), cancelRegistration);
 
-// Administrator
+/* Administrator */
 router.patch('/:id/approve', authenticateToken, authorizeAdmin, approveProject);
 
 router.patch('/:id/reject', authenticateToken, authorizeAdmin, rejectProject);

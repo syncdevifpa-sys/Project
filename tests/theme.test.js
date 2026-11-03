@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
-const source = fs.readFileSync(path.join(root, 'front/js/theme.js'), 'utf8');
+const source = fs.readFileSync(path.join(root, 'frontend/js/theme.js'), 'utf8');
 
 function context(mode, prefersDark, blocked = false) {
     const attrs = {},
@@ -41,9 +41,9 @@ function context(mode, prefersDark, blocked = false) {
 }
 
 test('Início público e painel respeitam tema salvo antes dos estilos', () => {
-    const dashboard = fs.readFileSync(path.join(root, 'front/dashboard.html'), 'utf8');
+    const dashboard = fs.readFileSync(path.join(root, 'frontend/dashboard.html'), 'utf8');
     const bootstrap = dashboard.match(/<script>([\s\S]*?)<\/script>/)[1];
-    const index = fs.readFileSync(path.join(root, 'front/index.html'), 'utf8');
+    const index = fs.readFileSync(path.join(root, 'frontend/index.html'), 'utf8');
     assert.ok(index.indexOf('src="js/theme.js"') < index.indexOf('href="landing.css"'));
     for (const code of [source, bootstrap]) {
         for (const [mode, systemDark, expected] of [
@@ -85,7 +85,7 @@ test('painel acompanha preferências de outra aba e sistema em Automático sem r
     ctx.sandbox.localStorage.setItem = (_, value) => {
         ctx.storage.mode = value;
     };
-    vm.runInNewContext(fs.readFileSync(path.join(root, 'front/js/portal.js'), 'utf8'), ctx.sandbox);
+    vm.runInNewContext(fs.readFileSync(path.join(root, 'frontend/js/portal.js'), 'utf8'), ctx.sandbox);
     ctx.sandbox.window.Arcadia.applyTheme();
     assert.equal(ctx.attrs['data-theme'], 'light');
     ctx.system.matches = true;
@@ -99,8 +99,8 @@ test('painel acompanha preferências de outra aba e sistema em Automático sem r
     ctx.storage.mode = 'dark';
     ctx.handlers.storage({ key: 'arcadia-theme' });
     assert.equal(ctx.attrs['data-theme'], 'dark');
-    const index = fs.readFileSync(path.join(root, 'front/index.html'), 'utf8'),
-        dashboard = fs.readFileSync(path.join(root, 'front/dashboard.html'), 'utf8');
+    const index = fs.readFileSync(path.join(root, 'frontend/index.html'), 'utf8'),
+        dashboard = fs.readFileSync(path.join(root, 'frontend/dashboard.html'), 'utf8');
     for (const html of [index, dashboard]) {
         assert.match(html, /assets\/arcadia-emblem\.png/);
         assert.match(html, /brand-logo\.css/);
@@ -115,7 +115,7 @@ test('armazenamento bloqueado ou preferência inválida não impede renderizaç�
 });
 
 test('conteúdo do Início fica visível com observador e no modo de compatibilidade', () => {
-    const landing = fs.readFileSync(path.join(root, 'front/js/landing.js'), 'utf8');
+    const landing = fs.readFileSync(path.join(root, 'frontend/js/landing.js'), 'utf8');
     for (const supported of [true, false]) {
         const classes = [];
         const element = { classList: { add: (value) => classes.push(value) } };
@@ -146,15 +146,15 @@ test('conteúdo do Início fica visível com observador e no modo de compatibili
 test('todos os cabeçalhos usam emblema transparente compartilhado sem fundo branco', () => {
     const root = path.resolve(__dirname, '..');
     for (const name of fs
-        .readdirSync(path.join(root, 'front'))
+        .readdirSync(path.join(root, 'frontend'))
         .filter((name) => name.endsWith('.html'))) {
-        const html = fs.readFileSync(path.join(root, 'front', name), 'utf8');
+        const html = fs.readFileSync(path.join(root, 'frontend', name), 'utf8');
         if (!html.includes('ar-brand-img')) continue;
         assert.match(html, /brand-logo\.css/, name);
         assert.doesNotMatch(html, /src="public\/arcadia-logo-128\.png"/, name);
         assert.match(html, /src="assets\/arcadia-emblem\.png"/, name);
     }
-    const css = fs.readFileSync(path.join(root, 'front/brand-logo.css'), 'utf8');
+    const css = fs.readFileSync(path.join(root, 'frontend/brand-logo.css'), 'utf8');
     assert.match(css, /background:\s*transparent/);
     assert.match(css, /data-theme=['"]dark['"]/);
     assert.doesNotMatch(css, /blend-mode/);

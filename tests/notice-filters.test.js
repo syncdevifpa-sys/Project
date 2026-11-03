@@ -77,8 +77,8 @@ function headers(claims) {
     return { Authorization: 'Bearer ' + jwt.sign(claims, process.env.JWT_SECRET) };
 }
 test('Todos inclui todos os públicos com seleções mistas ou sem subitens; externo e vazio são distintos', () => {
-    const A = { noticeAudiences: require('../front/js/notice-audiences') };
-    vm.runInNewContext(fs.readFileSync('front/js/notice-filters.js', 'utf8'), {
+    const A = { noticeAudiences: require('../frontend/js/notice-audiences') };
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js', 'utf8'), {
         window: { Arcadia: A }
     });
     for (const selected of [['todos', 'discente'], ['todos']])
@@ -176,10 +176,10 @@ test('destinatário externo usa contrato existente e criação exige sessão ins
         (await fetch(api + '/api/notices', { method: 'POST', headers: auth, body: '{}' })).status,
         403
     );
-    const html = fs.readFileSync('front/notices.html', 'utf8');
+    const html = fs.readFileSync('frontend/notices.html', 'utf8');
     assert.match(html, /data-filter-publico="External"/);
     assert.match(
-        fs.readFileSync('front/js/content-fields.js', 'utf8'),
+        fs.readFileSync('frontend/js/content-fields.js', 'utf8'),
         /externo:\s*'Público externo'/
     );
 });
@@ -256,7 +256,7 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
         { id_aviso: 3, titulo: 'Para externos', publico_alvo: 'externo', situacao: 'publicado' }
     ];
     const A = {
-        noticeAudiences: require('../front/js/notice-audiences'),
+        noticeAudiences: require('../frontend/js/notice-audiences'),
         auth: { getSessao: () => ({ id_usuario: 4, tipo_usuario: 'servidor' }) },
         noticeActions: { canDelete: () => false },
         showToast: (m) => assert.fail(m),
@@ -267,8 +267,8 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
         document,
         location: { pathname: '/notices.html' }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/notice-filters.js', 'utf8'), context);
-    vm.runInNewContext(fs.readFileSync('front/js/pages.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/pages.js', 'utf8'), context);
     load();
     await new Promise((r) => setImmediate(r));
     const grid = get('#noticesCardsGrid');
