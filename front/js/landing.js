@@ -20,6 +20,23 @@
             const icon = trigger.querySelector('.faq-icon-circle');
             if (icon) icon.setAttribute('aria-hidden', 'true');
         });
+        // Acordeão "Dentro da plataforma": apenas um item aberto por vez.
+        const features = Array.from(document.querySelectorAll('.feature-trigger'));
+        features.forEach((trigger) => {
+            const panel = document.getElementById(trigger.getAttribute('aria-controls'));
+            if (!panel) return;
+            panel.hidden = trigger.getAttribute('aria-expanded') !== 'true';
+            trigger.addEventListener('click', () => {
+                const open = trigger.getAttribute('aria-expanded') === 'true';
+                features.forEach((other) => {
+                    const otherPanel = document.getElementById(other.getAttribute('aria-controls'));
+                    other.setAttribute('aria-expanded', 'false');
+                    if (otherPanel) otherPanel.hidden = true;
+                });
+                trigger.setAttribute('aria-expanded', String(!open));
+                panel.hidden = open;
+            });
+        });
         updateAccountActions();
         loadAccountProfile();
         window.addEventListener('storage', updateAccountActions);
@@ -38,6 +55,48 @@
             navLinks.addEventListener('click', (e) => {
                 if (e.target.closest('a')) setOpen(false);
             });
+            // Esc fecha o menu e devolve o foco ao botão.
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape' || navToggle.getAttribute('aria-expanded') !== 'true')
+                    return;
+                setOpen(false);
+                navToggle.focus();
+            });
+            // Ao voltar para a largura de desktop, o menu é fechado.
+            if (window.matchMedia) {
+                const desktop = window.matchMedia('(min-width: 1001px)');
+                const close = (e) => {
+                    if (e.matches) setOpen(false);
+                };
+                if (desktop.addEventListener) desktop.addEventListener('change', close);
+            }
+        }
+
+        // Botão de tema no rodapé: grava a mesma preferência usada pelo portal.
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const root = document.documentElement;
+            const sync = () => {
+                const dark = root.getAttribute('data-theme') === 'dark';
+                themeToggle.setAttribute('aria-pressed', String(dark));
+                themeToggle.setAttribute(
+                    'aria-label',
+                    dark ? 'Ativar tema claro' : 'Ativar tema escuro'
+                );
+            };
+            sync();
+            themeToggle.addEventListener('click', () => {
+                const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                root.setAttribute('data-theme', next);
+                root.setAttribute('data-theme-mode', next);
+                try {
+                    localStorage.setItem('arcadia-theme', next);
+                } catch {
+                    /* Sem armazenamento, o tema vale apenas para esta visita. */
+                }
+                sync();
+            });
+            window.addEventListener('storage', sync);
         }
 
         if (document.getElementById('publicNews')) loadPublicContent();
@@ -129,7 +188,7 @@
         if (welcome)
             welcome.textContent = loggedIn
                 ? 'Acompanhe as publicações do campus e os projetos da comunidade. Seu próximo acesso começa aqui.'
-                : 'Gratuito para a comunidade do campus. Crie sua conta com seu e-mail.';
+                : 'Um meio mais organizado de acesso às informações institucionais. Crie sua conta com seu e-mail.';
         const welcomeTitle = document.getElementById('homeWelcomeTitle');
         if (welcomeTitle) welcomeTitle.setAttribute('aria-level', loggedIn ? '1' : '2');
         document.querySelectorAll('a[href="signup.html"]').forEach((link) => {
