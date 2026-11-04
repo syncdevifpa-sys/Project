@@ -215,23 +215,8 @@ html[data-portal-navigation='pending'] .ar-navpill {
 .ar-sidebar-close {
   display: none;
 }
-.ar-sidebar-context {
-  margin: 0 8px 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--cyan-soft);
-  color: var(--cyan-ink);
-  font-size: 12px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
 .ar-sidebar-toggle-label {
   display: none;
-}
-@media (min-width: 1101px) {
-  .ar-sidebar-collapsed .ar-sidebar-context {
-    display: none;
-  }
 }
 .ar-sidebar-toggle {
   position: fixed;

@@ -112,11 +112,18 @@
 .ar-notice-cover img {
   width: 100%;
   height: auto;
-  max-height: 560px;
+  max-height: 280px;
   object-fit: contain;
 }
 .ar-detail > .ar-notice-cover img {
-  max-height: 720px;
+  max-height: 360px;
+}
+.ar-detail > .ar-notice-cover {
+  width: min(100%, 520px);
+  margin-right: auto;
+}
+.public-card .ar-notice-cover img {
+  max-height: 240px;
 }
 .ar-cover-preview .ar-notice-cover img {
   max-height: 420px;

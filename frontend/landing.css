@@ -1974,11 +1974,16 @@ section[id] {
 }
 .public-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  align-items: start;
+  justify-items: start;
   gap: 24px;
   margin-top: 28px;
 }
 .public-card {
+  width: 100%;
+  max-width: 400px;
+  min-width: 0;
   background: #fff;
   border: 1px solid #d9ded8;
   border-radius: 20px;

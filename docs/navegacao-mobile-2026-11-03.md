@@ -4,7 +4,7 @@ Esta entrega permanece em `codex/desenvolvimento`, posterior à release oficial 
 
 - Botão Menu com ícone de três linhas no próprio cabeçalho, sem a antiga aba solta na lateral.
 - Painel lateral mais largo, fechamento por X, Escape, fundo externo ou escolha de destino. Preserva foco, bloqueio do fundo e grupos por conta.
-- Identificação da página atual e hierarquia visual dos subitens. Visitantes usam o mesmo componente, apenas com destinos públicos e entrada/cadastro.
+- Página atual identificada no cabeçalho e no link ativo, sem aviso adicional no menu; hierarquia visual dos subitens. Visitantes usam o mesmo componente, apenas com destinos públicos e entrada/cadastro.
 - Página inicial com Menu identificado, fechamento por Escape/clique externo e área rolável em telas baixas. Itens do painel fechado ficam fora da navegação por teclado.
 - Banner inicial usa o par de cores do tema desde a preparação anterior ao CSS; personalizações continuam com validação de contraste.
 - Biblioteca aceita até 4 MiB por arquivo no cliente, no processamento binário/multipart e no serviço. Mantém cotas, validação de assinatura, autorização e limites de descompressão do DOCX.

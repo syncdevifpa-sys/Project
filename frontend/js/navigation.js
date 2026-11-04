@@ -308,9 +308,7 @@
         sidebar.append(heading);
         const nav = document.createElement('nav');
         nav.setAttribute('aria-label', 'Navegação do portal');
-        const context = document.createElement('p');
-        context.className = 'ar-sidebar-context';
-        sidebar.append(context, nav);
+        sidebar.append(nav);
         function link(href, label, glyph) {
             const item = document.createElement('a');
             item.href = href;
@@ -392,7 +390,6 @@
         toggle.append(toggleIcon, toggleText);
         if (bar) bar.prepend(toggle);
         else document.body.append(toggle);
-        context.textContent = 'Você está em: ' + currentLabel;
         const backdrop = document.createElement('div');
         backdrop.className = 'ar-sidebar-backdrop';
         backdrop.setAttribute('aria-hidden', 'true');
@@ -529,7 +526,6 @@
                     }
                 }
                 current.textContent = label;
-                context.textContent = 'Você está em: ' + label;
                 saveState();
             }
         };
