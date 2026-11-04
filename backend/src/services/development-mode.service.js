@@ -1,4 +1,4 @@
-// Dados simulados exigem ativação explícita e nunca são usados na Vercel/produção.
+/* Dados simulados exigem ativação explícita e nunca são usados na Vercel/produção. */
 function developmentFallbackEnabled() {
     return (
         process.env.NODE_ENV === 'development' &&

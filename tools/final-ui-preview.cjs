@@ -1,4 +1,4 @@
-// Prévia local: dados fictícios; calendário e publicações somente em memória, sem banco ou mensagens.
+/* Prévia local: dados fictícios; calendário e publicações somente em memória, sem banco ou mensagens. */
 const express = require('../node_modules/express');
 const fs = require('fs'),
     path = require('path');
@@ -6,7 +6,7 @@ const db = require('../backend/src/config/database');
 const sharing = require('../backend/src/services/profile-sharing.service');
 const photo =
     'data:image/png;base64,' +
-    fs.readFileSync(path.join(__dirname, '../front/public/arcadia-logo-64.png')).toString('base64');
+    fs.readFileSync(path.join(__dirname, '../frontend/public/arcadia-logo-64.png')).toString('base64');
 const demoPublishedAt = new Date().toISOString();
 const user = {
     id_usuario: 4,
@@ -114,7 +114,7 @@ const noticeDemoRows = [
         capa:
             'data:image/png;base64,' +
             fs
-                .readFileSync(path.join(__dirname, '../front/assets/print-calendar.png'))
+                .readFileSync(path.join(__dirname, '../frontend/assets/print-calendar.png'))
                 .toString('base64'),
         id_usuario: 4,
         titulo: 'Informações sobre inscrições, atividades e encontros da comunidade acadêmica do campus',
@@ -313,7 +313,7 @@ app.get('/api/auth/perfil', (_req, res) =>
 app.get(/^\/api\//, (_req, res) => res.json([]));
 app.use('/api', (_req, res) => res.status(405).json({ error: 'Prévia sem gravação' }));
 app.get('/:file.html', (req, res, next) => {
-    const file = path.join(__dirname, '../front', path.basename(req.params.file) + '.html');
+    const file = path.join(__dirname, '../frontend', path.basename(req.params.file) + '.html');
     if (!fs.existsSync(file)) return next();
     const person = req.params.file === 'community' ? external : user;
     const sessionScript =
@@ -335,7 +335,7 @@ app.get('/:file.html', (req, res, next) => {
             )
     );
 });
-app.use(express.static(path.join(__dirname, '../front')));
+app.use(express.static(path.join(__dirname, '../frontend')));
 module.exports = app;
 if (require.main === module)
     app.listen(61119, '127.0.0.1', () =>

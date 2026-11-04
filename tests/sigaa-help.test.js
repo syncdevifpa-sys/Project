@@ -22,7 +22,7 @@ test('ajuda SIGAA é única, acessível por clique/teclado e usa somente exemplo
         })
     };
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/sigaa-help.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/sigaa-help.js', 'utf8'), {
         window: { Arcadia: A },
         document
     });
@@ -49,7 +49,7 @@ test('ajuda SIGAA é única, acessível por clique/teclado e usa somente exemplo
     assert.equal(prevented, true);
     assert.equal(summary.focused, true);
     for (const name of ['signup.html', 'community-settings.html']) {
-        const html = fs.readFileSync('front/' + name, 'utf8');
+        const html = fs.readFileSync('frontend/' + name, 'utf8');
         assert.match(html, /data-sigaa-username/);
         assert.match(html, /js\/sigaa-help\.js/);
     }

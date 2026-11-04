@@ -1,4 +1,4 @@
-// Somente geração de arquivos. Nenhuma conexão com MySQL é criada.
+/* Somente geração de arquivos. Nenhuma conexão com MySQL é criada. */
 const fs = require('node:fs');
 const path = require('node:path');
 const { generate, checksum } = require('../lib/migration-sql.cjs');

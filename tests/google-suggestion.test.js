@@ -28,7 +28,7 @@ function page({ login = true, loggedIn = false, challenge, explicitLogout = fals
         sessionStorage: { getItem: () => explicitLogout ? '1' : null },
         console
     };
-    vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/auth.js', 'utf8'), context);
     return { auth: context.window.Arcadia.auth, events, calls, notices };
 }
 test('One Tap solicita sugestão no login sem selecionar automaticamente e preserva nonce do servidor', async () => {
@@ -100,7 +100,7 @@ test('selecionar uma conta no modal não envia login até clicar em Entrar', asy
             body: { append(value) { open = value; value.isConnected = true; } } },
         localStorage: { getItem: () => '{}', setItem() {} }, console
     };
-    vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/auth.js', 'utf8'), context);
     await context.window.Arcadia.auth.triggerRealGoogleOAuth();
     assert.equal(enter.disabled, true);
     await googleOptions.callback({ credential: 'google.id.token' });

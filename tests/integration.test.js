@@ -37,7 +37,10 @@ test('início esconde cadastro com sessão e oferece entrada aos visitantes', ()
                           : []
             }
         });
-        vm.runInContext(fs.readFileSync(path.join(root, 'front/js/landing.js'), 'utf8'), context);
+        vm.runInContext(
+            fs.readFileSync(path.join(root, 'frontend/js/landing.js'), 'utf8'),
+            context
+        );
         assert.equal(signup.hidden, loggedIn);
         assert.equal(panel.href, loggedIn ? 'dashboard.html' : 'login.html');
         assert.equal(panel.textContent, loggedIn ? 'Meu painel' : 'Entrar');
@@ -58,6 +61,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
     targets.publicNews = element();
     targets.publicProjects = element();
     const calls = [];
+    const covers = [];
     const context = vm.createContext({
         document: {
             readyState: 'complete',
@@ -68,6 +72,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         window: {
             addEventListener() {},
             Arcadia: {
+                noticeCover: { decorate: (card, cover) => covers.push(cover) },
                 api: {
                     get: async (url, options) => {
                         calls.push({ url, options });
@@ -79,7 +84,12 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
                                     descricao: 'Notícia completa'
                                 }
                             ],
-                            projects: []
+                            projects: [
+                                {
+                                    titulo: 'Projeto com capa',
+                                    capa: 'data:image/jpeg;base64,/9j/AA=='
+                                }
+                            ]
                         };
                     },
                     expect: (promise) => promise
@@ -87,7 +97,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
             }
         }
     });
-    vm.runInContext(fs.readFileSync(path.join(root, 'front/js/landing.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(root, 'frontend/js/landing.js'), 'utf8'), context);
     await new Promise((resolve) => setImmediate(resolve));
     assert.equal(calls.length, 1);
     assert.equal(calls[0].url, '/api/public');
@@ -96,7 +106,8 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         targets.publicNews.children[0].children[0].textContent,
         '<script>private()</script>'
     );
-    assert.equal(targets.publicProjects.textContent, 'Nenhum projeto publicado no momento.');
+    assert.equal(targets.publicProjects.children.length, 1);
+    assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
 });
 
 test('início público usa projeções públicas e independe da sessão', async () => {
@@ -129,14 +140,14 @@ test('início público usa projeções públicas e independe da sessão', async 
     } finally {
         db.execute = original;
     }
-    const home = fs.readFileSync(path.join(root, 'front/index.html'), 'utf8');
+    const home = fs.readFileSync(path.join(root, 'frontend/index.html'), 'utf8');
     assert.doesNotMatch(home, /src="js\/(auth|portal|pages)\.js"/);
     for (const file of fs
-        .readdirSync(path.join(root, 'front'))
+        .readdirSync(path.join(root, 'frontend'))
         .filter((f) => f.endsWith('.html'))) {
         // A prévia isolada não usa sessão real nem integra o build publicado.
         if (file === 'classes-preview.html') continue;
-        const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
+        const html = fs.readFileSync(path.join(root, 'frontend', file), 'utf8');
         if (!html.includes('class="ar-navpill"')) continue;
         if (['community.html', 'community-settings.html'].includes(file)) {
             assert.match(html, /href="community.html"[^>]*>Meu painel<\/a>/);
@@ -162,9 +173,9 @@ after(async () => {
 
 test('todas as páginas carregam scripts locais existentes e JavaScript válido', async () => {
     for (const file of fs
-        .readdirSync(path.join(root, 'front'))
+        .readdirSync(path.join(root, 'frontend'))
         .filter((f) => f.endsWith('.html'))) {
-        const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
+        const html = fs.readFileSync(path.join(root, 'frontend', file), 'utf8');
         assert.equal((html.match(/<\/html>/g) || []).length, 1, file);
         for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
             const src = match[1].match(/src="([^"]+)"/);
@@ -173,7 +184,7 @@ test('todas as páginas carregam scripts locais existentes e JavaScript válido'
                 continue;
             }
             if (/^https?:/.test(src[1])) continue;
-            const script = path.join(root, 'front', src[1].split(/[?#]/)[0]);
+            const script = path.join(root, 'frontend', src[1].split(/[?#]/)[0]);
             assert.ok(fs.existsSync(script), `${file}: ${src[1]}`);
             new vm.Script(fs.readFileSync(script, 'utf8'), { filename: script });
             assert.equal((await fetch(base + '/' + src[1])).status, 200);
@@ -194,7 +205,7 @@ test('URLs antigas redirecionam para páginas inglesas preservando parâmetros, 
         }))
     );
     for (const [oldPage, newPage] of Object.entries(redirects)) {
-        assert.equal(fs.existsSync(path.join(root, 'front', oldPage)), false);
+        assert.equal(fs.existsSync(path.join(root, 'frontend', oldPage)), false);
         const query = '?id=42&filter=urgente%20hoje';
         const moved = await fetch(base + '/' + oldPage + query, { redirect: 'manual' });
         assert.equal(moved.status, 308, oldPage);
@@ -212,16 +223,16 @@ test('URLs antigas redirecionam para páginas inglesas preservando parâmetros, 
 test('links HTML locais apontam para páginas existentes e usam nomes ingleses', () => {
     const oldPages = Object.keys(require('../page-redirects.json'));
     for (const file of fs
-        .readdirSync(path.join(root, 'front'))
+        .readdirSync(path.join(root, 'frontend'))
         .filter((f) => f.endsWith('.html'))) {
-        const html = fs.readFileSync(path.join(root, 'front', file), 'utf8');
+        const html = fs.readFileSync(path.join(root, 'frontend', file), 'utf8');
         for (const oldPage of oldPages) assert.ok(!html.includes(oldPage), file + ': ' + oldPage);
         for (const match of html.matchAll(
             /(?:href|action)=["']([^"']+\.html(?:[?#][^"']*)?)["']/g
         )) {
             if (/^(?:https?:)?\/\//.test(match[1])) continue;
             const target = match[1].split(/[?#]/)[0].replace(/^\//, '');
-            assert.ok(fs.existsSync(path.join(root, 'front', target)), file + ': ' + target);
+            assert.ok(fs.existsSync(path.join(root, 'frontend', target)), file + ': ' + target);
         }
     }
 });
@@ -242,7 +253,7 @@ test('cliente API envia JWT, usa PUT para atualização parcial e propaga erros'
             };
         }
     });
-    vm.runInContext(fs.readFileSync(path.join(root, 'front/js/api.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(root, 'frontend/js/api.js'), 'utf8'), context);
     const api = context.window.Arcadia.api;
     assert.equal((await api.crud('/api/tasks').list())[0].id_tarefa, 1);
     await api.crud('/api/reminders').patch(1, { ativo: false });
@@ -323,7 +334,6 @@ test('rotas de configurações existem e exigem autenticação', async () => {
         ['GET', 'perfil'],
         ['PUT', 'perfil'],
         ['GET', 'nomes'],
-        ['PUT', 'nomes'],
         ['POST', 'nomes/solicitacoes'],
         ['POST', 'logout'],
         ['POST', 'logout-outros'],
@@ -337,6 +347,16 @@ test('rotas de configurações existem e exigem autenticação', async () => {
         });
         assert.equal(res.status, 401, route);
     }
+    assert.equal(
+        (
+            await fetch(base + '/api/auth/nomes', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            })
+        ).status,
+        404
+    );
     assert.equal(
         (
             await fetch(base + '/api/users/1', {
@@ -374,7 +394,7 @@ test('cadastro converte os vínculos em inglês para os valores do banco', () =>
         window: { Arcadia: { api: {}, token: {} } },
         document: { readyState: 'loading', addEventListener() {} }
     });
-    vm.runInContext(fs.readFileSync(path.join(root, 'front/js/auth.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(root, 'frontend/js/auth.js'), 'utf8'), context);
     const auth = context.window.Arcadia.auth;
     assert.equal(auth.paraTipoUsuario('Student'), 'discente');
     assert.equal(auth.paraTipoUsuario('Professor'), 'docente');
@@ -599,7 +619,7 @@ test('documentos pessoais usam /my e estados refletem o banco', async () => {
             }
         }
     });
-    vm.runInContext(fs.readFileSync(path.join(root, 'front/js/documents.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(root, 'frontend/js/documents.js'), 'utf8'), context);
     await context.window.Arcadia.documents.list();
     assert.equal(requested, '/api/documents/my');
     assert.ok(context.window.Arcadia.documents.STATUS.includes('pendente'));

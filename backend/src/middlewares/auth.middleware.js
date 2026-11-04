@@ -56,7 +56,7 @@ async function authenticateToken(req, res, next) {
         if (!sessions.length)
             return res.status(401).json({ error: 'Sessão encerrada ou expirada.' });
         req.session = sessions[0];
-        // O privilégio atual vem do banco, não de uma sessão antiga ou do formulário.
+        /* O privilégio atual vem do banco, não de uma sessão antiga ou do formulário. */
         req.user = {
             ...decoded,
             is_admin: sessions[0].is_admin === 1 || sessions[0].is_admin === true

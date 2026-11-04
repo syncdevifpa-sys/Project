@@ -22,7 +22,7 @@ function fixture(subject, legacy = false) {
         }
     });
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/class-period.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/class-period.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: node }
     });
@@ -84,6 +84,6 @@ test('cadastro não presume regime ou semestre; edição preenche 2026.1', () =>
     const edit = fixture({ ano_letivo: 2026, regime_letivo: 'semestral', semestre: 1 }, true);
     assert.equal(edit.fields.read().semestre, 1);
     assert.equal(edit.nodes[2].required, true);
-    const html = fs.readFileSync('front/classes.html', 'utf8');
+    const html = fs.readFileSync('frontend/classes.html', 'utf8');
     assert.ok(html.indexOf('js/class-period.js') < html.indexOf('js/classes.js'));
 });

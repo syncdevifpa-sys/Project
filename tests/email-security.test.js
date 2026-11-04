@@ -193,7 +193,7 @@ test('navegador não envia boas-vindas nem cria sessão Google fictícia', async
             assert.fail('Não enviar e-mail');
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/auth.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/auth.js', 'utf8'), context);
     const result = await context.window.Arcadia.auth.sendWelcomeEmail({
         email: 'one@example.test'
     });
@@ -202,7 +202,7 @@ test('navegador não envia boas-vindas nem cria sessão Google fictícia', async
         context.window.Arcadia.auth.completeGoogleAuth('Nome', 'one@example.test', ''),
         /botão oficial do Google/
     );
-    for (const file of ['front/login.html', 'front/signup.html'])
+    for (const file of ['frontend/login.html', 'frontend/signup.html'])
         assert.ok(!fs.readFileSync(file, 'utf8').includes('@emailjs/browser'));
 });
 

@@ -23,7 +23,7 @@ test('links renderizam apenas HTTP/HTTPS por DOM, preservando texto malicioso e 
     }
     const A = {},
         context = { window: { Arcadia: A }, document: { createElement: node }, URL };
-    vm.runInNewContext(fs.readFileSync('front/js/notice-text.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-text.js', 'utf8'), context);
     const target = node('p'),
         text =
             '<img src=x onerror=alert(1)>\nhttps://example.test/a?x=1&y=2. (http://example.test/path) javascript:alert(1) data:text/html,no';

@@ -12,11 +12,11 @@ const {
 
 const { authenticateToken, authorizeAdmin } = require('../middlewares/auth.middleware');
 
-// Public routes
+/* Public routes */
 router.get('/', listCourses);
 router.get('/:id', getCourseById);
 
-// Administrator routes
+/* Administrator routes */
 router.post('/', authenticateToken, authorizeAdmin, createCourse);
 
 router.put('/:id', authenticateToken, authorizeAdmin, updateCourse);

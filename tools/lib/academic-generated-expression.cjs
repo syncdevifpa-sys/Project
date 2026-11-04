@@ -1,4 +1,4 @@
-// Match only the two generated rules in 1.1.31. Never normalize arbitrary SQL.
+/* Reconhece somente as duas regras geradas na 1.1.31; não normaliza SQL arbitrário. */
 const fs = require('node:fs'),
     path = require('node:path');
 const space = '[ \\t\\r\\n]*';
@@ -29,8 +29,10 @@ function pattern(column) {
         condition = parens(identifier('ativa'));
         result = identifier('id_curso');
     } else if (column === 'turma_pendente') {
-        // Backslashes, when present in metadata, are accepted only as the paired
-        // serialization of these two literal quote delimiters. No global unescape.
+        /*
+         * As barras invertidas dos metadados são aceitas apenas como a serialização pareada
+         * dos dois delimitadores de aspas literais; não há remoção global de escapes.
+         */
         const literal = "(?:'pendente'|\\\\'pendente\\\\')";
         const equality =
             identifier('estado') +

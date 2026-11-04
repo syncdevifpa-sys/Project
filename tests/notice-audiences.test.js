@@ -1,6 +1,6 @@
 const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
-const audiences = require('../front/js/notice-audiences');
+const audiences = require('../frontend/js/notice-audiences');
 const { validateNotice, editNotice } = require('../backend/src/services/notice-edit.service');
 const { canReadNotice } = require('../backend/src/services/notice-visibility.service');
 const model = require('../backend/src/models/notices.model');

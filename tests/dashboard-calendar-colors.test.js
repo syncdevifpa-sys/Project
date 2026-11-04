@@ -11,7 +11,7 @@ test('painel identifica categorias do calendário e aplica cores personalizadas 
         properties = {};
     const A = {
         auth: { exigirLogin: () => true, getSessao: () => ({ id_usuario: 4 }) },
-        calendarCategories: require('../front/js/calendar-categories'),
+        calendarCategories: require('../frontend/js/calendar-categories'),
         showToast: (message) => assert.fail(message),
         api: {
             expect: (result) => result,
@@ -55,7 +55,7 @@ test('painel identifica categorias do calendário e aplica cores personalizadas 
         }
     };
     for (const name of ['calendar-colors', 'pages'])
-        vm.runInNewContext(fs.readFileSync('front/js/' + name + '.js', 'utf8'), context);
+        vm.runInNewContext(fs.readFileSync('frontend/js/' + name + '.js', 'utf8'), context);
     ready.forEach((callback) => callback());
     await new Promise((resolve) => setImmediate(resolve));
     assert.match(panels[0].innerHTML, /data-event-category="ferias"/);

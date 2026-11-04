@@ -3,7 +3,7 @@ const { test } = require('node:test'),
     fs = require('node:fs'),
     vm = require('node:vm');
 test('FAQ mantém perguntas, responde limites reais e associa botões e painéis acessíveis', () => {
-    const html = fs.readFileSync('front/index.html', 'utf8').replace(/\s+/g, ' ');
+    const html = fs.readFileSync('frontend/index.html', 'utf8').replace(/\s+/g, ' ');
     for (const question of [
         'Quem pode usar a Arcadia?',
         'Há alguma taxa de assinatura?',
@@ -43,7 +43,7 @@ test('FAQ mantém perguntas, responde limites reais e associa botões e painéis
         querySelectorAll: (s) => (s === '.faq-trigger' ? [trigger] : []),
         getElementById: () => null
     };
-    vm.runInNewContext(fs.readFileSync('front/js/landing.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/landing.js', 'utf8'), {
         document,
         window: { Arcadia: A, addEventListener() {} },
         localStorage: { getItem: () => null }

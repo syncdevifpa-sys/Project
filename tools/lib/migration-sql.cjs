@@ -1,4 +1,4 @@
-// Geração offline: este módulo não abre conexão nem executa SQL.
+/* Geração offline: este módulo não abre conexão nem executa SQL. */
 const { checksum } = require('../generated/migration-checksum.js');
 const quote = (v) => v === null || v === undefined ? 'NULL' : "'" + String(v).replace(/'/g, "''") + "'";
 const helpers = `
@@ -145,7 +145,7 @@ function fk(i, apply) {
 }
 function triggerCheck(t, required = false) {
     const body = t.body.toLowerCase().replace(/[`\s]/g,'');
-    // BEGIN/END opcional somente quando o corpo contem um unico UPDATE.
+    /* BEGIN/END opcional somente quando o corpo contem um unico UPDATE. */
     const singleUpdate = /^begin(update[^;]+);end$/.exec(body);
     const bodies = singleUpdate ? [body, singleUpdate[1], singleUpdate[1]+';'] : [body];
     return `CALL _arc125_assert(${required?'EXISTS':'NOT EXISTS'}(SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=${quote(t.name)} AND ${required?'':'NOT '}(

@@ -47,9 +47,23 @@ function createCommunity(database = db) {
                 fail(400, 'Dados pessoais inválidos.');
             data[name] = value.trim() || null;
         }
-        const fields = Object.keys(data);
-        if (!fields.length) fail(400, 'Nenhum dado pessoal para salvar.');
+        if (!Object.keys(data).length) fail(400, 'Nenhum dado pessoal para salvar.');
         return transaction(owner, async (c) => {
+            /* O nome completo só muda pelo pedido de correção aprovado. */
+            if (Object.hasOwn(data, 'nome')) {
+                const [current] = await c.execute(
+                    'SELECT nome FROM publico_externo WHERE id_externo=?',
+                    [id(owner)]
+                );
+                if (!current[0] || data.nome !== current[0].nome)
+                    fail(
+                        409,
+                        'Para corrigir o nome completo, envie uma solicitação à administração.'
+                    );
+                delete data.nome;
+            }
+            const fields = Object.keys(data);
+            if (!fields.length) return { message: 'Nenhum dado pessoal alterado.' };
             await c.execute(
                 'UPDATE publico_externo SET ' +
                     fields.map((name) => name + '=?').join(',') +
@@ -65,10 +79,15 @@ function createCommunity(database = db) {
     async function registrations(owner) {
         await account(database, owner);
         let rows;
-        try { [rows] = await database.execute(
-            "SELECT e.id_projeto,e.status FROM projeto_inscricoes_externas e JOIN projetos p ON p.id_projeto=e.id_projeto WHERE e.id_externo=? AND p.aprovacao='aprovado' AND p.visibilidade='publico'",
-            [id(owner)]
-        ); } catch(error) { if(error.code==='ER_BAD_FIELD_ERROR') return []; throw error; }
+        try {
+            [rows] = await database.execute(
+                "SELECT e.id_projeto,e.status FROM projeto_inscricoes_externas e JOIN projetos p ON p.id_projeto=e.id_projeto WHERE e.id_externo=? AND p.aprovacao='aprovado' AND p.visibilidade='publico'",
+                [id(owner)]
+            );
+        } catch (error) {
+            if (error.code === 'ER_BAD_FIELD_ERROR') return [];
+            throw error;
+        }
         return rows;
     }
     async function register(owner, project, cancel = false) {
@@ -89,7 +108,7 @@ function createCommunity(database = db) {
             }
             if (![1, true].includes(row.permite_externos))
                 fail(403, 'Este projeto não permite participação da Comunidade externa.');
-            if (row.visibilidade !== 'publico') fail(404,'Projeto não disponível publicamente.');
+            if (row.visibilidade !== 'publico') fail(404, 'Projeto não disponível publicamente.');
             if (!['ativo', 'inscricoes'].includes(row.situacao))
                 fail(409, 'O projeto não está recebendo inscrições.');
             const [existing] = await c.execute(
@@ -127,7 +146,7 @@ function createCommunity(database = db) {
     }
     async function saveEvent(owner, key, body) {
         const data = validateContent('calendar', body, !key);
-        // Campos de autoria, visibilidade pública e origem acadêmica nunca vêm do cliente.
+        /* Campos de autoria, visibilidade pública e origem acadêmica nunca vêm do cliente. */
         const allowed = [
             'titulo',
             'descricao',
@@ -184,10 +203,10 @@ function createCommunity(database = db) {
         });
     }
     async function documents(owner) {
-        fail(403,'Documentos não estão disponíveis para a Comunidade externa.');
+        fail(403, 'Documentos não estão disponíveis para a Comunidade externa.');
     }
     async function download(owner, key) {
-        fail(403,'Documentos não estão disponíveis para a Comunidade externa.');
+        fail(403, 'Documentos não estão disponíveis para a Comunidade externa.');
     }
     return {
         updateProfile,

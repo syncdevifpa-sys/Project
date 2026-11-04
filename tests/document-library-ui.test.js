@@ -96,7 +96,7 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/document-library.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/document-library.js', 'utf8'), {
         window: { Arcadia: A },
         URLSearchParams,
         FormData: class {

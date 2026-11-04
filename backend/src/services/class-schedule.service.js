@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const timetable = require('../../../front/js/campus-timetable');
+const timetable = require('../../../frontend/js/campus-timetable');
 const { createCohortInfo } = require('./cohort-info.service');
 const { isoDate: day, weeklySlot } = require('../../generated/schedule-policy');
 const fail = (status, message) => {
@@ -11,6 +11,7 @@ function id(v) {
         fail(400, 'Identificador inválido.');
     return n;
 }
+/* Validação dos dados de uma recorrência de aula. */
 function fields(body) {
     if (body?.fim_dia_seguinte !== undefined && typeof body.fim_dia_seguinte !== 'boolean')
         fail(400, 'Informe se a aula termina no dia seguinte.');
@@ -21,6 +22,7 @@ function fields(body) {
     const room = require('./cohort-info.service').optional(body.sala, 100, 'Sala');
     return { ...slot, sala: room };
 }
+/* Expansão dos horários semanais em ocorrências datadas, sem criar registros. */
 function expand(rows, from, until) {
     day(from);
     day(until);
@@ -41,6 +43,7 @@ function expand(rows, from, until) {
                 id_ocorrencia: `aula:${row.id_horario}:${date}`,
                 id_horario: row.id_horario,
                 id_disciplina: row.id_disciplina,
+                id_turma: row.id_turma,
                 titulo: row.disciplina,
                 turma: row.turma,
                 data: date,
@@ -58,6 +61,7 @@ function expand(rows, from, until) {
     }
     return out;
 }
+/* Comparação de ocorrências reais para detectar conflitos de horário. */
 function overlaps(first, second) {
     const dayMs = 86400000;
     for (
@@ -89,6 +93,7 @@ function overlaps(first, second) {
 function createClassSchedule(database = db) {
     const access = createCohortInfo(database);
     const admin = (a) => a.is_admin === true || a.is_admin === 1;
+    /* Consulta e autorização da disciplina; a escrita continua restrita ao responsável ou administrador. */
     async function subject(c, a, key, write = false) {
         const [r] = await c.execute(
             'SELECT d.*,t.campus,t.turno,t.sala_oficial,t.arquivada_em AS turma_arquivada FROM academico_disciplinas d JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE d.id_disciplina=?' +
@@ -239,18 +244,25 @@ function createClassSchedule(database = db) {
             return { message: 'Horário retirado da agenda; registro preservado.' };
         });
     }
-    async function agenda(owner, from, until) {
+    /* Consulta semanal: valida a turma escolhida antes de carregar a grade completa. */
+    async function agenda(owner, from, until, cohort = null) {
         day(from);
         day(until);
         if (until < from || Date.parse(until) - Date.parse(from) > 93 * 86400000)
             fail(400, 'Consulte no máximo 93 dias por vez.');
         const a = await access.actor(database, owner);
         if (a.tipo_usuario === 'servidor' && !admin(a)) return [];
+        const selected = cohort == null || cohort === '' ? null : id(cohort);
+        if (selected !== null && !(await access.permission(database, a, selected)))
+            fail(403, 'Você não participa desta turma.');
         const [rows] = await database.execute(
-            "SELECT h.id_horario,h.id_disciplina,h.dia_semana,TIME_FORMAT(h.hora_inicio,'%H:%i') AS hora_inicio,TIME_FORMAT(h.hora_fim,'%H:%i') AS hora_fim,DATE_FORMAT(h.vigencia_inicio,'%Y-%m-%d') AS vigencia_inicio,DATE_FORMAT(h.vigencia_fim,'%Y-%m-%d') AS vigencia_fim,h.sala,t.sala_oficial,t.turno,d.nome AS disciplina,t.nome AS turma FROM academico_horarios h JOIN academico_disciplinas d ON d.id_disciplina=h.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE h.ativo=1 AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL AND h.vigencia_inicio<=? AND h.vigencia_fim>=? AND (?=1 OR (?='docente' AND d.id_professor=? AND d.atribuicao_ativa=1) OR (?='discente' AND EXISTS(SELECT 1 FROM academico_matriculas m WHERE m.id_disciplina=d.id_disciplina AND m.id_aluno=? AND m.ativa=1))) ORDER BY h.dia_semana,h.hora_inicio",
+            "SELECT h.id_horario,h.id_disciplina,h.dia_semana,TIME_FORMAT(h.hora_inicio,'%H:%i') AS hora_inicio,TIME_FORMAT(h.hora_fim,'%H:%i') AS hora_fim,DATE_FORMAT(h.vigencia_inicio,'%Y-%m-%d') AS vigencia_inicio,DATE_FORMAT(h.vigencia_fim,'%Y-%m-%d') AS vigencia_fim,h.sala,t.sala_oficial,t.turno,d.nome AS disciplina,t.id_turma,t.nome AS turma FROM academico_horarios h JOIN academico_disciplinas d ON d.id_disciplina=h.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE h.ativo=1 AND d.arquivada_em IS NULL AND t.arquivada_em IS NULL AND h.vigencia_inicio<=? AND h.vigencia_fim>=? AND (? IS NULL OR t.id_turma=?) AND (? IS NOT NULL OR ?=1 OR (?='docente' AND d.id_professor=? AND d.atribuicao_ativa=1) OR (?='discente' AND EXISTS(SELECT 1 FROM academico_matriculas m WHERE m.id_disciplina=d.id_disciplina AND m.id_aluno=? AND m.ativa=1))) ORDER BY h.dia_semana,h.hora_inicio",
             [
                 until,
                 from,
+                selected,
+                selected,
+                selected,
                 admin(a) ? 1 : 0,
                 a.tipo_usuario,
                 a.id_usuario,
@@ -277,6 +289,7 @@ function createClassSchedule(database = db) {
             };
         });
     }
+    /* Exceções alteram uma data da recorrência, preservando o horário original. */
     async function exceptions(owner, key, schedule) {
         const a = await access.actor(database, owner);
         await subject(database, a, key);

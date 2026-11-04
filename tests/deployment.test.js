@@ -53,7 +53,7 @@ test('entrada da Vercel carrega sem .env e registra o pool MySQL compatível', (
 });
 
 test('API usa HTTPS do deploy, preserva Live Server e permite endereço explícito', () => {
-    const source = fs.readFileSync(path.join(__dirname, '../front/js/api.js'), 'utf8');
+    const source = fs.readFileSync(path.join(__dirname, '../frontend/js/api.js'), 'utf8');
     for (const [location, override, expected] of [
         [
             { hostname: 'portal.vercel.app', port: '', origin: 'https://portal.vercel.app' },
@@ -84,7 +84,7 @@ test('API usa HTTPS do deploy, preserva Live Server e permite endereço explíci
 
 test('referências ativas entre pastas usam nomes atuais e assets locais existem', () => {
     const root = path.resolve(__dirname, '..');
-    const front = path.join(root, 'front');
+    const frontend = path.join(root, 'frontend');
     const oldPages = Object.keys(require('../page-redirects.json'));
     function walk(dir) {
         return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -92,7 +92,7 @@ test('referências ativas entre pastas usam nomes atuais e assets locais existem
             return entry.isDirectory() ? walk(file) : [file];
         });
     }
-    const sourceFiles = ['front', 'backend/src', 'tools', '.vscode']
+    const sourceFiles = ['frontend', 'backend/src', 'tools', '.vscode']
         .flatMap((dir) => walk(path.join(root, dir)))
         .filter((file) => /\.(?:html|js|css|json|sql)$/.test(file));
     sourceFiles.push(path.join(root, '.gitignore'), path.join(root, '.vercelignore'));
@@ -101,7 +101,7 @@ test('referências ativas entre pastas usam nomes atuais e assets locais existem
         for (const oldPage of oldPages) assert.ok(!text.includes(oldPage), file + ': ' + oldPage);
         assert.ok(!text.includes('ilustracoes/'), file);
     }
-    for (const file of walk(front).filter((file) => /\.(?:html|css)$/.test(file))) {
+    for (const file of walk(frontend).filter((file) => /\.(?:html|css)$/.test(file))) {
         const text = fs.readFileSync(file, 'utf8');
         const refs = file.endsWith('.html')
             ? [
@@ -114,7 +114,7 @@ test('referências ativas entre pastas usam nomes atuais e assets locais existem
             if (/^(?:https?:|data:|\/\/|#)/.test(ref)) continue;
             const clean = ref.split(/[?#]/)[0];
             const target = clean.startsWith('/')
-                ? path.join(front, clean.slice(1))
+                ? path.join(frontend, clean.slice(1))
                 : path.resolve(path.dirname(file), clean);
             assert.ok(fs.existsSync(target), file + ': ' + ref);
         }

@@ -1,4 +1,4 @@
-// Conteúdo fixo do portal. O link é construído pelo serviço com APP_URL validada.
+/* Conteúdo fixo do portal. O link é construído pelo serviço com APP_URL validada. */
 const escapeHTML = (value) =>
     String(value).replace(
         /[&<>"']/g,

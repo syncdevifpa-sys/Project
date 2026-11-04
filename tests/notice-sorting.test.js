@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 test('ordenação de Notícias cobre a coleção inteira, desempata e preserva os registros', () => {
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/notice-filters.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js', 'utf8'), {
         window: { Arcadia: A }
     });
     const rows = [

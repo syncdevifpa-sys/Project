@@ -163,7 +163,7 @@ function createRequirements(database = db) {
                 fail(409, 'O vínculo do pedido precisa de revisão administrativa.');
             return stored;
         }
-        // Legado: somente um pedido realmente existente comprova a intencao anterior.
+        /* Legado: somente um pedido realmente existente comprova a intencao anterior. */
         return request ? request.tipo_solicitado || 'docente' : null;
     }
     async function submit(key, body, explicitChange = false) {
@@ -256,7 +256,7 @@ function createRequirements(database = db) {
             );
             if (!sources[0]?.id_externo)
                 fail(409, 'Solicitação já avaliada ou indisponível. Atualize a lista.');
-            // A mesma ordem do reenvio: conta externa antes do pedido.
+            /* A mesma ordem do reenvio: conta externa antes do pedido. */
             const account = await external(c, sources[0].id_externo, true);
             const [rows] = await c.execute(
                 'SELECT * FROM docente_requisitos WHERE id_requisito=? FOR UPDATE',
@@ -343,7 +343,7 @@ function createRequirements(database = db) {
                 ]
             );
             const user = created.insertId;
-            // O ID externo permanece a origem estável da mesma conta; usuarios é a projeção institucional.
+            /* O ID externo permanece a origem estável da mesma conta; usuarios é a projeção institucional. */
             await c.execute(
                 'INSERT INTO conta_vinculos (id_externo,id_usuario,id_requisito) VALUES (?,?,?)',
                 [account.id_externo, user, r.id_requisito]
@@ -389,7 +389,7 @@ function createRequirements(database = db) {
                 'external',
                 account.id_externo
             );
-            // Retém origem e histórico; impede um segundo acesso externo à mesma identidade.
+            /* Retém origem e histórico; impede um segundo acesso externo à mesma identidade. */
             await c.execute("UPDATE publico_externo SET situacao='bloqueado' WHERE id_externo=?", [
                 account.id_externo
             ]);

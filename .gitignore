@@ -11,7 +11,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# Atalhos locais da raiz para Live Server (código-fonte mantido em front/)
+# Atalhos locais da raiz para Live Server (código-fonte mantido em frontend/)
 /assets
 /auth.css
 /notices.html
@@ -43,6 +43,6 @@ Thumbs.db
 /tmp/
 /tools/generated/
 /backend/generated/
-/front/js/person-name.js
+/frontend/js/person-name.js
 
-/front/js/campus-map-model.js
+/frontend/js/campus-map-model.js

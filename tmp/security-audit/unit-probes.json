@@ -1,5 +1,0 @@
-{
-  "toastInsertsHtmlWithoutEscaping": true,
-  "remoteXssExploitConfirmed": false,
-  "bcryptLongPasswordsShareFirst72Bytes": true
-}

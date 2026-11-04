@@ -1,4 +1,4 @@
-// Visibility is enforced before returning publications, independently of UI filters.
+/* A visibilidade é validada antes de retornar publicações, independentemente dos filtros da interface. */
 function canReadNotice(notice, viewer) {
     const institutional = viewer && viewer.tipo_usuario !== 'externo' && viewer.id_usuario;
     if (
@@ -9,7 +9,7 @@ function canReadNotice(notice, viewer) {
     )
         return true;
     if (notice.situacao !== 'publicado') return false;
-    const audiences = require('../../../front/js/notice-audiences').parse(notice.publico_alvo);
+    const audiences = require('../../../frontend/js/notice-audiences').parse(notice.publico_alvo);
     if (audiences.includes('todos') || audiences.includes('externo')) return true;
     return Boolean(institutional && audiences.includes(viewer.tipo_usuario));
 }

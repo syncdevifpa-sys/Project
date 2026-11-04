@@ -44,7 +44,7 @@ function fixture() {
         return node;
     };
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/confirm-dialog.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/confirm-dialog.js', 'utf8'), {
         window: { Arcadia: A },
         document: { activeElement: previous, body: make('body'), createElement: make }
     });

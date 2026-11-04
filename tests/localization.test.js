@@ -51,7 +51,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
         location: { pathname: '/projects.html' },
         window: {
             Arcadia: {
-                contentFields: require('../front/js/content-fields'),
+                contentFields: require('../frontend/js/content-fields'),
                 auth: { getSessao: () => ({ tipo_usuario: 'docente' }) },
                 showToast: (message) => assert.fail(message),
                 api: {
@@ -76,7 +76,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
             }
         }
     });
-    vm.runInContext(fs.readFileSync(path.join(__dirname, '../front/js/pages.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../frontend/js/pages.js'), 'utf8'), context);
     load();
     await new Promise((resolve) => setImmediate(resolve));
     assert.match(grid.innerHTML, /Pesquisa/);

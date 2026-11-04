@@ -14,7 +14,7 @@ test('erro de rede ou expiração mantém confirmação disponível e não redir
             history:{replaceState(){}},URLSearchParams,
             window:{sessionStorage:{getItem:k=>stored.get(k),removeItem:k=>stored.delete(k),setItem:(k,v)=>stored.set(k,v)},Arcadia:{api:{post:async(path,body,options)=>{requests.push({path,body,options});if(fail)throw Error('Link expirado ou rede indisponível');return{message:'E-mail confirmado.',alreadyConfirmed:true};},expect:p=>p},token:{clear(){assert.fail('Cadastro confirmado não autentica nem altera outra sessão');}}}}
         };
-        vm.runInNewContext(fs.readFileSync('front/js/email-verification.js','utf8'),context);
+        vm.runInNewContext(fs.readFileSync('frontend/js/email-verification.js','utf8'),context);
         assert.equal(requests.length,0);
         nodes.confirmEmailForm.events.submit({preventDefault(){}});
         await new Promise(resolve=>setImmediate(resolve));
@@ -45,7 +45,7 @@ test('abrir fragmento não envia token; clique explícito confirma e remove o to
         };
     let removed = false,
         cleared = false;
-    vm.runInNewContext(fs.readFileSync('front/js/email-verification.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/email-verification.js', 'utf8'), {
         document: { getElementById: (id) => nodes[id] },
         location: { hash: '#token=' + 'a'.repeat(64), pathname: '/verify-email.html', replace: value => calls.push({redirect:value}) },
         history: {
@@ -104,7 +104,7 @@ test('cadastro abre confirmação com destinatário preenchido e aviso de envio 
             ['arcadia.pendingEmail', 'signup@example.test'],
             ['arcadia.signupNotice', notice]
         ]);
-        vm.runInNewContext(fs.readFileSync('front/js/email-verification.js', 'utf8'), {
+        vm.runInNewContext(fs.readFileSync('frontend/js/email-verification.js', 'utf8'), {
             document: { getElementById: (id) => fields[id] },
             location: { hash: '', pathname: '/verify-email.html' },
             URLSearchParams,
@@ -145,7 +145,7 @@ for (const storedEmail of ['signup@example.test', null, 'invalid']) {
                 }
             };
         }
-        vm.runInNewContext(fs.readFileSync('front/js/email-verification.js', 'utf8'), {
+        vm.runInNewContext(fs.readFileSync('frontend/js/email-verification.js', 'utf8'), {
             document: { getElementById: (id) => nodes[id] },
             location: { hash: '', pathname: '/verify-email.html' },
             URLSearchParams,

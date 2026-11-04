@@ -163,7 +163,7 @@ function candidatesFromPages(pages, { year, level }) {
             }
             currentLevel = levelName;
         }
-        // Cabeçalhos institucionais atravessam colunas: remova a linha inteira antes do recorte.
+        /* Cabeçalhos institucionais atravessam colunas: remova a linha inteira antes do recorte. */
         const pageTop = Math.max(...page.items.map((item) => item.y));
         const headerRows = page.items
             .filter(
@@ -192,7 +192,7 @@ function candidatesFromPages(pages, { year, level }) {
             .map((item) => {
                 const match = normalize(item.text).match(/^([a-z]+)(?:\s*\/\s*(\d{4}))?$/);
                 if (!match || !MONTHS.includes(match[1])) return null;
-                // Nomes de meses citados no corpo (como "Abril") não abrem outra coluna.
+                /* Nomes de meses citados no corpo (como "Abril") não abrem outra coluna. */
                 if (item.text.trim() !== item.text.trim().toUpperCase() && !match[2]) return null;
                 const right = page.items
                     .filter(
@@ -242,8 +242,10 @@ function candidatesFromPages(pages, { year, level }) {
             const bandItems = pageItems.filter(
                 (item) => item.y < band.y - 3 && item.y > bottom + 3
             );
-            // O rótulo e o número de um total podem estar em objetos/colunas diferentes.
-            // Delimite o rodapé antes de associar os fragmentos à coluna mais próxima.
+            /*
+             * O rótulo e o número de um total podem estar em objetos/colunas diferentes.
+             * Delimite o rodapé antes de associar os fragmentos à coluna mais próxima.
+             */
             const footerY = Math.max(
                 -Infinity,
                 ...bandItems
@@ -254,8 +256,10 @@ function candidatesFromPages(pages, { year, level }) {
             );
             const cols = band.anchors.map((anchor) => ({ anchor, items: [] }));
             for (const item of bandItems.filter((item) => item.y > footerY + 2)) {
-                // O início do texto identifica a coluna. Uma descrição longa não muda
-                // de mês só porque a largura calculada ultrapassa o centro da célula.
+                /*
+                 * O início do texto identifica a coluna. Uma descrição longa não muda
+                 * de mês só porque a largura calculada ultrapassa o centro da célula.
+                 */
                 const center = item.x;
                 let col = cols[0];
                 for (const other of cols)
@@ -301,8 +305,10 @@ function candidatesFromPages(pages, { year, level }) {
                 .map((item) => item.y)
         );
         const above = aboveItems.filter((item) => item.y > aboveFooterY + 2);
-        // Uma tabela pode atravessar a página sem repetir os cabeçalhos dos meses.
-        // Reutiliza as colunas anteriores somente dentro da mesma modalidade.
+        /*
+         * Uma tabela pode atravessar a página sem repetir os cabeçalhos dos meses.
+         * Reutiliza as colunas anteriores somente dentro da mesma modalidade.
+         */
         if (above.length && previousColumns.length) {
             const pageTop = Math.max(...page.items.map((item) => item.y));
             const continuations = previousColumns.map((column) => ({
@@ -332,7 +338,7 @@ function candidatesFromPages(pages, { year, level }) {
             groups.unshift(...continuations);
             if (!bands.length) lastColumns = continuations;
         } else if (above.length) {
-            // O preâmbulo de resoluções não é uma coluna de eventos. Preserve apenas datas explícitas.
+            /* O preâmbulo de resoluções não é uma coluna de eventos. Preserve apenas datas explícitas. */
             groups.unshift({
                 lines: lines(above).filter(
                     (line) =>
@@ -388,8 +394,10 @@ function candidatesFromPages(pages, { year, level }) {
         }
         previousColumns = lastColumns.filter((column) => !column.closed);
     }
-    // Expande dias enumerados depois de juntar as linhas de uma mesma descrição.
-    // "27 e 30" não inclui os dias 28 e 29.
+    /*
+     * Expande dias enumerados depois de juntar as linhas de uma mesma descrição.
+     * "27 e 30" não inclui os dias 28 e 29.
+     */
     for (let index = candidates.length - 1; index >= 0; index--) {
         const candidate = candidates[index];
         if (!candidate.distinctDates?.length) continue;
@@ -476,8 +484,10 @@ async function extractCalendarPdf(buffer, metadata) {
         fail(400, 'Envie um PDF válido de até 4 MB.');
     let pdfjs;
     try {
-        // Referências explícitas permitem ao empacotador incluir o módulo nativo e o worker.
-        // O PDF.js procura ambos dinamicamente; isso funciona localmente mesmo se faltarem no deploy.
+        /*
+         * Referências explícitas permitem ao empacotador incluir o módulo nativo e o worker.
+         * O PDF.js procura ambos dinamicamente; isso funciona localmente mesmo se faltarem no deploy.
+         */
         require('@napi-rs/canvas');
         pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
         globalThis.pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs');

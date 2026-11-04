@@ -137,8 +137,17 @@ function fixture() {
             return consent;
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/dialog-shell.js', 'utf8'), {
-        window: { Arcadia: A },
+    const window = {
+        Arcadia: A,
+        scrollX: 0,
+        scrollY: 140,
+        scrollTo(position) {
+            this.scrollX = position.left;
+            this.scrollY = position.top;
+        }
+    };
+    vm.runInNewContext(fs.readFileSync('frontend/js/dialog-shell.js', 'utf8'), {
+        window,
         document,
         queueMicrotask,
         Event
@@ -159,6 +168,7 @@ function fixture() {
     };
     return {
         A,
+        window,
         make,
         Element,
         document,
@@ -254,7 +264,7 @@ test('apenas janela superior fecha e a rolagem continua bloqueada até fechar a 
     assert.equal(f.classes.size, 0);
 });
 test('CSS mantém controle no cabeçalho e limita conteúdo à viewport móvel', () => {
-    const css = fs.readFileSync('front/dialog-shell.css', 'utf8');
+    const css = fs.readFileSync('frontend/dialog-shell.css', 'utf8');
     assert.match(css, /100dvh/);
     assert.match(css, /\.ar-dialog-shell-body[^}]*overflow: auto/s);
     assert.match(css, /\.ar-dialog-shell-head[^}]*flex: 0 0 auto/s);
@@ -283,4 +293,19 @@ test('overlay existente mantém foco, Escape e bloqueio de rolagem no empilhamen
     assert.equal(f.classes.has('ar-dialog-open'), true);
     parent.dialog.close();
     assert.equal(f.classes.size, 0);
+});
+
+test('abrir e fechar janela não leva a página à posição de seu conteúdo no DOM', () => {
+    const f = fixture();
+    const { dialog } = f.make();
+    const show = dialog.showModal.bind(dialog);
+    dialog.showModal = () => {
+        show();
+        f.window.scrollY = 900;
+    };
+    f.A.dialogShell.open(dialog);
+    assert.equal(f.window.scrollY, 140);
+    f.window.scrollY = 900;
+    dialog.close();
+    assert.equal(f.window.scrollY, 140);
 });

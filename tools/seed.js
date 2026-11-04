@@ -17,7 +17,7 @@ async function runSeed() {
     console.log('🌱 Iniciando seed do banco de dados Arcádia...\n');
 
     try {
-        // 1. Cursos
+        /* 1. Cursos */
         console.log('📚 Inserindo cursos...');
         const cursos = [
             ['Tecnologia em Análise e Desenvolvimento de Sistemas', 'Graduação', 6],
@@ -35,7 +35,7 @@ async function runSeed() {
             );
         }
 
-        // 2. Usuários de Demonstração
+        /* 2. Usuários de Demonstração */
         console.log('👤 Inserindo usuários de teste (senha: senha123)...');
         const senhaHash = await bcrypt.hash('senha123', 10);
         const usuarios = [
@@ -54,7 +54,7 @@ async function runSeed() {
             );
         }
 
-        // 3. Editais / Avisos
+        /* 3. Editais / Avisos */
         console.log('📢 Inserindo editais e avisos...');
         const avisos = [
             ['Bolsas de Iniciação Científica (PIBIC)', 'Seleção de alunos para projetos de pesquisa do campus, com bolsa mensal.', 'matricula', 'todos', 'publicado', 1, 1],
@@ -72,7 +72,7 @@ async function runSeed() {
             );
         }
 
-        // 4. Calendário
+        /* 4. Calendário */
         console.log('📅 Inserindo eventos no calendário...');
         const eventos = [
             ['Início do Período Letivo 2026/2', '2026-08-10', 'Início das aulas para todos os cursos.', 'academico', 'Auditório Central'],

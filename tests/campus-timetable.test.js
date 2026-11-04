@@ -2,7 +2,7 @@ const { test, after } = require('node:test'),
     assert = require('node:assert/strict');
 const db = require('../backend/src/config/database');
 after(() => db.end());
-const policy = require('../front/js/campus-timetable');
+const policy = require('../frontend/js/campus-timetable');
 const { expand, overlaps } = require('../backend/src/services/class-schedule.service');
 test('grade Belém calcula seis aulas e intervalo20min nos três turnos; noite termina no dia seguinte', () => {
     for (const [shift, start, end] of [

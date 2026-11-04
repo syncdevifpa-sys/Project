@@ -207,14 +207,14 @@ test('página de comunidade carrega apenas perfil externo e usa o logout compart
         document: { getElementById: (id) => nodes[id] }
     };
     await vm.runInNewContext(
-        fs.readFileSync(path.join(__dirname, '../front/js/community.js'), 'utf8'),
+        fs.readFileSync(path.join(__dirname, '../frontend/js/community.js'), 'utf8'),
         context
     );
     assert.deepEqual(calls, ['/api/external/me']);
     assert.equal(nodes.externalName.textContent, 'Visitante');
     assert.equal(exited, false);
-    const html=fs.readFileSync(path.join(__dirname,'../front/community.html'),'utf8');
-    assert.ok(html.includes('id="externalLogout" data-sign-out'));
+    const html=fs.readFileSync(path.join(__dirname,'../frontend/community.html'),'utf8');
+    assert.match(html, /<[^>]*\bid="externalLogout"[^>]*\bdata-sign-out(?=[\s=>])[^>]*>/);
     assert.ok(html.includes('src="js/auth.js"'));
 });
 

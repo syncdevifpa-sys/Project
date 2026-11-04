@@ -152,12 +152,12 @@ function fixture(role = 'servidor', admin = true) {
         Intl,
         Date
     };
-    vm.runInNewContext(fs.readFileSync('front/js/academic-ui.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/academic-ui.js', 'utf8'), context);
     return { body, ids, A, context, requests };
 }
 test('admin abre arquivadas, restaura com confirmação explícita e exibe bloqueio de exclusão no diálogo', async () => {
     const f = fixture();
-    vm.runInNewContext(fs.readFileSync('front/js/admin-academic.js', 'utf8'), f.context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/admin-academic.js', 'utf8'), f.context);
     await settle();
     const panel = f.ids.get('adminAcademicPanel');
     assert.equal(panel.hidden, false);
@@ -184,7 +184,7 @@ test('admin abre arquivadas, restaura com confirmação explícita e exibe bloqu
 });
 test('aluno envia pedido por ID selecionado e vê estado pendente sem controles de aprovação', async () => {
     const f = fixture('discente', false);
-    vm.runInNewContext(fs.readFileSync('front/js/class-access.js', 'utf8'), f.context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/class-access.js', 'utf8'), f.context);
     await settle();
     const host = f.ids.get('academicAccess'),
         details = all(host).find((n) => n.tag === 'details');

@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
-const code = fs.readFileSync('front/js/account-removal.js', 'utf8');
+const code = fs.readFileSync('frontend/js/account-removal.js', 'utf8');
 for (const external of [false, true]) {
     test(`exclusão própria ${external ? 'externa' : 'institucional'} envia confirmação e mantém sessão quando recusada`, async () => {
         let submit,

@@ -1,4 +1,4 @@
-// Subconjunto conservador: um endereço simples, nunca uma lista ou cabeçalho MIME.
+/* Subconjunto conservador: um endereço simples, nunca uma lista ou cabeçalho MIME. */
 function emailAddress(value) {
     if (typeof value !== 'string' || value.length > 254 || /[\u0000-\u001f\u007f]/u.test(value))
         throw Object.assign(new Error('Informe um único endereço de e-mail válido.'), {

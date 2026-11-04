@@ -31,7 +31,7 @@ async function registerExternal(req, res) {
 
         const normalizedEmail = require('../services/email-verification.service').address(email);
         await require('../services/security-limits.service').verification(req, normalizedEmail);
-        // Confere primeiro a tabela usuarios
+        /* Confere primeiro a tabela usuarios */
         const institutionalUser =
             await externalUsersModel.findInstitutionalByEmail(normalizedEmail);
 
@@ -41,7 +41,7 @@ async function registerExternal(req, res) {
             });
         }
 
-        // Depois publico_externo
+        /* Depois publico_externo */
         const externalUser = await externalUsersModel.findExternalByEmail(normalizedEmail);
 
         if (externalUser) {

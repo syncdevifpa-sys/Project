@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const {
     classifyHoliday
 } = require('../backend/src/services/calendar-holiday-classification.service');
-const { forYear } = require('../front/js/calendar-holidays');
+const { forYear } = require('../frontend/js/calendar-holidays');
 
 test('todos os feriados calculados são reconhecidos pelo nome e data em anos diferentes', () => {
     for (const year of [2025, 2026, 2027, 2030])

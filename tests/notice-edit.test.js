@@ -143,7 +143,7 @@ function fixture(fail = false, role = 'discente') {
         'notice-actions',
         'notice-editor'
     ])
-        vm.runInNewContext(fs.readFileSync('front/js/' + p + '.js', 'utf8'), context);
+        vm.runInNewContext(fs.readFileSync('frontend/js/' + p + '.js', 'utf8'), context);
     const notice = {
         id_aviso: 7,
         id_usuario: 4,
@@ -228,7 +228,7 @@ test('salvar envia allowlist e atualiza tela; falha mantém editor e conteúdo d
 });
 
 test('criação/edição compartilham todos os campos por módulo e preservam criação em falha', async () => {
-    const definitions = require('../front/js/content-fields');
+    const definitions = require('../frontend/js/content-fields');
     for (const kind of ['notices', 'tasks', 'documents', 'projects', 'calendar']) {
         const create = fixture(false, 'servidor');
         create.A.contentEditor.open(kind, null, () => {});

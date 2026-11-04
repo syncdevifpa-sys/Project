@@ -5,7 +5,7 @@ const { authenticateExternal } = require('./externalAuth.middleware');
 
 function optionalNoticeViewer(req, res, next) {
     if (!req.headers.authorization) return next();
-    // Decoding only selects the authenticator; both validate signature and active session.
+    /* A decodificação apenas escolhe o autenticador; ambos validam a assinatura e a sessão ativa. */
     const claims = jwt.decode(req.headers.authorization.split(' ')[1] || '');
     if (claims?.tipo_usuario === 'externo') {
         return authenticateExternal(req, res, () => {

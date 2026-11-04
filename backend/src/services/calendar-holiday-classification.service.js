@@ -1,5 +1,5 @@
 /* Nome, data e abrangência precisam coincidir; uma atividade no feriado não vira feriado. */
-const { forYear } = require('../../../front/js/calendar-holidays');
+const { forYear } = require('../../../frontend/js/calendar-holidays');
 const normalize = (value) =>
     String(value || '')
         .normalize('NFD')

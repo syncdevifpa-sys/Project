@@ -1,6 +1,6 @@
 const test = require('node:test');
 test('padrão configurado aplica-se às áreas de conteúdo, preservando Meu espaço', () => {
-    const { usesSiteDefault } = require('../front/js/class-appearance.js');
+    const { usesSiteDefault } = require('../frontend/js/class-appearance.js');
     for (const page of [
         'notices.html',
         'calendar.html',
@@ -22,7 +22,7 @@ const assert = require('node:assert/strict');
 const { readFileSync, readdirSync } = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const { valid, contrast, readable } = require('../front/js/class-appearance');
+const { valid, contrast, readable } = require('../frontend/js/class-appearance');
 
 test('cores de banner rejeitam valores inválidos e corrigem contraste insuficiente', () => {
     assert.equal(valid('var(--ink)'), false);
@@ -40,11 +40,11 @@ test('cores de banner rejeitam valores inválidos e corrigem contraste insuficie
 });
 
 test('todos os banners de página carregam personalização e estilos circulares do calendário', () => {
-    const front = path.join(__dirname, '../front');
-    const pages = readdirSync(front).filter((p) => p.endsWith('.html'));
+    const frontend = path.join(__dirname, '../frontend');
+    const pages = readdirSync(frontend).filter((p) => p.endsWith('.html'));
     let count = 0;
     for (const page of pages) {
-        const html = readFileSync(path.join(front, page), 'utf8');
+        const html = readFileSync(path.join(frontend, page), 'utf8');
         if (!/class="(?:ar-hero |ar-detail |hero-card")/.test(html)) continue;
         count++;
         assert.equal((html.match(/src="js\/class-appearance.js"/g) || []).length, 1, page);
@@ -105,7 +105,7 @@ test('cards de resumo usam chaves independentes, paleta do portal e restauram ap
         ['arcadia-class-banner-styles:7', JSON.stringify(preferences)]
     ]);
     const A = {
-        bannerPreferences: require('../front/js/banner-preferences'),
+        bannerPreferences: require('../frontend/js/banner-preferences'),
         auth: { getSessao: () => ({ id_usuario: 7 }) },
         getIconSvg: (name) => '<svg data-icon="' + name + '"></svg>'
     };
@@ -123,7 +123,7 @@ test('cards de resumo usam chaves independentes, paleta do portal e restauram ap
         }
     };
     vm.runInNewContext(
-        readFileSync(path.join(__dirname, '../front/js/class-appearance.js'), 'utf8'),
+        readFileSync(path.join(__dirname, '../frontend/js/class-appearance.js'), 'utf8'),
         context
     );
     assert.equal(cards[0].styles.get('--personal-banner-ink'), '#000000');

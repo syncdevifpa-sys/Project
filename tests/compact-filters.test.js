@@ -73,7 +73,7 @@ function fixture() {
             }
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/compact-filters.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/compact-filters.js', 'utf8'), context);
     document.events.DOMContentLoaded();
     return { document, panel, body, summary, select, group, second, window };
 }

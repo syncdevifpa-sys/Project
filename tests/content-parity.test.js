@@ -2,7 +2,7 @@ const { test, after } = require('node:test'),
     assert = require('node:assert/strict');
 const db = require('../backend/src/config/database'),
     { editContent, validateContent } = require('../backend/src/services/content-edit.service'),
-    definitions = require('../front/js/content-fields');
+    definitions = require('../frontend/js/content-fields');
 after(() => db.end());
 function tx(
     t,

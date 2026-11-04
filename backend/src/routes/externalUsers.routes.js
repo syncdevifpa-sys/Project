@@ -21,7 +21,6 @@ router.post('/login', loginExternal);
 router.get('/me', authenticateExternal, getExternalProfile);
 const names = require('../services/account-names.service').handlers('external');
 router.get('/nomes', authenticateExternal, names.get);
-router.put('/nomes', authenticateExternal, names.put);
 router.post('/nomes/solicitacoes', authenticateExternal, names.post);
 router.get(
     '/email-status',

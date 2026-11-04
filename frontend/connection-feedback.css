@@ -1,0 +1,46 @@
+/* Mesmo padrão das notificações do portal, disponível também na autenticação. */
+.ar-connection-toast {
+  position: fixed;
+  z-index: 1000;
+  inset: auto 16px 16px auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(440px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid var(--line, #aaa);
+  border-radius: var(--radius-md, 16px);
+  background: var(--surface, #fff);
+  color: var(--ink, #181818);
+  box-shadow: 0 8px 24px #0002;
+  font: 14px/1.5 var(--font-sans, sans-serif);
+}
+.ar-connection-toast button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface-sunken, #eee);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.ar-connection-toast button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.ar-connection-toast button[hidden] {
+  display: none;
+}
+.ar-load-retry {
+  margin-top: 8px;
+}
+@media (max-width: 600px) {
+  .ar-connection-toast {
+    flex-wrap: wrap;
+    inset-inline: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}

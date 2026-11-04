@@ -19,7 +19,6 @@ router.put('/compartilhamento', authenticateToken, sharing.put);
 router.put('/perfil', authenticateToken, profile.updateProfile);
 const names = require('../services/account-names.service').handlers('users');
 router.get('/nomes', authenticateToken, names.get);
-router.put('/nomes', authenticateToken, names.put);
 router.post('/nomes/solicitacoes', authenticateToken, names.post);
 router.post(
     '/email-change',
@@ -48,12 +47,12 @@ router.delete('/account', authenticateToken, async (req, res) => {
     }
 });
 
-// Compatibilidade explícita: este endereço nunca mais dispara mensagens.
+/* Compatibilidade explícita: este endereço nunca mais dispara mensagens. */
 router.post('/send-welcome', (_req, res) => {
     res.status(410).json({ error: 'O envio público de boas-vindas foi desativado.' });
 });
 
-// POST /api/auth/login
+/* POST /api/auth/login */
 router.post('/login', login);
 
 module.exports = router;

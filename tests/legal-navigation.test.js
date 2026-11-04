@@ -6,7 +6,7 @@ function legal(referrer,saved) {
     const values=new Map(saved?[['arcadiaLegalReturn',saved]]:[]),links=[];
     const element=()=>({append(){},setAttribute(){},addEventListener(){},querySelectorAll:()=>[]});
     const window={};window.self=window;window.top=window;
-    vm.runInNewContext(fs.readFileSync('front/js/privacy-notice.js','utf8'),{window,URL,
+    vm.runInNewContext(fs.readFileSync('frontend/js/privacy-notice.js','utf8'),{window,URL,
         location:{origin:'https://portal.example',pathname:'/privacy.html'},
         document:{referrer,createElement:element,body:element(),addEventListener(){},querySelector:s=>s==='header nav'?{prepend:l=>links.push(l)}:element()},
         localStorage:{getItem:()=>null},sessionStorage:{getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)}});

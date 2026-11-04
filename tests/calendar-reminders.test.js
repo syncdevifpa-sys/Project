@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {identity,context,authorizeContext}=require('../backend/src/services/reminder-context.service');
 const {createReminders}=require('../backend/src/services/task-reminders.service');
-const {toUTC,fromUTC}=require('../front/js/reminder-time');
+const {toUTC,fromUTC}=require('../frontend/js/reminder-time');
 const {generate}=require('../tools/lib/calendar-reminder-migration.cjs');
 const {createDispatcher}=require('../backend/src/services/reminder-dispatch.service');
 const spec=require('../backend/db/migrations/1.1.26.json');
@@ -147,7 +147,7 @@ test('evolução SQL mantém uma tabela de lembretes, checksum independente e in
     for(const trigger of spec.triggers) assert.ok(fresh.includes('CREATE TRIGGER '+trigger.name+' '));
     const config=JSON.parse(fs.readFileSync('vercel.json','utf8'));
     assert.deepEqual(config.crons,[{path:'/api/internal/reminders/run',schedule:'0 12 * * *'}]);
-    const html=fs.readFileSync('front/calendar.html','utf8');
+    const html=fs.readFileSync('frontend/calendar.html','utf8');
     assert.ok(html.indexOf('js/reminder-time.js')<html.indexOf('js/task-reminders.js'));
     assert.ok(html.includes('task-reminders.css'));
 });

@@ -46,7 +46,7 @@ const upload = multer({
     fileFilter
 });
 
-// Upload de arquivo único (foto de perfil, anexo de edital ou documento)
+/* Upload de arquivo único (foto de perfil, anexo de edital ou documento) */
 router.post(
     '/',
     authenticateToken,

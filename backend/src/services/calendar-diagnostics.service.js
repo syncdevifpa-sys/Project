@@ -1,4 +1,4 @@
-// Nunca registre PDF, caminhos, mensagem bruta, credenciais ou tokens.
+/* Nunca registre PDF, caminhos, mensagem bruta, credenciais ou tokens. */
 const stages = new Set([
     'authorization',
     'metadata',

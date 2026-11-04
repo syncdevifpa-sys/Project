@@ -64,7 +64,7 @@ function fixture({ canCreate = true, error = null } = {}) {
             return input;
         }
     };
-    vm.runInNewContext(fs.readFileSync('front/js/class-catalog.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/class-catalog.js', 'utf8'), {
         window: { Arcadia: A },
         document: { createElement: (tag) => new Element(tag) }
     });
@@ -143,8 +143,8 @@ test('duplicidade seleciona existente e falhas preservam nome e dados; ação de
     assert.equal(fixture({ canCreate: false }).save(), undefined);
 });
 test('formulário carrega helper antes de classes e não simula catálogo vazio em migração pendente', () => {
-    const html = fs.readFileSync('front/classes.html', 'utf8'),
-        source = fs.readFileSync('front/js/classes.js', 'utf8');
+    const html = fs.readFileSync('frontend/classes.html', 'utf8'),
+        source = fs.readFileSync('frontend/js/classes.js', 'utf8');
     assert.ok(html.indexOf('js/class-catalog.js') < html.indexOf('js/classes.js'));
     assert.match(source, /if\s*\(\s*!features\.available\s*\)\s*throw new Error/);
     const editor = source.slice(

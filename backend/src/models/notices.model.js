@@ -189,7 +189,7 @@ async function deleteNotice(noticeId, actorId) {
                 { status: 403 }
             );
         }
-        // Leituras são dependências da publicação; outros registros não são removidos.
+        /* Leituras são dependências da publicação; outros registros não são removidos. */
         await connection.execute('DELETE FROM avisos_lidos WHERE id_aviso = ?', [noticeId]);
         const [result] = await connection.execute('DELETE FROM avisos WHERE id_aviso = ?', [
             noticeId

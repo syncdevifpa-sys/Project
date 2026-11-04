@@ -15,9 +15,15 @@ tmp/
 output/
 package-lock.json
 backend/package-lock.json
-front/assets/
-front/illustrations/
-front/public/
+frontend/assets/
+frontend/illustrations/
+frontend/public/
 **/*.svg
 **/*.woff2
 **/*.png
+
+# Código gerado a partir dos módulos TypeScript.
+backend/generated/
+tools/generated/
+frontend/js/person-name.js
+frontend/js/campus-map-model.js

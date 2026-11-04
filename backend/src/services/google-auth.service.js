@@ -149,7 +149,7 @@ function createGoogleAuth({
                     { registrationRequired: true }
                 );
             if (user.situacao !== 'ativo') fail(403, 'Esta conta não está ativa.');
-            // Alterar o e-mail de qualquer lado não pode trocar a identidade vinculada por outra conta.
+            /* Alterar o e-mail de qualquer lado não pode trocar a identidade vinculada por outra conta. */
             if (String(user.email).trim().toLowerCase() !== email)
                 fail(
                     409,

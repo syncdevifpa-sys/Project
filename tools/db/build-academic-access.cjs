@@ -1,4 +1,4 @@
-// Gera somente a nova migração; nunca reescreve versões já aplicadas.
+/* Gera somente a nova migração; nunca reescreve versões já aplicadas. */
 const fs = require('node:fs'),
     crypto = require('node:crypto');
 const spec = JSON.parse(fs.readFileSync('backend/db/migrations/1.1.31.json', 'utf8'));

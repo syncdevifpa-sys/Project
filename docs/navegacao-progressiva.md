@@ -16,7 +16,7 @@ principal é substituída. O acesso direto a cada endereço continua funcionando
 
 ## Comportamento
 
-O manifesto em `front/js/progressive-navigation.js` permite apenas controladores
+O manifesto em `frontend/js/progressive-navigation.js` permite apenas controladores
 conhecidos. Scripts encontrados no HTML recebido não são executados. Os recursos
 permitidos são carregados uma vez, e os estilos da próxima tela ficam prontos
 antes da substituição do conteúdo.

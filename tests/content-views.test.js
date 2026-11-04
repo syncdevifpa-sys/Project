@@ -71,7 +71,7 @@ function setup() {
         }
     }
     const A = {};
-    vm.runInNewContext(fs.readFileSync('front/js/content-views.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/content-views.js', 'utf8'), {
         window: { Arcadia: A },
         document: {
             createElement: (tag) => new Node(tag),

@@ -19,7 +19,7 @@ function fixture() {
         }
     };
     const document = { readyState: 'loading', addEventListener() {} };
-    vm.runInNewContext(fs.readFileSync('front/js/pages.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/pages.js', 'utf8'), {
         window: { Arcadia: A },
         document,
         location: { pathname: '/dashboard.html' },

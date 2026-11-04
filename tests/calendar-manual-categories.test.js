@@ -2,14 +2,14 @@ const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const definitions = require('../front/js/content-fields');
-const catalogue = require('../front/js/calendar-categories');
+const definitions = require('../frontend/js/content-fields');
+const catalogue = require('../frontend/js/calendar-categories');
 const { validateContent } = require('../backend/src/services/content-edit.service');
 const db = require('../backend/src/config/database');
 after(() => db.end());
 function colors() {
     const A = { calendarCategories: catalogue };
-    vm.runInNewContext(fs.readFileSync('front/js/calendar-colors.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/calendar-colors.js', 'utf8'), {
         window: { Arcadia: A, addEventListener() {} },
         document: { addEventListener() {} }
     });
@@ -34,7 +34,7 @@ test('nove grupos visuais cobrem todos os tipos existentes sem perder compatibil
     assert.equal(catalogue.canonical('ferias_docentes'), 'ferias');
     assert.equal(catalogue.canonical('periodo_academico'), 'registro_academico');
     assert.equal(catalogue.canonical('sabado_letivo'), 'atividades_campus');
-    const html = fs.readFileSync('front/calendar.html', 'utf8');
+    const html = fs.readFileSync('frontend/calendar.html', 'utf8');
     for (const key of Object.keys(catalogue.options))
         assert.ok(html.includes('data-filter-key="' + key + '"'));
 });

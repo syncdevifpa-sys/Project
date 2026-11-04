@@ -1,4 +1,4 @@
-// Geração offline de evolução explícita. Não altera a versão 1.1.25 já publicada.
+/* Geração offline de evolução explícita. Não altera a versão 1.1.25 já publicada. */
 const { helpers, column, index, fk, checksum, triggerCheck }=require('./migration-sql.cjs');
 const q=(s)=>"'"+String(s).replace(/'/g,"''")+"'";
 function generate(spec) {

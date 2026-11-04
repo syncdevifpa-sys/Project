@@ -1,4 +1,4 @@
-// Consulta somente leitura. Não imprime host, usuário, senha ou nome do banco.
+/* Consulta somente leitura. Não imprime host, usuário, senha ou nome do banco. */
 const fs = require('node:fs'),
     path = require('node:path'),
     mysql = require('mysql2/promise'),

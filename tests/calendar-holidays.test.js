@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const holidays = require('../front/js/calendar-holidays');
+const holidays = require('../frontend/js/calendar-holidays');
 
 test('feriados nacionais fixos e Sexta-feira da Paixão se repetem com datas corretas', () => {
     for (const [year, date] of [
