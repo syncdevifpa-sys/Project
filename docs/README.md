@@ -29,3 +29,5 @@ As capturas e saídas de testes em `tmp/` são artefatos locais e podem ser rege
 - [Estrutura de pastas e arquivos gerados](organizacao-do-projeto.md).
 - [Conexão, tentativas de leitura e entrada no topo](conexao-e-entrada.md).
 - [Nome no perfil e solicitação de correção](ajustes-nomes-noticias.md).
+
+- [Inventário técnico de cookies e armazenamento](cookies-e-armazenamento.md).

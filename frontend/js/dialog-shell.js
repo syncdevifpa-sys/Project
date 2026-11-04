@@ -186,6 +186,16 @@
         node.addEventListener('close', () => release(node, state));
         return state;
     }
+    /* O foco nativo dos diálogos não deve reposicionar a página que ficou ao fundo. */
+    const pagePosition = () => ({ x: window.scrollX || 0, y: window.scrollY || 0 });
+    function restorePage(position) {
+        if (
+            position &&
+            typeof window.scrollTo === 'function' &&
+            ((window.scrollX || 0) !== position.x || (window.scrollY || 0) !== position.y)
+        )
+            window.scrollTo({ left: position.x, top: position.y, behavior: 'instant' });
+    }
     function release(node, state) {
         const index = stack.lastIndexOf(node);
         if (index < 0) return;
@@ -193,9 +203,11 @@
         stack.splice(index, 1);
         lock();
         if (wasTop && state.previous?.isConnected) state.previous.focus({ preventScroll: true });
+        if (wasTop) restorePage(state.pagePosition);
     }
     function begin(node, state, previous = document.activeElement) {
         state.previous = previous;
+        state.pagePosition = pagePosition();
         state.touched = false;
         state.pointer = null;
         state.activeButton = null;
@@ -215,8 +227,11 @@
                 !node.classList.contains('ar-google-login-dialog')
         });
         const previous = document.activeElement;
+        const position = pagePosition();
         node.showModal();
         begin(node, state, previous);
+        state.pagePosition = position;
+        restorePage(position);
     }
     function openOverlay(node) {
         const state = enhance(node, { frame: false });

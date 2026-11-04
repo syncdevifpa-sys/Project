@@ -15,6 +15,37 @@
         window.location.href = target;
     }
     A.loginNavigation = { go };
+    /* Entrar pelo link do site também deve abrir a tela de login no topo. */
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest?.('a[href]');
+        if (
+            !link ||
+            event.defaultPrevented ||
+            event.ctrlKey ||
+            event.metaKey ||
+            event.shiftKey ||
+            event.altKey ||
+            (event.button != null && event.button !== 0) ||
+            link.target === '_blank'
+        )
+            return;
+        const next = new URL(link.href, location.href);
+        if (next.origin !== location.origin || !next.pathname.endsWith('/login.html') || next.hash)
+            return;
+        try {
+            sessionStorage.setItem(
+                key,
+                JSON.stringify({
+                    target: 'login.html',
+                    until: Date.now() + 60000,
+                    restoration: history.scrollRestoration
+                })
+            );
+        } catch {
+            next.searchParams.set('arcadia-entry', '1');
+            link.href = next.href;
+        }
+    });
     let marker;
     try {
         marker = JSON.parse(sessionStorage.getItem(key) || 'null');
@@ -22,7 +53,8 @@
     const page = location.pathname.split('/').pop();
     const params = new URLSearchParams(location.search || '');
     const explicit =
-        params.get('arcadia-entry') === '1' && ['dashboard.html', 'community.html'].includes(page);
+        params.get('arcadia-entry') === '1' &&
+        ['login.html', 'dashboard.html', 'community.html'].includes(page);
     if (!explicit && (!marker || marker.target !== page || marker.until < Date.now())) return;
     try {
         sessionStorage.removeItem(key);

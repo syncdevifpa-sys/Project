@@ -137,8 +137,17 @@ function fixture() {
             return consent;
         }
     };
+    const window = {
+        Arcadia: A,
+        scrollX: 0,
+        scrollY: 140,
+        scrollTo(position) {
+            this.scrollX = position.left;
+            this.scrollY = position.top;
+        }
+    };
     vm.runInNewContext(fs.readFileSync('frontend/js/dialog-shell.js', 'utf8'), {
-        window: { Arcadia: A },
+        window,
         document,
         queueMicrotask,
         Event
@@ -159,6 +168,7 @@ function fixture() {
     };
     return {
         A,
+        window,
         make,
         Element,
         document,
@@ -283,4 +293,19 @@ test('overlay existente mantém foco, Escape e bloqueio de rolagem no empilhamen
     assert.equal(f.classes.has('ar-dialog-open'), true);
     parent.dialog.close();
     assert.equal(f.classes.size, 0);
+});
+
+test('abrir e fechar janela não leva a página à posição de seu conteúdo no DOM', () => {
+    const f = fixture();
+    const { dialog } = f.make();
+    const show = dialog.showModal.bind(dialog);
+    dialog.showModal = () => {
+        show();
+        f.window.scrollY = 900;
+    };
+    f.A.dialogShell.open(dialog);
+    assert.equal(f.window.scrollY, 140);
+    f.window.scrollY = 900;
+    dialog.close();
+    assert.equal(f.window.scrollY, 140);
 });

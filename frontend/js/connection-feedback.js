@@ -1,6 +1,8 @@
 /* Estado de conexão compartilhado; nenhuma escrita é repetida automaticamente. */
 (function (A) {
     'use strict';
+    /* O documento legal embutido usa o aviso único da página principal. */
+    if (window.self !== window.top) return;
     const messages = {
         offline: 'Você está sem conexão. Verifique sua internet e tente novamente.',
         server: 'Não foi possível conectar ao Arcádia. Tente novamente em instantes.'
@@ -10,7 +12,9 @@
         notice,
         text,
         retryButton,
-        recoveryTimer;
+        recoveryTimer,
+        heartbeat = null,
+        probing = false;
     const offline = () => typeof navigator !== 'undefined' && navigator.onLine === false;
     function render() {
         if (!document.body) return;
@@ -71,26 +75,42 @@
     }
     /* A verificação de recuperação consulta apenas a rota pública de saúde. */
     async function probe() {
-        if (retryButton?.disabled) return;
+        if (probing) return;
         if (offline()) {
             failed();
             return;
         }
+        probing = true;
         if (retryButton) retryButton.disabled = true;
         const controller = typeof AbortController === 'function' ? new AbortController() : null;
-        const timeout = setTimeout(() => controller?.abort(), 8000);
+        const timeout = setTimeout(() => controller?.abort(), 5000);
         try {
-            await request((A.api?.BASE || location.origin) + '/api', {
-                method: 'GET',
-                cache: 'no-store',
-                signal: controller?.signal
-            });
+            /* A chave variável impede que um cache antigo simule uma recuperação. */
+            const response = await fetch(
+                (A.api?.BASE || location.origin) + '/api?connection-check=' + Date.now(),
+                {
+                    method: 'GET',
+                    cache: 'no-store',
+                    signal: controller?.signal
+                }
+            );
+            if (!response.ok) throw new Error('O servidor ainda não está disponível.');
+            reached();
         } catch (error) {
-            if (error.name === 'AbortError') failed(new Error('Tempo de conexão esgotado.'));
+            failed(error.name === 'AbortError' ? new Error('Tempo de conexão esgotado.') : error);
         } finally {
             clearTimeout(timeout);
+            probing = false;
             if (retryButton) retryButton.disabled = false;
         }
+    }
+    /* Alguns navegadores não disparam offline ao perder o acesso externo. */
+    function checkVisible() {
+        if (document.visibilityState !== 'hidden') return probe();
+    }
+    function startMonitor() {
+        if (heartbeat !== null || typeof setInterval !== 'function') return;
+        heartbeat = setInterval(checkVisible, 15000);
     }
     /* Cada área informa somente uma função de leitura para sua tentativa manual. */
     function offerRetry(host, load, error) {
@@ -127,10 +147,21 @@
         failed();
     });
     window.addEventListener('online', probe);
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('visibilitychange', checkVisible);
+    window.addEventListener('focus', checkVisible);
+    window.addEventListener('pageshow', startMonitor);
+    window.addEventListener('pagehide', () => {
+        if (heartbeat !== null) clearInterval(heartbeat);
+        heartbeat = null;
+    });
+    const boot = () => {
         if (offline()) failed();
         else render();
-    });
+        startMonitor();
+    };
+    if (!document.readyState || document.readyState === 'loading')
+        document.addEventListener('DOMContentLoaded', boot);
+    else boot();
     A.connection = {
         fetch: request,
         failed,

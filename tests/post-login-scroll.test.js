@@ -9,7 +9,13 @@ function fixture(marker = null, pathname = '/dashboard.html', search = '') {
         frames = [],
         scrolls = [];
     const history = { scrollRestoration: 'auto', replaceState() {} };
-    const location = { pathname, search, hash: '', href: pathname };
+    const location = {
+        pathname,
+        search,
+        hash: '',
+        origin: 'https://arcadia.test',
+        href: 'https://arcadia.test' + pathname
+    };
     const window = {
         Arcadia: {},
         location,
@@ -24,6 +30,7 @@ function fixture(marker = null, pathname = '/dashboard.html', search = '') {
         history,
         Date,
         URLSearchParams,
+        URL,
         document: {
             addEventListener: (type, fn) => {
                 dom[type] = fn;
@@ -66,4 +73,27 @@ test('entrada externa usa sua própria tela e preparação não altera outras ab
     const marker = JSON.parse(f.storage.get('arcadia.postLogin'));
     assert.equal(marker.target, 'community.html');
     assert.ok(marker.until > Date.now());
+});
+
+test('link para entrar marca somente a abertura intencional da tela de login', () => {
+    const f = fixture(null, '/index.html');
+    const link = { href: 'https://arcadia.test/login.html' };
+    f.dom.click({ target: { closest: () => link }, button: 0 });
+    assert.equal(JSON.parse(f.storage.get('arcadia.postLogin')).target, 'login.html');
+    const page = fixture({ target: 'login.html', until: Date.now() + 60000 }, '/login.html');
+    assert.equal(page.history.scrollRestoration, 'manual');
+    assert.ok(page.scrolls.every((position) => position.top === 0));
+});
+test('links com âncora, outra origem e cliques modificados não alteram o scroll', () => {
+    for (const [href, extra] of [
+        ['https://arcadia.test/login.html#ajuda', {}],
+        ['https://other.test/login.html', {}],
+        ['https://arcadia.test/login.html', { ctrlKey: true }],
+        ['https://arcadia.test/notices.html', {}]
+    ]) {
+        const f = fixture(null, '/index.html');
+        f.dom.click({ target: { closest: () => ({ href }) }, button: 0, ...extra });
+        assert.equal(f.storage.size, 0);
+        assert.equal(f.scrolls.length, 0);
+    }
 });

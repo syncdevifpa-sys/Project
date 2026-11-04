@@ -48,7 +48,7 @@
     try {
         const saved = JSON.parse(localStorage.getItem(key));
         if (saved?.version === 2 && ['necessary', 'optional'].includes(saved.choice))
-            choice = saved.choice;
+            choice = 'necessary';
     } catch (_) {}
     const panel = document.createElement('aside');
     panel.className = 'ar-privacy-notice';
@@ -56,10 +56,11 @@
     panel.hidden = !!choice;
     panel.innerHTML =
         '<h2 id="privacyNoticeTitle">Cookies e sua privacidade</h2>' +
-        '<p>O armazenamento necessário mantém seu acesso e a operação do portal. Você permite cookies opcionais?</p>' +
-        '<p><strong>Nenhum cookie opcional está ativo nesta versão.</strong> Sua escolha não autoriza novos rastreadores. Antes de incluir um recurso que exija consentimento, pediremos uma nova autorização específica.</p>' +
-        '<div class="ar-privacy-notice-actions"><button type="button" data-choice="necessary">Rejeitar cookies opcionais</button><button type="button" data-choice="optional">Aceitar opcionais</button><a href="cookies.html">Ler Política de Cookies</a><a href="privacy.html">Como usamos seus dados</a></div>';
+        '<p>Usamos armazenamento no navegador para manter seu acesso, suas preferências e este aviso.</p>' +
+        '<p>Não há ferramentas de publicidade ou análise de acesso ativadas pelo Arcádia. A entrada com Google pode usar cookies técnicos do provedor.</p>' +
+        '<div class="ar-privacy-notice-actions"><button type="button" data-choice="necessary">Usar somente o necessário</button><a href="cookies.html">Ver detalhes do armazenamento</a><a href="privacy.html">Como usamos seus dados</a></div>';
     document.body.append(panel);
+    let previousFocus = null;
     const toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'ar-privacy-reopen';
@@ -68,6 +69,9 @@
     (
         document.querySelector('.ar-site-footer nav, .footer-bottom-links, footer') || document.body
     ).append(toggle);
+    document.addEventListener('focusin', (event) => {
+        if (!panel.contains(event.target) && event.target !== toggle) previousFocus = event.target;
+    });
     for (const button of panel.querySelectorAll('[data-choice]'))
         button.addEventListener('click', () => {
             try {
@@ -82,12 +86,19 @@
             } catch (_) {}
             panel.hidden = true;
             toggle.hidden = false;
-            toggle.focus();
+            const target = previousFocus?.isConnected
+                ? previousFocus
+                : document.querySelector('main h1, h1, main');
+            if (target) {
+                if (target.tabIndex < 0) target.tabIndex = -1;
+                target.focus({ preventScroll: true });
+            }
         });
     toggle.addEventListener('click', () => {
+        previousFocus = toggle;
         panel.hidden = false;
         toggle.hidden = true;
-        panel.querySelector('button').focus();
+        panel.querySelector('button').focus({ preventScroll: true });
     });
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a[href]');
@@ -132,9 +143,9 @@
         close.addEventListener('click', () => dialog.close());
         dialog.addEventListener('close', () => {
             dialog.remove();
-            if (link.isConnected) link.focus();
+            if (link.isConnected) link.focus({ preventScroll: true });
         });
         window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal();
-        close.focus();
+        close.focus({ preventScroll: true });
     });
 })();

@@ -11,6 +11,7 @@
     <title>Política de Cookies · Arcádia</title>
     <link rel="stylesheet" href="legal.css" />
     <link rel="stylesheet" href="privacy-notice.css" />
+    <link rel="stylesheet" href="connection-feedback.css" />
   </head>
   <body>
     <a class="skip" href="#conteudo">Ir para o conteúdo</a>
@@ -28,7 +29,7 @@
         <p class="eyebrow">Informações do portal</p>
         <h1>Política de Cookies</h1>
         <p>Entenda o armazenamento no navegador e como alterar suas escolhas.</p>
-        <p class="meta">Minuta 1.1 · Revisada em 19 de outubro de 2026</p>
+        <p class="meta">Minuta 1.2 · Revisada em 3 de novembro de 2026</p>
       </div>
       <aside class="status" aria-label="Estado do documento">
         <strong>Documento em revisão.</strong>
@@ -96,10 +97,10 @@
               opções utilizadas.
             </p>
             <p>
-              O aviso oferece Rejeitar cookies opcionais e Aceitar opcionais com destaque
-              equivalente. Não há cookies opcionais ativos nesta versão. Guardamos a escolha e sua
-              data neste navegador, até remoção dos dados ou atualização da versão do aviso. Você
-              pode alterar a escolha em Preferências de cookies no rodapé.
+              O aviso explica o armazenamento usado pelo portal e oferece “Usar somente o
+              necessário”. Não há ferramentas de publicidade ou análise de acesso ativadas pelo
+              código do Arcádia. A confirmação e sua data ficam neste navegador para que o aviso não
+              seja repetido a cada visita. Os detalhes podem ser reabertos no rodapé.
             </p>
             <p>
               O armazenamento de sessão também é utilizado em etapas de cadastro e confirmação de
@@ -110,9 +111,11 @@
           <section id="cookies-5">
             <h2>Arquivos para uso sem conexão</h2>
             <p>
-              O recurso de funcionamento offline guarda arquivos da interface, como páginas,
-              estilos, scripts e imagens, no cache do navegador. No código revisado, o service
-              worker não guarda respostas das rotas da API nesse cache.
+              O código inclui um service worker que pode guardar páginas, estilos, scripts e imagens
+              do próprio portal em navegadores onde ele esteja instalado. Não foi encontrado
+              registro automático desse worker no código atual; instalações anteriores podem
+              continuar no navegador. As rotas da API, inclusive a verificação de conexão, ficam
+              fora desse cache.
             </p>
             <p>
               Os arquivos podem permanecer até a atualização ou limpeza do cache. Sua presença não
@@ -122,10 +125,16 @@
           <section id="cookies-6">
             <h2>Serviços externos e rastreamento</h2>
             <p>
-              O portal pode carregar fontes ou componentes de terceiros, incluindo recursos do
-              Google, e utiliza hospedagem externa. Essas conexões podem transmitir informações
-              técnicas, como IP e dados do navegador. Os cookies ou outras tecnologias efetivamente
-              usados por esses fornecedores ainda precisam ser inventariados no ambiente publicado.
+              As fontes do portal são servidas pelo próprio site. A entrada com Google carrega o
+              Google Identity Services, que pode usar cookies técnicos de autenticação. A
+              documentação do Google descreve, por exemplo, o cookie g_state para lembrar a saída e
+              evitar uma nova entrada automática indesejada. A presença de cada cookie depende do
+              navegador e da configuração do provedor.
+              <a
+                href="https://developers.google.com/identity/gsi/web/guides/automatic-sign-in-sign-out"
+                >Documentação do Google</a
+              >. A hospedagem e a barra de ferramentas do Preview da Vercel também são serviços
+              externos; seus dados de funcionamento não são definidos por este aviso.
             </p>
             <p>
               Não foram identificadas ferramentas de publicidade ou análise de audiência na
@@ -150,9 +159,10 @@
           <section id="cookies-8">
             <h2>Como funciona a escolha no aviso</h2>
             <p>
-              A escolha se refere somente à versão atual, sem cookies opcionais ativos, e não ativa
-              nenhum rastreador. Ela não substitui o aceite dos Termos de Uso nem autoriza novas
-              finalidades. A recusa de opcionais não impede criar uma conta ou acessar o portal.
+              A confirmação do aviso não ativa rastreadores, não altera os dados da conta e não
+              substitui o aceite dos Termos de Uso. Os botões anteriores de aceitar ou rejeitar
+              opcionais apenas registravam uma preferência: não havia recurso opcional para ativar.
+              O aviso foi simplificado para refletir essa operação.
             </p>
             <p>
               Antes de incluir recursos opcionais que exijam consentimento, a equipe deverá revisar
@@ -182,5 +192,6 @@
       <a href="privacy.html">Política de Privacidade</a>
     </footer>
     <script src="js/privacy-notice.js"></script>
+    <script src="js/connection-feedback.js"></script>
   </body>
 </html>

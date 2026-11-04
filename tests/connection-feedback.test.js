@@ -36,7 +36,8 @@ function fixture() {
         domEvents = {},
         navigator = { onLine: true },
         calls = [],
-        timers = new Map();
+        timers = new Map(),
+        intervals = new Map();
     let available = true,
         failure;
     const window = {
@@ -47,6 +48,7 @@ function fixture() {
     };
     const document = {
         body,
+        visibilityState: 'visible',
         createElement: (tag) => new Node(tag),
         addEventListener: (name, fn) => {
             domEvents[name] = fn;
@@ -64,6 +66,12 @@ function fixture() {
             return id;
         },
         clearTimeout: (id) => timers.delete(id),
+        setInterval: (fn, delay) => {
+            const id = Symbol();
+            intervals.set(id, { fn, delay });
+            return id;
+        },
+        clearInterval: (id) => intervals.delete(id),
         fetch: async (url, options = {}) => {
             calls.push({ url, method: options.method || 'GET' });
             if (failure) throw failure;
@@ -79,6 +87,9 @@ function fixture() {
         events,
         navigator,
         timers,
+        intervals,
+        document,
+        domEvents,
         connection: window.Arcadia.connection,
         set available(value) {
             available = value;
@@ -132,7 +143,7 @@ test('POST com falha não é reenviado ao recuperar conexão ou clicar na verifi
         f.calls.map((call) => call.method),
         ['POST', 'DELETE', 'GET']
     );
-    assert.ok(f.calls.at(-1).url.endsWith('/api'));
+    assert.equal(new URL(f.calls.at(-1).url).pathname, '/api');
 });
 test('tentativa contextual repete somente a leitura e preserva os campos existentes', async () => {
     const f = fixture(),
@@ -164,4 +175,38 @@ test('cancelamento de navegação não vira erro de conexão', async () => {
         (error) => error.name === 'AbortError'
     );
     assert.equal(f.body.children.length, 0);
+});
+
+test('detecta perda e recuperação sem evento offline nem interação com a página', async () => {
+    const f = fixture();
+    assert.equal(f.intervals.size, 1);
+    const check = [...f.intervals.values()][0];
+    assert.equal(check.delay, 15000);
+    f.available = false;
+    await check.fn();
+    assert.equal(f.navigator.onLine, true);
+    assert.match(
+        f.body.children[0].children[0].textContent,
+        /Não foi possível conectar ao Arcádia/
+    );
+    assert.match(f.calls[0].url, /connection-check=/);
+    f.available = true;
+    await check.fn();
+    assert.equal(f.body.children[0].children[0].textContent, 'Conexão restabelecida.');
+});
+test('aba oculta não gera consultas e retornar à aba verifica a conexão', async () => {
+    const f = fixture(),
+        check = [...f.intervals.values()][0].fn;
+    f.document.visibilityState = 'hidden';
+    await check();
+    assert.equal(f.calls.length, 0);
+    f.document.visibilityState = 'visible';
+    f.available = false;
+    await f.domEvents.visibilitychange();
+    assert.equal(f.calls.length, 1);
+    f.events.pagehide();
+    assert.equal(f.intervals.size, 0);
+    f.events.pageshow();
+    f.events.pageshow();
+    assert.equal(f.intervals.size, 1);
 });

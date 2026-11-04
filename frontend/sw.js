@@ -4,7 +4,7 @@
  * Permite funcionamento e cache offline e instalação na tela inicial.
  */
 
-const CACHE_NAME = 'arcadia-pwa-v1';
+const CACHE_NAME = 'arcadia-pwa-v2';
 const STATIC_ASSETS = [
     'index.html',
     'dashboard.html',
@@ -45,7 +45,9 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(
-                keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+                keys
+                    .filter((key) => key.startsWith('arcadia-pwa-') && key !== CACHE_NAME)
+                    .map((key) => caches.delete(key))
             );
         })
     );
@@ -56,7 +58,12 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
     /* Não cacheia chamadas da API */
-    if (event.request.method !== 'GET' || url.pathname.includes('/api/')) {
+    if (
+        url.origin !== self.location.origin ||
+        event.request.method !== 'GET' ||
+        url.pathname.endsWith('/api') ||
+        url.pathname.includes('/api/')
+    ) {
         return;
     }
 

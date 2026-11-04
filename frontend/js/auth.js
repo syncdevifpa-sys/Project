@@ -259,7 +259,7 @@ window.Arcadia = window.Arcadia || {};
                 if (error.data?.passwordRequired) {
                     enter.hidden = true;
                     linkForm.hidden = false;
-                    linkForm.querySelector('input').focus();
+                    linkForm.querySelector('input').focus({ preventScroll: true });
                 }
             } finally {
                 linkForm.querySelector('input').value = '';
@@ -285,11 +285,11 @@ window.Arcadia = window.Arcadia || {};
             linkForm.querySelector('input').value = '';
             window.google?.accounts?.id?.cancel();
             dialog.remove();
-            if (previous?.isConnected) previous.focus();
+            if (previous?.isConnected) previous.focus({ preventScroll: true });
         });
         document.body.append(dialog);
         window.Arcadia.dialogShell ? window.Arcadia.dialogShell.open(dialog) : dialog.showModal();
-        dialog.querySelector('[data-google-close]').focus();
+        dialog.querySelector('[data-google-close]').focus({ preventScroll: true });
         try {
             window.google?.accounts?.id?.cancel();
             const context = initial.context || (await prepareGoogleAuth());
@@ -302,7 +302,7 @@ window.Arcadia = window.Arcadia || {};
                 linkForm.hidden = true;
                 status.textContent = 'Conta Google selecionada. Clique em Entrar para continuar.';
                 status.dataset.state = 'info';
-                enter.focus();
+                enter.focus({ preventScroll: true });
             };
             const width = Math.min(
                 340,
@@ -330,7 +330,7 @@ window.Arcadia = window.Arcadia || {};
                 showError(initial.error);
                 if (initial.error.data?.passwordRequired) {
                     linkForm.hidden = false;
-                    linkForm.querySelector('input').focus();
+                    linkForm.querySelector('input').focus({ preventScroll: true });
                 }
             }
         } catch (error) {
