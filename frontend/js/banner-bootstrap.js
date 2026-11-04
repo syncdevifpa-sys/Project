@@ -41,7 +41,9 @@
                     style.mode === 'neutral'
                         ? 'var(--surface, var(--color-page, #fff))'
                         : style.mode === 'default'
-                          ? 'var(--accent, var(--lime))'
+                          ? page === 'index.html'
+                              ? 'var(--color-hero-bg)'
+                              : 'var(--accent, var(--lime))'
                           : style.background
                 );
                 root.style.setProperty(
@@ -49,7 +51,9 @@
                     style.mode === 'neutral'
                         ? 'var(--ink, var(--color-text, #182020))'
                         : style.mode === 'default'
-                          ? '#182020'
+                          ? page === 'index.html'
+                              ? 'var(--color-ink-hero)'
+                              : '#182020'
                           : style.text
                 );
             }

@@ -700,7 +700,15 @@
         const linkWrap = view.field('Endereço do documento', link);
         const file = input('file');
         file.accept = '.pdf,.docx,.png,.jpg,.jpeg';
-        const fileWrap = view.field('Arquivo PDF, DOCX, PNG ou JPEG de até 2 MB', file);
+        const fileWrap = view.field('Arquivo PDF, DOCX, PNG ou JPEG de até 4 MB', file);
+        const fileHelp = element(
+            'span',
+            '20 MB de espaço por pessoa. PDF mostra a primeira página; a prévia de DOCX é aproximada.',
+            'ar-library-help'
+        );
+        fileHelp.id = 'libraryFileHelp';
+        file.setAttribute('aria-describedby', fileHelp.id);
+        fileWrap.append(fileHelp);
         file.addEventListener('change', () => {
             if (!title.value && file.files[0]) title.value = file.files[0].name.slice(0, 150);
         });
@@ -744,8 +752,8 @@
             if (item) return api.expect(api.put(endpoint + '/items/' + item.id_item, body));
             if (kind.value === 'link') return api.expect(api.post(endpoint + '/links', body));
             const selected = file.files[0];
-            if (!selected || selected.size > 2 * 1024 * 1024)
-                throw Error('Envie um arquivo de até 2 MB.');
+            if (!selected || selected.size > 4 * 1024 * 1024)
+                throw Error('Envie um arquivo de até 4 MB.');
             const metadata = {
                 titulo: title.value,
                 descricao: details.value,

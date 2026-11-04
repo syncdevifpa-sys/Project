@@ -3,6 +3,23 @@ const assert = require('node:assert/strict'),
     vm = require('node:vm'),
     fs = require('node:fs');
 const code = fs.readFileSync('frontend/js/navigation.js', 'utf8');
+test('menu móvel tem ícone reconhecível e rótulo, sem aviso redundante da página', () => {
+    for (const session of [{}, { tipo_usuario: 'discente' }, { tipo_usuario: 'externo' }]) {
+        const f = fixture('projects.html', session, true);
+        assert.equal(f.toggle.children[1].textContent, 'Menu');
+        assert.match(f.toggle.children[0].children[0].attributes.d, /M4 6h16/);
+        assert.equal(f.toggle.attributes['aria-controls'], 'portalSidebar');
+        assert.ok(!f.nodes.some((n) => n.className === 'ar-sidebar-context'));
+        if (!session.tipo_usuario) {
+            assert.ok(f.nodes.some((n) => n.href === 'login.html'));
+            assert.ok(
+                !f.nodes.some((n) =>
+                    ['admin.html', 'classes.html', 'people.html', 'documents.html'].includes(n.href)
+                )
+            );
+        }
+    }
+});
 function fixture(page, session, mobile = false, saved = '0', sessionValues = new Map()) {
     const nodes = [],
         storage = new Map([['arcadia-sidebar-collapsed', saved]]);

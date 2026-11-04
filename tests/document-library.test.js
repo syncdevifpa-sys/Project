@@ -300,6 +300,10 @@ test('professor ou admin publica conscientemente e aluno não acessa pasta/item 
     assert.equal(foreign.writes.length, 0);
 });
 test('arquivos validam tamanho e assinatura e não seguem links nem aceitam HTML executável', () => {
+    const largerPdf = Buffer.alloc(4 * 1024 * 1024, 32);
+    largerPdf.write('%PDF-1.7\n');
+    largerPdf.write('%%EOF', largerPdf.length - 5);
+    assert.equal(fileInfo(largerPdf, 'maior.pdf').size, largerPdf.length);
     assert.equal(fileInfo(pdf, 'aula.pdf').mime, 'application/pdf');
     for (const [buffer, name] of [
         [Buffer.from('<html>script</html>'), 'aula.pdf'],
@@ -488,6 +492,16 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
     const multipart = await fetch(base + '/files', { method: 'POST', headers, body: form });
     assert.equal(multipart.status, 201);
     assert.equal(f.writes.at(-1).args[3], '漢'.repeat(2998));
+    const largerPdf = Buffer.alloc(4 * 1024 * 1024, 32);
+    largerPdf.write('%PDF-1.7\n');
+    largerPdf.write('%%EOF', largerPdf.length - 5);
+    const largerForm = new FormData();
+    largerForm.append('titulo', 'Arquivo maior');
+    largerForm.append('arquivo', new Blob([largerPdf]), 'maior.pdf');
+    assert.equal(
+        (await fetch(base + '/files', { method: 'POST', headers, body: largerForm })).status,
+        201
+    );
     const download = await fetch(base + '/items/3/download', { headers });
     assert.equal(download.status, 200);
     assert.equal(download.headers.get('Content-Type'), 'application/octet-stream');

@@ -112,11 +112,25 @@
 .ar-notice-cover img {
   width: 100%;
   height: auto;
-  max-height: 560px;
+  max-height: 280px;
   object-fit: contain;
 }
 .ar-detail > .ar-notice-cover img {
-  max-height: 720px;
+  max-height: 360px;
+}
+.ar-detail > .ar-notice-cover {
+  width: min(100%, 520px);
+  margin-right: auto;
+}
+.public-card .ar-notice-cover img {
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+}
+/* Altura uniforme; margens do cartão e conteúdo integral da imagem preservados. */
+.public-card.ar-notice-with-cover > .ar-notice-cover {
+  flex: 0 0 240px;
+  height: 240px;
 }
 .ar-cover-preview .ar-notice-cover img {
   max-height: 420px;

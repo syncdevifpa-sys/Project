@@ -29,9 +29,23 @@
         if (navToggle && navLinks) {
             const setOpen = (open) => {
                 navLinks.classList.toggle('is-open', open);
+                navLinks.inert = !open;
+                navLinks.setAttribute('aria-hidden', String(!open));
                 navToggle.setAttribute('aria-expanded', String(open));
                 navToggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
             };
+            navToggle.setAttribute('aria-controls', 'navMobilePanel');
+            setOpen(false);
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && navToggle.getAttribute('aria-expanded') === 'true') {
+                    setOpen(false);
+                    navToggle.focus({ preventScroll: true });
+                }
+            });
+            document.addEventListener('pointerdown', (event) => {
+                if (!navLinks.contains(event.target) && !navToggle.contains(event.target))
+                    setOpen(false);
+            });
             navToggle.addEventListener('click', () =>
                 setOpen(navToggle.getAttribute('aria-expanded') !== 'true')
             );

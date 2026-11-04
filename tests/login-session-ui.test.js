@@ -1,6 +1,29 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const client = require('./helpers/signup-client.cjs');
+test('falha de rede fica no aviso compartilhado sem repetir no formulário', async () => {
+    for (const access of ['login', 'cadastro']) {
+        const message = 'Não foi possível conectar ao Arcádia. Tente novamente em instantes.';
+        const c = client('users', 'person@example.test', async () => {
+            throw Object.assign(new Error(message), { code: 'NETWORK_ERROR' });
+        }, access);
+        c.window.Arcadia.connection = { messages: { server: message } };
+        await c.submit();
+        assert.equal(c.error.style.display, 'none');
+        assert.equal(c.success.style.display, 'none');
+        assert.equal(c.storage.size, 0);
+        assert.equal(c.timers.length, 0);
+    }
+});
+test('erro de credenciais continua visível no formulário com o monitor ativo', async () => {
+    const c = client('users', 'person@example.test', async () => ({
+        ok: false, status: 401, data: { error: 'E-mail ou senha incorretos.' }
+    }), 'login');
+    c.window.Arcadia.connection = { messages: { server: 'Falha de conexão' } };
+    await c.submit();
+    assert.equal(c.error.textContent, 'E-mail ou senha incorretos.');
+    assert.equal(c.error.style.display, 'block');
+});
 test('login anuncia confirmação uma vez e não cria sessão automaticamente',()=>{
     const c=client('users','person@example.test',()=>assert.fail('Sem login automático'),'login',{'arcadia.emailConfirmed':'1'});
     assert.equal(c.confirmedNotice.hidden,false);assert.match(c.confirmedNotice.textContent,/E-mail confirmado/);

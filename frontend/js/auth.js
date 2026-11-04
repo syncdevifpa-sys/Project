@@ -495,14 +495,19 @@ window.Arcadia = window.Arcadia || {};
             }
 
             const showError = (text) => {
+                /* Falhas de rede já têm aviso único e persistente no portal. */
+                if (Object.values(Arcadia.connection?.messages || {}).includes(text)) {
+                    if (msgErro) msgErro.style.display = 'none';
+                    if (msgSucesso) msgSucesso.style.display = 'none';
+                    return;
+                }
                 if (msgErro) {
                     msgErro.textContent = text;
                     msgErro.style.display = 'block';
                 } else {
-                    alert(text);
+                    showTopAlert('Não foi possível realizar o cadastro ou login', text);
                 }
                 if (msgSucesso) msgSucesso.style.display = 'none';
-                showTopAlert('Não foi possível realizar o cadastro ou login', text);
             };
 
             const showSuccess = (text) => {

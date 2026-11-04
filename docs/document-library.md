@@ -14,7 +14,7 @@ O código usa o MySQL existente, sem novo provedor pago e sem gravar arquivos no
 
 ## Limites
 
-- Arquivos: PDF, PNG e JPEG de até 2 MB, com extensão e assinatura verificadas no servidor. Downloads são anexos, nunca execução embutida na página. Não há suporte a Office, ZIP ou HTML nesta entrega, nem alegação de análise antivírus.
+- Arquivos: PDF, PNG e JPEG de até 4 MB, com extensão e assinatura verificadas no servidor. Downloads são anexos, nunca execução embutida na página. Não há suporte a Office, ZIP ou HTML nesta entrega, nem alegação de análise antivírus.
 - Espaço: 20 MB por usuário e 200 MB no total da biblioteca. A transação serializa operações por proprietário e verifica a cota global após obter um mutex, com leitura atual bloqueada para evitar soma desatualizada entre uploads concorrentes.
 - Até 500 itens e 100 pastas por usuário. Links não consomem a cota de bytes dos arquivos, mas contam como itens.
 - Pastas em um nível, sem árvore ou compartilhamento de pastas. É possível renomear e mover itens. A exclusão de pasta ocupada é recusada; nenhuma cascata de conteúdo é executada ao excluir uma pasta.
@@ -49,8 +49,12 @@ Rotas adicionais:
 - `GET /public`: catálogo de materiais publicados, sem exigir acesso a pastas pessoais.
 - `POST /folders`, `PUT /folders/:id`, `DELETE /folders/:id`: criação, renomeação e remoção de pasta vazia.
 - `POST /links`: cria um documento por endereço.
-- `POST /files`: recebe corpo binário `application/octet-stream`, com título, pasta, descrição, visibilidade e nome do arquivo na query. O corpo é limitado a 2 MB, abaixo do limite de payload típico da Vercel; limites adicionais do banco ou da plataforma podem ser inferiores e precisam ser observados no ambiente utilizado.
+- `POST /files`: recebe corpo binário `application/octet-stream`, com título, pasta, descrição, visibilidade e nome do arquivo na query. O corpo é limitado a 4 MB, abaixo do limite de payload típico da Vercel; limites adicionais do banco ou da plataforma podem ser inferiores e precisam ser observados no ambiente utilizado.
 - `PUT /items/:id`, `DELETE /items/:id`: edição de metadados, movimentação e exclusão consciente do próprio item.
 - `GET /items/:id/download`: valida autorização antes de ler o arquivo e entregá-lo como anexo.
 
 Se as tabelas não existirem, as rotas informam indisponibilidade e orientam habilitar a biblioteca. Falhas nunca são apresentadas como salvamento concluído. O formulário de edição de arquivo altera metadados e pasta; substituir o conteúdo exige adicionar outro item.
+
+## Atualização do limite
+
+O limite por arquivo passou de 2 para 4 MiB, com envio multipart e validação no servidor. DOCX é aceito sem macros; limites internos de XML e descompressão continuam ativos. As cotas de 20 MiB por conta e 200 MiB no total permanecem. Arquivos maiores exigem armazenamento externo e envio direto, porque a Vercel limita o corpo de requisição e resposta a 4,5 MB. Nenhuma migração foi executada.

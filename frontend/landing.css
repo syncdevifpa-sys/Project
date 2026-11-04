@@ -399,6 +399,9 @@ section[id] {
   color: var(--color-ink);
   font-size: 20px;
 }
+.nav-menu-label {
+  font: 600 12px var(--font-body);
+}
 
 /* Menu Mobile Dropdown */
 .nav-mobile-panel {
@@ -416,6 +419,9 @@ section[id] {
   flex-direction: column;
   gap: 12px;
   pointer-events: auto;
+  max-height: calc(100dvh - 110px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .nav-mobile-panel.is-open {
@@ -1760,9 +1766,11 @@ section[id] {
 
   .nav-toggle-btn {
     display: flex;
-    width: 46px;
+    width: auto;
+    gap: 6px;
+    padding: 8px 12px;
     height: 46px;
-    border-radius: 50%;
+    border-radius: 999px;
     background: rgba(16, 20, 26, 0.06);
     align-items: center;
     justify-content: center;
@@ -1966,11 +1974,18 @@ section[id] {
 }
 .public-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  align-items: stretch;
+  justify-items: start;
   gap: 24px;
   margin-top: 28px;
 }
 .public-card {
+  width: 100%;
+  max-width: 400px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border: 1px solid #d9ded8;
   border-radius: 20px;
@@ -1989,6 +2004,9 @@ section[id] {
   cursor: pointer;
   font-weight: 600;
   margin-top: 20px;
+}
+.public-card > details {
+  margin-top: auto;
 }
 .public-card a {
   color: inherit;

@@ -226,6 +226,19 @@
             </span>
           </a>
           <a href="#accountNames" data-nav-target="accountNames"
+            ><svg
+              class="ar-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M16 3l5 5-12 12H4v-5z M14 5l5 5" /></svg
             ><span
               ><b>Correção de nome</b><small>Solicitar correção do nome completo</small></span
             ></a
@@ -396,7 +409,15 @@
                 <label class="ar-field">
                   <span class="ar-field-label">Nome completo</span>
                   <input type="text" id="campoNome" value="" readonly />
-                  <small>Para alterar, acesse <a href="#accountNames">Correção de nome</a>.</small>
+                  <small
+                    >Para alterar, acesse
+                    <a
+                      class="ar-settings-inline-link"
+                      href="#accountNames"
+                      data-nav-target="accountNames"
+                      >Correção de nome</a
+                    >.</small
+                  >
                 </label>
 
                 <label class="ar-field">
@@ -1804,12 +1825,15 @@
         }
 
         /* Sincronização da navegação entre seções das configurações */
-        document.querySelectorAll('.ar-snav [data-nav-target]').forEach(function (link) {
+        document.querySelectorAll('[data-nav-target]').forEach(function (link) {
           link.addEventListener('click', function (e) {
             document.querySelectorAll('.ar-snav [data-nav-target]').forEach(function (l) {
               l.removeAttribute('aria-current');
             });
-            link.setAttribute('aria-current', 'page');
+            const current = document.querySelector(
+              '.ar-snav [data-nav-target="' + link.dataset.navTarget + '"]'
+            );
+            current?.setAttribute('aria-current', 'page');
           });
         });
       });

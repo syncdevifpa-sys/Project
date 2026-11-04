@@ -168,39 +168,7 @@
         const session = Arcadia.auth.getSessao();
         let page = location.pathname.split('/').pop();
         const external = session.tipo_usuario === 'externo';
-        if (!session.tipo_usuario) {
-            host.replaceChildren();
-            for (const [href, label] of [
-                ['index.html', 'Início'],
-                ['notices.html', 'Avisos e notícias'],
-                ['projects.html', 'Projetos'],
-                ['calendar.html', 'Agenda'],
-                ['campus-map.html', 'Mapa do campus'],
-                [
-                    session.tipo_usuario === 'externo' ? 'community.html' : 'login.html',
-                    session.tipo_usuario === 'externo' ? 'Minha conta' : 'Entrar'
-                ]
-            ]) {
-                const item = document.createElement('a');
-                item.href = href;
-                item.textContent = label;
-                host.append(item);
-            }
-            Arcadia.navigation = {
-                mounted: true,
-                refresh(next) {
-                    for (const item of host.children) {
-                        if (
-                            item.href?.endsWith(next) ||
-                            (next === 'notice.html' && item.href?.endsWith('notices.html'))
-                        )
-                            item.setAttribute('aria-current', 'page');
-                        else item.removeAttribute('aria-current');
-                    }
-                }
-            };
-            return;
-        }
+        const guest = !session.tipo_usuario;
         const paths = {
             panel: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
             news: 'M3 4h18v16H3z M6 7h5v5H6z M14 7h4 M14 11h4 M6 16h12',
@@ -215,17 +183,8 @@
             projects: 'M3 7h7l2-3h9v17H3z',
             shield: 'M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z'
         };
-        const groups = external
+        const groups = guest
             ? [
-                  {
-                      name: 'Meu espaço',
-                      icon: 'panel',
-                      links: [
-                          ['community.html', 'Meu painel', 'panel'],
-                          ['tasks.html', 'Tarefas', 'tasks'],
-                          ['community-settings.html', 'Configurações', 'settings']
-                      ]
-                  },
                   {
                       name: 'Conteúdo',
                       icon: 'file',
@@ -234,39 +193,69 @@
                           ['calendar.html', 'Calendário', 'calendar'],
                           ['projects.html', 'Projetos', 'projects'],
                           ['campus-map.html', 'Mapa do campus', 'map']
+                      ]
+                  },
+                  {
+                      name: 'Minha conta',
+                      icon: 'people',
+                      links: [
+                          ['login.html', 'Entrar', 'panel'],
+                          ['signup.html', 'Criar conta', 'people']
                       ]
                   }
               ]
-            : [
-                  {
-                      name: 'Meu espaço',
-                      icon: 'panel',
-                      links: [
-                          ['dashboard.html', 'Meu painel', 'panel'],
-                          ['tasks.html', 'Tarefas', 'tasks'],
-                          ['documents.html', 'Documentos', 'file'],
-                          ['settings.html', 'Configurações', 'settings']
-                      ]
-                  },
-                  {
-                      name: 'Conteúdo',
-                      icon: 'file',
-                      links: [
-                          ['notices.html', 'Avisos e notícias', 'news'],
-                          ['calendar.html', 'Calendário', 'calendar'],
-                          ['people.html', 'Pessoas', 'people'],
-                          ['projects.html', 'Projetos', 'projects'],
-                          ['campus-map.html', 'Mapa do campus', 'map']
-                      ]
-                  }
-              ];
-        if (!external)
+            : external
+              ? [
+                    {
+                        name: 'Meu espaço',
+                        icon: 'panel',
+                        links: [
+                            ['community.html', 'Meu painel', 'panel'],
+                            ['tasks.html', 'Tarefas', 'tasks'],
+                            ['community-settings.html', 'Configurações', 'settings']
+                        ]
+                    },
+                    {
+                        name: 'Conteúdo',
+                        icon: 'file',
+                        links: [
+                            ['notices.html', 'Avisos e notícias', 'news'],
+                            ['calendar.html', 'Calendário', 'calendar'],
+                            ['projects.html', 'Projetos', 'projects'],
+                            ['campus-map.html', 'Mapa do campus', 'map']
+                        ]
+                    }
+                ]
+              : [
+                    {
+                        name: 'Meu espaço',
+                        icon: 'panel',
+                        links: [
+                            ['dashboard.html', 'Meu painel', 'panel'],
+                            ['tasks.html', 'Tarefas', 'tasks'],
+                            ['documents.html', 'Documentos', 'file'],
+                            ['settings.html', 'Configurações', 'settings']
+                        ]
+                    },
+                    {
+                        name: 'Conteúdo',
+                        icon: 'file',
+                        links: [
+                            ['notices.html', 'Avisos e notícias', 'news'],
+                            ['calendar.html', 'Calendário', 'calendar'],
+                            ['people.html', 'Pessoas', 'people'],
+                            ['projects.html', 'Projetos', 'projects'],
+                            ['campus-map.html', 'Mapa do campus', 'map']
+                        ]
+                    }
+                ];
+        if (!external && !guest)
             groups.push({
                 name: 'Turmas',
                 icon: 'class',
                 links: [['classes.html', 'Minhas turmas', 'class']]
             });
-        if (session.is_admin && !external)
+        if (session.is_admin && !external && !guest)
             groups.push({
                 name: 'Administração',
                 icon: 'shield',
@@ -290,7 +279,7 @@
             return svg;
         }
         const barEnd = document.querySelector('.ar-nav-end');
-        if (barEnd) notificationPanel(barEnd, icon, external);
+        if (barEnd && !guest) notificationPanel(barEnd, icon, external);
         const bar = document.querySelector('.ar-nav');
         if (bar && window.ResizeObserver) {
             new window.ResizeObserver(() => {
@@ -313,7 +302,8 @@
         close.type = 'button';
         close.className = 'ar-iconbtn ar-sidebar-close';
         close.setAttribute('aria-label', 'Fechar navegação');
-        close.append(icon('M15 5l-7 7 7 7'));
+        close.append(icon('M6 6l12 12 M6 18L18 6'));
+        close.title = 'Fechar menu';
         heading.append(close);
         sidebar.append(heading);
         const nav = document.createElement('nav');
@@ -334,7 +324,11 @@
         const sections = [];
         const stateKey =
             'arcadia-sidebar-state:' +
-            (external ? 'external:' + session.id_externo : 'users:' + session.id_usuario);
+            (guest
+                ? 'visitor'
+                : external
+                  ? 'external:' + session.id_externo
+                  : 'users:' + session.id_usuario);
         let savedState = {};
         try {
             const value = JSON.parse(sessionStorage.getItem(stateKey) || '{}');
@@ -389,8 +383,13 @@
         toggle.type = 'button';
         toggle.className = 'ar-iconbtn ar-sidebar-toggle';
         toggle.setAttribute('aria-controls', 'portalSidebar');
-        toggle.append(icon('M9 5l7 7-7 7'));
-        document.body.append(toggle);
+        const toggleIcon = icon('M9 5l7 7-7 7');
+        const toggleText = document.createElement('span');
+        toggleText.className = 'ar-sidebar-toggle-label';
+        toggleText.textContent = 'Menu';
+        toggle.append(toggleIcon, toggleText);
+        if (bar) bar.prepend(toggle);
+        else document.body.append(toggle);
         const backdrop = document.createElement('div');
         backdrop.className = 'ar-sidebar-backdrop';
         backdrop.setAttribute('aria-hidden', 'true');
@@ -405,6 +404,10 @@
         } catch {}
         function layout() {
             const mobile = media.matches;
+            toggleIcon.children[0].setAttribute(
+                'd',
+                mobile ? 'M4 6h16 M4 12h16 M4 18h16' : 'M9 5l7 7-7 7'
+            );
             document.body.classList.toggle('ar-sidebar-collapsed', collapsed);
             document.body.classList.toggle('ar-sidebar-open', mobile && mobileOpen);
             sidebar.inert = mobile && !mobileOpen;
@@ -419,8 +422,8 @@
                 'aria-label',
                 mobile
                     ? mobileOpen
-                        ? 'Fechar navegação'
-                        : 'Abrir navegação'
+                        ? 'Fechar menu de navegação'
+                        : 'Abrir menu de navegação'
                     : collapsed
                       ? 'Expandir navegação'
                       : 'Recolher navegação'
@@ -452,13 +455,13 @@
         function hide(restore = true) {
             mobileOpen = false;
             layout();
-            if (restore) toggle.focus();
+            if (restore) toggle.focus({ preventScroll: true });
         }
         toggle.addEventListener('click', () => {
             if (media.matches) {
                 mobileOpen = !mobileOpen;
                 layout();
-                if (mobileOpen) close.focus();
+                if (mobileOpen) close.focus({ preventScroll: true });
             } else {
                 collapsed = !collapsed;
                 try {

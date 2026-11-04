@@ -1,7 +1,7 @@
 const db = require('../config/database');
 const LIMITS = Object.freeze({
     description: 3000,
-    file: 2 * 1024 * 1024,
+    file: 4 * 1024 * 1024,
     user: 20 * 1024 * 1024,
     total: 200 * 1024 * 1024,
     items: 500,
@@ -43,7 +43,7 @@ function url(value) {
 }
 function fileInfo(buffer, filename) {
     if (!Buffer.isBuffer(buffer) || !buffer.length || buffer.length > LIMITS.file)
-        fail(413, 'Envie um arquivo de até 2 MB.');
+        fail(413, 'Envie um arquivo de até 4 MB.');
     const name = text(filename, 150, 'Nome do arquivo');
     if (/[\\/]/.test(name)) fail(400, 'Nome do arquivo inválido.');
     const ext = name.split('.').pop().toLowerCase();

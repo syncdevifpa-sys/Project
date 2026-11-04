@@ -3,6 +3,12 @@ const { test } = require('node:test'),
     fs = require('node:fs'),
     vm = require('node:vm');
 const policy = require('../frontend/js/banner-preferences');
+test('Início usa fundo e texto do mesmo tema desde a primeira renderização', () => {
+    const f = fixture('index.html');
+    assert.equal(f.styles.get('--initial-banner-page-bg'), 'var(--color-hero-bg)');
+    assert.equal(f.styles.get('--initial-banner-page-ink'), 'var(--color-ink-hero)');
+    assert.ok(policy.contrast('#14263b', '#f2f4f8') >= 4.5);
+});
 function fixture(page = 'calendar.html', preferences = {}) {
     const attrs = new Map(),
         styles = new Map(),

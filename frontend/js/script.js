@@ -189,6 +189,12 @@
         const msgSucesso = form.querySelector('.mensagem-sucesso');
 
         const showError = (text) => {
+            /* O monitor de conexão já apresenta esta falha sem duplicar mensagens. */
+            if (Object.values(window.Arcadia?.connection?.messages || {}).includes(text)) {
+                if (msgErro) msgErro.style.display = 'none';
+                if (msgSucesso) msgSucesso.style.display = 'none';
+                return;
+            }
             if (msgErro) {
                 msgErro.textContent = text;
                 msgErro.style.display = 'block';

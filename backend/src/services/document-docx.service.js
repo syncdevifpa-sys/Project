@@ -3,7 +3,7 @@ const yauzl = require('yauzl');
 const { SaxesParser } = require('saxes');
 const invalid = () =>
     Object.assign(
-        new Error('DOCX inválido ou incompatível. Envie um arquivo .docx sem macros de até 2 MB.'),
+        new Error('DOCX inválido ou incompatível. Envie um arquivo .docx sem macros de até 4 MB.'),
         { status: 400 }
     );
 function xmlText(xml, contentTypes = false) {
@@ -50,7 +50,7 @@ function xmlText(xml, contentTypes = false) {
     return text;
 }
 async function readDocx(buffer) {
-    if (!Buffer.isBuffer(buffer) || buffer.length > 2 * 1024 * 1024) throw invalid();
+    if (!Buffer.isBuffer(buffer) || buffer.length > 4 * 1024 * 1024) throw invalid();
     return new Promise((resolve, reject) => {
         yauzl.fromBuffer(
             buffer,

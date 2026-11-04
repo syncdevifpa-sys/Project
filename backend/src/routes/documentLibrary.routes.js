@@ -202,7 +202,7 @@ router.use((error, _req, res, _next) => {
         error: missing
             ? 'A biblioteca precisa ser habilitada no banco de dados. Fale com a equipe.'
             : tooLarge
-              ? 'Envie um arquivo de até 2 MB.'
+              ? 'Envie um arquivo de até 4 MB.'
               : error.status
                 ? error.message
                 : 'Não foi possível acessar a biblioteca. Tente novamente.'
