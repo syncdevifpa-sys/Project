@@ -137,6 +137,7 @@
             'tokens.css',
             'bundle.css',
             'portal-responsive.css',
+            'adaptive-layout.css',
             'navigation.css',
             'brand-logo.css',
             'site-footer.css',

@@ -2,6 +2,9 @@
 
 ## Guias atuais
 
+- [Contrato visual vigente: celular, tablet e desktop](design-system-atual.md)
+- [Revisão de IHC e matriz de validação de novembro](revisao-ihc-2026-11-04.md)
+
 - [Banco: instalação e atualização](../backend/db/README.md)
 - [Turmas e disciplinas](classes.md)
 - [Solicitações de vínculo com o IFPA](teacher-requirements.md)
@@ -22,7 +25,7 @@
 - `juridico/`: documento separado para revisão jurídica; não substitui as páginas atuais do portal.
 - [Histórico de revisões](history/README.md): diagnósticos e relatórios datados, com evidências e limitações da época.
 
-As capturas e saídas de testes em `tmp/` são artefatos locais e podem ser regeneradas. Não contêm confirmação automática de que um banco remoto, SMTP ou deploy está funcionando.
+Capturas e saídas de testes são artefatos locais regeneráveis; prefira o diretório temporário do sistema. Não contêm confirmação automática de que um banco remoto, SMTP ou deploy está funcionando.
 
 ## Organização e comportamento do portal
 

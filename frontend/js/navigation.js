@@ -472,6 +472,10 @@
         });
         close.addEventListener('click', () => hide());
         backdrop.addEventListener('click', () => hide());
+        /* Uma janela assume o foco sem deixar o fundo preso no modo de menu. */
+        window.addEventListener('arcadia:dialog-opening', () => {
+            if (mobileOpen) hide();
+        });
         nav.addEventListener('click', (event) => {
             if (media.matches && event.target.closest('a')) hide(false);
         });

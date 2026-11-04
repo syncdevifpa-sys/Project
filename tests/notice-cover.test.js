@@ -40,6 +40,10 @@ test('renderização ignora fontes executáveis e só adiciona capa quando há i
     assert.equal(A.noticeCover.markup('javascript:alert(1)'), '');
     assert.equal(A.noticeCover.markup(''), '');
     assert.match(A.noticeCover.markup(png), /loading="lazy"/);
+    const described = A.noticeCover.markup(png, 'Encontro "Ciência" <2026> & inscrições');
+    assert.match(described, /alt="Encontro &quot;Ciência&quot; &lt;2026&gt; &amp; inscrições"/);
+    assert.doesNotMatch(described, /aria-hidden/);
+    assert.match(A.noticeCover.markup(png), /aria-hidden="true"/);
     const calls = [];
     const card = {
         classList: { add: (v) => calls.push(v) },

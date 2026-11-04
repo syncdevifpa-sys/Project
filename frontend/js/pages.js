@@ -249,7 +249,7 @@
                 return A.noticeCover?.valid(r.capa)
                     ? html
                           .replace('class="ar-card"', 'class="ar-card ar-notice-with-cover"')
-                          .replace('<h3', A.noticeCover.markup(r.capa) + '<h3')
+                          .replace('<h3', A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo) + '<h3')
                     : html;
             }
             function render() {
@@ -531,7 +531,10 @@
                                 projectActions(r) + editAction('projects', r, r.id_projeto)
                             );
                             return A.noticeCover?.valid(r.capa)
-                                ? markup.replace('<h3', A.noticeCover.markup(r.capa) + '<h3')
+                                ? markup.replace(
+                                      '<h3',
+                                      A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo) + '<h3'
+                                  )
                                 : markup;
                         })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
@@ -1096,6 +1099,22 @@
                 if (!button) return;
                 button.disabled = true;
                 try {
+                    if (
+                        !(await A.confirmAction({
+                            title: 'Cancelar solicitação?',
+                            message:
+                                'A solicitação deixará de ser processada. Confira o registro antes de confirmar.',
+                            items: [
+                                rows.find(
+                                    (row) => String(row.id_documento) === button.dataset.cancel
+                                )?.titulo || 'Solicitação selecionada'
+                            ],
+                            confirmLabel: 'Cancelar solicitação'
+                        }))
+                    ) {
+                        button.disabled = false;
+                        return;
+                    }
                     await api.expect(api.del('/api/documents/' + button.dataset.cancel));
                     await reload();
                     A.showToast('Solicitação cancelada.');
@@ -1177,7 +1196,10 @@
             const detail = title.closest('.ar-detail');
             detail?.querySelector('.ar-notice-cover')?.remove();
             if (detail && A.noticeCover?.valid(r.capa))
-                detail.insertAdjacentHTML('afterbegin', A.noticeCover.markup(r.capa));
+                detail.insertAdjacentHTML(
+                    'afterbegin',
+                    A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo)
+                );
             title.textContent = r.titulo;
             guard();
             document.title = r.titulo;

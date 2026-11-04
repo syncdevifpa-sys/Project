@@ -73,7 +73,7 @@
             close.textContent = 'Concluir';
             function dismiss(focus) {
                 panel.open = false;
-                if (focus) summary.focus();
+                if (focus) summary.focus({ preventScroll: true });
             }
             close.addEventListener('click', function () {
                 dismiss(true);
@@ -86,14 +86,20 @@
                     dismiss(true);
                 }
             });
-            panel.addEventListener('toggle', function () {
-                if (!panel.open) return;
+            function position() {
+                if (!panel.open || panel.isConnected === false) return;
                 if (window.innerWidth > 700) {
                     body.style.left = '0px';
                     const box = body.getBoundingClientRect();
                     const shift = Math.min(0, window.innerWidth - 16 - box.right);
                     body.style.left = Math.max(16 - box.left, shift) + 'px';
                 } else body.style.removeProperty('left');
+            }
+            window.addEventListener?.('resize', position, { passive: true });
+            window.visualViewport?.addEventListener('resize', position, { passive: true });
+            panel.addEventListener('toggle', function () {
+                if (!panel.open) return;
+                position();
                 document.querySelectorAll('.ar-compact-filters[open]').forEach(function (other) {
                     if (other !== panel) other.open = false;
                 });
@@ -117,6 +123,12 @@
             document.querySelectorAll('.ar-compact-filters').forEach(function (panel) {
                 refreshers.get(panel)?.();
             });
+        });
+    });
+    /* Tab pode sair do painel sem deixá-lo sobre o conteúdo. Não move o foco de volta. */
+    document.addEventListener('focusin', function (event) {
+        document.querySelectorAll('.ar-compact-filters[open]').forEach(function (panel) {
+            if (!panel.contains(event.target)) panel.open = false;
         });
     });
     document.addEventListener('DOMContentLoaded', function () {

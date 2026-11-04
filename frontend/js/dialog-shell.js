@@ -221,6 +221,8 @@
         });
     }
     function open(node) {
+        if (typeof CustomEvent === 'function')
+            window.dispatchEvent?.(new CustomEvent('arcadia:dialog-opening'));
         const state = enhance(node, {
             frame:
                 !node.classList.contains('ar-legal-dialog') &&
@@ -234,6 +236,8 @@
         restorePage(position);
     }
     function openOverlay(node) {
+        if (typeof CustomEvent === 'function')
+            window.dispatchEvent?.(new CustomEvent('arcadia:dialog-opening'));
         const state = enhance(node, { frame: false });
         state.overlay = true;
         const header = node.querySelector('.ar-pal-top');

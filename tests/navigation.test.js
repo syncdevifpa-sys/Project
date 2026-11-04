@@ -3,6 +3,20 @@ const assert = require('node:assert/strict'),
     vm = require('node:vm'),
     fs = require('node:fs');
 const code = fs.readFileSync('frontend/js/navigation.js', 'utf8');
+test('sair do drawer por mudança de breakpoint ou nova janela libera o fundo e o foco', () => {
+    for (const mode of ['breakpoint', 'dialog']) {
+        const f = fixture('projects.html', { tipo_usuario: 'discente' }, true);
+        f.toggle.events.click();
+        assert.equal(f.app.inert, true);
+        if (mode === 'dialog') f.windowEvents['arcadia:dialog-opening']();
+        else {
+            f.media.matches = false;
+            f.media.change();
+        }
+        assert.equal(f.app.inert, false);
+        assert.ok(!f.body.classList.values.includes('ar-sidebar-open'));
+    }
+});
 test('menu móvel tem ícone reconhecível e rótulo, sem aviso redundante da página', () => {
     for (const session of [{}, { tipo_usuario: 'discente' }, { tipo_usuario: 'externo' }]) {
         const f = fixture('projects.html', session, true);

@@ -12,6 +12,15 @@ module.exports = function signupClient(
         help = { hidden: true },
         confirmationHelp = { hidden: true },
         confirmedNotice = { hidden: true };
+    const attributes = {};
+    error.setAttribute = (name, value) => {
+        attributes[name] = value;
+    };
+    error.focus = () => {
+        error.focused = true;
+    };
+    const button = { tagName: 'BUTTON', textContent: 'Continuar', disabled: false };
+    const formAttributes = {};
     const fields = {
         '#nome, #name': { value: 'Pessoa de teste' },
         '#email': { value: email },
@@ -32,7 +41,11 @@ module.exports = function signupClient(
     const timers = [];
     const form = {
         getAttribute: () => access,
+        setAttribute: (name, value) => {
+            formAttributes[name] = value;
+        },
         querySelector: (selector) => fields[selector] || null,
+        querySelectorAll: () => [button],
         addEventListener: (_, fn) => {
             submit = fn;
         }
@@ -88,6 +101,9 @@ module.exports = function signupClient(
         timers,
         window,
         storage,
-        session
+        session,
+        button,
+        attributes,
+        formAttributes
     };
 };

@@ -5,16 +5,26 @@
         typeof value === 'string' &&
         value.length <= 750000 &&
         /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(value);
-    const markup = (value) =>
+    const escapeAttribute = (value) =>
+        String(value || '').replace(
+            /[&<>"']/g,
+            (letter) =>
+                ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[letter]
+        );
+    const markup = (value, description = '') =>
         valid(value)
-            ? '<div class="ar-notice-cover" aria-hidden="true"><img src="' +
+            ? '<div class="ar-notice-cover"' +
+              (description ? '' : ' aria-hidden="true"') +
+              '><img src="' +
               value +
-              '" alt="" loading="lazy" decoding="async"></div>'
+              '" alt="' +
+              escapeAttribute(description) +
+              '" loading="lazy" decoding="async"></div>'
             : '';
-    function decorate(card, value) {
+    function decorate(card, value, description = '') {
         if (!valid(value)) return;
         card.classList.add('ar-notice-with-cover');
-        card.insertAdjacentHTML('afterbegin', markup(value));
+        card.insertAdjacentHTML('afterbegin', markup(value, description));
     }
     function editor(parent, initial) {
         const group = document.createElement('div');
@@ -30,7 +40,7 @@
         const hint = document.createElement('p');
         hint.setAttribute('role', 'status');
         hint.textContent =
-            'JPG, PNG ou WEBP de até 10 MB. Ajuste o enquadramento; a imagem será comprimida antes de salvar.';
+            'JPG, PNG ou WEBP de até 10 MB. Transcreva no texto da publicação datas, contatos e demais informações do cartaz. A imagem será comprimida antes de salvar.';
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'ar-btn ar-btn--quiet';

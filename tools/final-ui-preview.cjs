@@ -6,7 +6,9 @@ const db = require('../backend/src/config/database');
 const sharing = require('../backend/src/services/profile-sharing.service');
 const photo =
     'data:image/png;base64,' +
-    fs.readFileSync(path.join(__dirname, '../frontend/public/arcadia-logo-64.png')).toString('base64');
+    fs
+        .readFileSync(path.join(__dirname, '../frontend/public/arcadia-logo-64.png'))
+        .toString('base64');
 const demoPublishedAt = new Date().toISOString();
 const user = {
     id_usuario: 4,
@@ -34,6 +36,165 @@ db.getConnection = async () => {
 };
 process.env.JWT_SECRET = 'read-only-preview-key';
 const app = express();
+/* Rotas locais de demonstração: nunca consultam nem escrevem no banco real. */
+app.get('/api', (_req, res) => res.json({ message: 'Prévia Arcádia em memória', preview: true }));
+const demoPerson = (req) => {
+    const role = String(req.headers.authorization || '')
+        .split(':')
+        .pop();
+    return role === 'externo'
+        ? external
+        : {
+              ...user,
+              tipo_usuario:
+                  role === 'aluno' ? 'discente' : role === 'professor' ? 'docente' : 'servidor',
+              is_admin: role === 'admin'
+          };
+};
+app.get('/api/auth/nomes', (req, res) =>
+    res.json({ nome: demoPerson(req).nome, disponivel: true, pedido: null })
+);
+app.get('/api/external/nomes', (_req, res) =>
+    res.json({ nome: external.nome, disponivel: true, pedido: null })
+);
+app.get('/api/courses', (_req, res) =>
+    res.json([
+        { id_curso: 1, nome: 'Curso de demonstração', regime_etapas: 'semestral', total_etapas: 6 }
+    ])
+);
+const demoSubject = {
+    id_disciplina: 11,
+    id_turma: 3,
+    nome: 'Disciplina com título extenso para conferir leitura e quebra de linha',
+    turma: 'Turma de demonstração',
+    ano_ingresso: 2026,
+    curso: 'Curso de demonstração',
+    campus: 'IFPA Campus Belém',
+    turno: 'noite',
+    professor: 'Docente de exemplo',
+    ano_letivo: 2026,
+    regime_letivo: 'semestral',
+    semestre: 2
+};
+app.get('/api/classes', (req, res) => {
+    const person = demoPerson(req);
+    res.json({
+        role: person.tipo_usuario,
+        canAdminister: person.is_admin,
+        canCreate: person.is_admin,
+        subjects: [demoSubject],
+        invites: []
+    });
+});
+const demoDetail = (req, aggregate = false) => ({
+    subject: { ...demoSubject, canManage: demoPerson(req).tipo_usuario !== 'discente' },
+    aggregate,
+    subjects: [demoSubject],
+    people: [],
+    pending: [],
+    posts: [
+        {
+            id_post: 1,
+            tipo: 'aviso',
+            titulo: 'Aviso fictício da disciplina',
+            descricao:
+                'Conteúdo de demonstração para conferir navegação, leitura e layouts. Nenhum dado de estudante é utilizado.',
+            criado_em: demoPublishedAt
+        }
+    ]
+});
+app.get('/api/classes/11', (req, res) => res.json(demoDetail(req)));
+app.get('/api/classes/cohorts/3/feed', (req, res) => res.json(demoDetail(req, true)));
+app.get('/api/classes/cohorts/3/info', (_req, res) =>
+    res.json({
+        descricao: 'Turma fictícia para revisão de interface.',
+        sala_oficial: 'Sala de exemplo',
+        vices: []
+    })
+);
+app.get('/api/classes/11/schedule', (_req, res) =>
+    res.json([
+        {
+            id_horario: 1,
+            dia_semana: 1,
+            hora_inicio: '18:30:00',
+            hora_fim: '20:10:00',
+            sala: 'Sala de exemplo',
+            modalidade: 'presencial'
+        }
+    ])
+);
+const demoLibraryItems = [
+    {
+        id_item: 1,
+        id_pasta: null,
+        titulo: 'Material de demonstração com título extenso',
+        descricao:
+            'Descrição em dois parágrafos.\n\nConfira a organização em quadro, lista e tabela.',
+        tipo: 'link',
+        url: 'https://example.test/material',
+        visibilidade: 'privado',
+        revisao: 'rascunho',
+        criado_em: demoPublishedAt
+    },
+    {
+        id_item: 2,
+        id_pasta: 1,
+        titulo: 'Outro material para comparação',
+        descricao: 'Nenhuma informação real de aluno.',
+        tipo: 'link',
+        url: 'https://example.test/outro',
+        visibilidade: 'privado',
+        revisao: 'rascunho',
+        criado_em: demoPublishedAt
+    }
+];
+app.get('/api/document-library', (req, res) =>
+    res.json({
+        items: demoLibraryItems,
+        saved: [],
+        folders: [{ id_pasta: 1, nome: 'Assunto de demonstração' }],
+        used: 0,
+        canPublish: demoPerson(req).tipo_usuario !== 'discente',
+        canReview: demoPerson(req).is_admin,
+        canSetAuthorship: true,
+        limits: { description: 3000, file: 4 * 1024 * 1024 }
+    })
+);
+app.get('/api/document-library/public', (_req, res) => res.json([]));
+app.get('/api/document-library/reviews', (_req, res) => res.json([]));
+app.get('/api/tasks/my', (_req, res) =>
+    res.json([
+        {
+            id_tarefa: 1,
+            titulo: 'Tarefa fictícia para conferir visualizações',
+            categoria: 'Acadêmico',
+            prioridade: 'media',
+            status: 'aberta',
+            observacao: 'Exemplo em memória'
+        }
+    ])
+);
+app.get('/api/admin/resources', (_req, res) => res.json([]));
+app.get('/api/admin/people/users', (_req, res) =>
+    res.json([
+        {
+            ...user,
+            id_usuario: 8,
+            nome: 'Pessoa fictícia para revisão administrativa',
+            email: 'outra.pessoa@example.test',
+            situacao: 'bloqueado',
+            is_admin: false
+        }
+    ])
+);
+app.get('/ui-preview', (_req, res) =>
+    res
+        .type('html')
+        .send(
+            `<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prévia local — Arcádia</title><style>body{font:16px/1.6 system-ui;max-width:900px;margin:auto;padding:24px;background:#fafaf8;color:#182020}nav{display:flex;flex-wrap:wrap;gap:12px}a{padding:12px;border:1px solid #aaa;border-radius:12px;color:inherit}li{margin:16px 0}</style><h1>Prévia local do Arcádia</h1><p>Dados fictícios. Nenhum banco, login real ou e-mail. O Início mantém o desenho atual.</p><p>Abra uma página e use a ferramenta de dimensões do navegador: 320, 390, 768, 820, 1024 e 1280 px. Confira claro/escuro e rotação.</p><nav>${['notices', 'projects', 'calendar', 'classes', 'documents', 'dashboard', 'settings', 'admin', 'community', 'community-settings', 'campus-map', 'login', 'signup'].map((page) => `<a href="/${page}.html?perfil=${page.startsWith('community') ? 'externo' : 'admin'}&theme=light">${page}</a>`).join('')}</nav><h2>Perfis e tema</h2><nav>${['aluno', 'professor', 'admin', 'externo'].map((role) => `<a href="/${role === 'externo' ? 'community' : 'classes'}.html?perfil=${role}&theme=dark">${role} · escuro</a>`).join('')}</nav><p>Para uma página pública sem sessão, acrescente <code>visitor=1</code>. Esta prévia não comprova permissões do servidor real.</p></html>`
+        )
+);
 app.post(
     '/api/calendar-import/preview',
     express.raw({ type: 'application/pdf', limit: '4mb' }),
@@ -66,7 +227,7 @@ for (const [kind, prefix] of [
         }
     });
 }
-app.get('/api/auth/perfil', (_req, res) => res.json(user));
+app.get('/api/auth/perfil', (req, res) => res.json(demoPerson(req)));
 app.get('/api/external/me', (_req, res) => res.json(external));
 app.get('/api/users', (_req, res) =>
     res.json([
@@ -301,27 +462,40 @@ app.get('/api/projects', (_req, res) =>
     ])
 );
 app.get('/api/projects/my', (_req, res) => res.json([]));
-app.get('/api/auth/perfil', (_req, res) =>
-    res.json({
-        ...user,
-        telefone: '',
-        sobre: 'Perfil fictício da prévia',
-        nome_social: '',
-        preferencias: {}
-    })
-);
 app.get(/^\/api\//, (_req, res) => res.json([]));
 app.use('/api', (_req, res) => res.status(405).json({ error: 'Prévia sem gravação' }));
 app.get('/:file.html', (req, res, next) => {
     const file = path.join(__dirname, '../frontend', path.basename(req.params.file) + '.html');
     if (!fs.existsSync(file)) return next();
-    const person = req.params.file === 'community' ? external : user;
-    const sessionScript =
+    const role = ['aluno', 'professor', 'admin', 'externo'].includes(req.query.perfil)
+        ? req.query.perfil
+        : req.params.file.startsWith('community')
+          ? 'externo'
+          : 'admin';
+    const person =
+        role === 'externo'
+            ? external
+            : {
+                  ...user,
+                  tipo_usuario:
+                      role === 'aluno' ? 'discente' : role === 'professor' ? 'docente' : 'servidor',
+                  is_admin: role === 'admin'
+              };
+    const explicitRole = ['aluno', 'professor', 'admin', 'externo'].includes(req.query.perfil);
+    const setDemoSession =
         req.query.visitor === '1'
             ? "localStorage.removeItem('arcadiaToken');localStorage.removeItem('arcadiaSessao');"
-            : "localStorage.setItem('arcadiaToken','preview');localStorage.setItem('arcadiaSessao'," +
+            : "localStorage.setItem('arcadiaToken','preview:" +
+              role +
+              "');localStorage.setItem('arcadiaSessao'," +
               JSON.stringify(JSON.stringify(person)) +
               ');';
+    const sessionScript =
+        req.query.visitor === '1' || explicitRole
+            ? setDemoSession
+            : "if (!(localStorage.getItem('arcadiaToken') || '').startsWith('preview:')) {" +
+              setDemoSession +
+              '}';
     res.type('html').send(
         fs
             .readFileSync(file, 'utf8')
@@ -329,15 +503,27 @@ app.get('/:file.html', (req, res, next) => {
                 '<head>',
                 '<head><script>window.ARCADIA_API_BASE=location.origin;' +
                     sessionScript +
-                    "localStorage.setItem('arcadia-theme'," +
-                    JSON.stringify(req.query.theme === 'light' ? 'light' : 'dark') +
-                    ');</script>'
+                    (['light', 'dark'].includes(req.query.theme)
+                        ? "localStorage.setItem('arcadia-theme'," +
+                          JSON.stringify(req.query.theme) +
+                          ');'
+                        : '') +
+                    '</script>'
+            )
+            .replace('<body', '<body data-ui-preview="true"')
+            .replace(
+                /(<body\b[^>]*>)/,
+                '$1<aside style="padding:8px 16px;font:12px system-ui;background:#fff4cc;color:#302800"><a href="/ui-preview">Prévia local</a> · Dados fictícios em memória · Sem banco ou e-mail</aside>'
             )
     );
 });
 app.use(express.static(path.join(__dirname, '../frontend')));
 module.exports = app;
-if (require.main === module)
-    app.listen(61119, '127.0.0.1', () =>
-        console.log('Prévia local com dados fictícios em memória: 61119')
+if (require.main === module) {
+    const port = Number(process.argv[2] || 61124);
+    if (!Number.isInteger(port) || port < 1024 || port > 65535)
+        throw Error('Porta local inválida.');
+    app.listen(port, '127.0.0.1', () =>
+        console.log('Prévia local com dados fictícios: http://127.0.0.1:' + port + '/ui-preview')
     );
+}
