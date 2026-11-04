@@ -1,4 +1,8 @@
 /* Banners e resumos do painel; os demais cards preservam cores semânticas. */
+.hero-card.ar-banner-site-default:not(.ar-banner-personal) {
+  background-color: var(--color-hero-bg);
+  color: var(--color-ink-hero);
+}
 .ar-banner-site-default:not(.ar-banner-personal) {
   background: var(--accent, var(--lime));
   color: #182020;

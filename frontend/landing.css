@@ -399,6 +399,9 @@ section[id] {
   color: var(--color-ink);
   font-size: 20px;
 }
+.nav-menu-label {
+  font: 600 12px var(--font-body);
+}
 
 /* Menu Mobile Dropdown */
 .nav-mobile-panel {
@@ -416,6 +419,9 @@ section[id] {
   flex-direction: column;
   gap: 12px;
   pointer-events: auto;
+  max-height: calc(100dvh - 110px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .nav-mobile-panel.is-open {
@@ -1760,9 +1766,11 @@ section[id] {
 
   .nav-toggle-btn {
     display: flex;
-    width: 46px;
+    width: auto;
+    gap: 6px;
+    padding: 8px 12px;
     height: 46px;
-    border-radius: 50%;
+    border-radius: 999px;
     background: rgba(16, 20, 26, 0.06);
     align-items: center;
     justify-content: center;

@@ -215,6 +215,24 @@ html[data-portal-navigation='pending'] .ar-navpill {
 .ar-sidebar-close {
   display: none;
 }
+.ar-sidebar-context {
+  margin: 0 8px 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--cyan-soft);
+  color: var(--cyan-ink);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.ar-sidebar-toggle-label {
+  display: none;
+}
+@media (min-width: 1101px) {
+  .ar-sidebar-collapsed .ar-sidebar-context {
+    display: none;
+  }
+}
 .ar-sidebar-toggle {
   position: fixed;
   z-index: 46;
@@ -360,7 +378,7 @@ html[data-portal-navigation='pending'] .ar-navpill {
   .ar-has-sidebar .ar-nav {
     flex-wrap: wrap;
     border-radius: var(--radius-lg);
-    padding-left: 48px;
+    padding-left: 8px;
   }
   .ar-grouped-nav {
     order: 3;
@@ -368,7 +386,7 @@ html[data-portal-navigation='pending'] .ar-navpill {
     margin: 0;
   }
   .ar-portal-sidebar {
-    width: min(280px, calc(100vw - 48px));
+    width: min(340px, calc(100vw - 32px));
     top: 0;
     bottom: 0;
     left: 0;
@@ -397,10 +415,38 @@ html[data-portal-navigation='pending'] .ar-navpill {
     padding-right: 0;
   }
   .ar-sidebar-toggle {
-    top: 24px;
-    left: 0;
-    border-radius: 0 12px 12px 0;
-    box-shadow: 0 2px 8px var(--scrim);
+    position: static;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 72px;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: var(--radius-full);
+    box-shadow: none;
+  }
+  .ar-sidebar-toggle-label {
+    display: inline;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .ar-sidebar-toggle[aria-expanded] svg {
+    transform: none;
+  }
+  .ar-portal-sidebar {
+    overscroll-behavior: contain;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .ar-sidebar-head {
+    position: sticky;
+    top: -12px;
+    z-index: 1;
+    padding-block: 8px;
+    background: var(--surface);
+  }
+  .ar-sidebar-links {
+    border-left: 1px solid var(--line);
+    margin-left: 20px;
+    padding-left: 8px;
   }
   .ar-account-management > summary span {
     display: block;
@@ -411,7 +457,7 @@ html[data-portal-navigation='pending'] .ar-navpill {
   .ar-has-sidebar .ar-nav {
     gap: 4px;
     flex-wrap: nowrap;
-    padding: 8px 8px 8px 48px;
+    padding: 8px;
     min-height: 60px;
   }
   .ar-nav-end > a[aria-label='Configurações'] {
@@ -463,12 +509,16 @@ html[data-portal-navigation='pending'] .ar-navpill {
     font-size: 12px;
   }
   .ar-sidebar-toggle {
-    top: 20px;
-    width: 44px;
+    width: auto;
     height: 44px;
   }
   .ar-sidebar-toggle svg {
     width: 16px;
     height: 16px;
+  }
+}
+@media (max-width: 360px) {
+  .ar-has-sidebar .ar-nav .ar-brand {
+    display: none;
   }
 }

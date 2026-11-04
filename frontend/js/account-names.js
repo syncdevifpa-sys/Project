@@ -27,6 +27,7 @@
             if (!host) return;
             const section = make('section');
             section.className = 'ar-card ar-account-names';
+            if (host.id !== 'accountNames') section.id = 'accountNames';
             section.append(make('h2', 'Correção do nome completo'));
             const help = make(
                 'p',

@@ -3,6 +3,23 @@
   padding: 24px;
   min-width: 0;
 }
+#accountNames {
+  scroll-margin-top: var(--portal-header-offset, 104px);
+}
+.ar-settings-inline-link {
+  color: var(--cyan-ink, var(--ink));
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.ar-settings-inline-link:hover {
+  border-bottom-color: currentColor;
+}
+.ar-settings-inline-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
 .ar-account-names form {
   margin-block: 20px;
 }
