@@ -123,15 +123,7 @@
   margin-right: auto;
 }
 .public-card .ar-notice-cover img {
-  height: 100%;
-  max-height: none;
-  object-fit: contain;
-}
-/* Capas públicas alinhadas, com apenas 12 px de margem nas laterais. */
-.public-card.ar-notice-with-cover > .ar-notice-cover {
-  flex: 0 0 240px;
-  height: 240px;
-  margin-inline: -16px;
+  max-height: 240px;
 }
 .ar-cover-preview .ar-notice-cover img {
   max-height: 420px;
