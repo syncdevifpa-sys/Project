@@ -1,8 +1,16 @@
 const router = require('express').Router();
 const db = require('../config/database');
 async function publicProjects() {
-    try { return await db.execute(`SELECT id_projeto,titulo,descricao,eixo,data_inicio,data_fim FROM projetos WHERE aprovacao = 'aprovado' AND visibilidade = 'publico' ORDER BY criado_em DESC`); }
-    catch(error) { if(error.code==='ER_BAD_FIELD_ERROR') return [[]]; throw error; }
+    try {
+        const [columns] = await db.execute("SHOW COLUMNS FROM projetos LIKE 'capa'");
+        const cover = columns.some((column) => column.Field === 'capa') ? 'capa' : 'NULL AS capa';
+        return await db.execute(
+            `SELECT id_projeto,titulo,descricao,eixo,data_inicio,data_fim,${cover} FROM projetos WHERE aprovacao = 'aprovado' AND visibilidade = 'publico' ORDER BY criado_em DESC`
+        );
+    } catch (error) {
+        if (error.code === 'ER_BAD_FIELD_ERROR') return [[]];
+        throw error;
+    }
 }
 
 /* As projeções públicas excluem dados de conta e inscrição. */

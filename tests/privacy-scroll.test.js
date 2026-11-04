@@ -85,7 +85,7 @@ function fixture(saved) {
 test('confirmar o uso necessário não leva ao rodapé e preserva o campo em edição', () => {
     const f = fixture();
     f.events.focusin({ target: f.input });
-    f.panel.children[0].events.click();
+    f.panel.children[1].events.click();
     assert.equal(f.window.scrollY, 160);
     assert.equal(f.panel.hidden, true);
     assert.equal(f.focus.at(-1).node, f.input);
@@ -96,14 +96,14 @@ test('confirmar o uso necessário não leva ao rodapé e preserva o campo em edi
 });
 test('primeira confirmação usa o título como foco lógico; reabrir e fechar mantém a posição', () => {
     const f = fixture();
-    f.panel.children[0].events.click();
+    f.panel.children[1].events.click();
     assert.equal(f.focus.at(-1).node, f.heading);
     assert.equal(f.window.scrollY, 160);
     f.window.scrollY = 800;
     f.toggle.events.click();
     assert.equal(f.window.scrollY, 800);
     assert.equal(f.panel.hidden, false);
-    f.panel.children[0].events.click();
+    f.panel.children[1].events.click();
     assert.equal(f.focus.at(-1).node, f.toggle);
     assert.equal(f.window.scrollY, 800);
 });
@@ -112,6 +112,20 @@ test('preferência antiga é reconhecida sem ativar recurso opcional', () => {
     assert.equal(f.panel.hidden, true);
     assert.equal(f.toggle.hidden, false);
     f.toggle.events.click();
-    f.panel.children[0].events.click();
+    f.panel.children[1].events.click();
     assert.equal(JSON.parse(f.storage.get('arcadia-cookie-choice-v2')).choice, 'necessary');
+});
+
+test('aceitar e rejeitar guardam escolhas distintas sem alterar a rolagem', () => {
+    for (const [index, choice] of [
+        [0, 'optional'],
+        [1, 'necessary']
+    ]) {
+        const f = fixture();
+        f.panel.children[index].events.click();
+        assert.equal(JSON.parse(f.storage.get('arcadia-cookie-choice-v2')).choice, choice);
+        assert.equal(f.window.scrollY, 160);
+        assert.equal(f.panel.hidden, true);
+        assert.match(f.panel.markup, /href="cookies.html"/);
+    }
 });

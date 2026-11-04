@@ -49,6 +49,15 @@
   font-weight: 650;
   cursor: pointer;
 }
+.ar-privacy-notice button[data-choice='necessary'] {
+  background: transparent;
+  color: var(--ink, #23352d);
+  border: 1px solid var(--control-border, #75887d);
+}
+.ar-privacy-notice .ar-privacy-help {
+  margin: 12px 0 0;
+  font-size: 12px;
+}
 .ar-privacy-notice a,
 .ar-privacy-notice button,
 .ar-privacy-reopen {

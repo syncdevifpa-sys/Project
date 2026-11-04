@@ -48,7 +48,7 @@
     try {
         const saved = JSON.parse(localStorage.getItem(key));
         if (saved?.version === 2 && ['necessary', 'optional'].includes(saved.choice))
-            choice = 'necessary';
+            choice = saved.choice;
     } catch (_) {}
     const panel = document.createElement('aside');
     panel.className = 'ar-privacy-notice';
@@ -58,7 +58,8 @@
         '<h2 id="privacyNoticeTitle">Cookies e sua privacidade</h2>' +
         '<p>Usamos armazenamento no navegador para manter seu acesso, suas preferências e este aviso.</p>' +
         '<p>Não há ferramentas de publicidade ou análise de acesso ativadas pelo Arcádia. A entrada com Google pode usar cookies técnicos do provedor.</p>' +
-        '<div class="ar-privacy-notice-actions"><button type="button" data-choice="necessary">Usar somente o necessário</button><a href="cookies.html">Ver detalhes do armazenamento</a><a href="privacy.html">Como usamos seus dados</a></div>';
+        '<div class="ar-privacy-notice-actions"><button type="button" data-choice="optional">Aceitar</button><a href="cookies.html">Ler sobre cookies</a><button type="button" data-choice="necessary">Rejeitar</button></div>' +
+        '<p class="ar-privacy-help">Rejeitar mantém somente o necessário. Atualmente não usamos cookies opcionais de publicidade ou análise.</p>';
     document.body.append(panel);
     let previousFocus = null;
     const toggle = document.createElement('button');

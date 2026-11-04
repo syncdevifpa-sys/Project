@@ -99,7 +99,7 @@
             if (window.Arcadia?.noticeText)
                 window.Arcadia.noticeText.render(description, description.textContent);
             card.append(title, description);
-            if (news) window.Arcadia?.noticeCover?.decorate(card, item.capa);
+            window.Arcadia?.noticeCover?.decorate(card, item.capa);
             if (news && item.resumo && item.descricao) {
                 const details = document.createElement('details');
                 const summary = document.createElement('summary');

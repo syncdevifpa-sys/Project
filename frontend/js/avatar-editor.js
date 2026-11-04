@@ -13,7 +13,7 @@
     A.editAvatar = async function (file, options = {}) {
         if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
             throw new Error('Selecione uma foto JPG, PNG ou WEBP.');
-        const maxMb = options.cover ? 15 : 5;
+        const maxMb = 10;
         if (!file.size || file.size > maxMb * 1024 * 1024)
             throw new Error('A imagem deve ter até ' + maxMb + ' MB.');
         const url = URL.createObjectURL(file),

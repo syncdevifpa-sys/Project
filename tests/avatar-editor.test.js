@@ -109,7 +109,7 @@ test('cancelar devolve nenhuma foto; confirmar entrega apenas o recorte e libera
 test('editor recusa formato não suportado e tamanho excessivo antes de abrir', async () => {
     const { A, getDialog } = editor();
     await assert.rejects(A.editAvatar({ type: 'image/svg+xml', size: 100 }));
-    await assert.rejects(A.editAvatar({ type: 'image/png', size: 6 * 1024 * 1024 }));
+    await assert.rejects(A.editAvatar({ type: 'image/png', size: 10 * 1024 * 1024 + 1 }));
     assert.equal(getDialog(), undefined);
 });
 test('API aceita foto raster pequena/remoção e recusa URL, assinatura inválida ou excesso', () => {

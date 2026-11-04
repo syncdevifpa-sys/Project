@@ -61,6 +61,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
     targets.publicNews = element();
     targets.publicProjects = element();
     const calls = [];
+    const covers = [];
     const context = vm.createContext({
         document: {
             readyState: 'complete',
@@ -71,6 +72,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         window: {
             addEventListener() {},
             Arcadia: {
+                noticeCover: { decorate: (card, cover) => covers.push(cover) },
                 api: {
                     get: async (url, options) => {
                         calls.push({ url, options });
@@ -82,7 +84,12 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
                                     descricao: 'Notícia completa'
                                 }
                             ],
-                            projects: []
+                            projects: [
+                                {
+                                    titulo: 'Projeto com capa',
+                                    capa: 'data:image/jpeg;base64,/9j/AA=='
+                                }
+                            ]
                         };
                     },
                     expect: (promise) => promise
@@ -99,7 +106,8 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         targets.publicNews.children[0].children[0].textContent,
         '<script>private()</script>'
     );
-    assert.equal(targets.publicProjects.textContent, 'Nenhum projeto publicado no momento.');
+    assert.equal(targets.publicProjects.children.length, 1);
+    assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
 });
 
 test('início público usa projeções públicas e independe da sessão', async () => {

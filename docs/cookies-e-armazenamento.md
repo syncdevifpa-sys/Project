@@ -11,7 +11,7 @@ Revisão do código em 3 de novembro de 2026. Este inventário descreve o que a 
 | Google Identity Services | Integração de autenticação. O Google documenta cookies técnicos como `g_state`, usado para lembrar a saída e evitar entrada automática indesejada. Sua presença depende do navegador e da configuração. |
 | Vercel Preview | Pode incluir a barra de ferramentas e a autenticação próprias da hospedagem. Elas não são implementadas pelos botões do aviso do Arcádia. |
 
-Não foram encontrados instrumentos de publicidade ou análise de audiência no código da aplicação. Os antigos botões de aceitar/rejeitar opcionais apenas guardavam a preferência; nenhum rastreador era ativado por eles. O aviso agora explica o uso e oferece **Usar somente o necessário**, além dos links para os detalhes. Isso não altera o acesso à conta nem ativa novos recursos.
+Não foram encontrados instrumentos de publicidade ou análise de audiência no código da aplicação. O aviso oferece Aceitar, Ler sobre cookies e Rejeitar. As escolhas são registradas separadamente; rejeitar mantém somente o necessário e ler não registra consentimento. Como não há rastreadores opcionais implementados, aceitar não carrega novos recursos. As preferências podem ser reabertas pelo rodapé.
 
 Sessão e preferências continuam nas tecnologias que já utilizavam. Não foram adicionados cookies HTTP desnecessários nem houve mudança do formato de autenticação. As tabelas e os dados do banco não foram alterados.
 

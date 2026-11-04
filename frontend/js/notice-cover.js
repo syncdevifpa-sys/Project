@@ -30,7 +30,7 @@
         const hint = document.createElement('p');
         hint.setAttribute('role', 'status');
         hint.textContent =
-            'Use uma foto em paisagem ou retrato. Escolha o formato e ajuste o enquadramento; a capa manterá sua proporção.';
+            'JPG, PNG ou WEBP de até 10 MB. Ajuste o enquadramento; a imagem será comprimida antes de salvar.';
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'ar-btn ar-btn--quiet';
@@ -81,9 +81,9 @@
             try {
                 if (
                     !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
-                    file.size > 15 * 1024 * 1024
+                    file.size > 10 * 1024 * 1024
                 )
-                    throw Error('Escolha uma imagem JPG, PNG ou WEBP de até 15 MB.');
+                    throw Error('Escolha uma imagem JPG, PNG ou WEBP de até 10 MB.');
                 if (A.editAvatar) {
                     const edited = await A.editAvatar(file, { cover: true });
                     if (!edited) {
