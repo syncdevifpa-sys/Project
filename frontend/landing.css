@@ -51,7 +51,7 @@
   --gradient-light: linear-gradient(110deg, var(--creme) 0%, var(--azul-claro) 100%);
 
   /* Tipografia */
-  --font-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
+  --font-serif: 'Times New Roman', Times, serif;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   --fs-display: clamp(64px, 9.6vw, 140px);
   --fs-h1: clamp(46px, 6vw, 86px);
