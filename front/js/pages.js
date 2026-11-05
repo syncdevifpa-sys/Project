@@ -1021,73 +1021,6 @@
         }
     }
 
-    async function dashboard() {
-        if (!A.auth.exigirLogin()) return;
-        const stats = $$('.ar-stat-value');
-        const captions = $$('.ar-stat-cap');
-        stats.forEach((el) => {
-            el.textContent = '—';
-        });
-        captions.forEach((el) => {
-            el.textContent = '';
-        });
-        const panels = $$('.ar-panel-body');
-        panels.forEach((el) => {
-            el.innerHTML = '<p>Carregando...</p>';
-        });
-        const requests = [
-            '/api/read-notices/unread/count',
-            '/api/tasks',
-            '/api/documents/my',
-            '/api/calendar',
-            '/api/notices'
-        ];
-        const results = await Promise.allSettled(requests.map((path) => api.expect(api.get(path))));
-        results.forEach((r, i) => {
-            if (r.status === 'rejected') error(r.reason);
-        });
-        if (results[0].status === 'fulfilled') stats[0].textContent = results[0].value.unread;
-        if (results[1].status === 'fulfilled')
-            stats[1].textContent = results[1].value.filter((r) => r.status !== 'concluida').length;
-        if (results[2].status === 'fulfilled')
-            stats[2].textContent = results[2].value.filter((r) => r.status !== 'pronto').length;
-        const row = (r, href, when, calendar = false) => {
-            const category = calendar ? A.calendarCategories.canonical(r.categoria) : null;
-            const metadata = [
-                category ? A.calendarCategories.options[category] : '',
-                r.resumo || r.descricao || ''
-            ]
-                .filter(Boolean)
-                .join(' · ');
-            return `<a class="ar-row ar-row--nav ar-dashboard-row"${category ? ` data-event-category="${esc(category)}"` : ''} href="${href}"><span class="ar-row-main"><div class="ar-row-title">${esc(r.titulo)}</div><div class="ar-row-meta">${esc(metadata)}</div></span><span class="ar-row-trail">${date(when)}</span></a>`;
-        };
-        panels[0].innerHTML =
-            results[3].status === 'fulfilled'
-                ? results[3].value
-                      .filter(
-                          (r) =>
-                              String(r.data_evento).slice(0, 10) >=
-                              new Date().toLocaleDateString('sv-SE')
-                      )
-                      .slice(0, 5)
-                      .map((r) => row(r, 'calendar.html', r.data_evento, true))
-                      .join('') || '<p>Nenhuma data próxima.</p>'
-                : '<p>Não foi possível carregar o calendário.</p>';
-        panels[1].innerHTML =
-            results[4].status === 'fulfilled'
-                ? results[4].value
-                      .slice(0, 5)
-                      .map((r) =>
-                          row(
-                              r,
-                              'notice.html?id=' + encodeURIComponent(r.id_aviso),
-                              r.data_publicacao
-                          )
-                      )
-                      .join('') || '<p>Nenhum aviso publicado.</p>'
-                : '<p>Não foi possível carregar os avisos.</p>';
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         const page = location.pathname.split('/').pop();
         const handler = {
@@ -1096,8 +1029,7 @@
             'calendar.html': calendar,
             'documents.html': documents,
             'people.html': people,
-            'notice.html': noticeDetail,
-            'dashboard.html': dashboard
+            'notice.html': noticeDetail
         }[page];
         if (handler)
             handler().catch((e) => {

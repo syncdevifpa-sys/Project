@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Meu painel</title>
 
     <!-- Inicialização do tema antes da exibição -->
@@ -36,323 +36,304 @@
     </script>
 
     <link rel="stylesheet" href="tokens.css" />
-    <link rel="stylesheet" href="bundle.css" />
-    <link rel="stylesheet" href="portal-responsive.css" />
-    <link rel="stylesheet" href="content-views.css" />
     <link rel="icon" type="image/png" sizes="64x64" href="public/arcadia-logo-64.png" />
     <link rel="stylesheet" href="scrollbars.css" />
-    <link rel="stylesheet" href="navigation.css" />
     <link rel="stylesheet" href="brand-logo.css" />
-    <link rel="stylesheet" href="site-footer.css?v=3" />
     <link rel="stylesheet" href="privacy-notice.css" />
-    <link rel="stylesheet" href="banner-appearance.css" />
-</head>
-  <body>
-    <div class="ar-app">
-      <!-- Barra de navegação superior -->
-      <header class="ar-nav">
-        <a class="ar-brand" href="index.html">
-          <img
-            src="assets/arcadia-emblem.png"
-            alt="Logo da Arcadia"
-            class="ar-brand-img ar-brand-img--home"
-            width="34"
-            height="34"
-          />
-          <span>
-            <div class="ar-brand-name">Arcadia</div>
-            <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
+    <!-- Mesmas fontes da landing page (Instrument Serif nos títulos, Inter no texto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body class="db-page">
+    <a class="db-skip" href="#dbMain">Pular para o conteúdo</a>
+
+    <!-- 01 Menu lateral (vira gaveta abaixo de 900 px) -->
+    <aside class="db-side" id="dbSide" aria-label="Navegação do portal">
+      <div class="db-side-head">
+        <a class="db-brand ar-brand" href="index.html">
+          <img src="assets/arcadia-emblem.png" alt="" class="ar-brand-img" width="36" height="36" />
+          <span class="db-brand-text">
+            <span class="db-brand-name">Arcadia</span>
+            <span class="db-brand-sub">IFPA Campus Belém</span>
           </span>
         </a>
+        <button type="button" class="db-collapse" id="dbCollapse" aria-controls="dbSide" aria-label="Recolher menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
+      </div>
 
-        <nav class="ar-navpill" aria-label="Seções do portal">
-          <a href="index.html">Início</a>
-          <a href="dashboard.html" aria-current="page">Meu painel</a>
-          <a href="notices.html">Avisos e notícias</a>
-          <a href="tasks.html">Tarefas</a>
-          <a href="documents.html">Documentos</a>
-          <a href="calendar.html">Calendário</a>
-          <span class="ar-sep" aria-hidden="true"></span>
-          <a href="people.html">Pessoas</a>
-          <a href="projects.html">Projetos</a>
-        </nav>
+      <nav class="db-side-nav" aria-label="Seções do portal">
+        <a class="db-nav-item" href="index.html" data-tip="Início">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></svg>
+          <span class="db-nav-label">Início</span>
+        </a>
+        <a class="db-nav-item" href="dashboard.html" aria-current="page" data-tip="Meu painel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+          <span class="db-nav-label">Meu painel</span>
+        </a>
+        <a class="db-nav-item" href="tasks.html" data-tip="Tarefas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h11M10 12h11M10 18h11M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17" /></svg>
+          <span class="db-nav-label">Tarefas</span>
+          <span class="db-nav-count" id="dbNavTasks" hidden></span>
+        </a>
+        <a class="db-nav-item" href="documents.html" data-tip="Documentos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+          <span class="db-nav-label">Documentos</span>
+          <span class="db-nav-count db-nav-count--soft" id="dbNavDocs" hidden></span>
+        </a>
 
-        <div class="ar-nav-end">
-          <button
-            type="button"
-            class="ar-iconbtn"
-            aria-label="Buscar (Ctrl+K)"
-            title="Buscar (Ctrl+K)"
-            data-search-trigger
-          >
-            <svg
-              class="ar-icon"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m21 21-4.34-4.34"></path>
-              <circle cx="11" cy="11" r="8"></circle>
-            </svg>
+        <div class="db-nav-group" id="dbGroupClasses">
+          <button type="button" class="db-nav-item" aria-expanded="false" aria-controls="dbSubClasses" data-tip="Turmas">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+            <span class="db-nav-label">Turmas</span>
+            <svg class="db-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
           </button>
+          <div class="db-sub" id="dbSubClasses" hidden>
+            <a href="classes.html">Minhas turmas</a>
+          </div>
+        </div>
 
-          <a
-            class="ar-iconbtn"
-            href="settings.html"
-            aria-label="Configurações"
-            title="Configurações"
-          >
-            <svg
-              class="ar-icon"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M14 17H5"></path>
-              <path d="M19 7h-9"></path>
-              <circle cx="17" cy="17" r="3"></circle>
-              <circle cx="7" cy="7" r="3"></circle>
-            </svg>
-          </a>
+        <div class="db-nav-group" id="dbGroupContent">
+          <button type="button" class="db-nav-item" aria-expanded="false" aria-controls="dbSubContent" data-tip="Conteúdo">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z" /><path d="m2 17 10 5 10-5M2 12l10 5 10-5" /></svg>
+            <span class="db-nav-label">Conteúdo</span>
+            <span class="db-nav-count" id="dbNavNotices" hidden></span>
+            <svg class="db-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+          <div class="db-sub" id="dbSubContent" hidden>
+            <a href="notices.html">Avisos e notícias</a>
+            <a href="calendar.html">Calendário</a>
+            <a href="people.html">Pessoas</a>
+            <a href="projects.html">Projetos</a>
+          </div>
+        </div>
 
-          <a class="ar-user" href="settings.html">
-            <span
-              class="ar-avatar ar-avatar--cyan"
-              style="width: 34px; height: 34px; font-size: 13px"
-              >ST</span
-            >
-            <div>
-              <div class="ar-user-name">Minha conta</div>
-              <div class="ar-user-role"></div>
-            </div>
-          </a>
+        <a class="db-nav-item" href="admin.html" id="adminAccess" data-tip="Administração" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v5c0 5-8 9-8 9s-8-4-8-9V7z" /></svg>
+          <span class="db-nav-label">Administração</span>
+        </a>
+      </nav>
 
-          <button type="button" class="ar-btn ar-btn--primary ar-btn--sm" data-sign-out
-            >Sair</button
-          >
+      <div class="db-side-foot">
+        <a class="db-nav-item" href="settings.html" data-tip="Configurações">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+          <span class="db-nav-label">Configurações</span>
+        </a>
+      </div>
+    </aside>
+    <div class="db-overlay" id="dbOverlay" hidden></div>
+
+    <div class="db-shell">
+      <!-- 02 Barra superior -->
+      <header class="db-topbar">
+        <a class="db-top-brand ar-brand" href="index.html">
+          <img src="assets/arcadia-emblem.png" alt="" class="ar-brand-img" width="32" height="32" />
+          <span>Arcadia</span>
+        </a>
+        <button type="button" class="db-searchbox" id="dbSearchOpen" aria-haspopup="dialog" aria-label="Buscar tarefas, avisos, disciplinas (Ctrl K)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <span class="db-searchbox-text">Buscar tarefas, avisos, disciplinas…</span>
+          <kbd class="db-kbd">Ctrl K</kbd>
+        </button>
+        <button type="button" class="db-iconbtn db-search-icon" id="dbSearchOpenMobile" aria-haspopup="dialog" aria-label="Buscar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        </button>
+        <div class="db-account">
+          <button type="button" class="db-account-btn" id="dbAccountBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="dbAccountMenu">
+            <span class="db-avatar" id="dbAvatar" aria-hidden="true">··</span>
+            <span class="db-account-text">
+              <span class="db-account-name" id="dbUserName">Minha conta</span>
+              <span class="db-account-role" id="dbUserRole"></span>
+            </span>
+            <svg class="db-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+          <div class="db-menu" id="dbAccountMenu" role="menu" hidden>
+            <a role="menuitem" href="profile.html">Meu perfil</a>
+            <a role="menuitem" href="settings.html">Configurações</a>
+            <hr />
+            <button type="button" role="menuitem" class="db-menu-danger" data-sign-out>Sair</button>
+          </div>
         </div>
       </header>
 
-      <!-- Page Hero Banner -->
-      <section class="ar-hero ar-hero--lime ar-hero--large">
-        <svg
-          class="ar-hero-art"
-          viewBox="0 0 1000 220"
-          preserveAspectRatio="xMaxYMax meet"
-          aria-hidden="true"
-        >
-          <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-          <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-          <rect
-            class="s"
-            x="770"
-            y="116"
-            width="180"
-            height="52"
-            rx="26"
-            opacity="0.75"
-            transform="rotate(-16 860 142)"
-          ></rect>
-          <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-          <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-          <circle class="d" cx="752" cy="133" r="5"></circle>
-          <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-        </svg>
-        <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
-        <div class="ar-hero-side">
-          <p class="ar-hero-desc"
-            >Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.</p
-          >
-          <div class="ar-hero-actions">
-            <a href="tasks.html" class="ar-btn ar-btn--primary">
-              <span>Ver tarefas</span>
-              <svg
-                class="ar-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </section>
+      <main class="db-content" id="dbMain" tabindex="-1">
+        <h1 class="db-sr-only">Meu painel</h1>
 
-      <!-- StatCard Grid (3 columns) -->
-      <div class="ar-grid-3">
-        <div class="ar-stat ar-stat--cyan" data-appearance-id="unread-notices">
-          <div class="ar-stat-label">Avisos não lidos</div>
-          <div class="ar-stat-value">—</div>
-          <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
-          <div class="ar-stat-foot">
-            <a href="notices.html" class="ar-link">
-              <span>Ver avisos</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
+        <!-- Linha 1: boas-vindas (2) e próximo compromisso (1) -->
+        <div class="db-row">
+          <section class="db-card db-hello db-span-2" id="dbHello" aria-labelledby="dbHelloTitle">
+            <p class="db-label db-hello-date" id="dbToday"></p>
+            <h2 class="db-display" id="dbHelloTitle">Olá, <span id="painelUserGreeting"></span></h2>
+            <p class="db-hello-summary" id="dbSummary" aria-live="polite">Carregando seu dia…</p>
+            <div class="db-metrics">
+              <div class="db-metric">
+                <div class="db-metric-head"><span>Tarefas desta semana</span><span>seg a dom</span></div>
+                <p class="db-metric-value" id="dbWeekValue">—</p>
+                <div class="db-bar db-bar--dark" aria-hidden="true"><i id="dbWeekBar"></i></div>
+              </div>
+              <div class="db-metric">
+                <div class="db-metric-head"><span>Entregas no prazo seguidas</span><span id="dbStreakHint"></span></div>
+                <p class="db-metric-value" id="dbStreak">—</p>
+                <ol class="db-streak" id="dbWeek" aria-label="Entregas desta semana"></ol>
+              </div>
+            </div>
+          </section>
+
+          <section class="db-card db-now db-span-1" id="dbNowCard" aria-labelledby="dbNowLabel">
+            <p class="db-label" id="dbNowLabel">Próximo compromisso</p>
+            <div id="dbNow" aria-live="polite">
+              <div class="db-skeleton db-skeleton--light" style="width: 80%; height: 28px"></div>
+              <div class="db-skeleton db-skeleton--light" style="width: 50%"></div>
+            </div>
+          </section>
         </div>
 
-        <div class="ar-stat ar-stat--yellow" data-appearance-id="open-tasks">
-          <div class="ar-stat-label">Tarefas em aberto</div>
-          <div class="ar-stat-value">—</div>
-          <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
-          <div class="ar-stat-foot">
-            <a href="tasks.html" class="ar-link">
-              <span>Ver tarefas</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
+        <!-- Linha 2: coluna principal (2) e coluna lateral (1) -->
+        <div class="db-row">
+          <div class="db-col db-span-2">
+            <!-- 05 A fazer -->
+            <section class="db-card" id="dbTodo" aria-labelledby="dbTasksTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbTasksTitle">A fazer <span class="db-count is-zero" id="dbTaskCount">0</span></h2>
+                <div class="db-chips" role="group" aria-label="Filtrar tarefas">
+                  <button type="button" class="db-chip" aria-pressed="true" data-filter="all">Tudo <span data-count="all">0</span></button>
+                  <button type="button" class="db-chip" aria-pressed="false" data-filter="late">Atrasadas <span data-count="late">0</span></button>
+                  <button type="button" class="db-chip" aria-pressed="false" data-filter="week">Próximos 7 dias <span data-count="week">0</span></button>
+                </div>
+              </div>
+              <div id="dbTasks" class="db-tasks">
+                <div class="db-skeleton" style="width: 70%"></div>
+                <div class="db-skeleton" style="width: 55%"></div>
+                <div class="db-skeleton" style="width: 62%"></div>
+              </div>
+              <form class="db-add" id="dbAddForm" autocomplete="off">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                <label class="db-sr-only" for="dbAddInput">Nova tarefa</label>
+                <input id="dbAddInput" name="titulo" maxlength="150" placeholder="Adicionar tarefa e pressionar Enter" />
+                <button type="submit" class="db-btn db-btn--primary db-btn--sm">Adicionar</button>
+              </form>
+            </section>
+
+            <!-- 06 Minhas disciplinas -->
+            <section class="db-card" id="dbClassesCard" aria-labelledby="dbClassesTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbClassesTitle">Minhas disciplinas</h2>
+                <a class="db-link" href="classes.html">Ver turmas</a>
+              </div>
+              <div class="db-classes" id="dbClasses"><div class="db-skeleton" style="height: 120px"></div></div>
+            </section>
+          </div>
+
+          <div class="db-col db-span-1">
+            <!-- 07 Avisos e notícias -->
+            <section class="db-card" id="dbNoticesCard" aria-labelledby="dbNoticesTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbNoticesTitle">Avisos e notícias <span class="db-count is-zero" id="dbNoticeCount">0</span></h2>
+                <button type="button" class="db-link" id="dbReadAll" disabled>Marcar como lidos</button>
+              </div>
+              <ul class="db-notices" id="dbNotices"><li><div class="db-skeleton"></div></li></ul>
+              <a class="db-arrow-link" href="notices.html">Ver todos os avisos
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </a>
+            </section>
+
+            <!-- 08 Próximas datas -->
+            <section class="db-card" id="dbDatesCard" aria-labelledby="dbDatesTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbDatesTitle">Próximas datas</h2>
+                <a class="db-link" href="calendar.html">Calendário</a>
+              </div>
+              <ul class="db-dates" id="dbDates"><li><div class="db-skeleton"></div></li></ul>
+            </section>
+
+            <!-- 09 Documentos solicitados -->
+            <section class="db-card db-docs" id="dbDocsCard" aria-labelledby="dbDocsTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbDocsTitle">Documentos solicitados</h2>
+                <a class="db-link" href="documents.html">Solicitar</a>
+              </div>
+              <div class="db-docs-summary">
+                <p class="db-metric-value" id="dbDocsValue">—</p>
+                <span id="dbDocsHint"></span>
+              </div>
+              <div class="db-bar db-bar--light" aria-hidden="true"><i id="dbDocsBar"></i></div>
+              <ul class="db-doc-list" id="dbDocs"></ul>
+            </section>
           </div>
         </div>
+      </main>
 
-        <div class="ar-stat ar-stat--pink" data-appearance-id="pending-documents">
-          <div class="ar-stat-label">Documentos em análise</div>
-          <div class="ar-stat-value">—</div>
-          <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
-          <div class="ar-stat-foot">
-            <a href="documents.html" class="ar-link">
-              <span>Ver documentos</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
+      <!-- 10 Rodapé -->
+      <footer class="db-foot ar-site-footer" aria-label="Contato e informações legais">
+        <p><b>Arcadia, portal acadêmico</b> <a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a></p>
+        <nav aria-label="Documentos legais">
+          <a href="privacy.html">Política de Privacidade</a>
+          <a href="terms.html">Termos de Uso</a>
+          <a href="cookies.html">Política de Cookies</a>
+        </nav>
+      </footer>
+    </div>
+
+    <!-- Barra inferior (abaixo de 900 px) -->
+    <nav class="db-bottom" aria-label="Atalhos do painel">
+      <a href="#dbHello" data-jump="dbHello" aria-current="page">
+        <span class="db-bottom-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg></span>
+        Painel
+      </a>
+      <a href="#dbTodo" data-jump="dbTodo">
+        <span class="db-bottom-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h11M10 12h11M10 18h11M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17" /></svg><b class="db-badge" id="dbBottomTasks" hidden></b></span>
+        Tarefas
+      </a>
+      <a href="#dbClassesCard" data-jump="dbClassesCard">
+        <span class="db-bottom-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg></span>
+        Turmas
+      </a>
+      <a href="#dbNoticesCard" data-jump="dbNoticesCard">
+        <span class="db-bottom-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg><b class="db-badge" id="dbBottomNotices" hidden></b></span>
+        Avisos
+      </a>
+      <button type="button" id="dbDrawerOpen" aria-controls="dbSide" aria-expanded="false">
+        <span class="db-bottom-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></span>
+        Menu
+      </button>
+    </nav>
+
+    <!-- Busca (Ctrl K) -->
+    <div class="db-search-layer" id="dbSearch" hidden>
+      <div class="db-search-dialog" role="dialog" aria-modal="true" aria-label="Buscar no portal">
+        <div class="db-search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input
+            id="dbSearchInput"
+            type="text"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="dbSearchResults"
+            aria-autocomplete="list"
+            placeholder="Buscar tarefas, avisos, disciplinas…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <kbd class="db-kbd">Esc</kbd>
         </div>
-      </div>
-
-      <!-- 2 Column List Panels -->
-      <div class="ar-grid-2 ar-dashboard-summaries">
-        <!-- Panel: Upcoming Dates -->
-        <section class="ar-panel">
-          <div class="ar-panel-head">
-            <h3 class="ar-panel-label" style="margin: 0">Próximas datas</h3>
-            <a href="calendar.html" class="ar-link">
-              <span>Abrir calendário</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-          <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-        </section>
-
-        <!-- Panel: Recently Created -->
-        <section class="ar-panel">
-          <div class="ar-panel-head">
-            <h3 class="ar-panel-label" style="margin: 0">Avisos e notícias recentes</h3>
-            <a href="notices.html" class="ar-link">
-              <span>Ver avisos</span>
-              <svg
-                class="ar-icon"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-          <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-        </section>
+        <div class="db-search-results" id="dbSearchResults" role="listbox" aria-label="Resultados"></div>
+        <div class="db-search-foot" aria-hidden="true"><span>↑ ↓ navegar</span><span>Enter abrir</span><span>Esc fechar</span></div>
       </div>
     </div>
+
+    <div class="db-toast-dock" id="dbToastDock" aria-live="polite" role="status"></div>
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/portal.js"></script>
     <script src="js/calendar-categories.js"></script>
-    <script src="js/calendar-colors.js"></script>
-    <script src="js/pages.js"></script>
-    <script src="js/navigation.js"></script>
-
-    <footer class="ar-site-footer" aria-label="Contato e informações legais">
-      <span>Arcádia · Portal acadêmico</span>
-      <nav aria-label="Contato e documentos">
-        <a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a>
-        <a href="privacy.html">Política de Privacidade</a>
-        <a href="terms.html">Termos de Uso</a>
-        <a href="cookies.html">Política de Cookies</a>
-      </nav>
-    </footer>
+    <script src="js/tasks.js"></script>
+    <script src="js/dashboard.js"></script>
     <script src="js/privacy-notice.js"></script>
-    <script src="js/class-appearance.js"></script>
-</body>
+  </body>
 </html>
