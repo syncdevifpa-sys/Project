@@ -25,7 +25,13 @@
         },
         'projects.html': { scripts: [...helpers, 'js/pages.js'], controller: 'pages' },
         'dashboard.html': {
-            scripts: ['js/calendar-categories.js', 'js/calendar-colors.js', 'js/pages.js'],
+            scripts: [
+                'js/calendar-categories.js',
+                'js/calendar-colors.js',
+                'js/tasks.js',
+                'js/dashboard.js',
+                'js/pages.js'
+            ],
             controller: 'pages',
             private: true
         }

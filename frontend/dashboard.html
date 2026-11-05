@@ -64,7 +64,9 @@
     <link rel="stylesheet" href="progressive-navigation.css" />
     <link rel="stylesheet" href="connection-feedback.css" />
     <link rel="stylesheet" href="adaptive-layout.css" />
-      <link rel="stylesheet" href="topbar.css" />
+    <link rel="stylesheet" href="topbar.css" />
+    <!-- Meu painel v3 (fontes da especificação: Instrument Serif e Inter) -->
+    <link rel="stylesheet" href="dashboard.css" />
   </head>
   <body>
     <div class="ar-app">
@@ -163,206 +165,210 @@
           </button>
         </div>
       </header>
-      <main class="ar-main ar-route-main">
-        <!-- Banner de abertura da página -->
-        <section class="ar-hero ar-hero--lime ar-hero--large" data-initial-banner-slot="page">
-          <svg
-            class="ar-hero-art"
-            viewBox="0 0 1000 220"
-            preserveAspectRatio="xMaxYMax meet"
-            aria-hidden="true"
-          >
-            <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
-            <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
-            <rect
-              class="s"
-              x="770"
-              y="116"
-              width="180"
-              height="52"
-              rx="26"
-              opacity="0.75"
-              transform="rotate(-16 860 142)"
-            ></rect>
-            <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
-            <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
-            <circle class="d" cx="752" cy="133" r="5"></circle>
-            <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
-          </svg>
-          <h1 class="ar-hero-title">Olá, <span id="painelUserGreeting"></span></h1>
-          <div class="ar-hero-side">
-            <p class="ar-hero-desc">
-              Acompanhe suas tarefas, solicitações de documentos e os próximos prazos.
-            </p>
-            <div class="ar-hero-actions">
-              <a href="tasks.html" class="ar-btn ar-btn--primary">
-                <span>Ver tarefas</span>
-                <svg
-                  class="ar-icon"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </section>
+      <main class="ar-main ar-route-main db-v3" id="dbMain">
+        <!-- Meu painel v3: os cartões são preenchidos por js/dashboard.js com dados da API -->
 
-        <!-- Indicadores em três colunas -->
-        <div class="ar-grid-3">
-          <div
-            class="ar-stat ar-stat--cyan"
-            data-appearance-id="unread-notices"
-            data-initial-banner-slot="unread-notices"
+        <!-- Linha 1: boas-vindas (2) e próximo compromisso (1) -->
+        <div class="db-row" id="dbHello">
+          <section
+            class="ar-hero db-card db-hello db-span-2"
+            data-initial-banner-slot="page"
+            aria-labelledby="dbHelloTitle"
           >
-            <div class="ar-stat-label">Avisos não lidos</div>
-            <div class="ar-stat-value">—</div>
-            <div class="ar-stat-cap">Avisos que você ainda não leu.</div>
-            <div class="ar-stat-foot">
-              <a href="notices.html" class="ar-link">
-                <span>Ver avisos</span>
-                <svg
-                  class="ar-icon"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
+            <p class="db-label db-hello-date" id="dbToday"></p>
+            <h1 class="ar-hero-title db-display" id="dbHelloTitle">
+              Olá, <span id="painelUserGreeting"></span>
+            </h1>
+            <p class="db-hello-summary" id="dbSummary" aria-live="polite">Carregando seu dia…</p>
+            <div class="db-metrics">
+              <div class="db-metric">
+                <div class="db-metric-head"><span>Tarefas desta semana</span><span>seg a dom</span></div>
+                <p class="db-metric-value" id="dbWeekValue">—</p>
+                <div class="db-bar db-bar--dark" aria-hidden="true"><i id="dbWeekBar"></i></div>
+              </div>
+              <div class="db-metric">
+                <div class="db-metric-head">
+                  <span>Entregas no prazo seguidas</span><span id="dbStreakHint"></span>
+                </div>
+                <p class="db-metric-value" id="dbStreak">—</p>
+                <ol class="db-streak" id="dbWeek" aria-label="Entregas desta semana"></ol>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div
-            class="ar-stat ar-stat--yellow"
-            data-appearance-id="open-tasks"
-            data-initial-banner-slot="open-tasks"
-          >
-            <div class="ar-stat-label">Tarefas em aberto</div>
-            <div class="ar-stat-value">—</div>
-            <div class="ar-stat-cap">Acompanhe seus prazos na seção Tarefas.</div>
-            <div class="ar-stat-foot">
-              <a href="tasks.html" class="ar-link">
-                <span>Ver tarefas</span>
-                <svg
-                  class="ar-icon"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
+          <section class="db-card db-now db-span-1" id="dbNowCard" aria-labelledby="dbNowLabel">
+            <p class="db-label" id="dbNowLabel">Próximo compromisso</p>
+            <div id="dbNow" aria-live="polite">
+              <div class="db-skeleton db-skeleton--light" style="width: 80%; height: 28px"></div>
+              <div class="db-skeleton db-skeleton--light" style="width: 50%"></div>
             </div>
+          </section>
+        </div>
+
+        <!-- Linha 2: coluna principal (2) e coluna lateral (1) -->
+        <div class="db-row">
+          <div class="db-col db-span-2">
+            <section class="db-card" id="dbTodo" aria-labelledby="dbTasksTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbTasksTitle">
+                  A fazer <span class="db-count is-zero" id="dbTaskCount">0</span>
+                </h2>
+                <div class="db-chips" role="group" aria-label="Filtrar tarefas">
+                  <button type="button" class="db-chip" aria-pressed="true" data-filter="all">
+                    Tudo <span data-count="all">0</span>
+                  </button>
+                  <button type="button" class="db-chip" aria-pressed="false" data-filter="late">
+                    Atrasadas <span data-count="late">0</span>
+                  </button>
+                  <button type="button" class="db-chip" aria-pressed="false" data-filter="week">
+                    Próximos 7 dias <span data-count="week">0</span>
+                  </button>
+                </div>
+              </div>
+              <div id="dbTasks" class="db-tasks">
+                <div class="db-skeleton" style="width: 70%"></div>
+                <div class="db-skeleton" style="width: 55%"></div>
+                <div class="db-skeleton" style="width: 62%"></div>
+              </div>
+              <form class="db-add" id="dbAddForm" autocomplete="off">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                <label class="db-sr-only" for="dbAddInput">Nova tarefa</label>
+                <input
+                  id="dbAddInput"
+                  name="titulo"
+                  maxlength="150"
+                  placeholder="Adicionar tarefa e pressionar Enter"
+                />
+                <button type="submit" class="db-btn db-btn--primary db-btn--sm">Adicionar</button>
+              </form>
+            </section>
+
+            <section class="db-card" id="dbClassesCard" aria-labelledby="dbClassesTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbClassesTitle">Minhas disciplinas</h2>
+                <a class="db-link" href="classes.html">Ver turmas</a>
+              </div>
+              <div class="db-classes" id="dbClasses">
+                <div class="db-skeleton" style="height: 120px"></div>
+              </div>
+            </section>
           </div>
 
-          <div
-            class="ar-stat ar-stat--pink"
-            data-appearance-id="pending-documents"
-            data-initial-banner-slot="pending-documents"
-          >
-            <div class="ar-stat-label">Documentos em análise</div>
-            <div class="ar-stat-value">—</div>
-            <div class="ar-stat-cap">Consulte o andamento na seção Documentos.</div>
-            <div class="ar-stat-foot">
-              <a href="documents.html" class="ar-link">
-                <span>Ver documentos</span>
-                <svg
-                  class="ar-icon"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
+          <div class="db-col db-span-1">
+            <section class="db-card" id="dbNoticesCard" aria-labelledby="dbNoticesTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbNoticesTitle">
+                  Avisos e notícias <span class="db-count is-zero" id="dbNoticeCount">0</span>
+                </h2>
+                <button type="button" class="db-link" id="dbReadAll" disabled>Marcar como lidos</button>
+              </div>
+              <ul class="db-notices" id="dbNotices">
+                <li><div class="db-skeleton"></div></li>
+              </ul>
+              <a class="db-arrow-link" href="notices.html"
+                >Ver todos os avisos
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
               </a>
-            </div>
+            </section>
+
+            <section class="db-card" id="dbDatesCard" aria-labelledby="dbDatesTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbDatesTitle">Próximas datas</h2>
+                <a class="db-link" href="calendar.html">Calendário</a>
+              </div>
+              <ul class="db-dates" id="dbDates">
+                <li><div class="db-skeleton"></div></li>
+              </ul>
+            </section>
+
+            <section class="db-card db-docs" id="dbDocsCard" aria-labelledby="dbDocsTitle">
+              <div class="db-card-head">
+                <h2 class="db-title" id="dbDocsTitle">Documentos solicitados</h2>
+                <a class="db-link" href="documents.html">Solicitar</a>
+              </div>
+              <div class="db-docs-summary">
+                <p class="db-metric-value" id="dbDocsValue">—</p>
+                <span id="dbDocsHint"></span>
+              </div>
+              <div class="db-bar db-bar--light" aria-hidden="true"><i id="dbDocsBar"></i></div>
+              <ul class="db-doc-list" id="dbDocs"></ul>
+            </section>
           </div>
         </div>
 
-        <!-- Painéis de listagem em duas colunas -->
-        <div class="ar-grid-2 ar-dashboard-summaries">
-          <!-- Painel das próximas datas -->
-          <section class="ar-panel">
-            <div class="ar-panel-head">
-              <h3 class="ar-panel-label" style="margin: 0">Próximas datas</h3>
-              <a href="calendar.html" class="ar-link">
-                <span>Abrir calendário</span>
-                <svg
-                  class="ar-icon"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
-            </div>
-            <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-          </section>
+        <!-- Barra inferior (abaixo de 900 px) -->
+        <nav class="db-bottom" aria-label="Atalhos do painel">
+          <a href="#dbHello" data-jump="dbHello" aria-current="page">
+            <span class="db-bottom-icon"
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                <rect x="14" y="14" width="7" height="7" rx="1.5" /></svg
+            ></span>
+            Painel
+          </a>
+          <a href="#dbTodo" data-jump="dbTodo">
+            <span class="db-bottom-icon"
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 6h11M10 12h11M10 18h11M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17" /></svg
+              ><b class="db-badge" id="dbBottomTasks" hidden></b
+            ></span>
+            Tarefas
+          </a>
+          <a href="#dbClassesCard" data-jump="dbClassesCard">
+            <span class="db-bottom-icon"
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg
+            ></span>
+            Turmas
+          </a>
+          <a href="#dbNoticesCard" data-jump="dbNoticesCard">
+            <span class="db-bottom-icon"
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg
+              ><b class="db-badge" id="dbBottomNotices" hidden></b
+            ></span>
+            Avisos
+          </a>
+          <button type="button" id="dbDrawerOpen" aria-controls="portalSidebar">
+            <span class="db-bottom-icon"
+              ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg
+            ></span>
+            Menu
+          </button>
+        </nav>
 
-          <!-- Painel de registros recentes -->
-          <section class="ar-panel">
-            <div class="ar-panel-head">
-              <h3 class="ar-panel-label" style="margin: 0">Avisos e notícias recentes</h3>
-              <a href="notices.html" class="ar-link">
-                <span>Ver avisos</span>
-                <svg
-                  class="ar-icon"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </a>
+        <!-- Busca do painel (Ctrl K) -->
+        <div class="db-search-layer" id="dbSearch" hidden>
+          <div class="db-search-dialog" role="dialog" aria-modal="true" aria-label="Buscar no portal">
+            <div class="db-search-field">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+              <input
+                id="dbSearchInput"
+                type="text"
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="dbSearchResults"
+                aria-autocomplete="list"
+                aria-label="Buscar tarefas, avisos, disciplinas"
+                placeholder="Buscar tarefas, avisos, disciplinas…"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <kbd class="db-kbd">Esc</kbd>
             </div>
-            <div class="ar-panel-body"><p role="status">Carregando...</p></div>
-          </section>
+            <div class="db-search-results" id="dbSearchResults" role="listbox" aria-label="Resultados"></div>
+            <div class="db-search-foot" aria-hidden="true">
+              <span>↑ ↓ navegar</span><span>Enter abrir</span><span>Esc fechar</span>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -376,6 +382,8 @@
     <script src="js/compact-filters.js"></script>
     <script src="js/calendar-categories.js"></script>
     <script src="js/calendar-colors.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/dashboard.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/navigation.js"></script>
 
@@ -394,3 +402,4 @@
       <script src="js/topbar.js" defer></script>
   </body>
 </html>
+

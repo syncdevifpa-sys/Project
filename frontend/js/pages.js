@@ -1246,6 +1246,12 @@
         async function dashboard() {
             if (!A.auth.exigirLogin()) return;
             if (A.auth.getSessao().tipo_usuario === 'externo') return;
+            /* Meu painel v3 (js/dashboard.js): mesmo ciclo de vida e mesmo cancelamento desta tela. */
+            if (A.dashboard?.mount && $('#dbTodo')) {
+                const painel = A.dashboard.mount({ root, api });
+                cleanups.push(() => painel.dispose());
+                return painel.ready;
+            }
             const stats = $$('.ar-stat-value');
             const captions = $$('.ar-stat-cap');
             stats.forEach((el) => {
