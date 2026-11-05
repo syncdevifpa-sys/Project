@@ -9,6 +9,24 @@
   --brand-navy: #0b1f3a;
   --brand-blue: #2563eb;
   --brand-cream: #f6f3ec;
+  --accent-ink: #182020;
+}
+[data-accent='white'] {
+  --accent: #ffffff;
+  --accent-ink: #0b1f3a;
+}
+[data-accent='navy'] {
+  --accent: #0b1f3a;
+  --accent-ink: #ffffff;
+}
+.ar-mini--white {
+  background: #ffffff;
+  color: #0b1f3a;
+  border: 1px solid var(--control-border);
+}
+.ar-mini--navy {
+  background: #0b1f3a;
+  color: #ffffff;
 }
 :root,
 :root[data-theme] {
@@ -19,6 +37,7 @@
 }
 :root,
 [data-theme='light'] {
+  color-scheme: light;
   --canvas: #f6f3ec;
   --surface: #ffffff;
   --surface-sunken: #f0ece3;
@@ -39,6 +58,7 @@
   --text-muted: #5a5a5a;
 }
 [data-theme='dark'] {
+  color-scheme: dark;
   --canvas: #0b1422;
   --surface: #132238;
   --surface-sunken: #1b304c;
@@ -102,6 +122,61 @@ html.db-v3-on[data-theme='dark'] {
 html.db-v3-on[data-theme='dark'] :is(.db-title, .ar-nav .ar-brand-name) {
   color: var(--ink);
 }
+/* O painel antigo reutilizava a cor creme como fundo e texto: separamos os usos. */
+html.db-v3-on[data-theme='dark'] {
+  color-scheme: dark;
+  --db-blue-soft: #1b304c;
+  --db-disabled: #9daec5;
+  --db-border-strong: #718099;
+  --db-underline: #718099;
+  --db-alert: #ffb69a;
+  --db-alert-bg: #422b27;
+}
+html.db-v3-on[data-theme='dark'] .ar-nav {
+  background: var(--canvas);
+}
+html.db-v3-on[data-theme='dark'] .db-v3 .db-hello:not(.ar-banner-personal) {
+  color: #f6f3ec;
+}
+html.db-v3-on[data-theme='dark'] .db-hello:not(.ar-banner-personal) .db-streak li.is-today {
+  color: #f6f3ec;
+  box-shadow: inset 0 0 0 2px #f6f3ec;
+}
+html.db-v3-on[data-theme='dark'] .db-bar--dark i {
+  background: #f6f3ec;
+}
+html.db-v3-on[data-theme='dark']
+  :is(.db-empty h3, .db-date-box, .db-docs, .db-docs .db-link, .db-docs .db-metric-value small) {
+  color: var(--ink);
+}
+html.db-v3-on[data-theme='dark'] .db-v3 .db-chip:not([aria-pressed='true']) {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+html.db-v3-on[data-theme='dark']
+  :is(.db-search-dialog, .db-bottom, .db-pill--white, .db-pill--high, .db-doc .db-pill) {
+  background: var(--surface);
+  color: var(--ink);
+}
+html.db-v3-on[data-theme='dark'] .db-pill--today {
+  color: var(--ink);
+}
+/* O desenho é decorativo, não recebe cliques e acompanha a cor do banner. */
+.db-v3 .db-hello {
+  isolation: isolate;
+}
+.db-v3 .db-hello > .ar-hero-art {
+  position: absolute;
+  inset: auto 0 0 auto;
+  width: 68%;
+  height: 56%;
+  pointer-events: none;
+  color: inherit;
+  opacity: 0.12;
+  z-index: -1;
+  overflow: hidden;
+  border-end-end-radius: 24px;
+}
 
 /* Moldura, cartões e formulários usam as mesmas superfícies quentes. */
 .ar-app,
@@ -115,8 +190,13 @@ html.db-v3-on[data-theme='dark'] :is(.db-title, .ar-nav .ar-brand-name) {
   border-radius: 24px;
   box-shadow: none;
 }
+.ar-brand-name,
 .ar-nav .ar-brand-name {
   color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.1;
 }
 .ar-portal-sidebar {
   background: var(--surface);
@@ -156,6 +236,41 @@ html.db-v3-on[data-theme='dark'] :is(.db-title, .ar-nav .ar-brand-name) {
   color: var(--brand-blue);
   opacity: 0.12;
 }
+.ar-hero:not(.ar-banner-personal) :is(.ar-hero-title, .ar-hero-desc, .ar-hero-count) {
+  color: inherit;
+}
+/* O padrão de cor escolhido pelo usuário permanece acima do modelo visual. */
+.ar-banner-site-default:not(.ar-banner-personal):not(.db-hello) {
+  background: var(--accent, var(--surface));
+  color: var(--accent-ink, #182020);
+}
+.ar-hero.ar-hero--compact:not(.db-hello) {
+  padding-block: 24px;
+  gap: 20px;
+  min-height: 132px;
+  align-items: center;
+}
+.ar-hero.ar-hero--compact:not(.db-hello) .ar-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 3.8vw, 48px);
+  font-weight: 400;
+  line-height: 1.08;
+}
+.ar-hero .ar-hero-desc {
+  line-height: 1.6;
+  max-width: 56ch;
+}
+.ar-hero .ar-hero-actions {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .ar-hero.ar-hero--compact:not(.db-hello) {
+    min-height: 0;
+    gap: 16px;
+    padding-block: 24px;
+  }
+}
 .ar-btn--primary {
   background: var(--action);
   color: var(--on-action);
@@ -173,6 +288,12 @@ html.db-v3-on[data-theme='dark'] :is(.db-title, .ar-nav .ar-brand-name) {
   border-top: 1px solid var(--line);
   border-radius: 0;
   color: var(--ink-muted);
+}
+/* Contorno discreto nas fotos de conteúdo; emblemas e avatares mantêm seu formato. */
+:is(.ar-notice-cover, .ar-cover-preview, .news-card, .post, .feature-figure) > img {
+  box-sizing: border-box;
+  border: 1px solid var(--line, #e5dfd3);
+  border-radius: 6px;
 }
 
 /* Emblema ao lado do nome no novo cabeçalho público. */

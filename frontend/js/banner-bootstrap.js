@@ -23,7 +23,7 @@
                 );
             } catch {}
             const accent = localStorage.getItem('arcadia-theme-accent') || 'lime';
-            if (['lime', 'cyan', 'pink', 'yellow'].includes(accent))
+            if (['lime', 'cyan', 'pink', 'yellow', 'white', 'navy'].includes(accent))
                 root.setAttribute('data-accent', accent);
             const preferences =
                 stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
@@ -44,7 +44,7 @@
                           ? page === 'index.html'
                               ? 'var(--color-hero-bg)'
                               : 'var(--accent, var(--lime))'
-                          : style.background
+                          : policy.backgroundCSS(style)
                 );
                 root.style.setProperty(
                     '--initial-banner-' + slot + '-ink',
@@ -53,7 +53,7 @@
                         : style.mode === 'default'
                           ? page === 'index.html'
                               ? 'var(--color-ink-hero)'
-                              : '#182020'
+                              : 'var(--accent-ink, #182020)'
                           : style.text
                 );
             }

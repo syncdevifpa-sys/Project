@@ -9,6 +9,39 @@ test('Início usa fundo e texto do mesmo tema desde a primeira renderização', 
     assert.equal(f.styles.get('--initial-banner-page-ink'), 'var(--color-ink-hero)');
     assert.ok(policy.contrast('#14263b', '#f2f4f8') >= 4.5);
 });
+test('degradê conserva a cor salva, o contraste e o primeiro desenho antes do DOM', () => {
+    for (const preset of Object.values(policy.presets)) {
+        const style = policy.resolve({ mode: 'custom', ...preset, gradient: true });
+        const css = policy.backgroundCSS(style);
+        assert.match(css, /^linear-gradient\(135deg, #[0-9a-f]{6}, #[0-9a-f]{6}\)$/i);
+        for (const color of css.match(/#[0-9a-f]{6}/gi))
+            assert.ok(policy.contrast(color, style.text) >= 4.5);
+        const saved = { 'page:calendar.html:0': style };
+        assert.equal(fixture('calendar.html', saved).styles.get('--initial-banner-page-bg'), css);
+        const solid = policy.resolve({ ...style, gradient: false });
+        assert.equal(policy.backgroundCSS(solid), preset.background);
+        assert.equal(solid.gradient, undefined);
+    }
+});
+test('texto ilegível é corrigido também nos dois extremos do degradê personalizado', () => {
+    for (const background of ['#ffffff', '#000000', '#0b1f3a', '#777777', '#ffea00', '#0000ff']) {
+        const style = policy.resolve({
+            mode: 'custom',
+            background,
+            text: background,
+            gradient: true
+        });
+        assert.notEqual(style.text, background);
+        for (const color of policy.backgroundCSS(style).match(/#[0-9a-f]{6}/gi))
+            assert.ok(policy.contrast(color, style.text) >= 4.5);
+        assert.equal(
+            fixture('calendar.html', { 'page:calendar.html:0': style }).styles.get(
+                '--initial-banner-page-ink'
+            ),
+            style.text
+        );
+    }
+});
 function fixture(page = 'calendar.html', preferences = {}) {
     const attrs = new Map(),
         styles = new Map(),

@@ -9,4 +9,12 @@ Base: redesenho do Início e Meu painel enviado por Renzo, incluindo o ajuste de
 - Login e cadastro passam a compartilhar a identidade, em vez de fixar o antigo tema verde.
 - A alteração é de apresentação; não modifica APIs, dados, permissões ou banco.
 
+## Banners e tema escuro
+
+- Branco e azul-marinho aparecem nas Configurações de aparência e no seletor de cada banner, ao lado das cores existentes.
+- As cores prontas e o modo Personalizado oferecem “Aplicar degradê suave”. A preferência continua independente por banner e conta neste navegador; desmarcar mantém a cor lisa.
+- O segundo tom é calculado localmente com contraste de texto verificado. O formato anterior de preferências continua válido, sem migração nem substituição automática de escolhas.
+- O painel recupera o detalhe gráfico decorativo no banner de boas-vindas. Tema escuro separa fundos e textos, corrigindo cabeçalho claro, boas-vindas, filtros, estados vazios e cartões de documentos.
+- Texto de interface permanece em Inter/alternativas do sistema; títulos e marca “Arcádia” usam Times New Roman.
+
 Revisão em branch `codex/design-unificado`. Renomear branches ou títulos antigos requer identificar quais nomes o usuário quer corrigir; essa operação não integra a mudança visual.

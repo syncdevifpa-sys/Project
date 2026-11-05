@@ -12,6 +12,17 @@
         green: '#c9edb0',
         orange: '#f4ceaa'
     };
+    /* Atalhos de cor salvam o mesmo formato das cores personalizadas existentes. */
+    const presets = {
+        ...Object.fromEntries(
+            Object.entries(legacy).map(([name, background]) => [
+                name,
+                { background, text: '#182020' }
+            ])
+        ),
+        white: { background: '#ffffff', text: '#0b1f3a' },
+        navy: { background: '#0b1f3a', text: '#ffffff' }
+    };
     function luminance(hex) {
         const rgb = hex
             .slice(1)
@@ -32,6 +43,28 @@
             : contrast(background, '#000000') >= contrast(background, '#ffffff')
               ? '#000000'
               : '#ffffff';
+    }
+    /* Degradê suave: a segunda cor mantém ou aumenta o contraste do texto. */
+    function backgroundCSS(style) {
+        if (!style.gradient || !valid(style.background) || !valid(style.text))
+            return style.background;
+        const darken = luminance(style.text) > luminance(style.background);
+        const target = darken ? '#000000' : '#ffffff';
+        const channel = (hex, offset) => parseInt(hex.slice(offset, offset + 2), 16);
+        let end =
+            '#' +
+            [1, 3, 5]
+                .map((offset) =>
+                    Math.round(
+                        channel(style.background, offset) * 0.76 + channel(target, offset) * 0.24
+                    )
+                        .toString(16)
+                        .padStart(2, '0')
+                )
+                .join('');
+        if (end === style.background.toLowerCase()) end = darken ? '#132238' : '#e7eefd';
+        if (contrast(end, style.text) < 4.5) end = target;
+        return 'linear-gradient(135deg, ' + style.background + ', ' + end + ')';
     }
     function usesSiteDefault(page) {
         return ![
@@ -56,7 +89,8 @@
             return {
                 mode: 'custom',
                 background: style.background,
-                text: readable(style.background, style.text)
+                text: readable(style.background, style.text),
+                ...(style.gradient === true ? { gradient: true } : {})
             };
         return { mode: 'default' };
     }
@@ -71,5 +105,16 @@
                   (page === 'index.html' ? 'home' : '0') +
                   (publication ? ':' + publication : '');
     }
-    return { valid, legacy, contrast, readable, usesSiteDefault, owner, resolve, pageKey };
+    return {
+        valid,
+        legacy,
+        presets,
+        contrast,
+        readable,
+        backgroundCSS,
+        usesSiteDefault,
+        owner,
+        resolve,
+        pageKey
+    };
 });

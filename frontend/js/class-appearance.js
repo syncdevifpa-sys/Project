@@ -6,7 +6,8 @@
             ? require('./banner-preferences')
             : A?.bannerPreferences;
     if (!policy) return;
-    const { valid, contrast, readable, usesSiteDefault, resolve, legacy } = policy;
+    const { valid, contrast, readable, backgroundCSS, usesSiteDefault, resolve, legacy, presets } =
+        policy;
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = policy;
         return;
@@ -56,7 +57,7 @@
                 '--personal-banner-bg',
                 style.mode === 'neutral'
                     ? 'var(--surface, var(--color-page, #fff))'
-                    : style.background
+                    : backgroundCSS(style)
             );
             node.style.setProperty(
                 '--personal-banner-ink',
@@ -102,6 +103,13 @@
             const select = document.createElement('select');
             for (const [value, text] of [
                 ['default', 'Padrão do site'],
+                ['cyan', 'Ciano'],
+                ['pink', 'Rosa'],
+                ['yellow', 'Amarelo'],
+                ['green', 'Verde'],
+                ['orange', 'Laranja'],
+                ['white', 'Branco'],
+                ['navy', 'Azul-marinho'],
                 ['custom', 'Personalizado'],
                 ['neutral', 'Sem cor']
             ]) {
@@ -126,19 +134,45 @@
             const background = picker('Fundo'),
                 text = picker('Texto');
             const current = resolve(preferences()[key]);
+            const gradientLabel = document.createElement('label');
+            gradientLabel.className = 'ar-banner-gradient-toggle';
+            const gradient = document.createElement('input');
+            gradient.type = 'checkbox';
+            gradient.checked = current.gradient === true;
+            gradientLabel.append(gradient, document.createTextNode('Aplicar degradê suave'));
+            const gradientHint = document.createElement('small');
+            gradientHint.textContent =
+                'Escolha uma cor pronta ou Personalizado. Desmarque para manter a cor lisa.';
             select.value = current.mode;
             background.value = current.background || '#bdeafa';
             text.value = current.text || '#182020';
+            const preset = Object.keys(presets).find(
+                (name) =>
+                    current.mode === 'custom' &&
+                    current.background.toLowerCase() === presets[name].background &&
+                    current.text.toLowerCase() === presets[name].text
+            );
+            if (preset) select.value = preset;
             const preview = document.createElement('p');
             preview.className = 'ar-banner-appearance-preview';
-            preview.textContent = title;
+            preview.textContent = node.querySelector('h1, h2')?.textContent || title;
             const feedback = document.createElement('p');
             feedback.setAttribute('role', 'status');
             function sync() {
+                const selected = presets[select.value];
+                if (selected) {
+                    background.value = selected.background;
+                    text.value = selected.text;
+                }
                 fields.hidden = select.value !== 'custom';
-                preview.hidden = select.value !== 'custom';
+                preview.hidden = select.value !== 'custom' && !selected;
+                gradient.disabled = select.value === 'default' || select.value === 'neutral';
                 const adjusted = readable(background.value, text.value);
-                preview.style.backgroundColor = background.value;
+                preview.style.background = backgroundCSS({
+                    background: background.value,
+                    text: adjusted,
+                    gradient: gradient.checked && !gradient.disabled
+                });
                 preview.style.color = adjusted;
                 feedback.textContent =
                     select.value === 'custom' && adjusted !== text.value
@@ -149,6 +183,7 @@
             select.onchange = sync;
             background.oninput = sync;
             text.oninput = sync;
+            gradient.onchange = sync;
             sync();
             const actions = document.createElement('div');
             actions.className = 'ar-banner-appearance-actions';
@@ -160,7 +195,7 @@
             save.type = 'submit';
             save.textContent = 'Salvar';
             actions.append(cancel, save);
-            form.append(label, fields, preview, feedback, actions);
+            form.append(label, fields, gradientLabel, gradientHint, preview, feedback, actions);
             dialog.append(h, note, form);
             document.body.append(dialog);
             form.onsubmit = (event) => {
@@ -177,9 +212,11 @@
                                 : {
                                       mode: 'custom',
                                       background: background.value,
-                                      text: readable(background.value, text.value)
+                                      text: readable(background.value, text.value),
+                                      ...(gradient.checked ? { gradient: true } : {})
                                   };
                     localStorage.setItem(storageKey(), JSON.stringify(value));
+                    A.bannerBootstrap?.apply();
                     apply(node, key);
                     dialog.close();
                 } catch {
