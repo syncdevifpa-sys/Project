@@ -41,6 +41,15 @@ test('restauração valida sessão no servidor antes de mostrar dados; revogaç�
     const revoked=browser({status:401});revoked.handlers.pagehide();await revoked.handlers.pageshow({persisted:true});
     assert.equal(revoked.body.cleared,true);assert.equal(revoked.stored.has('arcadiaToken'),false);
 });
+test('Comunidade pode consultar Pessoas, preservando o bloqueio das áreas privadas',()=>{
+    const publicPeople=browser({page:'people.html',external:true});
+    assert.deepEqual(publicPeople.redirects,[]);
+    for(const page of ['admin.html','classes.html','documents.html']) {
+        const restricted=browser({page,external:true});
+        assert.deepEqual(restricted.redirects,['community.html']);
+    }
+});
+
 test('logout em outra aba ou troca de conta apaga imediatamente a tela anterior',()=>{
     const b=browser();b.stored.set('arcadiaToken','two');b.handlers.storage({key:'arcadiaToken'});
     assert.equal(b.body.cleared,true);assert.deepEqual(b.redirects,['login.html']);

@@ -77,15 +77,13 @@
         if (!topic) return;
         const region = scope.querySelector('.ar-hero, .ar-detail, .admin-intro');
         if (!region || region.querySelector('[data-page-help]')) return;
-        let host = region.querySelector('.ar-hero-actions');
-        if (!host) {
-            host = document.createElement('div');
-            host.className = 'ar-hero-actions ar-page-help-actions';
-            (region.querySelector('.ar-hero-side') || region).append(host);
-        }
+        region.setAttribute('data-help-region', 'true');
+        const host = document.createElement('div');
+        host.className = 'ar-page-help-actions';
+        region.append(host);
         const trigger = document.createElement('button');
         trigger.type = 'button';
-        trigger.className = 'ar-btn ar-page-help';
+        trigger.className = 'ar-page-help';
         trigger.dataset.pageHelp = page;
         trigger.textContent = '?';
         trigger.title = 'Ajuda sobre ' + topic[0];

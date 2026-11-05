@@ -64,9 +64,23 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
                 delete this.attributes[k];
             },
             append(...items) {
+                for (const item of items) {
+                    if (item.parentElement)
+                        item.parentElement.children = item.parentElement.children.filter(
+                            (child) => child !== item
+                        );
+                    item.parentElement = this;
+                }
                 this.children.push(...items);
             },
             prepend(...items) {
+                for (const item of items) {
+                    if (item.parentElement)
+                        item.parentElement.children = item.parentElement.children.filter(
+                            (child) => child !== item
+                        );
+                    item.parentElement = this;
+                }
                 this.children.unshift(...items);
             },
             replaceChildren(...items) {
@@ -132,6 +146,7 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         documentEvents,
         windowEvents,
         body,
+        host,
         app,
         media,
         storage,
@@ -142,6 +157,17 @@ function fixture(page, session, mobile = false, saved = '0', sessionValues = new
         backdrop: nodes.find((n) => n.className === 'ar-sidebar-backdrop')
     };
 }
+test('botão fica fora do cabeçalho com desfoque no desktop e entra na barra móvel', () => {
+    const f = fixture('projects.html', { tipo_usuario: 'discente' });
+    assert.equal(f.toggle.parentElement, f.body);
+    f.media.matches = true;
+    f.media.change();
+    assert.equal(f.toggle.parentElement, f.host);
+    f.media.matches = false;
+    f.media.change();
+    assert.equal(f.toggle.parentElement, f.body);
+});
+
 test('sidebar preserva grupos expandidos e posição ao trocar de página, separados por conta', () => {
     const session = { id_usuario: 7, tipo_usuario: 'discente' };
     const first = fixture('dashboard.html', session);
@@ -191,10 +217,11 @@ test('sidebar marks current section, gates administration and remembers icon rai
         'tasks.html',
         'notices.html',
         'calendar.html',
+        'people.html',
         'projects.html'
     ])
         assert.ok(destinations.includes(path));
-    for (const path of ['documents.html', 'people.html', 'classes.html', 'admin.html'])
+    for (const path of ['documents.html', 'classes.html', 'admin.html'])
         assert.ok(!destinations.includes(path));
 });
 test('mobile drawer closes with Escape, backdrop and navigation; restores background access', () => {
@@ -317,7 +344,7 @@ test('mapa é acessível na navegação pública, institucional e externa sem ab
                 !f.nodes.some(
                     (node) =>
                         node.tag === 'a' &&
-                        ['classes.html', 'admin.html', 'people.html', 'documents.html'].includes(
+                        ['classes.html', 'admin.html', 'documents.html'].includes(
                             node.href
                         )
                 )

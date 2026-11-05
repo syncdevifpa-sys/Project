@@ -221,6 +221,7 @@
                         links: [
                             ['notices.html', 'Avisos e notícias', 'news'],
                             ['calendar.html', 'Calendário', 'calendar'],
+                            ['people.html', 'Pessoas', 'people'],
                             ['projects.html', 'Projetos', 'projects'],
                             ['campus-map.html', 'Mapa do campus', 'map']
                         ]
@@ -388,8 +389,7 @@
         toggleText.className = 'ar-sidebar-toggle-label';
         toggleText.textContent = 'Menu';
         toggle.append(toggleIcon, toggleText);
-        if (bar) bar.prepend(toggle);
-        else document.body.append(toggle);
+        document.body.append(toggle);
         const backdrop = document.createElement('div');
         backdrop.className = 'ar-sidebar-backdrop';
         backdrop.setAttribute('aria-hidden', 'true');
@@ -404,6 +404,9 @@
         } catch {}
         function layout() {
             const mobile = media.matches;
+            /* O desfoque do cabeçalho cria um bloco de posicionamento para filhos fixos. */
+            if (mobile && bar && toggle.parentElement !== bar) bar.prepend(toggle);
+            else if (!mobile && toggle.parentElement !== document.body) document.body.append(toggle);
             toggleIcon.children[0].setAttribute(
                 'd',
                 mobile ? 'M4 6h16 M4 12h16 M4 18h16' : 'M9 5l7 7-7 7'

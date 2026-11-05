@@ -343,6 +343,13 @@
             icon: 'folder-kanban'
         },
         {
+            type: 'People',
+            title: 'Pessoas',
+            meta: 'Comunidade do campus · Contatos compartilhados',
+            href: 'people.html',
+            icon: 'users'
+        },
+        {
             type: 'Calendar',
             title: 'Calendário',
             meta: 'Datas e eventos',
@@ -360,7 +367,8 @@
         Tasks: 'Tarefas',
         Documents: 'Documentos',
         Projects: 'Projetos',
-        Calendar: 'Calendário'
+        Calendar: 'Calendário',
+        People: 'Pessoas'
     };
 
     function buildCommandPalette() {
@@ -391,6 +399,7 @@
                 ? ''
                 : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="People">Pessoas</button>' +
             '</div>' +
             '</div>' +
             '<div class="ar-pal-body">' +

@@ -14,17 +14,15 @@ Antes desta entrega, os controles `?` específicos existiam no Mapa e na grade d
 
 ## Exemplo para avaliação, sem substituir a barra atual
 
-Com a prévia local `node tools/final-ui-preview.cjs 61125`:
+Com a prévia local `node tools/final-ui-preview.cjs 61127`:
 
-- Atual: `http://127.0.0.1:61125/projects.html?perfil=admin&theme=light`
-- Exemplo: `http://127.0.0.1:61125/projects.html?perfil=admin&theme=light&barra=exemplo`
+- Atual: `http://127.0.0.1:61127/projects.html?perfil=admin&theme=light`
+- Exemplo: `http://127.0.0.1:61127/projects.html?perfil=admin&theme=light&barra=exemplo`
 
-A proposta mantém Menu e marca à esquerda, deixa a busca de áreas e as notificações visíveis e agrupa perfil, Configurações e Sair em Conta. A ajuda permanece junto ao conteúdo. O menu de Conta abre por clique/toque/teclado, fecha com Escape ou foco externo e mantém as ações originais.
+A barra compartilhada (`topbar.css` e `js/topbar.js`) está integrada às abas do portal, preservando foto e primeiro nome lado a lado. O menu reúne identificação, conta, aparência (quando disponível), privacidade e saída, sem recriar os eventos originais. No celular, a pesquisa ocupa uma segunda linha para preservar o espaço da identificação.
 
-O exemplo é injetado exclusivamente pelo servidor local de fixtures quando `barra=exemplo` é solicitado. O frontend publicado não carrega esse módulo. Não há mudança da estrutura real da barra superior nem do redesenho proposto para o Início.
+A busca de áreas limita a janela à viewport, permite rolagem e mantém o botão de fechar no canto superior direito. O X é discreto, com alvo de toque de 44 px. Os links antigos com `barra=exemplo` continuam funcionando sem injetar um segundo menu.
 
 ## Validação e limite
 
-Os testes exercitam o controlador real de Projetos, incluindo busca por responsável, acentos, eixo, situação e descarte do listener ao sair; a ajuda é testada para nome acessível, duplicação e restauração de foco. Um teste HTTP confirma que a proposta não aparece sem o parâmetro de prévia. Tipos, build e suíte são conferidos antes do commit.
-
-A ferramenta de navegador permanece indisponível nesta sessão. Não há alegação de conferência visual real da proposta nos tamanhos de celular, tablet ou desktop. O exemplo navegável foi preparado para essa avaliação.
+Conferência em navegador de Avisos, abertura da busca, nome junto à foto e dimensões móveis. Os testes cobrem busca de Projetos, ajuda, navegação, diálogo, scroll e HTTP da prévia. Dados da prévia são fictícios; não há banco ou envio de e-mail. As mudanças estão locais, sem publicação.

@@ -18,12 +18,13 @@ const send = (path, method, data) =>
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
-test('barra alternativa aparece somente na prévia explicitamente solicitada', async () => {
+test('barra compartilhada aparece nas abas e o link antigo não duplica a implementação', async () => {
     const normal = await (await fetch(base + '/projects.html?perfil=admin')).text();
     const example = await (await fetch(base + '/projects.html?perfil=admin&barra=exemplo')).text();
     assert.doesNotMatch(normal, /ar-topbar-example/);
-    assert.match(example, /ar-topbar-example/);
-    assert.match(example, /Ir para uma área/);
+    assert.doesNotMatch(example, /ar-topbar-example/);
+    assert.match(normal, /js\/topbar.js/);
+    assert.match(example, /topbar.css/);
     assert.match(normal, /filterProjectText/);
 });
 test('prévia salva a troca de Aviso para Notícia e os públicos selecionados sem transação de banco', async () => {

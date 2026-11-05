@@ -24,17 +24,51 @@
   font-size: 13px;
   color: var(--ink-muted);
 }
-.ar-hero-actions .ar-page-help {
-  flex: 0 0 44px;
+.ar-page-help {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 44px;
   min-height: 44px;
   padding: 0;
-  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
   border-radius: 50%;
   font-weight: 600;
+  cursor: pointer;
+}
+.ar-page-help::before {
+  content: '';
+  position: absolute;
+  inset: 11px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.ar-page-help:hover,
+.ar-page-help:focus-visible {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+[data-help-region] {
+  position: relative;
 }
 .ar-page-help-actions {
-  margin-top: 12px;
+  position: absolute;
+  top: 8px;
+  right: 52px;
+  color: inherit;
+}
+@media (min-width: 801px) {
+  [data-help-region].ar-hero > .ar-hero-side {
+    padding-inline-end: 76px;
+  }
+}
+@media (max-width: 800px) {
+  [data-help-region].ar-hero > .ar-hero-title {
+    padding-inline-end: 76px;
+  }
 }
 .ar-page-help-dialog {
   width: min(440px, calc(100vw - 24px));
