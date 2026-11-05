@@ -1,0 +1,211 @@
+/* Identidade compartilhada com o Início e o painel redesenhados pelo Renzo. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Times New Roman', Times, serif;
+  --fonte: var(--font-sans);
+  --font-main: var(--font-sans);
+  --brand-navy: #0b1f3a;
+  --brand-blue: #2563eb;
+  --brand-cream: #f6f3ec;
+}
+:root,
+:root[data-theme] {
+  --ref-primary: #0b1f3a;
+  --ref-primary-hover: #1d45a3;
+  --ref-input-focus: #2563eb;
+  --ref-showcase: var(--surface-sunken);
+}
+:root,
+[data-theme='light'] {
+  --canvas: #f6f3ec;
+  --surface: #ffffff;
+  --surface-sunken: #f0ece3;
+  --line: #e5dfd3;
+  --control-border: #b5ae9f;
+  --ink: #1a1a1a;
+  --ink-muted: #5a5a5a;
+  --action: #0b1f3a;
+  --on-action: #ffffff;
+  --link: #1d45a3;
+  --focus: #2563eb;
+  --chip-active: #e7eefd;
+  --bg-canvas: #f6f3ec;
+  --bg-card: #ffffff;
+  --bg-surface: #f0ece3;
+  --border-color: #e5dfd3;
+  --text-primary: #1a1a1a;
+  --text-muted: #5a5a5a;
+}
+[data-theme='dark'] {
+  --canvas: #0b1422;
+  --surface: #132238;
+  --surface-sunken: #1b304c;
+  --line: #30435e;
+  --control-border: #718099;
+  --ink: #f6f3ec;
+  --ink-muted: #c3cad8;
+  --action: #dbe6ff;
+  --on-action: #0b1f3a;
+  --link: #a9c2fa;
+  --focus: #a9c2fa;
+  --chip-active: #24395a;
+  --bg-canvas: #0b1422;
+  --bg-card: #132238;
+  --bg-surface: #1b304c;
+  --border-color: #30435e;
+  --text-primary: #f6f3ec;
+  --text-muted: #c3cad8;
+}
+:root[data-theme='dark'] {
+  --ref-primary: #2563eb;
+  --ref-primary-hover: #1d45a3;
+}
+
+/* Texto de interface e títulos têm papéis tipográficos diferentes. */
+body {
+  font-family: var(--font-sans);
+}
+body.ar-auth-branded {
+  background: var(--canvas);
+  background-image: none;
+  color: var(--ink);
+}
+body.ar-auth-branded :is(h1, h2, h3, h4) {
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+:is(h1, h2, h3, h4, h5, h6),
+.ar-hero-title,
+.ar-dialog-title,
+.ar-card-title,
+.ar-detail-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+html.db-v3-on {
+  --db-serif: 'Times New Roman', Times, serif;
+}
+html.db-v3-on[data-theme='dark'] {
+  --db-cream: var(--canvas);
+  --db-white: var(--surface);
+  --db-ink: var(--ink);
+  --db-text-2: var(--ink-muted);
+  --db-text-3: var(--ink-muted);
+  --db-line: var(--line);
+  --db-line-soft: var(--line);
+  --db-row-hover: var(--surface-sunken);
+}
+html.db-v3-on[data-theme='dark'] :is(.db-title, .ar-nav .ar-brand-name) {
+  color: var(--ink);
+}
+
+/* Moldura, cartões e formulários usam as mesmas superfícies quentes. */
+.ar-app,
+.ar-has-sidebar {
+  background-color: var(--canvas);
+  color: var(--ink);
+}
+.ar-has-sidebar .ar-nav {
+  background: color-mix(in srgb, var(--canvas) 94%, transparent);
+  border-color: transparent;
+  border-radius: 24px;
+  box-shadow: none;
+}
+.ar-nav .ar-brand-name {
+  color: var(--ink);
+}
+.ar-portal-sidebar {
+  background: var(--surface);
+  border-color: var(--line);
+  border-radius: 24px;
+}
+.ar-portal-sidebar :is(nav > a, .ar-sidebar-links a, summary) {
+  border-radius: 12px;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+}
+.ar-portal-sidebar :is(nav > a, .ar-sidebar-links a):hover {
+  background: var(--surface-sunken);
+}
+.ar-portal-sidebar a[aria-current='page'] {
+  background: var(--brand-blue);
+  color: #fff;
+  box-shadow: none;
+}
+.ar-card,
+.ar-sset,
+.ar-library,
+.ac-context,
+.ac-content {
+  background: var(--surface);
+  border-color: var(--line);
+  border-radius: 24px;
+}
+.ar-hero:not(.ar-banner-personal):not(.db-hello) {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+}
+.ar-hero:not(.ar-banner-personal):not(.db-hello) .ar-hero-art {
+  color: var(--brand-blue);
+  opacity: 0.12;
+}
+.ar-btn--primary {
+  background: var(--action);
+  color: var(--on-action);
+  border-color: transparent;
+}
+.ar-btn--primary:hover {
+  filter: brightness(1.1);
+}
+.ar-preview-search,
+.ar-preview-account > summary {
+  background: var(--surface);
+}
+.ar-site-footer {
+  background: transparent;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--ink-muted);
+}
+
+/* Emblema ao lado do nome no novo cabeçalho público. */
+.site-nav .wordmark {
+  display: grid;
+  grid-template-columns: 40px auto;
+  column-gap: 10px;
+  align-items: center;
+}
+.site-nav .wordmark-logo {
+  grid-row: 1 / 3;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+[data-theme='dark'] .site-nav .wordmark-logo {
+  filter: brightness(0) invert(1);
+}
+@media (max-width: 600px) {
+  .site-nav .wordmark {
+    grid-template-columns: 30px auto;
+    gap: 6px;
+  }
+  .site-nav .wordmark-logo {
+    width: 30px;
+    height: 30px;
+  }
+  .ar-hero:not(.ar-banner-personal):not(.db-hello) {
+    border-radius: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ar-portal-sidebar :is(nav > a, .ar-sidebar-links a, summary) {
+    transition: none;
+  }
+}
