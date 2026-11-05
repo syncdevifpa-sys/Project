@@ -343,6 +343,13 @@
             icon: 'folder-kanban'
         },
         {
+            type: 'People',
+            title: 'Pessoas',
+            meta: 'Comunidade do campus · Contatos compartilhados',
+            href: 'people.html',
+            icon: 'users'
+        },
+        {
             type: 'Calendar',
             title: 'Calendário',
             meta: 'Datas e eventos',
@@ -360,7 +367,8 @@
         Tasks: 'Tarefas',
         Documents: 'Documentos',
         Projects: 'Projetos',
-        Calendar: 'Calendário'
+        Calendar: 'Calendário',
+        People: 'Pessoas'
     };
 
     function buildCommandPalette() {
@@ -374,12 +382,12 @@
             'display:none; align-items:flex-start; padding-top:80px; z-index:100;';
 
         scrim.innerHTML =
-            '<div class="ar-pal" role="dialog" aria-label="Busca no portal">' +
+            '<div class="ar-pal" role="dialog" aria-label="Ir para uma área do portal">' +
             '<div class="ar-pal-top">' +
             '<label class="ar-search" style="width:100%">' +
             getIconSvg('search', 16) +
-            '<span class="ar-sr">Buscar no portal</span>' +
-            '<input type="search" id="ar-pal-input" placeholder="Buscar avisos, documentos ou projetos..." autocomplete="off">' +
+            '<span class="ar-sr">Ir para uma área do portal</span>' +
+            '<input type="search" id="ar-pal-input" placeholder="Digite uma área: avisos, projetos, calendário..." autocomplete="off">' +
             '<kbd class="ar-kbd">Esc</kbd>' +
             '</label>' +
             '<p class="ar-pal-hint">Busque uma seção, como Avisos, Tarefas ou Documentos.</p>' +
@@ -391,6 +399,7 @@
                 ? ''
                 : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="People">Pessoas</button>' +
             '</div>' +
             '</div>' +
             '<div class="ar-pal-body">' +
@@ -915,6 +924,7 @@
         hydrateTopNav: hydrateTopNav,
         styleViewSwitcher: styleViewSwitcher,
         hydratePage: function (root) {
+            window.Arcadia.pageHelp?.mount(root);
             setupContentShortcut(root);
             renderIcons(root);
             setupViewToolbar(root);

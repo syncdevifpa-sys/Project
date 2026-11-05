@@ -180,6 +180,7 @@
             const error = document.createElement('p');
             error.className = 'ar-notice-editor-error ar-span-2';
             error.setAttribute('role', 'alert');
+            error.tabIndex = -1;
             form.append(error);
             const hint = document.createElement('p');
             hint.className = 'notice-filter-hint ar-span-2';

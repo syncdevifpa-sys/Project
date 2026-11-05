@@ -1,7 +1,13 @@
 (function (A) {
     'use strict';
     let sequence = 0;
-    A.confirmAction = function ({ title, message, items = [], confirmLabel = 'Excluir' }) {
+    A.confirmAction = function ({
+        title,
+        message,
+        items = [],
+        confirmLabel = 'Excluir',
+        confirmText = ''
+    }) {
         return new Promise((resolve) => {
             const previous = document.activeElement;
             const dialog = document.createElement('dialog');
@@ -36,6 +42,22 @@
             confirm.type = 'button';
             confirm.className = 'ar-btn ar-confirm-danger';
             confirm.textContent = confirmLabel;
+            let confirmation;
+            if (confirmText) {
+                const label = document.createElement('label');
+                label.textContent = 'Para confirmar, digite: ' + confirmText;
+                confirmation = document.createElement('input');
+                confirmation.type = 'text';
+                confirmation.autocomplete = 'off';
+                confirmation.spellcheck = false;
+                confirmation.setAttribute('aria-describedby', description.id);
+                confirm.disabled = true;
+                confirmation.addEventListener('input', () => {
+                    confirm.disabled = confirmation.value.trim() !== String(confirmText).trim();
+                });
+                label.append(confirmation);
+                dialog.append(label);
+            }
             actions.append(cancel, confirm);
             dialog.append(actions);
             let settled = false;
@@ -44,11 +66,15 @@
                 settled = true;
                 dialog.close();
                 dialog.remove();
-                if (previous?.isConnected) previous.focus();
+                if (previous?.isConnected && !previous.closest?.('[inert]'))
+                    previous.focus({ preventScroll: true });
                 resolve(value);
             };
             cancel.addEventListener('click', () => finish(false));
-            confirm.addEventListener('click', () => finish(true));
+            confirm.addEventListener('click', () => {
+                if (!confirmText || confirmation.value.trim() === String(confirmText).trim())
+                    finish(true);
+            });
             dialog.addEventListener('cancel', (event) => {
                 event.preventDefault();
                 finish(false);

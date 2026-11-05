@@ -259,7 +259,8 @@
                                         items: [
                                             `${row.nome || row.titulo || row[meta.id]} (ID ${id})`
                                         ],
-                                        confirmLabel: 'Excluir definitivamente'
+                                        confirmLabel: 'Excluir definitivamente',
+                                        confirmText: people() ? String(row.nome || id) : ''
                                     }))
                                 )
                                     return;

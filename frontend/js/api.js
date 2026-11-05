@@ -51,7 +51,6 @@ window.Arcadia = window.Arcadia || {};
     } catch {}
     const externalRestricted = new Set([
         'documents.html',
-        'people.html',
         'profile.html',
         'classes.html',
         'admin.html'

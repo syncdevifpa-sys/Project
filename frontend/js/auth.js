@@ -504,6 +504,10 @@ window.Arcadia = window.Arcadia || {};
                 if (msgErro) {
                     msgErro.textContent = text;
                     msgErro.style.display = 'block';
+                    msgErro.setAttribute?.('role', 'alert');
+                    msgErro.setAttribute?.('tabindex', '-1');
+                    msgErro.focus?.({ preventScroll: true });
+                    msgErro.scrollIntoView?.({ block: 'nearest', behavior: 'instant' });
                 } else {
                     showTopAlert('Não foi possível realizar o cadastro ou login', text);
                 }
@@ -538,191 +542,234 @@ window.Arcadia = window.Arcadia || {};
                     /* O login funciona mesmo sem armazenamento nesta aba. */
                 }
             }
+            /* Uma operação por formulário; validar/recuperar nunca repete uma escrita. */
+            let submitting = false;
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (msgErro) msgErro.style.display = 'none';
-                if (msgSucesso) msgSucesso.style.display = 'none';
+                if (submitting) return;
+                submitting = true;
+                const buttons = Array.from(
+                    form.querySelectorAll?.('button[type="submit"], input[type="submit"]') || []
+                );
+                const initialButtons = buttons.map((button) => ({
+                    button,
+                    disabled: button.disabled,
+                    text: button.textContent
+                }));
+                form.setAttribute?.('aria-busy', 'true');
+                for (const button of buttons) {
+                    button.disabled = true;
+                    if (button.tagName !== 'INPUT')
+                        button.textContent =
+                            tipoAcesso === 'login' ? 'Entrando…' : 'Criando conta…';
+                }
+                try {
+                    if (msgErro) msgErro.style.display = 'none';
+                    if (msgSucesso) msgSucesso.style.display = 'none';
 
-                const email = (form.querySelector('#email')?.value || '').trim();
-                const senha = form.querySelector('#senha, #password')?.value || '';
+                    const email = (form.querySelector('#email')?.value || '').trim();
+                    const senha = form.querySelector('#senha, #password')?.value || '';
 
-                if (tipoAcesso === 'cadastro') {
-                    const legalAcceptance = form.querySelector('#legalAcceptance');
-                    if (legalAcceptance && !legalAcceptance.checked) {
-                        legalAcceptance.focus();
-                        return showError(
-                            'Para criar a conta, aceite os Termos de Uso e confirme a leitura da Política de Privacidade.'
-                        );
-                    }
-
-                    const nome = (form.querySelector('#nome, #name')?.value || '').trim();
-                    const telefone =
-                        (form.querySelector('#telefone, #phone')?.value || '').trim() || null;
-                    const vinculoInput = form.querySelector('#vinculoInput, #affiliationInput');
-                    const roleBtnAtivo = form.querySelector(
-                        '.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo'
-                    );
-                    const vinculoSelecionado =
-                        vinculoInput && vinculoInput.value
-                            ? vinculoInput.value
-                            : roleBtnAtivo
-                              ? roleBtnAtivo.getAttribute('data-vinculo') ||
-                                roleBtnAtivo.textContent.trim()
-                              : 'Aluno';
-                    const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
-
-                    if (!['discente', 'externo', 'docente', 'servidor'].includes(tipo_usuario)) {
-                        return showError(
-                            'Contas de professor e servidor precisam ser autorizadas pela administração.'
-                        );
-                    }
-
-                    if (!nome || !email || !senha) {
-                        return showError('Preencha todos os campos obrigatórios.');
-                    }
-                    if (senha.length < 8) {
-                        return showError('A senha deve ter pelo menos 8 caracteres.');
-                    }
-
-                    try {
-                        const { ok, status, data } = await api.post(
-                            ['externo', 'discente', 'docente', 'servidor'].includes(tipo_usuario)
-                                ? '/api/external/register'
-                                : '/api/users',
-                            {
-                                nome,
-                                email,
-                                senha,
-                                tipo_usuario,
-                                ...(['discente', 'docente', 'servidor'].includes(tipo_usuario)
-                                    ? {
-                                          matricula: form.querySelector('#teacherMatricula')?.value,
-                                          nome_usuario:
-                                              form.querySelector('#teacherUsername')?.value,
-                                          formacao: form.querySelector('#teacherFormacao')?.value,
-                                          etapa_atual:
-                                              Number(
-                                                  form.querySelector('#studentCourseInfo')?.value
-                                              ) || null
-                                      }
-                                    : {}),
-                                telefone:
-                                    telefone ||
-                                    (form.querySelector('#telefone')?.value || '').trim() ||
-                                    null,
-                                id_curso:
-                                    tipo_usuario === 'discente'
-                                        ? Number(form.querySelector('#curso')?.value) || null
-                                        : null
-                            },
-                            { auth: false }
-                        );
-
-                        /* Mantém apenas o destinatário nesta aba; nunca coloca dados na URL. */
-                        if (status === 409 || (ok && status === 201)) {
-                            try {
-                                window.sessionStorage.setItem('arcadia.pendingEmail', email);
-                            } catch {}
-                        }
-                        if (status === 409) {
-                            const help = form.querySelector('[data-signup-verification]');
-                            if (help) help.hidden = false;
+                    if (tipoAcesso === 'cadastro') {
+                        const legalAcceptance = form.querySelector('#legalAcceptance');
+                        if (legalAcceptance && !legalAcceptance.checked) {
+                            legalAcceptance.focus();
                             return showError(
-                                'Este e-mail já tem um cadastro. Se ainda não o confirmou, use o link de confirmação abaixo; se já confirmou, faça login.'
+                                'Para criar a conta, aceite os Termos de Uso e confirme a leitura da Política de Privacidade.'
                             );
                         }
-                        if (!ok) {
-                            return showError(data.error || 'Não foi possível realizar o cadastro.');
-                        }
 
-                        const createdId = ['externo', 'discente', 'docente', 'servidor'].includes(
-                            tipo_usuario
-                        )
-                            ? data?.externalId
-                            : data?.userId;
+                        const nome = (form.querySelector('#nome, #name')?.value || '').trim();
+                        const telefone =
+                            (form.querySelector('#telefone, #phone')?.value || '').trim() || null;
+                        const vinculoInput = form.querySelector('#vinculoInput, #affiliationInput');
+                        const roleBtnAtivo = form.querySelector(
+                            '.ar-role-btn.is-active, .ar-role-btn[aria-checked="true"], .pill.ativo'
+                        );
+                        const vinculoSelecionado =
+                            vinculoInput && vinculoInput.value
+                                ? vinculoInput.value
+                                : roleBtnAtivo
+                                  ? roleBtnAtivo.getAttribute('data-vinculo') ||
+                                    roleBtnAtivo.textContent.trim()
+                                  : 'Aluno';
+                        const tipo_usuario = paraTipoUsuario(vinculoSelecionado);
+
                         if (
-                            status !== 201 ||
-                            !Number.isInteger(createdId) ||
-                            createdId <= 0 ||
-                            data.verificationRequired !== true ||
-                            typeof data.verificationSent !== 'boolean'
+                            !['discente', 'externo', 'docente', 'servidor'].includes(tipo_usuario)
                         ) {
                             return showError(
-                                'O servidor não confirmou a criação da conta pendente. Não prossiga para a confirmação; atualize a página e confira o cadastro.'
+                                'Contas de professor e servidor precisam ser autorizadas pela administração.'
                             );
                         }
-                        const help = form.querySelector('[data-signup-verification]');
-                        if (help) help.hidden = false;
 
-                        showSuccess(
-                            data.verificationSent
-                                ? 'Conta criada. Confira seu e-mail e confirme o link antes de entrar.'
-                                : 'Sua conta foi criada e está pendente de confirmação. O envio falhou; não é preciso se cadastrar novamente. Depois que o serviço de e-mail estiver disponível, use o link abaixo para solicitar outra mensagem.'
-                        );
+                        if (!nome || !email || !senha) {
+                            return showError('Preencha todos os campos obrigatórios.');
+                        }
+                        if (senha.length < 8) {
+                            return showError('A senha deve ter pelo menos 8 caracteres.');
+                        }
 
                         try {
-                            window.sessionStorage.setItem(
-                                'arcadia.signupNotice',
-                                data.verificationSent ? 'sent' : 'failed'
+                            const { ok, status, data } = await api.post(
+                                ['externo', 'discente', 'docente', 'servidor'].includes(
+                                    tipo_usuario
+                                )
+                                    ? '/api/external/register'
+                                    : '/api/users',
+                                {
+                                    nome,
+                                    email,
+                                    senha,
+                                    tipo_usuario,
+                                    ...(['discente', 'docente', 'servidor'].includes(tipo_usuario)
+                                        ? {
+                                              matricula:
+                                                  form.querySelector('#teacherMatricula')?.value,
+                                              nome_usuario:
+                                                  form.querySelector('#teacherUsername')?.value,
+                                              formacao:
+                                                  form.querySelector('#teacherFormacao')?.value,
+                                              etapa_atual:
+                                                  Number(
+                                                      form.querySelector('#studentCourseInfo')
+                                                          ?.value
+                                                  ) || null
+                                          }
+                                        : {}),
+                                    telefone:
+                                        telefone ||
+                                        (form.querySelector('#telefone')?.value || '').trim() ||
+                                        null,
+                                    id_curso:
+                                        tipo_usuario === 'discente'
+                                            ? Number(form.querySelector('#curso')?.value) || null
+                                            : null
+                                },
+                                { auth: false }
                             );
-                        } catch {}
-                        window.location.href = 'verify-email.html';
-                    } catch (err) {
-                        console.error('Erro ao conectar com a API:', err);
-                        showError(
-                            err.code === 'NETWORK_ERROR'
-                                ? err.message
-                                : 'Não foi possível conectar ao Arcádia. Tente novamente em instantes.'
-                        );
-                    }
-                    return;
-                }
 
-                if (tipoAcesso === 'login') {
-                    if (confirmationHelp) confirmationHelp.hidden = true;
-                    if (!email || !senha) {
-                        return showError('Por favor, informe seu e-mail e senha.');
-                    }
-
-                    try {
-                        const { ok, status, data } = await api.post(
-                            '/api/auth/login',
-                            { email, senha },
-                            { auth: false }
-                        );
-
-                        if (!ok) {
-                            if (data.emailVerificationRequired === true && confirmationHelp) {
-                                confirmationHelp.hidden = false;
+                            /* Mantém apenas o destinatário nesta aba; nunca coloca dados na URL. */
+                            if (status === 409 || (ok && status === 201)) {
                                 try {
                                     window.sessionStorage.setItem('arcadia.pendingEmail', email);
                                 } catch {}
                             }
-                            return showError(
-                                data.error ||
-                                    (status === 401
-                                        ? 'E-mail ou senha incorretos.'
-                                        : 'Erro ao efetuar login.')
+                            if (status === 409) {
+                                const help = form.querySelector('[data-signup-verification]');
+                                if (help) help.hidden = false;
+                                return showError(
+                                    'Este e-mail já tem um cadastro. Se ainda não o confirmou, use o link de confirmação abaixo; se já confirmou, faça login.'
+                                );
+                            }
+                            if (!ok) {
+                                return showError(
+                                    data.error || 'Não foi possível realizar o cadastro.'
+                                );
+                            }
+
+                            const createdId = [
+                                'externo',
+                                'discente',
+                                'docente',
+                                'servidor'
+                            ].includes(tipo_usuario)
+                                ? data?.externalId
+                                : data?.userId;
+                            if (
+                                status !== 201 ||
+                                !Number.isInteger(createdId) ||
+                                createdId <= 0 ||
+                                data.verificationRequired !== true ||
+                                typeof data.verificationSent !== 'boolean'
+                            ) {
+                                return showError(
+                                    'O servidor não confirmou a criação da conta pendente. Não prossiga para a confirmação; atualize a página e confira o cadastro.'
+                                );
+                            }
+                            const help = form.querySelector('[data-signup-verification]');
+                            if (help) help.hidden = false;
+
+                            showSuccess(
+                                data.verificationSent
+                                    ? 'Conta criada. Confira seu e-mail e confirme o link antes de entrar.'
+                                    : 'Sua conta foi criada e está pendente de confirmação. O envio falhou; não é preciso se cadastrar novamente. Depois que o serviço de e-mail estiver disponível, use o link abaixo para solicitar outra mensagem.'
+                            );
+
+                            try {
+                                window.sessionStorage.setItem(
+                                    'arcadia.signupNotice',
+                                    data.verificationSent ? 'sent' : 'failed'
+                                );
+                            } catch {}
+                            window.location.href = 'verify-email.html';
+                        } catch (err) {
+                            console.error('Erro ao conectar com a API:', err);
+                            showError(
+                                err.code === 'NETWORK_ERROR'
+                                    ? err.message
+                                    : 'Não foi possível conectar ao Arcádia. Tente novamente em instantes.'
                             );
                         }
+                        return;
+                    }
 
-                        if (!data.user || !data.token) {
-                            return showError('Resposta inválida do servidor.');
+                    if (tipoAcesso === 'login') {
+                        if (confirmationHelp) confirmationHelp.hidden = true;
+                        if (!email || !senha) {
+                            return showError('Por favor, informe seu e-mail e senha.');
                         }
 
-                        salvarSessao(data.user, data.token);
+                        try {
+                            const { ok, status, data } = await api.post(
+                                '/api/auth/login',
+                                { email, senha },
+                                { auth: false }
+                            );
 
-                        showSuccess('Login realizado! Redirecionando...');
-                        irParaPortal();
-                    } catch (err) {
-                        console.error('Erro ao conectar com a API:', err);
-                        showError(
-                            err.code === 'AUTH_STORAGE_UNAVAILABLE'
-                                ? 'O login foi validado, mas o navegador bloqueou o armazenamento da sessão. Permita os dados deste site e tente novamente.'
-                                : err.code === 'NETWORK_ERROR'
-                                  ? err.message
-                                  : 'Não foi possível conectar ao Arcádia. Tente novamente em instantes.'
-                        );
+                            if (!ok) {
+                                if (data.emailVerificationRequired === true && confirmationHelp) {
+                                    confirmationHelp.hidden = false;
+                                    try {
+                                        window.sessionStorage.setItem(
+                                            'arcadia.pendingEmail',
+                                            email
+                                        );
+                                    } catch {}
+                                }
+                                return showError(
+                                    data.error ||
+                                        (status === 401
+                                            ? 'E-mail ou senha incorretos.'
+                                            : 'Erro ao efetuar login.')
+                                );
+                            }
+
+                            if (!data.user || !data.token) {
+                                return showError('Resposta inválida do servidor.');
+                            }
+
+                            salvarSessao(data.user, data.token);
+
+                            showSuccess('Login realizado! Redirecionando...');
+                            irParaPortal();
+                        } catch (err) {
+                            console.error('Erro ao conectar com a API:', err);
+                            showError(
+                                err.code === 'AUTH_STORAGE_UNAVAILABLE'
+                                    ? 'O login foi validado, mas o navegador bloqueou o armazenamento da sessão. Permita os dados deste site e tente novamente.'
+                                    : err.code === 'NETWORK_ERROR'
+                                      ? err.message
+                                      : 'Não foi possível conectar ao Arcádia. Tente novamente em instantes.'
+                            );
+                        }
+                    }
+                } finally {
+                    submitting = false;
+                    form.setAttribute?.('aria-busy', 'false');
+                    for (const entry of initialButtons) {
+                        entry.button.disabled = entry.disabled;
+                        entry.button.textContent = entry.text;
                     }
                 }
             });

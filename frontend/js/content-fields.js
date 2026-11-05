@@ -82,7 +82,7 @@
             defaults: { tipo: 'requerimento' },
             fields: [
                 title,
-                ['motivo', 'Motivo', 'textarea'],
+                ['motivo', 'Motivo (opcional)', 'textarea'],
                 description,
                 [
                     'tipo',

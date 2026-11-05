@@ -56,6 +56,27 @@ function fixture() {
         }
     };
 }
+test('exclusão com confirmação digitada exige o nome correto antes de resolver', async () => {
+    const f = fixture();
+    const result = f.A.confirmAction({
+        title: 'Excluir pessoa?',
+        message: 'Irreversível.',
+        confirmText: 'Pessoa de teste'
+    });
+    const input = f.nodes.find((n) => n.tag === 'input');
+    const confirm = f.nodes.find((n) => n.textContent === 'Excluir');
+    const dialog = f.nodes.find((n) => n.tag === 'dialog');
+    assert.equal(confirm.disabled, true);
+    input.value = 'Outra pessoa';
+    input.events.input();
+    confirm.events.click();
+    assert.equal(dialog.removed, undefined);
+    input.value = 'Pessoa de teste';
+    input.events.input();
+    assert.equal(confirm.disabled, false);
+    confirm.events.click();
+    assert.equal(await result, true);
+});
 test('confirmação usa diálogo acessível, texto seguro e foco inicial em Cancelar', async () => {
     const f = fixture();
     const result = f.A.confirmAction({

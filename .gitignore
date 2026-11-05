@@ -46,3 +46,6 @@ Thumbs.db
 /frontend/js/person-name.js
 
 /frontend/js/campus-map-model.js
+
+# Capturas e prévias geradas localmente
+/output/

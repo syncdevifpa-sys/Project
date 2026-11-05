@@ -62,7 +62,14 @@ function fixture() {
     document.createElement = node;
     document.querySelectorAll = (s) =>
         s.endsWith('[open]') ? (panel.open ? [panel] : []) : [panel];
-    const window = { Arcadia: {}, innerWidth: 1000 };
+    const window = {
+        Arcadia: {},
+        innerWidth: 1000,
+        events: {},
+        addEventListener(name, handler) {
+            this.events[name] = handler;
+        }
+    };
     const context = {
         document,
         window,
@@ -77,6 +84,20 @@ function fixture() {
     document.events.DOMContentLoaded();
     return { document, panel, body, summary, select, group, second, window };
 }
+test('rotação reposiciona painel sem descartar seleção e Tab para fora o fecha', () => {
+    const f = fixture();
+    f.select.value = 'pdf';
+    f.panel.open = true;
+    f.window.innerWidth = 820;
+    f.window.events.resize();
+    assert.equal(f.panel.open, true);
+    assert.equal(f.select.value, 'pdf');
+    f.window.innerWidth = 390;
+    f.window.events.resize();
+    assert.equal(f.select.value, 'pdf');
+    f.document.events.focusin({ target: {} });
+    assert.equal(f.panel.open, false);
+});
 test('filtros iniciam recolhidos, preservam seleção ao fechar e Escape retorna o foco', () => {
     const f = fixture();
     assert.equal(f.panel.open, false);

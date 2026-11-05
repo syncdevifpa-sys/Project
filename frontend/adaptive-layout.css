@@ -1,0 +1,204 @@
+/* Contrato adaptativo compartilhado: celular, tablet e desktop usam o mesmo HTML. */
+.ar-project-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ar-project-tools > .ar-search {
+  flex: 1 1 180px;
+  max-width: 420px;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+}
+.ar-project-tools .ar-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+}
+.ar-project-search-status {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.ar-page-help {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  border-radius: 50%;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ar-page-help::before {
+  content: '';
+  position: absolute;
+  inset: 11px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.ar-page-help:hover,
+.ar-page-help:focus-visible {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+[data-help-region] {
+  position: relative;
+}
+.ar-page-help-actions {
+  position: absolute;
+  top: 8px;
+  right: 52px;
+  color: inherit;
+}
+@media (min-width: 801px) {
+  [data-help-region].ar-hero > .ar-hero-side {
+    padding-inline-end: 76px;
+  }
+}
+@media (max-width: 800px) {
+  [data-help-region].ar-hero > .ar-hero-title {
+    padding-inline-end: 76px;
+  }
+}
+.ar-page-help-dialog {
+  width: min(440px, calc(100vw - 24px));
+}
+.ar-page-help-dialog p {
+  line-height: 1.6;
+}
+.ar-app :is(.ar-main, .ar-route-main, .ar-panel, .ar-card, .ac-context, .ac-content),
+.ar-library-layout > *,
+.ac-workspace > * {
+  min-inline-size: 0;
+}
+.ar-app :is(h1, h2, h3, .ar-btn, summary, .ar-field) {
+  overflow-wrap: anywhere;
+}
+.ar-card-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+.ar-app :is(.ar-profile-actions, .ar-library-actions, .ac-toolbar) {
+  flex-wrap: wrap;
+}
+.ar-app :is(.ar-btn, .ar-iconbtn, summary):focus-visible {
+  outline: 2px solid var(--focus, #176b9a);
+  outline-offset: 3px;
+}
+/* A tabela e o mapa podem rolar localmente; o texto da página deve refluír. */
+:is(.ar-table-scroll, .ar-library-table-scroll, .ac-schedule-scroll) {
+  max-inline-size: 100%;
+  overscroll-behavior-inline: contain;
+}
+dialog:is(.ar-dialog, .ar-library-dialog, .ar-confirm-dialog) {
+  max-inline-size: calc(100vw - 24px);
+}
+.ar-confirm-dialog label {
+  display: grid;
+  gap: 8px;
+  margin-block: 16px;
+  overflow-wrap: anywhere;
+}
+.ar-confirm-dialog input {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 44px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+/* Tablet: conteúdo com folga e ações ao toque, sem imitar um desktop comprimido. */
+@media (min-width: 601px) and (max-width: 1100px) {
+  .ar-has-sidebar .ar-nav {
+    gap: 8px;
+    padding: 10px;
+  }
+  .ar-has-sidebar .ar-grouped-nav {
+    width: auto;
+    flex: 0 1 auto;
+    order: 0;
+  }
+  .ar-has-sidebar .ar-nav-end {
+    margin-inline-start: auto;
+    flex-wrap: wrap;
+  }
+  .ar-app .ar-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ar-app .ar-grid-3 > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  .ar-app .ar-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .ar-has-sidebar .ar-grouped-nav,
+  .ar-has-sidebar .ar-user > div {
+    display: none;
+  }
+  .ac-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ar-library-layout {
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+/* Celular e zoom: campos legíveis, ações com quebra e respiros reduzidos. */
+@media (max-width: 600px) {
+  .ar-app .ar-form-grid,
+  .ar-app .ar-grid-2,
+  .ar-app .ar-grid-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ar-app .ar-form-grid > * {
+    grid-column: auto;
+  }
+  .ar-app :is(.ar-profile-actions, .ar-library-actions) {
+    gap: 8px;
+  }
+  .ar-app .ar-library {
+    padding: 16px;
+  }
+  .ar-app input:not([type='checkbox']):not([type='radio']),
+  .ar-app select,
+  .ar-app textarea,
+  dialog input:not([type='checkbox']):not([type='radio']),
+  dialog select,
+  dialog textarea,
+  .ar-compact-filter-body select {
+    font-size: max(16px, 1em);
+  }
+  .ar-compact-filters > .ar-compact-filter-body {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    max-height: min(60dvh, 420px);
+  }
+}
+@media (pointer: coarse) {
+  .ar-app :is(button, summary),
+  .ar-compact-filter-body :is(button, select),
+  .ar-dialog-shell :is(button, select) {
+    min-block-size: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ar-app :is(.ar-portal-sidebar, .ar-card, .ar-hero),
+  .ar-compact-filter-body {
+    animation: none;
+    transition: none;
+  }
+}

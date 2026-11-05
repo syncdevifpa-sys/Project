@@ -1,3 +1,9 @@
+# Registro histórico de um experimento React
+
+Este conteúdo descreve uma intervenção antiga em `Numbers.tsx`. Não é o contrato do portal HTML/CSS/JS atual. A referência vigente está em [docs/design-system-atual.md](docs/design-system-atual.md), junto aos componentes reais de `frontend/`. O texto anterior é preservado abaixo como histórico.
+
+---
+
 Leia DESIGN.md antes de começar. Ele é a fonte de verdade de espaçamento,
 tipografia e cor. Não invente valores fora dele.
 
