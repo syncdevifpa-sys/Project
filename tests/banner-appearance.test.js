@@ -51,7 +51,8 @@ test('todos os banners de página carregam personalização e estilos circulares
         assert.ok(html.includes('href="banner-appearance.css"'), page);
         assert.ok(html.includes('href="content-views.css"'), page);
     }
-    assert.equal(count, 14);
+    // A landing (index.html) segue o design fixo da especificação e não tem banner personalizável.
+    assert.equal(count, 13);
 });
 
 test('cards de resumo usam chaves independentes, paleta do portal e restauram apenas o item escolhido', () => {
