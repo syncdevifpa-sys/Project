@@ -1,4 +1,47 @@
 /* Contrato adaptativo compartilhado: celular, tablet e desktop usam o mesmo HTML. */
+.ar-project-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ar-project-tools > .ar-search {
+  flex: 1 1 180px;
+  max-width: 420px;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+}
+.ar-project-tools .ar-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+}
+.ar-project-search-status {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.ar-hero-actions .ar-page-help {
+  flex: 0 0 44px;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 600;
+}
+.ar-page-help-actions {
+  margin-top: 12px;
+}
+.ar-page-help-dialog {
+  width: min(440px, calc(100vw - 24px));
+}
+.ar-page-help-dialog p {
+  line-height: 1.6;
+}
 .ar-app :is(.ar-main, .ar-route-main, .ar-panel, .ar-card, .ac-context, .ac-content),
 .ar-library-layout > *,
 .ac-workspace > * {

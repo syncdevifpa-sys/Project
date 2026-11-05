@@ -374,12 +374,12 @@
             'display:none; align-items:flex-start; padding-top:80px; z-index:100;';
 
         scrim.innerHTML =
-            '<div class="ar-pal" role="dialog" aria-label="Busca no portal">' +
+            '<div class="ar-pal" role="dialog" aria-label="Ir para uma área do portal">' +
             '<div class="ar-pal-top">' +
             '<label class="ar-search" style="width:100%">' +
             getIconSvg('search', 16) +
-            '<span class="ar-sr">Buscar no portal</span>' +
-            '<input type="search" id="ar-pal-input" placeholder="Buscar avisos, documentos ou projetos..." autocomplete="off">' +
+            '<span class="ar-sr">Ir para uma área do portal</span>' +
+            '<input type="search" id="ar-pal-input" placeholder="Digite uma área: avisos, projetos, calendário..." autocomplete="off">' +
             '<kbd class="ar-kbd">Esc</kbd>' +
             '</label>' +
             '<p class="ar-pal-hint">Busque uma seção, como Avisos, Tarefas ou Documentos.</p>' +
@@ -915,6 +915,7 @@
         hydrateTopNav: hydrateTopNav,
         styleViewSwitcher: styleViewSwitcher,
         hydratePage: function (root) {
+            window.Arcadia.pageHelp?.mount(root);
             setupContentShortcut(root);
             renderIcons(root);
             setupViewToolbar(root);

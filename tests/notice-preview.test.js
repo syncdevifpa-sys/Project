@@ -18,6 +18,14 @@ const send = (path, method, data) =>
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
+test('barra alternativa aparece somente na prévia explicitamente solicitada', async () => {
+    const normal = await (await fetch(base + '/projects.html?perfil=admin')).text();
+    const example = await (await fetch(base + '/projects.html?perfil=admin&barra=exemplo')).text();
+    assert.doesNotMatch(normal, /ar-topbar-example/);
+    assert.match(example, /ar-topbar-example/);
+    assert.match(example, /Ir para uma área/);
+    assert.match(normal, /filterProjectText/);
+});
 test('prévia salva a troca de Aviso para Notícia e os públicos selecionados sem transação de banco', async () => {
     assert.equal((await send('/api/notices/7', 'PUT', { tipo_publicacao: 'aviso' })).status, 200);
     const previous = await (await fetch(base + '/api/notices/7')).json();

@@ -496,6 +496,7 @@ app.get('/:file.html', (req, res, next) => {
             : "if (!(localStorage.getItem('arcadiaToken') || '').startsWith('preview:')) {" +
               setDemoSession +
               '}';
+    const headerExample = req.query.barra === 'exemplo' ? require('./topbar-example.cjs')() : '';
     res.type('html').send(
         fs
             .readFileSync(file, 'utf8')
@@ -508,7 +509,8 @@ app.get('/:file.html', (req, res, next) => {
                           JSON.stringify(req.query.theme) +
                           ');'
                         : '') +
-                    '</script>'
+                    '</script>' +
+                    headerExample
             )
             .replace('<body', '<body data-ui-preview="true"')
             .replace(

@@ -3,6 +3,7 @@
 ## Guias atuais
 
 - [Contrato visual vigente: celular, tablet e desktop](design-system-atual.md)
+- [Ajuda contextual, busca de Projetos e exemplo da barra](ajuda-e-busca-projetos.md)
 - [Revisão de IHC e matriz de validação de novembro](revisao-ihc-2026-11-04.md)
 
 - [Banco: instalação e atualização](../backend/db/README.md)

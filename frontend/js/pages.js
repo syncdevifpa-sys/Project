@@ -2,6 +2,19 @@
 (function (A) {
     'use strict';
     let currentDispose = () => {};
+    /* Pesquisa local: acentos, caixa e ordem dos termos não impedem encontrar o projeto. */
+    function searchProjects(rows, query = '') {
+        const normalize = (text) =>
+            String(text ?? '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        const terms = normalize(query).trim().split(/\s+/).filter(Boolean);
+        return rows.filter((row) => {
+            const text = normalize([row.titulo, row.descricao, row.responsavel_nome].join(' '));
+            return terms.every((term) => text.includes(term));
+        });
+    }
     function mount(options = {}) {
         currentDispose();
         let active = true;
@@ -472,6 +485,8 @@
             if (external) $('#btnNovoProjeto').hidden = true;
             let rows = [];
             const grid = $('#gridProjetos');
+            const search = $('#filterProjectText');
+            const searchStatus = $('#projectSearchStatus');
             const situations = A.contentFields.projects.fields.find(
                 (field) => field[0] === 'situacao'
             )[2];
@@ -494,7 +509,10 @@
             const bar = filterBar(
                 '#chipbarProjetos',
                 tracks,
-                () => rows.filter((row) => !situation.value || row.situacao === situation.value),
+                () =>
+                    searchProjects(rows, search?.value).filter(
+                        (row) => !situation.value || row.situacao === situation.value
+                    ),
                 'eixo',
                 render
             );
@@ -520,9 +538,15 @@
                     : '';
             }
             function render() {
+                const visible = bar.visible();
+                if (searchStatus)
+                    searchStatus.textContent =
+                        visible.length +
+                        ' de ' +
+                        rows.length +
+                        (rows.length === 1 ? ' projeto' : ' projetos');
                 grid.innerHTML =
-                    bar
-                        .visible()
+                    visible
                         .map((r) => {
                             const markup = card(
                                 r.titulo,
@@ -539,9 +563,10 @@
                         })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
                 linkDescriptions('#gridProjetos .ar-card-desc');
-                contentViews(grid, bar.visible(), 'situacao', situations);
+                contentViews(grid, visible, 'situacao', situations);
                 bar.counts();
             }
+            if (search) listen(search, 'input', render);
             async function reload() {
                 retryLoad = reload;
                 rows = await api.expect(api.get('/api/projects'));
@@ -1328,7 +1353,7 @@
             : Promise.resolve();
         return { ready, dispose };
     }
-    A.pages = { mount, dispose: () => currentDispose() };
+    A.pages = { mount, dispose: () => currentDispose(), searchProjects };
     const boot = () => {
         if (!A.progressiveNavigation?.isLoading) mount();
     };
