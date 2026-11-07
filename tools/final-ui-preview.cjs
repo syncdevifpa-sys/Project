@@ -252,22 +252,11 @@ app.get('/api/users', (_req, res) =>
         )
     ])
 );
-app.get('/api/public', (_req, res) =>
-    res.json({
-        notices: [
-            {
-                titulo: 'Notícias da comunidade',
-                resumo: 'Acompanhe as publicações e os próximos encontros do campus.'
-            }
-        ],
-        projects: [
-            {
-                titulo: 'Projetos do campus',
-                descricao: 'Conheça as iniciativas compartilhadas pela comunidade acadêmica.'
-            }
-        ]
-    })
-);
+/* A vitrine usa os mesmos registros das áreas de Notícias e Projetos. */
+app.get('/api/public', (_req, res) => res.json({
+    notices: noticeDemoRows.filter(row => row.situacao === 'publicado' && row.publico_alvo === 'todos'),
+    projects: projectDemoRows.filter(row => row.aprovacao === 'aprovado' && row.visibilidade === 'publico')
+}));
 app.get('/api/read-notices/unread/count', (_req, res) => res.json({ unread: 1 }));
 const noticeDemoRows = [
     {
@@ -288,6 +277,16 @@ const noticeDemoRows = [
         data_publicacao: demoPublishedAt
     }
 ];
+/* Notícia real para avaliação local; não é inserida no banco de produção. */
+noticeDemoRows.push({
+    id_aviso: 8, id_usuario: 4, tipo_publicacao: 'noticia', categoria: 'edital',
+    publico_alvo: 'todos', situacao: 'publicado', data_publicacao: '2026-10-14T22:57:00Z',
+    titulo: 'IFPA abre inscrições do PSU 2027 com 6.970 vagas',
+    resumo: 'Seleção reúne cursos técnicos e de graduação em 22 campi. Inscrições pela internet até 16 de novembro.',
+    descricao: 'O IFPA anunciou 6.970 vagas no Processo Seletivo Unificado 2027, entre cursos técnicos integrados, subsequentes e superiores. As inscrições ocorrem de 16 de outubro a 16 de novembro de 2026. Confira modalidades, regras e atualizações no edital oficial. Fonte: https://www.ifpa.edu.br/ultimas-noticias/3059-ifpa-publica-edital-do-processo-seletivo-unificado-2027-com-6-970-vagas',
+    capa: 'data:image/jpeg;base64,' + fs.readFileSync(path.join(__dirname, '../frontend/assets/landing/news-psu-2027.jpg')).toString('base64')
+});
+app.post('/api/read-notices/:id', (_req, res) => res.json({ affectedRows: 1 }));
 app.get('/api/notices', (_req, res) => res.json(noticeDemoRows));
 app.get('/api/notices/:id', (req, res) => {
     const notice = noticeDemoRows.find((row) => String(row.id_aviso) === req.params.id);
@@ -437,8 +436,7 @@ app.patch('/api/content/calendar/:id', (req, res) => {
         });
     }
 });
-app.get('/api/projects', (_req, res) =>
-    res.json([
+const projectDemoRows = [
         {
             id_projeto: 1,
             id_usuario: 4,
@@ -446,6 +444,7 @@ app.get('/api/projects', (_req, res) =>
             descricao: 'Projeto fictício para conferir as visualizações.',
             eixo: 'pesquisa',
             aprovacao: 'aprovado',
+            visibilidade: 'publico',
             situacao: 'ativo',
             vagas: 5
         },
@@ -459,8 +458,8 @@ app.get('/api/projects', (_req, res) =>
             situacao: 'em_selecao',
             vagas: 3
         }
-    ])
-);
+ ];
+app.get('/api/projects', (_req, res) => res.json(projectDemoRows));
 app.get('/api/projects/my', (_req, res) => res.json([]));
 app.get(/^\/api\//, (_req, res) => res.json([]));
 app.use('/api', (_req, res) => res.status(405).json({ error: 'Prévia sem gravação' }));

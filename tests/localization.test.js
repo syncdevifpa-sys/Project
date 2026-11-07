@@ -48,6 +48,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
     };
     const context = vm.createContext({
         document,
+        URLSearchParams,
         location: { pathname: '/projects.html' },
         window: {
             Arcadia: {

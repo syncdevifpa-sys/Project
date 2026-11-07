@@ -230,6 +230,8 @@
             );
             const filterDetails = $('#noticeFilterDetails');
             filterDetails.open = false;
+            if (new URLSearchParams(location.search).get('tipo') === 'noticia')
+                $('#filterNoticeType').value = 'noticia';
             function visible() {
                 const text = value('filterTextNotices').toLowerCase();
                 const type = $('#filterNoticeType').value;
@@ -486,6 +488,7 @@
             let rows = [];
             const grid = $('#gridProjetos');
             const search = $('#filterProjectText');
+            const linkedProject = new URLSearchParams(location.search).get('projeto');
             const searchStatus = $('#projectSearchStatus');
             const situations = A.contentFields.projects.fields.find(
                 (field) => field[0] === 'situacao'
@@ -585,6 +588,10 @@
                     rows = [
                         ...new Map([...rows, ...mine].map((row) => [row.id_projeto, row])).values()
                     ];
+                }
+                if (linkedProject && search && !search.value) {
+                    const linked = rows.find(row => String(row.id_projeto) === linkedProject);
+                    if (linked) search.value = linked.titulo;
                 }
                 render();
             }

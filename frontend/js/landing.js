@@ -148,12 +148,14 @@
     }
 
     function renderCards(target, items, emptyMessage, news) {
+        if (!target) return;
+        items = Array.isArray(items) ? items : [];
         target.replaceChildren();
         if (!items.length) {
             target.textContent = emptyMessage;
             return;
         }
-        items.forEach((item) => {
+        items.slice(0, 6).forEach((item) => {
             const card = document.createElement('article');
             card.className = 'public-card';
             const title = document.createElement('h3');
@@ -165,6 +167,23 @@
             if (window.Arcadia?.noticeText)
                 window.Arcadia.noticeText.render(description, description.textContent);
             card.append(title, description);
+            if (news && item.data_publicacao) {
+                const published = new Date(item.data_publicacao);
+                if (!Number.isNaN(published.getTime())) {
+                    const time = document.createElement('time');
+                    time.dateTime = published.toISOString();
+                    time.textContent = published.toLocaleDateString('pt-BR');
+                    card.append(time);
+                }
+            }
+            const id = news ? item.id_aviso : item.id_projeto;
+            if (/^[1-9]\d*$/.test(String(id || ''))) {
+                const link = document.createElement('a');
+                link.className = 'text-link';
+                link.href = news ? 'notice.html?id=' + id : 'projects.html?projeto=' + id;
+                link.textContent = news ? 'Abrir notícia →' : 'Ver projeto →';
+                card.append(link);
+            }
             window.Arcadia?.noticeCover?.decorate(card, item.capa, 'Capa: ' + item.titulo);
             if (news && item.resumo && item.descricao) {
                 const details = document.createElement('details');
@@ -294,7 +313,7 @@
             const content = await window.Arcadia.api.expect(
                 window.Arcadia.api.get('/api/public', { auth: false })
             );
-            renderCards(news, content.notices, 'Nenhuma notícia pública no momento.', true);
+            renderCards(news, (content.notices || []).filter(item => item.tipo_publicacao === 'noticia'), 'Nenhuma notícia pública no momento.', true);
             renderCards(projects, content.projects, 'Nenhum projeto publicado no momento.', false);
         } catch (error) {
             news.textContent = 'Não foi possível carregar as notícias. Tente novamente mais tarde.';

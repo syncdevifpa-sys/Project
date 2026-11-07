@@ -1559,8 +1559,7 @@ a:not(.btn):not(.wordmark):focus-visible {
 .home-return {
   display: none;
 }
-/* Visitante vê o conteúdo do PDF; a lista dinâmica fica para a sessão conectada. */
-[data-home-view='visitor'] .public-section,
+/* O conteúdo institucional introdutório é recolhido para quem já entrou. */
 [data-home-view='connected'] [data-home-intro],
 [data-home-view='about'] #homeWelcome,
 [data-home-view='about'] .public-section {

@@ -54,6 +54,8 @@
     <link rel="stylesheet" href="connection-feedback.css" />
     <link rel="stylesheet" href="adaptive-layout.css" />
       <link rel="stylesheet" href="design-system.css" />
+      <link rel="stylesheet" href="theme-options.css" />
+    <script src="js/theme-options.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -398,48 +400,24 @@
         </div>
       </section>
 
-      <!-- 5. Notícias -->
-      <section data-home-intro class="news section--white" id="noticias" aria-labelledby="newsTitle">
+      <!-- Notícias e projetos publicados no portal, disponíveis também a visitantes. -->
+      <section class="public-section" id="noticias" aria-labelledby="public-news-title">
         <div class="container">
-          <div class="section-head">
-            <h2 class="display-title" id="newsTitle" data-reveal data-drift>Notícias</h2>
-            <a href="notices.html" class="text-link">Ver todas as notícias <span class="arrow" aria-hidden="true">&rarr;</span></a>
-          </div>
-
-          <ul class="news-track" aria-label="Notícias recentes">
-            <li class="news-card" data-rise>
-              <a href="notices.html" class="news-link">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/news-pre-enem.jpg" alt="Cartaz do Pré-Enem 2026 do IFPA Campus Belém" width="711" height="884" loading="lazy" /></span></span>
-                <p class="news-meta">
-                  <span class="tag tag--evento">Evento</span>
-                  <time datetime="2026-10-29">29 out. 2026</time>
-                </p>
-                <h3 class="news-title">Revisão Final Pré-Enem 2026, de 03 a 06 de novembro</h3>
-            </a>
-            </li>
-            <li class="news-card" data-rise>
-              <a href="notices.html" class="news-link">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/news-oficio.jpg" alt="Ofício circular sobre a suspensão das atividades do Campus Belém" width="710" height="884" loading="lazy" /></span></span>
-                <p class="news-meta">
-                  <span class="tag tag--oficial">Oficial</span>
-                  <time datetime="2026-10-27">27 out. 2026</time>
-                </p>
-                <h3 class="news-title">Atividades do Campus Belém suspensas nos dias 27 e 28 de outubro</h3>
-            </a>
-            </li>
-            <li class="news-card" data-rise>
-              <a href="notices.html" class="news-link">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/news-psu-2027.jpg" alt="Cartaz do PSU 2027 do IFPA com a fachada do Campus Belém" width="711" height="884" loading="lazy" /></span></span>
-                <p class="news-meta">
-                  <span class="tag tag--processo">Processo seletivo</span>
-                  <time datetime="2026-10-16">16 out. 2026</time>
-                </p>
-                <h3 class="news-title">IFPA Campus Belém oferta 1.135 vagas em Cursos Técnicos e Superiores</h3>
-            </a>
-            </li>
-          </ul>
+          <h2 class="section-title" id="public-news-title">Notícias do campus</h2>
+          <p class="section-lead">Publicações da área de Notícias compartilhadas com toda a comunidade.</p>
+          <a class="text-link" href="notices.html?tipo=noticia">Ver todas as notícias →</a>
+          <div class="public-grid" id="publicNews" aria-live="polite"><p>Carregando notícias…</p></div>
         </div>
       </section>
+      <section class="public-section" id="public-projects" aria-labelledby="public-projects-title">
+        <div class="container">
+          <h2 class="section-title" id="public-projects-title">Projetos da comunidade</h2>
+          <p class="section-lead">Conheça os projetos públicos aprovados do campus.</p>
+          <a class="text-link" href="projects.html">Ver todos os projetos →</a>
+          <div class="public-grid" id="publicProjects" aria-live="polite"><p>Carregando projetos…</p></div>
+        </div>
+      </section>
+
 
       <!-- 6. Campus e comunidade -->
       <section data-home-intro class="community section--cream" aria-labelledby="communityTitle">
@@ -704,22 +682,6 @@
             <a href="signup.html" class="btn btn--light">Criar conta <span class="arrow" aria-hidden="true">&rarr;</span></a>
             <a href="login.html" class="btn btn--outline-dark">Entrar</a>
           </div>
-        </div>
-      </section>
-
-      <!-- Conteúdo público dinâmico exibido na sessão conectada -->
-      <section class="public-section" id="public-news" aria-labelledby="public-news-title">
-        <div class="container">
-          <h2 class="section-title" id="public-news-title">Notícias e avisos do campus</h2>
-          <p class="section-lead">Informações e novidades compartilhadas com toda a comunidade.</p>
-          <div class="public-grid" id="publicNews" aria-live="polite"><p>Carregando notícias…</p></div>
-        </div>
-      </section>
-      <section class="public-section" id="public-projects" aria-labelledby="public-projects-title">
-        <div class="container">
-          <h2 class="section-title" id="public-projects-title">Projetos da comunidade</h2>
-          <p class="section-lead">Conheça os projetos aprovados do campus. Para participar, acesse seu painel.</p>
-          <div class="public-grid" id="publicProjects" aria-live="polite"><p>Carregando projetos…</p></div>
         </div>
       </section>
 
