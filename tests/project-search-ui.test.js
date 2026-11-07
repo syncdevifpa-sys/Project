@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function fixture() {
+function fixture(query = '') {
     const nodes = [];
     const node = (tag = 'div') => {
         const n = {
@@ -94,7 +94,8 @@ function fixture() {
     vm.runInNewContext(fs.readFileSync('frontend/js/pages.js', 'utf8'), {
         window: { Arcadia: A },
         document,
-        location: { pathname: '/projects.html' }
+        URLSearchParams,
+        location: { pathname: '/projects.html', search: query }
     });
     boot();
     return {
@@ -132,4 +133,12 @@ test('busca de Projetos combina texto sem acentos, responsável, eixo e situaç�
     assert.equal(f.visible[0].id_projeto, 1);
     f.A.pages.dispose();
     assert.equal(f.search.events.input, undefined);
+});
+
+ test('link do Início seleciona o projeto correspondente sem expor outro projeto', async () => {
+    const f = fixture('?projeto=2');
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(f.search.value, 'Extensão comunitária');
+    assert.equal(f.visible.length, 1);
+    assert.equal(f.visible[0].id_projeto, 2);
 });

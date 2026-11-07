@@ -19,8 +19,11 @@ router.get('/', async (req, res, next) => {
         const coverColumn = (await require('../services/notice-schema.service').hasNoticeCover())
             ? 'capa'
             : 'NULL AS capa';
+        const typeColumn = (await require('../services/notice-schema.service').hasNoticeType())
+            ? 'tipo_publicacao'
+            : "'aviso' AS tipo_publicacao";
         const [[notices], [projects]] = await Promise.all([
-            db.execute(`SELECT id_aviso, titulo, resumo, descricao, data_publicacao, ${coverColumn}
+            db.execute(`SELECT id_aviso, titulo, resumo, descricao, data_publicacao, ${coverColumn}, ${typeColumn}
                 FROM avisos WHERE situacao = 'publicado' AND (FIND_IN_SET('todos', publico_alvo) > 0 OR FIND_IN_SET('externo', publico_alvo) > 0)
                 ORDER BY fixado DESC, data_publicacao DESC`),
             publicProjects()

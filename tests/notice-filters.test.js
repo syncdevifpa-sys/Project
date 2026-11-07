@@ -265,6 +265,7 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
     const context = {
         window: { Arcadia: A, matchMedia: () => ({ matches: true, addEventListener() {} }) },
         document,
+        URLSearchParams,
         location: { pathname: '/notices.html' }
     };
     vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js', 'utf8'), context);

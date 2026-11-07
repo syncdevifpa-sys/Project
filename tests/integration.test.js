@@ -79,6 +79,8 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
                         return {
                             notices: [
                                 {
+                                    id_aviso: 12,
+                                    tipo_publicacao: 'noticia',
                                     titulo: '<script>private()</script>',
                                     resumo: 'Resumo',
                                     descricao: 'Notícia completa'
@@ -86,6 +88,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
                             ],
                             projects: [
                                 {
+                                    id_projeto: 8,
                                     titulo: 'Projeto com capa',
                                     capa: 'data:image/jpeg;base64,/9j/AA=='
                                 }
@@ -107,6 +110,8 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         '<script>private()</script>'
     );
     assert.equal(targets.publicProjects.children.length, 1);
+    assert.equal(targets.publicNews.children[0].children[2].href, 'notice.html?id=12');
+    assert.equal(targets.publicProjects.children[0].children[2].href, 'projects.html?projeto=8');
     assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
 });
 

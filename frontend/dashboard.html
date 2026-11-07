@@ -65,8 +65,11 @@
     <link rel="stylesheet" href="connection-feedback.css" />
     <link rel="stylesheet" href="adaptive-layout.css" />
     <link rel="stylesheet" href="topbar.css" />
-    <!-- Meu painel v3 (fontes da especificação: Instrument Serif e Inter) -->
+    <!-- Meu painel v3 (fontes da especificação: Times New Roman e Inter) -->
     <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="design-system.css" />
+      <link rel="stylesheet" href="theme-options.css" />
+    <script src="js/theme-options.js"></script>
   </head>
   <body>
     <div class="ar-app">
@@ -175,6 +178,29 @@
             data-initial-banner-slot="page"
             aria-labelledby="dbHelloTitle"
           >
+            <svg
+              class="ar-hero-art"
+              viewBox="0 0 1000 220"
+              preserveAspectRatio="xMaxYMax meet"
+              aria-hidden="true"
+            >
+              <path class="l" d="M420 214 C 520 130, 620 230, 720 150 S 900 96, 1010 124"></path>
+              <circle class="s" cx="650" cy="182" r="52" opacity="0.9"></circle>
+              <rect
+                class="s"
+                x="770"
+                y="116"
+                width="180"
+                height="52"
+                rx="26"
+                opacity="0.75"
+                transform="rotate(-16 860 142)"
+              ></rect>
+              <circle class="s" cx="975" cy="196" r="44" opacity="0.85"></circle>
+              <rect class="s" x="520" y="150" width="76" height="26" rx="13" opacity="0.6"></rect>
+              <circle class="d" cx="752" cy="133" r="5"></circle>
+              <circle class="s" cx="470" cy="128" r="9" opacity="0.9"></circle>
+            </svg>
             <p class="db-label db-hello-date" id="dbToday"></p>
             <h1 class="ar-hero-title db-display" id="dbHelloTitle">
               Olá, <span id="painelUserGreeting"></span>
@@ -182,7 +208,9 @@
             <p class="db-hello-summary" id="dbSummary" aria-live="polite">Carregando seu dia…</p>
             <div class="db-metrics">
               <div class="db-metric">
-                <div class="db-metric-head"><span>Tarefas desta semana</span><span>seg a dom</span></div>
+                <div class="db-metric-head">
+                  <span>Tarefas desta semana</span><span>seg a dom</span>
+                </div>
                 <p class="db-metric-value" id="dbWeekValue">—</p>
                 <div class="db-bar db-bar--dark" aria-hidden="true"><i id="dbWeekBar"></i></div>
               </div>
@@ -260,7 +288,9 @@
                 <h2 class="db-title" id="dbNoticesTitle">
                   Avisos e notícias <span class="db-count is-zero" id="dbNoticeCount">0</span>
                 </h2>
-                <button type="button" class="db-link" id="dbReadAll" disabled>Marcar como lidos</button>
+                <button type="button" class="db-link" id="dbReadAll" disabled>
+                  Marcar como lidos
+                </button>
               </div>
               <ul class="db-notices" id="dbNotices">
                 <li><div class="db-skeleton"></div></li>
@@ -311,7 +341,9 @@
           <a href="#dbTodo" data-jump="dbTodo">
             <span class="db-bottom-icon"
               ><svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M10 6h11M10 12h11M10 18h11M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17" /></svg
+                <path
+                  d="M10 6h11M10 12h11M10 18h11M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"
+                /></svg
               ><b class="db-badge" id="dbBottomTasks" hidden></b
             ></span>
             Tarefas
@@ -344,7 +376,12 @@
 
         <!-- Busca do painel (Ctrl K) -->
         <div class="db-search-layer" id="dbSearch" hidden>
-          <div class="db-search-dialog" role="dialog" aria-modal="true" aria-label="Buscar no portal">
+          <div
+            class="db-search-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Buscar no portal"
+          >
             <div class="db-search-field">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="11" cy="11" r="7" />
@@ -364,7 +401,12 @@
               />
               <kbd class="db-kbd">Esc</kbd>
             </div>
-            <div class="db-search-results" id="dbSearchResults" role="listbox" aria-label="Resultados"></div>
+            <div
+              class="db-search-results"
+              id="dbSearchResults"
+              role="listbox"
+              aria-label="Resultados"
+            ></div>
             <div class="db-search-foot" aria-hidden="true">
               <span>↑ ↓ navegar</span><span>Enter abrir</span><span>Esc fechar</span>
             </div>
@@ -399,7 +441,6 @@
     <script src="js/privacy-notice.js"></script>
     <script src="js/class-appearance.js"></script>
     <script src="js/progressive-navigation.js"></script>
-      <script src="js/topbar.js" defer></script>
+    <script src="js/topbar.js" defer></script>
   </body>
 </html>
-
