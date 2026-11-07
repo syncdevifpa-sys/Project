@@ -25,7 +25,7 @@ html[data-preview-season="clean"] {
       --db-line:#363a42;--db-line-soft:#25282d;--db-ink:#f1f2f4;
     }
     html[data-preview-season] {
-      --cyan:#55c7e6;--pink:#ed82b2;--yellow:#f5ce45;--lime:#9bd268;
+      --cyan:#8fd8ea;--pink:#f7a6cf;--yellow:#ffd84a;--lime:#c6f36b;
       --bg-canvas:var(--canvas);--bg-card:var(--surface);--bg-surface:var(--surface-sunken);
       --border-color:var(--line);--text-primary:var(--ink);--text-muted:var(--ink-muted);
     }
@@ -78,3 +78,71 @@ html[data-preview-season="clean"] {
 .ar-srow:has(#accentPickerGroup) { display:block; }
 .ar-srow:has(#accentPickerGroup) .ar-srow-desc { max-width:65ch; }
 #accentPickerGroup { margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
+
+/* Os subitens ficam recuados sob o grupo ao qual pertencem. */
+.ar-portal-sidebar .ar-sidebar-links { margin:4px 0 8px 22px;padding-left:8px;border-left:1px solid var(--line); }
+.ar-portal-sidebar .ar-sidebar-links > a { padding:10px 8px;gap:9px;font-size:13px; }
+/* Painel: hierarquia mais compacta e título do compromisso sem dominar o cartão. */
+.db-v3 .ar-hero-title.db-display { font-size:clamp(40px,4.2vw,60px);line-height:1.08; }
+.db-v3 .ar-hero.db-hello { gap:14px; }
+.db-v3 .db-hello-summary { font-size:16px;line-height:1.6; }
+.db-v3 .db-now-title { font-size:clamp(25px,2.1vw,32px);line-height:1.18;overflow-wrap:anywhere; }
+.db-v3 .db-metric-value { font-size:34px;line-height:1.1; }
+
+/* Oculta somente a barra de rolagem; mouse, toque e teclado continuam funcionando. */
+.ar-portal-sidebar { scrollbar-width:none;-ms-overflow-style:none; }
+.ar-portal-sidebar::-webkit-scrollbar { width:0;height:0; }
+/* Dias e progresso herdam o contraste do banner em vez de um azul permanente. */
+html[data-preview-season] .db-v3 .db-hello .db-streak { grid-template-columns:repeat(7,minmax(0,1fr));gap:6px; }
+html[data-preview-season] .db-v3 .db-hello .db-streak li { color:inherit;background:color-mix(in srgb,currentColor 10%,transparent);font-size:11px;min-width:0;height:32px; }
+html[data-preview-season] .db-v3 .db-hello .db-streak li.is-done { background:color-mix(in srgb,currentColor 24%,transparent);box-shadow:inset 0 -3px currentColor; }
+html[data-preview-season] .db-v3 .db-hello .db-streak li.is-today { color:inherit;box-shadow:inset 0 0 0 2px currentColor; }
+html[data-preview-season] .db-v3 .db-hello .db-bar--dark { background:color-mix(in srgb,currentColor 14%,transparent); }
+html[data-preview-season] .db-v3 .db-hello .db-bar--dark i { background:currentColor; }
+html[data-preview-season] .db-v3 .db-hello :is(.db-hello-date,.db-metric-head span,.db-metric-value small) { color:inherit; }
+
+/* Seletores do painel retomam o cinza neutro usado no design anterior. */
+html[data-preview-season] .db-v3 .db-chip { background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line); }
+html[data-preview-season] .db-v3 .db-chip[aria-pressed='true'] { background:#dcdcdc;color:#182020;box-shadow:none; }
+html[data-theme='dark'][data-preview-season] .db-v3 .db-chip[aria-pressed='true'] { background:#383838;color:#f2f2f2; }
+html[data-preview-season] .db-v3 .db-chip span { color:inherit;opacity:.75; }
+html[data-preview-season] .db-v3 .db-chip:focus-visible { outline:2px solid var(--focus);outline-offset:3px; }
+
+/* Seleção discreta do modelo anterior, preservando a identificação da página atual. */
+html[data-preview-season] .ar-portal-sidebar a[aria-current="page"] { background:#dcdcdc;color:#182020;box-shadow:inset 3px 0 var(--cyan); }
+html[data-theme="dark"][data-preview-season] .ar-portal-sidebar a[aria-current="page"] { background:#383838;color:#f2f2f2; }
+/* Indicadores informativos, sem o preenchimento azul-marinho permanente. */
+html[data-preview-season] .db-v3 :is(.db-countdown,.db-count,.db-nav-count) { background:#dcdcdc;color:#182020; }
+html[data-theme="dark"][data-preview-season] .db-v3 :is(.db-countdown,.db-count,.db-nav-count) { background:#383838;color:#f2f2f2; }
+/* Botões de ação principal no modelo aprovado no Início. */
+html[data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#ffffff;border:0;border-radius:6px;min-height:44px;padding:12px 20px; }
+/* A seleção da biblioteca deriva da cor efetivamente aplicada ao banner. */
+html[data-preview-season] .ar-library-tabs .ar-btn[aria-pressed="true"] { background:color-mix(in srgb,var(--page-banner-tint,var(--pink)) 32%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--page-banner-tint,var(--pink)) 75%,var(--ink) 25%); }
+
+/* Idioma compartilhado, compacto também na barra do celular. */
+.lang-switch { position:relative;display:inline-flex;flex:0 0 auto; }
+.lang-toggle { display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:7px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:inherit;font-size:12px;cursor:pointer; }
+.lang-toggle svg { width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5; }
+.lang-menu { position:absolute;z-index:100;right:0;top:calc(100% + 6px);min-width:135px;margin:0;padding:6px;list-style:none;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow-float); }
+.lang-menu[hidden] { display:none; }
+.lang-menu button { display:block;width:100%;min-height:40px;padding:8px 10px;text-align:left;border:0;border-radius:7px;background:transparent;color:var(--ink);font:inherit;font-size:13px;cursor:pointer; }
+.lang-menu button:hover,.lang-menu button[aria-current='true'] { background:var(--surface-sunken); }
+.lang-toggle:focus-visible,.lang-menu button:focus-visible { outline:2px solid var(--focus);outline-offset:2px; }
+.ar-tutorial-link { font-size:13px;color:inherit;margin-inline:12px;text-decoration:none; }
+@media(max-width:600px) { .lang-toggle { min-width:36px;padding:5px; }.lang-toggle .lang-current { font-size:10px; } }
+
+/* Paleta própria das áreas pessoais quando não há uma cor personalizada. */
+html[data-preview-season] .ar-hero--yellow:not(.ar-banner-personal):not(.ar-banner-site-default) { background:var(--yellow);color:#182020; }
+html[data-preview-season] .ar-hero--pink:not(.ar-banner-personal):not(.ar-banner-site-default) { background:var(--pink);color:#182020; }
+html[data-preview-season] .ar-hero--lime:not(.ar-banner-personal):not(.ar-banner-site-default) { background:var(--lime);color:#182020; }
+html[data-preview-season] .ar-hero--cyan:not(.ar-banner-personal):not(.ar-banner-site-default) { background:var(--cyan);color:#182020; }
+html[data-preview-season] .ar-hero--accent:not(.ar-banner-personal):not(.ar-banner-site-default) { background:var(--accent);color:var(--accent-ink,#182020); }
+html[data-preview-season] .db-v3 .db-hello:not(.ar-banner-personal) { background:#0b1f3a;color:#ffffff; }
+html[data-preview-season] .db-v3 #dbNowCard:not(.ar-banner-personal) { background:#1d45a3;color:#ffffff; }
+html[data-preview-season] .db-v3 :is(.db-hello,#dbNowCard) :is(.db-hello-summary,.db-hello-summary a,.db-hello-date,.db-now-title,.db-now-title a,.db-now-place,.db-now-when,.db-metric-head span,.db-metric-value,.db-metric-value small) { color:inherit; }
+
+/* Ação principal: degradê claro durante o dia e azul no tema escuro. */
+html[data-preview-season]:not([data-theme='dark']) :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#f6f3ec,#c6def8);color:#0b1f3a;box-shadow:inset 0 0 0 1px #bfd1e8; }
+html[data-theme='dark'][data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#ffffff;box-shadow:none; }
+[data-tutorial-link][hidden] { display:none !important; }
+.tutorial-actions { display:flex;gap:24px;align-items:center;padding-bottom:48px;flex-wrap:wrap; }

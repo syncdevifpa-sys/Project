@@ -129,6 +129,9 @@ test('painel v3 agrupa tarefas por prazo, conta filtros e resume o dia com atalh
     assert.match(html, /Programação Web, em andamento/);
     assert.equal(f.nodes.dbTaskCount.textContent, 4);
     assert.match(f.nodes.dbStreak.innerHTML, /^2<small>seguidas/);
+    assert.equal((f.nodes.dbWeek.innerHTML.match(/<li /g) || []).length, 7);
+    assert.match(f.nodes.dbWeek.innerHTML, /aria-label="Sábado[^\"]*"[^>]*>Sáb<\/li>/);
+    assert.match(f.nodes.dbWeek.innerHTML, /aria-label="Domingo[^\"]*"[^>]*>Dom<\/li>/);
     assert.match(f.nodes.dbSummary.innerHTML, /data-jump="dbTodo" data-set-filter="all">1 entrega<\/a> pra hoje/);
     assert.match(f.nodes.dbSummary.innerHTML, /data-set-filter="late">1 tarefa atrasada<\/a>/);
     assert.match(f.nodes.dbSummary.innerHTML, /3 avisos novos<\/a> te esperando/);

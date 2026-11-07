@@ -38,8 +38,20 @@
         }
     }
     function apply(node, key) {
-        const style = resolve(currentOwner() ? preferences()[key] : null);
+        let style = resolve(currentOwner() ? preferences()[key] : null);
         const page = location.pathname.split('/').pop() || 'index.html';
+        /* No painel, azul recebe letras brancas com contraste, sem alterar a preferência salva. */
+        if (page === 'dashboard.html' && style.mode === 'custom') {
+            const rgb = style.background.slice(1).match(/../g).map(value => parseInt(value, 16));
+            if (rgb[2] > rgb[0] && rgb[1] > rgb[0]) {
+                let background = style.background;
+                while (contrast(background, '#ffffff') < 4.5) {
+                    background = '#' + background.slice(1).match(/../g)
+                        .map(value => Math.floor(parseInt(value, 16) * .95).toString(16).padStart(2, '0')).join('');
+                }
+                style = { ...style, background, text: '#ffffff' };
+            }
+        }
         node.classList.toggle(
             'ar-banner-site-default',
             style.mode === 'default' && !!currentOwner() && usesSiteDefault(page)

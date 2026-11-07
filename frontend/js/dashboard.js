@@ -76,7 +76,7 @@
         const t = today();
         const dow = weekday(t);
         const monday = addDays(t, dow === 0 ? -6 : 1 - dow);
-        return { monday, sunday: addDays(monday, 6), days: [0, 1, 2, 3, 4].map((i) => addDays(monday, i)) };
+        return { monday, sunday: addDays(monday, 6), days: [0, 1, 2, 3, 4, 5, 6].map((i) => addDays(monday, i)) };
     }
 
     // ---------- Regras puras (testáveis sem DOM) ----------
@@ -309,10 +309,10 @@
             const t = today();
             $('dbWeek').innerHTML = days
                 .map((d, i) => {
-                    const label = cap(WEEKDAYS_LONG[i + 1]) + (doneDays.has(d) ? ': entregou' : d === t ? ': hoje' : '');
+                    const label = cap(WEEKDAYS_LONG[weekday(d)]) + (doneDays.has(d) ? ': entregou' : d === t ? ': hoje' : '');
                     return (
                         '<li class="' + (doneDays.has(d) ? 'is-done ' : '') + (d === t ? 'is-today' : '') +
-                        '" title="' + esc(label) + '" aria-label="' + esc(label) + '">' + 'STQQS'[i] + '</li>'
+                        '" title="' + esc(label) + '" aria-label="' + esc(label) + '">' + ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'][i] + '</li>'
                     );
                 })
                 .join('');

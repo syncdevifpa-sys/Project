@@ -483,8 +483,8 @@ app.get('/:file.html', (req, res, next) => {
     const explicitRole = ['aluno', 'professor', 'admin', 'externo'].includes(req.query.perfil);
     const setDemoSession =
         req.query.visitor === '1'
-            ? "localStorage.removeItem('arcadiaToken');localStorage.removeItem('arcadiaSessao');"
-            : "localStorage.setItem('arcadiaToken','preview:" +
+            ? "localStorage.removeItem('arcadiaToken');localStorage.removeItem('arcadiaSessao');localStorage.setItem('arcadia-preview-visitor','1');"
+            : "localStorage.removeItem('arcadia-preview-visitor');localStorage.setItem('arcadiaToken','preview:" +
               role +
               "');localStorage.setItem('arcadiaSessao'," +
               JSON.stringify(JSON.stringify(person)) +
@@ -492,13 +492,16 @@ app.get('/:file.html', (req, res, next) => {
     const sessionScript =
         req.query.visitor === '1' || explicitRole
             ? setDemoSession
-            : "if (!(localStorage.getItem('arcadiaToken') || '').startsWith('preview:')) {" +
+            : "if (localStorage.getItem('arcadia-preview-visitor') !== '1' && !(localStorage.getItem('arcadiaToken') || '').startsWith('preview:')) {" +
               setDemoSession +
               '}';
     const headerExample = req.query.barra === 'exemplo' ? require('./topbar-example.cjs')() : '';
+    const sourceHtml = fs.readFileSync(file, 'utf8');
+    const previewHtml = req.query.design === 'hibrido' && path.basename(file) === 'index.html'
+        ? require('./hybrid-design-preview.cjs')(sourceHtml)
+        : sourceHtml;
     res.type('html').send(
-        fs
-            .readFileSync(file, 'utf8')
+        previewHtml
             .replace(
                 '<head>',
                 '<head><script>window.ARCADIA_API_BASE=location.origin;' +

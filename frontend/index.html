@@ -57,7 +57,7 @@
       <link rel="stylesheet" href="theme-options.css" />
     <script src="js/theme-options.js"></script>
   </head>
-  <body>
+  <body class="home-content-page">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
     <!-- 1. Cabeçalho -->
@@ -70,11 +70,8 @@
         </a>
 
         <ul class="nav-links">
-          <li><a href="#plataforma">Plataforma</a></li>
-          <li><a href="#noticias">Notícias</a></li>
-          <li><a href="#para-quem">Para quem</a></li>
-          <li><a href="#como-funciona">Como funciona</a></li>
-          <li><a href="#duvidas">Dúvidas</a></li>
+          <li><a href="#noticias">Notícias e avisos</a></li>
+          <li><a href="#public-projects">Projetos</a></li>
           <li><a href="campus-map.html">Mapa do campus</a></li>
         </ul>
 
@@ -111,7 +108,6 @@
             <span class="nav-account-avatar" id="homeAccountAvatar" aria-hidden="true"></span>
           </a>
           <a href="login.html" class="btn btn--outline nav-login">Entrar</a>
-          <a href="signup.html" class="btn btn--primary btn--sm">Criar conta</a>
           <button
             type="button"
             class="nav-toggle"
@@ -128,11 +124,8 @@
       <!-- Menu expansível para telas pequenas -->
       <div class="nav-mobile-panel" id="navMobilePanel">
         <ul class="container">
-          <li><a href="#plataforma">Plataforma</a></li>
-          <li><a href="#noticias">Notícias</a></li>
-          <li><a href="#para-quem">Para quem</a></li>
-          <li><a href="#como-funciona">Como funciona</a></li>
-          <li><a href="#duvidas">Dúvidas</a></li>
+          <li><a href="#noticias">Notícias e avisos</a></li>
+          <li><a href="#public-projects">Projetos</a></li>
           <li><a href="campus-map.html">Mapa do campus</a></li>
           <li class="nav-mobile-lang">
             <span id="mobileLangLabel">Idioma</span>
@@ -147,265 +140,36 @@
     </header>
 
     <main id="conteudo">
-      <!-- 2. Apresentação principal -->
-      <section data-home-intro class="hero section--cream" id="home">
-        <div class="container">
-          <div class="hero-grid" data-hero-text>
-            <h1 class="hero-title"><span class="w"><span class="w-in" style="--i: 0">Notícias,</span></span> <span class="w"><span class="w-in" style="--i: 1">avisos</span></span> <span class="w"><span class="w-in" style="--i: 2">e</span></span> <span class="w"><span class="w-in" style="--i: 3">eventos</span></span> <span class="w"><span class="w-in" style="--i: 4">em</span></span> <span class="w"><span class="w-in" style="--i: 5">um</span></span> <span class="w"><span class="w-in" style="--i: 6">único</span></span> <span class="w"><span class="w-in" style="--i: 7">ambiente.</span></span></h1>
-            <div class="hero-side">
-              <p class="hero-lead">
-                Sem informações espalhadas entre redes sociais, aplicativos de mensagens e e-mails.
-                A Arcadia reúne o que estudantes, docentes e servidores precisam acompanhar.
-              </p>
-              <div class="btn-row">
-                <a href="signup.html" class="btn btn--primary">Criar conta <span class="arrow" aria-hidden="true">&rarr;</span></a>
-                <a href="login.html" class="btn btn--outline">Entrar</a>
-              </div>
-              <p class="hero-note">
-                Gratuito para toda a comunidade acadêmica. Cadastre-se com seu e-mail.
-              </p>
-            </div>
+      <!-- Destaque de boas-vindas para quem já acessou o portal. -->
+      <section class="home-campus-banner container" aria-labelledby="campusBannerTitle">
+        <img src="assets/landing/campus-belem.jpg" alt="Entrada do IFPA Campus Belém" width="1200" height="628" fetchpriority="high" />
+        <div class="home-campus-banner-content">
+          <p class="eyebrow">IFPA Campus Belém</p>
+          <h1 id="campusBannerTitle">Notícias e avisos</h1>
+          <p>O que acontece no campus, perto de você.</p>
+          <div class="home-visitor-actions">
+            <a class="btn btn--primary" href="login.html">Entrar</a>
+            <a class="text-link home-more-info" href="tutorial.html" data-tutorial-link>Mais informações →</a>
           </div>
-
-          <div class="hero-media">
-            <div class="hero-frame" data-hero-frame>
-              <img
-                class="hero-photo"
-                src="assets/landing/campus-belem.jpg"
-                alt="Portaria do Instituto Federal do Pará, Campus Belém"
-                width="1200"
-                height="628"
-              />
-            </div>
-            <aside class="highlight-card" aria-labelledby="highlightTitle">
-              <div class="highlight-main">
-                <p class="highlight-meta">
-                  <span class="tag tag--oficial">Oficial</span>
-                  <span class="highlight-kicker">Aviso em destaque</span>
-                </p>
-                <h2 class="highlight-title" id="highlightTitle">Matrícula 2027.1 aberta</h2>
-              </div>
-              <div class="highlight-side">
-                <p>
-                  Prazos, documentos exigidos e etapas para calouros e veteranos, publicados no
-                  mural oficial.
-                </p>
-                <a href="notices.html" class="btn btn--ghost-light btn--sm"
-                  >Ver aviso <span class="arrow" aria-hidden="true">&rarr;</span></a
-                >
-              </div>
-            </aside>
-          </div>
+          <div class="home-member-actions"><a class="btn btn--primary" href="#noticias">Explorar publicações →</a></div>
         </div>
       </section>
+      <!-- 2. Apresentação principal -->
 
       <!-- 3. O que é a Arcadia -->
-      <section data-home-intro class="about section--white" aria-labelledby="aboutLabel">
-        <div class="container">
-          <p class="eyebrow eyebrow--center" id="aboutLabel">O que é a Arcadia</p>
-          <p class="about-quote" data-reveal>
-            A Arcadia centraliza, organiza e dissemina informações institucionais.
-            <span class="text-soft"
-              >Porque a comunicação é fundamental para o funcionamento de uma instituição de
-              ensino.</span
-            >
-          </p>
-
-          <div class="pillars">
-            <article class="pillar" data-rise>
-              <p class="eyebrow">Alcance</p>
-              <h3 class="pillar-title">Um canal para todos os públicos</h3>
-              <p>Discentes, docentes e servidores acessam as mesmas informações, no mesmo lugar.</p>
-            </article>
-            <article class="pillar" data-rise>
-              <p class="eyebrow">Agilidade</p>
-              <h3 class="pillar-title">Comunicados sem atraso</h3>
-              <p>Acesso às informações 24 horas por dia, sem atrasos no recebimento de comunicados.</p>
-            </article>
-            <article class="pillar" data-rise>
-              <p class="eyebrow">Participação</p>
-              <h3 class="pillar-title">Comunidade mais integrada</h3>
-              <p>Maior participação e integração entre os diferentes públicos da instituição.</p>
-            </article>
-          </div>
-        </div>
-      </section>
 
       <!-- 4. Dentro da plataforma -->
-      <section data-home-intro class="platform section--cream" id="plataforma" aria-labelledby="platformTitle">
-        <div class="container platform-grid">
-          <div class="platform-intro">
-            <p class="eyebrow">Depois de entrar</p>
-            <h2 class="section-title" id="platformTitle" data-reveal>Dentro da plataforma</h2>
-            <p class="section-lead">
-              Funcionalidades para publicação e organização de notícias e avisos institucionais.
-            </p>
-            <p class="product-mockup-note">
-              Ilustrações da interface com dados demonstrativos; não são registros reais.
-            </p>
-          </div>
-
-          <div class="feature-accordion">
-            <div class="feature-item" data-rise>
-              <h3 class="feature-heading">
-                <button type="button" class="feature-trigger" aria-expanded="true" aria-controls="feature-panel-1" id="feature-trigger-1">
-                  <span class="feature-text">
-                    <span class="eyebrow">Meu painel</span>
-                    <span class="feature-title">Seu dia organizado em um só lugar</span>
-                  </span>
-                  <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h3>
-              <div class="feature-panel" id="feature-panel-1" role="region" aria-labelledby="feature-trigger-1">
-                <p>Tarefas por prazo, avisos não lidos, próximas datas e documentos solicitados reunidos no seu painel.</p>
-                <figure class="feature-figure">
-                  <img
-                    src="illustrations/product/hero.svg"
-                    alt="Ilustração do Meu painel com menu lateral e resumos, usando dados demonstrativos"
-                    decoding="async"
-                    loading="lazy"
-                    width="1280"
-                    height="800"
-                  />
-                </figure>
-              </div>
-            </div>
-
-            <div class="feature-item" data-rise>
-              <h3 class="feature-heading">
-                <button type="button" class="feature-trigger" aria-expanded="false" aria-controls="feature-panel-2" id="feature-trigger-2">
-                  <span class="feature-text">
-                    <span class="eyebrow">Mural oficial</span>
-                    <span class="feature-title">Avisos e comunicados atualizados</span>
-                  </span>
-                  <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h3>
-              <div class="feature-panel" id="feature-panel-2" role="region" aria-labelledby="feature-trigger-2" hidden>
-                <p>Do início do período de matrícula aos comunicados do dia, sem falhas na disseminação de avisos importantes.</p>
-                <p>Aluno, professor ou servidor: consulte avisos por público-alvo.</p>
-                <figure class="feature-figure">
-                  <img
-                    src="illustrations/product/notices.svg"
-                    alt="Ilustração de Avisos e notícias com menu lateral e filtros por público, usando dados demonstrativos"
-                    decoding="async"
-                    loading="lazy"
-                    width="1280"
-                    height="800"
-                  />
-                </figure>
-              </div>
-            </div>
-
-            <div class="feature-item" data-rise>
-              <h3 class="feature-heading">
-                <button type="button" class="feature-trigger" aria-expanded="false" aria-controls="feature-panel-3" id="feature-trigger-3">
-                  <span class="feature-text">
-                    <span class="eyebrow">Portal no celular</span>
-                    <span class="feature-title">Sua rotina, onde você estiver</span>
-                  </span>
-                  <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h3>
-              <div class="feature-panel" id="feature-panel-3" role="region" aria-labelledby="feature-trigger-3" hidden>
-                <p>Acesse seu painel, acompanhe tarefas e consulte avisos em uma interface adaptada ao celular.</p>
-                <figure class="feature-figure feature-figure--phone">
-                  <img
-                    src="illustrations/product/mobile.svg"
-                    alt="Ilustração do Meu painel no celular com dados demonstrativos"
-                    decoding="async"
-                    loading="lazy"
-                    width="390"
-                    height="844"
-                  />
-                </figure>
-              </div>
-            </div>
-
-            <div class="feature-item" data-rise>
-              <h3 class="feature-heading">
-                <button type="button" class="feature-trigger" aria-expanded="false" aria-controls="feature-panel-4" id="feature-trigger-4">
-                  <span class="feature-text">
-                    <span class="eyebrow">Central de documentos</span>
-                    <span class="feature-title">Formulários e documentos acadêmicos</span>
-                  </span>
-                  <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h3>
-              <div class="feature-panel" id="feature-panel-4" role="region" aria-labelledby="feature-trigger-4" hidden>
-                <p>Organize seus arquivos em pastas, consulte documentos públicos e acompanhe solicitações acadêmicas.</p>
-                <figure class="feature-figure">
-                  <img
-                    src="illustrations/product/documents.svg"
-                    alt="Ilustração de Documentos com biblioteca e pastas pessoais demonstrativas"
-                    decoding="async"
-                    loading="lazy"
-                    width="1280"
-                    height="800"
-                  />
-                </figure>
-              </div>
-            </div>
-
-            <div class="feature-item" data-rise>
-              <h3 class="feature-heading">
-                <button type="button" class="feature-trigger" aria-expanded="false" aria-controls="feature-panel-5" id="feature-trigger-5">
-                  <span class="feature-text">
-                    <span class="eyebrow">Calendário acadêmico</span>
-                    <span class="feature-title">Datas acadêmicas em um só lugar</span>
-                  </span>
-                  <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h3>
-              <div class="feature-panel" id="feature-panel-5" role="region" aria-labelledby="feature-trigger-5" hidden>
-                <p>Consulte eventos públicos e acadêmicos conforme seu acesso e organize sua agenda pessoal.</p>
-                <figure class="feature-figure">
-                  <img
-                    src="illustrations/product/calendar.svg"
-                    alt="Ilustração do calendário com modos público e pessoal e eventos demonstrativos"
-                    decoding="async"
-                    loading="lazy"
-                    width="1280"
-                    height="800"
-                  />
-                </figure>
-              </div>
-            </div>
-
-            <div class="feature-item" data-rise>
-              <h3 class="feature-heading">
-                <button type="button" class="feature-trigger" aria-expanded="false" aria-controls="feature-panel-6" id="feature-trigger-6">
-                  <span class="feature-text">
-                    <span class="eyebrow">Projetos</span>
-                    <span class="feature-title">Projetos da comunidade acadêmica</span>
-                  </span>
-                  <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h3>
-              <div class="feature-panel" id="feature-panel-6" role="region" aria-labelledby="feature-trigger-6" hidden>
-                <p>Conheça iniciativas de pesquisa, ensino e extensão e confira as condições de participação.</p>
-                <figure class="feature-figure">
-                  <img
-                    src="illustrations/product/projects.svg"
-                    alt="Ilustração de Projetos com filtros e iniciativas demonstrativas"
-                    decoding="async"
-                    loading="lazy"
-                    width="1280"
-                    height="800"
-                  />
-                </figure>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <!-- Notícias e projetos publicados no portal, disponíveis também a visitantes. -->
       <section class="public-section" id="noticias" aria-labelledby="public-news-title">
         <div class="container">
-          <h2 class="section-title" id="public-news-title">Notícias do campus</h2>
-          <p class="section-lead">Publicações da área de Notícias compartilhadas com toda a comunidade.</p>
-          <a class="text-link" href="notices.html?tipo=noticia">Ver todas as notícias →</a>
+          <h2 class="section-title" id="public-news-title">Notícias e avisos</h2>
+          <p class="section-lead">Novidades e comunicados públicos da comunidade acadêmica.</p>
+          <a class="text-link" href="notices.html">Ver notícias e avisos →</a>
+          <label class="home-news-search" for="homeNewsSearch">
+            <span>Pesquisar notícias e avisos</span>
+            <input id="homeNewsSearch" type="search" placeholder="Pesquisar notícias e avisos" autocomplete="off" />
+          </label>
           <div class="public-grid" id="publicNews" aria-live="polite"><p>Carregando notícias…</p></div>
         </div>
       </section>
@@ -418,272 +182,17 @@
         </div>
       </section>
 
-
       <!-- 6. Campus e comunidade -->
-      <section data-home-intro class="community section--cream" aria-labelledby="communityTitle">
-        <div class="container">
-          <div class="section-head">
-            <h2 class="display-title" id="communityTitle" data-reveal data-drift>Campus e comunidade</h2>
-            <a href="https://www.instagram.com/ifpabelem/" class="text-link" target="_blank" rel="noopener"
-              >Ver no Instagram <span class="arrow" aria-hidden="true">&nearr;</span
-              ><span class="visually-hidden"> (abre em nova aba)</span></a
-            >
-          </div>
-
-          <ul class="post-grid">
-            <li class="post" data-rise>
-              <a href="https://www.instagram.com/ifpabelem/" target="_blank" rel="noopener">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/ig-convivencia.jpg" alt="" width="711" height="886" loading="lazy" /></span></span>
-                <span class="post-title">IFPA Campus Belém inaugura espaço de convivência para servidores técnico-administrativos</span>
-                <span class="post-cta">Ver publicação<span class="visually-hidden"> no Instagram (abre em nova aba)</span></span>
-              </a>
-            </li>
-            <li class="post" data-rise>
-              <a href="https://www.instagram.com/ifpabelem/" target="_blank" rel="noopener">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/ig-defesa-memorial.jpg" alt="" width="711" height="711" loading="lazy" /></span></span>
-                <span class="post-title">Defesa de memorial à classe de Professor Titular</span>
-                <span class="post-cta">Ver publicação<span class="visually-hidden"> no Instagram (abre em nova aba)</span></span>
-              </a>
-            </li>
-            <li class="post" data-rise>
-              <a href="https://www.instagram.com/ifpabelem/" target="_blank" rel="noopener">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/ig-formacao.jpg" alt="" width="710" height="709" loading="lazy" /></span></span>
-                <span class="post-title">IFPA Campus Belém marca mais uma conquista na trajetória de seus estudantes</span>
-                <span class="post-cta">Ver publicação<span class="visually-hidden"> no Instagram (abre em nova aba)</span></span>
-              </a>
-            </li>
-            <li class="post" data-rise>
-              <a href="https://www.instagram.com/ifpabelem/" target="_blank" rel="noopener">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/ig-semana-biblioteca.jpg" alt="" width="710" height="886" loading="lazy" /></span></span>
-                <span class="post-title">Semana da Biblioteca 2026: a celebração do livro e da autoria humana em tempos digitais</span>
-                <span class="post-cta">Ver publicação<span class="visually-hidden"> no Instagram (abre em nova aba)</span></span>
-              </a>
-            </li>
-            <li class="post" data-rise>
-              <a href="https://www.instagram.com/ifpabelem/" target="_blank" rel="noopener">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/ig-eletricista.jpg" alt="" width="711" height="886" loading="lazy" /></span></span>
-                <span class="post-title">IFPA Campus Belém certifica concluintes do curso de Eletricista Instalador de Baixa Tensão</span>
-                <span class="post-cta">Ver publicação<span class="visually-hidden"> no Instagram (abre em nova aba)</span></span>
-              </a>
-            </li>
-            <li class="post" data-rise>
-              <a href="https://www.instagram.com/ifpabelem/" target="_blank" rel="noopener">
-                <span class="item-media" data-grow><span class="media-frame"><img src="assets/landing/ig-conclusao-tecnicos.jpg" alt="" width="711" height="711" loading="lazy" /></span></span>
-                <span class="post-title">IFPA Campus Belém celebra conquista de novos profissionais em solenidade de conclusão de cursos técnicos</span>
-                <span class="post-cta">Ver publicação<span class="visually-hidden"> no Instagram (abre em nova aba)</span></span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
       <!-- 7. Para quem -->
-      <section data-home-intro class="audience section--white" id="para-quem" aria-labelledby="audienceTitle">
-        <div class="container">
-          <div class="audience-head">
-            <div>
-              <p class="eyebrow">Para quem</p>
-              <h2 class="section-title section-title--lg" id="audienceTitle" data-reveal>
-                Feito para<br />toda a comunidade<br />acadêmica
-              </h2>
-            </div>
-            <p class="section-lead">
-              Discentes, docentes e servidores dependem do acesso a avisos, notícias e eventos para
-              organizar suas rotinas acadêmicas.
-            </p>
-          </div>
-
-          <div class="audience-grid">
-            <article class="audience-card" data-rise>
-              <p class="audience-meta"><span class="eyebrow">Discentes</span> Técnico e graduação</p>
-              <h3 class="card-title">Estudantes</h3>
-              <p>
-                Períodos de matrícula, editais de iniciação científica e eventos, sem depender de
-                redes sociais ou da comunicação oral.
-              </p>
-            </article>
-            <article class="audience-card" data-rise>
-              <p class="audience-meta"><span class="eyebrow">Docentes</span> Ensino, pesquisa e extensão</p>
-              <h3 class="card-title">Professores e instrutores</h3>
-              <p>
-                Publicação de avisos e eventos para as turmas, melhorando o fluxo de comunicação
-                institucional.
-              </p>
-            </article>
-            <article class="audience-card" data-rise>
-              <p class="audience-meta"><span class="eyebrow">Servidores</span> Gestão e administração</p>
-              <h3 class="card-title">Equipe administrativa</h3>
-              <p>
-                Redução de falhas comunicacionais e otimização dos processos administrativos, com
-                informações padronizadas.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
 
       <!-- 8. Também no celular -->
-      <section data-home-intro class="devices section--cream" aria-labelledby="devicesTitle">
-        <div class="container">
-          <div class="devices-head">
-            <p class="eyebrow eyebrow--center">Em qualquer dispositivo</p>
-            <h2 class="section-title section-title--lg" id="devicesTitle" data-reveal>A Arcadia também<br />no celular</h2>
-            <p class="section-lead">
-              Funciona no navegador do computador, do tablet e do celular, sem precisar instalar
-              nada.
-            </p>
-            <a href="signup.html" class="btn btn--primary">Criar conta <span class="arrow" aria-hidden="true">&rarr;</span></a>
-          </div>
 
-          <div class="devices-panel" data-grow aria-hidden="true">
-            <!-- Espaço reservado para a foto futura -->
-          </div>
-        </div>
-      </section>
 
-      <!-- 9. Como funciona -->
-      <section data-home-intro class="steps section--navy" id="como-funciona" aria-labelledby="stepsTitle">
-        <div class="container">
-          <p class="eyebrow eyebrow--accent">Como funciona</p>
-          <h2 class="section-title section-title--lg" id="stepsTitle" data-reveal>
-            Três passos para acessar <span class="text-accent">o mural acadêmico</span>
-          </h2>
-          <div class="steps-sub">
-            <p class="section-lead">Organização e acessibilidade das informações, do cadastro ao mural.</p>
-            <a href="signup.html" class="text-link text-link--light">Criar conta <span class="arrow" aria-hidden="true">&rarr;</span></a>
-          </div>
-
-          <ol class="steps-grid">
-            <li class="step" data-rise>
-              <div class="step-screen" data-grow aria-hidden="true">[TELA: cadastro]</div>
-              <p class="step-label"><span class="step-number">1</span> <span class="eyebrow">Cadastro</span></p>
-              <h3 class="card-title">Crie sua conta.</h3>
-              <p>Cadastre-se com seu e-mail. É gratuito.</p>
-            </li>
-            <li class="step" data-rise>
-              <div class="step-screen" data-grow aria-hidden="true">[TELA: vínculo]</div>
-              <p class="step-label"><span class="step-number">2</span> <span class="eyebrow">Vínculo</span></p>
-              <h3 class="card-title">Informe seu vínculo.</h3>
-              <p>Discente, docente ou servidor da instituição.</p>
-            </li>
-            <li class="step" data-rise>
-              <div class="step-screen" data-grow aria-hidden="true">[TELA: mural]</div>
-              <p class="step-label"><span class="step-number">3</span> <span class="eyebrow">Mural</span></p>
-              <h3 class="card-title">Fique por dentro.</h3>
-              <p>Acompanhe notícias, avisos e eventos no computador ou no celular.</p>
-            </li>
-          </ol>
-        </div>
-      </section>
 
       <!-- 10. Dúvidas frequentes -->
-      <section data-home-intro class="faq section--navy" id="duvidas" aria-labelledby="faqTitle">
-        <div class="container faq-inner">
-          <h2 class="section-title section-title--lg" id="faqTitle" data-reveal>Dúvidas frequentes</h2>
-          <p class="section-lead">
-            Não encontrou o que procura?
-            <a href="mailto:portalarcadia.contato@gmail.com" class="faq-contact">Fale com a equipe</a>.
-          </p>
-
-          <div class="faq-accordion" id="faq">
-            <div class="faq-item" data-rise>
-              <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>Quem pode usar a Arcadia?</span>
-                <span class="toggle-icon faq-icon-circle"></span>
-              </button>
-              <div class="faq-panel">
-                <p
-                  >Qualquer pessoa pode consultar as publicações públicas. Alunos podem criar uma
-                  conta com e-mail, senha e um curso cadastrado. Quem não tem vínculo com o campus
-                  pode escolher Comunidade externa; essa conta não dá acesso às funções
-                  institucionais. Contas de professor e servidor dependem de validação
-                  administrativa.</p
-                >
-                <p
-                  >A entrada é por e-mail e senha. Quando habilitado, o Google permite entrar em uma conta já cadastrada, após vincular com sua senha. A
-                  recuperação de senha depende do serviço de envio de e-mail configurado. Se ele
-                  estiver indisponível, a tela informa o problema.</p
-                >
-              </div>
-            </div>
-
-            <div class="faq-item" data-rise>
-              <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>Há alguma taxa de assinatura?</span>
-                <span class="toggle-icon faq-icon-circle"></span>
-              </button>
-              <div class="faq-panel">
-                <p
-                  >Não. O uso da Arcadia é gratuito. Este é um projeto acadêmico; não há plano de
-                  assinatura nem cobrança para criar conta ou usar os recursos disponíveis.</p
-                >
-              </div>
-            </div>
-
-            <div class="faq-item" data-rise>
-              <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>Como meu vínculo é verificado?</span>
-                <span class="toggle-icon faq-icon-circle"></span>
-              </button>
-              <div class="faq-panel">
-                <p
-                  >Selecionar um vínculo no formulário não concede permissões de professor ou
-                  servidor. Esses perfis precisam de autorização da administração do projeto; usar um
-                  e-mail institucional, por si só, não comprova o cargo. O cadastro público permite as
-                  opções Aluno e Comunidade externa. Não há verificação automática de vínculo com
-                  sistemas do IFPA nem confirmação automática por e-mail.</p
-                >
-              </div>
-            </div>
-
-            <div class="faq-item" data-rise>
-              <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>A Arcadia substitui o SIGAA?</span>
-                <span class="toggle-icon faq-icon-circle"></span>
-              </button>
-              <div class="faq-panel">
-                <p
-                  >Não. A Arcadia é um projeto acadêmico para organizar publicações, tarefas, projetos
-                  e solicitações. Não consulta nem altera automaticamente notas, matrículas ou
-                  registros no SIGAA. Na aba Documentos, você acompanha solicitações; isso não gera um
-                  documento oficial automaticamente. O download fica disponível quando um arquivo é
-                  cadastrado na solicitação pela equipe responsável.</p
-                >
-              </div>
-            </div>
-
-            <div class="faq-item" data-rise>
-              <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>Funciona no celular?</span>
-                <span class="toggle-icon faq-icon-circle"></span>
-              </button>
-              <div class="faq-panel">
-                <p
-                  >Sim. Você pode acessar pelo navegador do celular, com conexão à internet, sem
-                  instalar um aplicativo. A navegação lateral e os filtros se recolhem em telas
-                  menores para dar espaço ao conteúdo. O tema claro, escuro ou automático pode ser
-                  escolhido nas Configurações.</p
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <!-- 11. Chamada final (também é a saudação da sessão conectada) -->
-      <section class="cta section--navy" id="homeWelcome" aria-labelledby="homeWelcomeTitle">
-        <div class="container cta-inner">
-          <h2 class="section-title section-title--lg" id="homeWelcomeTitle" data-reveal>Informação clara e acessível</h2>
-          <p class="section-lead" id="homeWelcomeDescription"
-            >Um meio mais organizado de acesso às informações institucionais. Crie sua conta com
-            seu e-mail.</p
-          >
-          <div class="btn-row btn-row--center">
-            <a href="signup.html" class="btn btn--light">Criar conta <span class="arrow" aria-hidden="true">&rarr;</span></a>
-            <a href="login.html" class="btn btn--outline-dark">Entrar</a>
-          </div>
-        </div>
-      </section>
 
       <a class="home-return container" href="index.html">&larr; Voltar ao início</a>
     </main>
@@ -694,14 +203,23 @@
         <a href="index.html" class="wordmark wordmark--footer" aria-label="Arcádia — início">
           <span class="wordmark-name">Arcádia</span>
         </a>
-        <nav aria-label="Rodapé">
+        <div class="footer-about"><p>Portal acadêmico do IFPA Campus Belém.</p><p>Informação, projetos e vida no campus em um só lugar.</p></div>
+        <nav aria-label="Explore o portal">
+          <h2>Explore</h2>
           <ul class="footer-links">
-            <li><a href="#plataforma">Plataforma</a></li>
-            <li><a href="#noticias">Notícias</a></li>
-            <li><a href="#para-quem">Para quem</a></li>
-            <li><a href="#como-funciona">Como funciona</a></li>
-            <li><a href="#duvidas">Dúvidas</a></li>
+            <li><a href="notices.html">Notícias e avisos</a></li>
+            <li><a href="projects.html">Projetos da comunidade</a></li>
+            <li><a href="calendar.html">Calendário acadêmico</a></li>
             <li><a href="campus-map.html">Mapa do campus</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Contato e informações legais">
+          <h2>Contato e privacidade</h2>
+          <ul class="footer-links">
+            <li><a href="mailto:portalarcadia.contato@gmail.com">portalarcadia.contato@gmail.com</a></li>
+            <li><a href="privacy.html">Política de Privacidade</a></li>
+            <li><a href="terms.html">Termos de Uso</a></li>
+            <li><a href="cookies.html">Política de Cookies</a></li>
           </ul>
         </nav>
         <div class="footer-end">
@@ -721,10 +239,12 @@
     <link rel="stylesheet" href="avatar-editor.css" />
     <script src="js/avatar-editor.js"></script>
     <script src="js/notice-cover.js"></script>
+    <script src="js/language-control.js"></script>
     <script src="js/idioma.js"></script>
     <script src="js/landing.js"></script>
     <script src="js/scroll-suave.js"></script>
     <script src="js/animacoes.js"></script>
     <script src="js/privacy-notice.js"></script>
+    <script src="js/banner-controls.js"></script>
   </body>
 </html>

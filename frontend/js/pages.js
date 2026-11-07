@@ -1227,11 +1227,25 @@
             }
             const detail = title.closest('.ar-detail');
             detail?.querySelector('.ar-notice-cover')?.remove();
+            body.parentElement?.querySelector('.ar-publication-media')?.remove();
+            /* A capa integra o banner acima do título, sem deformar a imagem. */
+            detail?.parentElement?.querySelector('.ar-publication-media')?.remove();
             if (detail && A.noticeCover?.valid(r.capa))
-                detail.insertAdjacentHTML(
-                    'afterbegin',
-                    A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo)
-                );
+                detail.insertAdjacentHTML('afterbegin', '<div class="ar-publication-media">' +
+                    A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo) + '</div>');
+            const media = detail?.querySelector('.ar-publication-media');
+            const coverImage = media?.querySelector('img');
+            if (coverImage) {
+                const fitCover = () => {
+                    if (!coverImage.naturalWidth || !coverImage.naturalHeight) return;
+                    const portrait = coverImage.naturalHeight > coverImage.naturalWidth;
+                    media.classList.toggle('is-portrait', portrait);
+                    media.style.setProperty('--publication-image-ratio',
+                        String(coverImage.naturalWidth / (coverImage.naturalHeight * .96)));
+                };
+                coverImage.addEventListener('load', fitCover, { once: true });
+                if (coverImage.complete) fitCover();
+            }
             title.textContent = r.titulo;
             guard();
             document.title = r.titulo;

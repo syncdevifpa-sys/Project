@@ -107,6 +107,7 @@
         }
 
         if (document.getElementById('publicNews')) loadPublicContent();
+        document.getElementById('homeNewsSearch')?.addEventListener('input', renderPublicNews);
 
         /* Exibe o conteúdo da página ao entrar na área visível. */
         const reveals = document.querySelectorAll('.reveal-item');
@@ -181,7 +182,7 @@
                 const link = document.createElement('a');
                 link.className = 'text-link';
                 link.href = news ? 'notice.html?id=' + id : 'projects.html?projeto=' + id;
-                link.textContent = news ? 'Abrir notícia →' : 'Ver projeto →';
+                link.textContent = news ? 'Abrir publicação →' : 'Ver projeto →';
                 card.append(link);
             }
             window.Arcadia?.noticeCover?.decorate(card, item.capa, 'Capa: ' + item.titulo);
@@ -210,13 +211,14 @@
         } catch (error) {
             /* Sessão indisponível ou inválida utiliza os links de visitante. */
         }
+        document.querySelectorAll('[data-tutorial-link]').forEach(link => { link.hidden = loggedIn; });
         const welcome = document.getElementById('homeWelcomeDescription');
         if (welcome)
             welcome.textContent = loggedIn
                 ? 'Acompanhe as publicações do campus e os projetos da comunidade. Seu próximo acesso começa aqui.'
                 : 'Um meio mais organizado de acesso às informações institucionais. Crie sua conta com seu e-mail.';
         const welcomeTitle = document.getElementById('homeWelcomeTitle');
-        if (welcomeTitle) welcomeTitle.setAttribute('aria-level', loggedIn ? '1' : '2');
+        if (welcomeTitle) welcomeTitle.setAttribute('aria-level', '2');
         document.querySelectorAll('a[href="signup.html"]').forEach((link) => {
             link.hidden = loggedIn;
         });
@@ -306,6 +308,14 @@
         }
     }
 
+    let publicNotices = [];
+    function renderPublicNews() {
+        const normalize = text => String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const query = normalize(document.getElementById('homeNewsSearch')?.value).trim();
+        const terms = query.split(/\s+/).filter(Boolean);
+        const rows = publicNotices.filter(item => terms.every(term => normalize([item.titulo, item.resumo, item.descricao].join(' ')).includes(term)));
+        renderCards(document.getElementById('publicNews'), rows, query ? 'Nenhuma publicação encontrada para esta pesquisa.' : 'Nenhuma publicação pública no momento.', true);
+    }
     async function loadPublicContent() {
         const news = document.getElementById('publicNews');
         const projects = document.getElementById('publicProjects');
@@ -313,7 +323,8 @@
             const content = await window.Arcadia.api.expect(
                 window.Arcadia.api.get('/api/public', { auth: false })
             );
-            renderCards(news, (content.notices || []).filter(item => item.tipo_publicacao === 'noticia'), 'Nenhuma notícia pública no momento.', true);
+            publicNotices = Array.isArray(content.notices) ? content.notices : [];
+            renderPublicNews();
             renderCards(projects, content.projects, 'Nenhum projeto publicado no momento.', false);
         } catch (error) {
             news.textContent = 'Não foi possível carregar as notícias. Tente novamente mais tarde.';
