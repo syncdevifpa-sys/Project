@@ -14,11 +14,6 @@
           const end='#'+[1,3,5].map(offset=>Math.max(0,Math.min(255,Math.round(parseInt(colors[0].slice(offset,offset+2),16)+(parseInt(colors[1].slice(offset,offset+2),16)-parseInt(colors[0].slice(offset,offset+2),16))*1.4))).toString(16).padStart(2,'0')).join('');
           return policy.contrast(end,style.text)>=4.5?base.replace(colors[1],end):base;
         };
-        Object.assign(policy.presets,{
-          cyan:{background:'#bdeafa',text:'#182020'},pink:{background:'#f4c6dd',text:'#182020'},
-          yellow:{background:'#f7e895',text:'#182020'},green:{background:'#c9edb0',text:'#182020'},
-          orange:{background:'#f4ceaa',text:'#182020'}
-        });
         if(window.Arcadia.bannerBootstrap)window.Arcadia.bannerBootstrap.apply();
       }
       function read(key,fallback){try{return localStorage.getItem(key)||fallback}catch{return fallback}}

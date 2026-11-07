@@ -64,6 +64,14 @@
         node.classList.toggle('ar-banner-personal', style.mode !== 'default');
         node.style.removeProperty('--personal-banner-bg');
         node.style.removeProperty('--personal-banner-ink');
+        node.classList.toggle('ar-banner-gradient-default', style.mode === 'default' && style.gradient === true);
+        node.style.removeProperty('--default-banner-bg');
+        node.style.removeProperty('--default-banner-ink');
+        if (style.mode === 'default' && style.gradient) {
+            const standard = policy.defaultStyle(page, document.documentElement?.getAttribute('data-accent') || 'lime', key);
+            node.style.setProperty('--default-banner-bg', backgroundCSS({ ...standard, gradient: true }));
+            node.style.setProperty('--default-banner-ink', standard.text);
+        }
         if (style.mode !== 'default') {
             node.style.setProperty(
                 '--personal-banner-bg',
@@ -154,7 +162,7 @@
             gradientLabel.append(gradient, document.createTextNode('Aplicar degradê suave'));
             const gradientHint = document.createElement('small');
             gradientHint.textContent =
-                'Escolha uma cor pronta ou Personalizado. Desmarque para manter a cor lisa.';
+                'Também funciona com Padrão do site. Desmarque para manter a cor lisa.';
             select.value = current.mode;
             background.value = current.background || '#bdeafa';
             text.value = current.text || '#182020';
@@ -171,14 +179,16 @@
             const feedback = document.createElement('p');
             feedback.setAttribute('role', 'status');
             function sync() {
-                const selected = presets[select.value];
+                const selected = select.value === 'default'
+                    ? policy.defaultStyle(location.pathname.split('/').pop(), document.documentElement.getAttribute('data-accent') || 'lime', key)
+                    : presets[select.value];
                 if (selected) {
                     background.value = selected.background;
                     text.value = selected.text;
                 }
                 fields.hidden = select.value !== 'custom';
                 preview.hidden = select.value !== 'custom' && !selected;
-                gradient.disabled = select.value === 'default' || select.value === 'neutral';
+                gradient.disabled = select.value === 'neutral';
                 const adjusted = readable(background.value, text.value);
                 preview.style.background = backgroundCSS({
                     background: background.value,
@@ -216,7 +226,10 @@
                     if (!dialogOwner || dialogOwner !== currentOwner())
                         throw new Error('A conta mudou. Atualize a página.');
                     const value = preferences();
-                    if (select.value === 'default') delete value[key];
+                    if (select.value === 'default') {
+                        if (gradient.checked) value[key] = { mode: 'default', gradient: true };
+                        else delete value[key];
+                    }
                     else
                         value[key] =
                             select.value === 'neutral'
@@ -277,6 +290,16 @@
         }
     }
     A.classAppearance.hydrate = init;
+    if (typeof MutationObserver !== 'undefined' && document.documentElement) {
+        let lastAccent = document.documentElement.getAttribute('data-accent');
+        new MutationObserver(() => {
+            const accent = document.documentElement.getAttribute('data-accent');
+            if (accent === lastAccent) return;
+            lastAccent = accent;
+            A.bannerBootstrap?.apply();
+            document.querySelectorAll('.ar-banner-gradient-default').forEach(node => apply(node, node.dataset.appearanceKey));
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent'] });
+    }
     window.addEventListener?.('storage', (event) => {
         if (
             event.key === null ||

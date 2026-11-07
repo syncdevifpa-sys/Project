@@ -17,7 +17,7 @@
         ...Object.fromEntries(
             Object.entries(legacy).map(([name, background]) => [
                 name,
-                { background, text: '#182020' }
+                { background: { cyan: '#8fd8ea', pink: '#f7a6cf', yellow: '#ffd84a', green: '#c6f36b' }[name] || background, text: '#182020' }
             ])
         ),
         white: { background: '#ffffff', text: '#0b1f3a' },
@@ -76,6 +76,14 @@
             'community-settings.html'
         ].includes(page);
     }
+    /* Mesma paleta do tema e mesmas cores próprias das áreas pessoais. */
+    function defaultStyle(page, accent = 'lime', key = '') {
+        const general = presets[accent === 'lime' ? 'green' : accent] || presets.green;
+        if (key === 'dashboard:next-commit') return { background: '#1d45a3', text: '#ffffff' };
+        const tone = { 'tasks.html': 'yellow', 'documents.html': 'pink', 'community.html': 'cyan' }[page];
+        if (page === 'dashboard.html' && !key.startsWith('dashboard:summary:')) return { ...presets.navy };
+        return { ...(tone ? presets[tone] : general) };
+    }
     function owner(session) {
         const external = session?.tipo_usuario === 'externo',
             id = external ? session.id_externo || session.id_usuario : session?.id_usuario;
@@ -92,7 +100,7 @@
                 text: readable(style.background, style.text),
                 ...(style.gradient === true ? { gradient: true } : {})
             };
-        return { mode: 'default' };
+        return { mode: 'default', ...(style?.mode === 'default' && style.gradient === true ? { gradient: true } : {}) };
     }
     function pageKey(page, search = '') {
         const publication =
@@ -113,6 +121,7 @@
         readable,
         backgroundCSS,
         usesSiteDefault,
+        defaultStyle,
         owner,
         resolve,
         pageKey

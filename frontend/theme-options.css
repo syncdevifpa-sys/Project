@@ -146,3 +146,7 @@ html[data-preview-season]:not([data-theme='dark']) :is(.ar-btn--primary,.db-btn-
 html[data-theme='dark'][data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#ffffff;box-shadow:none; }
 [data-tutorial-link][hidden] { display:none !important; }
 .tutorial-actions { display:flex;gap:24px;align-items:center;padding-bottom:48px;flex-wrap:wrap; }
+
+/* Degradê no padrão mantém vínculo com a cor geral ou com a cor própria da aba. */
+html[data-preview-season] .ar-banner-gradient-default:not(.ar-banner-personal) { background:var(--default-banner-bg) !important;color:var(--default-banner-ink) !important; }
+html[data-preview-season] .ar-portal-sidebar a[aria-current='page'] { box-shadow:inset 3px 0 color-mix(in srgb,var(--page-banner-tint,var(--accent)) 72%,var(--ink) 28%); }
