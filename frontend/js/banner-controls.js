@@ -11,6 +11,17 @@
                 || computed.backgroundColor;
             if (document.documentElement.style.getPropertyValue('--page-banner-tint') !== color)
                 document.documentElement.style.setProperty('--page-banner-tint', color);
+            /* O cartão de documentos repete o fundo completo e o contraste do cumprimento. */
+            const root = document.documentElement;
+            const values = {
+                '--page-banner-background': computed.backgroundImage === 'none'
+                    ? computed.backgroundColor
+                    : computed.backgroundImage,
+                '--page-banner-ink': computed.color
+            };
+            for (const [key, value] of Object.entries(values)) {
+                if (root.style.getPropertyValue(key) !== value) root.style.setProperty(key, value);
+            }
         }
         sync();
         observer = new MutationObserver(sync);

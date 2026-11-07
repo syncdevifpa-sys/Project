@@ -153,7 +153,7 @@
             `<article class="ar-card"><h3 class="ar-card-title">${esc(title)}</h3><p class="ar-card-desc">${esc(description)}</p><p class="ar-card-meta">${meta}</p>${action}</article>`;
         const editAction = (kind, row, id) =>
             A.contentEditor?.canEdit(kind, row)
-                ? `<button type="button" class="ar-btn ar-btn--secondary" data-edit-content="${esc(id)}">Editar</button>`
+                ? `<button type="button" class="ar-iconbtn ar-content-edit" data-edit-content="${esc(id)}" title="Editar" aria-label="Editar: ${esc(row.titulo || row.nome || 'conteúdo')}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button>`
                 : '';
         function editableGrid(target, kind, rows, reload) {
             target.addEventListener('click', (event) => {
@@ -259,7 +259,7 @@
                     r.titulo,
                     r.resumo,
                     `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
-                    `<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--secondary btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button><button type="button" class="ar-btn ar-btn--quiet btn-delete" data-id="${esc(r.id_aviso)}">Excluir publicação</button>` : ''}`
+                    `<div class="ar-notice-card-actions"><a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
                 );
                 return A.noticeCover?.valid(r.capa)
                     ? html

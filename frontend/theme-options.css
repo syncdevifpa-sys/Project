@@ -150,3 +150,160 @@ html[data-theme='dark'][data-preview-season] :is(.ar-btn--primary,.db-btn--prima
 /* Degradê no padrão mantém vínculo com a cor geral ou com a cor própria da aba. */
 html[data-preview-season] .ar-banner-gradient-default:not(.ar-banner-personal) { background:var(--default-banner-bg) !important;color:var(--default-banner-ink) !important; }
 html[data-preview-season] .ar-portal-sidebar a[aria-current='page'] { box-shadow:inset 3px 0 color-mix(in srgb,var(--page-banner-tint,var(--accent)) 72%,var(--ink) 28%); }
+
+/* Superfícies mais discretas: preserva círculos de perfil e botões em pílula. */
+:root { --radius-lg:18px; --radius-xl:24px; }
+.ar-portal-sidebar,
+.ar-has-sidebar .ar-nav,
+.ar-card, .ar-sset, .ar-library, .ac-context, .ac-content,
+.ar-hero, .db-v3 .db-card, .db-v3 .db-hello,
+.home-campus-banner { border-radius:20px; }
+.ar-hero:not(.ar-banner-personal):not(.db-hello) { border-radius:20px; }
+.ar-task-reminders { border-radius:16px; margin-block:8px; }
+
+/* O espaço entre painéis vem do contêiner, sem somar margens de lembretes. */
+.ar-calendar-page .ar-app > :is(.ar-day-reminders,.ar-weekly-agenda,.ar-task-reminders) { margin-block:0; }
+.db-v3 { --db-gap:16px; }
+
+/* Documentos solicitados repete a cor e o degradê do banner principal. */
+.db-v3 #dbDocsCard {
+  background:var(--page-banner-background,var(--accent));
+  color:var(--page-banner-ink,var(--ink));
+}
+.db-v3 #dbDocsCard :is(.db-link,.db-metric-value small,.db-empty) { color:inherit; }
+.db-v3 #dbDocsCard .db-link { text-decoration-color:currentColor; }
+
+/* Ações compartilham o formato compacto; seletores e ícones mantêm sua função visual. */
+html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]) {
+  border-radius:6px;
+}
+html[data-preview-season] :is(.ar-btn--secondary,.db-btn--outline,.btn--outline) {
+  background:linear-gradient(110deg,#f6f3ec,#c6def8);
+  color:#0b1f3a;
+  border-color:#bfd1e8;
+}
+html[data-preview-season][data-theme='dark'] :is(.ar-btn--secondary,.db-btn--outline,.btn--outline) {
+  background:linear-gradient(110deg,#0b1f3a,#1d45a3);
+  color:#ffffff;
+  border-color:#526c91;
+}
+/* Banners de abertura mais baixos, sem comprimir o painel pessoal ou as notícias abertas. */
+.ar-hero:not(.db-hello):not(.ar-detail) {
+  min-height:132px;
+  padding-block:20px;
+  gap:16px;
+  align-items:center;
+}
+.ar-hero:not(.db-hello):not(.ar-detail) .ar-hero-desc { margin-block:0 12px; }
+@media (max-width:600px) {
+  .ar-hero:not(.db-hello):not(.ar-detail) { min-height:0; padding:20px; }
+}
+
+/* Ações editoriais discretas deixam o destaque para o conteúdo da publicação. */
+html[data-preview-season] .ar-filter-page .ar-hero :is(#btnNewNotice,#btnExportCsv) {
+  background:color-mix(in srgb,currentColor 5%,transparent);
+  color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 25%,transparent);
+  box-shadow:none;
+  min-height:40px;
+  padding:8px 12px;
+}
+.ar-filter-page .ar-hero.ar-hero--compact {
+  min-height:116px;
+  padding-block:16px;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+}
+.ar-filter-page .ar-hero .ar-hero-side { gap:10px; max-width:none; justify-self:stretch; }
+.ar-filter-page .ar-hero .ar-hero-desc { margin:0; font-size:13px; line-height:1.4; }
+.ar-notice-card-actions { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.ar-notice-card-actions > .ar-link { margin-right:auto; }
+.ar-notice-card-actions > .ar-iconbtn { width:36px; height:36px; background:transparent; border-color:transparent; color:var(--ink-muted); }
+.ar-notice-card-actions > .ar-iconbtn:hover { background:var(--surface-sunken); color:var(--ink); }
+.ar-notice-card-actions > .btn-delete:hover { color:var(--danger); }
+@media (max-width:600px) {
+  .ar-filter-page .ar-hero.ar-hero--compact { grid-template-columns:1fr; gap:12px; }
+}
+@media (pointer:coarse) {
+  .ar-notice-card-actions > .ar-iconbtn { width:44px; height:44px; }
+}
+
+/* Ações ganham destaque no apontamento e no teclado, sem animar seletores. */
+html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]) {
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+@media (hover:hover) {
+  html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-disabled='true']):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):hover {
+    transform:translateY(-2px);
+    box-shadow:0 5px 14px #547fa838;
+  }
+  html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
+    background:linear-gradient(110deg,#f6f3ec,#c6def8);
+    color:#0b1f3a;
+    border-color:#9cb9d8;
+  }
+  html[data-preview-season][data-theme='dark'] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
+    background:linear-gradient(110deg,#0b1f3a,#1d45a3);
+    color:#ffffff;
+    box-shadow:0 5px 16px #4678d94d;
+  }
+}
+/* O link real cobre o cartão; controles editoriais ficam acima dessa área. */
+:is(.ar-card,.public-card):has(a[href*='notice.html?id=']) { position:relative; }
+.ar-card .ar-notice-card-actions { position:static; }
+:is(.ar-card,.public-card) a[href*='notice.html?id=']::after { content:''; position:absolute; inset:0; border-radius:inherit; z-index:1; }
+:is(.ar-card,.public-card):has(a[href*='notice.html?id=']) :is(button,summary,input,select,textarea,a:not([href*='notice.html?id='])) { position:relative; z-index:2; }
+:is(.ar-card,.public-card):has(a[href*='notice.html?id=']:focus-visible) { outline:2px solid var(--focus); outline-offset:3px; }
+@media (prefers-reduced-motion:reduce) {
+  html[data-preview-season] :is(.ar-btn,.db-btn,.btn) { transition:none; }
+  html[data-preview-season] :is(.ar-btn,.db-btn,.btn):hover { transform:none; }
+}
+html[data-motion='reduced'][data-preview-season] :is(.ar-btn,.db-btn,.btn) { transition:none; transform:none; }
+
+/* O estado da publicação ocupa uma linha própria, fora da ajuda e da paleta. */
+.ar-detail > .ar-detail-status {
+  position:relative;
+  inset:auto;
+  order:-1;
+  align-self:flex-start;
+  box-sizing:border-box;
+  max-width:calc(100% - 100px);
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+
+/* O mesmo acabamento discreto vale para ações fora do banner de notícias. */
+html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete) {
+  background:color-mix(in srgb,currentColor 5%,transparent);
+  color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 25%,transparent);
+  border-radius:6px;
+  box-shadow:none;
+}
+/* Cartões clicáveis, navegação e ferramentas respondem sem disputar destaque. */
+:is(.ar-card,.public-card):has(a[href*='notice.html?id=']),
+.ar-portal-sidebar a,
+.ar-iconbtn { transition:box-shadow .16s ease,transform .16s ease,background-color .16s ease; }
+@media (hover:hover) {
+  :is(.ar-card,.public-card):has(a[href*='notice.html?id=']):hover { box-shadow:0 6px 20px #547fa824; transform:translateY(-2px); }
+  .ar-portal-sidebar a:not([aria-current='page']):hover { background:color-mix(in srgb,var(--page-banner-tint,var(--accent)) 14%,var(--surface)); transform:translateX(2px); }
+  .ar-iconbtn:not(:disabled):hover { background:var(--surface-sunken); box-shadow:0 2px 8px #547fa824; }
+  html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
+    background:linear-gradient(110deg,#f6f3ec,#c6def8); color:#0b1f3a; border-color:#9cb9d8; box-shadow:0 5px 14px #547fa838;
+  }
+  html[data-preview-season][data-theme='dark'] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
+    background:linear-gradient(110deg,#0b1f3a,#1d45a3); color:#fff; box-shadow:0 5px 16px #4678d94d;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  :is(.ar-card,.public-card):has(a[href*='notice.html?id=']),.ar-portal-sidebar a,.ar-iconbtn { transition:none; transform:none !important; }
+}
+html[data-motion='reduced'] :is(.ar-card,.public-card):has(a[href*='notice.html?id=']),
+html[data-motion='reduced'] .ar-portal-sidebar a,
+html[data-motion='reduced'] .ar-iconbtn { transition:none; transform:none; }
+
+/* Edição de projetos e demais conteúdos usa a mesma ferramenta discreta. */
+.ar-content-edit { align-self:flex-end; margin-top:8px; border-color:transparent; background:transparent; color:var(--ink-muted); }
+#gridProjetos .ar-card { transition:box-shadow .16s ease; }
+@media (hover:hover) {
+  #gridProjetos .ar-card:hover { box-shadow:0 6px 20px #547fa824; }
+}
