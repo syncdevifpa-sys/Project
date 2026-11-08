@@ -555,7 +555,8 @@
                                 r.titulo,
                                 r.descricao,
                                 `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
-                                projectActions(r) + editAction('projects', r, r.id_projeto)
+                                projectActions(r) + editAction('projects', r, r.id_projeto) +
+                                (A.projectActions?.canDelete() ? `<button type="button" class="ar-iconbtn ar-project-delete" data-delete-project="${esc(r.id_projeto)}" title="Excluir projeto" aria-label="Excluir projeto: ${esc(r.titulo)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : '')
                             );
                             return A.noticeCover?.valid(r.capa)
                                 ? markup.replace(
@@ -599,6 +600,16 @@
                 if (A.auth.exigirLogin()) A.contentEditor.open('projects', null, reload);
             });
             editableGrid(grid, 'projects', () => rows, reload);
+            listen(grid, 'click', async (event) => {
+                const button = event.target.closest('[data-delete-project]');
+                if (!button || button.disabled) return;
+                const project = rows.find(row => String(row.id_projeto) === button.dataset.deleteProject);
+                if (!project) return;
+                button.disabled = true;
+                try { await A.projectActions.remove(project, reload); }
+                catch (failure) { error(failure); }
+                finally { button.disabled = false; }
+            });
             grid.addEventListener('click', async (e) => {
                 const button = e.target.closest('[data-register], [data-cancel]');
                 if (!button) return;

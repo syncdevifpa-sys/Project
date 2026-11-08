@@ -290,7 +290,7 @@ html.db-v3-on[data-theme='dark'] .db-pill--today {
   color: var(--ink-muted);
 }
 /* Contorno discreto nas fotos de conteúdo; emblemas e avatares mantêm seu formato. */
-:is(.ar-notice-cover, .ar-cover-preview, .news-card, .post, .feature-figure) > img {
+:is(.ar-cover-preview, .news-card, .post, .feature-figure) > img {
   box-sizing: border-box;
   border: 1px solid var(--line, #e5dfd3);
   border-radius: 6px;
