@@ -200,7 +200,7 @@ html[data-preview-season][data-theme='dark'] :is(.ar-btn--secondary,.db-btn--out
 }
 
 /* Ações editoriais discretas deixam o destaque para o conteúdo da publicação. */
-html[data-preview-season] .ar-filter-page .ar-hero :is(#btnNewNotice,#btnExportCsv) {
+html[data-preview-season] .ar-filter-page .ar-hero :is(.ar-btn--primary,.ar-btn--secondary) {
   background:color-mix(in srgb,currentColor 5%,transparent);
   color:inherit;
   border:1px solid color-mix(in srgb,currentColor 25%,transparent);
@@ -300,6 +300,27 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
 html[data-motion='reduced'] :is(.ar-card,.public-card):has(a[href*='notice.html?id=']),
 html[data-motion='reduced'] .ar-portal-sidebar a,
 html[data-motion='reduced'] .ar-iconbtn { transition:none; transform:none; }
+
+/* Formulários e diálogos também seguem o acabamento das ações do portal. */
+html[data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button) {
+  background:color-mix(in srgb,currentColor 5%,transparent);
+  color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 25%,transparent);
+  border-radius:6px;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+@media (hover:hover) {
+  html[data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button):not(:disabled):hover {
+    background:linear-gradient(110deg,#f6f3ec,#c6def8);color:#0b1f3a;box-shadow:0 5px 14px #547fa838;transform:translateY(-2px);
+  }
+  html[data-preview-season][data-theme='dark'] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button):not(:disabled):hover {
+    background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#fff;box-shadow:0 5px 16px #4678d94d;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button) { transition:none; transform:none !important; }
+}
+html[data-motion='reduced'][data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button) { transition:none; transform:none; }
 
 /* Edição de projetos e demais conteúdos usa a mesma ferramenta discreta. */
 .ar-content-edit { align-self:flex-end; margin-top:8px; border-color:transparent; background:transparent; color:var(--ink-muted); }

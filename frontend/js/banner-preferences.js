@@ -97,7 +97,8 @@
             return {
                 mode: 'custom',
                 background: style.background,
-                text: readable(style.background, style.text),
+                text: style.autoContrast === false ? style.text : readable(style.background, style.text),
+                ...(style.autoContrast === false ? { autoContrast: false } : {}),
                 ...(style.gradient === true ? { gradient: true } : {})
             };
         return { mode: 'default', ...(style?.mode === 'default' && style.gradient === true ? { gradient: true } : {}) };

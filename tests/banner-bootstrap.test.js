@@ -3,6 +3,17 @@ const { test } = require('node:test'),
     fs = require('node:fs'),
     vm = require('node:vm');
 const policy = require('../frontend/js/banner-preferences');
+
+test('contraste automático é padrão e pode ser desativado sem mudar a cor escolhida', () => {
+    const custom = { mode: 'custom', background: '#ffffff', text: '#eeeeee', autoContrast: false };
+    const manual = policy.resolve(custom);
+    assert.equal(manual.text, '#eeeeee');
+    assert.equal(manual.autoContrast, false);
+    assert.equal(fixture('calendar.html', { 'page:calendar.html:0': manual }).styles.get('--initial-banner-page-ink'), '#eeeeee');
+    const automatic = policy.resolve({ ...custom, autoContrast: true });
+    assert.equal(automatic.text, '#000000');
+    assert.ok(policy.contrast(automatic.background, automatic.text) >= 4.5);
+});
 test('Início usa fundo e texto do mesmo tema desde a primeira renderização', () => {
     const f = fixture('index.html');
     assert.equal(f.styles.get('--initial-banner-page-bg'), 'var(--color-hero-bg)');
