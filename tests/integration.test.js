@@ -16,6 +16,7 @@ test('início esconde cadastro com sessão e oferece entrada aos visitantes', ()
     for (const loggedIn of [true, false]) {
         const signup = {};
         const panel = {};
+        const tutorialLink = {};
         const context = vm.createContext({
             localStorage: {
                 getItem: (key) =>
@@ -30,7 +31,9 @@ test('início esconde cadastro com sessão e oferece entrada aos visitantes', ()
                 readyState: 'complete',
                 getElementById: () => null,
                 querySelectorAll: (selector) =>
-                    selector === 'a[href="signup.html"]'
+                    selector === '[data-tutorial-link]'
+                        ? [tutorialLink]
+                        : selector === 'a[href="signup.html"]'
                         ? [signup]
                         : selector.includes('login.html')
                           ? [panel]
@@ -42,6 +45,7 @@ test('início esconde cadastro com sessão e oferece entrada aos visitantes', ()
             context
         );
         assert.equal(signup.hidden, loggedIn);
+        assert.equal(tutorialLink.hidden, loggedIn);
         assert.equal(panel.href, loggedIn ? 'dashboard.html' : 'login.html');
         assert.equal(panel.textContent, loggedIn ? 'Meu painel' : 'Entrar');
     }
@@ -60,6 +64,11 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
     });
     targets.publicNews = element();
     targets.publicProjects = element();
+    const searchEvents = {};
+    targets.homeNewsSearch = {
+        value: '',
+        addEventListener(name, callback) { searchEvents[name] = callback; }
+    };
     const calls = [];
     const covers = [];
     const context = vm.createContext({
@@ -84,7 +93,8 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
                                     titulo: '<script>private()</script>',
                                     resumo: 'Resumo',
                                     descricao: 'Notícia completa'
-                                }
+                                },
+                                { id_aviso: 13, tipo_publicacao: 'aviso', titulo: 'Matrículas abertas', resumo: 'Comunicado da secretaria' }
                             ],
                             projects: [
                                 {
@@ -113,6 +123,12 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
     assert.equal(targets.publicNews.children[0].children[2].href, 'notice.html?id=12');
     assert.equal(targets.publicProjects.children[0].children[2].href, 'projects.html?projeto=8');
     assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
+    assert.equal(targets.publicNews.children.length, 2);
+    targets.homeNewsSearch.value = 'matriculas secretaria';
+    searchEvents.input();
+    assert.equal(targets.publicNews.children.length, 1);
+    assert.equal(targets.publicNews.children[0].children[0].textContent, 'Matrículas abertas');
+    assert.equal(targets.publicNews.children[0].children[2].href, 'notice.html?id=13');
 });
 
 test('início público usa projeções públicas e independe da sessão', async () => {

@@ -287,6 +287,19 @@ noticeDemoRows.push({
     capa: 'data:image/jpeg;base64,' + fs.readFileSync(path.join(__dirname, '../frontend/assets/landing/news-psu-2027.jpg')).toString('base64')
 });
 app.post('/api/read-notices/:id', (_req, res) => res.json({ affectedRows: 1 }));
+/* Conteúdos aprovados para avaliação local: créditos preservados, sem gravação no banco. */
+[
+    ['Orientações sobre a carteira do Passe Fácil', 'O Campus Belém publicou orientações sobre emissão da carteira do Passe Fácil. Consulte os procedimentos e documentos na publicação institucional.', '2026-11-06T16:55:00Z', '3172-orientacoes-sobre-emissao-e-renovacao-da-carteira-do-passe-facil-2'],
+    ['E-books com orientações práticas sobre gestão de pessoas', 'O Campus Belém apresenta materiais digitais com orientações práticas sobre gestão de pessoas. Conheça os materiais na publicação original.', '2026-10-30T18:13:00Z', '3170-ifpa-campus-belem-disponibiliza-e-books-com-orientacoes-praticas-sobre-gestao-de-pessoas'],
+    ['Campus Belém certifica 29 concluintes de Eletricista Instalador de Baixa Tensão', 'O campus divulgou a certificação de 29 concluintes do curso de Eletricista Instalador de Baixa Tensão. Confira o relato institucional.', '2026-10-22T18:19:00Z', '3167-ifpa-campus-belem-certifica-29-concluintes-do-curso-de-eletricista-instalador-de-baixa-tensao']
+].forEach(([titulo, resumo, data_publicacao, slug], index) => noticeDemoRows.push({
+    id_aviso: 9 + index, id_usuario: 4, titulo, resumo,
+    descricao: resumo + '\n\nFonte: IFPA Campus Belém. https://belem.ifpa.edu.br/publicacoes/' + slug,
+    tipo_publicacao: 'noticia', categoria: 'evento', publico_alvo: 'todos',
+    situacao: 'publicado', data_publicacao,
+    capa: 'data:image/jpeg;base64,' + fs.readFileSync(path.join(__dirname,
+        '../frontend/assets/landing/news-' + slug.substring(0, 4) + '-1.jpg')).toString('base64')
+}));
 app.get('/api/notices', (_req, res) => res.json(noticeDemoRows));
 app.get('/api/notices/:id', (req, res) => {
     const notice = noticeDemoRows.find((row) => String(row.id_aviso) === req.params.id);
@@ -459,6 +472,26 @@ const projectDemoRows = [
             vagas: 3
         }
  ];
+/* Divulgação de pesquisas: não presume atividade atual nem oferece inscrições. */
+[
+    ['O ritual e a cultura do cancelamento no Brasil', 'Estudo qualitativo de práticas discursivas na imprensa e no Twitter entre 2018 e 2021. Referência: edital 05/2022, PIBICTI/PROPPG/IFPA/CNPq.'],
+    ['Parentesco, política e redes sociais', 'Pesquisa sobre hierarquias e conflitos nas relações familiares em grupos de WhatsApp nas eleições presidenciais de 2018 e 2022. Referência: edital 01/2023, PROPPG/IFPA.'],
+    ['Gênero e poder no ciberespaço', 'Pesquisa sobre assédio sexual contra estudantes nas redes sociais do IFPA Campus Belém. Referência: edital 01/2023, PROPPG/IFPA.']
+].forEach(([titulo, resumo], index) => projectDemoRows.push({
+    id_projeto: 3 + index, id_usuario: 4, titulo,
+    descricao: resumo + '\n\nDivulgação de pesquisa. Situação atual a confirmar com o NUPEC; sem inscrições abertas. Fonte: https://nupecifpa.com/andamento/'
+        + '\n\nImagem: ' + [
+            'divulgação original da pesquisa pelo NUPEC. https://nupecifpa.com/projeto-de-pesquisa-o-ritual-e-a-cultura-do-cancelamento-no-brasil/',
+            'marca do NUPEC usada para identificação do núcleo, não é foto da pesquisa.',
+            'premiação divulgada pelo NUPEC. https://nupecifpa.com/pesquisadora-do-nupec-conquista-1o-lugar-na-categoria-ensino-superior-do-premio-jovem-cientista/'
+        ][index],
+    capa: (() => {
+        const image = fs.readFileSync(path.join(__dirname, '../frontend/assets/landing/project-nupec-' + (index + 1) + '.img'));
+        return 'data:image/' + (image[0] === 137 ? 'png' : 'jpeg') + ';base64,' + image.toString('base64');
+    })(),
+    responsavel_nome: 'NUPEC · responsáveis na fonte', eixo: 'pesquisa',
+    aprovacao: 'aprovado', visibilidade: 'publico', situacao: 'A confirmar', vagas: 0
+}));
 app.get('/api/projects', (_req, res) => res.json(projectDemoRows));
 app.get('/api/projects/my', (_req, res) => res.json([]));
 app.get(/^\/api\//, (_req, res) => res.json([]));
@@ -483,8 +516,8 @@ app.get('/:file.html', (req, res, next) => {
     const explicitRole = ['aluno', 'professor', 'admin', 'externo'].includes(req.query.perfil);
     const setDemoSession =
         req.query.visitor === '1'
-            ? "localStorage.removeItem('arcadiaToken');localStorage.removeItem('arcadiaSessao');"
-            : "localStorage.setItem('arcadiaToken','preview:" +
+            ? "localStorage.removeItem('arcadiaToken');localStorage.removeItem('arcadiaSessao');localStorage.setItem('arcadia-preview-visitor','1');"
+            : "localStorage.removeItem('arcadia-preview-visitor');localStorage.setItem('arcadiaToken','preview:" +
               role +
               "');localStorage.setItem('arcadiaSessao'," +
               JSON.stringify(JSON.stringify(person)) +
@@ -492,13 +525,16 @@ app.get('/:file.html', (req, res, next) => {
     const sessionScript =
         req.query.visitor === '1' || explicitRole
             ? setDemoSession
-            : "if (!(localStorage.getItem('arcadiaToken') || '').startsWith('preview:')) {" +
+            : "if (localStorage.getItem('arcadia-preview-visitor') !== '1' && !(localStorage.getItem('arcadiaToken') || '').startsWith('preview:')) {" +
               setDemoSession +
               '}';
     const headerExample = req.query.barra === 'exemplo' ? require('./topbar-example.cjs')() : '';
+    const sourceHtml = fs.readFileSync(file, 'utf8');
+    const previewHtml = req.query.design === 'hibrido' && path.basename(file) === 'index.html'
+        ? require('./hybrid-design-preview.cjs')(sourceHtml)
+        : sourceHtml;
     res.type('html').send(
-        fs
-            .readFileSync(file, 'utf8')
+        previewHtml
             .replace(
                 '<head>',
                 '<head><script>window.ARCADIA_API_BASE=location.origin;' +

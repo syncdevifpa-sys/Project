@@ -2,20 +2,24 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-test('apresentação usa seis mockups atuais, acessíveis, sem dados reais nem scripts externos', () => {
-    const html=fs.readFileSync('frontend/index.html','utf8');
-    const matches=[...html.matchAll(/<img\b[^>]*src="illustrations\/product\/([^"/]+)\.svg"[^>]*>/g)];
-    assert.equal(matches.length,6);
-    for(const [tag,name] of matches) {
-        assert.match(tag,/alt="[^"]*demonstrativ/i);
-        assert.match(tag,/decoding="async"/);
+test('guia separado usa fotos locais, exemplo identificado e conserva os mockups sem conteúdo executável', () => {
+    const html=fs.readFileSync('frontend/tutorial.html','utf8');
+    const photos=[...html.matchAll(/<img\b[^>]*src="(assets\/[^"<>]+)"[^>]*>/g)];
+    assert.ok(photos.length >= 4);
+    for (const [tag, source] of photos) {
+        assert.match(tag,/alt="[^"]+"/);
+        assert.ok(fs.existsSync('frontend/'+source));
+    }
+    assert.match(html,/interface com dados de demonstração/);
+    assert.doesNotMatch(html,/<script[^>]+src="https?:/i);
+    for(const name of ['hero','notices','mobile','documents','calendar','projects']) {
         const svg=fs.readFileSync('frontend/illustrations/product/'+name+'.svg','utf8');
         assert.doesNotMatch(svg,/<script|<foreignObject|Ana Ribeiro|https?:\/\/(?!www\.w3\.org)/i);
         assert.match(svg,/demonstrativ/i);
         assert.ok(Buffer.byteLength(svg)<40000);
-        if(name!=='mobile') assert.match(svg,/Avisos e notícias/);
     }
 });
+
 test('etiqueta de matrícula vazia fica oculta sem remover os controles de foto', () => {
     const html=fs.readFileSync('frontend/settings.html','utf8');
     assert.match(html,/id="confProfileMatricula" hidden/);

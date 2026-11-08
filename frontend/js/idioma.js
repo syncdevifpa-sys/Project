@@ -9,7 +9,7 @@
         pt: { rotulo: 'PT', html: 'pt-BR', aria: 'Idioma: português' },
         en: { rotulo: 'EN', html: 'en', aria: 'Language: English' }
     };
-    const ATRIBUTOS = ['alt', 'aria-label', 'title'];
+    const ATRIBUTOS = ['alt', 'aria-label', 'title', 'placeholder'];
 
     // Título do hero (cada palavra vira uma máscara animada).
     const HERO_EN = 'News, notices and events in a single place.';
@@ -24,6 +24,31 @@
     ];
 
     const EN = {
+        'Início': 'Home', 'Meu espaço': 'My space', 'Conteúdo': 'Content',
+        'Tarefas': 'Tasks', 'Documentos': 'Documents', 'Configurações': 'Settings',
+        'Pessoas': 'People', 'Turmas': 'Classes', 'Minhas turmas': 'My classes',
+        'Administração': 'Administration', 'Gerenciar aplicativo': 'Manage application',
+        'Avisos e notícias': 'Notices and news', 'Notícias e avisos': 'News and notices',
+        'Pesquisar': 'Search', 'Pesquisar áreas do portal': 'Search portal areas',
+        'Meus documentos': 'My documents', 'Materiais públicos': 'Public materials',
+        'Revisão de publicação': 'Publication review', 'Biblioteca de estudo': 'Study library',
+        'Adicionar documento': 'Add document', 'Adicionar pasta': 'Add folder',
+        'Buscar material': 'Search materials', 'Nova tarefa': 'New task',
+        'A fazer': 'To do', 'Tudo': 'All', 'Atrasadas': 'Overdue',
+        'Próximos 7 dias': 'Next 7 days', 'Criar tarefa': 'Create task',
+        'Adicionar': 'Add', 'Situação': 'Status', 'Quadro': 'Board', 'Tabela': 'Table',
+        'Lista': 'List', 'Filtros': 'Filters', 'Todas': 'All', 'Todos': 'All',
+        'Sair': 'Sign out', 'Salvar': 'Save', 'Cancelar': 'Cancel',
+        'Perfil': 'Profile', 'Conta e segurança': 'Account and security',
+        'Aparência': 'Appearance', 'Seus dados': 'Your details',
+        'Notificações': 'Notifications', 'Compartilhamento': 'Sharing',
+        'Correção de nome': 'Name correction', 'Tentar novamente': 'Try again',
+        'Próximo compromisso': 'Next event', 'PRÓXIMO COMPROMISSO': 'NEXT EVENT',
+        'Abrir calendário': 'Open calendar', 'Próximas datas': 'Upcoming dates',
+        'Documentos solicitados': 'Requested documents', 'Minhas disciplinas': 'My subjects',
+        'Ver turmas': 'View classes', 'Ver todos os avisos': 'View all notices',
+        'Termos de uso': 'Terms of use', 'Política de privacidade': 'Privacy policy',
+
         // Cabeçalho, menu e rodapé
         'Pular para o conteúdo': 'Skip to content',
         Plataforma: 'Platform',
@@ -317,7 +342,7 @@
     }
 
     // Partes tratadas à parte: títulos divididos em palavras, hero e o próprio seletor.
-    const IGNORAR = 'script, style, [data-reveal], .hero-title, .lang-switch, .nav-mobile-lang, .phone-week';
+    const IGNORAR = 'script, style, [data-reveal], .hero-title, .lang-switch, .nav-mobile-lang, .phone-week, #painelUserGreeting, .ar-card-desc, .body, #publicNews, #publicProjects, .ar-user-name, .ar-account-visible-name';
 
     // ---- Textos -----------------------------------------------------------------
     const textos = new WeakMap(); // nó de texto → { original, escrito }
@@ -455,7 +480,7 @@
 
     function aplicar() {
         root.lang = IDIOMAS[idioma].html;
-        document.title = idioma === 'pt' ? tituloPt : TITULO_PAGINA_EN;
+        document.title = idioma === 'pt' ? tituloPt : (EN[tituloPt] || (tituloPt.includes('IFPA Campus Belém') ? TITULO_PAGINA_EN : tituloPt));
         traduzirArvore(document.body);
         const titulosMudaram = aplicarTitulos();
         const heroMudou = aplicarHero();
@@ -539,6 +564,8 @@
             });
         }
     }
+
+    window.addEventListener('storage', function(event) { if(event.key === CHAVE) { idioma = lerPreferencia(); aplicar(); } });
 
     window.ArcadiaI18n = {
         idioma: () => idioma,

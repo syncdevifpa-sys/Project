@@ -38,8 +38,20 @@
         }
     }
     function apply(node, key) {
-        const style = resolve(currentOwner() ? preferences()[key] : null);
+        let style = resolve(currentOwner() ? preferences()[key] : null);
         const page = location.pathname.split('/').pop() || 'index.html';
+        /* No painel, azul recebe letras brancas com contraste, sem alterar a preferência salva. */
+        if (page === 'dashboard.html' && style.mode === 'custom' && style.autoContrast !== false) {
+            const rgb = style.background.slice(1).match(/../g).map(value => parseInt(value, 16));
+            if (rgb[2] > rgb[0] && rgb[1] > rgb[0]) {
+                let background = style.background;
+                while (contrast(background, '#ffffff') < 4.5) {
+                    background = '#' + background.slice(1).match(/../g)
+                        .map(value => Math.floor(parseInt(value, 16) * .95).toString(16).padStart(2, '0')).join('');
+                }
+                style = { ...style, background, text: '#ffffff' };
+            }
+        }
         node.classList.toggle(
             'ar-banner-site-default',
             style.mode === 'default' && !!currentOwner() && usesSiteDefault(page)
@@ -52,6 +64,14 @@
         node.classList.toggle('ar-banner-personal', style.mode !== 'default');
         node.style.removeProperty('--personal-banner-bg');
         node.style.removeProperty('--personal-banner-ink');
+        node.classList.toggle('ar-banner-gradient-default', style.mode === 'default' && style.gradient === true);
+        node.style.removeProperty('--default-banner-bg');
+        node.style.removeProperty('--default-banner-ink');
+        if (style.mode === 'default' && style.gradient) {
+            const standard = policy.defaultStyle(page, document.documentElement?.getAttribute('data-accent') || 'lime', key);
+            node.style.setProperty('--default-banner-bg', backgroundCSS({ ...standard, gradient: true }));
+            node.style.setProperty('--default-banner-ink', standard.text);
+        }
         if (style.mode !== 'default') {
             node.style.setProperty(
                 '--personal-banner-bg',
@@ -142,7 +162,15 @@
             gradientLabel.append(gradient, document.createTextNode('Aplicar degradê suave'));
             const gradientHint = document.createElement('small');
             gradientHint.textContent =
-                'Escolha uma cor pronta ou Personalizado. Desmarque para manter a cor lisa.';
+                'Também funciona com Padrão do site. Desmarque para manter a cor lisa.';
+            const contrastLabel = document.createElement('label');
+            contrastLabel.className = 'ar-banner-gradient-toggle';
+            const autoContrast = document.createElement('input');
+            autoContrast.type = 'checkbox';
+            autoContrast.checked = current.autoContrast !== false;
+            contrastLabel.append(autoContrast, document.createTextNode('Ajustar automaticamente a cor do texto'));
+            const contrastHint = document.createElement('small');
+            contrastHint.textContent = 'Nas cores personalizadas, troca o texto por preto ou branco quando faltar contraste. Desmarque para manter a cor escolhida.';
             select.value = current.mode;
             background.value = current.background || '#bdeafa';
             text.value = current.text || '#182020';
@@ -159,15 +187,18 @@
             const feedback = document.createElement('p');
             feedback.setAttribute('role', 'status');
             function sync() {
-                const selected = presets[select.value];
+                const selected = select.value === 'default'
+                    ? policy.defaultStyle(location.pathname.split('/').pop(), document.documentElement.getAttribute('data-accent') || 'lime', key)
+                    : presets[select.value];
                 if (selected) {
                     background.value = selected.background;
                     text.value = selected.text;
                 }
                 fields.hidden = select.value !== 'custom';
                 preview.hidden = select.value !== 'custom' && !selected;
-                gradient.disabled = select.value === 'default' || select.value === 'neutral';
-                const adjusted = readable(background.value, text.value);
+                gradient.disabled = select.value === 'neutral';
+                autoContrast.disabled = ['neutral', 'default'].includes(select.value);
+                const adjusted = autoContrast.checked ? readable(background.value, text.value) : text.value;
                 preview.style.background = backgroundCSS({
                     background: background.value,
                     text: adjusted,
@@ -175,7 +206,9 @@
                 });
                 preview.style.color = adjusted;
                 feedback.textContent =
-                    select.value === 'custom' && adjusted !== text.value
+                    select.value === 'custom' && !autoContrast.checked && contrast(background.value, text.value) < 4.5
+                        ? 'O texto tem pouco contraste com o fundo. A cor escolhida será mantida.'
+                        : select.value === 'custom' && adjusted !== text.value
                         ? 'Essa combinação tem pouco contraste. Ao salvar, o texto será ajustado para ' +
                           (adjusted === '#000000' ? 'preto.' : 'branco.')
                         : '';
@@ -184,6 +217,7 @@
             background.oninput = sync;
             text.oninput = sync;
             gradient.onchange = sync;
+            autoContrast.onchange = sync;
             sync();
             const actions = document.createElement('div');
             actions.className = 'ar-banner-appearance-actions';
@@ -195,7 +229,7 @@
             save.type = 'submit';
             save.textContent = 'Salvar';
             actions.append(cancel, save);
-            form.append(label, fields, gradientLabel, gradientHint, preview, feedback, actions);
+            form.append(label, fields, gradientLabel, gradientHint, contrastLabel, contrastHint, preview, feedback, actions);
             dialog.append(h, note, form);
             document.body.append(dialog);
             form.onsubmit = (event) => {
@@ -204,7 +238,10 @@
                     if (!dialogOwner || dialogOwner !== currentOwner())
                         throw new Error('A conta mudou. Atualize a página.');
                     const value = preferences();
-                    if (select.value === 'default') delete value[key];
+                    if (select.value === 'default') {
+                        if (gradient.checked) value[key] = { mode: 'default', gradient: true };
+                        else delete value[key];
+                    }
                     else
                         value[key] =
                             select.value === 'neutral'
@@ -212,7 +249,8 @@
                                 : {
                                       mode: 'custom',
                                       background: background.value,
-                                      text: readable(background.value, text.value),
+                                      text: autoContrast.checked ? readable(background.value, text.value) : text.value,
+                                      ...(autoContrast.checked ? {} : { autoContrast: false }),
                                       ...(gradient.checked ? { gradient: true } : {})
                                   };
                     localStorage.setItem(storageKey(), JSON.stringify(value));
@@ -265,6 +303,16 @@
         }
     }
     A.classAppearance.hydrate = init;
+    if (typeof MutationObserver !== 'undefined' && document.documentElement) {
+        let lastAccent = document.documentElement.getAttribute('data-accent');
+        new MutationObserver(() => {
+            const accent = document.documentElement.getAttribute('data-accent');
+            if (accent === lastAccent) return;
+            lastAccent = accent;
+            A.bannerBootstrap?.apply();
+            document.querySelectorAll('.ar-banner-gradient-default').forEach(node => apply(node, node.dataset.appearanceKey));
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent'] });
+    }
     window.addEventListener?.('storage', (event) => {
         if (
             event.key === null ||

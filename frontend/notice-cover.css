@@ -141,3 +141,14 @@
     margin-top: 0;
   }
 }
+
+/* Capa panorâmica com recorte e névoa que revela o próprio fundo do banner. */
+.ar-publication-media { width:100%;margin:0 0 20px; }
+.ar-publication-media > .ar-notice-cover { height:clamp(260px,32vw,400px);margin:0;border-radius:14px; }
+.ar-publication-media .ar-notice-cover::after { display:none; }
+.ar-publication-media .ar-notice-cover img { display:block;width:100%;height:100%;max-height:none;object-fit:cover;object-position:center 35%;margin:0 auto;border:0;border-radius:14px;mask-image:linear-gradient(to bottom,#000 0%,#000 68%,transparent 100%); }
+@media(max-width:600px) { .ar-publication-media > .ar-notice-cover { height:300px; } }
+/* Retratos preservam o cartaz: a moldura remove apenas os últimos 4% da base. */
+.ar-publication-media.is-portrait > .ar-notice-cover { height:auto;max-width:420px;margin-inline:auto;aspect-ratio:var(--publication-image-ratio); }
+.ar-publication-media.is-portrait .ar-notice-cover img { width:100%;height:auto;object-fit:contain;object-position:top;mask-image:linear-gradient(to bottom,#000 0%,#000 88%,transparent 100%); }
+@media(max-width:600px) { .ar-publication-media.is-portrait > .ar-notice-cover { max-width:320px;height:auto; } }

@@ -4,7 +4,7 @@
       const policy=window.Arcadia&&window.Arcadia.bannerPreferences;
       if(policy){
         /* Preferências globais: todos os padrões seguem a cor geral; escolhas pessoais continuam intactas. */
-        policy.usesSiteDefault=()=>true;
+        /* As áreas pessoais conservam as cores padrão próprias do modelo anterior. */
         const originalBackgroundCSS=policy.backgroundCSS;
         policy.backgroundCSS=function(style){
           if(!style.gradient)return originalBackgroundCSS(style);
@@ -14,11 +14,6 @@
           const end='#'+[1,3,5].map(offset=>Math.max(0,Math.min(255,Math.round(parseInt(colors[0].slice(offset,offset+2),16)+(parseInt(colors[1].slice(offset,offset+2),16)-parseInt(colors[0].slice(offset,offset+2),16))*1.4))).toString(16).padStart(2,'0')).join('');
           return policy.contrast(end,style.text)>=4.5?base.replace(colors[1],end):base;
         };
-        Object.assign(policy.presets,{
-          cyan:{background:'#55c7e6',text:'#182020'},pink:{background:'#ed82b2',text:'#182020'},
-          yellow:{background:'#f5ce45',text:'#182020'},green:{background:'#9bd268',text:'#182020'},
-          orange:{background:'#f0a05a',text:'#182020'}
-        });
         if(window.Arcadia.bannerBootstrap)window.Arcadia.bannerBootstrap.apply();
       }
       function read(key,fallback){try{return localStorage.getItem(key)||fallback}catch{return fallback}}
@@ -64,7 +59,7 @@
         }
         const auto=document.createElement('button');auto.type='button';auto.className='theme-preview-system';auto.dataset.previewThemeMode='auto';auto.innerHTML=svg('auto');auto.append(document.createTextNode('Sistema'));auto.title='Acompanhar o tema do dispositivo';auto.onclick=()=>setMode('auto');picker.append(auto);
         const hint=picker.closest('.ar-srow')&&picker.closest('.ar-srow').querySelector('.ar-srow-desc');if(hint)hint.textContent='Use as setas para escolher Claro ou Outono, Escuro ou Inverno. Sistema acompanha o dispositivo.';
-        const accents=document.getElementById('accentPickerGroup');const accentHint=accents&&accents.closest('.ar-srow').querySelector('.ar-srow-desc');if(accentHint)accentHint.textContent='Cor geral do site: aplicada à barra lateral e a todas as abas e cartões em Padrão do site. Cores personalizadas de cada item são preservadas.';
+        const accents=document.getElementById('accentPickerGroup');const accentHint=accents&&accents.closest('.ar-srow').querySelector('.ar-srow-desc');if(accentHint)accentHint.textContent='A cor geral vale para as áreas comuns. Meu espaço mantém as cores próprias de cada aba; personalizações individuais são preservadas.';
         update();
       });
     })();

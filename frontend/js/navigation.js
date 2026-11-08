@@ -409,7 +409,7 @@
             else if (!mobile && toggle.parentElement !== document.body) document.body.append(toggle);
             toggleIcon.children[0].setAttribute(
                 'd',
-                mobile ? 'M4 6h16 M4 12h16 M4 18h16' : 'M9 5l7 7-7 7'
+                mobile || collapsed ? 'M4 6h16 M4 12h16 M4 18h16' : 'M9 5l7 7-7 7'
             );
             document.body.classList.toggle('ar-sidebar-collapsed', collapsed);
             document.body.classList.toggle('ar-sidebar-open', mobile && mobileOpen);

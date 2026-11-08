@@ -33,15 +33,17 @@
                         ? policy.pageKey(page, location.search)
                         : 'dashboard:summary:' + slot;
                 const style = policy.resolve(preferences[key]);
-                if (style.mode === 'default' && (slot !== 'page' || !policy.usesSiteDefault(page)))
+                if (style.mode === 'default' && !style.gradient && (slot !== 'page' || !policy.usesSiteDefault(page)))
                     continue;
+                const standard = style.mode === 'default' && style.gradient
+                    ? policy.defaultStyle(page, accent, key) : null;
                 root.setAttribute('data-initial-banner-' + slot, style.mode);
                 root.style.setProperty(
                     '--initial-banner-' + slot + '-bg',
                     style.mode === 'neutral'
                         ? 'var(--surface, var(--color-page, #fff))'
                         : style.mode === 'default'
-                          ? page === 'index.html'
+                          ? standard ? policy.backgroundCSS({ ...standard, gradient: true }) : page === 'index.html'
                               ? 'var(--color-hero-bg)'
                               : 'var(--accent, var(--lime))'
                           : policy.backgroundCSS(style)
@@ -51,7 +53,7 @@
                     style.mode === 'neutral'
                         ? 'var(--ink, var(--color-text, #182020))'
                         : style.mode === 'default'
-                          ? page === 'index.html'
+                          ? standard ? standard.text : page === 'index.html'
                               ? 'var(--color-ink-hero)'
                               : 'var(--accent-ink, #182020)'
                           : style.text

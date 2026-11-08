@@ -1,0 +1,42 @@
+/* Guia de primeiro acesso: fotografia do campus e exemplos concretos da interface. */
+.guide-page { color:var(--color-ink); }
+.guide-hero { display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding-block:48px 32px; }
+.guide-hero h1 { font:400 clamp(38px,4.6vw,66px)/1.05 'Times New Roman',Times,serif;letter-spacing:-.025em;margin:18px 0 24px; }
+.guide-hero p:not(.eyebrow) { font-size:17px;line-height:1.75;color:var(--color-text);max-width:48ch; }
+.guide-hero figure { margin:0; }
+.guide-hero img { display:block;width:100%;height:340px;object-fit:cover;border-radius:24px; }
+.guide-hero figcaption,.guide-interface figcaption { font-size:12px;color:var(--color-text);line-height:1.5;margin-top:12px; }
+.guide-actions { display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:28px; }
+.guide-index { display:flex;flex-wrap:wrap;gap:10px;padding-block:12px 30px; }
+.guide-index a { border:1px solid var(--color-card-border);border-radius:24px;padding:10px 16px;background:var(--surface-card);color:var(--color-ink);font-size:13px;text-decoration:none; }
+.guide-index a:hover { background:var(--surface-sunken); }
+.guide-section { padding-block:44px;scroll-margin-top:100px; }
+.guide-section h2 { font:400 clamp(30px,3.3vw,44px)/1.12 'Times New Roman',Times,serif;max-width:23ch;margin:14px 0 20px;letter-spacing:-.02em; }
+.guide-lead { max-width:70ch;color:var(--color-text);font-size:16px;line-height:1.75; }
+.guide-benefits,.guide-feature-grid { display:grid;gap:18px;margin-top:28px; }
+.guide-benefits { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.guide-feature-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.guide-benefits article,.guide-feature-grid article { border:1px solid var(--color-card-border);border-radius:22px;background:var(--surface-card);padding:28px; }
+.guide-benefits h3,.guide-feature-grid h3,.guide-start h3 { font:400 27px/1.15 'Times New Roman',Times,serif;margin:0 0 14px;color:var(--color-ink); }
+.guide-benefits p,.guide-feature-grid p,.guide-start p { font-size:14px;line-height:1.75;color:var(--color-text);margin:0; }
+.guide-feature-grid .guide-how { margin-top:18px;padding-top:14px;border-top:1px solid var(--color-card-border);font-size:12px; }
+.guide-number { display:inline-block;font-size:12px;background:var(--cyan);color:#182020;border-radius:12px;padding:5px 10px;margin-bottom:20px; }
+.guide-interface { margin:28px 0 0;padding:16px;border:1px solid var(--color-card-border);border-radius:24px;background:var(--surface-card); }
+.guide-interface img { display:block;width:100%;height:auto;border-radius:14px; }
+.guide-photo-pair { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+.guide-photo-pair figure { margin:0;padding:12px;background:var(--surface-card);border:1px solid var(--color-card-border);border-radius:22px; }
+.guide-photo-pair img { display:block;width:100%;height:370px;object-fit:contain;border-radius:12px; }
+.guide-photo-credit { color:var(--color-text);font-size:12px;margin:12px 0 36px; }
+.guide-photo-credit a { color:inherit; }
+.guide-start { list-style:none;padding:0;margin:28px 0;display:grid;gap:16px; }
+.guide-start li { display:flex;align-items:flex-start;gap:22px;background:var(--surface-card);border:1px solid var(--color-card-border);padding:26px;border-radius:22px; }
+.guide-start li>span { display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;border-radius:14px;background:var(--lime);color:#182020;font:400 26px 'Times New Roman',serif; }
+.guide-faq { max-width:900px; }
+.guide-faq details { padding:20px 0;border-bottom:1px solid var(--color-card-border); }
+.guide-faq summary { cursor:pointer;font-size:16px;font-weight:600;line-height:1.5; }
+.guide-faq p { margin:16px 0 0;color:var(--color-text);font-size:14px;line-height:1.8;max-width:75ch; }
+.guide-support { margin-top:24px;font-size:14px; }
+.guide-bottom { display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding-block:12px 48px; }
+.guide-page a:focus-visible,.guide-faq summary:focus-visible { outline:2px solid var(--focus);outline-offset:4px; }
+@media(max-width:850px) { .guide-hero { gap:24px; }.guide-hero img { height:300px; }.guide-benefits { grid-template-columns:1fr; }.guide-photo-pair img { height:300px; } }
+@media(max-width:600px) { .guide-hero { grid-template-columns:1fr;padding-top:28px; }.guide-hero img { height:230px; }.guide-feature-grid,.guide-photo-pair { grid-template-columns:1fr; }.guide-section { padding-block:30px; }.guide-start li { padding:20px;gap:16px; }.guide-feature-grid article { padding:24px; }.guide-hero h1 { font-size:43px; } }

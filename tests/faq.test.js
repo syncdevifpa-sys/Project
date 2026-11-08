@@ -3,18 +3,20 @@ const { test } = require('node:test'),
     fs = require('node:fs'),
     vm = require('node:vm');
 test('FAQ mantém perguntas, responde limites reais e associa botões e painéis acessíveis', () => {
-    const html = fs.readFileSync('frontend/index.html', 'utf8').replace(/\s+/g, ' ');
+    const html = fs.readFileSync('frontend/tutorial.html', 'utf8').replace(/\s+/g, ' ');
     for (const question of [
-        'Quem pode usar a Arcadia?',
+        'Quem pode usar a Arcádia?',
         'Há alguma taxa de assinatura?',
         'Como meu vínculo é verificado?',
-        'A Arcadia substitui o SIGAA?',
+        'A Arcádia substitui o SIGAA?',
         'Funciona no celular?'
     ])
         assert.ok(html.includes(question));
     assert.match(html, /Comunidade externa/);
+    assert.ok((html.match(/<details>/g) || []).length >= 5, 'FAQ usa controles nativos acessíveis no guia');
+    assert.doesNotMatch(fs.readFileSync('frontend/index.html', 'utf8'), /class="guide-faq"/, 'guia não ocupa o Início');
     assert.match(html, /Google permite entrar em uma conta já cadastrada/);
-    assert.match(html, /recuperação de senha depende do serviço/);
+    assert.match(html, /recuperação de senha depende do serviço/i);
     assert.match(html, /validação administrativa/);
     assert.match(html, /não gera um documento oficial automaticamente/);
     const panel = {

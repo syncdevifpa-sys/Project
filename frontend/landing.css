@@ -1970,3 +1970,73 @@ a:not(.btn):not(.wordmark):focus-visible {
 [data-theme='dark'] .feature-figure {
   border-color: var(--color-on-navy-line);
 }
+
+/* Destaque do campus: fotografia com área de leitura independente do tema. */
+.home-campus-banner { display:none; }
+[data-home-view='connected'] .home-campus-banner {
+  display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+  margin-block:32px 0; border:1px solid var(--color-card-border);
+  border-radius:24px; overflow:hidden; background:var(--surface-card);
+}
+.home-campus-banner > img { width:100%;height:100%;min-height:260px;max-height:340px;object-fit:cover; }
+.home-campus-banner-content { padding:clamp(24px,4vw,48px);align-self:center; }
+.home-campus-banner-content h1 { font-family:'Times New Roman',Times,serif;font-size:clamp(32px,4vw,52px);font-weight:400;line-height:1.05;margin:10px 0 16px;color:var(--color-ink); }
+.home-campus-banner-content p { color:var(--text-muted,var(--color-ink)); }
+.home-campus-banner-content .btn { margin-top:20px; }
+.home-news-search { display:grid;gap:8px;max-width:480px;margin-top:24px;font-size:14px;color:var(--color-ink); }
+.home-news-search input { min-width:0;width:100%;min-height:46px;padding:12px 16px;border:1px solid var(--control-border,var(--color-card-border));border-radius:24px;background:var(--surface-card);color:var(--color-ink);font:inherit; }
+.home-news-search input:focus-visible { outline:2px solid var(--focus,#176b9a);outline-offset:3px; }
+@media(max-width:640px) {
+  [data-home-view='connected'] .home-campus-banner { grid-template-columns:1fr; }
+  .home-campus-banner > img { min-height:0;height:180px; }
+}
+
+/* Rodapé com os acessos e documentos que já faziam parte do portal. */
+.site-footer .footer-inner { display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:20px 40px;align-items:start;padding-block:40px; }
+.site-footer .wordmark--footer { grid-column:1; }
+.site-footer .footer-about { grid-column:1;grid-row:2;font-size:14px;line-height:1.6;color:var(--color-text); }
+.site-footer nav { grid-row:1 / span 2; }
+.site-footer nav h2 { font-family:var(--font-sans);font-size:13px;font-weight:600;margin:0 0 16px;color:var(--color-ink); }
+.site-footer .footer-links { display:flex;flex-direction:column;align-items:flex-start;gap:12px; }
+.site-footer .footer-links a { font-size:13px;overflow-wrap:anywhere; }
+.site-footer .footer-end { grid-column:1 / -1;justify-content:space-between;border-top:1px solid var(--color-card-border);padding-top:20px; }
+@media(max-width:700px) { .site-footer .footer-inner { grid-template-columns:1fr 1fr;gap:24px; }.site-footer .wordmark--footer,.site-footer .footer-about { grid-column:1 / -1;grid-row:auto; }.site-footer nav { grid-row:auto;min-width:0; } }
+@media(max-width:420px) { .site-footer .footer-inner { grid-template-columns:1fr; }.site-footer nav { grid-column:1; } }
+
+/* Tutorial restaurado: três passos visíveis mesmo sem autenticação. */
+.restored-tutorial { padding-block:56px; }
+.restored-tutorial .section-header-centered { text-align:center;max-width:760px;margin:0 auto 28px; }
+.restored-tutorial .section-title { font-size:clamp(30px,4vw,48px); }
+.restored-tutorial .eyebrow-pill { display:inline-block;background:var(--surface-card);padding:7px 14px;border-radius:20px;font-size:12px;margin-bottom:16px; }
+.restored-tutorial .steps-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;list-style:none;padding:0; }
+.restored-tutorial .step-box { border:1px solid var(--color-card-border);border-radius:22px;overflow:hidden;background:var(--surface-card); }
+.restored-tutorial .step-banner { height:130px;display:grid;place-items:center;background:#caeaf2; }
+.restored-tutorial .step-banner--red { background:#f4c6dd; }
+.restored-tutorial .step-banner--green { background:#c9edb0; }
+.restored-tutorial .step-shape-wrap { width:90px;height:90px;position:relative;display:grid;place-items:center; }
+.restored-tutorial .step-shape-wrap svg { position:absolute;width:80px;height:80px; }
+.restored-tutorial .step-number { position:relative;font-size:30px;color:#182020;font-family:'Times New Roman',serif; }
+.restored-tutorial .step-body { padding:24px; }
+.restored-tutorial .step-title { font-size:25px;margin:0 0 12px;font-family:'Times New Roman',serif;color:var(--color-ink); }
+.restored-tutorial .step-desc { font-size:14px;line-height:1.6;color:var(--color-text); }
+@media(max-width:650px) { .restored-tutorial .steps-grid { grid-template-columns:1fr; } }
+
+/* O Início recebe visitantes e contas conectadas; a apresentação completa fica no guia. */
+.home-campus-banner { display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);margin-block:32px 0;border:1px solid var(--color-card-border);border-radius:24px;overflow:hidden;background:var(--surface-card); }
+@media(max-width:640px) { .home-campus-banner { grid-template-columns:1fr; } }
+
+/* Início enxuto: navegação alinhada e informações extras apenas por escolha do visitante. */
+.home-content-page .site-nav { gap:24px;justify-content:space-between; }
+.home-content-page .site-nav .nav-links { margin:0 0 0 auto;gap:24px; }
+.home-content-page .site-nav .nav-actions { gap:12px; }
+.home-content-page .site-nav .wordmark-name { font-size:32px; }
+.home-content-page .home-campus-banner { margin-top:24px; }
+.home-content-page .home-campus-banner > img { min-height:240px;max-height:280px; }
+.home-content-page .home-campus-banner-content { padding:28px 36px; }
+.home-content-page .home-campus-banner-content h1 { font-size:clamp(32px,3.5vw,46px); }
+.home-visitor-actions,.home-member-actions { display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:20px; }
+.home-campus-banner-content :is(.home-visitor-actions,.home-member-actions) .btn { margin-top:0; }
+.home-more-info { font-size:14px; }
+html[data-home-connected='true'] .home-visitor-actions,html:not([data-home-connected='true']) .home-member-actions { display:none; }
+@media(max-width:1000px) { .home-content-page .site-nav .nav-links { display:none; } }
+@media(max-width:640px) { .home-content-page .home-campus-banner > img { min-height:0;height:150px; }.home-content-page .home-campus-banner-content { padding:24px; }.home-content-page .site-nav { gap:12px; } }

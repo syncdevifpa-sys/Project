@@ -3,6 +3,17 @@ const { test } = require('node:test'),
     fs = require('node:fs'),
     vm = require('node:vm');
 const policy = require('../frontend/js/banner-preferences');
+
+test('contraste automático é padrão e pode ser desativado sem mudar a cor escolhida', () => {
+    const custom = { mode: 'custom', background: '#ffffff', text: '#eeeeee', autoContrast: false };
+    const manual = policy.resolve(custom);
+    assert.equal(manual.text, '#eeeeee');
+    assert.equal(manual.autoContrast, false);
+    assert.equal(fixture('calendar.html', { 'page:calendar.html:0': manual }).styles.get('--initial-banner-page-ink'), '#eeeeee');
+    const automatic = policy.resolve({ ...custom, autoContrast: true });
+    assert.equal(automatic.text, '#000000');
+    assert.ok(policy.contrast(automatic.background, automatic.text) >= 4.5);
+});
 test('Início usa fundo e texto do mesmo tema desde a primeira renderização', () => {
     const f = fixture('index.html');
     assert.equal(f.styles.get('--initial-banner-page-bg'), 'var(--color-hero-bg)');
@@ -86,6 +97,30 @@ test('bootstrap aplica padrão global antes do DOM e preserva exceções Meu esp
         'community.html'
     ])
         assert.equal(fixture(page).attrs.has('data-initial-banner-page'), false);
+});
+
+test('degradê padrão persiste sem congelar a cor e acompanha mudanças do destaque', () => {
+    const preference = { mode: 'default', gradient: true };
+    assert.deepEqual(policy.resolve(JSON.parse(JSON.stringify(preference))), preference);
+    const f = fixture('calendar.html', { 'page:calendar.html:0': preference });
+    assert.match(f.styles.get('--initial-banner-page-bg'), /linear-gradient/);
+    assert.ok(f.styles.get('--initial-banner-page-bg').includes(policy.presets.green.background));
+    f.storage.set('arcadia-theme-accent', 'pink');
+    f.apply();
+    assert.ok(f.styles.get('--initial-banner-page-bg').includes(policy.presets.pink.background));
+    assert.deepEqual(JSON.parse(f.storage.get('arcadia-class-banner-styles:7'))['page:calendar.html:0'], preference);
+    const docs = fixture('documents.html', { 'page:documents.html:0': preference });
+    assert.ok(docs.styles.get('--initial-banner-page-bg').includes(policy.presets.pink.background));
+    docs.storage.set('arcadia-class-banner-styles:7', '{}');
+    docs.apply();
+    assert.equal(docs.attrs.has('data-initial-banner-page'), false);
+});
+
+test('atalhos e cores padrão compartilham os mesmos valores', () => {
+    for (const [page, preset] of [['documents.html', 'pink'], ['tasks.html', 'yellow'], ['community.html', 'cyan']])
+        assert.deepEqual(policy.defaultStyle(page), policy.presets[preset]);
+    for (const accent of ['cyan', 'pink', 'yellow', 'white', 'navy'])
+        assert.deepEqual(policy.defaultStyle('calendar.html', accent), policy.presets[accent]);
 });
 test('customização, contraste, Sem cor e reset usam a mesma regra do editor', () => {
     const f = fixture('calendar.html', {
