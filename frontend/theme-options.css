@@ -324,6 +324,8 @@ html[data-motion='reduced'][data-preview-season] :is(.btn-pill,.btn-submit,.ar-b
 
 /* Edição de projetos e demais conteúdos usa a mesma ferramenta discreta. */
 .ar-content-edit { align-self:flex-end; margin-top:8px; border-color:transparent; background:transparent; color:var(--ink-muted); }
+.ar-project-delete { align-self:flex-end; border-color:transparent; background:transparent; color:var(--ink-muted); }
+.ar-project-delete:hover { color:var(--danger); }
 #gridProjetos .ar-card { transition:box-shadow .16s ease; }
 @media (hover:hover) {
   #gridProjetos .ar-card:hover { box-shadow:0 6px 20px #547fa824; }
