@@ -82,7 +82,8 @@
         ]) {
             const button = make('button', text);
             button.type = 'button';
-            button.className = 'ar-btn ar-btn--quiet';
+            button.className = 'ar-iconbtn';
+            button.title = label;
             button.setAttribute('aria-label', label);
             button.addEventListener('click', () => changeMonth(shiftMonth(state.month, offset)));
             controls.append(button);

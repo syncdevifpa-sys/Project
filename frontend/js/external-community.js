@@ -13,6 +13,7 @@
         const n = el('button', text, 'ar-btn ar-btn--secondary');
         n.type = 'button';
         n.onclick = fn;
+        A.compactAction?.(n, text);
         return n;
     };
     function dialog(title) {

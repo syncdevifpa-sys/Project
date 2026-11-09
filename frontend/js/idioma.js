@@ -7,7 +7,8 @@
     const CHAVE = 'arcadia-lang';
     const IDIOMAS = {
         pt: { rotulo: 'PT', html: 'pt-BR', aria: 'Idioma: português' },
-        en: { rotulo: 'EN', html: 'en', aria: 'Language: English' }
+        en: { rotulo: 'EN', html: 'en', aria: 'Language: English' },
+        es: { rotulo: 'ES', html: 'es', aria: 'Idioma: español' }
     };
     const ATRIBUTOS = ['alt', 'aria-label', 'title', 'placeholder'];
 
@@ -211,7 +212,7 @@
         'Discente ·': 'Student ·',
         Desenvolvimento: 'Systems',
         'de Sistemas': 'Development',
-        Calendário: 'Academic',
+        Calendário: 'Calendar',
         acadêmico: 'calendar',
         Agenda: 'Schedule',
         'Novembro de 2026': 'November 2026',
@@ -314,6 +315,112 @@
             'IFPA PSU 2027 poster showing the Campus Belém building'
     };
 
+    /* Traduções locais da interface; não dependem de serviços de terceiros. */
+    Object.assign(EN, {
+        'Tarefas desta semana':'Tasks this week', 'seg a dom':'Mon to Sun',
+        'Entregas no prazo seguidas':'Consecutive on-time submissions', 'seguida':'in a row', 'seguidas':'in a row',
+        'SEM DATA':'NO DATE', 'Sem data':'No date', 'MAIS TARDE':'LATER', 'HOJE':'TODAY', 'ATRASADAS':'OVERDUE',
+        'Marcar como lidos':'Mark as read', 'em andamento':'in progress', 'dia todo':'all day',
+        'Hoje':'Today', 'hoje':'today', 'Amanhã':'Tomorrow', 'amanhã':'tomorrow',
+        'Seg':'Mon', 'Ter':'Tue', 'Qua':'Wed', 'Qui':'Thu', 'Sex':'Fri', 'Sáb':'Sat', 'Dom':'Sun',
+        'Segunda':'Monday', 'Terça':'Tuesday', 'Quarta':'Wednesday', 'Quinta':'Thursday', 'Sexta':'Friday', 'Sábado':'Saturday', 'Domingo':'Sunday',
+        'JAN':'JAN', 'FEV':'FEB', 'MAR':'MAR', 'ABR':'APR', 'MAI':'MAY', 'JUN':'JUN', 'JUL':'JUL', 'AGO':'AUG', 'SET':'SEP', 'OUT':'OCT', 'NOV':'NOV', 'DEZ':'DEC',
+        'Eventos':'Events', 'Acadêmico':'Academic', 'Matrículas':'Enrollment', 'Nenhuma tarefa':'No tasks',
+        'Nada vence hoje. Bom momento pra adiantar o que vem pela frente.':'Nothing is due today. A good time to get ahead.',
+        'Tudo em dia por aqui. Aproveite o dia!':'You are all caught up. Enjoy your day!',
+        'te esperando.':'waiting for you.', 'no calendário':'on the calendar', 'pra hoje':'due today', 'Hoje você tem':'Today you have',
+        'Zerou tudo por aqui!':'All caught up!', 'Nenhuma tarefa pendente. Que tal planejar a próxima semana?':'No pending tasks. How about planning next week?',
+        'Ver avisos':'View notices', 'Ver tarefas':'View tasks', 'Ver documentos':'View documents',
+        'Enviar projeto':'Submit project', 'Criar publicação':'Create post', 'Exportar CSV':'Export CSV',
+        'Editar':'Edit', 'Excluir':'Delete', 'Baixar':'Download', 'Iniciar':'Start', 'Concluir':'Complete',
+        'Adicionar tarefa':'Add task', 'Editar tarefa':'Edit task', 'Iniciar tarefa':'Start task', 'Concluir tarefa':'Complete task',
+        'Pesquisar notícias e avisos':'Search news and notices', 'Buscar avisos...':'Search notices...',
+        'Adicionar tarefa e pressionar Enter':'Add a task and press Enter', 'Responsável':'Person responsible',
+        'Nenhum documento solicitado ainda.':'No documents requested yet.', 'Solicitar':'Request',
+        'Ordenar por':'Sort by', 'Mais recentes':'Newest first', 'Mais antigos':'Oldest first',
+        'Prazo mais próximo':'Nearest deadline', 'Título A–Z':'Title A–Z', 'Título Z–A':'Title Z–A',
+        'Publicado':'Published', 'Rascunho':'Draft', 'Arquivado':'Archived', 'Notícia':'News', 'Aviso':'Notice',
+        'Abrir publicação':'Open post', 'Ler publicação completa':'Read full post', 'Buscar projetos':'Search projects',
+        'Pesquisa':'Research', 'Extensão':'Outreach', 'Ensino':'Teaching', 'Inovação':'Innovation',
+        'Ativo':'Active', 'Encerrado':'Closed', 'Em seleção':'Selection in progress', 'Em andamento':'In progress',
+        'Fundo':'Background', 'Texto':'Text', 'Estilo':'Style', 'Personalizado':'Custom', 'Padrão do site':'Site default',
+        'Aparência do banner':'Banner appearance', 'Aplicar degradê suave':'Apply a subtle gradient',
+        'Ajustar automaticamente a cor do texto':'Automatically adjust text color',
+        'Nenhum evento encontrado.':'No events found.', 'Mês anterior':'Previous month', 'Próximo mês':'Next month',
+        'Mês exibido':'Displayed month', 'Calendário acadêmico':'Academic calendar',
+        'Abrir menu de navegação':'Open navigation menu', 'Recolher navegação':'Collapse navigation',
+        'Abrir opções da conta':'Open account options', 'Prévia local':'Local preview',
+        '· Dados fictícios em memória · Sem banco ou e-mail':'· Sample data in memory · No database or email'
+    });
+    const ES = {
+        'Início':'Inicio', 'Meu espaço':'Mi espacio', 'Conteúdo':'Contenido', 'Tarefas':'Tareas',
+        'Documentos':'Documentos', 'Configurações':'Configuración', 'Pessoas':'Personas', 'Turmas':'Clases',
+        'Minhas turmas':'Mis clases', 'Administração':'Administración', 'Gerenciar aplicativo':'Administrar aplicación',
+        'Avisos e notícias':'Avisos y noticias', 'Notícias e avisos':'Noticias y avisos', 'Pesquisar':'Buscar',
+        'Pesquisar áreas do portal':'Buscar secciones del portal', 'Meu painel':'Mi panel', 'Minha conta':'Mi cuenta',
+        'Meus documentos':'Mis documentos', 'Materiais públicos':'Materiales públicos', 'Revisão de publicação':'Revisión de publicación',
+        'Biblioteca de estudo':'Biblioteca de estudio', 'Adicionar documento':'Añadir documento', 'Adicionar pasta':'Añadir carpeta',
+        'Buscar material':'Buscar material', 'Nova tarefa':'Nueva tarea', 'A fazer':'Por hacer', 'Tudo':'Todo', 'Atrasadas':'Atrasadas',
+        'Próximos 7 dias':'Próximos 7 días', 'Criar tarefa':'Crear tarea', 'Adicionar':'Añadir', 'Situação':'Estado',
+        'Quadro':'Tarjetas', 'Tabela':'Tabla', 'Lista':'Lista', 'Filtros':'Filtros', 'Todas':'Todas', 'Todos':'Todos',
+        'Sair':'Cerrar sesión', 'Salvar':'Guardar', 'Cancelar':'Cancelar', 'Fechar':'Cerrar', 'Perfil':'Perfil',
+        'Conta e segurança':'Cuenta y seguridad', 'Aparência':'Apariencia', 'Seus dados':'Tus datos',
+        'Notificações':'Notificaciones', 'Compartilhamento':'Compartir', 'Correção de nome':'Corrección de nombre',
+        'Tentar novamente':'Intentar de nuevo', 'Próximo compromisso':'Próximo evento', 'PRÓXIMO COMPROMISSO':'PRÓXIMO EVENTO',
+        'Abrir calendário':'Abrir calendario', 'Próximas datas':'Próximas fechas', 'Documentos solicitados':'Documentos solicitados',
+        'Minhas disciplinas':'Mis asignaturas', 'Ver turmas':'Ver clases', 'Ver todos os avisos':'Ver todos los avisos',
+        'Termos de Uso':'Términos de uso', 'Termos de uso':'Términos de uso', 'Política de Privacidade':'Política de privacidad',
+        'Política de privacidade':'Política de privacidad', 'Política de Cookies':'Política de cookies',
+        'Preferências de cookies':'Preferencias de cookies', 'Cookies e sua privacidade':'Cookies y tu privacidad',
+        'Aceitar':'Aceptar', 'Rejeitar':'Rechazar', 'Entrar':'Iniciar sesión', 'Criar conta':'Crear cuenta',
+        'Plataforma':'Plataforma', 'Notícias':'Noticias', 'Para quem':'Para quién', 'Como funciona':'Cómo funciona',
+        'Dúvidas':'Preguntas', 'Idioma':'Idioma', 'Mapa do campus':'Mapa del campus', 'Projetos':'Proyectos',
+        'Projetos da comunidade':'Proyectos de la comunidad', 'Mais informações →':'Más información →',
+        'Tarefas desta semana':'Tareas de esta semana', 'seg a dom':'lun a dom',
+        'Olá,':'Hola,',
+        'Entregas no prazo seguidas':'Entregas consecutivas a tiempo', 'seguida':'consecutiva', 'seguidas':'consecutivas',
+        'SEM DATA':'SIN FECHA', 'Sem data':'Sin fecha', 'MAIS TARDE':'MÁS ADELANTE', 'HOJE':'HOY', 'ATRASADAS':'ATRASADAS',
+        'Marcar como lidos':'Marcar como leídos', 'em andamento':'en curso', 'dia todo':'todo el día',
+        'Hoje':'Hoy', 'hoje':'hoy', 'Amanhã':'Mañana', 'amanhã':'mañana',
+        'Seg':'Lun', 'Ter':'Mar', 'Qua':'Mié', 'Qui':'Jue', 'Sex':'Vie', 'Sáb':'Sáb', 'Dom':'Dom',
+        'Segunda':'Lunes', 'Terça':'Martes', 'Quarta':'Miércoles', 'Quinta':'Jueves', 'Sexta':'Viernes', 'Sábado':'Sábado', 'Domingo':'Domingo',
+        'JAN':'ENE', 'FEV':'FEB', 'MAR':'MAR', 'ABR':'ABR', 'MAI':'MAY', 'JUN':'JUN', 'JUL':'JUL', 'AGO':'AGO', 'SET':'SEP', 'OUT':'OCT', 'NOV':'NOV', 'DEZ':'DIC',
+        'Eventos':'Eventos', 'Acadêmico':'Académico', 'Matrículas':'Matrículas', 'Nenhuma tarefa':'No hay tareas',
+        'Nada vence hoje. Bom momento pra adiantar o que vem pela frente.':'Hoy no vence nada. Es un buen momento para adelantar lo que viene.',
+        'Tudo em dia por aqui. Aproveite o dia!':'¡Todo al día! Disfruta del día.',
+        'te esperando.':'te esperan.', 'no calendário':'en el calendario', 'pra hoje':'para hoy', 'Hoje você tem':'Hoy tienes',
+        'Zerou tudo por aqui!':'¡Todo terminado!', 'Nenhuma tarefa pendente. Que tal planejar a próxima semana?':'No hay tareas pendientes. ¿Qué tal planificar la próxima semana?',
+        'Ver avisos':'Ver avisos', 'Ver tarefas':'Ver tareas', 'Ver documentos':'Ver documentos', 'Enviar projeto':'Enviar proyecto',
+        'Criar publicação':'Crear publicación', 'Exportar CSV':'Exportar CSV', 'Editar':'Editar', 'Excluir':'Eliminar',
+        'Baixar':'Descargar', 'Iniciar':'Iniciar', 'Concluir':'Completar', 'Adicionar tarefa':'Añadir tarea',
+        'Editar tarefa':'Editar tarea', 'Iniciar tarefa':'Iniciar tarea', 'Concluir tarefa':'Completar tarea',
+        'Pesquisar notícias e avisos':'Buscar noticias y avisos', 'Buscar avisos...':'Buscar avisos...',
+        'Adicionar tarefa e pressionar Enter':'Añadir tarea y pulsar Intro', 'Responsável':'Responsable',
+        'Nenhum documento solicitado ainda.':'Todavía no hay documentos solicitados.', 'Solicitar':'Solicitar',
+        'Ordenar por':'Ordenar por', 'Mais recentes':'Más recientes', 'Mais antigos':'Más antiguos',
+        'Prazo mais próximo':'Fecha límite más próxima', 'Título A–Z':'Título A–Z', 'Título Z–A':'Título Z–A',
+        'Publicado':'Publicado', 'Rascunho':'Borrador', 'Arquivado':'Archivado', 'Notícia':'Noticia', 'Aviso':'Aviso',
+        'Abrir publicação':'Abrir publicación', 'Ler publicação completa':'Leer publicación completa', 'Buscar projetos':'Buscar proyectos',
+        'Pesquisa':'Investigación', 'Extensão':'Extensión', 'Ensino':'Enseñanza', 'Inovação':'Innovación',
+        'Ativo':'Activo', 'Encerrado':'Finalizado', 'Em seleção':'En selección', 'Em andamento':'En curso',
+        'Fundo':'Fondo', 'Texto':'Texto', 'Estilo':'Estilo', 'Personalizado':'Personalizado', 'Padrão do site':'Predeterminado del sitio',
+        'Aparência do banner':'Apariencia del banner', 'Aplicar degradê suave':'Aplicar degradado suave',
+        'Ajustar automaticamente a cor do texto':'Ajustar automáticamente el color del texto',
+        'Nenhum evento encontrado.':'No se encontraron eventos.', 'Mês anterior':'Mes anterior', 'Próximo mês':'Mes siguiente',
+        'Mês exibido':'Mes mostrado', 'Calendário':'Calendario', 'Calendário acadêmico':'Calendario académico',
+        'Abrir menu de navegação':'Abrir menú de navegación', 'Recolher navegação':'Contraer navegación',
+        'Abrir opções da conta':'Abrir opciones de la cuenta', 'Prévia local':'Vista previa local',
+        '· Dados fictícios em memória · Sem banco ou e-mail':'· Datos de ejemplo en memoria · Sin base de datos ni correo',
+        'Notícias e avisos do campus':'Noticias y avisos del campus',
+        'E-mail':'Correo electrónico', 'Senha':'Contraseña', 'Manter conectado':'Mantener sesión iniciada',
+        'Esqueci minha senha':'Olvidé mi contraseña', 'Bem-vindo de volta':'Bienvenido de nuevo',
+        'Informe os dados da sua conta':'Introduce los datos de tu cuenta', 'Entrar com Google':'Iniciar sesión con Google',
+        'Aluno':'Estudiante', 'Alunos':'Estudiantes', 'Professor':'Profesor', 'Professores':'Profesores',
+        'Servidor':'Personal', 'Servidores':'Personal', 'Público externo':'Público externo', 'Comunidade externa':'Comunidad externa',
+        'Título':'Título', 'Resumo':'Resumen', 'Descrição':'Descripción', 'Texto completo':'Texto completo',
+        'Categoria':'Categoría', 'Prazo':'Fecha límite', 'Vagas':'Plazas', 'Tipo':'Tipo', 'Referência':'Referencia'
+    };
+
     const root = document.documentElement;
     const normalizar = (s) => s.replace(/\s+/g, ' ').trim();
 
@@ -328,13 +435,122 @@
     }
     let idioma = lerPreferencia();
 
+    function traduzirModelo(chave) {
+        const es = idioma === 'es';
+        if (chave === '1 aviso novo') return es ? '1 aviso nuevo' : '1 new notice';
+        if (chave === '1 compromisso') return es ? '1 evento' : '1 event';
+        if (chave === '1 entrega') return es ? '1 entrega' : '1 submission';
+        const modelos = [
+            [/^de (\d+) concluídas$/, es ? 'de $1 completadas' : 'of $1 completed'],
+            [/^em (\d+) dias$/, es ? 'en $1 días' : 'in $1 days'],
+            [/^(\d+) avisos? novos?$/, es ? '$1 avisos nuevos' : '$1 new notices'],
+            [/^(\d+) compromissos?$/, es ? '$1 eventos' : '$1 events'],
+            [/^(\d+) entregas?$/, es ? '$1 entregas' : '$1 submissions'],
+            [/^(\d+) tarefas? atrasadas?$/, es ? '$1 tareas atrasadas' : '$1 overdue tasks'],
+            [/^Exibindo (\d+) tarefas?$/, es ? 'Mostrando $1 tareas' : 'Showing $1 tasks'],
+            [/^(\d+) publicações$/, es ? '$1 publicaciones' : '$1 posts'],
+            [/^(\d+) de (\d+) projetos?$/, es ? '$1 de $2 proyectos' : '$1 of $2 projects'],
+            [/^recorde: (\d+)$/, es ? 'récord: $1' : 'best: $1'],
+            [/^(Domingo|Segunda|Terça|Quarta|Quinta|Sexta|Sábado): hoje$/, null],
+            [/^(Editar|Excluir|Iniciar|Concluir|Baixar)( tarefa| documento| projeto| publicação)?: (.+)$/, null]
+        ];
+        for (const [padrao, troca] of modelos) {
+            const match = chave.match(padrao);
+            if (!match) continue;
+            if (troca) return chave.replace(padrao, troca);
+            if (chave.endsWith(': hoje')) return (es ? ES : EN)[match[1]] + (es ? ': hoy' : ': today');
+            return (es ? ES : EN)[match[1]] + ': ' + match[3];
+        }
+        const dias = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+        const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+        const data = chave.toLowerCase().match(/^(domingo|segunda(?:-feira)?|terça(?:-feira)?|quarta(?:-feira)?|quinta(?:-feira)?|sexta(?:-feira)?|sábado), (\d{1,2}) de ([a-zç]+)(?: de (\d{4}))?$/);
+        if (data && meses.includes(data[3])) {
+            const weekday = dias.indexOf(data[1].replace('-feira',''));
+            const wd = (es ? ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'] : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'])[weekday];
+            const month = (es ? ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'] : ['January','February','March','April','May','June','July','August','September','October','November','December'])[meses.indexOf(data[3])];
+            return es ? wd + ', ' + data[2] + ' de ' + month + (data[4] ? ' de ' + data[4] : '') : wd + ', ' + month + ' ' + data[2] + (data[4] ? ', ' + data[4] : '');
+        }
+        return null;
+    }
+
+    /* O motor do navegador trabalha no dispositivo; não envia textos a um servidor. */
+    let motorLocal = null, idiomaMotor = '', preparando = '', versaoIdioma = 0;
+    let filaLocal = Promise.resolve();
+    const cacheLocal = new Map();
+    function informarTraducao(message, retry = false) {
+        let area = document.querySelector('.ar-i18n-status');
+        if (!area) {
+            area = document.createElement('li');
+            area.className = 'ar-i18n-status';
+            document.getElementById('langMenu')?.append(area);
+        }
+        area.replaceChildren();
+        const text = document.createElement('p');
+        text.setAttribute('role','status');
+        text.textContent = message;
+        area.append(text);
+        if (retry) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = idioma === 'es' ? 'Traducir en este dispositivo' : 'Translate on this device';
+            button.onclick = () => prepararLocal(true);
+            area.append(button);
+        }
+    }
+    async function prepararLocal(gesto = false) {
+        const alvo = idioma;
+        if (alvo === 'pt' || preparando === alvo || idiomaMotor === alvo && motorLocal) return;
+        if (!window.Translator) {
+            informarTraducao(alvo === 'es' ? 'Este navegador no ofrece traducción local. Se conserva el contenido original.' : 'This browser does not offer local translation. Original content is preserved.');
+            return;
+        }
+        preparando = alvo;
+        try {
+            const options = { sourceLanguage:'pt', targetLanguage:alvo };
+            const available = await window.Translator.availability(options);
+            if (available === 'unavailable') throw Error('unavailable');
+            if (!gesto && available !== 'available') {
+                informarTraducao(alvo === 'es' ? 'Activa la traducción local para descargar el idioma.' : 'Enable local translation to download the language.', true);
+                return;
+            }
+            informarTraducao(alvo === 'es' ? 'Preparando traducción local…' : 'Preparing local translation…');
+            const engine = await window.Translator.create(options);
+            if (idioma !== alvo) { engine.destroy?.(); return; }
+            motorLocal?.destroy?.();
+            motorLocal = engine;
+            idiomaMotor = alvo;
+            informarTraducao(alvo === 'es' ? 'Traducción automática en este dispositivo. Elige PT para ver el original.' : 'Automatic translation on this device. Choose PT to view the original.');
+            traduzirArvore(document.body);
+        } catch (failure) {
+            if (idioma !== alvo) return;
+            informarTraducao(alvo === 'es' ? 'Traducción local no disponible. El contenido original se conserva.' : 'Local translation is unavailable. Original content is preserved.', failure?.name === 'NotAllowedError');
+        } finally { if (preparando === alvo) preparando = ''; }
+    }
+    function traduzirLocal(original, aplicarResultado) {
+        if (!motorLocal || idiomaMotor !== idioma || !original.trim() || /^[\d\s\W]+$/.test(original) || /https?:\/\/|\S+@\S+/.test(original)) return;
+        const version = versaoIdioma, engine = motorLocal, lang = idioma;
+        const key = lang + ':' + original;
+        if (cacheLocal.has(key)) { aplicarResultado(cacheLocal.get(key)); return; }
+        filaLocal = filaLocal.catch(() => {}).then(async () => {
+            if (version !== versaoIdioma || lang !== idioma) return;
+            const translated = cacheLocal.get(key) || await engine.translate(original);
+            if (typeof translated !== 'string' || !translated.trim()) return;
+            if (cacheLocal.size >= 500) cacheLocal.delete(cacheLocal.keys().next().value);
+            cacheLocal.set(key, translated);
+            if (version === versaoIdioma && lang === idioma) aplicarResultado(translated);
+        }).catch(() => { /* Falha mantém o original, sem confirmar uma tradução incompleta. */ });
+    }
+
     // Tradução de um texto em português para o idioma atual (null = sem tradução).
     function traduzir(pt) {
         if (idioma === 'pt') return pt;
         const chave = normalizar(pt);
-        if (Object.prototype.hasOwnProperty.call(EN, chave)) return EN[chave];
-        for (const [padrao, troca] of PADROES_EN) if (padrao.test(chave)) return chave.replace(padrao, troca);
-        return null;
+        const dictionary = idioma === 'es' ? ES : EN;
+        if (Object.prototype.hasOwnProperty.call(dictionary, chave)) return dictionary[chave];
+        const model = traduzirModelo(chave);
+        if (model !== null) return model;
+        if (idioma === 'en') for (const [padrao, troca] of PADROES_EN) if (padrao.test(chave)) return chave.replace(padrao, troca);
+        return cacheLocal.get(idioma + ':' + pt) || null;
     }
     // Mantém os espaços das pontas do texto original (ex.: " Sua escolha…").
     function comEspacos(original, traduzido) {
@@ -342,7 +558,7 @@
     }
 
     // Partes tratadas à parte: títulos divididos em palavras, hero e o próprio seletor.
-    const IGNORAR = 'script, style, [data-reveal], .hero-title, .lang-switch, .nav-mobile-lang, .phone-week, #painelUserGreeting, .ar-card-desc, .body, #publicNews, #publicProjects, .ar-user-name, .ar-account-visible-name';
+    const IGNORAR = 'script, style, textarea, input, code, pre, [contenteditable], [translate="no"], [data-reveal], .hero-title, .lang-switch, .nav-mobile-lang, .phone-week, #painelUserGreeting, .ar-user-name, .ar-account-visible-name, .ar-brand, .wordmark, #gridPessoas .ar-card-title';
 
     // ---- Textos -----------------------------------------------------------------
     const textos = new WeakMap(); // nó de texto → { original, escrito }
@@ -363,12 +579,19 @@
             reg.escrito = alvo;
             no.textContent = alvo;
         }
+        if (traducao === null && idioma !== 'pt') traduzirLocal(reg.original, translated => {
+            if (!no.isConnected || textos.get(no) !== reg || no.textContent !== reg.escrito) return;
+            const next = comEspacos(reg.original, translated);
+            if (no.textContent === next) return;
+            reg.escrito = next;
+            no.textContent = reg.escrito;
+        });
     }
 
     // ---- Atributos --------------------------------------------------------------
     const atributos = new WeakMap(); // elemento → { [atributo]: { original, escrito } }
     function traduzirAtributo(el, nome) {
-        if (el.closest(IGNORAR) && !el.matches('[data-reveal], .hero-title')) return;
+        if (el.closest(IGNORAR) && !el.matches('[data-reveal], .hero-title, input, textarea')) return;
         const atual = el.getAttribute(nome);
         if (atual == null || !atual.trim()) return;
         let mapa = atributos.get(el);
@@ -381,6 +604,12 @@
             reg.escrito = alvo;
             el.setAttribute(nome, alvo);
         }
+        if (traducao === null && idioma !== 'pt') traduzirLocal(reg.original, translated => {
+            if (!el.isConnected || el.getAttribute(nome) !== reg.escrito) return;
+            if (el.getAttribute(nome) === translated) return;
+            reg.escrito = translated;
+            el.setAttribute(nome, translated);
+        });
     }
 
     function traduzirArvore(raiz) {
@@ -429,7 +658,7 @@
     let heroIdioma = 'pt';
     function aplicarHero() {
         if (!hero || heroIdioma === idioma) return false;
-        const palavras = idioma === 'pt' ? heroPt : HERO_EN.split(' ');
+        const palavras = idioma === 'pt' ? heroPt : (idioma === 'es' ? 'Noticias, avisos y eventos en un solo lugar.' : HERO_EN).split(' ');
         hero.innerHTML = palavras
             .map((p, i) => `<span class="w"><span class="w-in" style="--i: ${i}">${p}</span></span>`)
             .join(' ');
@@ -442,7 +671,7 @@
     const semanaPt = semana.map((s) => s.textContent);
     function aplicarSemana() {
         semana.forEach((s, i) => {
-            s.textContent = idioma === 'pt' ? semanaPt[i] : SEMANA_EN[i] || semanaPt[i];
+            s.textContent = idioma === 'pt' ? semanaPt[i] : (idioma === 'es' ? ['D','L','M','X','J','V','S'] : SEMANA_EN)[i] || semanaPt[i];
         });
     }
 
@@ -460,7 +689,7 @@
             if (atual) atual.textContent = info.rotulo;
         }
         const rotuloMobile = document.getElementById('mobileLangLabel');
-        if (rotuloMobile) rotuloMobile.textContent = idioma === 'pt' ? 'Idioma' : EN.Idioma;
+        if (rotuloMobile) rotuloMobile.textContent = idioma === 'en' ? EN.Idioma : 'Idioma';
         for (const op of opcoes()) {
             const ativo = op.dataset.lang === idioma;
             if (op.closest('.lang-menu')) op.setAttribute('aria-current', String(ativo));
@@ -480,7 +709,7 @@
 
     function aplicar() {
         root.lang = IDIOMAS[idioma].html;
-        document.title = idioma === 'pt' ? tituloPt : (EN[tituloPt] || (tituloPt.includes('IFPA Campus Belém') ? TITULO_PAGINA_EN : tituloPt));
+        document.title = idioma === 'pt' ? tituloPt : ((idioma === 'es' ? ES : EN)[tituloPt] || (tituloPt.includes('IFPA Campus Belém') ? (idioma === 'es' ? 'Arcadia — Portal del IFPA Campus Belém' : TITULO_PAGINA_EN) : tituloPt));
         traduzirArvore(document.body);
         const titulosMudaram = aplicarTitulos();
         const heroMudou = aplicarHero();
@@ -494,6 +723,9 @@
     function definir(novo) {
         if (!IDIOMAS[novo] || novo === idioma) return;
         idioma = novo;
+        versaoIdioma++;
+        if (idioma === 'pt') { motorLocal?.destroy?.(); motorLocal = null; idiomaMotor = ''; document.querySelector('.ar-i18n-status')?.remove(); }
+        else prepararLocal(true);
         try {
             localStorage.setItem(CHAVE, novo);
         } catch {
@@ -512,7 +744,21 @@
     });
 
     function iniciar() {
+        /* Completa os seletores existentes no Início e no tutorial sem duplicá-los. */
+        const menuIdiomas = document.getElementById('langMenu');
+        if (menuIdiomas && !menuIdiomas.querySelector('[data-lang="es"]')) {
+            const item = document.createElement('li'), option = document.createElement('button');
+            option.type = 'button'; option.dataset.lang = 'es'; option.lang = 'es'; option.textContent = 'Español';
+            item.append(option); menuIdiomas.append(item);
+        }
+        const menuMobile = document.querySelector('.nav-mobile-lang');
+        if (menuMobile && !menuMobile.querySelector('[data-lang="es"]')) {
+            const option = document.createElement('button');
+            option.type = 'button'; option.className = 'lang-chip'; option.dataset.lang = 'es'; option.lang = 'es'; option.textContent = 'ES';
+            menuMobile.append(option);
+        }
         aplicar();
+        if (idioma !== 'pt') prepararLocal(false);
         observador.observe(document.body, {
             childList: true,
             subtree: true,
@@ -565,7 +811,14 @@
         }
     }
 
-    window.addEventListener('storage', function(event) { if(event.key === CHAVE) { idioma = lerPreferencia(); aplicar(); } });
+    window.addEventListener('storage', function(event) {
+        if (event.key !== CHAVE) return;
+        idioma = lerPreferencia(); versaoIdioma++;
+        motorLocal?.destroy?.(); motorLocal = null; idiomaMotor = '';
+        aplicar();
+        if (idioma !== 'pt') prepararLocal(false);
+        else document.querySelector('.ar-i18n-status')?.remove();
+    });
 
     window.ArcadiaI18n = {
         idioma: () => idioma,

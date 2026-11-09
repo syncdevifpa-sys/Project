@@ -176,6 +176,7 @@
         const node = element('button', text, className);
         node.type = 'button';
         node.addEventListener('click', action);
+        A.compactAction?.(node, text);
         return node;
     }
     const size = (value) => {
@@ -476,16 +477,23 @@
                 } catch (_) {
                     info.append(element('p', 'Link indisponível. Edite o endereço.'));
                 }
-            } else if (item.id_item)
-                actions.append(
-                    button('Baixar', (event) =>
-                        download({ ...item, reviewing: mode === 'review' }, event)
-                    )
+            } else if (item.id_item) {
+                const downloadButton = button('Baixar', (event) =>
+                    download({ ...item, reviewing: mode === 'review' }, event)
                 );
+                downloadButton.setAttribute('aria-label', 'Baixar ' + item.titulo);
+                actions.append(downloadButton);
+            }
             const edit = button('Editar', () => documentEditor(item));
             edit.setAttribute('aria-label', 'Editar ' + item.titulo);
+            edit.className = 'ar-iconbtn';
+            edit.title = 'Editar documento';
+            edit.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg>';
             const remove = button('Excluir', () => removeItem(item));
             remove.setAttribute('aria-label', 'Excluir ' + item.titulo);
+            remove.className = 'ar-iconbtn';
+            remove.title = 'Excluir documento';
+            remove.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>';
             if (mode === 'mine') {
                 actions.append(edit, remove);
                 if (

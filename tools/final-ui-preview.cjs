@@ -163,7 +163,7 @@ app.get('/api/document-library', (req, res) =>
 );
 app.get('/api/document-library/public', (_req, res) => res.json([]));
 app.get('/api/document-library/reviews', (_req, res) => res.json([]));
-app.get('/api/tasks/my', (_req, res) =>
+app.get(['/api/tasks', '/api/tasks/my'], (_req, res) =>
     res.json([
         {
             id_tarefa: 1,

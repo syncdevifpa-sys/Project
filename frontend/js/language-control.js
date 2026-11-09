@@ -1,4 +1,4 @@
-/* Mesmo seletor PT/EN no cabeçalho das páginas internas e de acesso. */
+/* Seletor compartilhado; idioma.js completa as opções PT/EN/ES antes da interação. */
 (function () {
     function syncTutorialLinks() {
         let connected = false;

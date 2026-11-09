@@ -37,6 +37,7 @@
         const b = el('button', label, 'ar-btn');
         b.type = 'button';
         b.onclick = fn;
+        A.compactAction?.(b, label);
         return b;
     };
     const message = (t) => {
