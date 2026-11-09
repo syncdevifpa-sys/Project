@@ -14,6 +14,9 @@ test('sitemap contém somente a home pública canônica, sem datas inventadas ou
     const head=html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)[1];
     assert.equal((head.match(/rel="canonical"/g)||[]).length,1);
     assert.match(head,/<link rel="canonical" href="https:\/\/portalarcadia.vercel.app\/"/);
+    assert.match(head,/<title>Arcádia — Projeto acadêmico do IFPA Campus Belém | Mural de apoio<\/title>/);
+    assert.match(head,/<meta name="description" content="Arcádia é um projeto acadêmico do IFPA Campus Belém,/);
+    assert.match(html,/Mural de apoio à comunidade do campus\. Não é um canal oficial da instituição\./);
     assert.doesNotMatch(head,/<meta[^>]*name="robots"[^>]*content="noindex/);
     for(const page of ['privacy','terms','cookies'])
         assert.match(fs.readFileSync(`frontend/${page}.html`,'utf8'),/name="robots" content="noindex"/);

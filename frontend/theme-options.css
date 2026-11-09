@@ -326,6 +326,19 @@ html[data-motion='reduced'][data-preview-season] :is(.btn-pill,.btn-submit,.ar-b
 .ar-content-edit { align-self:flex-end; margin-top:8px; border-color:transparent; background:transparent; color:var(--ink-muted); }
 .ar-project-delete { align-self:flex-end; border-color:transparent; background:transparent; color:var(--ink-muted); }
 .ar-project-delete:hover { color:var(--danger); }
+.ar-task-actions { display:inline-flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.ar-task-actions .ar-task-action { flex:0 0 36px; width:36px; height:36px; padding:0; border:0; background:transparent; color:var(--ink-muted); }
+.ar-task-actions .ar-task-action:hover { color:var(--ink); background:var(--surface-sunken); }
+.ar-task-actions [data-action='concluir']:hover { color:var(--green-ink); }
+.db-v3 .db-add-button { flex:0 0 40px; width:40px; height:40px; padding:0; background:transparent; border:0; color:var(--ink); }
+.db-v3 .db-add-button:hover { background:var(--surface); }
+.ar-compact-action { flex:0 0 40px; width:40px; height:40px; padding:0; background:transparent; border-color:transparent; color:var(--ink); }
+.lang-menu .ar-i18n-status { border-top:1px solid var(--line); margin-top:6px; padding:8px; max-width:260px; min-width:200px; white-space:normal; font-size:12px; line-height:1.5; color:var(--ink-muted); }
+.ar-i18n-status p { margin:0; }
+@media (pointer:coarse) { .ar-compact-action { flex-basis:44px; width:44px; height:44px; } }
+@media (pointer:coarse) {
+  .ar-task-actions .ar-task-action { flex-basis:44px; width:44px; height:44px; }
+}
 #gridProjetos .ar-card { transition:box-shadow .16s ease; }
 @media (hover:hover) {
   #gridProjetos .ar-card:hover { box-shadow:0 6px 20px #547fa824; }

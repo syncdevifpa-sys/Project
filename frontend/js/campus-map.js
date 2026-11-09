@@ -138,6 +138,7 @@
                 const share = create('button', 'Compartilhar local');
                 share.type = 'button';
                 share.className = 'ar-btn ar-btn--secondary';
+                A.compactAction?.(share, 'Compartilhar local');
                 share.onclick = () => {
                     const link = create('input');
                     link.type = 'text';

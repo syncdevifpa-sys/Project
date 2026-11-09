@@ -12,7 +12,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="3PZ4Fij-cD3Jg2fTCUvty45bWIFZJc3bwiKSbrrr6XE" />
     <link rel="canonical" href="https://portalarcadia.vercel.app/" />
-    <title>Arcadia — Portal do IFPA Campus Belém</title>
+    <title>Arcádia — Projeto acadêmico do IFPA Campus Belém | Mural de apoio</title>
+    <meta name="description" content="Arcádia é um projeto acadêmico do IFPA Campus Belém, desenvolvido por alunos como mural de apoio à comunidade do campus, reunindo notícias, projetos e recursos." />
+    <meta property="og:title" content="Arcádia — Projeto acadêmico do IFPA Campus Belém | Mural de apoio" />
+    <meta property="og:description" content="Projeto acadêmico do IFPA Campus Belém, desenvolvido por alunos como mural de apoio à comunidade do campus." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://portalarcadia.vercel.app/" />
     <!-- Aplica a preferência de tema antes de carregar os estilos. -->
     <script src="js/theme.js"></script>
     <script src="js/home-view.js"></script>
@@ -22,11 +27,12 @@
       setTimeout(function () {
         if (!window.__arcadiaAnimacoes) document.documentElement.classList.remove('js');
       }, 4000);
-      // Idioma salvo em inglês: esconde a página até js/idioma.js traduzir (sem piscar o PT).
+      // Idioma salvo: evita exibir português antes da tradução da interface.
       try {
-        if (localStorage.getItem('arcadia-lang') === 'en') {
+        var homeLanguage = localStorage.getItem('arcadia-lang');
+        if (homeLanguage === 'en' || homeLanguage === 'es') {
           document.documentElement.classList.add('i18n-pendente');
-          document.documentElement.lang = 'en';
+          document.documentElement.lang = homeLanguage;
           setTimeout(function () {
             document.documentElement.classList.remove('i18n-pendente');
           }, 3000);
@@ -96,6 +102,7 @@
             <ul class="lang-menu" id="langMenu" hidden>
               <li><button type="button" class="lang-option" data-lang="pt" lang="pt-BR" aria-current="true">Português</button></li>
               <li><button type="button" class="lang-option" data-lang="en" lang="en" aria-current="false">English</button></li>
+              <li><button type="button" class="lang-option" data-lang="es" lang="es" aria-current="false">Español</button></li>
             </ul>
           </div>
           <a
@@ -132,6 +139,7 @@
             <span class="lang-chips" role="group" aria-labelledby="mobileLangLabel">
               <button type="button" class="lang-chip" data-lang="pt" lang="pt-BR" aria-pressed="true">PT</button>
               <button type="button" class="lang-chip" data-lang="en" lang="en" aria-pressed="false">EN</button>
+              <button type="button" class="lang-chip" data-lang="es" lang="es" aria-pressed="false">ES</button>
             </span>
           </li>
           <li class="nav-mobile-login"><a href="login.html" class="btn btn--outline">Entrar</a></li>
@@ -146,7 +154,7 @@
         <div class="home-campus-banner-content">
           <p class="eyebrow">IFPA Campus Belém</p>
           <h1 id="campusBannerTitle">Notícias e avisos</h1>
-          <p>O que acontece no campus, perto de você.</p>
+          <p>Um mural desenvolvido por alunos, para apoiar a comunidade do IFPA Campus Belém.</p>
           <div class="home-visitor-actions">
             <a class="btn btn--primary" href="login.html">Entrar</a>
             <a class="text-link home-more-info" href="tutorial.html" data-tutorial-link>Mais informações →</a>
@@ -203,7 +211,7 @@
         <a href="index.html" class="wordmark wordmark--footer" aria-label="Arcádia — início">
           <span class="wordmark-name">Arcádia</span>
         </a>
-        <div class="footer-about"><p>Portal acadêmico do IFPA Campus Belém.</p><p>Informação, projetos e vida no campus em um só lugar.</p></div>
+        <div class="footer-about"><p>Projeto acadêmico do IFPA Campus Belém, desenvolvido por alunos.</p><p>Mural de apoio à comunidade do campus. Não é um canal oficial da instituição.</p></div>
         <nav aria-label="Explore o portal">
           <h2>Explore</h2>
           <ul class="footer-links">

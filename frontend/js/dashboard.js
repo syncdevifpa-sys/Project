@@ -785,9 +785,9 @@
                                   ? 'Solicitado em ' + ddmm(ymd(d.criado_em))
                                   : 'Solicitado';
                           const action = url
-                              ? '<a class="db-btn db-btn--primary db-btn--sm" data-download="' + esc(d.id_documento) +
-                                '" href="' + esc(url) + '" target="_blank" rel="noopener">' + ICON.download +
-                                (again ? 'Baixar de novo' : 'Baixar') + '</a>'
+                              ? '<a class="ar-iconbtn ar-compact-action" data-download="' + esc(d.id_documento) +
+                                '" href="' + esc(url) + '" title="' + (again ? 'Baixar de novo' : 'Baixar documento') +
+                                '" aria-label="Baixar: ' + esc(d.titulo) + '" target="_blank" rel="noopener">' + ICON.download + '</a>'
                               : '<span class="db-pill">' + esc(DOC_STATUS[d.status] || d.status || '') + '</span>';
                           return (
                               '<li class="db-doc"><div class="db-doc-text"><p class="db-doc-title">' + esc(d.titulo) +
@@ -803,7 +803,8 @@
             store.set(DOWNLOADED_KEY, [...all]);
             // Deixa o navegador abrir o arquivo antes de trocar o botão.
             later(() => {
-                link.innerHTML = ICON.download + 'Baixar de novo';
+                link.innerHTML = ICON.download;
+                link.title = 'Baixar de novo';
                 const sub = link.closest('.db-doc')?.querySelector('.db-doc-sub');
                 if (sub) sub.textContent = 'Baixado agora há pouco';
             }, 0);
