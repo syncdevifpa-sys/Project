@@ -25,13 +25,7 @@
       } catch (e) {}
     </script>
 
-    <!-- Fontes do Google: Instrument Serif (títulos) e Inter (textos) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fontes do sistema (design system Arcádia): Times New Roman e San Francisco, sem download. -->
 
     <link rel="icon" type="image/png" href="public/arcadia-logo-64.png" />
     <link rel="apple-touch-icon" href="assets/arcadia-emblem.png" />
@@ -48,10 +42,13 @@
 
     <!-- 1. Cabeçalho -->
     <header class="site-header">
-      <nav class="container site-nav" aria-label="Navegação principal">
+      <nav class="site-nav" aria-label="Navegação principal">
         <a href="index.html" class="wordmark" aria-label="Arcádia, IFPA Campus Belém — início">
-          <span class="wordmark-name">Arcádia</span>
-          <span class="wordmark-sub">IFPA Campus Belém</span>
+          <span class="wordmark-mark" aria-hidden="true">A</span>
+          <span class="wordmark-text">
+            <span class="wordmark-name">Arcádia</span>
+            <span class="wordmark-sub">IFPA Campus Belém</span>
+          </span>
         </a>
 
         <ul class="nav-links">
@@ -132,17 +129,31 @@
     <main id="conteudo">
       <!-- 2. Apresentação principal -->
       <section data-home-intro class="hero section--cream" id="home">
-        <div class="container">
+        <!-- Formas flutuantes do design system (Assets › Shapes): só decoração. -->
+        <div class="hero-shapes" aria-hidden="true">
+          <span class="hero-shape hero-shape--sol"><svg viewBox="0 0 64 64" width="64" height="64"><polygon points="32.0,1.0 37.4,11.7 47.5,5.2 46.8,17.2 58.8,16.5 52.3,26.6 63.0,32.0 52.3,37.4 58.8,47.5 46.8,46.8 47.5,58.8 37.4,52.3 32.0,63.0 26.6,52.3 16.5,58.8 17.2,46.8 5.2,47.5 11.7,37.4 1.0,32.0 11.7,26.6 5.2,16.5 17.2,17.2 16.5,5.2 26.6,11.7" /></svg></span>
+          <span class="hero-shape hero-shape--retangulo"><svg viewBox="0 0 64 48" width="64" height="48"><rect x="6" y="6" width="52" height="36" rx="2" transform="rotate(10 32 24)" /></svg></span>
+          <span class="hero-shape hero-shape--folha"><svg viewBox="0 0 36 64" width="36" height="64"><path d="M6 4 C28 12 36 40 20 62 C24 40 18 20 6 4 Z" /></svg></span>
+          <span class="hero-shape hero-shape--zigue"><svg viewBox="0 0 56 24" width="56" height="24"><polyline points="3,19 15,5 27,19 39,5 53,19" /></svg></span>
+          <span class="hero-shape hero-shape--meia-lua"><svg viewBox="0 0 96 48" width="96" height="48"><path d="M0 48 A48 48 0 0 1 96 48 Z" /></svg></span>
+          <span class="hero-shape hero-shape--estrela"><svg viewBox="0 0 48 48" width="48" height="48"><polygon points="24.0,1.0 27.8,14.8 40.3,7.7 33.2,20.2 47.0,24.0 33.2,27.8 40.3,40.3 27.8,33.2 24.0,47.0 20.2,33.2 7.7,40.3 14.8,27.8 1.0,24.0 14.8,20.2 7.7,7.7 20.2,14.8" /></svg></span>
+          <span class="hero-shape hero-shape--onda"><svg viewBox="0 0 132 44" width="132" height="44"><path d="M0 44 C14 44 18 14 40 14 C60 14 64 34 82 34 C98 34 102 8 120 8 C126 8 130 12 132 16 L132 44 Z" /></svg></span>
+        </div>
+
+        <div class="container hero-inner">
           <div class="hero-grid" data-hero-text>
-            <h1 class="hero-title"><span class="w"><span class="w-in" style="--i: 0">Notícias,</span></span> <span class="w"><span class="w-in" style="--i: 1">avisos</span></span> <span class="w"><span class="w-in" style="--i: 2">e</span></span> <span class="w"><span class="w-in" style="--i: 3">eventos</span></span> <span class="w"><span class="w-in" style="--i: 4">em</span></span> <span class="w"><span class="w-in" style="--i: 5">um</span></span> <span class="w"><span class="w-in" style="--i: 6">único</span></span> <span class="w"><span class="w-in" style="--i: 7">ambiente.</span></span></h1>
+            <div class="hero-head">
+              <p class="eyebrow">Conheça a Arcádia</p>
+              <h1 class="hero-title"><span class="w"><span class="w-in" style="--i: 0">Notícias,</span></span> <span class="w"><span class="w-in" style="--i: 1">avisos</span></span> <span class="w"><span class="w-in" style="--i: 2">e</span></span> <span class="w"><span class="w-in" style="--i: 3">eventos</span></span> <span class="w"><span class="w-in" style="--i: 4">em</span></span> <span class="w"><span class="w-in" style="--i: 5">um</span></span> <span class="w hero-highlight"><span class="w-in" style="--i: 6">único</span></span> <span class="w hero-highlight"><span class="w-in" style="--i: 7">ambiente.</span></span></h1>
+            </div>
             <div class="hero-side">
               <p class="hero-lead">
                 Sem informações espalhadas entre redes sociais, aplicativos de mensagens e e-mails.
                 A Arcadia reúne o que estudantes, docentes e servidores precisam acompanhar.
               </p>
-              <div class="btn-row">
-                <a href="signup.html" class="btn btn--primary">Criar conta <span class="arrow" aria-hidden="true">&rarr;</span></a>
-                <a href="login.html" class="btn btn--outline">Entrar</a>
+              <div class="hero-actions">
+                <a href="#como-funciona" class="btn btn--sun">Veja como começar</a>
+                <a href="#noticias" class="text-link">Ver últimas notícias</a>
               </div>
               <p class="hero-note">
                 Gratuito para toda a comunidade acadêmica. Cadastre-se com seu e-mail.
@@ -150,34 +161,24 @@
             </div>
           </div>
 
-          <div class="hero-media">
-            <div class="hero-frame" data-hero-frame>
-              <img
-                class="hero-photo"
-                src="assets/landing/campus-belem.jpg"
-                alt="Portaria do Instituto Federal do Pará, Campus Belém"
-                width="1200"
-                height="628"
-              />
-            </div>
-            <aside class="highlight-card" aria-labelledby="highlightTitle">
-              <div class="highlight-main">
-                <p class="highlight-meta">
-                  <span class="tag tag--oficial">Oficial</span>
-                  <span class="highlight-kicker">Aviso em destaque</span>
-                </p>
-                <h2 class="highlight-title" id="highlightTitle">Matrícula 2027.1 aberta</h2>
-              </div>
-              <div class="highlight-side">
-                <p>
-                  Prazos, documentos exigidos e etapas para calouros e veteranos, publicados no
-                  mural oficial.
-                </p>
-                <a href="notices.html" class="btn btn--ghost-light btn--sm"
-                  >Ver aviso <span class="arrow" aria-hidden="true">&rarr;</span></a
-                >
-              </div>
-            </aside>
+          <div class="hero-bento">
+            <ul class="hero-stats" aria-label="A Arcádia em números">
+              <li class="hero-stat">
+                <span class="pill pill--accent">Portal</span>
+                <span class="hero-stat-label">áreas no portal</span>
+                <span class="hero-stat-value">6</span>
+              </li>
+              <li class="hero-stat hero-stat--soft">
+                <span class="pill pill--outline">Comunidade</span>
+                <span class="hero-stat-label">públicos atendidos</span>
+                <span class="hero-stat-value">4</span>
+              </li>
+              <li class="hero-stat hero-stat--blue">
+                <span class="pill pill--outline">PSU 2027</span>
+                <span class="hero-stat-label">vagas ofertadas</span>
+                <span class="hero-stat-value">1.135</span>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
@@ -648,6 +649,7 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <a href="index.html" class="wordmark wordmark--footer" aria-label="Arcádia — início">
+          <span class="wordmark-mark" aria-hidden="true">A</span>
           <span class="wordmark-name">Arcádia</span>
         </a>
         <nav aria-label="Rodapé">

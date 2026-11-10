@@ -23,6 +23,18 @@
   --color-on-navy: #ffffff;
   --color-on-navy-muted: #c3cad8;
   --color-on-navy-line: rgba(255, 255, 255, 0.12);
+  /* Cores de destaque do design system Arcádia (tokens.json): formas flutuantes e
+     CTA amarelo. Texto sobre qualquer uma delas usa --color-on-color. */
+  --color-sun: #f5c518;
+  --color-coral: #ff6b5b;
+  --color-lime: #c6f26b;
+  --color-teal: #4cc9a6;
+  --color-pink: #f5a3c7;
+  --color-sky: #8ed8f8;
+  --color-on-color: #111214;
+  /* Palavra em destaque de títulos grandes (24px ou mais). */
+  --color-highlight: #d9480f;
+  --opacity-decor: 0.35;
   /* Hover e foco */
   --azul-destaque: #2563eb;
   --azul-claro: #8db0f7;
@@ -51,8 +63,12 @@
   --gradient-light: linear-gradient(110deg, var(--creme) 0%, var(--azul-claro) 100%);
 
   /* Tipografia */
-  --font-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  /* Design system Arcádia: Times New Roman nos títulos e San Francisco nos textos
+     (fontes do sistema; fora de aparelhos Apple entram Helvetica Neue e system-ui). */
+  --font-serif: 'Times New Roman', Times, serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', system-ui,
+    sans-serif;
   --fs-display: clamp(64px, 9.6vw, 140px);
   --fs-h1: clamp(46px, 6vw, 86px);
   --fs-h2: clamp(40px, 4.6vw, 64px);
@@ -84,7 +100,8 @@
   --radius-sm: 3px;
   --radius-md: 5px;
   --radius-lg: 10px;
-  --shadow-card: 0 30px 50px -20px rgba(11, 29, 58, 0.45);
+  --radius-xl: 12px;
+  --radius-pill: 999px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --duration: 0.25s;
 }
@@ -107,6 +124,7 @@
   --acordeao-fechado: #a3a8b3;
   --color-navy: #081429;
   --color-navy-raised: #10223f;
+  --color-highlight: #f5c518;
 }
 
 /* ---------- Base ---------- */
@@ -203,7 +221,6 @@ button:focus-visible,
 .section--navy button:focus-visible,
 .site-footer a:focus-visible,
 .site-footer button:focus-visible,
-.highlight-card a:focus-visible,
 .devices-panel :focus-visible {
   outline-color: var(--color-focus-on-dark);
 }
@@ -247,7 +264,6 @@ button:focus-visible,
 .card-title,
 .pillar-title,
 .feature-title,
-.highlight-title,
 .news-title,
 .about-quote {
   font-family: var(--font-serif);
@@ -393,17 +409,6 @@ button:focus-visible,
   opacity: 1;
 }
 
-/* "Ver aviso": borda creme; no hover inverte as cores do card. */
-.btn--ghost-light {
-  background-color: transparent;
-  border-color: var(--creme);
-  color: var(--color-on-navy);
-}
-.btn--ghost-light:focus-visible {
-  background-color: var(--creme);
-  color: var(--marinho);
-}
-
 @media (hover: hover) {
   .btn--primary:hover,
   .btn--light:hover {
@@ -423,9 +428,21 @@ button:focus-visible,
   .btn--outline-dark:hover::before {
     opacity: 1;
   }
-  .btn--ghost-light:hover {
-    background-color: var(--creme);
-    color: var(--marinho);
+}
+
+/* CTA chamativo: pílula amarela. No máximo um por página (design system: Button). */
+.btn--sun {
+  background-color: var(--color-sun);
+  color: var(--color-on-color);
+  border-radius: var(--radius-pill);
+  transition: filter var(--hover-cor-duracao) ease;
+}
+.btn--sun:focus-visible {
+  border-radius: var(--radius-pill);
+}
+@media (hover: hover) {
+  .btn--sun:hover {
+    filter: brightness(1.06);
   }
 }
 .btn-row {
@@ -469,8 +486,7 @@ a:not(.btn):not(.wordmark):focus-visible {
   color: var(--azul-destaque);
 }
 .section--navy a:not(.btn):hover,
-.section--navy a:not(.btn):focus-visible,
-.highlight-card a:not(.btn):hover {
+.section--navy a:not(.btn):focus-visible {
   color: var(--azul-claro);
 }
 .footer-links a {
@@ -514,6 +530,30 @@ a:not(.btn):not(.wordmark):focus-visible {
   color: #0b1d3a;
 }
 
+/* Pílulas de categoria (design system: Tag). Nunca são botão. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+/* Mesmas cores do selo "Oficial". */
+.pill--accent {
+  background: var(--color-accent-soft);
+  color: var(--color-blue);
+}
+[data-theme='dark'] .pill--accent {
+  color: var(--color-accent);
+}
+.pill--outline {
+  border-color: currentColor;
+}
+
 /* ---------- Ícone + / × dos acordeões ---------- */
 .toggle-icon {
   position: relative;
@@ -543,60 +583,111 @@ a:not(.btn):not(.wordmark):focus-visible {
 /* ==========================================================================
    1. Cabeçalho
    ========================================================================== */
+/* Barra flutuante: o cabeçalho é transparente e a navegação é uma pílula
+   solta sobre a página, que continua visível ao rolar. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--surface-page);
-  border-bottom: 1px solid transparent;
+  padding: 12px var(--gutter) 0;
 }
 .site-nav {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
-  min-height: var(--header-height);
+  gap: var(--space-md);
+  max-width: var(--container);
+  min-height: 60px;
+  margin-inline: auto;
+  padding: 8px 10px 8px 14px;
+  border: 1px solid var(--color-line-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  background: color-mix(in srgb, var(--surface-card) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 10px 30px -18px rgba(11, 29, 58, 0.35);
 }
+/* Logo: monograma no azul dos botões + nome em serifa. */
 .wordmark {
   display: inline-flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   flex: none;
   color: var(--color-ink);
   text-decoration: none;
 }
+.wordmark-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background-image: var(--gradient-primary);
+  color: #ffffff;
+  font-family: var(--font-serif);
+  font-size: 25px;
+  line-height: 1;
+}
+.wordmark-text {
+  display: flex;
+  flex-direction: column;
+}
 .wordmark-name {
   font-family: var(--font-serif);
-  font-size: 40px;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.015em;
 }
 .wordmark-sub {
-  margin-top: 4px;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  margin-top: 3px;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-text);
 }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: clamp(18px, 2.2vw, 30px);
+  gap: 2px;
   margin-inline: auto;
 }
 .nav-links a {
+  display: block;
+  padding: 9px 14px;
+  border-radius: var(--radius-pill);
   font-size: 14px;
   font-weight: 500;
   color: var(--color-ink);
   text-decoration: none;
-  padding: 6px 0;
-  border-bottom: 1px solid transparent;
-  transition: color var(--hover-cor-duracao) ease;
+  transition:
+    color var(--hover-cor-duracao) ease,
+    background-color var(--hover-cor-duracao) ease;
+}
+.site-nav .nav-links a:focus-visible {
+  background-color: var(--color-accent-soft);
+  color: var(--color-blue);
+  border-radius: var(--radius-pill);
+}
+@media (hover: hover) {
+  .site-nav .nav-links a:hover {
+    background-color: var(--color-accent-soft);
+    color: var(--color-blue);
+  }
+}
+[data-theme='dark'] .site-nav .nav-links a:hover,
+[data-theme='dark'] .site-nav .nav-links a:focus-visible {
+  color: var(--color-accent);
 }
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 6px;
   flex: none;
+}
+.nav-actions .btn {
+  border-radius: var(--radius-pill);
 }
 /* ---------- Seletor de idioma (js/idioma.js) ---------- */
 .lang-switch {
@@ -608,9 +699,9 @@ a:not(.btn):not(.wordmark):focus-visible {
   align-items: center;
   gap: 6px;
   min-height: 40px;
-  padding: 0 10px;
+  padding: 0 12px;
   border: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: transparent;
   font-size: 14px;
   font-weight: 500;
@@ -636,7 +727,7 @@ a:not(.btn):not(.wordmark):focus-visible {
 }
 .lang-menu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 18px);
   right: 0;
   z-index: 60;
   display: grid;
@@ -645,7 +736,8 @@ a:not(.btn):not(.wordmark):focus-visible {
   padding: 6px;
   background: var(--surface-card);
   border: 1px solid var(--color-line-soft);
-  border-radius: var(--radius-md);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px -18px rgba(11, 29, 58, 0.35);
 }
 .lang-option {
   display: flex;
@@ -654,7 +746,7 @@ a:not(.btn):not(.wordmark):focus-visible {
   width: 100%;
   padding: 10px 12px;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   background: transparent;
   font-size: 14px;
   color: var(--color-ink);
@@ -669,17 +761,17 @@ a:not(.btn):not(.wordmark):focus-visible {
   content: '✓';
   color: var(--azul-destaque);
 }
-/* Botões pequenos: branco sobre o creme do cabeçalho; creme dentro da lista branca. */
+/* Botões pequenos: azul-claro sobre a barra, como os links; creme dentro da lista. */
 .lang-toggle:focus-visible,
 .lang-toggle[aria-expanded='true'] {
-  background-color: var(--surface-alt);
+  background-color: var(--color-accent-soft);
 }
 .lang-option:focus-visible {
   background-color: var(--surface-page);
 }
 @media (hover: hover) {
   .lang-toggle:hover {
-    background-color: var(--surface-alt);
+    background-color: var(--color-accent-soft);
   }
   .lang-option:hover {
     background-color: var(--surface-page);
@@ -693,9 +785,11 @@ a:not(.btn):not(.wordmark):focus-visible {
 .i18n-pendente body {
   visibility: hidden;
 }
+/* "Entrar" sem contorno: só se preenche no hover. */
 .nav-login {
   min-height: 40px;
   padding: 0 16px;
+  border-color: transparent;
   font-size: 14px;
 }
 .nav-account {
@@ -726,18 +820,17 @@ a:not(.btn):not(.wordmark):focus-visible {
   height: 40px;
   padding: 0;
   border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: transparent;
   cursor: pointer;
   transition: background-color var(--hover-cor-duracao) ease;
 }
-/* Botões pequenos: fundo branco sobre o creme do cabeçalho. */
 .nav-toggle:focus-visible {
-  background-color: var(--surface-alt);
+  background-color: var(--color-accent-soft);
 }
 @media (hover: hover) {
   .nav-toggle:hover {
-    background-color: var(--surface-alt);
+    background-color: var(--color-accent-soft);
   }
 }
 .nav-toggle svg {
@@ -755,9 +848,17 @@ a:not(.btn):not(.wordmark):focus-visible {
 /* ==========================================================================
    2. Hero
    ========================================================================== */
+/* Design system: HeroHeadline + FloatingShapes + StatTile. Sem foto do campus:
+   o fundo é a própria seção com as formas flutuando nos espaços vazios. */
 .hero {
+  position: relative;
+  overflow: hidden;
   padding-top: clamp(48px, 7vw, 100px);
-  padding-bottom: clamp(140px, 13vw, 190px);
+  padding-bottom: clamp(64px, 8vw, 96px);
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
 }
 .hero-grid {
   display: grid;
@@ -766,77 +867,178 @@ a:not(.btn):not(.wordmark):focus-visible {
   gap: var(--space-xl);
   margin-bottom: clamp(48px, 6vw, 80px);
 }
+.hero-head .eyebrow {
+  margin-bottom: var(--space-md);
+}
 .hero-title {
   font-size: var(--fs-h1);
   line-height: 0.95;
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
+.hero-highlight {
+  color: var(--color-highlight);
+}
 .hero-lead {
+  max-width: 440px;
   font-size: var(--fs-lead);
   line-height: 1.6;
   margin-bottom: var(--space-lg);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
 }
 .hero-note {
   margin-top: var(--space-md);
   font-size: 12px;
   color: var(--color-text);
 }
-.hero-media {
-  position: relative;
+
+/* Formas flutuantes: sobem e descem devagar, nunca por cima do texto. */
+@keyframes hero-flutuar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-28px);
+  }
 }
-/* Moldura da foto: escala e border-radius animados por js/animacoes.js. */
-.hero-frame {
-  overflow: hidden;
-  border-radius: 6px;
-  transform-origin: 50% 0;
-  background: var(--color-placeholder);
+@keyframes hero-flutuar-b {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(28px);
+  }
 }
-.hero-photo {
-  width: 100%;
-  aspect-ratio: 1200 / 580;
-  object-fit: cover;
-}
-.highlight-card {
+.hero-shapes {
   position: absolute;
-  left: 3%;
-  bottom: -80px;
-  width: min(73%, 880px);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-lg);
-  align-items: center;
-  padding: clamp(28px, 3.2vw, 44px) clamp(28px, 3.2vw, 40px);
-  background: var(--color-navy);
-  color: var(--color-on-navy-muted);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
+  inset: 0;
+  pointer-events: none;
 }
-.highlight-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
+.hero-shape {
+  position: absolute;
+  opacity: var(--opacity-decor);
+  animation: hero-flutuar 20s ease-in-out infinite;
 }
-.highlight-kicker {
-  font-size: var(--fs-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-accent);
+.hero-shape svg {
+  display: block;
+  overflow: visible;
 }
-.highlight-title {
-  font-size: clamp(30px, 3vw, 42px);
-  line-height: 1;
-  color: var(--color-on-navy);
+.hero-shape--sol {
+  top: 7%;
+  left: 49%;
+  fill: var(--color-sun);
+  animation-duration: 18s;
+  animation-delay: -1s;
 }
-.highlight-side p {
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: var(--space-md);
+.hero-shape--retangulo {
+  top: 2%;
+  right: 7%;
+  fill: var(--color-coral);
+  animation-duration: 22s;
+  animation-delay: -3s;
+}
+.hero-shape--folha {
+  top: 30%;
+  left: 56.5%;
+  fill: var(--color-sun);
+  animation-name: hero-flutuar-b;
+  animation-delay: -2s;
+}
+.hero-shape--zigue {
+  top: 80%;
+  right: 34%;
+  animation-name: hero-flutuar-b;
+  animation-duration: 16s;
+  animation-delay: -4s;
+}
+.hero-shape--zigue polyline {
+  fill: none;
+  stroke: var(--color-lime);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* A meia-lua e a onda ficam 14px abaixo da borda para não abrir vão ao subir. */
+.hero-shape--meia-lua {
+  bottom: -14px;
+  left: 22%;
+  fill: var(--color-teal);
+  animation-duration: 24s;
+  animation-delay: -5s;
+}
+.hero-shape--estrela {
+  top: 64%;
+  right: 16%;
+  fill: var(--color-pink);
+  animation-name: hero-flutuar-b;
+  animation-duration: 21s;
+  animation-delay: -6s;
+}
+.hero-shape--onda {
+  bottom: -14px;
+  right: 30%;
+  fill: var(--color-sky);
+  animation-duration: 26s;
+  animation-delay: -2s;
 }
 
+/* Números em blocos de cor, na coluna do título (o canto à direita fica para as formas).
+   Posicionado para ficar por cima do texto, que desce ao rolar (js/animacoes.js). */
+.hero-bento {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-xl);
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  min-height: 150px;
+  padding: 14px 18px 18px;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  color: var(--color-ink);
+}
+/* Escala da paleta do site: branco, azul-claro e azul da marca. */
+.hero-stat--soft,
+.hero-stat--blue {
+  border-color: transparent;
+}
+.hero-stat--soft {
+  background: var(--color-accent-soft);
+}
+.hero-stat--blue {
+  background: var(--color-blue);
+  color: var(--color-on-navy);
+}
+.hero-stat-label {
+  margin-top: auto;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.hero-stat-value {
+  font-family: var(--font-serif);
+  font-size: clamp(44px, 4.4vw, 64px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
 /* ==========================================================================
    3. O que é a Arcadia
    ========================================================================== */
@@ -1454,6 +1656,14 @@ a:not(.btn):not(.wordmark):focus-visible {
 .wordmark--footer .wordmark-name {
   font-size: 40px;
 }
+.wordmark--footer .wordmark-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--creme);
+  color: var(--marinho);
+  font-size: 30px;
+}
 .footer-links {
   display: flex;
   flex-wrap: wrap;
@@ -1623,8 +1833,8 @@ a:not(.btn):not(.wordmark):focus-visible {
   .lang-switch {
     margin-right: 0;
   }
-  .nav-links {
-    gap: 18px;
+  .nav-links a {
+    padding-inline: 10px;
   }
 }
 
@@ -1641,28 +1851,39 @@ a:not(.btn):not(.wordmark):focus-visible {
   .nav-toggle {
     display: grid;
   }
+  /* Cartão flutuante abaixo da barra: abre por cima da página, sem empurrá-la. */
   .nav-mobile-panel {
     display: block;
-    max-height: 0;
-    overflow: hidden;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: var(--gutter);
+    right: var(--gutter);
+    max-height: calc(100vh - var(--header-height) - 32px);
+    overflow-y: auto;
     visibility: hidden;
-    background: var(--surface-page);
-    border-bottom: 1px solid transparent;
+    opacity: 0;
+    transform: translateY(-8px);
+    background: var(--surface-card);
+    border: 1px solid var(--color-line-soft);
+    border-radius: 22px;
+    box-shadow: 0 10px 30px -18px rgba(11, 29, 58, 0.35);
     transition:
-      max-height 0.3s var(--ease),
-      visibility 0s linear 0.3s;
+      opacity 0.2s var(--ease),
+      transform 0.2s var(--ease),
+      visibility 0s linear 0.2s;
   }
   .nav-mobile-panel.is-open {
-    max-height: 560px;
     visibility: visible;
-    border-bottom-color: var(--color-line-soft);
+    opacity: 1;
+    transform: none;
     transition:
-      max-height 0.3s var(--ease),
+      opacity 0.2s var(--ease),
+      transform 0.2s var(--ease),
       visibility 0s;
   }
   .nav-mobile-panel ul {
     display: grid;
-    padding-block: 8px 20px;
+    padding: 8px 20px 20px;
   }
   .nav-mobile-panel li a:not(.btn) {
     display: block;
@@ -1694,7 +1915,7 @@ a:not(.btn):not(.wordmark):focus-visible {
     min-height: 36px;
     padding: 0 12px;
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-pill);
     background: transparent;
     font-size: 13px;
     font-weight: 600;
@@ -1722,14 +1943,13 @@ a:not(.btn):not(.wordmark):focus-visible {
 @media (max-width: 1000px) {
   .nav-mobile-login .btn {
     width: 100%;
+    border-radius: var(--radius-pill);
   }
 
-  .hero-grid {
+  .hero-grid,
+  .hero-bento {
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     gap: var(--space-lg);
-  }
-  .highlight-card {
-    width: 86%;
   }
   .platform-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -1754,15 +1974,22 @@ a:not(.btn):not(.wordmark):focus-visible {
   .hero-title {
     font-size: clamp(44px, 8.4vw, 72px);
   }
-  .hero {
-    padding-bottom: var(--space-section);
+  .hero-bento {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
   }
-  .highlight-card {
-    position: relative;
-    left: auto;
-    bottom: auto;
-    width: auto;
-    margin: -72px 4% 0;
+  /* Em uma coluna sobram menos vãos: ficam as formas do topo e das bordas. */
+  .hero-shape--sol {
+    top: 1%;
+    left: 52%;
+  }
+  .hero-shape--estrela {
+    top: 30%;
+    right: 3%;
+  }
+  .hero-shape--folha,
+  .hero-shape--zigue {
+    display: none;
   }
   .pillars {
     grid-template-columns: minmax(0, 1fr);
@@ -1803,8 +2030,21 @@ a:not(.btn):not(.wordmark):focus-visible {
     --header-height: 68px;
     --space-xl: 40px;
   }
-  .wordmark-name {
-    font-size: 30px;
+  .site-header {
+    padding-top: 10px;
+  }
+  .site-nav {
+    min-height: 54px;
+    padding: 6px 8px 6px 10px;
+  }
+  .site-nav .wordmark-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 22px;
+  }
+  .site-nav .wordmark-name {
+    font-size: 24px;
   }
   .site-nav .wordmark-sub {
     display: none;
@@ -1820,17 +2060,26 @@ a:not(.btn):not(.wordmark):focus-visible {
     font-size: clamp(36px, 10.2vw, 46px);
     line-height: 1;
   }
-  .hero-photo {
-    aspect-ratio: 294 / 270;
+  .hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .highlight-card {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-md);
-    margin: -90px 12px 0;
-    padding: 24px 20px;
+  .hero-stat {
+    min-height: 128px;
   }
-  .highlight-title {
-    font-size: 26px;
+  .hero-stat--blue {
+    grid-column: 1 / -1;
+  }
+  .hero-shape--sol {
+    top: 0;
+  }
+  .hero-shape--estrela {
+    display: none;
+  }
+  .hero-shape--meia-lua {
+    left: 4%;
+  }
+  .hero-shape--onda {
+    right: 4%;
   }
   .about-quote {
     font-size: clamp(25px, 7.3vw, 32px);

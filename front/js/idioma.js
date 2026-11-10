@@ -11,8 +11,9 @@
     };
     const ATRIBUTOS = ['alt', 'aria-label', 'title'];
 
-    // Título do hero (cada palavra vira uma máscara animada).
+    // Título do hero (cada palavra vira uma máscara animada). As últimas palavras vão em destaque.
     const HERO_EN = 'News, notices and events in a single place.';
+    const HERO_EN_DESTAQUE = 2;
     // Iniciais dos dias da semana no celular do calendário (D S T Q Q S S).
     const SEMANA_EN = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     const TITULO_PAGINA_EN = 'Arcadia — IFPA Campus Belém Portal';
@@ -38,16 +39,21 @@
         Idioma: 'Language',
         '← Voltar ao início': '← Back to home',
         // Hero
+        'Conheça a Arcádia': 'Meet Arcadia',
+        'Veja como começar': 'See how to get started',
+        'Ver últimas notícias': 'See the latest news',
+        'A Arcádia em números': 'Arcadia in numbers',
+        Portal: 'Portal',
+        'áreas no portal': 'areas in the portal',
+        Comunidade: 'Community',
+        'públicos atendidos': 'audiences served',
+        'vagas ofertadas': 'openings offered',
+        '1.135': '1,135',
         'Sem informações espalhadas entre redes sociais, aplicativos de mensagens e e-mails. A Arcadia reúne o que estudantes, docentes e servidores precisam acompanhar.':
             'No more information scattered across social media, messaging apps and email. Arcadia brings together everything students, faculty and staff need to keep up with.',
         'Gratuito para toda a comunidade acadêmica. Cadastre-se com seu e-mail.':
             'Free for the whole academic community. Sign up with your email.',
         Oficial: 'Official',
-        'Aviso em destaque': 'Featured notice',
-        'Matrícula 2027.1 aberta': 'Enrollment for 2027.1 is open',
-        'Prazos, documentos exigidos e etapas para calouros e veteranos, publicados no mural oficial.':
-            'Deadlines, required documents and steps for new and returning students, published on the official board.',
-        'Ver aviso': 'View notice',
         // O que é
         'O que é a Arcadia': 'What is Arcadia',
         'A Arcadia centraliza, organiza e dissemina informações institucionais.':
@@ -371,13 +377,25 @@
 
     // ---- Título do hero ------------------------------------------------------------
     const hero = document.querySelector('.hero-title');
-    const heroPt = hero ? Array.from(hero.querySelectorAll('.w-in')).map((w) => w.textContent) : [];
+    const heroPt = hero
+        ? Array.from(hero.querySelectorAll('.w-in')).map((w) => ({
+              texto: w.textContent,
+              destaque: w.parentElement.classList.contains('hero-highlight')
+          }))
+        : [];
+    const heroEn = HERO_EN.split(' ').map((texto, i, todas) => ({
+        texto,
+        destaque: i >= todas.length - HERO_EN_DESTAQUE
+    }));
     let heroIdioma = 'pt';
     function aplicarHero() {
         if (!hero || heroIdioma === idioma) return false;
-        const palavras = idioma === 'pt' ? heroPt : HERO_EN.split(' ');
+        const palavras = idioma === 'pt' ? heroPt : heroEn;
         hero.innerHTML = palavras
-            .map((p, i) => `<span class="w"><span class="w-in" style="--i: ${i}">${p}</span></span>`)
+            .map(
+                (p, i) =>
+                    `<span class="w${p.destaque ? ' hero-highlight' : ''}"><span class="w-in" style="--i: ${i}">${p.texto}</span></span>`
+            )
             .join(' ');
         heroIdioma = idioma;
         return true;
