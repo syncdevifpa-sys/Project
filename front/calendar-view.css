@@ -1,33 +1,799 @@
-.ar-calendar-view-picker {
+/* calendar-view.css: calendário do portal (grade do mês, agenda e lista).
+   Superfícies, linhas, foco e tema escuro vêm dos tokens do portal (tokens.css).
+   A cor de cada categoria vem de --event-* (js/calendar-colors.js), que a pessoa pode
+   trocar nas Configurações; por isso nenhuma categoria tem cor fixa aqui. */
+
+/* ==========================================================================
+   1. Variáveis do Calendário
+   ========================================================================== */
+:root {
+  --cal-radius-card: var(--radius-md);
+  --cal-radius-day: 12px;
+  --cal-radius-pill: var(--radius-full);
+  --cal-border: var(--line);
+  --cal-border-hover: var(--control-border);
+  --cal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   2. Painel Principal e Estrutura Geral
+   ========================================================================== */
+.ar-calendar-page .ar-panel {
+  border-radius: 22px;
+  border: 1px solid var(--cal-border);
+  background: var(--surface);
+  padding: 24px;
+  position: relative;
+  overflow: visible;
+}
+
+.ar-calendar-page .ar-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--cal-border);
+}
+
+.ar-calendar-page .ar-panel-label {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.ar-calendar-public-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--cal-radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--surface-sunken);
+  border: 1px solid var(--cal-border);
+  color: var(--ink-muted);
+}
+
+#calendarListStatus {
+  color: var(--ink-muted);
+  font-size: 14px;
+  margin: 0 0 14px;
+}
+
+/* ==========================================================================
+   3. Barra de Ferramentas do Calendário (Toolbar & Filtros)
+   ========================================================================== */
+.ar-calendar-toolbar {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.7fr) minmax(180px, 1fr) auto auto auto;
+  align-items: end;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--cal-border);
+  border-radius: 18px;
+}
+
+.ar-calendar-toolbar:has(#btnCalendarListScope:not([hidden])) {
+  grid-template-columns: minmax(120px, 0.7fr) minmax(150px, 1fr) auto auto auto auto;
+}
+
+.ar-calendar-toolbar .ar-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.ar-calendar-toolbar :is(select, input) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--cal-border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: border-color 0.15s ease;
+}
+
+.ar-calendar-toolbar :is(select, input):focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+}
+
+/* Botões do Seletor de Visualização (Mensal / Lista) */
+.ar-calendar-toolbar .ar-calendar-view-picker {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 3px;
+  margin: 0;
+  padding: 3px;
+  min-height: 42px;
+  align-self: end;
+  background: var(--surface-sunken);
+  border: 1px solid var(--cal-border);
+  border-radius: 12px;
+}
+
+.ar-calendar-toolbar .ar-calendar-view-picker button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 6px 14px;
+  min-height: 34px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s var(--cal-ease);
+}
+
+.ar-calendar-toolbar .ar-calendar-view-picker button:hover {
+  color: var(--ink);
+}
+
+.ar-calendar-toolbar .ar-calendar-view-picker button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  border: 1px solid var(--cal-border);
+}
+
+/* Opções Avançadas e Filtros (Dropdown) */
+.ar-calendar-options > summary,
+.ar-calendar-selection-tools > summary,
+.ar-calendar-legend > summary {
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid var(--cal-border);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s var(--cal-ease);
+}
+
+.ar-calendar-options > summary:hover,
+.ar-calendar-selection-tools > summary:hover,
+.ar-calendar-legend > summary:hover {
+  background: var(--surface-sunken);
+  border-color: var(--control-border);
+}
+
+.ar-calendar-options[open] {
+  grid-column: 1 / -1;
+}
+
+.ar-calendar-options-body {
+  margin-top: 12px;
+  padding: 18px;
+  border: 1px solid var(--cal-border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.ar-calendar-options-body > :first-child {
+  margin-top: 0;
+}
+
+#calendarFilterStatus {
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+/* ==========================================================================
+   4. Chips de Categorias (Pills Inspirados no Header da Referência)
+   ========================================================================== */
+.ar-calendar-filter-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ar-calendar-filter-group legend {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.ar-calendar-filter-group .ar-chipbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.ar-calendar-filter-group .ar-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  min-height: 38px;
+  border-radius: var(--cal-radius-pill);
+  border: 1px solid var(--cal-border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s var(--cal-ease);
+}
+
+.ar-calendar-filter-group .ar-chip:hover {
+  background: var(--surface-sunken);
+  border-color: var(--control-border);
+}
+
+.ar-calendar-filter-group .ar-chip[aria-pressed='true'] {
+  background: var(--action);
+  color: var(--on-action);
+  border-color: var(--action);
+  font-weight: 600;
+}
+
+/* Indicador numérico nos chips de categoria */
+.ar-calendar-filter-group .ar-chip .ar-sup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 6px;
+  border-radius: var(--cal-radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+}
+
+.ar-calendar-filter-group .ar-chip[aria-pressed='true'] .ar-sup {
+  background: color-mix(in srgb, var(--on-action) 18%, transparent);
+  color: var(--on-action);
+}
+
+/* Opções de Feriados */
+.ar-calendar-holiday-options {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ar-calendar-holiday-options .ar-field {
+  flex: 1 1 180px;
+}
+
+.ar-calendar-holiday-options [hidden] {
+  display: none !important;
+}
+
+/* ==========================================================================
+   5. Navegação do Mês (Controles e Título)
+   ========================================================================== */
+.ar-calendar-page .ar-month-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  margin: 0 0 14px;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+/* O nome do mês vem em minúsculas ("novembro de 2026"): só a primeira letra sobe. */
+.ar-calendar-page .ar-month-title::first-letter {
+  text-transform: uppercase;
+}
+
+.ar-calendar-page .ar-month-navigation {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  margin: 20px 0;
+  gap: 8px;
+  margin-bottom: 18px;
 }
-.ar-calendar-view-picker select,
-.ar-month-picker input {
+
+.ar-calendar-page .ar-month-navigation .ar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--cal-border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.15s var(--cal-ease);
+}
+
+.ar-calendar-page .ar-month-navigation .ar-btn:hover {
+  background: var(--surface-sunken);
+  border-color: var(--control-border);
+}
+
+.ar-calendar-page .ar-month-navigation .ar-btn:last-child {
+  border-radius: var(--cal-radius-pill);
+  padding: 0 16px;
+  background: var(--surface-sunken);
+}
+
+.ar-calendar-page .ar-month-navigation .ar-btn:last-child:hover {
+  background: var(--surface);
+}
+
+.ar-calendar-page .ar-month-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.ar-calendar-page .ar-month-picker input {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--cal-border);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 12px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.ar-calendar-page .ar-month-picker input:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+}
+
+/* ==========================================================================
+   6. Grade Mensal do Calendário (Cards de Dias com Bordas Suaves e Vida)
+   ========================================================================== */
+.ar-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ar-month-weekday {
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 0;
+}
+
+.ar-month-empty {
+  min-height: 108px;
+  background: transparent;
+  border: 1px dashed transparent;
+  border-radius: var(--cal-radius-day);
+}
+
+.ar-month-day {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
   min-width: 0;
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 108px;
+  padding: 10px;
+  text-align: left;
   color: var(--ink);
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--cal-border);
+  border-radius: var(--cal-radius-day);
   font: inherit;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
+
+.ar-month-day:hover {
+  border-color: var(--cal-border-hover);
+  background: var(--surface-sunken);
+}
+
+/* Dias com eventos ganham um fundo levemente mais escuro que os vazios. */
+.ar-month-day:has(.ar-month-count) {
+  background: color-mix(in srgb, var(--surface-sunken) 55%, var(--surface));
+}
+
+/* Número do dia */
+.ar-month-number {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+}
+
+/* Hoje: o número fica numa pílula na cor de destaque do portal. */
+.ar-month-day[aria-current='date'] .ar-month-number {
+  background: var(--cyan);
+  color: var(--on-field);
+  border-radius: var(--cal-radius-pill);
+  text-decoration: none;
+}
+
+/* Dia escolhido pela pessoa */
+.ar-month-day[aria-pressed='true'] {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+  background: var(--surface);
+}
+
+.ar-month-day:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+}
+
+/* Contador de eventos do dia (micro-pill) */
+.ar-month-count {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1.5px 7px;
+  border-radius: var(--cal-radius-pill);
+  background: var(--surface-sunken);
+  border: 1px solid var(--cal-border);
+  color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+/* Eventos pré-visualizados no dia: tom suave da cor da categoria e a faixa à esquerda
+   (content-views.css) na cor cheia. */
+.ar-month-event {
+  --cat: var(--event-evento);
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+  padding: 2.5px 7px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--cat) 13%, var(--surface));
+  color: color-mix(in srgb, var(--cat) 70%, var(--ink));
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+[data-theme='dark'] .ar-month-event {
+  background: color-mix(in srgb, var(--cat) 24%, var(--surface));
+  color: color-mix(in srgb, var(--cat) 45%, var(--ink));
+}
+.ar-month-event[data-event-category] {
+  border-inline-start: 3px solid var(--cat);
+  padding-inline-start: 6px;
+}
+.ar-month-event[data-event-category='evento'] {
+  --cat: var(--event-evento, var(--event-evento));
+}
+.ar-month-event[data-event-category='matricula'] {
+  --cat: var(--event-matricula, var(--event-evento));
+}
+.ar-month-event[data-event-category='edital'] {
+  --cat: var(--event-edital, var(--event-evento));
+}
+.ar-month-event[data-event-category='cancelamento'] {
+  --cat: var(--event-cancelamento, var(--event-evento));
+}
+.ar-month-event[data-event-category='feriado'] {
+  --cat: var(--event-feriado, var(--event-evento));
+}
+.ar-month-event[data-event-category='ferias'] {
+  --cat: var(--event-ferias, var(--event-evento));
+}
+.ar-month-event[data-event-category='aniversario'] {
+  --cat: var(--event-aniversario, var(--event-evento));
+}
+.ar-month-event[data-event-category='atividades_campus'] {
+  --cat: var(--event-atividades_campus, var(--event-evento));
+}
+.ar-month-event[data-event-category='sabado_letivo'] {
+  --cat: var(--event-sabado_letivo, var(--event-evento));
+}
+.ar-month-event[data-event-category='periodo_academico'] {
+  --cat: var(--event-periodo_academico, var(--event-evento));
+}
+.ar-month-event[data-event-category='culminancia_bimestral'] {
+  --cat: var(--event-culminancia_bimestral, var(--event-evento));
+}
+.ar-month-event[data-event-category='recesso'] {
+  --cat: var(--event-recesso, var(--event-evento));
+}
+.ar-month-event[data-event-category='registro_academico'] {
+  --cat: var(--event-registro_academico, var(--event-evento));
+}
+.ar-month-event[data-event-category='ponto_facultativo'] {
+  --cat: var(--event-ponto_facultativo, var(--event-evento));
+}
+.ar-month-event[data-event-category='avaliacao'] {
+  --cat: var(--event-avaliacao, var(--event-evento));
+}
+.ar-month-event[data-event-category='interrupcao_presencial'] {
+  --cat: var(--event-interrupcao_presencial, var(--event-evento));
+}
+.ar-month-event[data-event-category='ferias_docentes'] {
+  --cat: var(--event-ferias_docentes, var(--event-evento));
+}
+
+.ar-calendar-page .ar-month-hint {
+  margin: 14px 0 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   7. Cards de Eventos na Agenda e Lista (Com "Vida", Ambient Glow e Bordas)
+   ========================================================================== */
+.ar-month-agenda-title {
+  margin: 28px 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.ar-calendar-event {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--cal-border);
+  border-radius: var(--cal-radius-card);
+  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.ar-calendar-event:hover {
+  border-color: var(--cal-border-hover);
+}
+
+/* Bloco da Data no Card */
+.ar-calendar-event .ar-row-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 14px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--cal-border);
+  line-height: 1;
+}
+
+.ar-calendar-event .ar-row-date b {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.ar-calendar-event .ar-row-date small {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-top: 3px;
+  line-height: 1;
+}
+
+/* Conteúdo Principal do Card */
+.ar-calendar-event .ar-row-main {
+  flex: 1 1 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ar-calendar-event .ar-row-title {
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.ar-calendar-event .ar-row-meta {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+/* Etiqueta da categoria no cartão: mesma lógica de cor dos eventos do mês. */
+.ar-calendar-event {
+  --cat: var(--event-evento);
+}
+.ar-calendar-event .ar-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--cal-radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--cat) 14%, var(--surface));
+  color: color-mix(in srgb, var(--cat) 72%, var(--ink));
+  white-space: nowrap;
+}
+[data-theme='dark'] .ar-calendar-event .ar-badge {
+  background: color-mix(in srgb, var(--cat) 24%, var(--surface));
+  color: color-mix(in srgb, var(--cat) 45%, var(--ink));
+}
+
+/* Botões de Ação no Card */
+.ar-calendar-event > .ar-btn {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ar-calendar-event[data-event-category='evento'] {
+  --cat: var(--event-evento, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='matricula'] {
+  --cat: var(--event-matricula, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='edital'] {
+  --cat: var(--event-edital, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='cancelamento'] {
+  --cat: var(--event-cancelamento, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='feriado'] {
+  --cat: var(--event-feriado, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='ferias'] {
+  --cat: var(--event-ferias, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='aniversario'] {
+  --cat: var(--event-aniversario, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='atividades_campus'] {
+  --cat: var(--event-atividades_campus, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='sabado_letivo'] {
+  --cat: var(--event-sabado_letivo, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='periodo_academico'] {
+  --cat: var(--event-periodo_academico, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='culminancia_bimestral'] {
+  --cat: var(--event-culminancia_bimestral, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='recesso'] {
+  --cat: var(--event-recesso, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='registro_academico'] {
+  --cat: var(--event-registro_academico, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='ponto_facultativo'] {
+  --cat: var(--event-ponto_facultativo, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='avaliacao'] {
+  --cat: var(--event-avaliacao, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='interrupcao_presencial'] {
+  --cat: var(--event-interrupcao_presencial, var(--event-evento));
+}
+.ar-calendar-event[data-event-category='ferias_docentes'] {
+  --cat: var(--event-ferias_docentes, var(--event-evento));
+}
+
+/* ==========================================================================
+   8. Edição e Ferramentas Secundárias
+   ========================================================================== */
+.ar-calendar-edit-list {
+  display: grid;
+  gap: 10px;
+  margin-block: 16px;
+}
+
+.ar-calendar-edit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--cal-border);
+  border-radius: var(--cal-radius-card);
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+}
+
+.ar-calendar-edit-item:hover {
+  border-color: var(--cal-border-hover);
+}
+
+.ar-calendar-edit-item > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ar-calendar-edit-item h3 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 600;
+}
+
+.ar-calendar-edit-item p {
+  margin: 4px 0 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.ar-calendar-edit-item .ar-btn {
+  flex-shrink: 0;
+  border-radius: 10px;
+  min-height: 38px;
+}
+
 .ar-calendar-tools {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 0 16px 16px;
+  margin: 0 0 16px;
 }
+
 .ar-calendar-tools .ar-btn {
   min-width: 0;
   max-width: 100%;
   white-space: normal;
-  min-height: 44px;
+  min-height: 40px;
+  border-radius: 10px;
 }
+
 .ar-calendar-selection {
   flex-basis: 100%;
   margin: 4px 0;
@@ -35,376 +801,79 @@
   color: var(--ink-muted);
   font-size: 13px;
 }
-.ar-month-title {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  text-transform: capitalize;
-  margin: 0 0 12px;
-  font-size: 22px;
+
+.ar-calendar-page .ar-calendar-selection-tools {
+  margin: 12px 0 0;
 }
-.ar-month-navigation {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 8px;
-  margin-bottom: 16px;
+
+/* ==========================================================================
+   9. Responsividade e Adaptações Mobile
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .ar-calendar-toolbar,
+  .ar-calendar-toolbar:has(#btnCalendarListScope:not([hidden])) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .ar-calendar-options:not([open]) {
+    grid-column: auto;
+  }
 }
-.ar-month-navigation .ar-btn {
-  min-width: 44px;
-  min-height: 44px;
-  font-size: 16px;
+
+@media (max-width: 700px) {
+  .ar-calendar-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+  .ar-calendar-options {
+    grid-column: 1 / -1;
+  }
+  .ar-calendar-page .ar-panel {
+    padding: 16px;
+    border-radius: 18px;
+  }
+  .ar-calendar-page .ar-month-day {
+    min-height: 72px;
+    padding: 6px;
+  }
+  .ar-calendar-page .ar-panel-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ar-calendar-page .ar-month-title {
+    font-size: 20px;
+  }
 }
-.ar-month-picker {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  font-size: 13px;
-}
-.ar-month-picker input {
-  width: 100%;
-  box-sizing: border-box;
-}
-.ar-month-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-  margin-top: 16px;
-}
-.ar-month-weekday {
-  text-align: center;
-  color: var(--ink-muted);
-  font-size: 12px;
-  padding: 8px 0;
-}
-.ar-month-day {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: stretch;
-  min-width: 0;
-  min-height: 112px;
-  padding: 8px;
-  text-align: left;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font: inherit;
-  cursor: pointer;
-}
-.ar-month-number {
-  font-weight: 600;
-}
-.ar-month-day[aria-current='date'] .ar-month-number {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.ar-month-day[aria-pressed='true'] {
-  background: var(--surface-sunken);
-  outline: 2px solid var(--ink);
-  outline-offset: -2px;
-}
-.ar-month-day:has(.ar-month-count) {
-  background: var(--surface-sunken);
-}
-.ar-month-day:focus-visible {
-  outline: 3px solid var(--ink);
-  outline-offset: 1px;
-}
-.ar-month-count {
-  font-size: 11px;
-  color: var(--ink-muted);
-  overflow-wrap: anywhere;
-}
-.ar-month-event {
-  font-size: 12px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ar-month-agenda-title {
-  margin: 24px 0 12px;
-  font-size: 18px;
-}
-.ar-calendar-event {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.ar-calendar-event .ar-row-main {
-  flex: 1 1 200px;
-  overflow-wrap: anywhere;
-}
-.ar-calendar-event .ar-row-date {
-  flex: 0 0 48px;
-}
-.ar-calendar-event > .ar-btn {
-  max-width: 100%;
-  white-space: normal;
-}
-.ar-calendar-event .ar-badge {
-  white-space: normal;
-}
+
 @media (max-width: 600px) {
   .ar-month-grid {
-    gap: 2px;
+    gap: 4px;
   }
   .ar-month-day {
     min-height: 64px;
-    padding: 5px 2px;
+    padding: 5px 3px;
     text-align: center;
-    gap: 4px;
+    gap: 3px;
   }
   .ar-month-event {
     display: none;
   }
   .ar-month-count {
     font-size: 10px;
+    padding: 1px 4px;
+    align-self: center;
   }
   .ar-month-weekday {
     font-size: 10px;
+    padding: 4px 0;
   }
   .ar-calendar-event {
     gap: 10px;
+    padding: 14px;
   }
   .ar-calendar-event .ar-row-main {
     flex-basis: 100%;
   }
-}
-/* Consulta principal compacta; opções secundárias sob demanda. */
-.ar-calendar-toolbar {
-  display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(170px, 0.65fr) auto;
-  align-items: end;
-  gap: 12px;
-  margin: 0;
-}
-.ar-calendar-toolbar .ar-field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  font-size: 13px;
-}
-.ar-calendar-toolbar :is(select, input) {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  min-height: 44px;
-  margin: 0;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--ink);
-  font: inherit;
-}
-/* portal.js converte o seletor de visualização em botões. */
-.ar-calendar-toolbar .ar-calendar-view-picker {
-  margin: 0;
-  min-height: 44px;
-  align-self: end;
-}
-.ar-calendar-options > summary,
-.ar-calendar-selection-tools > summary,
-.ar-calendar-legend > summary {
-  box-sizing: border-box;
-  min-height: 44px;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  color: var(--ink);
-  background: var(--surface);
-  cursor: pointer;
-  font-size: 14px;
-}
-.ar-calendar-options[open] {
-  grid-column: 1 / -1;
-}
-.ar-calendar-options-body {
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-}
-.ar-calendar-options-body > :first-child {
-  margin-top: 0;
-}
-.ar-calendar-filter-group {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.ar-calendar-filter-group legend {
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.ar-calendar-filter-group .ar-chipbar {
-  margin: 0 0 12px;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.ar-calendar-filter-group .ar-chip {
-  min-height: 44px;
-  white-space: normal;
-}
-.ar-calendar-holiday-options {
-  display: flex;
-  align-items: end;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.ar-calendar-holiday-options .ar-field {
-  flex: 1 1 180px;
-}
-.ar-calendar-holiday-options [hidden] {
-  display: none !important;
-}
-.ar-calendar-page .ar-calendar-selection-tools {
-  margin: 12px 0 0;
-}
-.ar-calendar-selection-tools .ar-calendar-tools {
-  margin: 12px 0 0;
-}
-.ar-calendar-page .ar-month-navigation {
-  display: grid;
-  grid-template-columns: 44px minmax(120px, 180px) 44px auto;
-  justify-content: start;
-  align-items: end;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-.ar-calendar-page .ar-month-navigation > :first-child {
-  order: 1;
-}
-.ar-calendar-page .ar-month-navigation > :nth-child(2) {
-  order: 3;
-}
-.ar-calendar-page .ar-month-navigation > label {
-  order: 2;
-}
-.ar-calendar-page .ar-month-navigation > :last-child {
-  order: 4;
-}
-.ar-calendar-page .ar-month-navigation .ar-btn {
-  padding: 8px;
-  min-width: 44px;
-  min-height: 44px;
-  margin: 0;
-}
-.ar-calendar-page .ar-month-picker {
-  gap: 3px;
-}
-.ar-calendar-page .ar-month-picker input {
-  padding: 8px;
-  font-size: 13px;
-}
-.ar-calendar-page .ar-month-title {
-  margin-bottom: 8px;
-}
-.ar-calendar-page .ar-month-grid {
-  margin-top: 8px;
-}
-.ar-calendar-page .ar-month-day {
-  min-height: 90px;
-}
-.ar-calendar-page .ar-month-hint {
-  margin: 8px 0 0;
-  color: var(--ink-muted);
-  font-size: 13px;
-}
-.ar-calendar-toolbar :is(select, input, summary):focus-visible,
-.ar-calendar-selection-tools > summary:focus-visible {
-  outline: 3px solid var(--ink);
-  outline-offset: 2px;
-}
-@media (max-width: 700px) {
-  .ar-calendar-toolbar {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 8px;
-  }
-  .ar-calendar-options {
-    grid-column: 1 / -1;
-  }
-  .ar-calendar-page .ar-month-day {
-    min-height: 64px;
-  }
-  .ar-calendar-page .ar-panel-head {
-    flex-wrap: wrap;
-    gap: 6px;
-    padding-bottom: 8px;
-  }
-  .ar-calendar-page .ar-month-navigation {
-    grid-template-columns: 44px minmax(0, 1fr) 44px auto;
-  }
-  .ar-calendar-page .ar-month-title {
-    font-size: 20px;
-  }
-}
-@media (max-width: 400px) {
-  .ar-calendar-toolbar .ar-calendar-view-picker {
-    gap: 0;
-    padding: 2px;
-    flex-wrap: nowrap;
-  }
-  .ar-calendar-toolbar .ar-calendar-view-picker button {
-    min-height: 44px;
-    padding: 8px;
-    font-size: 13px;
-  }
-  .ar-calendar-toolbar .ar-calendar-view-picker button svg {
-    display: none;
-  }
-}
-.ar-calendar-toolbar {
-  grid-template-columns: minmax(180px, 1fr) auto auto auto;
-}
-.ar-calendar-edit-list {
-  display: grid;
-  gap: 10px;
-  margin-block: 16px;
-}
-.ar-calendar-edit-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-.ar-calendar-edit-item > div {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-.ar-calendar-edit-item h3 {
-  margin: 0;
-  font-size: 16px;
-}
-.ar-calendar-edit-item p {
-  margin: 6px 0 0;
-  color: var(--ink-muted);
-  font-size: 13px;
-}
-.ar-calendar-edit-item .ar-btn {
-  flex-shrink: 0;
-  min-height: 44px;
-}
-@media (max-width: 700px) {
-  .ar-calendar-toolbar {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-  .ar-calendar-options:not([open]) {
-    grid-column: auto;
-  }
-  .ar-calendar-toolbar > .ar-btn {
-    min-width: 0;
-    min-height: 44px;
-    padding-inline: 8px;
-  }
-}
-
-@media (max-width: 600px) {
   .ar-calendar-page .ar-app {
     padding: 12px;
   }
@@ -414,36 +883,27 @@
     min-height: 0;
   }
   .ar-calendar-page .ar-hero-title {
-    font-size: 30px;
+    font-size: 28px;
     line-height: 1.15;
   }
   .ar-calendar-page .ar-hero-desc {
     font-size: 13px;
     line-height: 1.45;
   }
-  .ar-calendar-page .ar-hero .ar-btn {
-    font-size: 13px;
-    padding: 10px 12px;
-    gap: 6px;
+}
+
+@media (max-width: 400px) {
+  .ar-calendar-toolbar .ar-calendar-view-picker {
+    gap: 0;
+    padding: 2px;
+    flex-wrap: nowrap;
   }
-}
-.ar-calendar-toolbar {
-  grid-template-columns: minmax(140px, 0.7fr) minmax(180px, 1fr) auto auto auto;
-}
-.ar-calendar-toolbar:has(#btnCalendarListScope:not([hidden])) {
-  grid-template-columns: minmax(120px, 0.7fr) minmax(150px, 1fr) auto auto auto auto;
-}
-#calendarListStatus {
-  color: var(--ink-muted);
-  font-size: 14px;
-  margin: 0 0 12px;
-}
-@media (max-width: 1100px) {
-  .ar-calendar-toolbar,
-  .ar-calendar-toolbar:has(#btnCalendarListScope:not([hidden])) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  .ar-calendar-toolbar .ar-calendar-view-picker button {
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
-  .ar-calendar-options:not([open]) {
-    grid-column: auto;
+  .ar-calendar-toolbar .ar-calendar-view-picker button svg {
+    display: none;
   }
 }

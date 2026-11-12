@@ -184,7 +184,7 @@ test('destinatário externo usa contrato existente e criação exige sessão ins
     );
 });
 
-test('controles reais preservam seleção específica ao alternar Todos e começam recolhidos no celular', async () => {
+test('controles reais preservam seleção específica ao alternar Todos e ordenam pela data', async () => {
     const nodes = new Map();
     function node() {
         return {
@@ -251,9 +251,9 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
         }
     };
     const available = [
-        { id_aviso: 1, titulo: 'Aviso geral', publico_alvo: 'todos', situacao: 'publicado' },
-        { id_aviso: 2, titulo: 'Para alunos', publico_alvo: 'discente', situacao: 'publicado' },
-        { id_aviso: 3, titulo: 'Para externos', publico_alvo: 'externo', situacao: 'publicado' }
+        { id_aviso: 1, titulo: 'Aviso geral', publico_alvo: 'todos', situacao: 'publicado', categoria: 'evento', data_publicacao: '2026-11-01 09:00:00' },
+        { id_aviso: 2, titulo: 'Para alunos', publico_alvo: 'discente', situacao: 'publicado', categoria: 'matricula', data_publicacao: '2026-11-05 09:00:00' },
+        { id_aviso: 3, titulo: 'Para externos', publico_alvo: 'externo', situacao: 'publicado', categoria: 'edital', data_publicacao: '2026-11-03 09:00:00' }
     ];
     const A = {
         noticeAudiences: require('../front/js/notice-audiences'),
@@ -276,7 +276,15 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
     assert.match(grid.innerHTML, /Para externos/);
     assert.equal(publics[1].disabled, true);
     assert.equal(publics[1].checked, true);
-    assert.equal(get('#noticeFilterDetails').open, false);
+    // A etiqueta da categoria vira HTML de verdade, nunca código JavaScript na tela.
+    assert.match(grid.innerHTML, /crm-pill--cat crm-pill--matricula/);
+    assert.doesNotMatch(grid.innerHTML, /esc\(|' \+ /);
+    // Mais recentes primeiro; o botão inverte a ordem.
+    const order = () => ['Para alunos', 'Para externos', 'Aviso geral'].map((t) => grid.innerHTML.indexOf(t));
+    assert.ok(order()[0] < order()[1] && order()[1] < order()[2]);
+    get('#btnNoticeSort').events.click();
+    assert.ok(order()[2] < order()[1] && order()[1] < order()[0]);
+    get('#btnNoticeSort').events.click();
     publics[0].checked = false;
     publics[0].events.change();
     assert.equal(publics[1].disabled, false);

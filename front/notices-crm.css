@@ -1,0 +1,478 @@
+/* notices-crm.css: área de trabalho de Avisos e notícias (abas de categoria, ferramentas,
+   painel de filtros e tabela). Usa só os tokens do portal (tokens.css), então o tema
+   escuro vem de graça; as cores de categoria são as mesmas do calendário (--event-*,
+   personalizáveis nas Configurações). O banner do topo é o mesmo das outras páginas. */
+
+.crm-workspace {
+  position: relative;
+  margin-top: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Abas de categoria ---------- */
+.crm-tabs-strip {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.crm-tabs-strip::-webkit-scrollbar {
+  display: none;
+}
+/* Mais específico que .ar-chip (bundle.css): a aba não é uma pílula. */
+.crm-tabs-strip .crm-tab {
+  flex: none;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 48px;
+  padding: 14px 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 14px;
+  box-shadow: inset 0 -2px 0 transparent;
+  transition:
+    color 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+.crm-tabs-strip .crm-tab:hover {
+  background: none;
+  color: var(--ink);
+}
+.crm-tabs-strip .crm-tab[aria-pressed='true'] {
+  background: none;
+  border: 0;
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+.crm-tabs-strip .crm-tab:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -4px;
+  box-shadow: none;
+}
+.crm-tab .ar-sup {
+  vertical-align: baseline;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+/* ---------- Barra de ferramentas ---------- */
+.crm-toolbar {
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+.crm-toolbar-left,
+.crm-toolbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.crm-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.crm-tool-btn:hover {
+  background: var(--surface-sunken);
+}
+.crm-tool-btn[aria-expanded='true'],
+.crm-tool-btn[aria-pressed='true'] {
+  background: var(--chip-active);
+  border-color: var(--chip-active);
+}
+.crm-tool-btn:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+}
+.crm-tool-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: var(--action);
+  color: var(--on-action);
+  font-size: 11px;
+  line-height: 1;
+}
+.crm-tool-badge[hidden] {
+  display: none;
+}
+
+/* Busca */
+.crm-search-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 280px;
+  max-width: 100%;
+  height: 36px;
+  padding: 0 6px 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+}
+.crm-search-box:focus-within {
+  box-shadow: var(--focus-ring);
+}
+.crm-search-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+.crm-search-box input::placeholder {
+  color: var(--ink-muted);
+}
+.crm-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.crm-search-box:focus-within .crm-kbd {
+  visibility: hidden;
+}
+.crm-toolbar-sum {
+  color: var(--ink-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ---------- Painel de filtros ---------- */
+.crm-filter-anchor {
+  position: relative;
+}
+.crm-filter-popover {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  left: 0;
+  display: grid;
+  gap: var(--space-4);
+  width: min(400px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+}
+.crm-filter-popover[hidden] {
+  display: none;
+}
+.crm-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.crm-filter-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.crm-filter-close {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.crm-filter-close:hover {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+.crm-filter-close:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+}
+.crm-filter-group {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.crm-filter-field {
+  display: grid;
+  gap: var(--space-2);
+}
+.crm-filter-legend {
+  padding: 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.crm-checkbox-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* A caixa de seleção fica invisível, mas continua focável e lida por leitores de tela. */
+.crm-check-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.crm-check-pill input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.crm-check-pill:hover {
+  background: var(--surface-sunken);
+}
+.crm-check-pill:has(input:checked) {
+  background: var(--chip-active);
+  border-color: var(--control-border);
+}
+.crm-check-pill:has(input:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+.crm-check-pill:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.crm-check-pill .ar-check-count {
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+.crm-filter-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+.crm-filter-summary {
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+.crm-btn-link {
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.crm-btn-link:disabled {
+  color: var(--ink-muted);
+  text-decoration: none;
+  cursor: default;
+}
+.crm-btn-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Visualizações ---------- */
+.crm-view-container > [data-view-panel='lista'],
+.crm-view-container > [data-view-panel='quadro'] {
+  padding: var(--space-4);
+}
+.crm-table-wrap {
+  overflow-x: auto;
+}
+.crm-table th:first-child,
+.crm-table td:first-child {
+  padding-inline-start: var(--space-4);
+}
+.crm-table td {
+  transition: background-color 120ms ease-out;
+}
+.crm-table tbody tr:hover td {
+  background: var(--surface-sunken);
+}
+.crm-table tbody tr:has(.row-select:checked) td {
+  background: color-mix(in srgb, var(--cyan-soft) 70%, var(--surface));
+}
+.crm-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.crm-td-title a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.crm-td-title a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.crm-td-type {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+.crm-td-muted {
+  color: var(--ink-muted);
+}
+.crm-td-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+.crm-td-actions .ar-btn + .ar-btn {
+  margin-left: 6px;
+}
+.crm-workspace.is-compact .crm-table td {
+  padding-block: 6px;
+}
+.crm-workspace.is-compact .crm-td-type {
+  display: none;
+}
+
+/* ---------- Etiquetas ---------- */
+.crm-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--neutral-soft);
+  color: var(--neutral-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  white-space: nowrap;
+}
+/* Categoria: tom suave da cor da categoria; o texto fica perto da tinta para manter contraste. */
+.crm-pill--cat {
+  --cat: var(--ink-muted);
+  background: color-mix(in srgb, var(--cat) 14%, var(--surface));
+  color: color-mix(in srgb, var(--cat) 72%, var(--ink));
+}
+[data-theme='dark'] .crm-pill--cat {
+  background: color-mix(in srgb, var(--cat) 24%, var(--surface));
+  color: color-mix(in srgb, var(--cat) 45%, var(--ink));
+}
+.crm-pill--matricula {
+  --cat: var(--event-matricula);
+}
+.crm-pill--edital {
+  --cat: var(--event-edital);
+}
+.crm-pill--evento {
+  --cat: var(--event-evento);
+}
+.crm-pill--cancelamento {
+  --cat: var(--event-cancelamento);
+}
+.crm-pill--calendario {
+  --cat: var(--event-registro_academico, var(--ink-muted));
+}
+.crm-pill--status-publicado {
+  background: var(--green-soft);
+  color: var(--green-ink);
+}
+.crm-pill--status-rascunho {
+  background: var(--yellow-soft);
+  color: var(--yellow-ink);
+}
+.crm-pill--status-arquivado {
+  background: var(--neutral-soft);
+  color: var(--neutral-ink);
+}
+.ar-card-meta .crm-pill {
+  margin-right: 4px;
+}
+
+/* ---------- Telas menores ---------- */
+@media (max-width: 760px) {
+  .crm-toolbar,
+  .crm-toolbar-right {
+    align-items: stretch;
+  }
+  .crm-toolbar-right,
+  .crm-search-box {
+    width: 100%;
+  }
+  .crm-kbd {
+    display: none;
+  }
+  .crm-table {
+    min-width: 720px;
+  }
+}
+@media (max-width: 600px) {
+  .crm-toolbar {
+    padding: var(--space-3);
+  }
+  /* No celular a tabela já rola de lado; a densidade só faz diferença em tela larga. */
+  #btnNoticeDensity {
+    display: none;
+  }
+  .crm-tool-btn,
+  .crm-search-box {
+    min-height: 44px;
+  }
+  /* O painel vira uma folha presa à base da tela. */
+  .crm-filter-popover {
+    position: fixed;
+    top: auto;
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    width: auto;
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+  }
+  .crm-check-pill {
+    min-height: 44px;
+  }
+}

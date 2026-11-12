@@ -168,13 +168,20 @@
         $('#btnNewNotice').style.display = canManage ? '' : 'none';
         $('#btnDeleteSel').style.display = 'none';
         const bar = filterBar('#chipbarCategories', categories, () => rows, 'categoria', render);
-        const filterDetails = $('#noticeFilterDetails');
-        const filterMedia = window.matchMedia('(max-width: 600px)');
-        function filterLayout() {
-            filterDetails.open = !filterMedia.matches;
-        }
-        filterMedia.addEventListener('change', filterLayout);
-        filterLayout();
+        // Ordem: fixados primeiro e, dentro de cada grupo, pela data de publicação.
+        const sortButton = $('#btnNoticeSort');
+        let newestFirst = true;
+        const publishedAt = (r) => String(r.data_publicacao || '');
+        const sorted = (list) =>
+            list
+                .slice()
+                .sort(
+                    (a, b) =>
+                        Number(Boolean(b.fixado)) - Number(Boolean(a.fixado)) ||
+                        (newestFirst
+                            ? publishedAt(b).localeCompare(publishedAt(a))
+                            : publishedAt(a).localeCompare(publishedAt(b)))
+                );
         function visible() {
             const text = value('filterTextNotices').toLowerCase();
             const type = $('#filterNoticeType').value;
@@ -184,21 +191,26 @@
             const status = $$('[data-filter-situacao]:checked').map(
                 (c) => noticeStatuses[c.dataset.filterSituacao]
             );
-            return bar
-                .visible()
-                .filter(
-                    (r) =>
-                        (!type || (r.tipo_publicacao || 'aviso') === type) &&
-                        (!text || `${r.titulo} ${r.resumo}`.toLowerCase().includes(text)) &&
-                        A.noticeFilters.audienceMatches(r, audience) &&
-                        status.includes(r.situacao)
-                );
+            return sorted(
+                bar
+                    .visible()
+                    .filter(
+                        (r) =>
+                            (!type || (r.tipo_publicacao || 'aviso') === type) &&
+                            (!text || `${r.titulo} ${r.resumo}`.toLowerCase().includes(text)) &&
+                            A.noticeFilters.audienceMatches(r, audience) &&
+                            status.includes(r.situacao)
+                    )
+            );
         }
+        const typeLabel = (r) => (r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso');
+        const categoryPill = (r) =>
+            `<span class="crm-pill crm-pill--cat crm-pill--${esc(r.categoria)}">${esc(label(categories, r.categoria))}</span>`;
         function noticeCard(r) {
             const html = card(
                 r.titulo,
                 r.resumo,
-                `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
+                `${categoryPill(r)} ${typeLabel(r)} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
                 `<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--secondary btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button><button type="button" class="ar-btn ar-btn--quiet btn-delete" data-id="${esc(r.id_aviso)}">Excluir publicação</button>` : ''}`
             );
             return A.noticeCover?.valid(r.capa)
@@ -225,7 +237,7 @@
             table.innerHTML = list
                 .map(
                     (r) =>
-                        `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso" ${A.noticeActions.canDelete(r) ? '' : 'disabled'}></td><td><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(A.noticeAudiences.format(r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--sm btn-edit" data-id="${esc(r.id_aviso)}">Editar</button><button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`
+                        `<tr data-id="${esc(r.id_aviso)}"><td class="ar-td-check"><input type="checkbox" class="row-select" aria-label="Selecionar ${esc(r.titulo)}" ${A.noticeActions.canDelete(r) ? '' : 'disabled'}></td><td class="crm-td-title"><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a><span class="crm-td-type">${typeLabel(r)}</span></td><td>${categoryPill(r)}</td><td class="crm-td-muted">${esc(A.noticeAudiences.format(r.publico_alvo))}</td><td class="ar-td-mono">${date(r.data_publicacao)}</td><td><span class="crm-pill crm-pill--status crm-pill--status-${esc(r.situacao)}">${esc(label(noticeStatuses, r.situacao))}</span></td><td class="crm-td-actions">${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--sm btn-edit" data-id="${esc(r.id_aviso)}">Editar</button><button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`
                 )
                 .join('');
             board.innerHTML =
@@ -322,6 +334,12 @@
         });
         $('#filterTextNotices').addEventListener('input', render);
         $('#filterNoticeType').addEventListener('change', render);
+        sortButton?.addEventListener('click', () => {
+            newestFirst = !newestFirst;
+            const text = sortButton.querySelector('span');
+            if (text) text.textContent = newestFirst ? 'Mais recentes' : 'Mais antigas';
+            render();
+        });
         $$('[data-filter-publico], [data-filter-situacao]').forEach((c) =>
             c.addEventListener('change', render)
         );

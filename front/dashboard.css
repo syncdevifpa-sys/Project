@@ -1347,28 +1347,59 @@ a.db-task-title:hover {
 }
 
 /* ---------- 08 Próximas datas ---------- */
+/* Linhas como as outras listas do painel (sem cartão por item). A caixa da data leva a
+   cor da categoria do calendário (--event-*, personalizável nas Configurações). */
 .db-dates {
   display: grid;
   gap: 4px;
   margin: 0 -8px;
 }
 .db-date {
+  --cat: var(--db-navy);
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 8px;
+  padding: 8px;
   border-radius: 12px;
-  transition: background 200ms var(--db-ease);
+  transition: background-color 200ms var(--db-ease);
 }
 .db-date:hover {
   background: var(--db-row-hover);
+}
+.db-date[data-event-category='evento'] {
+  --cat: var(--event-evento, var(--db-navy));
+}
+.db-date[data-event-category='atividades_campus'] {
+  --cat: var(--event-atividades_campus, var(--db-navy));
+}
+.db-date[data-event-category='matricula'] {
+  --cat: var(--event-matricula, var(--db-navy));
+}
+.db-date[data-event-category='registro_academico'] {
+  --cat: var(--event-registro_academico, var(--db-navy));
+}
+.db-date[data-event-category='avaliacao'] {
+  --cat: var(--event-avaliacao, var(--db-navy));
+}
+.db-date[data-event-category='feriado'] {
+  --cat: var(--event-feriado, var(--db-navy));
+}
+.db-date[data-event-category='ponto_facultativo'] {
+  --cat: var(--event-ponto_facultativo, var(--db-navy));
+}
+.db-date[data-event-category='ferias'] {
+  --cat: var(--event-ferias, var(--db-navy));
+}
+.db-date[data-event-category='cancelamento'] {
+  --cat: var(--event-cancelamento, var(--db-navy));
 }
 .db-date-box {
   width: 52px;
   height: 52px;
   flex: none;
   border-radius: 12px;
-  background: var(--db-cream);
+  background: color-mix(in srgb, var(--cat) 12%, var(--db-cream));
+  box-shadow: inset 3px 0 0 var(--cat);
   display: grid;
   place-content: center;
   text-align: center;
