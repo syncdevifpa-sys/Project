@@ -11,7 +11,13 @@ body {
   color: var(--on-field);
 }
 .admin-intro h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
   margin: 0 0 var(--space-2);
+}
+.admin-panel h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
 }
 .admin-intro p {
   margin: 0;

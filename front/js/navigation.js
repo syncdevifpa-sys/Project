@@ -1,9 +1,14 @@
 // Barra lateral com grupos acessíveis e preferência de recolhimento no desktop.
 (function () {
     'use strict';
+    // js/navigation-boot.js marca o <html> antes da primeira pintura; com o menu
+    // definitivo montado, a marca sai e as classes do <body> assumem o layout.
+    function ready() {
+        document.documentElement.removeAttribute('data-nav-pending');
+    }
     function init() {
         const host = document.querySelector('.ar-nav .ar-navpill');
-        if (!host || !window.Arcadia?.auth) return;
+        if (!host || !window.Arcadia?.auth) return ready();
         const session = Arcadia.auth.getSessao(),
             page = location.pathname.split('/').pop();
         if (session.tipo_usuario === 'externo' || !session.tipo_usuario) {
@@ -26,7 +31,7 @@
                 item.textContent = label;
                 host.append(item);
             }
-            return;
+            return ready();
         }
         const paths = {
             panel: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
@@ -155,7 +160,9 @@
         });
         const current = document.createElement('span');
         current.className = 'ar-nav-current';
-        current.textContent = currentLabel;
+        // O HTML da página já mostrou este rótulo antes do script (data-nav-label);
+        // repetir o mesmo texto evita que ele troque na frente de quem usa.
+        current.textContent = host.dataset.navLabel || currentLabel;
         host.className = 'ar-grouped-nav';
         host.removeAttribute('aria-label');
         host.replaceChildren(current);
@@ -254,6 +261,7 @@
             layout();
         });
         layout();
+        ready();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();

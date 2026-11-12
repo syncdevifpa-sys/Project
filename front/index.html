@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arcadia — Portal do IFPA Campus Belém</title>
+    <title>Arcádia — Portal do IFPA Campus Belém</title>
     <!-- Aplica a preferência de tema antes de carregar os estilos. -->
     <script src="js/theme.js"></script>
     <script src="js/home-view.js"></script>
@@ -13,11 +13,18 @@
       setTimeout(function () {
         if (!window.__arcadiaAnimacoes) document.documentElement.classList.remove('js');
       }, 4000);
-      // Idioma salvo em inglês: esconde a página até js/idioma.js traduzir (sem piscar o PT).
+      // "Reduzir movimento" das Configurações do portal vale também aqui (data-motion).
+      // A preferência do sistema operacional não desliga as animações da landing.
       try {
-        if (localStorage.getItem('arcadia-lang') === 'en') {
+        if (localStorage.getItem('arcadia-theme-motion') === 'reduced')
+          document.documentElement.setAttribute('data-motion', 'reduced');
+      } catch (e) {}
+      // Idioma salvo em inglês ou espanhol: esconde a página até js/idioma.js traduzir (sem piscar o PT).
+      try {
+        var idiomaSalvo = localStorage.getItem('arcadia-lang');
+        if (idiomaSalvo === 'en' || idiomaSalvo === 'es') {
           document.documentElement.classList.add('i18n-pendente');
-          document.documentElement.lang = 'en';
+          document.documentElement.lang = idiomaSalvo;
           setTimeout(function () {
             document.documentElement.classList.remove('i18n-pendente');
           }, 3000);
@@ -44,7 +51,6 @@
     <header class="site-header">
       <nav class="site-nav" aria-label="Navegação principal">
         <a href="index.html" class="wordmark" aria-label="Arcádia, IFPA Campus Belém — início">
-          <span class="wordmark-mark" aria-hidden="true">A</span>
           <span class="wordmark-text">
             <span class="wordmark-name">Arcádia</span>
             <span class="wordmark-sub">IFPA Campus Belém</span>
@@ -80,6 +86,7 @@
             <ul class="lang-menu" id="langMenu" hidden>
               <li><button type="button" class="lang-option" data-lang="pt" lang="pt-BR" aria-current="true">Português</button></li>
               <li><button type="button" class="lang-option" data-lang="en" lang="en" aria-current="false">English</button></li>
+              <li><button type="button" class="lang-option" data-lang="es" lang="es" aria-current="false">Español</button></li>
             </ul>
           </div>
           <a
@@ -119,6 +126,7 @@
             <span class="lang-chips" role="group" aria-labelledby="mobileLangLabel">
               <button type="button" class="lang-chip" data-lang="pt" lang="pt-BR" aria-pressed="true">PT</button>
               <button type="button" class="lang-chip" data-lang="en" lang="en" aria-pressed="false">EN</button>
+              <button type="button" class="lang-chip" data-lang="es" lang="es" aria-pressed="false">ES</button>
             </span>
           </li>
           <li class="nav-mobile-login"><a href="login.html" class="btn btn--outline">Entrar</a></li>
@@ -149,7 +157,7 @@
             <div class="hero-side">
               <p class="hero-lead">
                 Sem informações espalhadas entre redes sociais, aplicativos de mensagens e e-mails.
-                A Arcadia reúne o que estudantes, docentes e servidores precisam acompanhar.
+                A Arcádia reúne o que estudantes, docentes e servidores precisam acompanhar.
               </p>
               <div class="hero-actions">
                 <a href="#como-funciona" class="btn btn--sun">Veja como começar</a>
@@ -183,12 +191,14 @@
         </div>
       </section>
 
-      <!-- 3. O que é a Arcadia -->
+      <!-- 3. O que é a Arcádia -->
       <section data-home-intro class="about section--white" aria-labelledby="aboutLabel">
         <div class="container">
-          <p class="eyebrow eyebrow--center" id="aboutLabel">O que é a Arcadia</p>
+          <p class="eyebrow eyebrow--center" id="aboutLabel">O que é a Arcádia</p>
           <p class="about-quote" data-reveal>
-            A Arcadia centraliza, organiza e dissemina informações institucionais.
+            <span class="text-gradient"
+              >A Arcádia centraliza, organiza e dissemina informações institucionais.</span
+            >
             <span class="text-soft"
               >Porque a comunicação é fundamental para o funcionamento de uma instituição de
               ensino.</span
@@ -198,17 +208,17 @@
           <div class="pillars">
             <article class="pillar" data-rise>
               <p class="eyebrow">Alcance</p>
-              <h3 class="pillar-title">Um canal para todos os públicos</h3>
+              <h3 class="pillar-title text-gradient">Um canal para todos os públicos</h3>
               <p>Discentes, docentes e servidores acessam as mesmas informações, no mesmo lugar.</p>
             </article>
             <article class="pillar" data-rise>
               <p class="eyebrow">Agilidade</p>
-              <h3 class="pillar-title">Comunicados sem atraso</h3>
+              <h3 class="pillar-title text-gradient">Comunicados sem atraso</h3>
               <p>Acesso às informações 24 horas por dia, sem atrasos no recebimento de comunicados.</p>
             </article>
             <article class="pillar" data-rise>
               <p class="eyebrow">Participação</p>
-              <h3 class="pillar-title">Comunidade mais integrada</h3>
+              <h3 class="pillar-title text-gradient">Comunidade mais integrada</h3>
               <p>Maior participação e integração entre os diferentes públicos da instituição.</p>
             </article>
           </div>
@@ -424,7 +434,7 @@
           <div class="audience-head">
             <div>
               <p class="eyebrow">Para quem</p>
-              <h2 class="section-title section-title--lg" id="audienceTitle" data-reveal>
+              <h2 class="section-title section-title--lg text-gradient" id="audienceTitle" data-reveal>
                 Feito para<br />toda a comunidade<br />acadêmica
               </h2>
             </div>
@@ -468,7 +478,7 @@
         <div class="container">
           <div class="devices-head">
             <p class="eyebrow eyebrow--center">Em qualquer dispositivo</p>
-            <h2 class="section-title section-title--lg" id="devicesTitle" data-reveal>A Arcadia também<br />no celular</h2>
+            <h2 class="section-title section-title--lg" id="devicesTitle" data-reveal>A Arcádia também<br />no celular</h2>
             <p class="section-lead">
               Funciona no navegador do computador, do tablet e do celular, sem precisar instalar
               nada.
@@ -529,7 +539,7 @@
           <div class="faq-accordion" id="faq">
             <div class="faq-item" data-rise>
               <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>Quem pode usar a Arcadia?</span>
+                <span>Quem pode usar a Arcádia?</span>
                 <span class="toggle-icon faq-icon-circle"></span>
               </button>
               <div class="faq-panel">
@@ -555,7 +565,7 @@
               </button>
               <div class="faq-panel">
                 <p
-                  >Não. O uso da Arcadia é gratuito. Este é um projeto acadêmico; não há plano de
+                  >Não. O uso da Arcádia é gratuito. Este é um projeto acadêmico; não há plano de
                   assinatura nem cobrança para criar conta ou usar os recursos disponíveis.</p
                 >
               </div>
@@ -579,12 +589,12 @@
 
             <div class="faq-item" data-rise>
               <button type="button" class="faq-trigger" aria-expanded="false">
-                <span>A Arcadia substitui o SIGAA?</span>
+                <span>A Arcádia substitui o SIGAA?</span>
                 <span class="toggle-icon faq-icon-circle"></span>
               </button>
               <div class="faq-panel">
                 <p
-                  >Não. A Arcadia é um projeto acadêmico para organizar publicações, tarefas, projetos
+                  >Não. A Arcádia é um projeto acadêmico para organizar publicações, tarefas, projetos
                   e solicitações. Não consulta nem altera automaticamente notas, matrículas ou
                   registros no SIGAA. Na aba Documentos, você acompanha solicitações; isso não gera um
                   documento oficial automaticamente. O download fica disponível quando um arquivo é
@@ -649,7 +659,6 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <a href="index.html" class="wordmark wordmark--footer" aria-label="Arcádia — início">
-          <span class="wordmark-mark" aria-hidden="true">A</span>
           <span class="wordmark-name">Arcádia</span>
         </a>
         <nav aria-label="Rodapé">
@@ -662,7 +671,7 @@
           </ul>
         </nav>
         <div class="footer-end">
-          <span>&copy; 2026 Arcadia</span>
+          <span>&copy; 2026 Arcádia</span>
           <button type="button" class="theme-toggle" id="themeToggle" aria-label="Ativar tema escuro" aria-pressed="false">
             <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>
             <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>

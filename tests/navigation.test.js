@@ -3,7 +3,20 @@ const assert = require('node:assert/strict'),
     vm = require('node:vm'),
     fs = require('node:fs');
 const code = fs.readFileSync('front/js/navigation.js', 'utf8');
-function fixture(page, session, mobile = false, saved = '0') {
+// Pages whose HTML ships the top menu that navigation.js replaces.
+const PAGES = [
+    'admin',
+    'calendar',
+    'classes',
+    'documents',
+    'notice',
+    'notices',
+    'people',
+    'projects',
+    'settings',
+    'tasks'
+];
+function fixture(page, session, mobile = false, saved = '0', label) {
     const nodes = [],
         storage = new Map([['arcadia-sidebar-collapsed', saved]]);
     function element(tag) {
@@ -52,14 +65,20 @@ function fixture(page, session, mobile = false, saved = '0') {
         end = element('div'),
         body = element('body'),
         app = element('main'),
+        root = element('html'),
         media = {
             matches: mobile,
             addEventListener(k, fn) {
                 this.change = fn;
             }
         };
+    // js/navigation-boot.js leaves this mark on <html> before first paint.
+    root.setAttribute('data-nav-pending', '');
+    // data-nav-label on the menu: the page label already painted by the stylesheet.
+    if (label) host.dataset.navLabel = label;
     const document = {
         readyState: 'complete',
+        documentElement: root,
         body,
         querySelector: (s) => (s === '.ar-nav-end' ? end : s === '.ar-app' ? app : host),
         createElement: element,
@@ -75,10 +94,12 @@ function fixture(page, session, mobile = false, saved = '0') {
     });
     return {
         nodes,
+        root,
         body,
         app,
         media,
         storage,
+        current: nodes.find((n) => n.className === 'ar-nav-current'),
         toggle: nodes.find((n) => n.className === 'ar-iconbtn ar-sidebar-toggle'),
         sidebar: nodes.find((n) => n.id === 'portalSidebar'),
         nav: nodes.find((n) => n.attributes['aria-label'] === 'Navegação do portal'),
@@ -149,4 +170,73 @@ test('compact navigation has distinct semantic icons and accessible names', () =
     assert.equal(new Set(paths).size, links.length);
     assert.ok(links.every((n) => n.title && n.attributes['aria-label'] === n.title));
     assert.equal(links.find((n) => n.href === 'notices.html').title, 'Avisos e notícias');
+});
+
+test('navigation clears the pending mark for sidebar and link menus', () => {
+    for (const session of [{ tipo_usuario: 'discente' }, { tipo_usuario: 'externo' }, {}])
+        assert.equal(
+            'data-nav-pending' in fixture('notices.html', session).root.attributes,
+            false
+        );
+});
+
+test('boot script tells the stylesheet which menu to reserve before first paint', () => {
+    const boot = fs.readFileSync('front/js/navigation-boot.js', 'utf8');
+    function run(session, collapsed) {
+        const attributes = {},
+            storage = {
+                arcadiaSessao: JSON.stringify(session),
+                'arcadia-sidebar-collapsed': collapsed
+            };
+        vm.runInNewContext(boot, {
+            document: {
+                documentElement: {
+                    setAttribute: (k, v) => (attributes[k] = v),
+                    removeAttribute: (k) => delete attributes[k]
+                }
+            },
+            localStorage: { getItem: (k) => storage[k] ?? null },
+            setTimeout: () => {}
+        });
+        return attributes;
+    }
+    assert.deepEqual(run({ tipo_usuario: 'discente' }, '0'), {
+        'data-nav': 'sidebar',
+        'data-nav-pending': ''
+    });
+    assert.deepEqual(run({ tipo_usuario: 'docente' }, '1'), {
+        'data-nav': 'sidebar',
+        'data-nav-pending': '',
+        'data-nav-collapsed': ''
+    });
+    assert.equal(run({ tipo_usuario: 'externo' }, '1')['data-nav'], 'links');
+    assert.equal(run({}, '0')['data-nav'], 'links');
+    // The script must run before the first stylesheet on every page with this menu.
+    for (const p of PAGES) {
+        const html = fs.readFileSync('front/' + p + '.html', 'utf8'),
+            at = html.indexOf('js/navigation-boot.js');
+        assert.ok(at > 0 && at < html.indexOf('tokens.css'), p);
+    }
+});
+
+test('each page ships the label the sidebar script shows, so it never changes on screen', () => {
+    const admin = { tipo_usuario: 'servidor', is_admin: true };
+    for (const p of PAGES) {
+        const html = fs.readFileSync('front/' + p + '.html', 'utf8'),
+            shipped = /class="ar-navpill"[^>]*data-nav-label="([^"]+)"/.exec(html)?.[1];
+        // Without the attribute the script falls back to the name it computes itself.
+        assert.equal(shipped, fixture(p + '.html', admin).current.textContent, p);
+    }
+    // The label already painted wins, even where the script would compute another one.
+    assert.equal(fixture('admin.html', { tipo_usuario: 'discente' }).current.textContent, 'Portal');
+    assert.equal(
+        fixture('admin.html', { tipo_usuario: 'discente' }, false, '0', 'Gerenciar aplicativo')
+            .current.textContent,
+        'Gerenciar aplicativo'
+    );
+    // The waiting state paints that label from the attribute, not from the old menu links.
+    assert.match(
+        fs.readFileSync('front/navigation.css', 'utf8'),
+        /\.ar-navpill\[data-nav-label\]::before \{\s*content: attr\(data-nav-label\);/
+    );
 });

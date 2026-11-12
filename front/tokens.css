@@ -94,53 +94,50 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
   --radius-full: 9999px;
-  --font-sans: 'Onest', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
-}
-@font-face {
-  font-family: 'Onest';
-  src: url(fonts/Onest-Variable-latin.woff2) format('woff2');
-  font-weight: 100 900;
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url(fonts/JetBrainsMono-Variable-latin.woff2) format('woff2');
-  font-weight: 100 800;
+  /* Tipografia do design system Arcádia: fontes do sistema, sem download.
+     Títulos (a partir de 20px) usam --font-serif com peso 400; o resto usa --font-sans.
+     landing.css repete estes valores e dashboard.css aponta para eles
+     (tests/typography.test.js confere). */
+  --font-serif: 'Times New Roman', Times, serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', system-ui,
+    sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }
 .display-xl {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-size: 64px;
   line-height: 77px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  font-weight: 400;
+  letter-spacing: -0.025em;
 }
 .display {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-size: 44px;
   line-height: 53px;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-.stat {
-  font-family: var(--font-sans);
-  font-size: 48px;
-  line-height: 58px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-}
-.title {
-  font-family: var(--font-sans);
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.02em;
 }
+.stat {
+  font-family: var(--font-serif);
+  font-size: 48px;
+  line-height: 58px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 400;
+  letter-spacing: normal;
+}
 .card-title {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-size: 22px;
   line-height: 27px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 .body {
   font-family: var(--font-sans);

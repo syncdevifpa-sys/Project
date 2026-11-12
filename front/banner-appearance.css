@@ -38,7 +38,7 @@
   box-shadow: 0 16px 48px #0003; font: inherit;
 }
 .ar-banner-appearance-dialog::backdrop { background: #0005; }
-.ar-banner-appearance-dialog h2 { margin: 0 0 10px; font-size: 20px; }
+.ar-banner-appearance-dialog h2 { font-family: var(--font-serif); font-weight: 400; margin: 0 0 10px; font-size: 20px; }
 .ar-banner-appearance-dialog p { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 .ar-banner-appearance-dialog form > label { display: grid; gap: 8px; }
 .ar-banner-appearance-dialog select,

@@ -36,6 +36,8 @@
   font-size: 13px;
 }
 .ar-month-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
   text-transform: capitalize;
   margin: 0 0 12px;
   font-size: 22px;

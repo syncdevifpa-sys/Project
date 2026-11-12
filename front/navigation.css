@@ -1,10 +1,38 @@
+/* Estado de espera: js/navigation-boot.js marca o <html> com data-nav-pending
+   antes da primeira pintura e js/navigation.js retira a marca ao montar o menu.
+   Enquanto isso, as regras [data-nav-pending] deixam a página no formato final
+   (espaço da barra lateral reservado, só o rótulo da página visível), sem salto.
+   O rótulo vem de data-nav-label no menu de cada página. */
 .ar-grouped-nav {
   display: flex;
   align-items: center;
   min-width: 0;
   margin: 0 auto;
 }
-.ar-nav-current {
+/* Visitante e comunidade externa: os links do HTML são trocados, então esperam ocultos. */
+[data-nav-pending] .ar-navpill {
+  visibility: hidden;
+}
+[data-nav-pending][data-nav='sidebar'] .ar-navpill {
+  position: static;
+  flex: none;
+  min-width: 0;
+  min-height: 36px;
+  margin: 0 auto;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+  visibility: visible;
+}
+[data-nav-pending][data-nav='sidebar'] .ar-navpill > * {
+  display: none;
+}
+[data-nav-pending][data-nav='sidebar'] .ar-navpill[data-nav-label]::before {
+  content: attr(data-nav-label);
+}
+.ar-nav-current,
+[data-nav-pending][data-nav='sidebar'] .ar-navpill[data-nav-label]::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -22,13 +50,16 @@
   text-align: center;
   overflow-wrap: anywhere;
 }
-.ar-has-sidebar {
+.ar-has-sidebar,
+[data-nav-pending][data-nav='sidebar'] {
   --sidebar-width: 240px;
 }
-.ar-has-sidebar.ar-sidebar-collapsed {
+.ar-has-sidebar.ar-sidebar-collapsed,
+[data-nav-pending][data-nav='sidebar'][data-nav-collapsed] {
   --sidebar-width: 72px;
 }
-.ar-has-sidebar .ar-app {
+.ar-has-sidebar .ar-app,
+[data-nav-pending][data-nav='sidebar'] .ar-app {
   margin-left: calc(var(--sidebar-width) + 24px);
   margin-right: 8px;
   max-width: none;
@@ -182,6 +213,19 @@
   color: var(--ink-muted);
 }
 @media (min-width: 1101px) {
+  /* Moldura vazia no lugar da barra lateral até ela ser montada. */
+  [data-nav-pending][data-nav='sidebar'] body::before {
+    content: '';
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    bottom: 16px;
+    width: var(--sidebar-width);
+    box-sizing: border-box;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
   .ar-sidebar-collapsed .ar-sidebar-head,
   .ar-sidebar-collapsed .ar-sidebar-group > summary,
   .ar-sidebar-collapsed .ar-portal-sidebar a span {
@@ -199,16 +243,19 @@
   }
 }
 @media (max-width: 1100px) {
-  .ar-has-sidebar .ar-app {
+  .ar-has-sidebar .ar-app,
+  [data-nav-pending][data-nav='sidebar'] .ar-app {
     margin: 0 auto;
     padding-bottom: 16px;
   }
-  .ar-has-sidebar .ar-nav {
+  .ar-has-sidebar .ar-nav,
+  [data-nav-pending][data-nav='sidebar'] .ar-nav {
     flex-wrap: wrap;
     border-radius: var(--radius-lg);
     padding-left: 48px;
   }
-  .ar-grouped-nav {
+  .ar-grouped-nav,
+  [data-nav-pending][data-nav='sidebar'] .ar-navpill {
     order: 3;
     width: 100%;
     margin: 0;
@@ -254,7 +301,8 @@
   }
 }
 @media (max-width: 600px) {
-  .ar-has-sidebar .ar-nav {
+  .ar-has-sidebar .ar-nav,
+  [data-nav-pending][data-nav='sidebar'] .ar-nav {
     gap: 8px;
   }
   .ar-nav-end > a[aria-label='Configurações'] {

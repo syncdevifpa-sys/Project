@@ -29,7 +29,9 @@
 
     const root = document.documentElement;
     const toque = window.matchMedia('(pointer: coarse)');
-    const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Como em js/animacoes.js: só a opção "Reduzir movimento" do portal (data-motion)
+    // desliga a inércia; a preferência do sistema operacional não.
+    const movimentoReduzido = () => root.getAttribute('data-motion') === 'reduced';
 
     let ativo = false;
     let alvo = window.scrollY;
@@ -197,7 +199,7 @@
     }
 
     function atualizarEstado() {
-        const deveAtivar = !toque.matches && !reduzido.matches;
+        const deveAtivar = !toque.matches && !movimentoReduzido();
         if (deveAtivar === ativo) return;
         ativo = deveAtivar;
         parar();
@@ -222,9 +224,7 @@
     }
     window.addEventListener('load', calcularLimite);
 
-    for (const consulta of [toque, reduzido]) {
-        if (consulta.addEventListener) consulta.addEventListener('change', atualizarEstado);
-        else if (consulta.addListener) consulta.addListener(atualizarEstado);
-    }
+    if (toque.addEventListener) toque.addEventListener('change', atualizarEstado);
+    else if (toque.addListener) toque.addListener(atualizarEstado);
     atualizarEstado();
 })();

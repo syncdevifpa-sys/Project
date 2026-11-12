@@ -13,6 +13,8 @@
   background: var(--scrim);
 }
 .ar-avatar-editor h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
   font-size: 24px;
   margin: 0 0 8px;
 }

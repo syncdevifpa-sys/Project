@@ -328,7 +328,7 @@
                 toast(msg, null, null, 10000);
                 try {
                     if (window.Notification && Notification.permission === 'granted')
-                        new Notification('Arcadia', { body: msg, icon: 'public/arcadia-logo-64.png' });
+                        new Notification('Arcádia', { body: msg, icon: 'public/arcadia-logo-64.png' });
                 } catch {}
                 const all = reminders();
                 delete all[key];

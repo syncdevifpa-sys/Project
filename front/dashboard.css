@@ -28,9 +28,10 @@
   --db-text-2: #5a5a5a;
   --db-ink: #1a1a1a;
 
-  --db-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
-  --db-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --db-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  /* Mesma tipografia do resto do site: os valores vêm de tokens.css. */
+  --db-serif: var(--font-serif);
+  --db-sans: var(--font-sans);
+  --db-mono: var(--font-mono);
 
   --db-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --db-side-w: 256px;

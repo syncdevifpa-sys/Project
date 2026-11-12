@@ -54,7 +54,7 @@ body {
   font: inherit;
   font-size: 14px;
   line-height: 20px;
-  font-weight: 500;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -153,7 +153,7 @@ body {
   gap: var(--space-1);
   font-size: 12px;
   line-height: 16px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-full);
   white-space: nowrap;
@@ -208,7 +208,7 @@ body {
   align-items: center;
   font-size: 11px;
   line-height: 14px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 4px 8px;
   border-radius: var(--radius-xs);
   border: 1px solid var(--line);
@@ -413,13 +413,14 @@ body {
   background: var(--lime);
 }
 .ar-hero-title {
+  font-family: var(--font-serif);
   margin: 0;
   position: relative;
   z-index: 1;
   font-size: 64px;
   line-height: 77px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  font-weight: 400;
+  letter-spacing: -0.025em;
 }
 .ar-hero--compact {
   min-height: 0;
@@ -535,7 +536,7 @@ body {
   color: var(--ink);
   font-size: 13px;
   line-height: 18px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -573,7 +574,7 @@ body {
   border-radius: var(--radius-full);
   font-size: 14px;
   line-height: 18px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
 }
 .ar-seg button:focus-visible {
@@ -781,10 +782,11 @@ body {
   gap: var(--space-2);
 }
 .ar-stat-value {
+  font-family: var(--font-serif);
   font-size: 48px;
   line-height: 58px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   margin-top: var(--space-3);
   font-variant-numeric: tabular-nums;
 }
@@ -847,11 +849,12 @@ body {
   margin-left: auto;
 }
 .ar-card-title {
+  font-family: var(--font-serif);
   margin: var(--space-2) 0 0;
   font-size: 22px;
   line-height: 27px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 .ar-card-desc {
   margin: 0;
@@ -1211,13 +1214,14 @@ body {
   gap: var(--space-1);
 }
 .ar-detail-title {
+  font-family: var(--font-serif);
   position: relative;
   z-index: 1;
   margin: 0;
   font-size: 44px;
   line-height: 53px;
-  font-weight: 500;
-  letter-spacing: -0.03em;
+  font-weight: 400;
+  letter-spacing: -0.02em;
   max-width: 640px;
 }
 .ar-detail-desc {
@@ -1347,11 +1351,12 @@ body {
   gap: var(--space-3);
 }
 .ar-dialog-title {
+  font-family: var(--font-serif);
   margin: 4px 0 0;
   font-size: 22px;
   line-height: 27px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 .ar-dialog-foot {
   display: flex;
@@ -1438,11 +1443,12 @@ body {
   gap: var(--space-2);
 }
 .ar-pal-preview h4 {
+  font-family: var(--font-serif);
   margin: 0;
   font-size: 22px;
   line-height: 27px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 .ar-pal-preview p {
   margin: 0;
@@ -1520,11 +1526,12 @@ body {
   gap: var(--space-3);
 }
 .ar-h2 {
+  font-family: var(--font-serif);
   margin: var(--space-6) 0 var(--space-1);
   font-size: 28px;
   line-height: 34px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 @media (max-width: 760px) {
   .ar-split,
@@ -1868,11 +1875,12 @@ a.ar-user:hover {
   min-width: 0;
 }
 .ar-sset-head h2 {
+  font-family: var(--font-serif);
   margin: 0;
   font-size: 22px;
   line-height: 27px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 .ar-sset-head p {
   margin: 4px 0 0;
@@ -1982,10 +1990,11 @@ a.ar-user:hover {
   gap: 2px;
 }
 .ar-profile-name {
+  font-family: var(--font-serif);
   font-size: 28px;
   line-height: 34px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 .ar-profile-meta {
   font-size: 13px;

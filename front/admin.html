@@ -7,6 +7,8 @@
 
     <script src="js/theme.js"></script>
 
+    <!-- Marca o tipo de menu antes da primeira pintura (evita o salto da barra lateral). -->
+    <script src="js/navigation-boot.js"></script>
     <link rel="stylesheet" href="tokens.css" />
     <link rel="stylesheet" href="bundle.css" />
     <link rel="stylesheet" href="portal-responsive.css" />
@@ -39,7 +41,7 @@
           </span>
         </a>
 
-        <div class="ar-navpill"
+        <div class="ar-navpill" data-nav-label="Gerenciar aplicativo"
           ><a href="index.html">Início</a>
           <a href="dashboard.html">Meu painel</a>
           <a href="settings.html">Minha conta</a>

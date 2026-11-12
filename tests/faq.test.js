@@ -5,10 +5,10 @@ const { test } = require('node:test'),
 test('FAQ mantém perguntas, responde limites reais e associa botões e painéis acessíveis', () => {
     const html = fs.readFileSync('front/index.html', 'utf8').replace(/\s+/g, ' ');
     for (const question of [
-        'Quem pode usar a Arcadia?',
+        'Quem pode usar a Arcádia?',
         'Há alguma taxa de assinatura?',
         'Como meu vínculo é verificado?',
-        'A Arcadia substitui o SIGAA?',
+        'A Arcádia substitui o SIGAA?',
         'Funciona no celular?'
     ])
         assert.ok(html.includes(question));

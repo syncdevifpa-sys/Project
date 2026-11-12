@@ -4,6 +4,8 @@
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Turmas · Arcádia</title
     ><script src="js/theme.js"></script>
+    <!-- Marca o tipo de menu antes da primeira pintura (evita o salto da barra lateral). -->
+    <script src="js/navigation-boot.js"></script>
     <link rel="stylesheet" href="tokens.css" /><link rel="stylesheet" href="bundle.css" />
     <link rel="stylesheet" href="portal-responsive.css" /><link
       rel="stylesheet"
@@ -17,6 +19,7 @@
       rel="stylesheet"
       href="confirm-dialog.css"
     />
+    <link rel="stylesheet" href="scrollbars.css" />
     <link rel="stylesheet" href="classes.css" />
     <link rel="stylesheet" href="content-views.css" />
   <link rel="stylesheet" href="banner-appearance.css" />
@@ -27,18 +30,18 @@
         <a class="ar-brand" href="index.html">
           <img
             src="assets/arcadia-emblem.png"
-            alt="Logo da Arcadia"
+            alt="Logo da Arcádia"
             class="ar-brand-img"
             width="34"
             height="34"
           />
           <span>
-            <div class="ar-brand-name">Arcadia</div>
+            <div class="ar-brand-name">Arcádia</div>
             <div class="ar-brand-sub">IFPA BELÉM CAMPUS</div>
           </span>
         </a>
 
-        <nav class="ar-navpill" aria-label="Seções do portal">
+        <nav class="ar-navpill" aria-label="Seções do portal" data-nav-label="Minhas turmas">
           <a href="index.html">Início</a>
           <a href="dashboard.html">Meu painel</a>
           <a href="notices.html">Avisos e notícias<sup class="ar-sup">(0)</sup></a>

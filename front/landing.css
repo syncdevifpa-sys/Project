@@ -34,6 +34,19 @@
   --color-on-color: #111214;
   /* Palavra em destaque de títulos grandes (24px ou mais). */
   --color-highlight: #d9480f;
+  /* Degradê de texto dos títulos de seção: da tinta para um azul pastel vivo
+     (3,2:1 sobre branco, o mínimo para texto grande). */
+  --color-pastel-blue: #5b8def;
+  /* O desenho tem o dobro da largura do texto (tinta → azul → tinta): parado, mostra a
+     primeira metade; a animação "tinta viva" desliza até a segunda e volta. */
+  --gradient-text: linear-gradient(
+    100deg,
+    var(--color-ink) 2%,
+    var(--color-pastel-blue) 45%,
+    var(--color-pastel-blue) 55%,
+    var(--color-ink) 98%
+  );
+  --tinta-duracao: 5.5s;
   --opacity-decor: 0.35;
   /* Hover e foco */
   --azul-destaque: #2563eb;
@@ -125,6 +138,7 @@
   --color-navy: #081429;
   --color-navy-raised: #10223f;
   --color-highlight: #f5c518;
+  --color-pastel-blue: #8fb0ff;
 }
 
 /* ---------- Base ---------- */
@@ -298,6 +312,51 @@ button:focus-visible,
 }
 .text-soft {
   color: var(--color-soft);
+}
+/* Texto em degradê (tinta → azul pastel), só em títulos grandes.
+   "Tinta viva": o azul atravessa o texto devagar e volta, sem parar. */
+@keyframes tinta-viva-fixa {
+  to {
+    background-position: 100% 0;
+  }
+}
+@keyframes tinta-viva {
+  to {
+    background-position: calc(var(--gx, 0px) * -1 - var(--gw, 100%)) calc(var(--gy, 0px) * -1);
+  }
+}
+/* Texto parado: o degradê cobre o elemento inteiro. */
+.text-gradient:not([data-reveal], [data-reveal] *) {
+  width: fit-content;
+  background-image: var(--gradient-text);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: tinta-viva-fixa var(--tinta-duracao) ease-in-out infinite alternate;
+}
+/* Título animado (data-reveal): cada palavra é uma máscara própria e pinta o seu
+   recorte do degradê. js/animacoes.js informa a caixa de todas as palavras
+   (--gw × --gh) e a posição de cada uma (--gx, --gy), então a cor segue contínua.
+   O padding dá ao fundo o mesmo espaço da máscara para acentos e descendentes. */
+.text-gradient .w-in {
+  padding: 0.16em 0.02em 0.12em;
+  margin: -0.16em -0.02em -0.12em;
+  background-image: var(--gradient-text);
+  background-repeat: repeat-x;
+  background-size: calc(var(--gw, 100%) * 2) var(--gh, 100%);
+  background-position: calc(var(--gx, 0px) * -1) calc(var(--gy, 0px) * -1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: tinta-viva var(--tinta-duracao) ease-in-out infinite alternate;
+}
+@media (forced-colors: active) {
+  .text-gradient,
+  .text-gradient .w-in {
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
 }
 .text-accent {
   color: var(--color-accent);
@@ -598,7 +657,7 @@ a:not(.btn):not(.wordmark):focus-visible {
   max-width: var(--container);
   min-height: 60px;
   margin-inline: auto;
-  padding: 8px 10px 8px 14px;
+  padding: 8px 10px 8px 24px;
   border: 1px solid var(--color-line-soft);
   border-radius: var(--radius-pill);
   background: var(--surface-card);
@@ -607,27 +666,13 @@ a:not(.btn):not(.wordmark):focus-visible {
   backdrop-filter: blur(14px) saturate(1.4);
   box-shadow: 0 10px 30px -18px rgba(11, 29, 58, 0.35);
 }
-/* Logo: monograma no azul dos botões + nome em serifa. */
+/* Logo: só o nome em serifa, sem símbolo. */
 .wordmark {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   flex: none;
   color: var(--color-ink);
   text-decoration: none;
-}
-.wordmark-mark {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background-image: var(--gradient-primary);
-  color: #ffffff;
-  font-family: var(--font-serif);
-  font-size: 25px;
-  line-height: 1;
 }
 .wordmark-text {
   display: flex;
@@ -656,6 +701,8 @@ a:not(.btn):not(.wordmark):focus-visible {
 .nav-links a {
   display: block;
   padding: 9px 14px;
+  /* Rótulos traduzidos são mais longos: nunca quebram em duas linhas. */
+  white-space: nowrap;
   border-radius: var(--radius-pill);
   font-size: 14px;
   font-weight: 500;
@@ -1071,6 +1118,23 @@ a:not(.btn):not(.wordmark):focus-visible {
 .pillar p:last-child {
   max-width: 380px;
 }
+/* O azul passa de um pilar para o seguinte, como uma onda da esquerda para a direita. */
+.pillar:nth-child(2) .pillar-title {
+  animation-delay: 0.9s;
+}
+.pillar:nth-child(3) .pillar-title {
+  animation-delay: 1.8s;
+}
+/* Com o ponteiro num pilar, os outros dois recuam. A opacidade vai nos filhos porque
+   a do próprio pilar é escrita pelo js/animacoes.js na entrada (data-rise). */
+.pillar > * {
+  transition: opacity var(--hover-duracao) ease-out;
+}
+@media (hover: hover) {
+  .pillars:hover .pillar:not(:hover) > * {
+    opacity: 0.4;
+  }
+}
 
 /* ==========================================================================
    4. Dentro da plataforma
@@ -1207,8 +1271,14 @@ a:not(.btn):not(.wordmark):focus-visible {
   transition: color var(--hover-duracao) ease-out;
 }
 .news-card:has(:focus-visible) .item-media::before,
-.post:has(:focus-visible) .item-media::before {
+.post:has(:focus-visible) .item-media::before,
+.audience-card.is-active::before {
   transform: translate(var(--hover-deslocamento), var(--hover-deslocamento));
+}
+/* js/animacoes.js marca um card de público por vez (.is-active), em sequência:
+   é o mesmo estado do hover. */
+.audience-card.is-active .card-title {
+  color: var(--azul-destaque);
 }
 .news-card:has(:focus-visible) :is(time, .news-title),
 .post:has(:focus-visible) :is(.post-title, .post-cta) {
@@ -1656,14 +1726,6 @@ a:not(.btn):not(.wordmark):focus-visible {
 .wordmark--footer .wordmark-name {
   font-size: 40px;
 }
-.wordmark--footer .wordmark-mark {
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
-  background: var(--creme);
-  color: var(--marinho);
-  font-size: 30px;
-}
 .footer-links {
   display: flex;
   flex-wrap: wrap;
@@ -1803,25 +1865,26 @@ a:not(.btn):not(.wordmark):focus-visible {
   transform-origin: 0 100%;
 }
 /* Título do hero: escondido antes da primeira pintura, até a entrada ao carregar. */
-@media (prefers-reduced-motion: no-preference) {
-  .js .hero-title .w-in {
-    transform: translateY(105%);
-  }
-  .js .hero-title.is-in .w-in {
-    transform: none;
-  }
+.js:not([data-motion='reduced']) .hero-title .w-in {
+  transform: translateY(105%);
 }
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
+.js:not([data-motion='reduced']) .hero-title.is-in .w-in {
+  transform: none;
+}
+/* Movimento reduzido. Decisão do projeto: a landing anima sempre, inclusive com as
+   animações do sistema operacional desligadas (prefers-reduced-motion não é usado).
+   Quem quer a página parada escolhe "Reduzir movimento" nas Configurações do portal;
+   o <head> do index.html marca data-motion='reduced' e tudo abaixo para, junto com
+   js/animacoes.js e js/scroll-suave.js. */
+html[data-motion='reduced'] {
+  scroll-behavior: auto;
+}
+[data-motion='reduced'] *,
+[data-motion='reduced'] *::before,
+[data-motion='reduced'] *::after {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
 }
 
 /* ==========================================================================
@@ -2035,13 +2098,7 @@ a:not(.btn):not(.wordmark):focus-visible {
   }
   .site-nav {
     min-height: 54px;
-    padding: 6px 8px 6px 10px;
-  }
-  .site-nav .wordmark-mark {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    font-size: 22px;
+    padding: 6px 8px 6px 20px;
   }
   .site-nav .wordmark-name {
     font-size: 24px;

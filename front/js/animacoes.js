@@ -1,6 +1,8 @@
 // animacoes.js: efeitos ligados ao scroll da landing (lê window.scrollY).
 // Anima só transform e opacity (e o border-radius da foto do hero).
 // Um único loop com requestAnimationFrame: lê tudo, calcula e só então escreve.
+// Fora do loop ficam a medida do degradê dos títulos (.text-gradient) e o destaque
+// que percorre os cards de público.
 (function () {
     'use strict';
 
@@ -42,14 +44,18 @@
     const PARALLAX_AMPLITUDE = 14; // %
     const PARALLAX_ESCALA = 1.16;
     // 7. Celulares em camadas: o fator vem do atributo data-par (0,16 / 0,06)
+    // 8. Destaque que percorre os cards de "Para quem"
+    const DESTAQUE_INTERVALO_MS = 2800;
+    const DESTAQUE_VISIVEL_MIN = 0.25; // parte da grade na tela para começar
     // Desempenho: elementos a mais de N telas de distância não são recalculados.
     const MARGEM_TELAS = 1;
     // -----------------------------------------------------------------------
 
     const root = document.documentElement;
-    const reduzido = window.matchMedia
-        ? window.matchMedia('(prefers-reduced-motion: reduce)')
-        : { matches: false };
+    // Decisão do projeto: a landing anima sempre, mesmo com as animações do sistema
+    // operacional desligadas. Só para quando a pessoa escolhe "Reduzir movimento" nas
+    // Configurações do portal (data-motion no <html>, marcado no <head> do index.html).
+    const movimentoReduzido = () => root.getAttribute('data-motion') === 'reduced';
     window.__arcadiaAnimacoes = true;
 
     const clamp = (x) => Math.min(1, Math.max(0, x));
@@ -317,7 +323,7 @@
     function iniciarHero() {
         if (heroIniciado || !heroTitulo) return;
         heroIniciado = true;
-        if (reduzido.matches) {
+        if (movimentoReduzido()) {
             heroTitulo.classList.add('is-in');
             return;
         }
@@ -356,12 +362,42 @@
         if (heroTitulo) heroTitulo.classList.add('is-in');
     }
     function aplicarPreferencia() {
-        if (reduzido.matches) desligar();
+        if (movimentoReduzido()) desligar();
         else ligar();
+    }
+
+    // ---- Degradê contínuo nos títulos (.text-gradient) ---------------------------
+    // Cada palavra é uma máscara própria e pinta só o seu recorte do degradê. A caixa
+    // que envolve todas as palavras (--gw × --gh) e a posição de cada uma dentro dela
+    // (--gx, --gy) vão para o CSS; assim a cor continua de uma palavra para a outra.
+    // Mede a máscara (.w), que nunca é transformada, e não a palavra em movimento.
+    function medirDegrades() {
+        const medidas = [];
+        for (const el of document.querySelectorAll('.text-gradient')) {
+            const mascaras = Array.from(el.querySelectorAll('.w'));
+            if (!mascaras.length) continue;
+            const caixas = mascaras.map((w) => w.getBoundingClientRect());
+            const esquerda = Math.min(...caixas.map((c) => c.left));
+            const topo = Math.min(...caixas.map((c) => c.top));
+            const largura = Math.max(...caixas.map((c) => c.right)) - esquerda;
+            const altura = Math.max(...caixas.map((c) => c.bottom)) - topo;
+            if (largura > 0 && altura > 0)
+                medidas.push({ el, mascaras, caixas, esquerda, topo, largura, altura });
+        }
+        // Escritas depois de todas as leituras.
+        for (const m of medidas) {
+            m.el.style.setProperty('--gw', `${arred(m.largura, 1)}px`);
+            m.el.style.setProperty('--gh', `${arred(m.altura, 1)}px`);
+            m.mascaras.forEach((w, i) => {
+                w.style.setProperty('--gx', `${arred(m.caixas[i].left - m.esquerda, 1)}px`);
+                w.style.setProperty('--gy', `${arred(m.caixas[i].top - m.topo, 1)}px`);
+            });
+        }
     }
 
     const remedir = () => {
         precisaMedir = true;
+        medirDegrades();
     };
 
     // Troca de idioma (js/idioma.js): os títulos recebem texto novo e são divididos de novo.
@@ -372,15 +408,63 @@
             t.zona = null;
         }
         if (heroTitulo) heroPalavras = Array.from(heroTitulo.querySelectorAll('.w-in'));
-        precisaMedir = true;
+        remedir();
         if (ligado) atualizar();
     });
     window.addEventListener('resize', remedir);
     window.addEventListener('load', remedir);
     if (typeof ResizeObserver !== 'undefined') new ResizeObserver(remedir).observe(document.body);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remedir);
-    if (reduzido.addEventListener) reduzido.addEventListener('change', aplicarPreferencia);
-    else if (reduzido.addListener) reduzido.addListener(aplicarPreferencia);
+
+    // ---- 8. Destaque que percorre os cards de "Para quem" -------------------------
+    // Um card por vez recebe .is-active (o mesmo visual do hover), em sequência, enquanto
+    // a grade está na tela. Com o mouse sobre a grade, quem manda é o hover: o ciclo
+    // para e só volta quando o ponteiro sai. Não depende do loop de scroll.
+    (function percorrerPublicos() {
+        const grade = document.querySelector('.audience-grid');
+        const cartoes = grade ? Array.from(grade.querySelectorAll('.audience-card')) : [];
+        if (cartoes.length < 2 || typeof IntersectionObserver === 'undefined') return;
+        if (movimentoReduzido()) return;
+        let atual = -1;
+        let relogio = null;
+        let naTela = false;
+        let comMouse = false;
+        const marcar = (indice) =>
+            cartoes.forEach((c, i) => c.classList.toggle('is-active', i === indice));
+        const avancar = () => {
+            atual = (atual + 1) % cartoes.length;
+            marcar(atual);
+        };
+        function acertar() {
+            const rodar = naTela && !comMouse;
+            if (rodar && relogio === null) {
+                avancar();
+                relogio = setInterval(avancar, DESTAQUE_INTERVALO_MS);
+            } else if (!rodar && relogio !== null) {
+                clearInterval(relogio);
+                relogio = null;
+                if (comMouse) marcar(-1);
+            }
+        }
+        new IntersectionObserver(
+            (entradas) => {
+                naTela = entradas[entradas.length - 1].isIntersecting;
+                acertar();
+            },
+            { threshold: DESTAQUE_VISIVEL_MIN }
+        ).observe(grade);
+        grade.addEventListener('pointerenter', (e) => {
+            if (e.pointerType !== 'mouse') return;
+            comMouse = true;
+            acertar();
+        });
+        grade.addEventListener('pointerleave', (e) => {
+            if (e.pointerType !== 'mouse') return;
+            comMouse = false;
+            acertar();
+        });
+    })();
 
     aplicarPreferencia();
+    medirDegrades();
 })();

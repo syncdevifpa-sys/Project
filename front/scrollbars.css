@@ -7,6 +7,11 @@
   --scrollbar-thumb: #555555;
   --scrollbar-hover: #808080;
 }
+/* Reserva o espaço da barra vertical desde o início: a largura da página
+   não muda quando o conteúdo carrega e passa a rolar, nem ao abrir um diálogo. */
+html {
+  scrollbar-gutter: stable;
+}
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;

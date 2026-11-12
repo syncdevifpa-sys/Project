@@ -4,7 +4,8 @@
  * Permite funcionamento e cache offline e instalação na tela inicial.
  */
 
-const CACHE_NAME = 'arcadia-pwa-v1';
+// Trocar a versão descarta o cache anterior na ativação (v2: saíram auth.css e style.css).
+const CACHE_NAME = 'arcadia-pwa-v2';
 const STATIC_ASSETS = [
     'index.html',
     'dashboard.html',
@@ -17,9 +18,7 @@ const STATIC_ASSETS = [
     'settings.html',
     'bundle.css',
     'landing.css',
-    'auth.css',
     'tokens.css',
-    'style.css',
     'js/theme.js',
     'js/api.js',
     'js/auth.js',
