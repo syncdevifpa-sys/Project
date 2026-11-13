@@ -1,0 +1,387 @@
+/* Página inicial (visão de quem já entrou): destaque do campus, notícias e projetos.
+   Só a área entre a navbar e o rodapé; os dois continuam como estão.
+   Carregado depois de theme-options.css para valer sobre as regras antigas. */
+:root {
+  --hp-accent: #2563eb;
+  --hp-accent-soft: rgba(37, 99, 235, 0.1);
+  --hp-line: var(--color-card-border, #d7dce8);
+  --hp-card: var(--surface-card, #fff);
+  --hp-ink: var(--color-ink, #141414);
+  --hp-muted: var(--text-muted, #5b6472);
+  --hp-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px -18px rgba(15, 23, 42, 0.28);
+  --hp-shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -18px rgba(15, 23, 42, 0.36);
+}
+[data-theme='dark'] {
+  --hp-accent: #8ab4ff;
+  --hp-accent-soft: rgba(138, 180, 255, 0.14);
+  --hp-muted: #a6adba;
+  --hp-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px -18px rgba(0, 0, 0, 0.7);
+  --hp-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 40px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* ---------- Destaque do campus ----------
+   A foto encosta na borda do cartão (antes ficava recuada pelo espaçamento do container). */
+[data-home-view='connected'] .home-campus-banner.container {
+  width: calc(100% - var(--gutter, 24px) * 2);
+  max-width: var(--container, 1200px);
+  margin-inline: auto;
+  margin-top: 28px;
+  padding: 0;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  border: 1px solid var(--hp-line);
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow);
+}
+[data-home-view='connected'] .home-campus-banner > img {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  max-height: 360px;
+  object-fit: cover;
+}
+[data-home-view='connected'] .home-campus-banner-content {
+  padding: clamp(24px, 4vw, 48px);
+}
+.home-campus-banner-content .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--hp-accent-soft);
+  color: var(--hp-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+[data-home-view='connected'] .home-campus-banner-content h1 {
+  margin: 16px 0 12px;
+  font-size: clamp(34px, 3.6vw, 48px);
+  letter-spacing: -0.01em;
+}
+[data-home-view='connected'] .home-campus-banner-content > p:not(.eyebrow) {
+  max-width: 44ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--hp-muted);
+}
+
+/* ---------- Cabeçalho das seções ----------
+   Título e texto à esquerda, link "Ver todos" à direita, busca logo abaixo. */
+.public-section {
+  padding-block: 56px 8px;
+}
+.public-section > .container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: 24px;
+}
+.public-section > .container > .section-title {
+  grid-column: 1;
+  margin: 0;
+  font-size: clamp(30px, 3.2vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.public-section > .container > .section-lead {
+  grid-column: 1;
+  margin: 8px 0 0;
+  font-size: 15.5px;
+  color: var(--hp-muted);
+}
+.public-section > .container > .text-link {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: end;
+  justify-self: end;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 1px solid var(--hp-line);
+  border-radius: 999px;
+  background: var(--hp-card);
+  white-space: nowrap;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.public-section > .container > .text-link:hover,
+.public-section > .container > .text-link:focus-visible {
+  border-color: var(--hp-accent);
+  color: var(--hp-accent);
+}
+.public-section > .container > :is(.home-news-search, .public-grid) {
+  grid-column: 1 / -1;
+}
+
+/* Busca com ícone de lupa; o rótulo continua lá para leitores de tela. */
+.home-news-search {
+  position: relative;
+  display: block;
+  max-width: 440px;
+  margin-top: 24px;
+}
+.home-news-search > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.home-news-search::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  background: var(--hp-muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  pointer-events: none;
+}
+.home-news-search input {
+  min-height: 46px;
+  padding: 12px 18px 12px 42px;
+  border: 1px solid var(--hp-line);
+  border-radius: 999px;
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.home-news-search input:focus,
+.home-news-search input:focus-visible {
+  outline: none;
+  border-color: var(--hp-accent);
+  box-shadow: 0 0 0 4px var(--hp-accent-soft);
+}
+
+/* ---------- Cartões ---------- */
+.public-section .public-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  justify-items: stretch;
+  gap: 20px;
+  margin-top: 24px;
+}
+.public-section .public-card {
+  position: relative;
+  max-width: none;
+  gap: 10px;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--hp-line);
+  border-radius: 20px;
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.public-section .public-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--hp-accent) 35%, var(--hp-line));
+  box-shadow: var(--hp-shadow-hover);
+}
+/* Data vira uma etiqueta no topo do cartão. */
+.public-section .public-card > time {
+  order: -1;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--hp-accent-soft);
+  color: var(--hp-accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.public-section .public-card h3 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.public-section .public-card > p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--hp-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.public-section .public-card > .text-link {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 6px 0 0;
+  border: 0;
+  color: var(--hp-accent);
+}
+.public-section .public-card > .text-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* "Ler publicação completa": linha discreta na base, com seta que gira ao abrir. */
+.public-section .public-card > details {
+  margin: 4px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--hp-line);
+}
+.public-section .public-card > details > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hp-muted);
+}
+.public-section .public-card > details > summary::-webkit-details-marker {
+  display: none;
+}
+.public-section .public-card > details > summary::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+}
+.public-section .public-card > details[open] > summary::before {
+  transform: rotate(45deg);
+}
+.public-section .public-card > details > summary:hover {
+  color: var(--hp-ink);
+}
+.public-section .public-card > details > p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--hp-muted);
+}
+
+/* Lista vazia (ex.: "Nenhum projeto publicado no momento."). */
+.public-section .public-grid:not(:has(> *)) {
+  display: block;
+  padding: 36px 24px;
+  border: 1px dashed var(--hp-line);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--hp-card) 60%, transparent);
+  text-align: center;
+  font-size: 15px;
+  color: var(--hp-muted);
+}
+.public-section#public-projects {
+  padding-bottom: 72px;
+}
+
+@media (max-width: 760px) {
+  [data-home-view='connected'] .home-campus-banner.container {
+    grid-template-columns: 1fr;
+    margin-top: 16px;
+    border-radius: 20px;
+  }
+  [data-home-view='connected'] .home-campus-banner > img {
+    min-height: 0;
+    height: 190px;
+  }
+  .public-section {
+    padding-block: 40px 4px;
+  }
+  .public-section > .container {
+    grid-template-columns: 1fr;
+  }
+  .public-section > .container > .text-link {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    margin-top: 14px;
+  }
+  .home-news-search {
+    max-width: none;
+  }
+}
+/* Como no resto da landing, o movimento só para pela preferência do portal. */
+html[data-motion='reduced'] .public-section .public-card,
+html[data-motion='reduced'] .public-section .public-card:hover {
+  transition: none;
+  transform: none;
+}
+
+/* Botão do destaque em cor sólida, sem degradê (vence o degradê do tema sazonal). */
+html .home-campus-banner-content :is(.home-member-actions, .home-visitor-actions) .btn--primary {
+  border: 1px solid var(--hp-accent) !important;
+  border-radius: 999px !important;
+  background: var(--hp-accent) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+html[data-theme='dark'] .home-campus-banner-content :is(.home-member-actions, .home-visitor-actions) .btn--primary {
+  color: #0b1220 !important;
+}
+
+/* ---------- Rodapé: cores legíveis sobre o azul-marinho ----------
+   Repetido aqui (arquivo novo) para valer mesmo com o landing.css antigo no cache.
+   Só as cores mudam; o layout do rodapé continua o mesmo. */
+.site-footer .footer-about,
+.site-footer .footer-about p {
+  color: #c3cad8;
+}
+.site-footer nav h2 {
+  color: #ffffff;
+}
+.site-footer .footer-links a {
+  color: #dbe2ee;
+}
+.site-footer .footer-links a:hover,
+.site-footer .footer-links a:focus-visible {
+  color: #ffffff;
+}
+.site-footer .footer-end {
+  border-top-color: rgba(255, 255, 255, 0.14);
+  color: #dbe2ee;
+}
+
+/* Botão "Meu painel" / "Entrar" da navbar com o mesmo visual de "Explorar publicações":
+   azul sólido em pílula, sem degradê (vence o degradê do tema sazonal). */
+html .site-header :is(.nav-login, .nav-mobile-login .btn) {
+  border: 1px solid var(--hp-accent) !important;
+  border-radius: 999px !important;
+  background: var(--hp-accent) !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+html[data-theme='dark'] .site-header :is(.nav-login, .nav-mobile-login .btn),
+html[data-theme='dark'] .site-header :is(.nav-login, .nav-mobile-login .btn):is(:hover, :focus-visible) {
+  color: #0b1220 !important;
+}
+
+/* Hover dos botões azuis (navbar e destaque): a cor não muda; só sobem um pouco
+   com uma sombra suave. O degradê que aparecia vinha de uma camada ::before do
+   botão contornado e do tema sazonal. */
+html .site-header :is(.nav-login, .nav-mobile-login .btn)::before,
+html .home-campus-banner-content :is(.home-member-actions, .home-visitor-actions) .btn--primary::before {
+  display: none !important;
+}
+html .site-header :is(.nav-login, .nav-mobile-login .btn),
+html .home-campus-banner-content :is(.home-member-actions, .home-visitor-actions) .btn--primary {
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease !important;
+}
+html .site-header :is(.nav-login, .nav-mobile-login .btn):is(:hover, :focus-visible),
+html .home-campus-banner-content :is(.home-member-actions, .home-visitor-actions) .btn--primary:is(:hover, :focus-visible) {
+  background: var(--hp-accent) !important;
+  background-image: none !important;
+  border-color: var(--hp-accent) !important;
+  color: #fff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--hp-accent) 70%, transparent) !important;
+}
+html[data-theme='dark'] .home-campus-banner-content :is(.home-member-actions, .home-visitor-actions) .btn--primary:is(:hover, :focus-visible) {
+  color: #0b1220 !important;
+}
+html[data-motion='reduced'] .site-header :is(.nav-login, .nav-mobile-login .btn):hover,
+html[data-motion='reduced'] .home-campus-banner-content .btn--primary:hover {
+  transform: none !important;
+}

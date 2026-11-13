@@ -432,6 +432,10 @@ html.db-v3-on #ar-toast-dock .ar-iconbtn {
   color: var(--db-disabled);
   text-decoration-color: var(--db-line);
 }
+/* Sem aviso por ler, "Marcar como lidos" não tem o que fazer: some, sem mexer no layout. */
+.db-v3 #dbReadAll:disabled {
+  visibility: hidden;
+}
 .db-arrow-link {
   display: inline-flex;
   align-items: center;
@@ -742,6 +746,7 @@ html.db-v3-on #ar-toast-dock .ar-iconbtn {
   text-decoration-thickness: 1.5px;
 }
 .db-now-place {
+  margin-top: 6px;
   font-size: 15px;
   line-height: 20px;
   opacity: 0.92;

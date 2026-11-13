@@ -170,8 +170,14 @@ html[data-preview-season] .ar-portal-sidebar a[aria-current='page'] { box-shadow
   background:var(--page-banner-background,var(--accent));
   color:var(--page-banner-ink,var(--ink));
 }
-.db-v3 #dbDocsCard :is(.db-link,.db-metric-value small,.db-empty) { color:inherit; }
+/* Tudo no cartão segue a tinta do banner; o título e o texto vazio tinham cor própria
+   (azul-marinho) e sumiam no banner azul-marinho. */
+.db-v3 #dbDocsCard :is(.db-title,.db-link,.db-metric-value small,.db-empty,.db-muted) { color:inherit; }
+.db-v3 #dbDocsCard .db-muted { opacity:.85; }
 .db-v3 #dbDocsCard .db-link { text-decoration-color:currentColor; }
+/* Trilho translúcido e preenchimento na cor do texto: com 0 documentos a barra fica vazia. */
+.db-v3 #dbDocsCard .db-bar--light { background:color-mix(in srgb,currentColor 22%,transparent); }
+.db-v3 #dbDocsCard .db-bar--light i { background:currentColor; }
 
 /* Ações compartilham o formato compacto; seletores e ícones mantêm sua função visual. */
 html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]) {
