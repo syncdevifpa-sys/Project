@@ -301,7 +301,7 @@ html body.ar-settings-page.ar-has-sidebar .ar-split .ar-calendar-color-settings 
 
 /* Configurações sem o banner do topo: o título continua disponível para leitores de
    tela, mas o cartão some e a tela começa direto no menu e nos blocos. */
-html body.ar-settings-page.ar-has-sidebar .ar-hero:has(~ .ar-split #dados) {
+html body.ar-settings-page .ar-hero:has(~ .ar-split #dados) {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
@@ -566,7 +566,9 @@ html body.ar-settings-page.ar-has-sidebar .ar-split {
 }
 html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav {
   grid-column: 1 / -1;
-  position: static;
+  position: sticky;
+  top: 84px;
+  z-index: 39;
   flex-direction: row;
   flex-wrap: nowrap;
   gap: 4px;
@@ -575,9 +577,9 @@ html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav {
   overflow-x: auto;
   scrollbar-width: none;
   border: 0;
-  border-bottom: 1px solid var(--st-glass-line);
+  border-bottom: 1px solid var(--line);
   border-radius: 0;
-  background: transparent;
+  background: var(--surface);
   box-shadow: none;
 }
 html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav::-webkit-scrollbar {

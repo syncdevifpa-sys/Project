@@ -368,7 +368,9 @@
                 prepared.root.inert = true;
                 currentMain.replaceWith(prepared.root);
                 currentMain = prepared.root;
-                document.body.classList.toggle('ar-filter-page', prepared.pageClasses.includes('ar-filter-page'));
+                for (const pageClass of ['ar-filter-page', 'ar-settings-page']) {
+                    document.body.classList.toggle(pageClass, prepared.pageClasses.includes(pageClass));
+                }
                 document.title = prepared.title;
                 currentUrl = url.href;
                 A.bannerBootstrap?.apply();

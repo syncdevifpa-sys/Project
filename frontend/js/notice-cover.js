@@ -178,7 +178,11 @@
             if (frame) return;
             frame = requestAnimationFrame(() => {
                 frame = 0;
-                if (media.isConnected) reveal(media.getBoundingClientRect().top >= 56);
+                if (media.isConnected) {
+                      const nearTop = media.getBoundingClientRect().top >= 56;
+                      reveal(nearTop);
+                      detail.classList.toggle('is-cover-scrolled', !nearTop);
+                  }
             });
         };
         window.addEventListener('scroll', onScroll, { passive:true });

@@ -47,7 +47,7 @@
   display: none;
 }
 /* Capas: uma única definição por componente, sem reescritas históricas em cascata. */
-.ar-notice-with-cover { position:relative;isolation:isolate;overflow:hidden;--cover-surface:var(--surface,#fff); }
+.ar-notice-with-cover { position:relative;isolation:isolate;overflow:hidden;--cover-surface:#fff; }
 .ar-notice-cover { position:relative;overflow:hidden;pointer-events:none;border-radius:8px; }
 .ar-notice-cover img { display:block;width:100%;height:100%;max-height:280px;object-fit:contain;margin:auto; }
 .ar-notice-with-cover > .ar-notice-cover { height:240px;flex:0 0 240px;margin-bottom:16px; }
@@ -58,7 +58,7 @@
 .ar-publication-media { position:relative;width:100%;margin:0 0 20px; }
 .ar-publication-media > .ar-notice-cover { width:100%;height:auto;max-width:none;margin:0; }
 .ar-publication-media .ar-notice-cover img { width:100%;height:auto;max-height:560px;object-fit:contain;border:0;mask-image:none; }
-.ar-publication-media .ar-notice-cover::after { background:var(--personal-banner-bg,var(--default-banner-bg,var(--initial-banner-page-bg,var(--accent,var(--pink)))));mask-image:linear-gradient(transparent 68%,#000); }
+.ar-publication-media .ar-notice-cover::after { background:var(--cover-surface,#fff);mask-image:linear-gradient(transparent 68%,#000); }
 .ar-detail.is-cover-revealed .ar-notice-cover::after { opacity:0; }
 .ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transition:transform 420ms ease; }
 .ar-detail.is-cover-revealed > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transform:translateY(3px); }
@@ -82,3 +82,16 @@
  :is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover > :is(h3,.ar-card-title,.ar-card-desc) { transition:none;transform:none; }
 }
 html[data-motion=reduced] :is(.ar-notice-cover::after,.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions,.ar-card-title,.ar-card-desc) { transition:none;transform:none; }
+
+/* A névoa permanece neutra; não herda marrom de temas ou cores de banner. */
+html[data-theme=dark] :is(.ar-notice-with-cover,.ar-detail) { --cover-surface:var(--surface,#191b1f); }
+.ar-detail { --cover-surface:#fff; }
+.ar-detail.is-cover-scrolled > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow) { transform:translateY(-6px); }
+@media(prefers-reduced-motion:reduce) { .ar-detail.is-cover-scrolled > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow) { transform:none; } }
+html[data-motion=reduced] .ar-detail.is-cover-scrolled > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow) { transform:none; }
+/* Leitura do projeto: link discreto, sem o acabamento nativo de um botão. */
+[data-open-project] { appearance:none;border:0;border-radius:0;background:transparent;color:inherit;padding:4px 0;width:fit-content;min-height:32px;font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer; }
+[data-open-project]:hover { color:var(--accent,var(--ink)); }
+/* O caminho da publicação acompanha a busca, sem cobrir os controles do cabeçalho. */
+.ar-route-main > .ar-crumbs { position:sticky;top:84px;z-index:39;background:var(--surface);padding:8px 10px;border-radius:8px; }
+@media(max-width:600px) { .ar-route-main > .ar-crumbs { top:76px; } }
