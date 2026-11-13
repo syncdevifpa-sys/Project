@@ -157,5 +157,43 @@
         render();
         return state;
     }
-    A.noticeCover = { valid, markup, decorate, editor };
+    /* Revela a fotografia sem bloquear a rolagem normal ou os gestos do navegador. */
+    function enableReveal(media) {
+        const detail = media.closest('.ar-detail');
+        if (!detail || media.dataset.revealReady) return;
+        media.dataset.revealReady = 'true';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'ar-cover-reveal-toggle';
+        const setRevealed = (value) => {
+            const image = media.querySelector('img');
+            const frame = media.querySelector('.ar-notice-cover');
+            if (value && image?.naturalWidth && frame && !detail.classList.contains('is-cover-revealed')) {
+                const bounds = frame.getBoundingClientRect();
+                media.style.setProperty('--revealed-cover-height',
+                    Math.max(bounds.height, bounds.width * image.naturalHeight / image.naturalWidth) + 'px');
+            }
+            detail.classList.toggle('is-cover-revealed', value);
+            button.setAttribute('aria-pressed', String(value));
+            button.textContent = value ? 'Recolher imagem' : 'Ver imagem inteira';
+        };
+        setRevealed(false);
+        button.addEventListener('click', () => setRevealed(!detail.classList.contains('is-cover-revealed')));
+        media.append(button);
+        media.addEventListener('wheel', (event) => {
+            if (Math.abs(event.deltaY) > 8) setRevealed(event.deltaY < 0);
+        }, { passive: true });
+        let startY = null;
+        media.addEventListener('touchstart', (event) => {
+            startY = event.touches.length === 1 ? event.touches[0].clientY : null;
+        }, { passive: true });
+        media.addEventListener('touchmove', (event) => {
+            if (startY === null || event.touches.length !== 1) return;
+            const distance = startY - event.touches[0].clientY;
+            if (Math.abs(distance) > 20) setRevealed(distance < 0);
+        }, { passive: true });
+        media.addEventListener('touchend', () => { startY = null; }, { passive: true });
+        media.addEventListener('touchcancel', () => { startY = null; }, { passive: true });
+    }
+    A.noticeCover = { valid, markup, decorate, editor, enableReveal };
 })((window.Arcadia = window.Arcadia || {}));

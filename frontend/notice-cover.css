@@ -1,4 +1,25 @@
 /* O degradê integra a fotografia à superfície, acompanhando o tema. */
+.ar-basic-text-editor { margin-top:-10px;display:grid;gap:8px;min-width:0; }
+.ar-visual-text-editor { min-height:100px;max-height:340px;overflow:auto;padding:14px 16px;border:1px solid var(--border,#ccd2d7);border-radius:10px;background:var(--surface,#fff);color:var(--ink,#17252e);font-family:inherit;font-size:15px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text; }
+.ar-visual-text-editor:focus { outline:2px solid var(--accent,#68bdcf);outline-offset:2px; }
+.ar-visual-text-editor[aria-invalid=true] { border-color:var(--danger,#b32020); }
+.ar-notice-editor textarea[hidden] { display:none; }
+.ar-text-toolbar { display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:6px;border:1px solid var(--border,#ccd2d7);border-radius:10px;background:var(--surface,#fff); }
+.ar-text-toolbar button,.ar-text-toolbar input[type=color] { width:36px;height:36px;border:1px solid var(--border,#ccd2d7);border-radius:6px;background:var(--surface,#fff);color:var(--ink,#17252e);cursor:pointer; }
+.ar-text-toolbar button:nth-child(1) { font-weight:800; }
+.ar-text-toolbar button:nth-child(2) { font-style:italic; }
+.ar-text-toolbar button:nth-child(3) { text-decoration:underline; }
+.ar-text-toolbar button { display:inline-flex;justify-content:center;align-items:center;transition:background-color 160ms ease,border-color 160ms ease; }
+.ar-text-toolbar button:hover { background:color-mix(in srgb,var(--accent,#78c5d5) 16%,var(--surface,#fff));border-color:var(--ink-muted,#6c7b85); }
+.ar-text-toolbar-divider { width:1px;height:24px;background:var(--border,#ccd2d7);margin-inline:4px; }
+.ar-basic-text-editor small { color:var(--ink-muted,#63717b);font-size:12px;line-height:1.5; }
+.ar-text-toolbar input[type=color] { padding:6px; }
+.ar-text-aligned { line-height:1.7; }
+.ar-text-toolbar :focus-visible { outline:2px solid var(--accent,#17607a);outline-offset:2px; }
+.ar-text-preview { padding:16px;border:1px solid var(--border,#ccd2d7);border-radius:10px;background:var(--surface,#fff);min-height:64px;max-height:220px;overflow:auto;line-height:1.65;font-size:14px; }
+.ar-text-list { display:block;padding-inline-start:1.3em;margin-block:6px; }
+.ar-text-list-item { display:list-item;list-style-type:disc;white-space:pre-wrap; }
+@media(pointer:coarse) { .ar-text-toolbar button,.ar-text-toolbar input[type=color] { width:44px;height:44px; } }
 .ar-notice-with-cover {
   position: relative;
   isolation: isolate;
@@ -152,3 +173,52 @@
 .ar-publication-media.is-portrait > .ar-notice-cover { height:auto;max-width:420px;margin-inline:auto;aspect-ratio:var(--publication-image-ratio); }
 .ar-publication-media.is-portrait .ar-notice-cover img { width:100%;height:auto;object-fit:contain;object-position:top;mask-image:linear-gradient(to bottom,#000 0%,#000 88%,transparent 100%); }
 @media(max-width:600px) { .ar-publication-media.is-portrait > .ar-notice-cover { max-width:320px;height:auto; } }
+
+/* A névoa fica em uma camada independente para desaparecer suavemente. */
+.ar-publication-media { position:relative; }
+.ar-publication-media .ar-notice-cover img { mask-image:none; }
+.ar-publication-media .ar-notice-cover::after {
+  display:block;
+  background:var(--personal-banner-bg,var(--initial-banner-page-bg,var(--accent,var(--pink))));
+  mask-image:linear-gradient(to bottom,transparent 68%,#000 100%);
+  transition:opacity 420ms ease;
+}
+.ar-detail.is-cover-revealed .ar-notice-cover::after { opacity:0; }
+.ar-detail.is-cover-revealed .ar-notice-cover img { object-fit:contain; mask-image:none; }
+.ar-publication-media > .ar-notice-cover { transition:height 480ms cubic-bezier(.22,.61,.36,1); }
+.ar-detail.is-cover-revealed .ar-publication-media > .ar-notice-cover { height:var(--revealed-cover-height,auto); }
+.ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transition:transform 420ms ease; }
+.ar-detail.is-cover-revealed > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transform:translateY(3px); }
+.ar-cover-reveal-toggle {
+  position:absolute;right:10px;top:10px;z-index:2;border:1px solid #ffffff80;
+  border-radius:8px;padding:8px 12px;background:#ffffffed;color:#152e3a;
+  font:inherit;font-size:12px;cursor:pointer;
+}
+.ar-cover-reveal-toggle:focus-visible { outline:2px solid currentColor;outline-offset:3px; }
+
+/* No portal público, a imagem permanece nítida desde o primeiro contato. */
+#publicNews .ar-notice-cover::after { display:none; }
+#publicNews .ar-notice-cover img { mask-image:none;filter:none; }
+
+/* Projetos exibem a capa limpa, sem a revelação reservada às notícias. */
+:is(#gridProjetos,#publicProjects) .ar-notice-cover::after { display:none; }
+:is(#gridProjetos,#publicProjects) .ar-notice-cover img { mask-image:none;filter:none; }
+
+/* Nos cards, teclado e mouse revelam a capa sem deslocar os demais cartões. */
+#noticesCardsGrid .ar-notice-cover::after { transition:opacity 240ms ease; }
+#noticesCardsGrid .ar-notice-with-cover > :not(.ar-notice-cover) { transition:transform 240ms ease; }
+#noticesCardsGrid .ar-notice-with-cover:focus-within .ar-notice-cover::after { opacity:0; }
+#noticesCardsGrid .ar-notice-with-cover:focus-within > :not(.ar-notice-cover) { transform:translateY(6px); }
+@media(hover:hover) {
+  #noticesCardsGrid .ar-notice-with-cover:hover .ar-notice-cover::after { opacity:0; }
+  #noticesCardsGrid .ar-notice-with-cover:hover > :not(.ar-notice-cover) { transform:translateY(6px); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .ar-publication-media .ar-notice-cover::after,
+  .ar-publication-media > .ar-notice-cover,
+  .ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions),
+  #noticesCardsGrid .ar-notice-cover::after,
+  #noticesCardsGrid .ar-notice-with-cover > :not(.ar-notice-cover) { transition:none;transform:none !important; }
+}
+
+.ar-detail.is-cover-revealed .ar-publication-media.is-portrait > .ar-notice-cover { aspect-ratio:auto; }

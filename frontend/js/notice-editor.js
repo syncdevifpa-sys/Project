@@ -153,6 +153,8 @@
                 inputs[name] = input;
                 label.append(input);
                 form.append(label);
+                if (['notices', 'projects'].includes(resource) && ['resumo', 'descricao'].includes(name))
+                    A.noticeText?.editor(input);
             }
             if (resource === 'calendar' && A.calendarColors) {
                 const preview = document.createElement('p');

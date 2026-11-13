@@ -680,6 +680,9 @@
                 wholeCalendarButton;
             const sourcePicker = $('#calendarSourceFilter'),
                 viewPicker = $('#calendarViewMode');
+            const calendarSearch = $('#calendarSearch');
+            const searchClear = $('#calendarSearchClear');
+            const hasSearch = () => Boolean(calendarSearch.value.trim());
             const listScopeButton = $('#btnCalendarListScope');
             const today = () => new Date().toLocaleDateString('sv-SE');
             let listAll = false;
@@ -706,7 +709,7 @@
                         ...row,
                         categoria: A.calendarCategories.canonical(row.categoria)
                     }));
-                return personal() || !institutional
+                const expanded = personal() || !institutional
                     ? selected
                     : A.calendarHolidays.merge(
                           selected,
@@ -717,6 +720,7 @@
                                 : Number(holidayYear.value),
                           holidayRegion.value
                       );
+                return A.calendarView.searchEvents(expanded, calendarSearch.value);
             };
             audience.addEventListener('change', () => {
                 sourcePicker.value = '';
@@ -734,7 +738,7 @@
             const visibleRows = () =>
                 viewPicker.value === 'month'
                     ? A.calendarView.inMonth(bar.visible(), monthState.month)
-                    : listAll
+                    : listAll || hasSearch()
                       ? bar.visible()
                       : A.calendarView.onDay(bar.visible(), today());
             if (canDelete) {
@@ -866,6 +870,17 @@
                     }
                 }
             }
+            listen(calendarSearch, 'input', () => {
+                selectedEvents.clear();
+                if (hasSearch()) chooseUsefulMonth();
+                render();
+            });
+            listen(searchClear, 'click', () => {
+                calendarSearch.value = '';
+                selectedEvents.clear();
+                render();
+                calendarSearch.focus();
+            });
             sourcePicker.addEventListener('change', () => {
                 selectedEvents.clear();
                 chooseUsefulMonth();
@@ -888,12 +903,14 @@
                 $('#holidayYearField').hidden =
                     personal() || viewPicker.value === 'month' || !listAll;
                 const isList = viewPicker.value === 'list';
-                listScopeButton.hidden = !isList;
+                listScopeButton.hidden = !isList || hasSearch();
                 listScopeButton.textContent = listAll ? 'Eventos de hoje' : 'Todos os eventos';
                 listScopeButton.setAttribute('aria-pressed', String(listAll));
                 const listStatus = $('#calendarListStatus');
                 listStatus.hidden = !isList;
-                listStatus.textContent = listAll
+                listStatus.textContent = hasSearch()
+                    ? 'Resultados da pesquisa em todas as datas dos calendários selecionados.'
+                    : listAll
                     ? 'Todos os eventos dos calendários e categorias selecionados.'
                     : 'Eventos de hoje · ' + new Date().toLocaleDateString('pt-BR');
                 $('.ar-calendar-holiday-options').hidden = personal() || !institutional;
@@ -915,6 +932,11 @@
                     categoryText === 'Todos' ? 'Todas as categorias' : 'Categoria: ' + categoryText;
                 let target = container,
                     list = visibleRows();
+                const searchCount = bar.visible().length;
+                searchClear.hidden = !hasSearch();
+                $('#calendarSearchStatus').textContent = hasSearch()
+                    ? searchCount + ' evento(s) encontrado(s). ' + (isList ? 'Exibindo todas as datas.' : 'A grade mostra o mês selecionado; use Lista para ver todas as datas.')
+                    : '';
                 if (viewPicker.value === 'month') {
                     const result = A.calendarView.render(container, list, monthState, render, {
                         reminderCounts: A.reminderUI?.calendarCounts?.()
@@ -1246,6 +1268,7 @@
                     A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo) + '</div>');
             const media = detail?.querySelector('.ar-publication-media');
             const coverImage = media?.querySelector('img');
+            if (media) A.noticeCover.enableReveal(media);
             if (coverImage) {
                 const fitCover = () => {
                     if (!coverImage.naturalWidth || !coverImage.naturalHeight) return;

@@ -227,6 +227,14 @@
         </div>
       </section>
 
+      <div class="ar-calendar-search" role="search" aria-label="Pesquisar no calendário">
+        <label for="calendarSearch">Pesquisar eventos</label>
+        <div class="ar-calendar-search-field">
+          <input id="calendarSearch" type="search" placeholder="Pesquisar título, descrição ou local" autocomplete="off" />
+          <button id="calendarSearchClear" type="button" class="ar-btn ar-btn--quiet" hidden>Limpar</button>
+        </div>
+        <p id="calendarSearchStatus" role="status" aria-live="polite"></p>
+      </div>
       <div class="ar-calendar-toolbar" aria-label="Controles do calendário">
         <label class="ar-field ar-calendar-audience"
           >Modo<select id="calendarAudience" aria-label="Calendários compartilhados ou privados">

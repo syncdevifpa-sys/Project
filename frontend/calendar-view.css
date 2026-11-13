@@ -514,3 +514,11 @@
   margin-top: 20px;
   padding: 16px;
 }
+/* Pesquisa compacta, independente dos filtros recolhidos. */
+.ar-calendar-search { margin-block:12px;max-width:600px;display:grid;gap:5px; }
+.ar-calendar-search > label { font-size:13px;color:var(--ink-muted,#596977); }
+.ar-calendar-search-field { display:flex;align-items:center;gap:6px; }
+.ar-calendar-search-field input { min-width:0;flex:1;width:100%;border:1px solid var(--border,#cbd3db);border-radius:10px;padding:11px 14px;font:inherit;background:var(--surface,#fff);color:var(--ink,#17252e); }
+.ar-calendar-search-field input:focus-visible { outline:2px solid var(--accent,#4ea8c7);outline-offset:2px; }
+#calendarSearchStatus { margin:0;font-size:12px;color:var(--ink-muted,#596977); }
+#calendarSearchStatus:empty { display:none; }

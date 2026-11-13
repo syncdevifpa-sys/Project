@@ -160,3 +160,12 @@ test('sino mensal usa contagem de lembretes sem expor conteúdo nem marcar dia v
         false
     );
 });
+test('pesquisa encontra eventos por termos, acentos, descrição, local e calendário sem alterar o conjunto autorizado',()=>{
+ const {view}=fixture();
+ const rows=[{id_evento:1,titulo:'Reunião pedagógica',descricao:'Planejamento do semestre',local:'Biblioteca',periodo_letivo:'2026.2'}, {id_evento:2,titulo:'Avaliação final',local:'Bloco M'}];
+ assert.deepEqual(Array.from(view.searchEvents(rows,'REUNIAO biblioteca 2026.2'),e=>e.id_evento),[1]);
+ assert.deepEqual(Array.from(view.searchEvents(rows,'planejamento'),e=>e.id_evento),[1]);
+ assert.equal(view.searchEvents(rows,'inexistente').length,0);
+ assert.equal(view.searchEvents(rows,'  ').length,2);
+ assert.equal(rows.length,2);
+});

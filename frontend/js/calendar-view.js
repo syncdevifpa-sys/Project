@@ -185,5 +185,15 @@
         root.append(agenda);
         return { agenda, events: onDay(events, state.day) };
     }
-    A.calendarView = { iso, monthDays, onDay, inMonth, entireCalendar, shiftMonth, render };
+    /* Pesquisa apenas no conjunto de eventos já autorizado pela API e pelos filtros. */
+    function searchEvents(events, query = '') {
+        const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const terms = normalize(query).trim().split(/\s+/).filter(Boolean);
+        return events.filter(event => {
+            const text = normalize([event.titulo, event.descricao, event.local, event.periodo_letivo,
+                event.modalidade, event.campus, event.referencia].join(' '));
+            return terms.every(term => text.includes(term));
+        });
+    }
+    A.calendarView = { iso, monthDays, onDay, inMonth, entireCalendar, shiftMonth, render, searchEvents };
 })((window.Arcadia = window.Arcadia || {}));
