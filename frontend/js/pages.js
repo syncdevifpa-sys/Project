@@ -255,12 +255,13 @@
                 );
             }
             function noticeCard(r) {
-                const html = card(
+                let html = card(
                     r.titulo,
                     r.resumo,
                     `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
                     `<div class="ar-notice-card-actions"><a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
                 );
+                if (r.fixado === true || r.fixado === 1) html = html.replace('<h3', '<span class="ar-pinned-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-4 2-3 5-3-3-5 3 3-5-3-3 5-3 2-4Z M9 15l-6 6"/></svg>Fixado</span><h3');
                 return A.noticeCover?.valid(r.capa)
                     ? html
                           .replace('class="ar-card"', 'class="ar-card ar-notice-with-cover"')
@@ -1286,6 +1287,27 @@
                 };
                 coverImage.addEventListener('load', fitCover, { once: true });
                 if (coverImage.complete) fitCover();
+            }
+            const related = $('#noticeRelated');
+            if (related) {
+                api.expect(api.get('/api/notices')).then(items => {
+                    if (!active || !related.isConnected) return;
+                    const visible = items.filter(item => item.situacao === 'publicado' && String(item.id_aviso) !== String(r.id_aviso))
+                        .sort((a,b) => Number(b.categoria === r.categoria) - Number(a.categoria === r.categoria)).slice(0,3);
+                    const heading = document.createElement('h2');
+                    heading.textContent = 'Outras publicações';
+                    related.replaceChildren(heading);
+                    for (const item of visible) {
+                        const link = document.createElement('a');
+                        link.href = 'notice.html?id=' + encodeURIComponent(item.id_aviso);
+                        link.textContent = item.titulo;
+                        const meta = document.createElement('small');
+                        meta.textContent = date(item.data_publicacao);
+                        link.append(meta);
+                        related.append(link);
+                    }
+                    related.hidden = !visible.length;
+                }).catch(() => { if (active) related.hidden = true; });
             }
             title.textContent = r.titulo;
             guard();

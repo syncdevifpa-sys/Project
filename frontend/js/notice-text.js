@@ -40,13 +40,12 @@
     /* Formatação restrita, criada por DOM: nenhum HTML da publicação é executado. */
     function inline(target, text, depth = 0) {
         if (depth > 6) return renderLinks(target, text);
-        const pattern = /\*\*([^\n]+?)\*\*|__([^\n]+?)__|(?<![\w/])_([^_\n]+?)_(?!\w)|\[cor=(#[0-9a-f]{6})\]([^\n]+?)\[\/cor\]/gi;
+        const pattern = /\*\*([\s\S]+?)\*\*|__([\s\S]+?)__|(?<![\w/])_([^_]+?)_(?!\w)/gi;
         let offset = 0;
         for (const match of text.matchAll(pattern)) {
             renderLinks(target, text.slice(offset, match.index));
-            const node = document.createElement(match[1] ? 'strong' : match[2] ? 'u' : match[3] ? 'em' : 'span');
-            if (match[4]) node.style.color = match[4];
-            inline(node, match[1] || match[2] || match[3] || match[5], depth + 1);
+            const node = document.createElement(match[1] ? 'strong' : match[2] ? 'u' : 'em');
+            inline(node, match[1] || match[2] || match[3], depth + 1);
             target.append(node);
             offset = match.index + match[0].length;
         }
@@ -57,49 +56,78 @@
         target.replaceChildren();
         target.style.whiteSpace = 'pre-wrap';
         target.style.overflowWrap = 'anywhere';
-        /* Apenas quatro alinhamentos conhecidos; estilos e HTML arbitrários não são aceitos. */
-        if (depth < 6 && /\[alinhar=(left|center|right|justify)\]/.test(text)) {
-            const pattern = /\[alinhar=(left|center|right|justify)\]([\s\S]*?)\[\/alinhar\]/g;
-            let offset = 0, found = false;
-            for (const match of text.matchAll(pattern)) {
-                found = true;
-                if (match.index > offset) {
-                    const before = document.createElement('span');
-                    render(before, text.slice(offset, match.index), depth + 1);
-                    target.append(before);
-                }
-                const paragraph = document.createElement('span');
-                paragraph.className = 'ar-text-aligned';
-                paragraph.style.display = 'block';
-                paragraph.style.textAlign = match[1];
-                render(paragraph, match[2], depth + 1);
-                target.append(paragraph);
-                offset = match.index + match[0].length;
-            }
-            if (found) {
-                if (offset < text.length) {
-                    const after = document.createElement('span');
-                    render(after, text.slice(offset), depth + 1);
-                    target.append(after);
-                }
-                return;
+        /* Marcações antigas podem estar aninhadas: um regex simples fechava o bloco errado. */
+        const tokens = /\[(alinhar|cor)=([^\]]+)\]|\[\/(alinhar|cor)\]/g;
+        const stack = [], blocks = [];
+        if (depth < 24) for (const token of text.matchAll(tokens)) {
+            if (token[1]) {
+                const valid = token[1] === 'alinhar'
+                    ? ['left','center','right','justify'].includes(token[2])
+                    : /^#[0-9a-f]{6}$/i.test(token[2]);
+                stack.push({ start:token.index,body:token.index + token[0].length,type:token[1],value:token[2],valid });
+            } else if (stack.length && stack.at(-1).type === token[3]) {
+                const open = stack.pop();
+                if (!stack.length && open.valid) blocks.push({ ...open,end:token.index + token[0].length,close:token.index });
             }
         }
-        if (!/^\s*[-•] /m.test(text)) return inline(target, text);
+        if (blocks.length) {
+            let offset = 0;
+            const append = (value) => {
+                const previous = target.lastElementChild || target.children?.[target.children.length - 1];
+                /* A quebra depois de um bloco já é visual: não a desenha uma segunda vez. */
+                if (previous?.className === 'ar-text-aligned' && value.startsWith('\n')) value = value.slice(1);
+                if (!value) return;
+                if (/^\n+$/.test(value)) {
+                    for (let i = 0; i < value.length; i++) target.append(document.createElement('br'));
+                    return;
+                }
+                const part = document.createElement('span');
+                render(part, value, depth + 1);
+                target.append(part);
+            };
+            for (const block of blocks) {
+                append(text.slice(offset, block.start));
+                const part = document.createElement('span');
+                if (block.type === 'alinhar') {
+                    part.className = 'ar-text-aligned';part.style.display = 'block';part.style.textAlign = block.value;
+                } else part.style.color = block.value;
+                render(part, text.slice(block.body,block.close), depth + 1);
+                if (block.type === 'alinhar' && block.body === block.close) part.append(document.createElement('br'));
+                target.append(part);
+                offset = block.end;
+            }
+            append(text.slice(offset));
+            return;
+        }
+        /* Restos de comandos incompletos não viram texto público; o conteúdo é preservado. */
+        const control = /\[alinhar=(?:left|center|right|justify)\]|\[cor=#[0-9a-f]{6}\]/gi;
+        const hasControl = /\[alinhar=(?:left|center|right|justify)\]|\[cor=#[0-9a-f]{6}\]/i.test(text);
+        const plain = text.replace(control, '').replace(hasControl ? /\[\/(?:alinhar|cor)\]/g : /$^/g, '');
+        if (!/^\s*(?:[-•] |\d+\. |#{2,3} )/m.test(plain)) return inline(target, plain);
         let list;
-        for (const [index, line] of text.split('\n').entries()) {
-            const item = line.match(/^\s*[-•] (.*)$/);
+        for (const [index, line] of plain.split('\n').entries()) {
+            const heading = line.match(/^(#{2,3}) (.*)$/);
+            if (heading) {
+                list = null;
+                const title = document.createElement(heading[1].length === 2 ? 'h2' : 'h3');
+                inline(title, heading[2]);
+                target.append(title);
+                continue;
+            }
+            const item = line.match(/^\s*(?:([-•]) |(\d+)\. )(.*)$/);
             if (item) {
-                if (!list) {
+                const numbered = Boolean(item[2]);
+                if (!list || list.numbered !== numbered) {
                     list = document.createElement('span');
-                    list.className = 'ar-text-list';
+                    list.numbered = numbered;
+                    list.className = 'ar-text-list' + (numbered ? ' ar-text-list--numbered' : '');
                     list.setAttribute('role', 'list');
                     target.append(list);
                 }
                 const row = document.createElement('span');
                 row.className = 'ar-text-list-item';
                 row.setAttribute('role', 'listitem');
-                inline(row, item[1]);
+                inline(row, item[3]);
                 list.append(row);
             } else {
                 list = null;
@@ -107,6 +135,47 @@
                 inline(target, line);
             }
         }
+    }
+    /* Converte blocos visuais em texto restrito sem juntar parágrafos nem perder espaços. */
+    function serializeEditor(root) {
+        const blockTags = ['div','p','h2','h3','ul','ol','li'];
+        const children = (parent) => {
+            let result = '';
+            for (const child of Array.from(parent.childNodes || [])) {
+                const tag = child.tagName?.toLowerCase();
+                if (blockTags.includes(tag) && result && !result.endsWith('\n')) result += '\n';
+                result += walk(child);
+            }
+            return result;
+        };
+        const wrap = (text, before, after) => text.split('\n').map(line => line ? before + line + after : '').join('\n');
+        function walk(node) {
+            if (node.nodeType === 3) return node.textContent.replace(/\u00a0/g, ' ');
+            if (node.nodeType !== 1) return '';
+            const tag = node.tagName.toLowerCase();
+            if (['script','style','iframe','object'].includes(tag)) return '';
+            if (tag === 'br') return '\n';
+            let text = children(node);
+            if (['strong','b'].includes(tag)) text = wrap(text,'**','**');
+            if (['em','i'].includes(tag)) text = wrap(text,'_','_');
+            if (tag === 'u') text = wrap(text,'__','__');
+            let color = node.getAttribute('color') || node.style.color;
+            const rgb = color?.match(/^rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)$/);
+            if (rgb) color = '#' + rgb.slice(1).map(n=>Number(n).toString(16).padStart(2,'0')).join('');
+            if (/^#[0-9a-f]{6}$/i.test(color || '')) text = wrap(text,'[cor=' + color + ']','[/cor]');
+            if (tag === 'li' || node.getAttribute('role') === 'listitem') {
+                const numbered = node.parentElement?.tagName?.toLowerCase() === 'ol' || node.parentElement?.classList?.contains('ar-text-list--numbered');
+                const prefix = numbered ? (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '- ';
+                text = prefix + text.replace(/\n$/, '') + '\n';
+            }
+            if (['h2','h3'].includes(tag)) text = (tag === 'h2' ? '## ' : '### ') + text.replace(/\n$/, '') + '\n';
+            const align = node.style.textAlign;
+            if (align && !text.replace(/\n/g, '')) return text || '\n';
+            if (['left','center','right','justify'].includes(align)) text = '[alinhar=' + align + ']' + text.replace(/\n$/, '') + '[/alinhar]';
+            if ((blockTags.includes(tag) || node.classList?.contains('ar-text-aligned')) && !text.endsWith('\n')) text += '\n';
+            return text;
+        }
+        return children(root).replace(/\n$/, '');
     }
     /* Edição visual: o campo original mantém apenas a representação restrita para salvar. */
     function editor(input) {
@@ -135,28 +204,8 @@
             if (selection?.rangeCount && area.contains(selection.anchorNode) && area.contains(selection.focusNode))
                 savedRange = selection.getRangeAt(0).cloneRange();
         }
-        function serialize(node) {
-            if (node.nodeType === 3) return node.textContent;
-            if (node.nodeType !== 1) return '';
-            const tag = node.tagName.toLowerCase();
-            if (['script','style','iframe','object'].includes(tag)) return '';
-            if (tag === 'br') return '\n';
-            let text = Array.from(node.childNodes).map(serialize).join('');
-            if (['strong','b'].includes(tag)) text = '**' + text + '**';
-            if (['em','i'].includes(tag)) text = '_' + text + '_';
-            if (tag === 'u') text = '__' + text + '__';
-            let color = node.getAttribute('color') || node.style.color;
-            const rgb = color?.match(/^rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)$/);
-            if (rgb) color = '#' + rgb.slice(1).map(n=>Number(n).toString(16).padStart(2,'0')).join('');
-            if (/^#[0-9a-f]{6}$/i.test(color || '')) text = '[cor=' + color + ']' + text + '[/cor]';
-            if (tag === 'li' || node.getAttribute('role') === 'listitem') text = '- ' + text + '\n';
-            const align = node.style.textAlign;
-            if (['left','center','right','justify'].includes(align)) text = '[alinhar=' + align + ']' + text + '[/alinhar]';
-            if (['div','p','ul','ol'].includes(tag) && node !== area && !text.endsWith('\n')) text += '\n';
-            return text;
-        }
         function sync() {
-            input.value = Array.from(area.childNodes).map(serialize).join('').replace(/\n$/, '');
+            input.value = serializeEditor(area);
             input.dispatchEvent(new Event('input', { bubbles: true }));
         }
         function command(name, value) {
@@ -188,13 +237,27 @@
                 area.setAttribute('aria-invalid','true');
             } else area.removeAttribute('aria-invalid');
         }, true);
+        if (input.name !== 'resumo') {
+            const style = document.createElement('select');
+            style.setAttribute('aria-label', 'Estilo do parágrafo');
+            for (const [value,label] of [['p','Texto normal'],['h2','Título de seção'],['h3','Subtítulo']]) {
+                const option = document.createElement('option');
+                option.value = value; option.textContent = label; style.append(option);
+            }
+            style.addEventListener('change', () => command('formatBlock', style.value));
+            toolbar.append(style);
+        }
         for (const [label, glyph, before, after] of [
             ['Negrito', 'N', 'bold', ''], ['Itálico', 'I', 'italic', ''],
-            ['Sublinhado', 'S', 'underline', ''], ['Lista de tópicos', '•', 'insertUnorderedList', '']
+            ['Sublinhado', 'S', 'underline', ''], ['Lista de tópicos', '•', 'insertUnorderedList', ''],
+            ['Lista numerada', '1.', 'insertOrderedList', ''], ['Desfazer', '↶', 'undo', ''],
+            ['Refazer', '↷', 'redo', ''], ['Limpar formatação', 'Tx', 'removeFormat', '']
         ]) {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = glyph;
+            button.className = 'ar-editor-action';
+            button.dataset.formatCommand = before;
             button.title = label;
             button.setAttribute('aria-label', label);
             button.addEventListener('click', () => command(before));
@@ -231,5 +294,5 @@
         panel.append(toolbar, hint);
         input.parentElement.after(panel);
     }
-    A.noticeText = { render, editor };
+    A.noticeText = { render, editor, serializeEditor };
 })((window.Arcadia = window.Arcadia || {}));

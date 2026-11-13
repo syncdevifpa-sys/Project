@@ -63,7 +63,7 @@
   color: inherit;
   outline-offset: 2px;
 }
-.ar-topbar-ready .ar-preview-search svg {
+.ar-preview-search svg {
   width: 18px;
   height: 18px;
   flex-shrink: 0;

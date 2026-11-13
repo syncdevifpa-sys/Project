@@ -162,6 +162,16 @@
         const detail = media.closest('.ar-detail');
         if (!detail || media.dataset.revealReady) return () => {};
         media.dataset.revealReady = 'true';
+        /* A névoa usa a superfície efetiva do banner, inclusive degradês personalizados. */
+        const syncBannerColor = () => {
+            const paint = getComputedStyle(detail);
+            media.style.setProperty('--publication-cover-bg', paint.backgroundImage !== 'none' ? paint.backgroundImage : paint.backgroundColor);
+        };
+        syncBannerColor();
+        const appearanceObserver = new MutationObserver(syncBannerColor);
+        appearanceObserver.observe(detail, { attributes:true,attributeFilter:['style','class'] });
+        const themeObserver = new MutationObserver(syncBannerColor);
+        themeObserver.observe(document.documentElement, { attributes:true,attributeFilter:['data-theme','data-accent','data-preview-season'] });
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'ar-cover-reveal-toggle';
@@ -189,6 +199,8 @@
         const dialog = media.closest('dialog');
         dialog?.addEventListener('scroll', onScroll, { passive:true, capture:true });
         return () => {
+            appearanceObserver.disconnect();
+            themeObserver.disconnect();
             window.removeEventListener('scroll', onScroll);
             dialog?.removeEventListener('scroll', onScroll, true);
             if (frame) cancelAnimationFrame(frame);

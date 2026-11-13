@@ -27,3 +27,7 @@
 
 .home-content-page .home-campus-banner.ar-banner-personal :is(h1,p,.eyebrow) { color:var(--personal-banner-ink); }
 .home-content-page .home-campus-banner.ar-banner-gradient-default { background:var(--default-banner-bg);color:var(--default-banner-ink); }
+
+/* Acesso ao painel acompanha o tema da página, sem texto claro sobre fundo claro. */
+.home-content-page .site-nav .btn { background:var(--surface-card);color:var(--color-ink);border-color:var(--color-line); }
+.home-content-page .site-nav .btn:hover { background:var(--surface-alt);border-color:var(--color-ink); }
