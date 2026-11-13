@@ -124,7 +124,7 @@
             if (
                 typeof selected === 'string' &&
                 selected.startsWith('cohort:') &&
-                data.subjects.some((s) => s.id_turma === Number(selected.split(':')[1]))
+                data.subjects.some((s) => s.id_turma === Number(selected.split(':')[1]) && periodKey(s) === selected.split(':')[2])
             )
                 await loadCohort(Number(selected.split(':')[1]), selected.split(':')[2]);
             else if (selected && data.subjects.some((s) => s.id_disciplina === selected))
@@ -158,6 +158,24 @@
             if (requestGeneration === reloadGeneration) status.setAttribute('aria-busy', 'false');
         }
     }
+    /* Hierarquia real: cada disciplina pertence a uma turma e a um período letivo. */
+    const navigationState = new Map();
+    const selectionKey = 'arcadia-class-selection:' + (A.auth.getSessao().id_usuario || 'current');
+    try { selected = JSON.parse(sessionStorage.getItem(selectionKey) || 'null'); } catch {}
+    function rememberSelection() {
+        try { sessionStorage.setItem(selectionKey, JSON.stringify(selected)); } catch {}
+    }
+    function disclosure(key, title, metadata, active) {
+        const group = el('details', undefined, 'ac-nav-group');
+        const summary = el('summary');
+        summary.append(el('span', title, 'ac-nav-title'));
+        if (metadata) summary.append(el('small', metadata, 'ac-nav-meta'));
+        group.append(summary);
+        group.open = navigationState.has(key) ? navigationState.get(key) : active;
+        if (active) group.dataset.selected = 'true';
+        group.addEventListener('toggle', () => navigationState.set(key, group.open));
+        return group;
+    }
     function renderSubjects() {
         const nav = q('#classSubjects');
         nav.replaceChildren();
@@ -168,31 +186,27 @@
         }
         for (const rows of groups.values()) {
             const first = rows[0];
-            nav.append(el('h3', `${first.turma} · ${first.ano_ingresso} · ${first.curso}`));
+            const activeCohort = rows.some(row => selected === row.id_disciplina) ||
+                String(selected).startsWith('cohort:' + first.id_turma + ':');
+            const cohort = disclosure('cohort:' + first.id_turma,
+                first.turma + ' · ' + first.ano_ingresso, first.curso, activeCohort || groups.size === 1);
             const periods = [...new Set(rows.map(periodKey))].sort().reverse();
             for (const period of periods) {
-                const offers = rows.filter((row) => periodKey(row) === period),
-                    firstOffer = offers[0];
-                nav.append(el('h4', periodLabel(firstOffer), 'ac-period-label'));
-                if (data.role === 'discente')
-                    nav.append(
-                        subjectChoice(
-                            'Todas as disciplinas',
-                            periodLabel(firstOffer),
-                            () => loadCohort(first.id_turma, period),
-                            selected === `cohort:${first.id_turma}:${period}`
-                        )
-                    );
-                for (const d of offers)
-                    nav.append(
-                        subjectChoice(
-                            d.nome,
-                            periodLabel(d),
-                            () => load(d.id_disciplina),
-                            selected === d.id_disciplina
-                        )
-                    );
+                const offers = rows.filter(row => periodKey(row) === period);
+                const activePeriod = offers.some(row => selected === row.id_disciplina) ||
+                    selected === `cohort:${first.id_turma}:${period}`;
+                const offer = disclosure(first.id_turma + ':' + period,
+                    periodLabel(offers[0]), '', activePeriod || periods.length === 1);
+                const list = el('div', undefined, 'ac-nav-subjects');
+                if (data.role === 'discente') list.append(subjectChoice(
+                    'Todas as disciplinas', '', () => loadCohort(first.id_turma, period),
+                    selected === `cohort:${first.id_turma}:${period}`));
+                for (const d of offers) list.append(subjectChoice(d.nome, '',
+                    () => load(d.id_disciplina), selected === d.id_disciplina));
+                offer.append(list);
+                cohort.append(offer);
             }
+            nav.append(cohort);
         }
         if (!groups.size) nav.append(el('p', 'Sem disciplinas.', 'ac-meta'));
         if (data.canAdminister) {
@@ -243,6 +257,7 @@
             const result = await call('/' + id);
             if (version !== generation) return;
             selected = id;
+            rememberSelection();
             detail = result;
             renderSubjects();
             render();
@@ -266,6 +281,7 @@
             );
             if (version !== generation) return;
             selected = 'cohort:' + id + ':' + (period || periodKey(result.subject));
+            rememberSelection();
             detail = result;
             if (tab === 'people') tab = 'aviso';
             renderSubjects();
@@ -427,7 +443,9 @@
         const heading = q('#classContext');
         const management = el('details', undefined, 'ac-management');
         management.hidden = true;
-        const summary = el('summary', 'Gerenciar');
+        const summary = el('summary', '⚙', 'ac-management-trigger');
+        summary.title = 'Gerenciar turma e disciplina';
+        summary.setAttribute('aria-label', 'Gerenciar turma e disciplina');
         const panel = el('div', undefined, 'ac-management-panel');
         management.append(summary, panel);
         const group = (title, danger = false) => {

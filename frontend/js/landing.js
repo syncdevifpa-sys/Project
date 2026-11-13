@@ -161,6 +161,14 @@
             card.className = 'public-card';
             const title = document.createElement('h3');
             title.textContent = item.titulo;
+            if (news && (item.fixado === true || item.fixado === 1)) {
+                const pin = document.createElement('span');
+                pin.className = 'ar-pinned-label';
+                pin.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-4 2-3 5-3-3-5 3 3-5-3-3 5-3 2-4Z M9 15l-6 6"/></svg>';
+                pin.append(document.createTextNode('Fixado'));
+                card.append(pin);
+            }
+
             const description = document.createElement('p');
             description.textContent = news
                 ? item.resumo || item.descricao || ''

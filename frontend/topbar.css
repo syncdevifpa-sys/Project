@@ -1,3 +1,8 @@
+/* Dimensões antes da montagem do cabeçalho: nenhuma foto pode expandir a navegação. */
+.ar-nav .ar-avatar { width:34px;height:34px;max-width:34px;max-height:34px;flex:0 0 34px;overflow:hidden; }
+.ar-nav .ar-avatar img { width:100%;height:100%;object-fit:cover; }
+.ar-nav .ar-brand-img { width:34px;height:34px;object-fit:contain;flex:none; }
+
 /* Barra compartilhada: busca, identificação e ações da conta. */
 
 .ar-topbar-ready.ar-has-sidebar .ar-nav {
@@ -58,7 +63,7 @@
   color: inherit;
   outline-offset: 2px;
 }
-.ar-topbar-ready .ar-preview-search svg {
+.ar-preview-search svg {
   width: 18px;
   height: 18px;
   flex-shrink: 0;

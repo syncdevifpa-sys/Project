@@ -86,7 +86,7 @@ function mountTopbar() {
         const link = document.createElement('a');
         link.href = href;
         link.innerHTML =
-            '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+            '<svg width="18" height="18" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
             icon +
             '</svg>';
         link.append(document.createTextNode(label));
@@ -103,7 +103,7 @@ function mountTopbar() {
         settings.setAttribute('aria-label', 'Abrir configurações');
         settings.insertAdjacentHTML(
             'afterbegin',
-            '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">' +
+            '<svg width="18" height="18" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">' +
                 icons.settings +
                 '</svg>'
         );
@@ -126,7 +126,7 @@ function mountTopbar() {
         const field = document.createElement('div');
         field.className = 'ar-preview-search';
         field.innerHTML =
-            '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>';
+            '<svg width="18" height="18" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>';
         const input = document.createElement('input');
         input.type = 'search';
         input.placeholder = 'Pesquisar';

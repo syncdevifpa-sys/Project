@@ -82,6 +82,14 @@ html[data-preview-season="clean"] {
 /* Os subitens ficam recuados sob o grupo ao qual pertencem. */
 .ar-portal-sidebar .ar-sidebar-links { margin:4px 0 8px 22px;padding-left:8px;border-left:1px solid var(--line); }
 .ar-portal-sidebar .ar-sidebar-links > a { padding:10px 8px;gap:9px;font-size:13px; }
+/* Recolhido: os ícones ocupam a largura inteira, sem o recuo dos submenus. */
+@media (min-width:1101px) {
+ .ar-sidebar-collapsed .ar-portal-sidebar .ar-sidebar-links { margin:4px 0 8px;padding:0;border:0; }
+ .ar-sidebar-collapsed .ar-portal-sidebar .ar-sidebar-links > a { padding:10px 0;justify-content:center;min-width:44px; }
+ .ar-sidebar-collapsed .ar-portal-sidebar > nav { scrollbar-width:none; }
+ .ar-sidebar-collapsed .ar-portal-sidebar > nav::-webkit-scrollbar { display:none; }
+}
+
 /* Painel: hierarquia mais compacta e título do compromisso sem dominar o cartão. */
 .db-v3 .ar-hero-title.db-display { font-size:clamp(40px,4.2vw,60px);line-height:1.08; }
 .db-v3 .ar-hero.db-hello { gap:14px; }

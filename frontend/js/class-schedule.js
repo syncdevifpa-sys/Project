@@ -214,6 +214,7 @@
             for (const day of weekdays) {
                 const cell = node('th', days[day]);
                 cell.setAttribute('scope', 'col');
+                if (day === (new Date().getDay() || 7)) cell.setAttribute('aria-current', 'date');
                 header.append(cell);
             }
             head.append(header);
@@ -444,9 +445,9 @@
                     copy.append(
                         node(
                             'p',
-                            row.vigencia_inicio.split('-').reverse().join('/') +
+                            (row.vigencia_inicio ? row.vigencia_inicio.split('-').reverse().join('/') : 'não informada') +
                                 ' a ' +
-                                row.vigencia_fim.split('-').reverse().join('/')
+                                (row.vigencia_fim ? row.vigencia_fim.split('-').reverse().join('/') : 'não informada')
                         )
                     );
                     const room = A.campusTimetable.room(row);

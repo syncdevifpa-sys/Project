@@ -1,6 +1,8 @@
 .ac-week-grid-scroll {
   max-width: 100%;
-  overflow-x: auto;
+  overflow: auto;
+  max-height: min(70dvh, 760px);
+  scrollbar-gutter: stable;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
 }
@@ -161,3 +163,16 @@
   color: var(--cyan-ink);
   font-weight: 700;
 }
+
+/* Grade de horários: dias e horas continuam visíveis durante a consulta. */
+.ac-week-grid thead th { position:sticky;top:0;z-index:3;background:var(--surface-sunken);box-shadow:0 1px var(--line); }
+.ac-week-grid thead th:first-child { inset-inline-start:0;z-index:4; }
+.ac-week-grid th[aria-current=date] { box-shadow:inset 0 -3px var(--accent,var(--cyan)); }
+.ac-week-grid tbody > tr:hover > td:not(.ac-week-break) { background:color-mix(in srgb,var(--surface-sunken) 45%,var(--surface)); }
+.ac-week-class { background:color-mix(in srgb,var(--accent,var(--cyan)) 12%,var(--surface));color:var(--ink);border-color:var(--accent,var(--cyan));line-height:1.45; }
+.ac-week-class > strong { font-size:14px; }
+.ac-week-class > span { font-size:12px;color:var(--ink-muted); }
+.ac-week-empty { font-size:12px;color:var(--ink-muted);vertical-align:middle; }
+.ac-week-grid :is(th,td) { padding:10px; }
+.ac-week-grid caption { background:var(--surface);font-size:15px; }
+@media(max-width:600px) { .ac-week-grid-scroll { max-height:65dvh; }.ac-week-grid td { min-width:150px; }.ac-week-grid :is(th,td) { padding:8px; } }

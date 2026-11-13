@@ -12,7 +12,7 @@
     if (!host) return;
     const control = document.createElement('div');
     control.className = 'lang-switch';
-    control.innerHTML = '<button type="button" class="lang-toggle" id="langToggle" aria-label="Idioma: português" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></svg><span class="lang-current" aria-hidden="true">PT</span><span aria-hidden="true">⌄</span></button><ul class="lang-menu" id="langMenu" hidden><li><button type="button" data-lang="pt" lang="pt-BR" aria-current="true">Português</button></li><li><button type="button" data-lang="en" lang="en" aria-current="false">English</button></li></ul>';
+    control.innerHTML = '<button type="button" class="lang-toggle" id="langToggle" aria-label="Idioma: português" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></svg><span class="lang-current" aria-hidden="true">PT</span><span aria-hidden="true">⌄</span></button><ul class="lang-menu" id="langMenu" hidden><li><button type="button" data-lang="pt" lang="pt-BR" aria-current="true">Português</button></li><li><button type="button" data-lang="en" lang="en" aria-current="false">English</button></li></ul>';
     host.prepend(control);
     if (document.querySelector('.ar-auth-header')) {
         const tutorial = document.createElement('a');
