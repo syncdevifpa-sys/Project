@@ -385,3 +385,41 @@ html[data-motion='reduced'] .site-header :is(.nav-login, .nav-mobile-login .btn)
 html[data-motion='reduced'] .home-campus-banner-content .btn--primary:hover {
   transform: none !important;
 }
+
+/* Etiqueta "IFPA Campus Belém": fundo verde e texto vermelho. */
+.home-campus-banner-content .eyebrow {
+  background: #d3f0da;
+  color: #c62828;
+}
+[data-theme='dark'] .home-campus-banner-content .eyebrow {
+  background: #1d4a2a;
+  color: #ff8a80;
+}
+
+/* Sem degradê em nenhum botão da página inicial: cor sólida e, no hover,
+   só a animação de subir (a cor não muda). */
+.btn--primary,
+.btn--light {
+  background-image: none !important;
+}
+.btn--primary {
+  background-color: var(--hp-accent) !important;
+}
+.btn--outline::before,
+.btn--outline-dark::before {
+  display: none !important;
+}
+@media (hover: hover) {
+  .btn--outline:hover,
+  .btn--outline-dark:hover {
+    background-color: transparent !important;
+    transform: translateY(-2px);
+  }
+  .btn--outline:hover {
+    border-color: var(--color-ink) !important;
+    color: var(--color-ink) !important;
+  }
+  .btn--outline-dark:hover {
+    color: var(--color-on-navy) !important;
+  }
+}

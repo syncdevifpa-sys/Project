@@ -169,8 +169,19 @@ html .ar-has-sidebar .ar-hero:not(.db-hello)::before {
   -webkit-mask-image: linear-gradient(100deg, transparent 0%, #000 70%);
   mask-image: linear-gradient(100deg, transparent 0%, #000 70%);
 }
+/* Desenhos do canto dos banners: visíveis sobre o vidro, na cor do texto. */
 html .ar-has-sidebar .ar-hero:not(.db-hello) .ar-hero-art {
-  display: none;
+  --hero-art-ink: var(--st-ink);
+  --field-shape: color-mix(in srgb, var(--hero-art-ink) 9%, transparent);
+  --on-field: color-mix(in srgb, var(--hero-art-ink) 35%, transparent);
+  z-index: -1;
+  opacity: 1 !important;
+}
+html .ar-has-sidebar .ar-hero.ar-banner-personal:not(.db-hello) .ar-hero-art {
+  --hero-art-ink: var(--personal-banner-ink, var(--st-ink));
+}
+html .ar-has-sidebar .ar-hero:not(.db-hello) .ar-hero-art .l {
+  stroke: color-mix(in srgb, var(--hero-art-ink) 16%, transparent);
 }
 html .ar-has-sidebar .ar-hero:not(.db-hello) :is(.ar-hero-title, .ar-hero-desc) {
   color: var(--st-ink) !important;
@@ -383,13 +394,13 @@ html body.ar-has-sidebar .db-v3 .db-hello .db-hello-summary a {
   text-decoration-color: var(--st-lime);
 }
 /* Ações do painel no mesmo limão dos outros botões principais. */
-html body.ar-has-sidebar :is(.db-btn--primary, .db-btn--blue, .db-btn--ghost-blue) {
+html body.ar-has-sidebar :is(.db-btn--primary, .db-btn--blue, .db-btn--ghost-blue):not(.ar-btn-cta) {
   border-color: var(--st-lime) !important;
   background: var(--st-lime) !important;
   color: var(--st-on-lime) !important;
   box-shadow: none !important;
 }
-html body.ar-has-sidebar :is(.db-btn--primary, .db-btn--blue, .db-btn--ghost-blue):hover {
+html body.ar-has-sidebar :is(.db-btn--primary, .db-btn--blue, .db-btn--ghost-blue):not(.ar-btn-cta):hover {
   border-color: var(--st-lime-hover) !important;
   background: var(--st-lime-hover) !important;
 }
@@ -1157,8 +1168,8 @@ html body.ar-has-sidebar .ar-sidebar-menu--open {
   }
 }
 
-/* Abas das seções. */
-html body.ar-has-sidebar .ar-split {
+/* Abas das seções (só em Configurações; Avisos também usa .ar-split). */
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) {
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) !important;
   column-gap: 32px;
   row-gap: 22px;
@@ -1222,8 +1233,224 @@ html body.ar-has-sidebar .ar-split > .ar-snav a:focus-visible {
   }
 }
 @media (max-width: 1100px) {
-  html body.ar-has-sidebar .ar-split {
+  html body.ar-has-sidebar .ar-split:has(> .ar-snav) {
     grid-template-columns: minmax(0, 1fr) !important;
     row-gap: 18px;
+  }
+}
+
+/* Celular estreito: formulários não alargam a página (fieldset nasce com
+   min-width: min-content) e botões de texto longo quebram a linha. */
+html body.ar-has-sidebar fieldset {
+  min-width: 0;
+}
+@media (max-width: 480px) {
+  html body.ar-has-sidebar :is(form, fieldset) .ar-btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* Barra de visualizações (Quadro, Tabela, Lista, Situação) no celular:
+   ocupa a largura toda, cada opção com a mesma largura, ícone em cima do texto;
+   "Ordenar por" vem embaixo, com o seletor na largura toda. */
+@media (max-width: 600px) {
+  html body.ar-has-sidebar .ar-collection-viewbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  html body.ar-has-sidebar .ar-collection-viewbar .ar-seg {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+    border-radius: 18px;
+  }
+  html body.ar-has-sidebar .ar-collection-viewbar .ar-seg button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+    min-height: 54px;
+    padding: 6px 2px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  html body.ar-has-sidebar .ar-collection-viewbar .ar-seg button svg {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+  }
+  html body.ar-has-sidebar .ar-collection-viewbar .ar-collection-sort {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+  }
+  html body.ar-has-sidebar .ar-collection-viewbar .ar-collection-sort select {
+    width: 100%;
+  }
+}
+
+/* Botão de ação no estilo da landing ("Veja como começar"): azul sólido, texto
+   branco, sem sublinhado; no hover a cor não muda, só sobe um pouco. */
+html body.ar-has-sidebar .ar-btn.ar-btn-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 11px 22px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: #2563eb !important;
+  color: #fff !important;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none !important;
+  white-space: normal;
+  box-shadow: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+html body.ar-has-sidebar .ar-btn.ar-btn-cta::before,
+html body.ar-has-sidebar .ar-btn.ar-btn-cta::after {
+  display: none;
+}
+:root[data-theme='dark'] body.ar-has-sidebar .ar-btn.ar-btn-cta {
+  background: #2f5bd3 !important;
+}
+html body.ar-has-sidebar .ar-btn.ar-btn-cta:hover,
+html body.ar-has-sidebar .ar-btn.ar-btn-cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -10px rgba(37, 99, 235, 0.6);
+}
+html body.ar-has-sidebar .ar-btn.ar-btn-cta:active {
+  transform: translateY(0);
+}
+
+/* ---------- Configurações com mais respiro ----------
+   Foto menor, colunas mais afastadas, blocos com mais espaço entre si e por dentro,
+   campos e botões em tamanho de formulário (sem esticar na largura toda). */
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) {
+  row-gap: 32px;
+}
+@media (min-width: 1101px) {
+  html body.ar-has-sidebar .ar-split:has(> .ar-snav) {
+    grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) !important;
+    column-gap: clamp(32px, 4vw, 56px);
+  }
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) > .ar-snav {
+  margin-bottom: 4px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) > div {
+  gap: 28px !important;
+  max-width: 860px;
+}
+html body.ar-has-sidebar .ar-profile-card .ar-profile-av {
+  max-width: 200px;
+}
+html body.ar-has-sidebar .ar-profile-card #confProfileAvatar {
+  font-size: clamp(44px, 4.4vw, 64px) !important;
+}
+html body.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-cam {
+  width: 32px;
+  height: 32px;
+}
+html body.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-name {
+  font-size: 22px;
+}
+html body.ar-has-sidebar .ar-profile-card {
+  gap: 14px;
+}
+
+/* Blocos: mais espaço por dentro, título menor, texto de apoio mais curto. */
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(
+    .ar-sset,
+    .ar-account-names,
+    .ar-account-email,
+    #profileSharing,
+    .ar-account-management
+  ) {
+  padding: 30px clamp(22px, 3vw, 36px);
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(
+    .ar-sset-head h2,
+    .ar-account-names > h2,
+    #accountEmail > h2,
+    #profileSharing > h2
+  ) {
+  margin-bottom: 6px;
+  font-size: 17px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(.ar-sset-head p, .ar-account-names > p, #accountEmail > p, #profileSharing > p) {
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.6;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) .ar-sset {
+  gap: 24px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) .ar-sset-head {
+  padding-bottom: 18px;
+}
+
+/* Formulários: mais distância entre os campos, campos mais baixos. */
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) .ar-form-grid {
+  column-gap: 24px;
+  row-gap: 26px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(form, fieldset, #profileSharing) {
+  display: grid;
+  gap: 18px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) .ar-field {
+  gap: 8px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(input:not([type='checkbox']):not([type='radio']):not([type='color']), select) {
+  min-height: 42px;
+  height: 42px;
+  font-size: 14px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) textarea {
+  font-size: 14px;
+}
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(#profileSharing, .ar-account-names, #accountEmail) :is(input:not([type='checkbox']):not([type='radio'])) {
+  max-width: 520px;
+}
+
+/* Botões no tamanho do texto, alinhados à esquerda (não ocupam a linha toda). */
+html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(form, fieldset, #profileSharing, .ar-account-names, #accountEmail) > :is(button, .ar-btn) {
+  justify-self: start;
+  width: auto;
+  min-height: 40px;
+  padding: 9px 20px;
+  font-size: 13.5px;
+}
+@media (max-width: 1100px) {
+  html body.ar-has-sidebar .ar-split:has(> .ar-snav) > div {
+    max-width: none;
+  }
+  html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(
+      .ar-sset,
+      .ar-account-names,
+      .ar-account-email,
+      #profileSharing,
+      .ar-account-management
+    ) {
+    padding: 24px 20px;
   }
 }

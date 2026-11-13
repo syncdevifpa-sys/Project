@@ -1,0 +1,788 @@
+/* Login e cadastro no estilo "estúdio": cartão branco grande dividido em dois.
+   À esquerda, um painel cinza-claro com pontilhado, a marca, um cartão flutuante
+   mostrando o portal e a frase em serifa; à direita, o formulário limpo. */
+:root {
+  --au-page: #ececec;
+  --au-card: #ffffff;
+  --au-panel: #f4f4f4;
+  --au-ink: #111111;
+  --au-muted: #6b6b6b;
+  --au-line: #e3e3e3;
+  --au-field: #ffffff;
+  --au-dot: #1a1a1a;
+  --au-blue: #2563eb;
+  --au-serif: 'Times New Roman', Times, serif;
+}
+:root[data-theme='dark'] {
+  --au-page: #0d0f13;
+  --au-card: #15181d;
+  --au-panel: #1b1f25;
+  --au-ink: #f2f3f5;
+  --au-muted: #a3a8b1;
+  --au-line: #2b3038;
+  --au-field: #1b1f25;
+  --au-dot: #e8eaee;
+}
+
+html,
+body {
+  background: var(--au-page) !important;
+}
+body::before,
+body::after {
+  display: none !important;
+}
+
+/* Página: o cartão ocupa quase a tela toda, com uma faixa fina em cima. */
+.ar-auth-page {
+  max-width: 1280px;
+  padding: 18px clamp(12px, 3vw, 32px) 28px;
+  gap: 14px;
+}
+.ar-auth-header {
+  padding: 0 6px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+.ar-auth-header .ar-brand {
+  display: none;
+}
+.ar-auth-header-end {
+  margin-left: auto;
+}
+.ar-auth-header-end .ar-btn:not(.ar-btn-cta) {
+  border: 1px solid var(--au-line) !important;
+  border-radius: 10px !important;
+  background: var(--au-card) !important;
+  color: var(--au-ink) !important;
+}
+.ar-auth-header :is(.lang-toggle, .ar-tutorial-link) {
+  color: var(--au-muted);
+}
+.ar-auth-main {
+  flex: 1;
+  display: flex;
+}
+.ar-auth-card-main {
+  flex: 1;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr) !important;
+  gap: 0;
+  padding: 12px;
+  border: 0 !important;
+  border-radius: 26px !important;
+  background: var(--au-card) !important;
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* ---------- Painel visual (esquerda) ---------- */
+.ar-auth-visual {
+  order: -1;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: block !important;
+  min-height: 620px;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 18px;
+  background: var(--au-panel) !important;
+  color: var(--au-ink);
+}
+.ar-auth-visual-brand {
+  position: absolute;
+  top: 26px;
+  left: 28px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--au-ink);
+  font-family: var(--au-serif);
+  font-size: 17px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.ar-auth-visual-brand img {
+  border-radius: 50%;
+}
+
+/* Pontilhado em meio-tom: mais denso numa faixa no meio, sumindo nas bordas. */
+.ar-auth-dots {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle, var(--au-dot) 1.7px, transparent 2.2px);
+  background-size: 7px 7px;
+  -webkit-mask-image:
+    radial-gradient(ellipse 30% 15% at 12% 50%, #000 0%, #000 45%, transparent 100%),
+    radial-gradient(ellipse 62% 36% at 40% 50%, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 90%);
+  mask-image:
+    radial-gradient(ellipse 30% 15% at 12% 50%, #000 0%, #000 45%, transparent 100%),
+    radial-gradient(ellipse 62% 36% at 40% 50%, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 90%);
+  opacity: 1;
+}
+
+/* Botõezinhos flutuantes com uma linha azul, como marcadores. */
+.ar-auth-chip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--au-line);
+  border-radius: 9px;
+  background: var(--au-card);
+  color: var(--au-ink);
+  font-family: var(--au-serif);
+  font-size: 15px;
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.3);
+}
+.ar-auth-chip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 26px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--au-blue);
+}
+.ar-auth-chip--top {
+  top: 15%;
+  left: 7%;
+}
+.ar-auth-chip--top::after {
+  left: calc(100% + 8px);
+}
+.ar-auth-chip--bottom {
+  bottom: 22%;
+  right: 12%;
+}
+.ar-auth-chip--bottom::after {
+  right: calc(100% + 8px);
+}
+
+/* Cartão flutuante com um pedaço do portal, saindo pela borda direita. */
+.ar-auth-mock {
+  position: absolute;
+  top: 36%;
+  left: 24%;
+  right: -12%;
+  z-index: 2;
+  padding: 16px 18px 14px;
+  border: 1px solid var(--au-line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--au-card) 94%, transparent);
+  box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.ar-auth-mock-tabs,
+.ar-auth-mock-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ar-auth-mock-tabs span,
+.ar-auth-mock-pills span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--au-muted);
+  font-size: 12px;
+}
+.ar-auth-mock-tabs .is-on,
+.ar-auth-mock-pills .is-on {
+  border: 1px solid var(--au-line);
+  background: var(--au-card);
+  color: var(--au-ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--au-blue) 12%, transparent);
+}
+.ar-auth-mock-text {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--au-line);
+  border-radius: 10px;
+  color: var(--au-muted);
+  font-family: var(--au-serif);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ar-auth-visual-title {
+  position: absolute;
+  left: 28px;
+  bottom: 26px;
+  z-index: 3;
+  margin: 0;
+  color: var(--au-ink);
+  font-family: var(--au-serif);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Formulário (direita) ---------- */
+.ar-auth-form-col {
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+  padding: 40px clamp(20px, 3vw, 40px) !important;
+  gap: 20px !important;
+  color: var(--au-ink);
+}
+.ar-auth-title {
+  margin: 0 0 6px !important;
+  color: var(--au-ink) !important;
+  font-family: var(--au-serif) !important;
+  font-size: 28px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+}
+.ar-auth-desc {
+  color: var(--au-muted) !important;
+  font-size: 13.5px !important;
+}
+.ar-auth-form-col form {
+  gap: 16px !important;
+}
+.ar-auth-form-col :is(.ar-input-label, label) {
+  color: var(--au-ink) !important;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.ar-auth-form-col :is(input:not([type='checkbox']):not([type='radio']), select, textarea) {
+  min-height: 44px;
+  border: 1px solid var(--au-line) !important;
+  border-radius: 10px !important;
+  background: var(--au-field) !important;
+  color: var(--au-ink) !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+}
+.ar-auth-form-col :is(input:not([type='checkbox']):not([type='radio']), select, textarea):focus {
+  border-color: color-mix(in srgb, var(--au-blue) 55%, var(--au-line)) !important;
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--au-blue) 14%, transparent) !important;
+}
+.ar-auth-form-col .ar-btn-submit {
+  width: 100%;
+  min-height: 46px;
+}
+
+/* "ou" com linha dos dois lados. */
+.ar-auth-or,
+.ar-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0 !important;
+  color: var(--au-muted) !important;
+  font-size: 12.5px;
+}
+.ar-auth-or::before,
+.ar-auth-or::after,
+.ar-auth-divider::before,
+.ar-auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--au-line);
+}
+.ar-auth-or span,
+.ar-auth-divider span {
+  padding: 0 !important;
+  background: none !important;
+}
+
+/* Google: botão inteiro de contorno, com o nome escrito. */
+.ar-social-row {
+  display: block !important;
+  margin: 0 !important;
+}
+.ar-social-circle-btn,
+.ar-btn-google-signup {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 46px;
+  padding: 10px 16px !important;
+  border: 1px solid var(--au-line) !important;
+  border-radius: 10px !important;
+  background: var(--au-card) !important;
+  color: var(--au-ink) !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ar-social-circle-btn:hover,
+.ar-btn-google-signup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.3) !important;
+}
+.ar-social-circle-btn svg,
+.ar-btn-google-signup svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.ar-switch-text {
+  color: var(--au-muted) !important;
+  font-size: 13px;
+  text-align: center;
+}
+.ar-switch-text a {
+  color: var(--au-ink) !important;
+  font-weight: 600;
+}
+
+/* ---------- Tablet e celular: formulário primeiro, painel menor embaixo ---------- */
+@media (max-width: 900px) {
+  .ar-auth-card-main {
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 8px;
+  }
+  .ar-auth-visual {
+    order: 1;
+    min-height: 420px;
+  }
+  .ar-auth-mock {
+    left: 10%;
+    right: -18%;
+  }
+}
+@media (max-width: 480px) {
+  .ar-auth-page {
+    padding-inline: 10px;
+  }
+  .ar-auth-visual {
+    min-height: 360px;
+  }
+  .ar-auth-mock {
+    top: 30%;
+    left: 8%;
+    right: -30%;
+  }
+  .ar-auth-chip--bottom {
+    bottom: 26%;
+  }
+}
+
+/* Sem as formas coloridas antigas no fundo. */
+.ar-auth-bg-shapes {
+  display: none !important;
+}
+/* O painel acompanha a tela: no cadastro (formulário longo) ele fica fixo ao rolar,
+   com altura de uma tela, em vez de esticar até o fim do formulário. */
+@media (min-width: 901px) {
+  .ar-auth-visual {
+    position: sticky !important;
+    top: 12px;
+    align-self: start;
+    height: min(720px, calc(100vh - 150px));
+    min-height: 560px;
+  }
+}
+
+/* Vínculo (Aluno, Professor…): grade clara; o escolhido fica em branco com
+   contorno escuro, como as abas do cartão de exemplo. */
+.ar-role-selector {
+  gap: 6px !important;
+  padding: 6px !important;
+  border: 1px solid var(--au-line) !important;
+  border-radius: 12px !important;
+  background: var(--au-panel) !important;
+}
+.ar-role-btn {
+  min-height: 42px;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: var(--au-muted) !important;
+  font-size: 13.5px !important;
+  box-shadow: none !important;
+}
+.ar-role-btn.is-active,
+.ar-role-btn[aria-checked='true'] {
+  border-color: var(--au-ink) !important;
+  background: var(--au-card) !important;
+  color: var(--au-ink) !important;
+}
+.ar-role-btn .ar-radio-dot {
+  border-color: currentColor !important;
+}
+.ar-role-btn:is(.is-active, [aria-checked='true']) .ar-radio-dot::after {
+  background: var(--au-ink) !important;
+}
+.ar-role-label,
+.ar-auth-divider span {
+  color: var(--au-muted) !important;
+}
+
+/* Marca igual à da landing: nome em serifa e "IFPA Campus Belém" pequeno embaixo. */
+.ar-auth-visual-brand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.ar-auth-visual-name {
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+.ar-auth-visual-sub {
+  margin-top: 4px;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--au-muted);
+}
+.ar-auth-chip--top {
+  top: 17%;
+}
+
+/* Cartão com as notícias da landing. */
+.ar-auth-mock {
+  top: 30%;
+}
+.ar-auth-mock-news {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+.ar-auth-mock-news li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--au-line);
+  border-radius: 10px;
+  background: var(--au-card);
+}
+.ar-auth-mock-news img {
+  flex: none;
+  width: 44px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.ar-auth-mock-meta {
+  margin: 0 0 3px;
+  color: var(--au-muted);
+  font-size: 11px;
+}
+.ar-auth-mock-meta b {
+  color: var(--au-blue);
+  font-weight: 600;
+}
+.ar-auth-mock-title {
+  margin: 0;
+  color: var(--au-ink);
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 15px;
+  line-height: 1.25;
+}
+@media (max-width: 480px) {
+  .ar-auth-mock {
+    top: 24%;
+  }
+}
+
+/* Tablet e celular: painel em coluna (marca, cartão, frase), sem sobreposição. */
+@media (max-width: 900px) {
+  .ar-auth-visual {
+    display: flex !important;
+    flex-direction: column;
+    gap: 22px;
+    min-height: 0 !important;
+    padding: 24px 0 26px 22px !important;
+  }
+  .ar-auth-visual :is(.ar-auth-visual-brand, .ar-auth-mock, .ar-auth-visual-title) {
+    position: static;
+  }
+  .ar-auth-chip {
+    display: none;
+  }
+  .ar-auth-mock {
+    width: auto;
+    margin-right: -40px;
+  }
+  .ar-auth-visual-title {
+    padding-right: 22px;
+  }
+}
+
+/* Painel só com a marca: emblema e "Arcádia" grandes, no centro. */
+.ar-auth-visual .ar-auth-visual-brand {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -56%);
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.ar-auth-visual-logo {
+  width: clamp(84px, 9vw, 124px);
+  height: auto;
+  border-radius: 50%;
+  background: var(--au-card);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.45);
+}
+.ar-auth-visual .ar-auth-visual-name {
+  font-size: clamp(56px, 6.4vw, 92px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.ar-auth-visual .ar-auth-visual-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+}
+/* Pontilhado em volta da marca, mais forte no meio. */
+.ar-auth-dots {
+  -webkit-mask-image: radial-gradient(ellipse 60% 46% at 50% 48%, transparent 0%, transparent 46%, rgba(0, 0, 0, 0.85) 62%, transparent 90%) !important;
+  mask-image: radial-gradient(ellipse 60% 46% at 50% 48%, transparent 0%, transparent 46%, rgba(0, 0, 0, 0.85) 62%, transparent 90%) !important;
+}
+@media (max-width: 900px) {
+  .ar-auth-visual {
+    align-items: center;
+    padding: 40px 22px 30px !important;
+    gap: 34px;
+  }
+  .ar-auth-visual .ar-auth-visual-brand {
+    transform: none;
+  }
+  .ar-auth-visual-title {
+    align-self: flex-start;
+  }
+}
+.ar-auth-visual .ar-auth-visual-sub { color: var(--au-ink); opacity: 0.62; font-weight: 600; }
+/* O "A" do emblema é azul-escuro: no tema escuro ele some sem um fundo claro. */
+.ar-auth-visual .ar-auth-visual-logo {
+  background: #fff;
+  padding: 6px;
+  box-sizing: border-box;
+}
+:root[data-theme='dark'] .ar-auth-visual .ar-auth-visual-logo {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 18px 40px -18px rgba(0, 0, 0, 0.8);
+}
+/* Reforça o "A" do emblema por cima da imagem, para ele ser lido de longe. */
+.ar-auth-visual-mark {
+  position: relative;
+  display: inline-grid;
+}
+.ar-auth-visual-mark > * {
+  grid-area: 1 / 1;
+}
+.ar-auth-visual .ar-auth-visual-mark .ar-auth-visual-logo {
+  width: clamp(104px, 10.5vw, 148px);
+}
+.ar-auth-visual-a {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+/* Emblema mais suave ao fundo; o "A" fino e nítido nas cores da marca. */
+.ar-auth-visual .ar-auth-visual-mark .ar-auth-visual-logo {
+  opacity: 1;
+}
+.ar-auth-visual-mark .ar-auth-visual-logo {
+  filter: opacity(0.42);
+}
+.ar-auth-a-lines path {
+  fill: none;
+  stroke: #163f6e;
+  stroke-width: 22;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ar-auth-a-lines .ar-auth-a-inner {
+  stroke: #7b46b0;
+  stroke-width: 20;
+}
+.ar-auth-a-nodes circle {
+  fill: #163f6e;
+}
+.ar-auth-a-nodes .ar-auth-a-inner {
+  fill: #7b46b0;
+}
+.ar-auth-visual-mark { display: block; line-height: 0; }
+.ar-auth-visual .ar-auth-visual-a { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* No celular o pontilhado vira um anel só em volta do emblema, longe dos textos. */
+@media (max-width: 900px) {
+  .ar-auth-visual .ar-auth-dots {
+    -webkit-mask-image: radial-gradient(circle at 50% 100px, transparent 64px, rgba(0, 0, 0, 0.85) 70px, transparent 108px) !important;
+    mask-image: radial-gradient(circle at 50% 100px, transparent 64px, rgba(0, 0, 0, 0.85) 70px, transparent 108px) !important;
+  }
+  .ar-auth-visual .ar-auth-visual-title {
+    font-size: 22px;
+  }
+}
+/* O círculo branco fica no contorno, não na imagem, para só o emblema ficar suave. */
+.ar-auth-visual .ar-auth-visual-mark {
+  padding: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.45);
+}
+:root[data-theme='dark'] .ar-auth-visual .ar-auth-visual-mark {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 18px 40px -18px rgba(0, 0, 0, 0.8);
+}
+.ar-auth-visual .ar-auth-visual-mark .ar-auth-visual-logo {
+  display: block;
+  padding: 0;
+  background: transparent;
+  box-shadow: none !important;
+}
+.ar-auth-visual .ar-auth-visual-mark .ar-auth-visual-a {
+  inset: 7px;
+  width: auto;
+  height: auto;
+  padding: 0;
+}
+/* Emblema original, sem reforço por cima. */
+.ar-auth-visual-mark .ar-auth-visual-logo {
+  filter: none;
+}
+/* "A" limpo: pernas e barra ligando uma à outra, sobre o emblema mais suave. */
+.ar-auth-visual-mark .ar-auth-visual-logo {
+  filter: opacity(0.4);
+}
+.ar-auth-visual-a path {
+  fill: none;
+  stroke: #163f6e;
+  stroke-width: 24;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ar-auth-visual-a circle {
+  fill: #163f6e;
+}
+/* Emblema com as cores originais; o trecho roxo vira azul, sem engrossar. */
+.ar-auth-visual-mark .ar-auth-visual-logo {
+  filter: none;
+}
+.ar-auth-visual-a .ar-auth-a-recolor path {
+  stroke-width: 14;
+}
+
+/* ---------- Cadastro mais enxuto ---------- */
+/* Formulário em duas colunas, com o curso logo depois dos dados pessoais. */
+form[data-acesso='cadastro'] {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px 14px !important;
+  align-items: start;
+}
+form[data-acesso='cadastro'] > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+form[data-acesso='cadastro'] > .ar-input-group:has(#email),
+form[data-acesso='cadastro'] > .ar-input-group:has(#telefone) {
+  grid-column: span 1;
+}
+form[data-acesso='cadastro'] > #campoCursoWrapper { order: 5; }
+form[data-acesso='cadastro'] > #teacherSignupFields { order: 6; }
+form[data-acesso='cadastro'] > .ar-input-group:has(#senha) { order: 7; }
+form[data-acesso='cadastro'] > .ar-signup-legal { order: 8; }
+form[data-acesso='cadastro'] > #signupSubmit { order: 9; }
+form[data-acesso='cadastro'] > [data-signup-verification] { order: 10; }
+
+/* Dados do SIGAA num bloco próprio, também em duas colunas. */
+form[data-acesso='cadastro'] > #teacherSignupFields:not([hidden]) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px 14px;
+  align-items: start;
+  padding: 18px;
+  border: 1px solid var(--au-line);
+  border-radius: 14px;
+}
+form[data-acesso='cadastro'] > #teacherSignupFields::before {
+  content: 'Dados do SIGAA';
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--au-muted);
+}
+#teacherSignupFields > * {
+  min-width: 0;
+  margin: 0;
+}
+#teacherSignupFields > :not(.ar-input-group),
+#teacherSignupFields > .ar-input-group:has(#teacherFormacao) {
+  grid-column: 1 / -1;
+}
+#teacherSignupFields > .ar-input-group[hidden] {
+  display: none;
+}
+#teacherSignupFields > p.ar-field-hint {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--au-panel);
+  line-height: 1.5;
+}
+
+/* Dicas menores e mais discretas. */
+form[data-acesso='cadastro'] .ar-field-hint {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--au-muted);
+}
+
+/* Pontilhado com furo de tamanho fixo, para nunca passar por cima da marca. */
+.ar-auth-dots {
+  -webkit-mask-image: radial-gradient(ellipse 330px 260px at 50% 48%, transparent 0, transparent 60%, rgba(0, 0, 0, 0.85) 74%, transparent 100%) !important;
+  mask-image: radial-gradient(ellipse 330px 260px at 50% 48%, transparent 0, transparent 60%, rgba(0, 0, 0, 0.85) 74%, transparent 100%) !important;
+}
+
+@media (max-width: 560px) {
+  form[data-acesso='cadastro'],
+  form[data-acesso='cadastro'] > #teacherSignupFields:not([hidden]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  form[data-acesso='cadastro'] > .ar-input-group:has(#email),
+  form[data-acesso='cadastro'] > .ar-input-group:has(#telefone) {
+    grid-column: 1 / -1;
+  }
+}
+/* Coluna do cadastro um pouco mais larga, para as duas colunas respirarem. */
+.ar-auth-form-col:has(form[data-acesso='cadastro']) {
+  max-width: 540px;
+}
+/* overflow: hidden no cartão travava o painel fixo; clip recorta igual sem travar. */
+.ar-auth-card-main,
+.ar-auth-main {
+  overflow: clip !important;
+}
+#teacherSignupFields > .ar-input-group:has(#teacherUsername) {
+  grid-column: 1 / -1;
+}
+/* Professor/servidor: sem etapa, a matrícula ocupa a linha toda. */
+#teacherSignupFields:has(#studentCourseInfo:disabled) > .ar-input-group:has(#teacherMatricula) {
+  grid-column: 1 / -1;
+}

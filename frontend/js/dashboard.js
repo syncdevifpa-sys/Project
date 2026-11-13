@@ -395,7 +395,7 @@
                 box.innerHTML =
                     '<h2 class="db-now-title">Agenda livre</h2>' +
                     '<p class="db-now-free">Nenhum evento no calendário nos próximos dias.</p>' +
-                    '<div class="db-now-actions"><a class="db-btn db-btn--ghost-blue" href="calendar.html">Abrir calendário</a></div>';
+                    '<div class="db-now-actions"><a class="db-btn db-btn--ghost-blue ar-btn-cta" href="calendar.html">Abrir calendário</a></div>';
                 return;
             }
             const start = startOf(first);
@@ -418,7 +418,7 @@
                       '" id="dbRemind" aria-pressed="' + on + '">' +
                       (on ? ICON.check + 'Lembrete ativado' : ICON.bell + 'Lembrar 10 min antes') + '</button>'
                     : '') +
-                '<a class="db-btn db-btn--ghost-blue" href="calendar.html">Abrir calendário</a></div>';
+                '<a class="db-btn db-btn--ghost-blue ar-btn-cta" href="calendar.html">Abrir calendário</a></div>';
             scheduleLocalAlert();
         }
         // A contagem atualiza a cada 15 s sem redesenhar o cartão.

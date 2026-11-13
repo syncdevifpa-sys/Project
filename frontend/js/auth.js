@@ -231,8 +231,8 @@ window.Arcadia = window.Arcadia || {};
             '<p class="ar-google-login-intro">Escolha a conta Google que usa o mesmo e-mail do seu cadastro.</p>' +
             '<div class="ar-google-login-provider"><div data-google-button></div></div>' +
             '<p class="ar-google-login-status" role="status">Preparando o acesso…</p>' +
-            '<button type="button" class="ar-google-login-enter" data-google-enter>Entrar</button>' +
-            '<form data-google-link hidden><h3>Vincule sua conta</h3><p>Confirme sua senha do Arcádia apenas nesta primeira vez. Seu perfil e suas permissões continuam os mesmos.</p><label for="googleLinkPassword">Senha do Arcádia</label><input id="googleLinkPassword" type="password" autocomplete="current-password" required maxlength="256"><button type="submit">Vincular e entrar</button></form>' +
+            '<button type="button" class="ar-google-login-enter ar-btn-cta" data-google-enter>Entrar</button>' +
+            '<form data-google-link hidden><h3>Vincule sua conta</h3><p>Confirme sua senha do Arcádia apenas nesta primeira vez. Seu perfil e suas permissões continuam os mesmos.</p><label for="googleLinkPassword">Senha do Arcádia</label><input id="googleLinkPassword" type="password" autocomplete="current-password" required maxlength="256"><button type="submit" class="ar-btn-cta">Vincular e entrar</button></form>' +
             '<div class="ar-google-login-actions"><span>Ainda não tem cadastro?</span><a href="signup.html">Criar conta</a></div>';
         const status = dialog.querySelector('[role="status"]');
         const linkForm = dialog.querySelector('form');

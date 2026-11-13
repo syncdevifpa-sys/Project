@@ -115,7 +115,7 @@ html[data-theme="dark"][data-preview-season] .ar-portal-sidebar a[aria-current="
 html[data-preview-season] .db-v3 :is(.db-countdown,.db-count,.db-nav-count) { background:#dcdcdc;color:#182020; }
 html[data-theme="dark"][data-preview-season] .db-v3 :is(.db-countdown,.db-count,.db-nav-count) { background:#383838;color:#f2f2f2; }
 /* Botões de ação principal no modelo aprovado no Início. */
-html[data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#ffffff;border:0;border-radius:6px;min-height:44px;padding:12px 20px; }
+html[data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:#1d45a3;color:#ffffff;border:0;border-radius:6px;min-height:44px;padding:12px 20px; }
 /* A seleção da biblioteca deriva da cor efetivamente aplicada ao banner. */
 html[data-preview-season] .ar-library-tabs .ar-btn[aria-pressed="true"] { background:color-mix(in srgb,var(--page-banner-tint,var(--pink)) 32%,var(--surface));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--page-banner-tint,var(--pink)) 75%,var(--ink) 25%); }
 
@@ -142,8 +142,8 @@ html[data-preview-season] .db-v3 #dbNowCard:not(.ar-banner-personal) { backgroun
 html[data-preview-season] .db-v3 :is(.db-hello,#dbNowCard) :is(.db-hello-summary,.db-hello-summary a,.db-hello-date,.db-now-title,.db-now-title a,.db-now-place,.db-now-when,.db-metric-head span,.db-metric-value,.db-metric-value small) { color:inherit; }
 
 /* Ação principal: degradê claro durante o dia e azul no tema escuro. */
-html[data-preview-season]:not([data-theme='dark']) :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#f6f3ec,#c6def8);color:#0b1f3a;box-shadow:inset 0 0 0 1px #bfd1e8; }
-html[data-theme='dark'][data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#ffffff;box-shadow:none; }
+html[data-preview-season]:not([data-theme='dark']) :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:#e3edf9;color:#0b1f3a;box-shadow:inset 0 0 0 1px #bfd1e8; }
+html[data-theme='dark'][data-preview-season] :is(.ar-btn--primary,.db-btn--primary,.db-btn--blue,.btn--primary) { background:#1d45a3;color:#ffffff;box-shadow:none; }
 [data-tutorial-link][hidden] { display:none !important; }
 .tutorial-actions { display:flex;gap:24px;align-items:center;padding-bottom:48px;flex-wrap:wrap; }
 
@@ -184,12 +184,12 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
   border-radius:6px;
 }
 html[data-preview-season] :is(.ar-btn--secondary,.db-btn--outline,.btn--outline) {
-  background:linear-gradient(110deg,#f6f3ec,#c6def8);
+  background:#e3edf9;
   color:#0b1f3a;
   border-color:#bfd1e8;
 }
 html[data-preview-season][data-theme='dark'] :is(.ar-btn--secondary,.db-btn--outline,.btn--outline) {
-  background:linear-gradient(110deg,#0b1f3a,#1d45a3);
+  background:#1d45a3;
   color:#ffffff;
   border-color:#526c91;
 }
@@ -243,13 +243,8 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
     box-shadow:0 5px 14px #547fa838;
   }
   html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
-    background:linear-gradient(110deg,#f6f3ec,#c6def8);
-    color:#0b1f3a;
-    border-color:#9cb9d8;
   }
   html[data-preview-season][data-theme='dark'] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
-    background:linear-gradient(110deg,#0b1f3a,#1d45a3);
-    color:#ffffff;
     box-shadow:0 5px 16px #4678d94d;
   }
 }
@@ -294,10 +289,10 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
   .ar-portal-sidebar a:not([aria-current='page']):hover { background:color-mix(in srgb,var(--page-banner-tint,var(--accent)) 14%,var(--surface)); transform:translateX(2px); }
   .ar-iconbtn:not(:disabled):hover { background:var(--surface-sunken); box-shadow:0 2px 8px #547fa824; }
   html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
-    background:linear-gradient(110deg,#f6f3ec,#c6def8); color:#0b1f3a; border-color:#9cb9d8; box-shadow:0 5px 14px #547fa838;
+    box-shadow:0 5px 14px #547fa838;
   }
   html[data-preview-season][data-theme='dark'] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
-    background:linear-gradient(110deg,#0b1f3a,#1d45a3); color:#fff; box-shadow:0 5px 16px #4678d94d;
+    box-shadow:0 5px 16px #4678d94d;
   }
 }
 @media (prefers-reduced-motion:reduce) {
@@ -317,10 +312,10 @@ html[data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-ac
 }
 @media (hover:hover) {
   html[data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button):not(:disabled):hover {
-    background:linear-gradient(110deg,#f6f3ec,#c6def8);color:#0b1f3a;box-shadow:0 5px 14px #547fa838;transform:translateY(-2px);
+    box-shadow:0 5px 14px #547fa838;transform:translateY(-2px);
   }
   html[data-preview-season][data-theme='dark'] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button):not(:disabled):hover {
-    background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#fff;box-shadow:0 5px 16px #4678d94d;
+    box-shadow:0 5px 16px #4678d94d;
   }
 }
 @media (prefers-reduced-motion:reduce) {
@@ -348,4 +343,63 @@ html[data-motion='reduced'][data-preview-season] :is(.btn-pill,.btn-submit,.ar-b
 #gridProjetos .ar-card { transition:box-shadow .16s ease; }
 @media (hover:hover) {
   #gridProjetos .ar-card:hover { box-shadow:0 6px 20px #547fa824; }
+}
+
+/* Login e cadastro no celular: o topo quebra em duas linhas em vez de
+   empurrar "Criar conta"/"Entrar" e "Como funciona" para fora da tela. */
+@media (max-width: 560px) {
+  .ar-auth-header { flex-wrap: wrap; row-gap: 6px; column-gap: 8px; padding: 10px 14px; border-radius: 24px; }
+  .ar-auth-header .ar-brand { min-width: 0; }
+  .ar-auth-header .ar-brand-sub { display: none; }
+  .ar-auth-header .ar-tutorial-link { order: 5; flex-basis: 100%; margin: 0; text-align: center; }
+}
+
+/* Botões de entrar/acessar (.ar-btn-cta) no estilo do "Veja como começar" da
+   landing: azul sólido, texto branco, sem sublinhado; no hover a cor não muda,
+   o botão só sobe um pouco. */
+html .ar-btn-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: #2563eb !important;
+  background-image: none !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+html .ar-btn-cta::before,
+html .ar-btn-cta::after {
+  display: none !important;
+}
+html .ar-btn-cta :is(svg, .ar-icon) {
+  color: inherit !important;
+  stroke: currentColor;
+}
+:root[data-theme='dark'] .ar-btn-cta {
+  background: #2f5bd3 !important;
+}
+html .ar-btn-cta:hover,
+html .ar-btn-cta:focus-visible {
+  background: #2563eb !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -10px rgba(37, 99, 235, 0.6) !important;
+}
+:root[data-theme='dark'] .ar-btn-cta:hover,
+:root[data-theme='dark'] .ar-btn-cta:focus-visible {
+  background: #2f5bd3 !important;
+}
+html .ar-btn-cta:active {
+  transform: translateY(0);
+}
+html .ar-btn-cta:disabled,
+html .ar-btn-cta[aria-disabled='true'] {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none !important;
 }

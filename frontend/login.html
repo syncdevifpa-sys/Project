@@ -650,6 +650,7 @@
       <link rel="stylesheet" href="design-system.css" />
       <link rel="stylesheet" href="theme-options.css" />
     <script src="js/theme-options.js"></script>
+    <link rel="stylesheet" href="auth-studio.css" />
   </head>
   <body class="ar-auth-branded">
     <div class="ar-auth-page">
@@ -799,7 +800,7 @@
               </div>
 
               <!-- Botão para entrar -->
-              <button type="submit" class="ar-btn-submit">
+              <button type="submit" class="ar-btn-submit ar-btn-cta">
                 <span>Entrar</span>
                 <svg
                   class="ar-icon"
@@ -819,6 +820,7 @@
               </button>
 
               <!-- Entrada com provedor disponível -->
+              <p class="ar-auth-or" aria-hidden="true"><span>ou</span></p>
               <div class="ar-social-row" aria-label="Opções de acesso com redes sociais">
                 <!-- Official Google Icon -->
                 <button
@@ -846,6 +848,7 @@
                       d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"
                     />
                   </svg>
+                  <span>Continuar com o Google</span>
                 </button>
               </div>
               <p class="ar-email-help" data-email-verification-help hidden>
@@ -859,229 +862,14 @@
           </section>
 
           <!-- Coluna de apresentação -->
-          <aside class="ar-auth-showcase-col">
-            <div class="ar-showcase-intro">
-              <h2 class="ar-showcase-title">Seu espaço acadêmico em um só lugar</h2>
-              <p class="ar-showcase-desc">
-                Acesse avisos oficiais, editais de pesquisa, documentos e o calendário do IFPA
-                Campus Belém em um só lugar.
-              </p>
-            </div>
-
-            <div class="ar-features-list">
-              <div class="ar-feature-item">
-                <h4>Informações do curso</h4>
-                <p>Consulte informações acadêmicas e orientações da secretaria.</p>
-              </div>
-
-              <div class="ar-feature-item">
-                <h4>Mural e avisos oficiais</h4>
-                <p>Receba atualizações das coordenações e da administração.</p>
-              </div>
-
-              <div class="ar-feature-item">
-                <h4>Acesso seguro à conta</h4>
-                <p>Sua senha é protegida para acessar o portal acadêmico.</p>
-              </div>
-            </div>
-
-            <!-- Vector Campus Art -->
-            <div class="ar-campus-art-wrap">
-              <svg
-                class="ar-campus-art"
-                viewBox="0 0 380 145"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="25"
-                  y="55"
-                  width="75"
-                  height="85"
-                  rx="4"
-                  fill="#f4a261"
-                  fill-opacity="0.9"
-                  stroke="#1b4332"
-                  stroke-width="2"
-                />
-                <line
-                  x1="45"
-                  y1="68"
-                  x2="45"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="4 3"
-                />
-                <line
-                  x1="65"
-                  y1="68"
-                  x2="65"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="4 3"
-                />
-                <rect
-                  x="75"
-                  y="80"
-                  width="15"
-                  height="20"
-                  fill="#e76f51"
-                  stroke="#1b4332"
-                  stroke-width="1.5"
-                />
-
-                <rect
-                  x="115"
-                  y="22"
-                  width="140"
-                  height="118"
-                  rx="6"
-                  fill="#ffffff"
-                  stroke="#1b4332"
-                  stroke-width="2.2"
-                />
-                <rect
-                  x="125"
-                  y="32"
-                  width="120"
-                  height="14"
-                  rx="2"
-                  fill="#2d6a4f"
-                  fill-opacity="0.3"
-                />
-                <line
-                  x1="140"
-                  y1="52"
-                  x2="140"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="5 3"
-                />
-                <line
-                  x1="165"
-                  y1="52"
-                  x2="165"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="5 3"
-                />
-                <line
-                  x1="190"
-                  y1="52"
-                  x2="190"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="5 3"
-                />
-                <line
-                  x1="215"
-                  y1="52"
-                  x2="215"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="5 3"
-                />
-                <line
-                  x1="235"
-                  y1="52"
-                  x2="235"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="5 3"
-                />
-                <rect
-                  x="160"
-                  y="112"
-                  width="30"
-                  height="28"
-                  rx="3"
-                  fill="#e76f51"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                />
-
-                <rect
-                  x="270"
-                  y="62"
-                  width="85"
-                  height="78"
-                  rx="4"
-                  fill="#ffe3a8"
-                  fill-opacity="0.95"
-                  stroke="#1b4332"
-                  stroke-width="2"
-                />
-                <line
-                  x1="290"
-                  y1="74"
-                  x2="290"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="4 3"
-                />
-                <line
-                  x1="315"
-                  y1="74"
-                  x2="315"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="4 3"
-                />
-                <line
-                  x1="338"
-                  y1="74"
-                  x2="338"
-                  y2="135"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                  stroke-dasharray="4 3"
-                />
-
-                <circle
-                  cx="108"
-                  cy="115"
-                  r="14"
-                  fill="#52b788"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                />
-                <circle
-                  cx="264"
-                  cy="120"
-                  r="12"
-                  fill="#2d6a4f"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                />
-                <circle
-                  cx="362"
-                  cy="122"
-                  r="13"
-                  fill="#52b788"
-                  stroke="#1b4332"
-                  stroke-width="1.8"
-                />
-
-                <line
-                  x1="10"
-                  y1="140"
-                  x2="370"
-                  y2="140"
-                  stroke="#1b4332"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
+          <aside class="ar-auth-showcase-col ar-auth-visual" aria-label="Sobre a Arcádia">
+            <a class="ar-auth-visual-brand" href="index.html">
+              <span class="ar-auth-visual-mark"><img class="ar-auth-visual-logo" src="assets/arcadia-emblem.png" alt="" width="120" height="120" /><svg class="ar-auth-visual-a" viewBox="0 0 1100 1100" aria-hidden="true"><path d="M300 718 L490 290 L610 290 L805 718 M343 622 L761 622" /><circle cx="490" cy="290" r="26" /><circle cx="610" cy="290" r="26" /><circle cx="300" cy="718" r="26" /><circle cx="805" cy="718" r="26" /><g class="ar-auth-a-recolor"><path d="M463 628 L552 432 L605 557" /><circle cx="552" cy="432" r="24" /><circle cx="605" cy="557" r="24" /></g></svg></span>
+              <span class="ar-auth-visual-name">Arcádia</span>
+              <span class="ar-auth-visual-sub">IFPA Campus Belém</span>
+            </a>
+            <div class="ar-auth-dots" aria-hidden="true"></div>
+            <p class="ar-auth-visual-title">Notícias, avisos e eventos<br />do campus, reunidos em um só lugar.</p>
           </aside>
         </div>
       </main>
