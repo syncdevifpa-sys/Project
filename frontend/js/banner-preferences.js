@@ -48,22 +48,31 @@
     function backgroundCSS(style) {
         if (!style.gradient || !valid(style.background) || !valid(style.text))
             return style.background;
+        const heavy = style.gradientStrength === 'heavy';
+        const darkTheme = style.theme === 'dark' || (style.theme !== 'light' && typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark');
         const darken = luminance(style.text) > luminance(style.background);
-        const target = darken ? '#000000' : '#ffffff';
+        const target = heavy ? (darkTheme ? '#101722' : '#ffffff') : darken ? '#000000' : '#ffffff';
+        let weight = heavy ? .72 : .24;
         const channel = (hex, offset) => parseInt(hex.slice(offset, offset + 2), 16);
         let end =
             '#' +
             [1, 3, 5]
                 .map((offset) =>
                     Math.round(
-                        channel(style.background, offset) * 0.76 + channel(target, offset) * 0.24
+                        channel(style.background, offset) * (1 - weight) + channel(target, offset) * weight
                     )
                         .toString(16)
                         .padStart(2, '0')
                 )
                 .join('');
         if (end === style.background.toLowerCase()) end = darken ? '#132238' : '#e7eefd';
-        if (contrast(end, style.text) < 4.5) end = target;
+        if (heavy) {
+            while (contrast(end, style.text) < 4.5 && weight > .05) {
+                weight -= .05;
+                end = '#' + [1,3,5].map(offset => Math.round(channel(style.background,offset)*(1-weight)+channel(target,offset)*weight).toString(16).padStart(2,'0')).join('');
+            }
+            if (contrast(end, style.text) < 4.5) end = style.background;
+        } else if (contrast(end, style.text) < 4.5) end = target;
         return 'linear-gradient(135deg, ' + style.background + ', ' + end + ')';
     }
     function usesSiteDefault(page) {
@@ -99,9 +108,9 @@
                 background: style.background,
                 text: style.autoContrast === false ? style.text : readable(style.background, style.text),
                 ...(style.autoContrast === false ? { autoContrast: false } : {}),
-                ...(style.gradient === true ? { gradient: true } : {})
+                ...(style.gradient === true ? { gradient: true, ...(style.gradientStrength === 'heavy' ? { gradientStrength:'heavy' } : {}) } : {})
             };
-        return { mode: 'default', ...(style?.mode === 'default' && style.gradient === true ? { gradient: true } : {}) };
+        return { mode: 'default', ...(style?.mode === 'default' && style.gradient === true ? { gradient: true, ...(style.gradientStrength === 'heavy' ? { gradientStrength:'heavy' } : {}) } : {}) };
     }
     function pageKey(page, search = '') {
         const publication =

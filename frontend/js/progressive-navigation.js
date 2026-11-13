@@ -202,7 +202,11 @@
             resources.set(key, promise);
             return promise;
         }
-        function stylesheet(href) {
+        /* Insere cada estilo novo antes do próximo estilo da página que já está carregado
+           (ex.: design-system, theme-options, portal-studio), repetindo a ordem de um
+           carregamento completo. Anexar no fim do <head> deixava o CSS antigo da tela
+           por cima das camadas novas. */
+        function stylesheet(href, later = []) {
             const url = new URL(href, initial),
                 key = url.pathname;
             if (
@@ -234,7 +238,11 @@
                     reject(new Error('Falha ao carregar os estilos.'));
                 };
                 styles.set(key, resource);
-                document.head.append(link);
+                const anchor = later
+                    .map((next) => styles.get(new URL(next, initial).pathname)?.link)
+                    .find((node) => node?.isConnected && node.parentNode === document.head);
+                if (anchor) document.head.insertBefore(link, anchor);
+                else document.head.append(link);
             });
             resource.ready = ready;
             return ready;
@@ -326,17 +334,18 @@
                 const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
                 const root = safeMain(doc),
                     title = doc.title;
+                const styleHrefs = [...doc.querySelectorAll('link[rel="stylesheet"][href]')].map(
+                    (link) => link.getAttribute('href')
+                );
                 const pageStyles = await Promise.all(
-                    [...doc.querySelectorAll('link[rel="stylesheet"][href]')].map((link) =>
-                        stylesheet(link.getAttribute('href'))
-                    )
+                    styleHrefs.map((href, index) => stylesheet(href, styleHrefs.slice(index + 1)))
                 );
                 for (const path of route.scripts) {
                     if (signal.aborted)
                         throw new DOMException('Navegação cancelada.', 'AbortError');
                     await script(path);
                 }
-                return { root, title, pageStyles, route };
+                return { root, title, pageStyles, route, pageClasses:Array.from(doc.body.classList) };
             },
             async commit(prepared, url, options) {
                 if (originalSession() !== shellOwner) throw new Error('A conta mudou.');
@@ -350,6 +359,8 @@
                 for (const [key, resource] of styles)
                     if (!fixedStyles.has(key.slice(key.lastIndexOf('/') + 1)))
                         resource.link.media = active.has(key) ? resource.media : 'not all';
+                /* Repete exatamente a ordem declarada na página, inclusive estilos já visitados. */
+                for (const resource of prepared.pageStyles) document.head.append(resource.link);
                 if (!options.pop) {
                     remember();
                     history.pushState({ arcadiaRoute: true, scroll: { x: 0, y: 0 } }, '', url.href);
@@ -357,6 +368,7 @@
                 prepared.root.inert = true;
                 currentMain.replaceWith(prepared.root);
                 currentMain = prepared.root;
+                document.body.classList.toggle('ar-filter-page', prepared.pageClasses.includes('ar-filter-page'));
                 document.title = prepared.title;
                 currentUrl = url.href;
                 A.bannerBootstrap?.apply();

@@ -359,6 +359,7 @@
                 $$(
                     '#noticesCardsGrid .ar-card-desc, #noticeCompactList .ar-card-desc, [data-view-panel="quadro"] .ar-card-desc'
                 ).forEach((element) => A.noticeText.render(element, element.textContent));
+                if (A.noticeCover?.linkCard) $$('#noticesCardsGrid .ar-card').forEach(card => A.noticeCover.linkCard(card,card.querySelector('a[href*="notice.html"]')));
                 $('#noticesSummary').textContent =
                     `${list.length} ${list.length === 1 ? 'publicação' : 'publicações'}`;
                 $('#btnDeleteSel').style.display = rows.some((r) => A.noticeActions.canDelete(r))
@@ -555,17 +556,18 @@
                                 r.titulo,
                                 r.descricao,
                                 `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
-                                projectActions(r) + editAction('projects', r, r.id_projeto) +
+                                `<button type="button" class="ar-link" data-open-project="${esc(r.id_projeto)}">Ver projeto</button>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
                                 (A.projectActions?.canDelete() ? `<button type="button" class="ar-iconbtn ar-project-delete" data-delete-project="${esc(r.id_projeto)}" title="Excluir projeto" aria-label="Excluir projeto: ${esc(r.titulo)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : '')
                             );
                             return A.noticeCover?.valid(r.capa)
-                                ? markup.replace(
+                                ? markup.replace('class="ar-card"','class="ar-card ar-notice-with-cover"').replace(
                                       '<h3',
                                       A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo) + '<h3'
                                   )
                                 : markup;
                         })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
+                if (A.noticeCover?.linkCard) grid.querySelectorAll('.ar-card').forEach(card => A.noticeCover.linkCard(card, card.querySelector('[data-open-project]')));
                 linkDescriptions('#gridProjetos .ar-card-desc');
                 contentViews(grid, visible, 'situacao', situations);
                 bar.counts();
@@ -600,6 +602,11 @@
                 if (A.auth.exigirLogin()) A.contentEditor.open('projects', null, reload);
             });
             editableGrid(grid, 'projects', () => rows, reload);
+            listen(grid,'click',event=>{
+                const open = event.target.closest('[data-open-project]');
+                const project = open && rows.find(row=>String(row.id_projeto)===open.dataset.openProject);
+                if(project) A.noticeCover.openProject(project);
+            });
             listen(grid, 'click', async (event) => {
                 const button = event.target.closest('[data-delete-project]');
                 if (!button || button.disabled) return;
@@ -1268,7 +1275,7 @@
                     A.noticeCover.markup(r.capa, 'Capa: ' + r.titulo) + '</div>');
             const media = detail?.querySelector('.ar-publication-media');
             const coverImage = media?.querySelector('img');
-            if (media) A.noticeCover.enableReveal(media);
+            if (media) cleanups.push(A.noticeCover.enableReveal(media));
             if (coverImage) {
                 const fitCover = () => {
                     if (!coverImage.naturalWidth || !coverImage.naturalHeight) return;

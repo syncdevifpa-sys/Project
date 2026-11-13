@@ -7,7 +7,7 @@
         /* As áreas pessoais conservam as cores padrão próprias do modelo anterior. */
         const originalBackgroundCSS=policy.backgroundCSS;
         policy.backgroundCSS=function(style){
-          if(!style.gradient)return originalBackgroundCSS(style);
+          if(!style.gradient||style.gradientStrength==='heavy')return originalBackgroundCSS(style);
           const base=originalBackgroundCSS(style),colors=base.match(/#[0-9a-f]{6}/gi);
           if(!colors||colors.length<2)return base;
           /* Reforço pequeno do degradê, somente quando a opção estiver marcada. */

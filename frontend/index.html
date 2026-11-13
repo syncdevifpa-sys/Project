@@ -53,15 +53,17 @@
     <link rel="stylesheet" href="landing.css" />
     <link rel="stylesheet" href="scrollbars.css" />
     <link rel="stylesheet" href="brand-logo.css" />
-    <link rel="stylesheet" href="notice-cover.css" />
     <link rel="stylesheet" href="privacy-notice.css" />
     <link rel="stylesheet" href="content-views.css" />
-    <link rel="stylesheet" href="banner-appearance.css" />
     <link rel="stylesheet" href="connection-feedback.css" />
     <link rel="stylesheet" href="adaptive-layout.css" />
       <link rel="stylesheet" href="design-system.css" />
       <link rel="stylesheet" href="theme-options.css" />
     <script src="js/theme-options.js"></script>
+
+    <link rel="stylesheet" href="notice-cover.css" />
+    <link rel="stylesheet" href="banner-appearance.css" />
+    <link rel="stylesheet" href="home-public.css" />
   </head>
   <body class="home-content-page">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -149,7 +151,7 @@
 
     <main id="conteudo">
       <!-- Destaque de boas-vindas para quem já acessou o portal. -->
-      <section class="home-campus-banner container" aria-labelledby="campusBannerTitle">
+      <section data-initial-banner-slot="page" class="home-campus-banner container" aria-labelledby="campusBannerTitle">
         <img src="assets/landing/campus-belem.jpg" alt="Entrada do IFPA Campus Belém" width="1200" height="628" fetchpriority="high" />
         <div class="home-campus-banner-content">
           <p class="eyebrow">IFPA Campus Belém</p>
@@ -159,7 +161,11 @@
             <a class="btn btn--primary" href="login.html">Entrar</a>
             <a class="text-link home-more-info" href="tutorial.html" data-tutorial-link>Mais informações →</a>
           </div>
-          <div class="home-member-actions"><a class="btn btn--primary" href="#noticias">Explorar publicações →</a></div>
+          <div class="home-member-actions">
+            <a class="btn btn--primary" href="#noticias">Explorar publicações →</a>
+            <!-- Acesso à landing (apresentação da Arcádia) também para quem já entrou. -->
+            <a class="text-link home-more-info" href="tutorial.html">Mais informações →</a>
+          </div>
         </div>
       </section>
       <!-- 2. Apresentação principal -->
@@ -253,6 +259,7 @@
     <script src="js/scroll-suave.js"></script>
     <script src="js/animacoes.js"></script>
     <script src="js/privacy-notice.js"></script>
+    <script src="js/class-appearance.js"></script>
     <script src="js/banner-controls.js"></script>
   </body>
 </html>

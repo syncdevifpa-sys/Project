@@ -157,43 +157,72 @@
         render();
         return state;
     }
-    /* Revela a fotografia sem bloquear a rolagem normal ou os gestos do navegador. */
+    /* A fotografia mantém tamanho e fonte; somente a névoa acompanha a proximidade do topo. */
     function enableReveal(media) {
         const detail = media.closest('.ar-detail');
-        if (!detail || media.dataset.revealReady) return;
+        if (!detail || media.dataset.revealReady) return () => {};
         media.dataset.revealReady = 'true';
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'ar-cover-reveal-toggle';
-        const setRevealed = (value) => {
-            const image = media.querySelector('img');
-            const frame = media.querySelector('.ar-notice-cover');
-            if (value && image?.naturalWidth && frame && !detail.classList.contains('is-cover-revealed')) {
-                const bounds = frame.getBoundingClientRect();
-                media.style.setProperty('--revealed-cover-height',
-                    Math.max(bounds.height, bounds.width * image.naturalHeight / image.naturalWidth) + 'px');
-            }
+        function reveal(value) {
             detail.classList.toggle('is-cover-revealed', value);
             button.setAttribute('aria-pressed', String(value));
-            button.textContent = value ? 'Recolher imagem' : 'Ver imagem inteira';
-        };
-        setRevealed(false);
-        button.addEventListener('click', () => setRevealed(!detail.classList.contains('is-cover-revealed')));
+            button.textContent = value ? 'Mostrar efeito da capa' : 'Ver imagem sem efeito';
+        }
+        reveal(false);
+        button.addEventListener('click', () => reveal(!detail.classList.contains('is-cover-revealed')));
         media.append(button);
-        media.addEventListener('wheel', (event) => {
-            if (Math.abs(event.deltaY) > 8) setRevealed(event.deltaY < 0);
-        }, { passive: true });
-        let startY = null;
-        media.addEventListener('touchstart', (event) => {
-            startY = event.touches.length === 1 ? event.touches[0].clientY : null;
-        }, { passive: true });
-        media.addEventListener('touchmove', (event) => {
-            if (startY === null || event.touches.length !== 1) return;
-            const distance = startY - event.touches[0].clientY;
-            if (Math.abs(distance) > 20) setRevealed(distance < 0);
-        }, { passive: true });
-        media.addEventListener('touchend', () => { startY = null; }, { passive: true });
-        media.addEventListener('touchcancel', () => { startY = null; }, { passive: true });
+        let frame = 0;
+        const onScroll = () => {
+            if (frame) return;
+            frame = requestAnimationFrame(() => {
+                frame = 0;
+                if (media.isConnected) reveal(media.getBoundingClientRect().top >= 56);
+            });
+        };
+        window.addEventListener('scroll', onScroll, { passive:true });
+        const dialog = media.closest('dialog');
+        dialog?.addEventListener('scroll', onScroll, { passive:true, capture:true });
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+            dialog?.removeEventListener('scroll', onScroll, true);
+            if (frame) cancelAnimationFrame(frame);
+        };
     }
-    A.noticeCover = { valid, markup, decorate, editor, enableReveal };
+    /* O link nativo continua disponível; selecionar texto e acionar botões não abre o cartão. */
+    function linkCard(card, primary) {
+        if (!primary || card.dataset.cardLinked) return;
+        card.dataset.cardLinked = 'true';
+        card.classList.add('ar-clickable-card');
+        card.addEventListener('click', event => {
+            if (event.defaultPrevented || event.button > 0 || event.target.closest('a,button,input,select,textarea,summary,[contenteditable]')) return;
+            if (window.getSelection()?.toString()) return;
+            primary.click();
+        });
+    }
+    function openProject(project) {
+        const dialog = document.createElement('dialog');
+        dialog.className = 'ar-dialog ar-project-reader';
+        const heading = document.createElement('h2');
+        heading.textContent = project.titulo;
+        const close = document.createElement('button');
+        close.type = 'button'; close.className = 'ar-iconbtn'; close.textContent = '×';
+        close.setAttribute('aria-label','Fechar projeto');
+        close.addEventListener('click',()=>dialog.close());
+        const content = document.createElement('section');
+        content.className = 'ar-detail';
+        if (valid(project.capa)) content.insertAdjacentHTML('afterbegin','<div class="ar-publication-media">'+markup(project.capa,'Capa: '+project.titulo)+'</div>');
+        const body = document.createElement('div');
+        A.noticeText.render(body,project.descricao || '');
+        content.append(heading,body);
+        if (!A.dialogShell) dialog.append(close);
+        dialog.append(content);
+        document.body.append(dialog);
+        const media = content.querySelector('.ar-publication-media');
+        const cleanup = media ? enableReveal(media) : ()=>{};
+        dialog.addEventListener('close',()=>{cleanup();dialog.remove();},{once:true});
+        A.dialogShell ? A.dialogShell.open(dialog) : dialog.showModal();
+    }
+    A.noticeCover = { valid, markup, decorate, editor, enableReveal, linkCard, openProject };
 })((window.Arcadia = window.Arcadia || {}));

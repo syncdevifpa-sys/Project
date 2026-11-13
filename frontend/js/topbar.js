@@ -1,6 +1,6 @@
 /* Organiza a barra preservando os controles e os eventos existentes. */
 
-window.addEventListener('load', function () {
+function mountTopbar() {
     const bar = document.querySelector('.ar-nav');
     if (!bar) return;
     const end = bar.querySelector('.ar-nav-end');
@@ -162,4 +162,10 @@ window.addEventListener('load', function () {
     document.addEventListener('focusin', function (e) {
         if (!account.contains(e.target)) account.open = false;
     });
-});
+ }
+/* Não aguarda fotos: o cabeçalho fica pronto assim que o documento está disponível. */
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountTopbar, { once: true });
+} else {
+    mountTopbar();
+}

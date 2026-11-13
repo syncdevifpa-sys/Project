@@ -197,6 +197,7 @@
                 details.append(summary, body);
                 card.append(details);
             }
+            window.Arcadia?.noticeCover?.linkCard?.(card, card.querySelector('a.text-link'));
             target.append(card);
         });
     }

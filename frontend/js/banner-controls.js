@@ -3,7 +3,7 @@
     let observer;
     function mount() {
         observer?.disconnect();
-        const banner = document.querySelector('.ar-hero');
+        const banner = document.querySelector('.ar-hero, .ar-detail, .db-hello, .home-campus-banner');
         if (!banner) return;
         function sync() {
             const computed = getComputedStyle(banner);

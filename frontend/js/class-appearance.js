@@ -69,7 +69,7 @@
         node.style.removeProperty('--default-banner-ink');
         if (style.mode === 'default' && style.gradient) {
             const standard = policy.defaultStyle(page, document.documentElement?.getAttribute('data-accent') || 'lime', key);
-            node.style.setProperty('--default-banner-bg', backgroundCSS({ ...standard, gradient: true }));
+            node.style.setProperty('--default-banner-bg', backgroundCSS({ ...standard, gradient: true, gradientStrength: style.gradientStrength }));
             node.style.setProperty('--default-banner-ink', standard.text);
         }
         if (style.mode !== 'default') {
@@ -159,7 +159,15 @@
             const gradient = document.createElement('input');
             gradient.type = 'checkbox';
             gradient.checked = current.gradient === true;
-            gradientLabel.append(gradient, document.createTextNode('Aplicar degradê suave'));
+            gradientLabel.append(gradient, document.createTextNode('Aplicar degradê'));
+            const strengthLabel = document.createElement('label');
+            strengthLabel.textContent = 'Intensidade do degradê';
+            const strength = document.createElement('select');
+            for (const [value, title] of [['soft','Suave'],['heavy','Intenso · acompanha o tema']]) {
+                const option = document.createElement('option'); option.value=value; option.textContent=title; strength.append(option);
+            }
+            strength.value = current.gradientStrength === 'heavy' ? 'heavy' : 'soft';
+            strengthLabel.append(strength);
             const gradientHint = document.createElement('small');
             gradientHint.textContent =
                 'Também funciona com Padrão do site. Desmarque para manter a cor lisa.';
@@ -197,12 +205,14 @@
                 fields.hidden = select.value !== 'custom';
                 preview.hidden = select.value !== 'custom' && !selected;
                 gradient.disabled = select.value === 'neutral';
+                strength.disabled = gradient.disabled || !gradient.checked;
                 autoContrast.disabled = ['neutral', 'default'].includes(select.value);
                 const adjusted = autoContrast.checked ? readable(background.value, text.value) : text.value;
                 preview.style.background = backgroundCSS({
                     background: background.value,
                     text: adjusted,
-                    gradient: gradient.checked && !gradient.disabled
+                    gradient: gradient.checked && !gradient.disabled,
+                    gradientStrength: strength.value
                 });
                 preview.style.color = adjusted;
                 feedback.textContent =
@@ -217,6 +227,7 @@
             background.oninput = sync;
             text.oninput = sync;
             gradient.onchange = sync;
+            strength.onchange = sync;
             autoContrast.onchange = sync;
             sync();
             const actions = document.createElement('div');
@@ -229,7 +240,7 @@
             save.type = 'submit';
             save.textContent = 'Salvar';
             actions.append(cancel, save);
-            form.append(label, fields, gradientLabel, gradientHint, contrastLabel, contrastHint, preview, feedback, actions);
+            form.append(label, fields, gradientLabel, strengthLabel, gradientHint, contrastLabel, contrastHint, preview, feedback, actions);
             dialog.append(h, note, form);
             document.body.append(dialog);
             form.onsubmit = (event) => {
@@ -239,7 +250,7 @@
                         throw new Error('A conta mudou. Atualize a página.');
                     const value = preferences();
                     if (select.value === 'default') {
-                        if (gradient.checked) value[key] = { mode: 'default', gradient: true };
+                        if (gradient.checked) value[key] = { mode: 'default', gradient: true, ...(strength.value === 'heavy' ? {gradientStrength:'heavy'} : {}) };
                         else delete value[key];
                     }
                     else
@@ -251,7 +262,7 @@
                                       background: background.value,
                                       text: autoContrast.checked ? readable(background.value, text.value) : text.value,
                                       ...(autoContrast.checked ? {} : { autoContrast: false }),
-                                      ...(gradient.checked ? { gradient: true } : {})
+                                      ...(gradient.checked ? { gradient: true, ...(strength.value === 'heavy' ? {gradientStrength:'heavy'} : {}) } : {})
                                   };
                     localStorage.setItem(storageKey(), JSON.stringify(value));
                     A.bannerBootstrap?.apply();
@@ -277,17 +288,18 @@
     A.classAppearance = { apply, decorate };
     function init() {
         const page = location.pathname.split('/').pop() || 'index.html';
-        document.querySelectorAll('.ar-hero, .ar-detail, .hero-card').forEach((node, i) => {
+        document.querySelectorAll('.ar-hero, .ar-detail, .hero-card, .home-campus-banner').forEach((node, i) => {
             /* Turmas mantém as chaves existentes; ofertas dinâmicas são decoradas por classes.js. */
             const publication =
                 page === 'notice.html' ? new URLSearchParams(location.search).get('id') || '' : '';
+            if (page === 'index.html' && !currentOwner()) return;
             const key =
                 page === 'classes.html'
                     ? 'overview'
                     : 'page:' +
                       page +
                       ':' +
-                      (node.id || i) +
+                      (page === 'index.html' ? 'home' : node.id || i) +
                       (publication ? ':' + publication : '');
             const title = node.querySelector('h1,h2')?.textContent.trim() || 'Página';
             decorate(node, key, title);
@@ -304,14 +316,14 @@
     }
     A.classAppearance.hydrate = init;
     if (typeof MutationObserver !== 'undefined' && document.documentElement) {
-        let lastAccent = document.documentElement.getAttribute('data-accent');
+        let lastAccent = document.documentElement.getAttribute('data-accent') + document.documentElement.getAttribute('data-theme');
         new MutationObserver(() => {
-            const accent = document.documentElement.getAttribute('data-accent');
+            const accent = document.documentElement.getAttribute('data-accent') + document.documentElement.getAttribute('data-theme');
             if (accent === lastAccent) return;
             lastAccent = accent;
             A.bannerBootstrap?.apply();
-            document.querySelectorAll('.ar-banner-gradient-default').forEach(node => apply(node, node.dataset.appearanceKey));
-        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent'] });
+            document.querySelectorAll('[data-appearance-key]').forEach(node => apply(node, node.dataset.appearanceKey));
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent','data-theme'] });
     }
     window.addEventListener?.('storage', (event) => {
         if (

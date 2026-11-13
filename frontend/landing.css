@@ -1994,12 +1994,12 @@ a:not(.btn):not(.wordmark):focus-visible {
 /* Rodapé com os acessos e documentos que já faziam parte do portal. */
 .site-footer .footer-inner { display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:20px 40px;align-items:start;padding-block:40px; }
 .site-footer .wordmark--footer { grid-column:1; }
-.site-footer .footer-about { grid-column:1;grid-row:2;font-size:14px;line-height:1.6;color:var(--color-text); }
+.site-footer .footer-about { grid-column:1;grid-row:2;font-size:14px;line-height:1.6;color:var(--color-on-navy-muted); }
 .site-footer nav { grid-row:1 / span 2; }
-.site-footer nav h2 { font-family:var(--font-sans);font-size:13px;font-weight:600;margin:0 0 16px;color:var(--color-ink); }
+.site-footer nav h2 { font-family:var(--font-sans);font-size:13px;font-weight:600;margin:0 0 16px;color:var(--color-on-navy); }
 .site-footer .footer-links { display:flex;flex-direction:column;align-items:flex-start;gap:12px; }
 .site-footer .footer-links a { font-size:13px;overflow-wrap:anywhere; }
-.site-footer .footer-end { grid-column:1 / -1;justify-content:space-between;border-top:1px solid var(--color-card-border);padding-top:20px; }
+.site-footer .footer-end { grid-column:1 / -1;justify-content:space-between;border-top:1px solid var(--color-on-navy-line);padding-top:20px; }
 @media(max-width:700px) { .site-footer .footer-inner { grid-template-columns:1fr 1fr;gap:24px; }.site-footer .wordmark--footer,.site-footer .footer-about { grid-column:1 / -1;grid-row:auto; }.site-footer nav { grid-row:auto;min-width:0; } }
 @media(max-width:420px) { .site-footer .footer-inner { grid-template-columns:1fr; }.site-footer nav { grid-column:1; } }
 

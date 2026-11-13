@@ -43,7 +43,7 @@
                     style.mode === 'neutral'
                         ? 'var(--surface, var(--color-page, #fff))'
                         : style.mode === 'default'
-                          ? standard ? policy.backgroundCSS({ ...standard, gradient: true }) : page === 'index.html'
+                          ? standard ? policy.backgroundCSS({ ...standard, gradient: true, gradientStrength: style.gradientStrength }) : page === 'index.html'
                               ? 'var(--color-hero-bg)'
                               : 'var(--accent, var(--lime))'
                           : policy.backgroundCSS(style)

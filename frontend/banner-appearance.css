@@ -34,10 +34,10 @@
 }
 .ar-banner-editable {
   position: relative;
-  padding-inline-end: max(58px, var(--space-6, 24px));
+  padding-inline-end: max(92px, var(--space-6, 24px));
 }
 .ar-banner-editable.ar-hero {
-  padding-inline-end: max(58px, var(--space-6, 24px));
+  padding-inline-end: max(92px, var(--space-6, 24px));
 }
 .ar-banner-editable > .ar-banner-appearance-trigger {
   position: absolute;
@@ -92,7 +92,7 @@
     .ar-stat-foot .ar-link
   ) {
   color: var(--personal-banner-ink) !important;
-  background-color: var(--personal-banner-bg);
+
 }
 .ar-banner-personal :is(.ar-hero-art, .hero-deco-shape) {
   opacity: 0.12 !important;
@@ -314,4 +314,11 @@ html:is(
   [data-initial-banner-slot='pending-documents']:not([data-appearance-key])
   :is(.ar-hero-art, .hero-deco-shape) {
   opacity: 0.12 !important;
+}
+
+/* Em telas estreitas, as ações de ajuda ficam na faixa superior, sem encobrir a descrição. */
+@media(max-width:700px) {
+ .ar-hero.ar-banner-editable:not(.db-hello) { grid-template-columns:minmax(0,1fr);padding:48px 22px 22px;gap:12px;min-height:0; }
+ .ar-hero.ar-banner-editable:not(.db-hello) > .ar-hero-side { grid-column:1;min-width:0; }
+ .ar-hero.ar-banner-editable:not(.db-hello) .ar-hero-actions { flex-wrap:wrap; }
 }

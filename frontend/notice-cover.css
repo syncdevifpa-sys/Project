@@ -20,46 +20,6 @@
 .ar-text-list { display:block;padding-inline-start:1.3em;margin-block:6px; }
 .ar-text-list-item { display:list-item;list-style-type:disc;white-space:pre-wrap; }
 @media(pointer:coarse) { .ar-text-toolbar button,.ar-text-toolbar input[type=color] { width:44px;height:44px; } }
-.ar-notice-with-cover {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  --cover-surface: var(--surface, #fff);
-}
-.ar-notice-with-cover > :not(.ar-notice-cover) {
-  position: relative;
-  z-index: 1;
-}
-.ar-notice-with-cover > .ar-card-title,
-.ar-notice-with-cover.public-card > h3 {
-  margin-top: 155px;
-}
-.ar-notice-cover {
-  height: 225px;
-  overflow: hidden;
-  pointer-events: none;
-}
-.ar-notice-with-cover > .ar-notice-cover {
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: 0;
-}
-.ar-notice-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-.ar-notice-cover::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent 75%,
-    var(--cover-surface, var(--surface, #fff)) 100%
-  );
-}
 .ar-cover-editor {
   min-width: 0;
   display: grid;
@@ -86,139 +46,39 @@
 .ar-cover-preview[hidden] {
   display: none;
 }
-.ar-detail > .ar-notice-cover {
-  position: relative;
-  border-radius: 16px;
-  margin-bottom: 20px;
-  height: clamp(180px, 30vw, 380px);
-}
-.public-card.ar-notice-with-cover {
-  --cover-surface: var(--surface, #fff);
-}
-@media (max-width: 600px) {
-  .ar-notice-cover {
-    height: 190px;
-  }
-  .ar-notice-with-cover > .ar-card-title,
-  .ar-notice-with-cover.public-card > h3 {
-    margin-top: 125px;
-  }
-}
-
-.public-card.ar-notice-with-cover {
-  --cover-surface: #fff;
-}
-[data-theme='dark'] .public-card.ar-notice-with-cover {
-  --cover-surface: #191f29;
-}
-.ar-detail--pink {
-  --cover-surface: var(--pink);
-}
-
-/* A altura acompanha a orientação escolhida; nenhuma capa é esticada. */
-.ar-notice-with-cover > .ar-card-title,
-.ar-notice-with-cover.public-card > h3 {
-  margin-top: 0;
-}
-.ar-notice-with-cover > .ar-notice-cover {
-  position: relative;
-  inset: auto;
-  margin-bottom: 16px;
-}
-.ar-notice-cover,
-.ar-detail > .ar-notice-cover {
-  position: relative;
-  height: auto;
-}
-.ar-notice-cover img {
-  width: 100%;
-  height: auto;
-  max-height: 280px;
-  object-fit: contain;
-}
-.ar-detail > .ar-notice-cover img {
-  max-height: 360px;
-}
-.ar-detail > .ar-notice-cover {
-  width: min(100%, 520px);
-  margin-right: auto;
-}
-.public-card .ar-notice-cover img {
-  height: 100%;
-  max-height: none;
-  object-fit: contain;
-}
-/* Altura uniforme; margens do cartão e conteúdo integral da imagem preservados. */
-.public-card.ar-notice-with-cover > .ar-notice-cover {
-  flex: 0 0 240px;
-  height: 240px;
-}
-.ar-cover-preview .ar-notice-cover img {
-  max-height: 420px;
-}
-@media (max-width: 600px) {
-  .ar-notice-with-cover > .ar-card-title,
-  .ar-notice-with-cover.public-card > h3 {
-    margin-top: 0;
-  }
-}
-
-/* Capa panorâmica com recorte e névoa que revela o próprio fundo do banner. */
-.ar-publication-media { width:100%;margin:0 0 20px; }
-.ar-publication-media > .ar-notice-cover { height:clamp(260px,32vw,400px);margin:0;border-radius:14px; }
-.ar-publication-media .ar-notice-cover::after { display:none; }
-.ar-publication-media .ar-notice-cover img { display:block;width:100%;height:100%;max-height:none;object-fit:cover;object-position:center 35%;margin:0 auto;border:0;border-radius:14px;mask-image:linear-gradient(to bottom,#000 0%,#000 68%,transparent 100%); }
-@media(max-width:600px) { .ar-publication-media > .ar-notice-cover { height:300px; } }
-/* Retratos preservam o cartaz: a moldura remove apenas os últimos 4% da base. */
-.ar-publication-media.is-portrait > .ar-notice-cover { height:auto;max-width:420px;margin-inline:auto;aspect-ratio:var(--publication-image-ratio); }
-.ar-publication-media.is-portrait .ar-notice-cover img { width:100%;height:auto;object-fit:contain;object-position:top;mask-image:linear-gradient(to bottom,#000 0%,#000 88%,transparent 100%); }
-@media(max-width:600px) { .ar-publication-media.is-portrait > .ar-notice-cover { max-width:320px;height:auto; } }
-
-/* A névoa fica em uma camada independente para desaparecer suavemente. */
-.ar-publication-media { position:relative; }
-.ar-publication-media .ar-notice-cover img { mask-image:none; }
-.ar-publication-media .ar-notice-cover::after {
-  display:block;
-  background:var(--personal-banner-bg,var(--initial-banner-page-bg,var(--accent,var(--pink))));
-  mask-image:linear-gradient(to bottom,transparent 68%,#000 100%);
-  transition:opacity 420ms ease;
-}
+/* Capas: uma única definição por componente, sem reescritas históricas em cascata. */
+.ar-notice-with-cover { position:relative;isolation:isolate;overflow:hidden;--cover-surface:var(--surface,#fff); }
+.ar-notice-cover { position:relative;overflow:hidden;pointer-events:none;border-radius:8px; }
+.ar-notice-cover img { display:block;width:100%;height:100%;max-height:280px;object-fit:contain;margin:auto; }
+.ar-notice-with-cover > .ar-notice-cover { height:240px;flex:0 0 240px;margin-bottom:16px; }
+.ar-notice-with-cover > :not(.ar-notice-cover) { position:relative;z-index:1; }
+.ar-notice-with-cover > :is(h3,.ar-card-title) { margin-top:0; }
+.ar-notice-cover::after { content:'';position:absolute;inset:0;background:linear-gradient(transparent 72%,var(--cover-surface,#fff));transition:opacity 420ms ease; }
+.ar-cover-preview .ar-notice-cover { height:240px; }
+.ar-publication-media { position:relative;width:100%;margin:0 0 20px; }
+.ar-publication-media > .ar-notice-cover { width:100%;height:auto;max-width:none;margin:0; }
+.ar-publication-media .ar-notice-cover img { width:100%;height:auto;max-height:560px;object-fit:contain;border:0;mask-image:none; }
+.ar-publication-media .ar-notice-cover::after { background:var(--personal-banner-bg,var(--default-banner-bg,var(--initial-banner-page-bg,var(--accent,var(--pink)))));mask-image:linear-gradient(transparent 68%,#000); }
 .ar-detail.is-cover-revealed .ar-notice-cover::after { opacity:0; }
-.ar-detail.is-cover-revealed .ar-notice-cover img { object-fit:contain; mask-image:none; }
-.ar-publication-media > .ar-notice-cover { transition:height 480ms cubic-bezier(.22,.61,.36,1); }
-.ar-detail.is-cover-revealed .ar-publication-media > .ar-notice-cover { height:var(--revealed-cover-height,auto); }
 .ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transition:transform 420ms ease; }
 .ar-detail.is-cover-revealed > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transform:translateY(3px); }
-.ar-cover-reveal-toggle {
-  position:absolute;right:10px;top:10px;z-index:2;border:1px solid #ffffff80;
-  border-radius:8px;padding:8px 12px;background:#ffffffed;color:#152e3a;
-  font:inherit;font-size:12px;cursor:pointer;
-}
+.ar-cover-reveal-toggle { position:absolute;right:10px;top:10px;z-index:2;border:1px solid #ffffff80;border-radius:8px;padding:8px 12px;background:#ffffffed;color:#152e3a;font:inherit;font-size:12px;cursor:pointer; }
 .ar-cover-reveal-toggle:focus-visible { outline:2px solid currentColor;outline-offset:3px; }
-
-/* No portal público, a imagem permanece nítida desde o primeiro contato. */
-#publicNews .ar-notice-cover::after { display:none; }
-#publicNews .ar-notice-cover img { mask-image:none;filter:none; }
-
-/* Projetos exibem a capa limpa, sem a revelação reservada às notícias. */
-:is(#gridProjetos,#publicProjects) .ar-notice-cover::after { display:none; }
-:is(#gridProjetos,#publicProjects) .ar-notice-cover img { mask-image:none;filter:none; }
-
-/* Nos cards, teclado e mouse revelam a capa sem deslocar os demais cartões. */
-#noticesCardsGrid .ar-notice-cover::after { transition:opacity 240ms ease; }
-#noticesCardsGrid .ar-notice-with-cover > :not(.ar-notice-cover) { transition:transform 240ms ease; }
-#noticesCardsGrid .ar-notice-with-cover:focus-within .ar-notice-cover::after { opacity:0; }
-#noticesCardsGrid .ar-notice-with-cover:focus-within > :not(.ar-notice-cover) { transform:translateY(6px); }
+.ar-clickable-card { cursor:pointer; }
+.ar-clickable-card :is(button,a,summary) { position:relative;z-index:2; }
+:is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover > :is(h3,.ar-card-title,.ar-card-desc) { transition:transform 420ms ease; }
+:is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover:focus-within .ar-notice-cover::after { opacity:0; }
+:is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover:focus-within > :is(h3,.ar-card-title,.ar-card-desc) { transform:translateY(3px); }
 @media(hover:hover) {
-  #noticesCardsGrid .ar-notice-with-cover:hover .ar-notice-cover::after { opacity:0; }
-  #noticesCardsGrid .ar-notice-with-cover:hover > :not(.ar-notice-cover) { transform:translateY(6px); }
+  :is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover:hover .ar-notice-cover::after { opacity:0; }
+  :is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover:hover > :is(h3,.ar-card-title,.ar-card-desc) { transform:translateY(3px); }
 }
+.ar-project-reader { width:min(900px,calc(100% - 24px));max-height:90dvh;overflow:auto; }
+.ar-project-reader > .ar-iconbtn { position:sticky;top:8px;z-index:4;margin-left:auto;display:block; }
+.ar-project-reader .ar-detail { padding:16px; }
+@media(max-width:600px) { .ar-publication-media .ar-notice-cover img { max-height:440px; } }
 @media(prefers-reduced-motion:reduce) {
-  .ar-publication-media .ar-notice-cover::after,
-  .ar-publication-media > .ar-notice-cover,
-  .ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions),
-  #noticesCardsGrid .ar-notice-cover::after,
-  #noticesCardsGrid .ar-notice-with-cover > :not(.ar-notice-cover) { transition:none;transform:none !important; }
+ .ar-notice-cover::after,.ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions),
+ :is(#noticesCardsGrid,#gridProjetos,#publicNews,#publicProjects) .ar-notice-with-cover > :is(h3,.ar-card-title,.ar-card-desc) { transition:none;transform:none; }
 }
-
-.ar-detail.is-cover-revealed .ar-publication-media.is-portrait > .ar-notice-cover { aspect-ratio:auto; }
+html[data-motion=reduced] :is(.ar-notice-cover::after,.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions,.ar-card-title,.ar-card-desc) { transition:none;transform:none; }

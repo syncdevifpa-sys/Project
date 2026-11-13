@@ -165,6 +165,10 @@
         if (n === 1) return 'amanhã';
         return 'em ' + n + ' dias';
     }
+    // "amanhã"/"hoje" no selo e "Amanhã, dia todo" no texto dizem a mesma coisa.
+    function repeatsWhen(item) {
+        return whenText(item).toLowerCase().startsWith(countdown(item).toLowerCase());
+    }
     function whenText(item) {
         const n = daysUntil(item.day);
         const { d, m } = dayMonth(item.day);
@@ -403,7 +407,10 @@
                     ? '<p class="db-now-place">' + esc([first.categoryLabel, first.place].filter(Boolean).join(' no ')) + '</p>'
                     : '') +
                 '</div>' +
-                '<p class="db-now-when"><span class="db-countdown" id="dbCountdown">' + esc(countdown(first)) + '</span>' +
+                '<p class="db-now-when">' +
+                // "amanhã" + "Amanhã, dia todo" repetia a mesma informação: o selo só aparece
+                // quando acrescenta algo (ex.: "começa em 40 min").
+                (repeatsWhen(first) ? '' : '<span class="db-countdown" id="dbCountdown">' + esc(countdown(first)) + '</span>') +
                 '<span>' + esc(whenText(first)) + '</span></p>' +
                 '<div class="db-now-actions">' +
                 (canRemind
@@ -418,7 +425,9 @@
         function tickCountdown() {
             const pill = $('dbCountdown');
             const [first] = upcoming(state.events);
-            if (!nowItem || !pill || !first || first.key !== nowItem.key) return renderNow();
+            if (!nowItem || !first || first.key !== nowItem.key) return renderNow();
+            // Sem selo (ele repetia a data): só redesenha quando o selo voltar a fazer sentido.
+            if (!pill) return repeatsWhen(first) ? undefined : renderNow();
             pill.textContent = countdown(first);
         }
 

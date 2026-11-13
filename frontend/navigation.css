@@ -344,11 +344,27 @@ html[data-portal-navigation='pending'] .ar-navpill {
   .ar-sidebar-collapsed .ar-portal-sidebar a span {
     display: none;
   }
+  /* Só a lista rola. O cabeçalho fica parado embaixo do botão de recolher (que é fixo),
+     então nenhum item passa por baixo do botão quando a barra é rolada. */
+  .ar-portal-sidebar {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .ar-portal-sidebar > nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Espaço para o contorno de foco dos links não ser cortado pela rolagem. */
+    margin: -3px;
+    padding: 3px;
+  }
   .ar-sidebar-collapsed .ar-portal-sidebar {
     padding: 8px;
   }
   .ar-sidebar-collapsed .ar-portal-sidebar nav {
-    padding-top: 52px;
+    margin-top: 49px;
   }
   .ar-sidebar-collapsed .ar-portal-sidebar a {
     justify-content: center;
@@ -507,3 +523,10 @@ html[data-portal-navigation='pending'] .ar-navpill {
     display: none;
   }
 }
+
+/* Atualização dos lembretes: movimento somente enquanto a consulta está em andamento. */
+.ar-notifications-refresh { width:36px;height:36px; }
+.ar-notifications-refresh[aria-busy=true] svg { animation:ar-refresh-spin 900ms linear infinite; }
+@keyframes ar-refresh-spin { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .ar-notifications-refresh[aria-busy=true] svg { animation:none; } }
+html[data-motion=reduced] .ar-notifications-refresh[aria-busy=true] svg { animation:none; }

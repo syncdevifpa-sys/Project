@@ -1,0 +1,630 @@
+/* Apenas a estrutura de Configurações da 1.1.46; não redefine o visual das outras páginas. */
+:root,
+:root[data-theme='light'] {
+  --st-bg: #eef2f8;
+  --st-bg-top: #e3eaf6;
+  --st-glass: rgba(255, 255, 255, 0.66);
+  --st-glass-strong: rgba(255, 255, 255, 0.86);
+  --st-glass-line: rgba(255, 255, 255, 0.95);
+  --st-shadow: 0 1px 2px rgba(22, 24, 27, 0.04), 0 12px 32px -18px rgba(22, 32, 56, 0.28);
+  --st-ink: #16181b;
+  --st-muted: #6b7280;
+  --st-line: rgba(22, 24, 27, 0.08);
+  --st-dark: #232427;
+  --st-dark-2: #2f3135;
+  --st-on-dark: #f3f4f6;
+  --st-on-dark-muted: #a3a8b1;
+  --st-lime: #d7f54a;
+  --st-lime-hover: #c9ea2f;
+  --st-on-lime: #16181b;
+  --st-radius: 26px;
+  --st-radius-sm: 16px;
+}
+:root[data-theme='dark'] {
+  --st-bg: #111215;
+  --st-bg-top: #171a20;
+  --st-glass: rgba(255, 255, 255, 0.05);
+  --st-glass-strong: rgba(255, 255, 255, 0.08);
+  --st-glass-line: rgba(255, 255, 255, 0.08);
+  --st-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.6);
+  --st-ink: #f3f4f6;
+  --st-muted: #a3a8b1;
+  --st-line: rgba(255, 255, 255, 0.08);
+  --st-dark: #1c1d20;
+  --st-dark-2: #26282c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --st-bg: #111215;
+    --st-bg-top: #171a20;
+    --st-glass: rgba(255, 255, 255, 0.05);
+    --st-glass-strong: rgba(255, 255, 255, 0.08);
+    --st-glass-line: rgba(255, 255, 255, 0.08);
+    --st-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.6);
+    --st-ink: #f3f4f6;
+    --st-muted: #a3a8b1;
+    --st-line: rgba(255, 255, 255, 0.08);
+    --st-dark: #1c1d20;
+    --st-dark-2: #26282c;
+  }
+}
+
+/* ---------- Configurações no estilo "perfil" ----------
+   Referência: cartão de perfil em destaque no topo, blocos brancos arredondados
+   com título e linha divisória, e cada opção como um "tile" suave. A foto fica no
+   tamanho de 72px (menor que a da referência) e o resto do CRM continua igual. */
+html body.ar-settings-page.ar-has-sidebar .ar-split {
+  gap: 20px;
+  align-items: start;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > div {
+  gap: 18px !important;
+}
+
+/* Menu das seções: cartão de vidro, item ativo escuro. */
+html body.ar-settings-page.ar-has-sidebar .ar-snav {
+  padding: 10px;
+  border: 1px solid var(--st-glass-line);
+  border-radius: var(--st-radius);
+  background: var(--st-glass-strong);
+  box-shadow: var(--st-shadow);
+  gap: 4px;
+  top: 88px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a {
+  padding: 10px 12px;
+  border-radius: var(--st-radius-sm);
+  align-items: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a .ar-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  margin: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--st-ink) 6%, transparent);
+  color: var(--st-ink);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a:hover {
+  background: color-mix(in srgb, var(--st-ink) 5%, transparent);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a[aria-current='page'] {
+  background: var(--st-dark);
+  color: var(--st-on-dark);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a[aria-current='page'] .ar-icon {
+  background: var(--st-lime);
+  color: var(--st-on-lime);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a[aria-current='page'] small {
+  color: var(--st-on-dark-muted);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav b {
+  font-size: 13.5px;
+  line-height: 18px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav small {
+  font-size: 11.5px;
+  line-height: 15px;
+}
+
+/* Todos os blocos com o mesmo cartão, título e respiro. */
+html body.ar-settings-page.ar-has-sidebar .ar-split :is(
+    .ar-sset,
+    .ar-account-names,
+    .ar-account-email,
+    #profileSharing,
+    .ar-account-management
+  ) {
+  margin: 0;
+  padding: 22px 24px;
+  border: 1px solid var(--st-glass-line);
+  border-radius: var(--st-radius);
+  background: var(--st-glass-strong);
+  box-shadow: var(--st-shadow);
+  color: var(--st-ink);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset {
+  gap: 18px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split :is(
+    .ar-sset-head h2,
+    .ar-account-names > h2,
+    #accountEmail > h2,
+    #profileSharing > h2
+  ) {
+  margin: 0 0 4px;
+
+  font-size: 19px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-head {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--st-glass-line);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split :is(.ar-sset-head p, .ar-account-names > p, #accountEmail > p, #profileSharing > p) {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--st-muted);
+  max-width: 62ch;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-account-names form {
+  margin-block: 14px 0;
+}
+
+/* Cartão do perfil em destaque. */
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile {
+  position: relative;
+  gap: 18px;
+  padding: 18px 20px;
+  margin-bottom: 6px;
+  border-radius: 20px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--st-lime) 38%, transparent), transparent 60%),
+    color-mix(in srgb, var(--st-ink) 4%, var(--st-glass-strong));
+  border: 1px solid var(--st-glass-line);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-av > .ar-avatar {
+  box-shadow: 0 0 0 4px var(--st-glass-strong), 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-cam {
+  width: 28px;
+  height: 28px;
+  border-color: var(--st-glass-strong);
+  background: var(--st-dark);
+  color: var(--st-lime);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-name {
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-meta {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--st-dark);
+  color: var(--st-on-dark);
+  font-size: 12px;
+  font-weight: 500;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile ~ p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--st-muted);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split #formDadosPessoais {
+  margin-top: 16px !important;
+  gap: 14px 16px;
+}
+
+/* Cada opção vira um "tile" suave, como os itens da referência. */
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-body {
+  gap: 10px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-body > .ar-srow {
+  padding: 14px 16px;
+  border: 1px solid var(--st-glass-line);
+  border-radius: var(--st-radius-sm);
+  background: color-mix(in srgb, var(--st-ink) 3%, transparent);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-body > .ar-srow + .ar-srow {
+  border-top: 1px solid var(--st-glass-line);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-srow-label {
+  font-size: 14px;
+  line-height: 20px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-srow-desc {
+  font-size: 12.5px;
+  color: var(--st-muted);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-account-management > summary {
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  html body.ar-settings-page.ar-has-sidebar .ar-split :is(
+      .ar-sset,
+      .ar-account-names,
+      .ar-account-email,
+      #profileSharing,
+      .ar-account-management
+    ) {
+    padding: 18px 16px;
+    border-radius: 20px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile {
+    padding: 14px;
+    gap: 14px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-name {
+    font-size: 19px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-body > .ar-srow {
+    padding: 12px 14px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-snav a .ar-icon {
+    width: 30px;
+    height: 30px;
+    padding: 7px;
+  }
+}
+
+/* Ajustes finos das Configurações. */
+html body.ar-settings-page.ar-has-sidebar .ar-snav a .ar-icon {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin: 8px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--st-ink) 6%, transparent);
+  background: transparent;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a[aria-current='page'] .ar-icon {
+  background: var(--st-lime);
+  box-shadow: 0 0 0 8px var(--st-lime);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a:not(:has(.ar-icon)) {
+  padding-left: 58px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-account-names {
+  gap: 0;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-account-names > p {
+  margin: 4px 0 0;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split :is(.ar-account-names, #profileSharing, #accountEmail) p:empty {
+  display: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split :is(#profileSharing, #accountEmail) :is(p, label) {
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split #profileSharing form > p,
+html body.ar-settings-page.ar-has-sidebar .ar-split #profileSharing fieldset > p {
+  color: var(--st-muted);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-calendar-color-settings > h3 {
+
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* Configurações sem o banner do topo: o título continua disponível para leitores de
+   tela, mas o cartão some e a tela começa direto no menu e nos blocos. */
+html body.ar-settings-page.ar-has-sidebar .ar-hero:has(~ .ar-split #dados) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-height: 0 !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+/* "Seus dados" logo abaixo da foto e do nome. */
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-head--profile {
+  margin: 12px 0 2px;
+}
+
+/* Menu das seções sem ícones também no celular (lista dentro da página). */
+html body.ar-settings-page.ar-has-sidebar .ar-snav a .ar-icon {
+  display: none !important;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-snav a,
+html body.ar-settings-page.ar-has-sidebar .ar-snav a:not(:has(.ar-icon)) {
+  padding-left: 14px;
+}
+
+/* ---------- Perfil no estilo GitHub ----------
+   Foto grande numa coluna à esquerda, primeiro nome em destaque, nome completo logo
+   abaixo, botão "Editar perfil" e a lista de informações (vínculo e e-mail). */
+html body.ar-settings-sidebar .ar-split {
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) !important;
+  gap: 32px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card {
+  min-width: 0;
+}
+@media (min-width: 1101px) {
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card {
+    position: sticky;
+    top: 88px;
+  }
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-av {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card #confProfileAvatar {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1;
+  font-size: clamp(56px, 6vw, 88px) !important;
+  font-weight: 500;
+  box-shadow: 0 0 0 1px var(--st-glass-line), 0 18px 40px -18px rgba(15, 23, 42, 0.35) !important;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card #confProfileAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-cam {
+  right: 10%;
+  bottom: 10%;
+  width: 38px;
+  height: 38px;
+  border-width: 3px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-name {
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-handle {
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 300;
+  color: var(--st-muted);
+  overflow-wrap: anywhere;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-handle[hidden] {
+  display: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-edit {
+  width: 100%;
+  margin-top: 14px;
+  justify-content: center;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-facts {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--st-glass-line);
+  list-style: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-facts li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--st-ink);
+  overflow-wrap: anywhere;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-facts li[hidden] {
+  display: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-facts .ar-icon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--st-muted);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-meta {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 400;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-badges:not(:has(> :not([hidden]):not([style*='display: none']))) {
+  display: none;
+}
+/* Seus dados agora começa pelo título. */
+html body.ar-settings-page.ar-has-sidebar .ar-split .ar-sset-head--profile {
+  margin: 0;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split #dados .ar-sset-body > p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--st-muted);
+}
+/* Celular e tablet: foto menor ao lado do nome, como no app do GitHub. */
+@media (max-width: 1100px) {
+  html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 16px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-av {
+    width: 96px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card #confProfileAvatar {
+    font-size: 34px !important;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-cam {
+    right: -2px;
+    bottom: -2px;
+    width: 30px;
+    height: 30px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-split .ar-profile-card .ar-profile-name {
+    font-size: 22px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-handle {
+    font-size: 16px;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-text {
+    display: contents;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card :is(.ar-profile-name, .ar-profile-handle) {
+    grid-column: 2;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-av {
+    grid-row: 1 / span 2;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card :is(.ar-profile-edit, .ar-profile-facts, .ar-profile-badges) {
+    grid-column: 1 / -1;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-name {
+    align-self: end;
+  }
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card .ar-profile-handle {
+    align-self: start;
+  }
+}
+
+/* Configurações no computador: só o ☰ no topo da barra, sem o botão de recolher. */
+@media (min-width: 1101px) {
+  html body.ar-settings-sidebar .ar-sidebar-toggle {
+    display: none !important;
+  }
+  html body.ar-settings-sidebar :is(.ar-sidebar-sub-head, .ar-sidebar-head) {
+    padding-right: 0;
+  }
+}
+
+/* ---------- Configurações: barra só com o menu do portal ----------
+   ✕ no topo da barra fecha a barra inteira (como no GitHub); o ☰ abre de novo.
+   As seções da página viram abas acima do perfil e do conteúdo. */
+html body.ar-settings-page.ar-has-sidebar .ar-sidebar-menu {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--st-dark-2);
+  color: var(--st-on-dark);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-sidebar-menu:hover {
+  background: var(--st-lime);
+  color: var(--st-on-lime);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-sidebar-menu:focus-visible {
+  outline: 2px solid var(--st-lime);
+  outline-offset: 2px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-sidebar-menu[hidden] {
+  display: none;
+}
+html body.ar-settings-sidebar .ar-portal-sidebar .ar-sidebar-head {
+  justify-content: flex-start;
+  gap: 10px;
+  min-height: 44px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-sidebar-menu--open {
+  position: fixed;
+  z-index: 46;
+  top: 24px;
+  left: 16px;
+  width: 44px;
+  height: 44px;
+  background: var(--st-dark);
+  box-shadow: var(--st-shadow);
+}
+@media (min-width: 1101px) {
+  html body.ar-settings-menu-closed {
+    --sidebar-width: 52px;
+  }
+  html body.ar-settings-menu-closed .ar-portal-sidebar {
+    display: none !important;
+  }
+}
+
+/* Abas das seções. */
+html body.ar-settings-page.ar-has-sidebar .ar-split {
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) !important;
+  column-gap: 32px;
+  row-gap: 22px;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav {
+  grid-column: 1 / -1;
+  position: static;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0 0 0 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border: 0;
+  border-bottom: 1px solid var(--st-glass-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav::-webkit-scrollbar {
+  display: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a {
+  flex: none;
+  display: block;
+  margin-bottom: -1px;
+  padding: 10px 14px 12px;
+  border-radius: 10px 10px 0 0;
+  background: transparent;
+  color: var(--st-muted);
+  white-space: nowrap;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a small {
+  display: none;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a b {
+  font-size: 14px;
+  font-weight: 500;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a:hover {
+  background: color-mix(in srgb, var(--st-ink) 5%, transparent);
+  color: var(--st-ink);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a[aria-current='page'] {
+  background: transparent;
+  color: var(--st-ink);
+  box-shadow: inset 0 -2px 0 var(--st-ink);
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a[aria-current='page'] b {
+  font-weight: 600;
+}
+html body.ar-settings-page.ar-has-sidebar .ar-split > .ar-snav a:focus-visible {
+  outline: 2px solid var(--st-ink);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+@media (min-width: 1101px) {
+  html body.ar-settings-page.ar-has-sidebar .ar-profile-card {
+    top: 24px;
+  }
+}
+@media (max-width: 1100px) {
+  html body.ar-settings-page.ar-has-sidebar .ar-split {
+    grid-template-columns: minmax(0, 1fr) !important;
+    row-gap: 18px;
+  }
+}

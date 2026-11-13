@@ -13,7 +13,13 @@ test('FAQ mantém perguntas, responde limites reais e associa botões e painéis
     ])
         assert.ok(html.includes(question));
     assert.match(html, /Comunidade externa/);
-    assert.ok((html.match(/<details>/g) || []).length >= 5, 'FAQ usa controles nativos acessíveis no guia');
+    // A apresentação usa o acordeão da landing: botões com aria-expanded ligados ao painel
+    // por aria-controls (js/tutorial-landing.js, testado abaixo).
+    assert.ok(
+        (html.match(/<button type="button" class="faq-trigger" aria-expanded="false">/g) || []).length >= 5,
+        'FAQ usa botões acessíveis na apresentação'
+    );
+    assert.match(html, /src="js\/tutorial-landing\.js"/);
     assert.doesNotMatch(fs.readFileSync('frontend/index.html', 'utf8'), /class="guide-faq"/, 'guia não ocupa o Início');
     assert.match(html, /Google permite entrar em uma conta já cadastrada/);
     assert.match(html, /recuperação de senha depende do serviço/i);
@@ -45,7 +51,7 @@ test('FAQ mantém perguntas, responde limites reais e associa botões e painéis
         querySelectorAll: (s) => (s === '.faq-trigger' ? [trigger] : []),
         getElementById: () => null
     };
-    vm.runInNewContext(fs.readFileSync('frontend/js/landing.js', 'utf8'), {
+    vm.runInNewContext(fs.readFileSync('frontend/js/tutorial-landing.js', 'utf8'), {
         document,
         window: { Arcadia: A, addEventListener() {} },
         localStorage: { getItem: () => null }

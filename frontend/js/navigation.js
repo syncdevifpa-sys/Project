@@ -33,7 +33,10 @@
         );
         const status = make('p');
         status.setAttribute('role', 'status');
-        const refresh = make('button', 'Atualizar', 'ar-btn ar-btn--secondary');
+        const refresh = make('button', '', 'ar-iconbtn ar-notifications-refresh');
+        refresh.setAttribute('aria-label', 'Atualizar lembretes');
+        refresh.title = 'Atualizar lembretes';
+        refresh.append(icon('M3 12a9 9 0 0 1 15-6l3 3M21 3v6h-6M21 12a9 9 0 0 1-15 6l-3-3M3 21v-6h6'));
         refresh.type = 'button';
         const list = make('ul', '', 'ar-notifications-list');
         const manage = make('a', 'Gerenciar lembretes', 'ar-link');
@@ -71,6 +74,7 @@
             const ticket = ++generation;
             request = window.AbortController ? new window.AbortController() : null;
             refresh.disabled = true;
+            refresh.setAttribute('aria-busy', 'true');
             status.textContent = 'Carregando lembretes…';
             list.replaceChildren();
             try {
@@ -115,7 +119,7 @@
                 bell.setAttribute('aria-label', 'Notificações');
                 status.textContent = 'Não foi possível carregar os lembretes. Tente Atualizar.';
             } finally {
-                if (ticket === generation) refresh.disabled = false;
+                if (ticket === generation) { refresh.disabled = false; refresh.removeAttribute('aria-busy'); }
             }
         }
         bell.addEventListener('click', () => {
