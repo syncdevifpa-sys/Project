@@ -75,7 +75,8 @@
 }
 .ar-project-reader { width:min(900px,calc(100% - 24px));max-height:90dvh;overflow:auto; }
 .ar-project-reader > .ar-iconbtn { position:sticky;top:8px;z-index:4;margin-left:auto;display:block; }
-.ar-project-reader .ar-detail { padding:16px; }
+.ar-project-reader .ar-detail { padding:16px;background:var(--surface);color:var(--ink); }
+.ar-project-reader .ar-detail :is(h2,p,.ar-text-aligned,.ar-text-list) { color:inherit; }
 @media(max-width:600px) { .ar-publication-media .ar-notice-cover img { max-height:440px; } }
 @media(prefers-reduced-motion:reduce) {
  .ar-notice-cover::after,.ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions),

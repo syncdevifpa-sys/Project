@@ -1,6 +1,6 @@
 /* Início: composição e superfícies do tutorial; tipografia e conteúdo do portal preservados. */
-.home-content-page { background:var(--color-cream,#f5f2eb); }
-.home-content-page .site-header { border-bottom:1px solid var(--color-line-soft,#e4e0d7);background:var(--color-cream,#f5f2eb); }
+.home-content-page { background:var(--surface-page,#f5f2eb); }
+.home-content-page .site-header { border-bottom:1px solid var(--color-line-soft,#e4e0d7);background:var(--surface-page,#f5f2eb); }
 .home-content-page .site-nav { min-height:90px;gap:24px; }
 .home-content-page .nav-links { gap:24px; }
 .home-content-page .home-campus-banner.container { max-width:1200px;margin:32px auto 48px;padding:0;display:grid;grid-template-columns:1.05fr 1fr;border:1px solid var(--color-card-border,#d7dce8);border-radius:18px;overflow:hidden;background:var(--surface-card,#fff); }

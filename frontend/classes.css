@@ -590,3 +590,23 @@
   outline: 2px solid var(--cyan);
   outline-offset: 3px;
 }
+
+/* Turmas e períodos expansíveis: a hierarquia permanece legível também no celular. */
+.ac-nav-group { min-width:0;border-bottom:1px solid var(--line);padding-block:6px; }
+.ac-nav-group > summary { position:relative;display:grid;gap:4px;list-style:none;cursor:pointer;padding:10px 28px 10px 4px;color:var(--ink); }
+.ac-nav-group > summary::-webkit-details-marker { display:none; }
+.ac-nav-group > summary::after { content:'';position:absolute;right:8px;top:16px;width:7px;height:7px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg); }
+.ac-nav-group[open] > summary::after { transform:rotate(225deg); }
+.ac-nav-group[data-selected=true] > summary .ac-nav-title { font-weight:750; }
+.ac-nav-group > .ac-nav-group { margin-left:8px;border:0; }
+.ac-nav-subjects { display:grid;gap:4px;margin-left:4px;padding-left:8px;border-left:1px solid var(--line); }
+.ac-nav-subjects .ac-subject-choice { min-height:44px;padding-block:10px; }
+.ac-nav-subjects .ac-nav-meta:empty { display:none; }
+.ac-nav-group summary:focus-visible { outline:2px solid var(--focus);outline-offset:2px;border-radius:6px; }
+/* A engrenagem abre o mesmo conjunto de ações, sem ocupar o centro com uma lista extensa. */
+.ac-management { position:relative;margin-block:8px; }
+.ac-management > .ac-management-trigger { display:grid;place-items:center;padding:8px;min-width:40px;width:40px;height:40px;list-style:none;border-color:var(--line);font-size:20px; }
+.ac-management > .ac-management-trigger::-webkit-details-marker { display:none; }
+.ac-management-panel { box-sizing:border-box;position:absolute;z-index:25;right:0;top:100%;width:min(620px,calc(100vw - 48px));max-height:65dvh;overflow:auto;box-shadow:var(--shadow-float); }
+.ac-management:not([open]) > .ac-management-panel { display:none; }
+@media(max-width:760px) { .ac-management-panel { right:auto;left:0; } }
