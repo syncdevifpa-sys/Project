@@ -1,8 +1,8 @@
 (function (root, factory) {
-    const search = factory();
+    const search = factory(typeof module === 'object' && module.exports ? require('./notice-links') : root.Arcadia.noticeLinks);
     if (typeof module === 'object' && module.exports) module.exports = search;
     else (root.Arcadia = root.Arcadia || {}).globalSearch = search;
-})(typeof window === 'undefined' ? globalThis : window, function () {
+})(typeof window === 'undefined' ? globalThis : window, function (noticeLinks) {
     const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     function match(items, query, scope = 'All') {
         const terms = normalize(query).trim().split(/\s+/).filter(Boolean);
@@ -18,7 +18,7 @@
                 : type === 'Projects' ? 'project.html?id=' + encodeURIComponent(id)
                 : type === 'Calendar' ? 'calendar.html?busca=' + encodeURIComponent(title)
                 : type === 'Tasks' ? 'tasks.html' : type === 'Documents' ? 'documents.html'
-                : 'notice.html?id=' + encodeURIComponent(id);
+                : noticeLinks.path(row);
             /* Nome, vínculo e conteúdo já autorizado; contatos privados não integram o índice. */
             return [{ type,title,href,meta:type === 'People' ? [row.tipo_usuario,row.curso].filter(Boolean).join(' · ') : row.data_evento || row.data_inicio || row.data_publicacao || '',
                 desc:type === 'People' ? '' : row.resumo || row.descricao || '',

@@ -49,6 +49,7 @@ function fixture(responses, session = { id_usuario: 4, tipo_usuario: 'discente',
         removeEventListener() {}
     };
     const A = {
+        noticeLinks: require('../frontend/js/notice-links'),
         auth: { exigirLogin: () => true, getSessao: () => session },
         calendarCategories: require('../frontend/js/calendar-categories'),
         showToast: (message) => toasts.push(message),

@@ -115,6 +115,9 @@ if (process.env.VERCEL || process.env.NODE_ENV === 'production')
         ['/classes-preview.html', '/classes-preview.css', '/js/classes-preview.js'],
         (_req, res) => res.sendStatus(404)
     );
+app.use(require('./src/routes/public-notice.routes').createPublicNoticeRouter(
+    require('./src/models/notices.model')
+));
 app.use(express.static(path.join(__dirname, '../frontend')));
 console.log('Application routes configured.');
 

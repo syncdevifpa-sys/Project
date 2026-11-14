@@ -269,6 +269,7 @@ test('controles reais preservam seleção específica ao alternar Todos e começ
         location: { pathname: '/notices.html' }
     };
     vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js', 'utf8'), context);
+    vm.runInNewContext(fs.readFileSync('frontend/js/notice-links.js', 'utf8'), context);
     vm.runInNewContext(fs.readFileSync('frontend/js/pages.js', 'utf8'), context);
     load();
     await new Promise((r) => setImmediate(r));

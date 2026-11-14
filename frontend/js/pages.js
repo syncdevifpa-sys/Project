@@ -259,7 +259,7 @@
                     r.titulo,
                     r.resumo,
                     `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
-                    `<div class="ar-notice-card-actions"><a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
+                    `<div class="ar-notice-card-actions"><a class="ar-link" href="${A.noticeLinks.path(r)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
                 );
                 if (r.fixado === true || r.fixado === 1) html = html.replace('<h3', '<span class="ar-pinned-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-4 2-3 5-3-3-5 3 3-5-3-3 5-3 2-4Z M9 15l-6 6"/></svg>Fixado</span><h3');
                 return A.noticeCover?.valid(r.capa)
@@ -328,14 +328,14 @@
                         list
                             .map(
                                 (r) =>
-                                    `<li><article class="ar-card"><h3 class="ar-card-title"><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></h3><p class="ar-card-meta">${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${date(r.data_publicacao)} · ${esc(label(noticeStatuses, r.situacao))}</p>${r.resumo ? `<details><summary>Ver resumo</summary><p class="ar-card-desc">${esc(r.resumo)}</p></details>` : ''}<a class="ar-link" href="notice.html?id=${encodeURIComponent(r.id_aviso)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button>` : ''}</article></li>`
+                                    `<li><article class="ar-card"><h3 class="ar-card-title"><a href="${A.noticeLinks.path(r)}">${esc(r.titulo)}</a></h3><p class="ar-card-meta">${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${date(r.data_publicacao)} · ${esc(label(noticeStatuses, r.situacao))}</p>${r.resumo ? `<details><summary>Ver resumo</summary><p class="ar-card-desc">${esc(r.resumo)}</p></details>` : ''}<a class="ar-link" href="${A.noticeLinks.path(r)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button>` : ''}</article></li>`
                             )
                             .join('') || '<li>Nenhuma publicação encontrada.</li>';
                 }
                 table.innerHTML = list
                     .map(
                         (r) =>
-                            `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso" ${A.noticeActions.canDelete(r) ? '' : 'disabled'}></td><td><a href="notice.html?id=${encodeURIComponent(r.id_aviso)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(A.noticeAudiences.format(r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--sm btn-edit" data-id="${esc(r.id_aviso)}">Editar</button><button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`
+                            `<tr data-id="${esc(r.id_aviso)}"><td><input type="checkbox" class="row-select" aria-label="Selecionar aviso" ${A.noticeActions.canDelete(r) ? '' : 'disabled'}></td><td><a href="${A.noticeLinks.path(r)}">${esc(r.titulo)}</a></td><td>${esc(label(categories, r.categoria))}</td><td>${esc(A.noticeAudiences.format(r.publico_alvo))}</td><td>${date(r.data_publicacao)}</td><td>${esc(label(noticeStatuses, r.situacao))}</td><td>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn ar-btn--sm btn-edit" data-id="${esc(r.id_aviso)}">Editar</button><button type="button" class="ar-btn ar-btn--sm btn-delete" data-id="${esc(r.id_aviso)}">Excluir</button>` : ''}</td></tr>`
                     )
                     .join('');
                 board.innerHTML =
@@ -360,7 +360,7 @@
                 $$(
                     '#noticesCardsGrid .ar-card-desc, #noticeCompactList .ar-card-desc, [data-view-panel="quadro"] .ar-card-desc'
                 ).forEach((element) => A.noticeText.render(element, element.textContent));
-                if (A.noticeCover?.linkCard) $$('#noticesCardsGrid .ar-card').forEach(card => A.noticeCover.linkCard(card,card.querySelector('a[href*="notice.html"]')));
+                if (A.noticeCover?.linkCard) $$('#noticesCardsGrid .ar-card').forEach(card => A.noticeCover.linkCard(card,card.querySelector('a[href*="/noticias/"]')));
                 $('#noticesSummary').textContent =
                     `${list.length} ${list.length === 1 ? 'publicação' : 'publicações'}`;
                 $('#btnDeleteSel').style.display = rows.some((r) => A.noticeActions.canDelete(r))
@@ -1269,7 +1269,7 @@
             related.hidden=related.children.length<2;
         }
         async function noticeDetail() {
-            const id = new URLSearchParams(location.search).get('id');
+            const id = document.documentElement.dataset.noticeId || new URLSearchParams(location.search).get('id');
             const title = $('.ar-detail-title');
             const desc = $('.ar-detail-desc');
             const info = $('.ar-info');
@@ -1347,7 +1347,7 @@
                     related.replaceChildren(heading);
                     for (const item of visible) {
                         const link = document.createElement('a');
-                        link.href = 'notice.html?id=' + encodeURIComponent(item.id_aviso);
+                        link.href = A.noticeLinks.path(item);
                         link.textContent = item.titulo;
                         const meta = document.createElement('small');
                         meta.textContent = date(item.data_publicacao);
@@ -1452,7 +1452,7 @@
                           .map((r) =>
                               row(
                                   r,
-                                  'notice.html?id=' + encodeURIComponent(r.id_aviso),
+                                  A.noticeLinks.path(r),
                                   r.data_publicacao
                               )
                           )
@@ -1465,7 +1465,7 @@
             });
         }
 
-        const page = options.page || location.pathname.split('/').pop();
+        const page = options.page || (location.pathname.startsWith('/noticias/') ? 'notice.html' : location.pathname.split('/').pop());
         const handler = {
             'notices.html': notices,
             'projects.html': projects,
