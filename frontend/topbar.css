@@ -353,3 +353,6 @@ html[data-topbar-mount=pending] .ar-nav-end > :is([data-sign-out],[data-logout],
 .ar-nav > .ar-crumbs ol { margin:0;flex-wrap:nowrap; }
 .ar-nav > .ar-crumbs li:last-child { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
 body:has(.ar-nav--breadcrumbs) { --portal-header-offset:140px; }
+
+/* Duração do curso acompanha o campo sem competir com o título. */
+.ar-course-duration {display:block;margin-top:6px;font:inherit;font-size:.8125rem;line-height:1.5;color:var(--text-muted, #596579);overflow-wrap:anywhere;}

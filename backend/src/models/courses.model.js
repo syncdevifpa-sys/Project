@@ -1,3 +1,4 @@
+const { enrich } = require('../services/course-duration.service');
 const { developmentFallbackEnabled } = require('../services/development-mode.service');
 const db = require('../config/database');
 const path = require('path');
@@ -78,14 +79,14 @@ async function listCourses() {
         }
 
         if (Array.isArray(courses) && courses.length > 0) {
-            return courses;
+            return courses.map(enrich);
         }
     } catch (error) {
         if (!developmentFallbackEnabled()) throw error;
         /* Fallback quando o banco não estiver disponível */
     }
 
-    return developmentFallbackEnabled() ? getFallbackCourses() : [];
+    return developmentFallbackEnabled() ? getFallbackCourses().map(enrich) : [];
 }
 
 async function findCourseById(courseId) {
@@ -104,7 +105,7 @@ async function findCourseById(courseId) {
         );
 
         if (courses && courses[0]) {
-            return courses[0];
+            return enrich(courses[0]);
         }
     } catch (error) {
         if (!developmentFallbackEnabled()) throw error;
@@ -113,7 +114,7 @@ async function findCourseById(courseId) {
 
     if (!developmentFallbackEnabled()) return null;
     const numericId = Number(courseId);
-    return getFallbackCourses().find((c) => c.id_curso === numericId) || null;
+    return enrich(getFallbackCourses().find((c) => c.id_curso === numericId) || null);
 }
 
 async function createCourse(courseData) {

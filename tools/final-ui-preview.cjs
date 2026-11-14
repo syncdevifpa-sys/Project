@@ -1,5 +1,5 @@
 /* Prévia local: dados fictícios; calendário e publicações somente em memória, sem banco ou mensagens. */
-const express = require('../node_modules/express');
+const express = require('express');
 const fs = require('fs'),
     path = require('path');
 const db = require('../backend/src/config/database');

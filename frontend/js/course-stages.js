@@ -1,4 +1,4 @@
-/* O regime vem do curso; o cadastro oferece até quatro anos ou oito semestres. */
+/* Regime e duração do curso; preserva quatro anos ou oito semestres e cursos mais longos. */
 (function (A) {
     const states = new WeakMap();
     function attach(course, stage, courses, selectedCourse, selectedStage) {
@@ -6,6 +6,15 @@
         let state = states.get(course);
         if (!state) {
             state = { enabled: !course.disabled, stage };
+            if (course.parentElement) {
+                state.duration = document.createElement('small');
+                state.duration.className = 'ar-course-duration';
+                state.duration.id = (course.id || 'course') + '-duration';
+                state.duration.setAttribute('role', 'status');
+                state.duration.hidden = true;
+                course.parentElement.append(state.duration);
+                course.setAttribute('aria-describedby', [course.getAttribute('aria-describedby'), state.duration.id].filter(Boolean).join(' '));
+            }
             state.update = (value) => {
                 const selected = state.courses.find(
                     (row) => String(row.id_curso) === String(course.value)
@@ -16,7 +25,11 @@
                     Number.isInteger(Number(selected.total_etapas)) &&
                     selected.total_etapas >= 1 &&
                     selected.total_etapas <= 20;
-                const maximum = selected?.regime_etapas === 'anual' ? 4 : 8;
+                const maximum = Math.max(Number(selected?.total_etapas) || 0, selected?.regime_etapas === 'anual' ? 4 : 8);
+                if (state.duration) {
+                    state.duration.textContent = selected?.duracao_texto ? 'Duração de referência: ' + selected.duracao_texto : '';
+                    state.duration.hidden = !state.duration.textContent;
+                }
                 stage.replaceChildren();
                 const placeholder = document.createElement('option');
                 placeholder.value = '';

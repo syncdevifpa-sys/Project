@@ -56,7 +56,7 @@ function fixture({
                             nome: 'Informática',
                             ativo: 1,
                             regime_etapas: regime,
-                            total_etapas: 6
+                            total_etapas: regime === 'anual' ? 3 : 6
                         }
                     ]
                 ];
