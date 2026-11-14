@@ -135,7 +135,7 @@ test('aba de horários cria, edita e retira na oferta correta com retorno visív
     const f = fixture();
     f.mount();
     await settle();
-    f.button('Adicionar horário').onclick();
+    f.button('Cadastrar horário semanal').onclick();
     f.fill();
     await f.submit();
     assert.match(f.host.textContent, /Horário salvo/);
@@ -154,7 +154,7 @@ test('falha ao salvar preserva formulário; gravação seguida de falha de leitu
     const f = fixture();
     f.mount();
     await settle();
-    f.button('Adicionar horário').onclick();
+    f.button('Cadastrar horário semanal').onclick();
     f.fill();
     f.setFailWrite(true);
     await f.submit();
@@ -281,7 +281,7 @@ test('cadastro abre pelo topo, ajuda é recolhida e cancelar devolve foco', asyn
     assert.ok(!help.open);
     assert.equal(help.children[0].tag, 'summary');
     assert.match(help.children[0].attributes['aria-label'], /Ajuda/);
-    const add = f.button('Adicionar horário');
+    const add = f.button('Cadastrar horário semanal');
     assert.equal(add.parent.className, 'ac-schedule-toolbar');
     add.onclick();
     assert.equal(dialog.open, true);
@@ -358,7 +358,37 @@ test('filtros combinam turnos, Tudo prevalece e nenhum turno tem retorno explíc
 test('botão de aula extra usa o fluxo da disciplina e não aparece para participantes', async () => {
     const f=fixture();let opened=0;
     f.mount(8,true,()=>opened++);await settle();
-    f.button('+ Aula extra').onclick();assert.equal(opened,1);
+    f.button('Adicionar aula extra').onclick();assert.equal(opened,1);
     f.mount(8,false,()=>opened++);await settle();
-    assert.equal(f.button('+ Aula extra'),undefined);
+    assert.equal(f.button('Adicionar aula extra'),undefined);
+});
+
+
+test('gerenciamento de horários só aparece quando há conteúdo para expandir', async () => {
+    const f = fixture();
+    f.mount();
+    await settle();
+    const panel = walk(f.host).find(n => n.className === 'ac-schedule-actions-list');
+    assert.equal(panel.hidden, true);
+    f.button('Cadastrar horário semanal').onclick();
+    f.fill();
+    await f.submit();
+    assert.equal(panel.hidden, false);
+    panel.open = true;
+    await f.button('Retirar horário').onclick();
+    assert.equal(panel.hidden, true);
+    assert.equal(panel.open, false);
+});
+
+
+test('Configurar aula mantém uma opção útil sem horários quando é possível adicionar aula extra', async () => {
+    const f = fixture();
+    let opened = 0;
+    f.mount(8, true, () => opened++);
+    await settle();
+    const panel = walk(f.host).find(n => n.className === 'ac-schedule-actions-list');
+    assert.equal(panel.hidden, false);
+    assert.equal(panel.children[0].textContent, 'Configurar aula');
+    f.button('Adicionar aula extra').onclick();
+    assert.equal(opened, 1);
 });

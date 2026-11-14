@@ -435,8 +435,10 @@
 }
 .ac-schedule-actions-list > summary {
   cursor: pointer;
-  padding-block: 12px;
-  min-height: 44px;
+  padding: 8px 10px;
+  min-height: 36px;
+  font-size: 13px;
+  line-height: 1.4;
   box-sizing: border-box;
 }
 .ac-schedule-fields .ac-schedule-next-day {
@@ -465,6 +467,10 @@
   flex: 0 0 20px;
 }
 
+.ac-schedule { min-width: 0; }
+.ac-schedule > p { margin-block: 10px; }
+.ac-schedule-actions-list[hidden] { display: none; }
+.ac-schedule-toolbar > .ar-btn { min-height: 36px; padding: 7px 12px; font-size: 13px; }
 .ac-schedule-toolbar {
   display: flex;
   align-items: center;
@@ -472,6 +478,8 @@
   gap: 12px;
 }
 .ac-schedule-toolbar h3 {
+  font-size: 1.05rem;
+  line-height: 1.4;
   margin: 0;
   flex: 1 1 180px;
 }
@@ -642,4 +650,19 @@
 @media (max-width: 560px) {
   .ac-class-change-form { grid-template-columns: minmax(0, 1fr); }
   .ac-schedule-toolbar > .ar-btn { flex: 1 1 140px; max-width: 100%; white-space: normal; }
+}
+
+/* Em telas de toque, mantém alvos confortáveis sem ampliar as letras. */
+@media (pointer: coarse) {
+  .ac-schedule-toolbar > .ar-btn, .ac-schedule-actions-list > summary { min-height: 44px; }
+}
+
+/* Os controles do contexto acompanham a largura da coluna de disciplinas. */
+.ac-context > .ar-btn {
+  box-sizing: border-box;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.4;
 }
