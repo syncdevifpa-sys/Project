@@ -2,7 +2,7 @@ const db = require('../config/database');
 const LIMITS = Object.freeze({
     description: 3000,
     file: 4 * 1024 * 1024,
-    user: 20 * 1024 * 1024,
+    user: 200 * 1024 * 1024,
     total: 200 * 1024 * 1024,
     items: 500,
     folders: 100
@@ -82,7 +82,7 @@ function fileInfo(buffer, filename) {
 }
 function publication(body, current = {}) {
     const value = body.visibilidade ?? current.visibilidade ?? 'privado';
-    if (!['privado', 'publico'].includes(value)) fail(400, 'Visibilidade inválida.');
+    if (!['privado', 'publico', 'campus', 'comunidade'].includes(value)) fail(400, 'Visibilidade inválida.');
     return value;
 }
 function description(body, current = {}) {
@@ -107,6 +107,14 @@ const publisher = (user) =>
     user.tipo_usuario === 'docente' || user.is_admin === 1 || user.is_admin === true;
 const publicAuthor =
     "u.situacao = 'ativo' AND (u.tipo_usuario = 'docente' OR u.is_admin = 1 OR i.revisao = 'aprovado')";
+/* O autenticador fornece o público confirmado da conta. */
+function audienceCondition(viewer) {
+    const conditions = ["i.visibilidade = 'publico'"];
+    if (viewer) conditions.push("i.visibilidade = 'comunidade'");
+    if (viewer?.id_usuario && viewer.tipo_usuario !== 'externo')
+        conditions.push("i.visibilidade = 'campus'");
+    return '(' + conditions.join(' OR ') + ')';
+}
 function createLibrary(database = db) {
     async function authorship() {
         try {
@@ -228,7 +236,7 @@ function createLibrary(database = db) {
         const visibility = publication(body),
             details = description(body);
         return transaction(owner, async (c, user) => {
-            if (visibility === 'publico' && !publisher(user))
+            if (visibility !== 'privado' && !publisher(user))
                 fail(403, 'Somente professores ou administradores podem publicar materiais.');
             const folder = await ownedFolder(c, owner, body.id_pasta);
             const [[usage]] = await c.execute(
@@ -249,7 +257,7 @@ function createLibrary(database = db) {
                 const [sizes] = await c.execute('SELECT tamanho FROM documento_itens FOR UPDATE');
                 const total = { used: sizes.reduce((n, row) => n + Number(row.tamanho), 0) };
                 if (Number(usage.used) + info.size > LIMITS.user)
-                    fail(409, 'Seu espaço de 20 MB está cheio.');
+                    fail(409, 'Seu espaço de ' + LIMITS.user / (1024 * 1024) + ' MB está cheio.');
                 if (Number(total.used) + info.size > LIMITS.total)
                     fail(
                         409,
@@ -293,7 +301,7 @@ function createLibrary(database = db) {
             const authorNames = authors(body, current);
             const visibility = publication(body, current),
                 details = description(body, current);
-            if (visibility === 'publico' && !publisher(user))
+            if (visibility !== 'privado' && !publisher(user))
                 fail(403, 'Somente professores ou administradores podem publicar materiais.');
             const title = text(body.titulo ?? current.titulo, 150, 'Título');
             const folder = await ownedFolder(
@@ -326,25 +334,34 @@ function createLibrary(database = db) {
             ]);
         });
     }
-    async function publicList() {
+    async function publicList(viewer = null) {
         const hasAuthors = await authorship();
         const [items] = await database.execute(
-            `SELECT i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, i.criado_em, i.atualizado_em, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.visibilidade = 'publico' AND ${publicAuthor} ORDER BY i.atualizado_em DESC, i.id_item DESC`
+            `SELECT i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, i.criado_em, i.atualizado_em, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, i.visibilidade, u.nome AS publicador FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE ${audienceCondition(viewer)} AND ${publicAuthor} ORDER BY i.atualizado_em DESC, i.id_item DESC`
         );
         return items;
     }
-    async function download(owner, key) {
+    async function download(owner, key, viewer = owner ? {id_usuario: owner} : null) {
         const [items] = await database.execute(
-            `SELECT i.nome_arquivo, i.mime, i.tipo, i.conteudo FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.id_item = ? AND (i.id_usuario = ? OR (i.visibilidade = 'publico' AND ${publicAuthor}))`,
+            `SELECT i.nome_arquivo, i.mime, i.tipo, i.conteudo FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.id_item = ? AND (i.id_usuario = ? OR (${audienceCondition(viewer)} AND ${publicAuthor}))`,
             [id(key), owner]
         );
         if (!items.length) fail(404, 'Documento não encontrado.');
         return items[0];
     }
+    async function readable(owner, key, viewer = null) {
+        const hasAuthors = await authorship();
+        const [rows] = await database.execute(
+            `SELECT i.id_item, i.titulo, i.descricao, i.visibilidade, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_itens i JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE i.id_item = ? AND (i.id_usuario = ? OR (${audienceCondition(viewer)} AND ${publicAuthor}))`,
+            [id(key), owner]
+        );
+        if (!rows.length) fail(404, 'Documento não encontrado ou sem acesso.');
+        return rows[0];
+    }
     async function savedList(owner) {
         const hasAuthors = await authorship();
         const [rows] = await database.execute(
-            `SELECT s.id_salvo, s.id_pasta, i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_salvos s LEFT JOIN documento_itens i ON i.id_item = s.id_item AND i.visibilidade = 'publico' AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id_usuario = i.id_usuario AND ${publicAuthor}) LEFT JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE s.id_usuario = ? ORDER BY s.criado_em DESC`,
+            `SELECT s.id_salvo, s.id_pasta, i.id_item, i.titulo, i.descricao, i.tipo, i.url, i.nome_arquivo, i.mime, i.tamanho, ${hasAuthors ? 'i.autor_obra' : 'NULL AS autor_obra'}, u.nome AS publicador FROM documento_salvos s LEFT JOIN documento_itens i ON i.id_item = s.id_item AND ${audienceCondition({id_usuario:owner})} AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id_usuario = i.id_usuario AND ${publicAuthor}) LEFT JOIN usuarios u ON u.id_usuario = i.id_usuario WHERE s.id_usuario = ? ORDER BY s.criado_em DESC`,
             [owner]
         );
         return rows.map((row) => ({ ...row, reference: true }));
@@ -353,7 +370,7 @@ function createLibrary(database = db) {
         return transaction(owner, async (c) => {
             const folder = await ownedFolder(c, owner, body.id_pasta);
             const [sources] = await c.execute(
-                `SELECT i.id_item, i.id_usuario FROM documento_itens i WHERE i.id_item = ? AND i.visibilidade = 'publico' AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id_usuario = i.id_usuario AND ${publicAuthor}) FOR UPDATE`,
+                `SELECT i.id_item, i.id_usuario FROM documento_itens i WHERE i.id_item = ? AND ${audienceCondition({id_usuario:owner})} AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id_usuario = i.id_usuario AND ${publicAuthor}) FOR UPDATE`,
                 [id(key)]
             );
             if (!sources.length) fail(404, 'Material público indisponível.');
@@ -463,6 +480,7 @@ function createLibrary(database = db) {
     return {
         list,
         publicList,
+        readable,
         saveFolder,
         removeFolder,
         create,

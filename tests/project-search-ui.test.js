@@ -71,6 +71,7 @@ function fixture(query = '') {
         }
     ];
     const A = {
+        noticeText: { summary: value => value },
         auth: { getSessao: () => ({ tipo_usuario: 'externo' }) },
         contentFields: require('../frontend/js/content-fields'),
         contentEditor: { canEdit: () => false },

@@ -57,8 +57,8 @@ test('sessão externa acessa tarefas próprias sem colidir com mesmo ID instituc
  assert.equal(rows.get(taskId).id_externo,7);assert.equal(rows.get(taskId).id_usuario,null);
  assert.equal((await request('tasks/'+taskId,'PUT',{titulo:'Atualizada'})).status,200);
  assert.equal((await request('tasks/'+taskId,'DELETE')).status,200);
- for(const path of ['notices','calendar','projects','external/me','external/reminders'])assert.equal((await request(path)).status,200,path);
- for(const path of ['documents','document-library/public','people','classes','admin','users/7','teacher-requirements/review','external/space/documents'])assert.equal((await request(path)).status,403,path);
+ for(const path of ['notices','calendar','projects','external/me','external/reminders','document-library/public'])assert.equal((await request(path)).status,200,path);
+ for(const path of ['documents','people','classes','admin','users/7','teacher-requirements/review','external/space/documents'])assert.equal((await request(path)).status,403,path);
  assert.equal((await request('documents','GET',undefined,institutional)).status,200);
  assert.equal(rows.get(1).titulo,'Institucional');assert.equal(rows.get(3).titulo,'Externa alheia');
 });

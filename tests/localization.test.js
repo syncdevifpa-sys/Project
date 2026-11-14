@@ -52,6 +52,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
         location: { pathname: '/projects.html' },
         window: {
             Arcadia: {
+                noticeText: { summary: value => value },
                 contentFields: require('../frontend/js/content-fields'),
                 auth: { getSessao: () => ({ tipo_usuario: 'docente' }) },
                 showToast: (message) => assert.fail(message),

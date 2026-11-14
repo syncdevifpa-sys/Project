@@ -292,7 +292,7 @@
                     r.titulo,
                     r.resumo,
                     `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
-                    `<div class="ar-notice-card-actions"><a class="ar-link" href="${A.noticeLinks.path(r)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
+                    `<div class="ar-notice-card-actions"><a class="ar-link ar-iconbtn" href="${A.noticeLinks.path(r)}" title="Abrir publicação" aria-label="Abrir publicação"><span data-icon="external-link"></span></a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
                 );
                 if (r.fixado === true || r.fixado === 1) html = html.replace('<h3', '<span class="ar-pinned-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-4 2-3 5-3-3-5 3 3-5-3-3 5-3 2-4Z M9 15l-6 6"/></svg>Fixado</span><h3');
                 return A.noticeCover?.valid(r.capa)
@@ -361,7 +361,7 @@
                         list
                             .map(
                                 (r) =>
-                                    `<li><article class="ar-card"><h3 class="ar-card-title"><a href="${A.noticeLinks.path(r)}">${esc(r.titulo)}</a></h3><p class="ar-card-meta">${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${date(r.data_publicacao)} · ${esc(label(noticeStatuses, r.situacao))}</p>${r.resumo ? `<details><summary>Ver resumo</summary><p class="ar-card-desc">${esc(r.resumo)}</p></details>` : ''}<a class="ar-link" href="${A.noticeLinks.path(r)}">Abrir publicação</a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button>` : ''}</article></li>`
+                                    `<li><article class="ar-card">${A.noticeCover?.valid(r.capa) ? A.noticeCover.markup(r.capa, "Capa: " + r.titulo) : ""}<h3 class="ar-card-title"><a href="${A.noticeLinks.path(r)}">${esc(r.titulo)}</a></h3><p class="ar-card-meta">${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${date(r.data_publicacao)} · ${esc(label(noticeStatuses, r.situacao))}</p>${r.resumo ? `<p class="ar-card-desc">${esc(r.resumo)}</p>` : ''}<a class="ar-link ar-iconbtn" href="${A.noticeLinks.path(r)}" title="Abrir publicação" aria-label="Abrir publicação"><span data-icon="external-link"></span></a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button>` : ''}</article></li>`
                             )
                             .join('') || '<li>Nenhuma publicação encontrada.</li>';
                 }
@@ -394,6 +394,7 @@
                     '#noticesCardsGrid .ar-card-desc, #noticeCompactList .ar-card-desc, [data-view-panel="quadro"] .ar-card-desc'
                 ).forEach((element) => A.noticeText.render(element, element.textContent));
                 if (A.noticeCover?.linkCard) $$('#noticesCardsGrid .ar-card').forEach(card => A.noticeCover.linkCard(card,card.querySelector('a[href*="/noticias/"]')));
+                A.renderIcons?.(root);
                 $('#noticesSummary').textContent =
                     `${list.length} ${list.length === 1 ? 'publicação' : 'publicações'}`;
                 $('#btnDeleteSel').style.display = rows.some((r) => A.noticeActions.canDelete(r))
@@ -588,9 +589,9 @@
                         .map((r) => {
                             const markup = card(
                                 r.titulo,
-                                r.descricao,
+                                A.noticeText.summary(r.descricao),
                                 `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
-                                `<a class="ar-link" data-open-project="${esc(r.id_projeto)}" href="project.html?id=${encodeURIComponent(r.id_projeto)}" aria-label="Ver projeto: ${esc(r.titulo)}">Ver projeto</a>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
+                                `<a class="ar-link ar-iconbtn" data-open-project="${esc(r.id_projeto)}" href="project.html?id=${encodeURIComponent(r.id_projeto)}" aria-label="Ver projeto: ${esc(r.titulo)}" title="Abrir projeto"><span data-icon="external-link"></span></a>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
                                 (A.projectActions?.canDelete() ? `<button type="button" class="ar-iconbtn ar-project-delete" data-delete-project="${esc(r.id_projeto)}" title="Excluir projeto" aria-label="Excluir projeto: ${esc(r.titulo)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : '')
                             );
                             return A.noticeCover?.valid(r.capa)
@@ -602,6 +603,7 @@
                         })
                         .join('') || '<p>Nenhum projeto encontrado.</p>';
                 if (A.noticeCover?.linkCard) grid.querySelectorAll('.ar-card').forEach(card => A.noticeCover.linkCard(card, card.querySelector('[data-open-project]')));
+                A.renderIcons?.(root);
                 linkDescriptions('#gridProjetos .ar-card-desc');
                 contentViews(grid, visible, 'situacao', situations);
                 bar.counts();
@@ -1151,15 +1153,12 @@
         }
 
         async function documents() {
-            if (!A.auth.exigirLogin()) return;
-            if (A.auth.getSessao().tipo_usuario === 'externo') {
-                try {
-                    await A.externalAgenda.documents();
-                } catch (e) {
-                    $('#documentLibrary').textContent = e.message;
-                }
+            if (!A.auth.estaLogado() || A.auth.getSessao().tipo_usuario === 'externo') {
+                const requests = $('.ar-library-requests');
+                if (requests) requests.hidden = true;
                 return;
             }
+            if (!A.auth.exigirLogin()) return;
             let rows = [];
             const grid = $('.ar-card-grid');
             const bar = filterBar('.ar-chipbar', statuses, () => rows, 'status', render);

@@ -609,7 +609,7 @@ CREATE TABLE documento_itens (
  titulo VARCHAR(150) NOT NULL,
  descricao VARCHAR(3000) NULL,
  autor_obra VARCHAR(500) NULL,
- visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado',
+ visibilidade ENUM('privado','publico','campus','comunidade') NOT NULL DEFAULT 'privado',
  revisao ENUM('nenhuma','pendente','aprovado','recusado') NOT NULL DEFAULT 'nenhuma',
  versao_revisao INT UNSIGNED NOT NULL DEFAULT 0,
  motivo_revisao VARCHAR(1000) NULL,

@@ -432,7 +432,7 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
     t.mock.method(db, 'execute', async (sql, args) =>
         sql.includes('FROM tokens t')
             ? [args[0] === hash && args[1] === 7 ? [{ id_token: 1, is_admin: 0 }] : []]
-            : sql.includes('i.id_item =') && args[0] === 900
+            : sql.includes('i.id_item =') && (args[0] === 900 || args[1] === null)
               ? [[]]
               : f.db.execute(sql, args)
     );
@@ -459,7 +459,7 @@ test('HTTP exige sessão, recebe binário limitado e entrega attachment privado 
     });
     assert.equal((await fetch(base)).status, 401);
     const headers = { Authorization: 'Bearer ' + token };
-    assert.equal((await fetch(base + '/items/3/preview')).status, 401);
+    assert.equal((await fetch(base + '/items/3/preview')).status, 404);
     assert.equal((await fetch(base + '/items/900/preview', { headers })).status, 404);
     assert.equal((await fetch(base + '/reviews/3/preview', { headers })).status, 403);
     assert.equal(rendered, 0);

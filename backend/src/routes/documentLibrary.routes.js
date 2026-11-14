@@ -15,7 +15,6 @@ const upload = multer({
         fieldNameSize: 100
     }
 }).single('arquivo');
-router.use(authenticateToken);
 router.use((_req, res, next) => {
     res.set('Cache-Control', 'no-store');
     next();
@@ -27,7 +26,39 @@ const action = (fn) => async (req, res, next) => {
         next(error);
     }
 };
-for (const scope of ['items', 'reviews']) {
+const { optionalNoticeViewer } = require('../middlewares/noticeViewer.middleware');
+router.get('/public', optionalNoticeViewer, action(async (q, s) => s.json(await library.publicList(q.noticeViewer))));
+router.get('/items/:id', optionalNoticeViewer, action(async (q, s) => {
+    s.json(await library.readable(q.noticeViewer?.id_usuario || null, q.params.id, q.noticeViewer));
+}));
+router.get('/items/:id/preview', optionalNoticeViewer, action(async (q, s) => {
+    const item = await library.download(q.noticeViewer?.id_usuario || null, q.params.id, q.noticeViewer);
+    const image = await require('../services/document-preview.service').preview(item);
+    s.set({'Content-Type':'image/png','X-Content-Type-Options':'nosniff','Content-Disposition':'inline','Content-Security-Policy':"default-src 'none'; sandbox"});
+    s.send(image);
+}));
+router.get(
+    '/items/:id/download',
+    optionalNoticeViewer,
+    action(async (q, s) => {
+        const item = await library.download(q.noticeViewer?.id_usuario || null, q.params.id, q.noticeViewer);
+        if (item.tipo !== 'arquivo')
+            return s.status(400).json({ error: 'Este documento é um link.' });
+        const filename = encodeURIComponent(item.nome_arquivo).replace(
+            /['()*]/g,
+            (c) => '%' + c.charCodeAt(0).toString(16)
+        );
+        s.set({
+            'Content-Type': 'application/octet-stream',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Disposition': `attachment; filename="documento"; filename*=UTF-8''${filename}`,
+            'Content-Security-Policy': "sandbox; default-src 'none'"
+        });
+        s.send(item.conteudo);
+    })
+);
+router.use(authenticateToken);
+for (const scope of ['reviews']) {
     router.get(
         `/${scope}/:id/preview`,
         action(async (q, s) => {
@@ -106,10 +137,6 @@ router.get(
     })
 );
 router.get(
-    '/public',
-    action(async (_q, s) => s.json(await library.publicList()))
-);
-router.get(
     '/',
     action(async (q, s) => s.json(await library.list(q.user.id_usuario)))
 );
@@ -166,25 +193,7 @@ router.delete(
         s.json({ message: 'Documento excluído.' });
     })
 );
-router.get(
-    '/items/:id/download',
-    action(async (q, s) => {
-        const item = await library.download(q.user.id_usuario, q.params.id);
-        if (item.tipo !== 'arquivo')
-            return s.status(400).json({ error: 'Este documento é um link.' });
-        const filename = encodeURIComponent(item.nome_arquivo).replace(
-            /['()*]/g,
-            (c) => '%' + c.charCodeAt(0).toString(16)
-        );
-        s.set({
-            'Content-Type': 'application/octet-stream',
-            'X-Content-Type-Options': 'nosniff',
-            'Content-Disposition': `attachment; filename="documento"; filename*=UTF-8''${filename}`,
-            'Content-Security-Policy': "sandbox; default-src 'none'"
-        });
-        s.send(item.conteudo);
-    })
-);
+
 router.use((error, _req, res, _next) => {
     if (['ER_ROW_IS_REFERENCED', 'ER_ROW_IS_REFERENCED_2'].includes(error.code))
         return res.status(409).json({

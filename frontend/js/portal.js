@@ -11,6 +11,8 @@
 
     /* Catálogo de ícones SVG do portal */
     var ICONS = {
+        'external-link': '<path d="M14 3h7v7M21 3 10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/>',
+        'copy': '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
         'edit': '<path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/>',
         'trash': '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',
         'share': '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4m-6.8 7 6.8 4"/>',
@@ -117,7 +119,7 @@
 
     /* Somente ações curtas e conhecidas viram ícones; os rótulos acessíveis permanecem. */
     function compactAction(node, label) {
-        var icons = { 'Editar':'edit', 'Excluir':'trash', 'Baixar':'download', 'Baixar material':'download', 'Baixar documento':'download', 'Compartilhar local':'share' };
+        var icons = { 'Editar':'edit', 'Excluir':'trash', 'Baixar':'download', 'Baixar material':'download', 'Baixar documento':'download', 'Compartilhar local':'share', 'Abrir link':'external-link', 'Copiar link':'copy' };
         var name = icons[label];
         if (!name) return node;
         node.classList.remove('ar-btn', 'ar-btn--ghost', 'ar-btn--secondary');

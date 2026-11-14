@@ -44,7 +44,7 @@ test('restauração valida sessão no servidor antes de mostrar dados; revogaç�
 test('Comunidade pode consultar Pessoas, preservando o bloqueio das áreas privadas',()=>{
     const publicPeople=browser({page:'people.html',external:true});
     assert.deepEqual(publicPeople.redirects,[]);
-    for(const page of ['admin.html','classes.html','documents.html']) {
+    for(const page of ['admin.html','classes.html']) {
         const restricted=browser({page,external:true});
         assert.deepEqual(restricted.redirects,['community.html']);
     }
@@ -69,4 +69,10 @@ test('resposta Google pendente não restaura sessão depois de logout',async()=>
     await assert.rejects(login,/cancelada ao sair/);
     assert.equal(stored.has('arcadiaToken'),false);
     assert.deepEqual(events,['cancel','disable','clear','login.html']);
+});
+
+/* A biblioteca publica filtra cada material no servidor, sem bloquear a página inteira. */
+test('biblioteca abre para visitante e conta externa sem liberar áreas institucionais',()=>{
+ assert.deepEqual(browser({page:'documents.html',token:null}).redirects,[]);
+ assert.deepEqual(browser({page:'documents.html',external:true}).redirects,[]);
 });

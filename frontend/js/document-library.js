@@ -1,7 +1,10 @@
 (function (A) {
     'use strict';
     const root = document.getElementById('documentLibrary');
-    if (!root || !A.auth.estaLogado() || A.auth.getSessao().tipo_usuario === 'externo') return;
+    if (!root) return;
+    const institutional = A.auth.estaLogado() && A.auth.getSessao().tipo_usuario !== 'externo';
+    let readerDialog = null;
+    const visibilityLabels = { publico: 'Geral — qualquer pessoa', comunidade: 'Contas do Arcádia — campus e externa', campus: 'Somente campus', privado: 'Privado — só você' };
     const api = A.api,
         endpoint = '/api/document-library';
     const find = (selector) => root.querySelector(selector);
@@ -60,7 +63,7 @@
                     item.id_item +
                     '/preview',
                 {
-                    headers: { Authorization: 'Bearer ' + owner },
+                    headers: owner ? { Authorization: 'Bearer ' + owner } : {},
                     signal: controller.signal,
                     cache: 'no-store'
                 }
@@ -135,13 +138,14 @@
     window.addEventListener?.('pagehide', clearPreviews);
     window.addEventListener?.('storage', (event) => {
         if (!event.key || ['arcadiaToken', 'arcadiaSessao'].includes(event.key)) {
+            readerDialog?.close();
             clearPreviews();
             for (const cover of root.querySelectorAll('.ar-library-cover')) cover.replaceChildren();
         }
     });
     let data = { folders: [], items: [], used: 0 },
         active = 'all',
-        mode = 'mine',
+        mode = institutional ? 'mine' : 'public',
         publicItems = [],
         reviews = [],
         ownIds = new Set(),
@@ -195,7 +199,7 @@
         delete status.dataset.error;
         try {
             const [mine, shared] = await Promise.all([
-                api.expect(api.get(endpoint)),
+                institutional ? api.expect(api.get(endpoint)) : Promise.resolve({folders:[],items:[],saved:[],used:0,canPublish:false,canReview:false}),
                 api.expect(api.get(endpoint + '/public'))
             ]);
             data = mine;
@@ -213,6 +217,11 @@
             )
                 active = 'all';
             render();
+            const linked = new URLSearchParams(location.search).get('material');
+            if (linked && !readerDialog) {
+                const item = await api.expect(api.get(endpoint + '/items/' + encodeURIComponent(linked)));
+                openMaterial(item);
+            }
         } catch (err) {
             error(err.message);
             A.connection?.offerRetry(status, reload, err);
@@ -227,7 +236,7 @@
             control.setAttribute('aria-pressed', String(control.dataset.libraryView === layout));
         find('[data-library-description]').textContent = {
             mine: 'Estude por assuntos: organize documentos, apostilas e links em suas pastas.',
-            public: 'Materiais publicados para a comunidade institucional. Salve referências na sua biblioteca.',
+            public: 'Materiais disponíveis conforme o público escolhido pelo autor.',
             review: 'Revisão administrativa para publicar materiais no portal. Não é avaliação acadêmica da disciplina.'
         }[mode];
         const hero = document.getElementById('libraryHeroCount');
@@ -236,8 +245,8 @@
             mode === 'review'
                 ? `${reviews.length} envio(s) aguardando decisão da administração`
                 : mode === 'public'
-                  ? `${publicItems.length} material(is) público(s) do campus`
-                  : `${data.items.length} documento(s) · ${size(data.used)} de 20 MB usados`;
+                  ? `${publicItems.length} material(is) disponível(is)`
+                  : `${data.items.length} documento(s) · ${size(data.used)} de ${size(data.limits?.user || 200 * 1024 * 1024)} usados`;
         for (const tab of root.querySelectorAll('[data-library-mode]'))
             tab.setAttribute('aria-pressed', String(tab.dataset.libraryMode === mode));
         const folders = find('[data-library-folders]');
@@ -283,6 +292,8 @@
         );
         if (current && mode === 'mine') {
             const actions = element('div', undefined, 'ar-library-actions');
+            const share = button('Copiar link', () => copyMaterialLink(item));
+            actions.append(share);
             actions.append(
                 button('Renomear pasta', () => folderEditor(current)),
                 button('Excluir pasta', () => removeFolder(current))
@@ -384,7 +395,16 @@
         for (const item of visible) {
             const row = element('article', undefined, 'ar-library-item');
             const info = element('div', undefined, 'ar-library-item-info');
-            info.append(element('h4', item.titulo || 'Material indisponível'));
+            const heading = element('h4');
+            const readerLink = element('a', item.titulo || 'Material indisponível');
+            readerLink.href = 'documents.html?material=' + encodeURIComponent(item.id_item);
+            readerLink.addEventListener('click', event => {
+                if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                openMaterial(item);
+            });
+            heading.append(readerLink);
+            info.append(heading);
             if (item.autor_obra)
                 info.append(element('p', 'Autor(es): ' + item.autor_obra, 'ar-library-authors'));
             const folder = data.folders.find((f) => f.id_pasta === item.id_pasta);
@@ -403,16 +423,7 @@
                         .join(' · ')
                 )
             );
-            if (item.descricao) {
-                if (layout === 'list') {
-                    const description = element('details', undefined, 'ar-library-description');
-                    description.append(
-                        element('summary', 'Ver descrição'),
-                        element('p', item.descricao)
-                    );
-                    info.append(description);
-                } else info.append(element('p', item.descricao));
-            }
+            if (item.descricao) info.append(element('p', item.descricao.slice(0, 240) + (item.descricao.length > 240 ? '…' : ''), 'ar-library-description'));
             if (mode === 'public' && item.publicador)
                 info.append(
                     element('small', 'Publicado por ' + item.publicador, 'ar-library-publisher')
@@ -435,7 +446,7 @@
                 info.append(
                     element(
                         'small',
-                        item.visibilidade === 'publico' ? 'Público no portal' : 'Privado'
+                        visibilityLabels[item.visibilidade] || 'Material compartilhado'
                     )
                 );
             if (mode === 'mine' && !item.reference)
@@ -473,6 +484,7 @@
                     link.href = parsed.href;
                     link.target = '_blank';
                     link.rel = 'noopener noreferrer';
+                    A.compactAction?.(link, 'Abrir link');
                     actions.append(link);
                 } catch (_) {
                     info.append(element('p', 'Link indisponível. Edite o endereço.'));
@@ -504,7 +516,7 @@
                 )
                     actions.append(button('Solicitar publicação', () => submitForReview(item)));
             }
-            if (mode === 'public') {
+            if (mode === 'public' && institutional) {
                 const saved =
                     ownIds.has(item.id_item) ||
                     data.items.some((i) => i.reference && i.id_item === item.id_item);
@@ -543,10 +555,67 @@
                     row.append(frame, info, actions);
                     if (item.nome_arquivo?.toLowerCase().endsWith('.docx'))
                         info.append(element('small', 'DOCX · prévia de texto aproximada'));
-                } else row.append(icon(item.tipo), info, actions);
+                } else row.append(coverFor(item), info, actions);
+                row.addEventListener('click', event => {
+                    if (event.target.closest('a,button,input,select,summary') || window.getSelection()?.toString()) return;
+                    openMaterial(item);
+                });
                 items.append(row);
             }
         }
+    }
+    async function copyMaterialLink(item) {
+        const link = new URL('documents.html?material=' + encodeURIComponent(item.id_item), document.baseURI).href;
+        try {
+            await navigator.clipboard.writeText(link);
+            A.showToast?.('Link copiado.');
+        } catch {
+            const input = element('input');
+            input.readOnly = true;
+            input.value = link;
+            input.setAttribute('aria-label', 'Link do material para copiar');
+            status.replaceChildren(input);
+            input.focus();
+            input.select();
+        }
+    }
+    function openMaterial(item) {
+        readerDialog?.close();
+        const previous = document.activeElement;
+        const dialog = element('dialog', undefined, 'ar-library-reader');
+        readerDialog = dialog;
+        const heading = element('h2', item.titulo);
+        heading.id = 'materialReaderTitle';
+        dialog.setAttribute('aria-labelledby', heading.id);
+        const close = button('Fechar', () => dialog.close(), 'ar-iconbtn');
+        close.setAttribute('aria-label', 'Fechar prévia do material');
+        close.textContent = '×';
+        const text = element('p', item.descricao || 'Sem descrição.', 'ar-library-reader-description');
+        const actions = element('div', undefined, 'ar-library-actions');
+        actions.append(button('Copiar link', () => copyMaterialLink(item)));
+        if (item.tipo === 'arquivo') actions.append(button('Baixar', event => download({...item,reviewing:mode === 'review'}, event)));
+        if (item.tipo === 'link') {
+            try {
+                const url = new URL(item.url);
+                if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw Error();
+                const link = element('a', 'Abrir link', 'ar-btn');
+                link.href = url.href;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                A.compactAction?.(link, 'Abrir link');
+                actions.append(link);
+            } catch { actions.append(element('p', 'Link indisponível.')); }
+        }
+        dialog.append(heading);
+        if (!A.dialogShell) dialog.append(close);
+        dialog.append(coverFor(item), text, actions);
+        document.body.append(dialog);
+        dialog.addEventListener('close', () => {
+            dialog.remove();
+            if (readerDialog === dialog) readerDialog = null;
+            if (!readerDialog && previous?.isConnected) previous.focus();
+        }, {once:true});
+        A.dialogShell ? A.dialogShell.open(dialog) : dialog.showModal();
     }
     function editor(title) {
         const previous = document.activeElement;
@@ -668,7 +737,9 @@
         const visibility = element('select');
         for (const [value, label] of [
             ['privado', 'Privado — só eu'],
-            ['publico', 'Público — pessoas do portal']
+            ['publico', 'Geral — qualquer pessoa, mesmo sem conta'],
+            ['comunidade', 'Contas do Arcádia — campus e comunidade externa'],
+            ['campus', 'Somente campus — contas institucionais']
         ]) {
             const option = element('option', label);
             option.value = value;
@@ -711,7 +782,7 @@
         const fileWrap = view.field('Arquivo PDF, DOCX, PNG ou JPEG de até 4 MB', file);
         const fileHelp = element(
             'span',
-            '20 MB de espaço por pessoa. PDF mostra a primeira página; a prévia de DOCX é aproximada.',
+            'Até ' + size(data.limits?.user || 200 * 1024 * 1024) + ' por pessoa, dentro do espaço compartilhado do portal. PDF mostra a primeira página; DOCX tem prévia aproximada.',
             'ar-library-help'
         );
         fileHelp.id = 'libraryFileHelp';
@@ -724,7 +795,7 @@
             'p',
             item?.tipo === 'arquivo'
                 ? 'Você pode alterar o título e mover o documento. Para trocar o arquivo, adicione outro documento. Alterar um envio reinicia a avaliação; um material aprovado de aluno volta a ser privado.'
-                : 'Documentos são privados na sua biblioteca. O acesso ao link no serviço de origem depende desse serviço.',
+                : 'O público escolhido define quem pode abrir este material. O acesso no serviço de origem depende das permissões desse serviço.',
             'ar-library-help'
         );
         view.fields.append(help);
@@ -951,7 +1022,7 @@
                     (item.reviewing ? '/reviews/' : '/items/') +
                     item.id_item +
                     '/download',
-                { headers: { Authorization: 'Bearer ' + A.token.get() } }
+                { headers: A.token.get() ? { Authorization: 'Bearer ' + A.token.get() } : {} }
             );
             if (!response.ok)
                 throw Error(
@@ -1007,5 +1078,8 @@
         node.addEventListener('click', () => {
             if (!loading) documentEditor();
         });
+    if (!institutional) {
+        for (const node of document.querySelectorAll('[data-library-folder], [data-library-document], [data-library-mode=mine], [data-library-mode=review]')) node.hidden = true;
+    }
     reload();
 })(window.Arcadia);
