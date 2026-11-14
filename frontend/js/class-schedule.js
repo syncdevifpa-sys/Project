@@ -21,7 +21,7 @@
         const dialog = node('dialog');
         dialog.className = 'ac-editor ac-class-change-dialog';
         dialog.setAttribute('aria-labelledby', 'classExceptionsTitle');
-        const title = node('h2', canManage ? 'Adicionar ou cancelar aula' : 'Alterações de aula');
+        const title = node('h2', canManage ? 'Cancelar ou restabelecer aula' : 'Alterações de aula');
         title.id = 'classExceptionsTitle';
         const list = node('div'),
             status = node('p');
@@ -54,8 +54,9 @@
         }
         if (canManage) {
             if (onAddExtra) {
-                const extra = node('button', '+ Adicionar aula extra');
+                const extra = node('button', 'Adicionar aula extra');
                 extra.type = 'button';
+                extra.title = 'Agendar uma aula em uma data específica, sem alterar os horários semanais.';
                 extra.className = 'ar-btn ar-btn--primary';
                 extra.onclick = () => { dialog.close(); onAddExtra(); };
                 dialog.insertBefore(extra, list);
@@ -337,11 +338,11 @@
         hint.append(
             node(
                 'p',
-                'Fuso: Belém (America/Belem). A sala da aula é opcional; sem ela, a Agenda usa a sala oficial da turma.'
+                'Cadastrar horário semanal cria aulas que se repetem durante a vigência. Em Configurar aula, você pode adicionar uma aula extra em uma data específica ou escolher um horário cadastrado para cancelar ou restabelecer uma aula.'
             ),
             node(
                 'p',
-                'Seis aulas de 50 minutos por turno, com intervalo de 20 minutos após a terceira. Horários antigos fora da grade são preservados para revisão.'
+                'Cancelar uma aula afeta somente a data escolhida, sem excluir o horário semanal. Sem horários cadastrados, cadastre primeiro o horário da disciplina para poder cancelar uma ocorrência. As alterações também aparecem em Atividades. Fuso: Belém. A sala é opcional; sem ela, será usada a sala da turma.'
             )
         );
         help.append(helpToggle, hint);
@@ -375,10 +376,19 @@
         const grid = node('div');
         const actionsList = node('details');
         actionsList.className = 'ac-schedule-actions-list';
+        actionsList.hidden = true;
         actionsList.append(
-            node('summary', canManage ? 'Cancelar aulas e gerenciar horários' : 'Detalhes dos horários'),
+            node('summary', canManage ? 'Configurar aula' : 'Ver detalhes dos horários'),
             list
         );
+        if (canManage && offering.onAddExtra) {
+            const extra = node('button', 'Adicionar aula extra');
+            extra.type = 'button';
+            extra.className = 'ar-btn';
+            extra.onclick = offering.onAddExtra;
+            actionsList.append(extra);
+            actionsList.hidden = false;
+        }
         root.append(status, retry, grid, actionsList);
         let generation = 0;
         let editing = null;
@@ -399,7 +409,7 @@
             weekday.value = '';
             nextDay.checked = false;
             legend.textContent = 'Adicionar horário semanal';
-            save.textContent = 'Adicionar horário';
+            save.textContent = 'Cadastrar horário semanal';
             cancel.hidden = false;
         }
 
@@ -436,6 +446,8 @@
                         { turno: offering.turno }
                     );
                 list.replaceChildren();
+                actionsList.hidden = rows.length === 0 && !(canManage && offering.onAddExtra);
+                if (actionsList.hidden) actionsList.open = false;
                 for (const row of rows) {
                     const item = node('article');
                     item.className = 'ac-schedule-item';
@@ -511,7 +523,7 @@
                         };
                         actions.append(change, remove);
                     }
-                    const changes = node('button', canManage ? 'Adicionar ou cancelar aula' : 'Ver alterações de aula');
+                    const changes = node('button', canManage ? 'Cancelar ou restabelecer aula' : 'Ver alterações de aula');
                     changes.type = 'button';
                     changes.className = 'ar-btn ar-btn--quiet';
                     changes.onclick = () => exceptions(subject, row, canManage, offering.onAddExtra);
@@ -523,7 +535,7 @@
                     successMessage ||
                     (rows.length
                         ? rows.length + ' horário(s) cadastrado(s).'
-                        : 'Nenhum horário semanal cadastrado nesta oferta.');
+                        : 'Nenhum horário semanal cadastrado para esta disciplina.');
                 return true;
             } catch (error) {
                 if (current !== generation || !root.isConnected) return false;
@@ -545,21 +557,15 @@
             dialog.setAttribute('aria-labelledby', 'scheduleEditorTitle-' + subject);
             const form = node('form');
             form.className = 'ac-schedule-form';
-            add = node('button', 'Adicionar horário');
+            add = node('button', 'Cadastrar horário semanal');
             add.type = 'button';
+            add.title = 'Cadastrar uma aula que se repete toda semana durante a vigência.';
             add.className = 'ar-btn ar-btn--primary';
             add.onclick = () => {
                 resetEditor();
                 showEditor(add);
             };
             toolbar.append(add);
-            if (offering.onAddExtra) {
-                const extra = node('button', '+ Aula extra');
-                extra.type = 'button';
-                extra.className = 'ar-btn';
-                extra.onclick = offering.onAddExtra;
-                toolbar.append(extra);
-            }
             dialog.addEventListener('close', () => {
                 if (returnFocus?.isConnected) returnFocus.focus();
             });
@@ -617,7 +623,7 @@
             field('sala', 'Sala desta aula (opcional)', 'text');
             const actions = node('div');
             actions.className = 'ac-actions';
-            save = node('button', 'Adicionar horário');
+            save = node('button', 'Cadastrar horário semanal');
             save.type = 'submit';
             save.className = 'ar-btn ar-btn--primary';
             cancel = node('button', 'Cancelar');

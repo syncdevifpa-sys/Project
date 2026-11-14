@@ -49,3 +49,6 @@ Thumbs.db
 
 # Capturas e prévias geradas localmente
 /output/
+
+# Anexos enviados no chat não fazem parte do código do portal.
+/.codex-remote-attachments/
