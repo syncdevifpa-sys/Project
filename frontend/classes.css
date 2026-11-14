@@ -30,7 +30,9 @@
   position: relative;
   display: grid;
   gap: 4px;
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
   min-width: 0;
   min-height: 60px;
   padding: 12px 36px 12px 14px;
@@ -665,4 +667,36 @@
   overflow-wrap: anywhere;
   font-size: 13px;
   line-height: 1.4;
+}
+
+/* Contém os grupos e botões na coluna de disciplinas. */
+.ac-context,
+.ac-context nav,
+.ac-nav-group,
+.ac-nav-subjects {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.ac-context > a.ar-btn {
+  display: flex;
+  width: 100%;
+  padding-inline: 10px;
+  text-align: center;
+}
+/* A gestão abre pelo botão da barra de Horários. */
+.ac-schedule-actions-list--managed > summary {
+  display: none;
+}
+.ac-schedule-actions-list--managed:not([open]) > * {
+  display: none;
+}
+.ac-schedule-actions-list--managed[open] {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.ac-schedule-actions-list--managed > .ar-btn {
+  margin-top: 10px;
 }

@@ -368,7 +368,7 @@ test('gerenciamento de horários só aparece quando há conteúdo para expandir'
     const f = fixture();
     f.mount();
     await settle();
-    const panel = walk(f.host).find(n => n.className === 'ac-schedule-actions-list');
+    const panel = walk(f.host).find(n => n.className?.split(' ').includes('ac-schedule-actions-list'));
     assert.equal(panel.hidden, true);
     f.button('Cadastrar horário semanal').onclick();
     f.fill();
@@ -386,9 +386,12 @@ test('Configurar aula mantém uma opção útil sem horários quando é possíve
     let opened = 0;
     f.mount(8, true, () => opened++);
     await settle();
-    const panel = walk(f.host).find(n => n.className === 'ac-schedule-actions-list');
+    const panel = walk(f.host).find(n => n.className?.split(' ').includes('ac-schedule-actions-list'));
     assert.equal(panel.hidden, false);
     assert.equal(panel.children[0].textContent, 'Configurar aula');
+    f.button('Configurar aula').onclick();
+    assert.equal(panel.open, true);
+    assert.equal(f.button('Configurar aula').attributes['aria-expanded'], 'true');
     f.button('Adicionar aula extra').onclick();
     assert.equal(opened, 1);
 });
