@@ -358,9 +358,9 @@ test('filtros combinam turnos, Tudo prevalece e nenhum turno tem retorno explíc
 test('botão de aula extra usa o fluxo da disciplina e não aparece para participantes', async () => {
     const f=fixture();let opened=0;
     f.mount(8,true,()=>opened++);await settle();
-    f.button('Adicionar aula extra').onclick();assert.equal(opened,1);
+    f.button('Configurar aula').onclick();assert.equal(opened,1);
     f.mount(8,false,()=>opened++);await settle();
-    assert.equal(f.button('Adicionar aula extra'),undefined);
+    assert.equal(f.button('Configurar aula'),undefined);
 });
 
 
@@ -381,17 +381,12 @@ test('gerenciamento de horários só aparece quando há conteúdo para expandir'
 });
 
 
-test('Configurar aula mantém uma opção útil sem horários quando é possível adicionar aula extra', async () => {
+test('Configurar aula abre diretamente o formulário sem botão intermediário', async () => {
     const f = fixture();
     let opened = 0;
     f.mount(8, true, () => opened++);
     await settle();
-    const panel = walk(f.host).find(n => n.className?.split(' ').includes('ac-schedule-actions-list'));
-    assert.equal(panel.hidden, false);
-    assert.equal(panel.children[0].textContent, 'Configurar aula');
     f.button('Configurar aula').onclick();
-    assert.equal(panel.open, true);
-    assert.equal(f.button('Configurar aula').attributes['aria-expanded'], 'true');
-    f.button('Adicionar aula extra').onclick();
     assert.equal(opened, 1);
+    assert.equal(f.button('Adicionar aula extra'), undefined);
 });

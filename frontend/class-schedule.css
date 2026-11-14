@@ -1,4 +1,7 @@
+/* Os cabeçalhos fixos ficam na camada da tabela, abaixo dos quadros de ajuda. */
 .ac-week-grid-scroll {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
   width: 100%;
   max-width: 100%;

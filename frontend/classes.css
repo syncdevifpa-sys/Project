@@ -488,6 +488,9 @@
 .ac-schedule-help {
   position: relative;
 }
+.ac-schedule-help[open] {
+  z-index: 5;
+}
 .ac-schedule-help > summary {
   display: grid;
   place-items: center;
@@ -506,6 +509,9 @@
   outline-offset: 3px;
 }
 .ac-schedule-help-content {
+  box-sizing: border-box;
+  max-height: 65dvh;
+  overflow-y: auto;
   position: absolute;
   z-index: 3;
   inset-inline-end: 0;
@@ -666,22 +672,6 @@
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
-}
-/* A gestão abre pelo botão da barra de Horários. */
-.ac-schedule-actions-list--managed > summary {
-  display: none;
-}
-.ac-schedule-actions-list--managed:not([open]) > * {
-  display: none;
-}
-.ac-schedule-actions-list--managed[open] {
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-}
-.ac-schedule-actions-list--managed > .ar-btn {
-  margin-top: 10px;
 }
 
 /* O link de administração é filho da navegação de disciplinas. */
