@@ -1197,16 +1197,14 @@
     async function openExtraClass(id) {
         await load(id);
         if (String(selected) !== String(id) || !detail?.subject?.canManage) return;
-        tab = 'atividades';
-        render();
         postEditor(null, 'aula_extra');
     }
     async function postEditor(post, initialActivity = 'atividade') {
         try {
-            const kind = post?.tipo || (tab === 'atividades' ? 'projeto' : tab);
+            const kind = post?.tipo || (initialActivity === 'aula_extra' || tab === 'atividades' ? 'projeto' : tab);
             const library =
                 kind === 'material' ? await api.expect(api.get('/api/document-library')) : null;
-            const e = editor(post ? 'Editar publicação' : 'Adicionar publicação');
+            const e = editor(post ? 'Editar publicação' : initialActivity === 'aula_extra' ? 'Agendar aula extra' : 'Adicionar publicação');
             const title = e.field('Título', {
                     value: post?.titulo,
                     required: true,
