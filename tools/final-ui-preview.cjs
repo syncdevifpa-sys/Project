@@ -166,7 +166,8 @@ app.get('/api/document-library', (req, res) =>
         limits: { description: 3000, file: 4 * 1024 * 1024 }
     })
 );
-app.get('/api/document-library/public', (_req, res) => res.json([]));
+app.get('/api/document-library/public', (_req, res) => res.json([{...demoLibraryItems[0],visibilidade:'publico',publicador:'Pessoa de demonstração'}]));
+app.get('/api/document-library/items/:id', (req,res)=>{ const item=demoLibraryItems.find(row=>String(row.id_item)===req.params.id);res.status(item?200:404).json(item||{error:'Material não encontrado'}); });
 app.get('/api/document-library/reviews', (_req, res) => res.json([]));
 const taskDemoRows=[{id_tarefa:1,titulo:'Tarefa fictícia para conferir arquivamento',categoria:'Acadêmico',prioridade:'media',status:'aberta',observacao:'Exemplo em memória',arquivo_disponivel:true,arquivada_em:null}];
 app.get(['/api/tasks','/api/tasks/my'],(req,res)=>res.json(taskDemoRows.filter(row=>req.query.include_archived==='1'||!row.arquivada_em)));

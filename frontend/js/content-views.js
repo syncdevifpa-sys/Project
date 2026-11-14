@@ -80,14 +80,6 @@
             list.className = 'ar-content-list';
             state.cards.forEach((card) => {
                 const item = make('li');
-                const description = card.querySelector?.('.ar-card-desc');
-                if (description?.textContent.trim()) {
-                    const disclosure = make('details');
-                    disclosure.dataset.viewDescription = 'true';
-                    disclosure.append(make('summary', 'Ver descrição'));
-                    description.replaceWith(disclosure);
-                    disclosure.append(description);
-                }
                 item.append(card);
                 list.append(item);
             });

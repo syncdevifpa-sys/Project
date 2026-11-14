@@ -62,7 +62,21 @@
 .ar-detail.is-cover-revealed .ar-notice-cover::after { opacity:0; }
 .ar-detail > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transition:transform 420ms ease; }
 .ar-detail.is-cover-revealed > :is(.ar-detail-title,.ar-detail-desc,.ar-detail-eyebrow,.ar-detail-actions) { transform:translateY(3px); }
-.ar-cover-reveal-toggle { position:absolute;right:10px;top:10px;z-index:2;border:1px solid #ffffff80;border-radius:8px;padding:8px 12px;background:#ffffffed;color:#152e3a;font:inherit;font-size:12px;cursor:pointer; }
+.ar-cover-reveal-toggle {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 8px 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  white-space: normal;
+  cursor: pointer;
+}
 .ar-cover-reveal-toggle:focus-visible { outline:2px solid currentColor;outline-offset:3px; }
 .ar-clickable-card { cursor:pointer; }
 .ar-clickable-card :is(button,a,summary) { position:relative;z-index:2; }

@@ -31,3 +31,4 @@ test('alinhamentos e cores aninhados não deixam comandos internos visíveis',()
  assert.equal(host.children[0].style.textAlign,'left');
  assert.equal(host.children[0].children[0].style.textAlign,'justify');
 });
+

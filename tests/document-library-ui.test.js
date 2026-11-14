@@ -205,10 +205,10 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
     views[2].events.click();
     assert.equal(items.dataset.view, 'list');
     assert.ok(items.querySelector('article'));
-    assert.equal(items.querySelector('.ar-library-description').tagName, 'details');
+    assert.equal(items.querySelector('.ar-library-description').tagName, 'p');
     assert.match(
-        items.querySelector('.ar-library-description').querySelector('p').textContent,
+        items.querySelector('.ar-library-description').textContent,
         /Segundo parágrafo/
     );
-    assert.equal(items.querySelector('.ar-library-cover'), undefined);
+    assert.ok(items.querySelector('.ar-library-cover'));
 });

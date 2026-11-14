@@ -456,3 +456,12 @@
 .ar-library-tabs [hidden] {
   display: none;
 }
+
+/* Leitura em janela própria, com a descrição integral e sem ferramentas de edição. */
+.ar-library-reader { box-sizing: border-box; width: min(760px, calc(100vw - 24px)); max-height: 90dvh; overflow: auto; padding: 20px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.ar-library-reader .ar-library-cover { width: 100%; height: auto; min-height: 100px; max-height: 65dvh; }
+.ar-library-reader .ar-library-cover img { width: 100%; max-height: 65dvh; object-fit: contain; }
+.ar-library-reader-description { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; }
+.ar-library-item-info h4 a { color: inherit; text-decoration: none; }
+.ar-library-items[data-view="list"] .ar-library-cover { width: 80px; height: 100px; }
+.ar-library-status input { box-sizing: border-box; max-width: 100%; width: 100%; }

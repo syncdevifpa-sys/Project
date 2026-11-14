@@ -202,3 +202,22 @@ dialog:is(.ar-dialog, .ar-library-dialog, .ar-confirm-dialog) {
     transition: none;
   }
 }
+
+/* Os totais permanecem nas listas e filtros, fora do título principal. */
+.ar-hero-title > sup,
+.ar-hero-count,
+.ar-library-hero-count { display: none; }
+.home-primary-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 16px; }
+.ar-app .ar-card-desc { overflow-wrap: anywhere; }
+@media (max-width: 1024px) {
+  .ar-app .ar-hero-title { font-size: clamp(1.85rem, 4vw, 2.75rem); line-height: 1.15; }
+  .ar-content-views, .ar-filter-menu { font-size: .875rem; }
+}
+@media (max-width: 600px) {
+  .ar-app .ar-hero-title, .ar-app .ar-detail-title { font-size: clamp(1.6rem, 6vw, 2.15rem); line-height: 1.15; }
+  .ar-app .ar-detail { padding: 16px; }
+  .ar-detail .ar-publication-media { width: calc(100% + 32px); max-width: none; margin-inline: -16px; }
+  .ar-publication-media .ar-notice-cover img { max-height: 70dvh; }
+  .ar-cover-reveal-toggle { margin-right: 12px; }
+  .ar-app :is(.ar-content-views, .ar-chipbar, .ar-filter-summary) { max-width: 100%; }
+}

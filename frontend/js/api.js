@@ -50,7 +50,6 @@ window.Arcadia = window.Arcadia || {};
             JSON.parse(localStorage.getItem('arcadiaSessao') || '{}').tipo_usuario === 'externo';
     } catch {}
     const externalRestricted = new Set([
-        'documents.html',
         'profile.html',
         'classes.html',
         'admin.html'

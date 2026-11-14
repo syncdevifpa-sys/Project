@@ -172,7 +172,7 @@
             const description = document.createElement('p');
             description.textContent = news
                 ? item.resumo || item.descricao || ''
-                : item.descricao || '';
+                : window.Arcadia?.noticeText?.summary(item.descricao) || String(item.descricao || '').slice(0, 240);
             if (window.Arcadia?.noticeText)
                 window.Arcadia.noticeText.render(description, description.textContent);
             card.append(title, description);

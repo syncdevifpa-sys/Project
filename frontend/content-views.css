@@ -328,3 +328,14 @@
   height: 44px;
   flex: 0 0 44px;
 }
+
+/* A lista usa a mesma hierarquia do cartão, com miniatura proporcional ao lado do resumo. */
+.ar-content-list .ar-card { display: flow-root; }
+.ar-content-list .ar-card-title { font-size: 1.2rem; line-height: 1.35; }
+.ar-content-list .ar-notice-cover { float: inline-start; width: 100px; height: 100px; margin: 0 14px 10px 0; }
+.ar-content-list .ar-notice-cover img { object-fit: contain; }
+.ar-content-list .ar-card-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+@media(max-width:600px) {
+ .ar-content-list .ar-notice-cover { width: 80px; height: 80px; }
+ .ar-content-list .ar-card-title { font-size: 1.1rem; }
+}

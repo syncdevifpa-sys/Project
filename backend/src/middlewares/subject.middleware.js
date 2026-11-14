@@ -16,7 +16,9 @@ function externalScope(req, res, next) {
     const claims = jwt.decode((req.headers.authorization || '').split(' ')[1] || '');
     if (claims?.tipo_usuario !== 'externo') return next();
     return authenticateExternal(req, res, () => {
-        if (allowed.test(req.path) || externalAllowed.test(req.path)) return next();
+        const publicMaterial = ['GET', 'HEAD'].includes(req.method) &&
+            /^\/document-library\/(?:public\/?$|items\/[1-9]\d*(?:\/(?:preview|download))?\/?$)/.test(req.path);
+        if (allowed.test(req.path) || externalAllowed.test(req.path) || publicMaterial) return next();
         res.set('Cache-Control', 'private, no-store');
         return res.status(403).json({ error: 'Esta área não está disponível para a Comunidade externa.' });
     });

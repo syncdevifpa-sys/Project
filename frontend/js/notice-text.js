@@ -294,5 +294,11 @@
         panel.append(toolbar, hint);
         input.parentElement.after(panel);
     }
-    A.noticeText = { render, editor, serializeEditor };
+    function summary(value, limit = 240) {
+        const target = document.createElement('div');
+        render(target, value || '');
+        const text = target.textContent.replace(/\s+/g, ' ').trim();
+        return text.length > limit ? text.slice(0, limit - 1).replace(/\s+\S*$/, '') + '…' : text;
+    }
+    A.noticeText = { render, editor, serializeEditor, summary };
 })((window.Arcadia = window.Arcadia || {}));
