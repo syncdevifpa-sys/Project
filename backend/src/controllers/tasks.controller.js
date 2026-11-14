@@ -11,9 +11,9 @@ async function listTasks(req, res) {
     try {
         const userId = taskOwner(req);
 
-        const tasks = await tasksModel.listTasks(userId);
+        const tasks = await require('../services/task-archive.service').annotate(await tasksModel.listTasks(userId));
 
-        return res.json(tasks);
+        return res.json(req.query.include_archived === '1' ? tasks : tasks.filter(task => !task.arquivada_em));
     } catch (error) {
         if (schemaUnavailable(req, res, error)) return;
         if (error.status) return res.status(error.status).json({ error: error.message });
@@ -140,6 +140,14 @@ async function deleteTask(req, res) {
 }
 
 module.exports = {
+    async archiveTask(req, res) {
+        try {
+            await require('../services/task-archive.service').set(taskOwner(req), req.params.id, req.body.arquivada);
+            return res.json({ message: req.body.arquivada ? 'Tarefa arquivada.' : 'Tarefa restaurada.' });
+        } catch (error) {
+            return res.status(error.status || 500).json({ error: error.status ? error.message : 'Não foi possível alterar o arquivamento.' });
+        }
+    },
     listTasks,
     getTaskById,
     createTask,

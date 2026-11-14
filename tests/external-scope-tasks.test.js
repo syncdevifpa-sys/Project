@@ -35,6 +35,7 @@ test('sessão externa acessa tarefas próprias sem colidir com mesmo ID instituc
    const row=rows.get(Number(args[0]));if(!row||!owner(sql,row,args[1]))return[{affectedRows:0}];
    rows.delete(Number(args[0]));return[{affectedRows:1}];
   }
+  if(sql.includes('FROM tarefa_arquivos')) return [[]];
   throw Error('Consulta inesperada no teste.');
  });
  const app=express();app.use(express.json());

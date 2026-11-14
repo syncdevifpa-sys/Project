@@ -17,6 +17,7 @@ function fixture({ verified = true, consent = false, taskOwner = true, completed
             if (sql.startsWith('SELECT id_tarefa,status')) return [taskOwner ? [{ id_tarefa: 3, status: completed ? 'concluida' : 'aberta' }] : []];
             if (sql.startsWith('SELECT * FROM lembretes')) return [exists ? [current] : []];
             if (sql.startsWith('SELECT l.*')) return [exists ? [current] : []];
+            if (sql.includes('FROM tarefa_arquivos')) return [[]];
             writes.push({ sql, args }); return [{ insertId: 2, affectedRows: exists ? 1 : 0 }];
         },
         async getConnection() { return { execute: db.execute, beginTransaction: async () => lifecycle.push('begin'), commit: async () => lifecycle.push('commit'), rollback: async () => lifecycle.push('rollback'), release: () => lifecycle.push('release') }; }

@@ -19,6 +19,7 @@
         stage.required = student;
         course.disabled = !student;
         stage.disabled = !student || (stage.options?.length || 0) < 2;
+        A.courseStages?.setEnabled?.(course, student);
         const training = form.elements.formacao.closest?.('label');
         if (training) training.hidden = student;
         document.getElementById('requestedCourseLabel').hidden = !student;

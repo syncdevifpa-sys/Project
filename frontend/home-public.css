@@ -31,3 +31,9 @@
 /* Acesso ao painel acompanha o tema da página, sem texto claro sobre fundo claro. */
 .home-content-page .site-nav .btn { background:var(--surface-card);color:var(--color-ink);border-color:var(--color-line); }
 .home-content-page .site-nav .btn:hover { background:var(--surface-alt);border-color:var(--color-ink); }
+
+html .home-content-page .site-nav .nav-login { background:linear-gradient(110deg,#f6f3ec,#c6def8);color:#0b1f3a;border:1px solid #bfd1e8; }
+html[data-theme=dark] .home-content-page .site-nav .nav-login { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#fff;border-color:#557098; }
+html .home-content-page .site-nav .nav-login::before { content:none; }
+html .home-content-page .site-nav .nav-login:hover { color:#0b1f3a;filter:brightness(.97); }
+html[data-theme=dark] .home-content-page .site-nav .nav-login:hover { color:#fff;filter:brightness(1.13); }

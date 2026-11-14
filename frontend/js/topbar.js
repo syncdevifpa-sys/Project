@@ -130,7 +130,7 @@ function mountTopbar() {
         const input = document.createElement('input');
         input.type = 'search';
         input.placeholder = 'Pesquisar';
-        input.setAttribute('aria-label', 'Pesquisar áreas do portal');
+        input.setAttribute('aria-label', 'Pesquisar no Arcádia');
         field.append(input);
         bar.insertBefore(field, end);
         function openSearch() {
@@ -162,6 +162,16 @@ function mountTopbar() {
     document.addEventListener('focusin', function (e) {
         if (!account.contains(e.target)) account.open = false;
     });
+    function syncBreadcrumb() {
+        bar.querySelector(':scope > .ar-crumbs')?.remove();
+        const path = document.querySelector('main.ar-main .ar-crumbs');
+        bar.classList.toggle('ar-nav--breadcrumbs', Boolean(path));
+        if (path) bar.append(path);
+    }
+    window.Arcadia.topbar = { syncBreadcrumb };
+    syncBreadcrumb();
+    document.documentElement.removeAttribute('data-topbar-mount');
+
  }
 /* Não aguarda fotos: o cabeçalho fica pronto assim que o documento está disponível. */
 if (document.readyState === 'loading') {

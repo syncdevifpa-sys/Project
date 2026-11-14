@@ -557,7 +557,7 @@
                                 r.titulo,
                                 r.descricao,
                                 `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
-                                `<button type="button" class="ar-link" data-open-project="${esc(r.id_projeto)}">Ver projeto</button>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
+                                `<a class="ar-link" data-open-project="${esc(r.id_projeto)}" href="project.html?id=${encodeURIComponent(r.id_projeto)}" aria-label="Ver projeto: ${esc(r.titulo)}">Ver projeto</a>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
                                 (A.projectActions?.canDelete() ? `<button type="button" class="ar-iconbtn ar-project-delete" data-delete-project="${esc(r.id_projeto)}" title="Excluir projeto" aria-label="Excluir projeto: ${esc(r.titulo)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : '')
                             );
                             return A.noticeCover?.valid(r.capa)
@@ -604,9 +604,7 @@
             });
             editableGrid(grid, 'projects', () => rows, reload);
             listen(grid,'click',event=>{
-                const open = event.target.closest('[data-open-project]');
-                const project = open && rows.find(row=>String(row.id_projeto)===open.dataset.openProject);
-                if(project) A.noticeCover.openProject(project);
+
             });
             listen(grid, 'click', async (event) => {
                 const button = event.target.closest('[data-delete-project]');
@@ -689,6 +687,7 @@
             const sourcePicker = $('#calendarSourceFilter'),
                 viewPicker = $('#calendarViewMode');
             const calendarSearch = $('#calendarSearch');
+            calendarSearch.value = new URLSearchParams(location.search).get('busca') || '';
             const searchClear = $('#calendarSearchClear');
             const hasSearch = () => Boolean(calendarSearch.value.trim());
             const listScopeButton = $('#btnCalendarListScope');
@@ -734,6 +733,7 @@
                 sourcePicker.value = '';
                 selectedEvents.clear();
                 refreshSources();
+                if (hasSearch()) chooseUsefulMonth();
                 render();
             });
             holidayYear.addEventListener('change', () => {
@@ -1084,6 +1084,7 @@
                     : !managedRows.some((row) => A.contentEditor.canEdit('calendar', row));
                 selectedEvents.clear();
                 refreshSources();
+                if (hasSearch()) chooseUsefulMonth();
                 render();
             }
             container.addEventListener('click', (event) => {
@@ -1203,9 +1204,14 @@
         async function people() {
             let rows = [];
             const grid = $('#gridPessoas');
+            const searchPeople = document.createElement('input');
+            searchPeople.type='search';searchPeople.className='ar-input';searchPeople.placeholder='Pesquisar pessoas';searchPeople.setAttribute('aria-label','Pesquisar pessoas');
+            searchPeople.value=new URLSearchParams(location.search).get('busca') || '';grid.before(searchPeople);listen(searchPeople,'input',render);
             const bar = filterBar('#chipbarPessoas', audiences, () => rows, 'tipo_usuario', render);
             function render() {
-                const people = bar.visible();
+                const query = searchPeople.value;
+                const normalized = text => String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+                const people = bar.visible().filter(row=>normalized(row.nome).includes(normalized(query)));
                 grid.replaceChildren(
                     ...people.map((r) => A.personCard(r, label(audiences, r.tipo_usuario)))
                 );
@@ -1220,6 +1226,48 @@
             await retryLoad();
         }
 
+        function renderPublicationInfo(info, row, project = false) {
+            const items = A.publicationModel.metadata(row, project);
+            info.innerHTML = items.map(item => `<div class="ar-info-item">${esc(item.label)}: ${item.type === 'date' ? date(item.value) : esc(item.value)}</div>`).join('');
+            info.hidden = !items.length;
+        }
+        async function projectDetail() {
+            const id = new URLSearchParams(location.search).get('id');
+            const projects = await api.expect(api.get('/api/projects'));
+            let own = [];
+            if (A.auth.getSessao().id_usuario) {
+                try { own = await api.expect(api.get('/api/projects/my')); } catch { guard(); }
+            }
+            const all = [...new Map([...projects,...own].map(row => [String(row.id_projeto),row])).values()];
+            const row = all.find(item => String(item.id_projeto) === id);
+            if (!row) throw new Error('Projeto não encontrado ou sem acesso para esta conta.');
+            const detail = $('.ar-detail'), title = $('.ar-detail-title');
+            title.textContent = row.titulo;
+            document.title = row.titulo;
+            const crumb = document.querySelector('.ar-nav > .ar-crumbs [aria-current="page"]') || $('.ar-crumbs [aria-current="page"]');
+            if (crumb) crumb.textContent = row.titulo;
+            $('.ar-detail-desc').textContent = [row.responsavel_nome, label(tracks,row.eixo)].filter(Boolean).join(' · ');
+            $('.ar-detail-status').textContent = 'Projeto';
+            $('.ar-detail-eyebrow').textContent = row.situacao || '';
+            A.noticeText.render($('.body'),row.descricao || '');
+            renderPublicationInfo($('.ar-info'),row,true);
+            detail.querySelectorAll('.ar-publication-media').forEach(node=>node.remove());
+            if (A.noticeCover.valid(row.capa)) {
+                detail.insertAdjacentHTML('afterbegin','<div class="ar-publication-media">'+A.noticeCover.markup(row.capa,'Capa: '+row.titulo)+'</div>');
+                cleanups.push(A.noticeCover.enableReveal(detail.querySelector('.ar-publication-media')));
+            }
+            const actions = $('.ar-detail-actions');actions.replaceChildren();
+            if (A.contentEditor?.canEdit('projects',row)) {
+                const edit = document.createElement('button');edit.type='button';edit.className='ar-btn';edit.textContent='Editar projeto';
+                edit.addEventListener('click',()=>A.contentEditor.open('projects',row,projectDetail));actions.append(edit);
+            }
+            const back = document.createElement('a');back.className='ar-btn';back.href='projects.html';back.textContent='Ver todos os projetos';actions.append(back);
+            const related = $('#noticeRelated'), heading = document.createElement('h2');heading.textContent='Outros projetos';related.replaceChildren(heading);
+            for (const item of projects.filter(item=>String(item.id_projeto)!==id).slice(0,3)) {
+                const link=document.createElement('a');link.href='project.html?id='+encodeURIComponent(item.id_projeto);link.textContent=item.titulo;related.append(link);
+            }
+            related.hidden=related.children.length<2;
+        }
         async function noticeDetail() {
             const id = new URLSearchParams(location.search).get('id');
             const title = $('.ar-detail-title');
@@ -1319,8 +1367,8 @@
                 `<span class="ar-tag">${esc(r.referencia || label(categories, r.categoria))}</span><span class="ar-tag">${esc(A.noticeAudiences.format(r.publico_alvo))}</span>`;
             $('.ar-detail-status').textContent =
                 `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${label(noticeStatuses, r.situacao)}`;
-            info.innerHTML = `<div class="ar-info-item">Publicado: ${date(r.data_publicacao)}</div><div class="ar-info-item">Prazo: ${date(r.data_prazo)}</div><div class="ar-info-item">Vagas: ${esc(r.vagas ?? '—')}</div>`;
-            const crumb = $('.ar-crumbs [aria-current="page"]');
+            renderPublicationInfo(info, r);
+            const crumb = document.querySelector('.ar-nav > .ar-crumbs [aria-current="page"]') || $('.ar-crumbs [aria-current="page"]');
             if (crumb) crumb.textContent = r.titulo;
             if (A.auth.estaLogado() && A.auth.getSessao().tipo_usuario !== 'externo') {
                 await api.expect(api.post('/api/read-notices/' + encodeURIComponent(id)));
@@ -1425,6 +1473,7 @@
             'documents.html': documents,
             'people.html': people,
             'notice.html': noticeDetail,
+            'project.html': projectDetail,
             'dashboard.html': dashboard
         }[page];
         const ready = handler

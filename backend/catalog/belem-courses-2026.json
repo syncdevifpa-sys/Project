@@ -37,296 +37,754 @@
       "url": "https://prosel.ifpa.edu.br/mestrado-profissional-em-engenharia-de-materiais-ppgemat-belem-2026",
       "id": "post_materials",
       "evidence": "Edital 16/2026, turma 2026"
+    },
+    {
+      "id": "undergraduate_pse_duration",
+      "url": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+      "evidence": "Duração consultada em 14/11/2026; referência institucional específica do curso."
+    },
+    {
+      "id": "materials_duration",
+      "url": "https://sigaa.ifpa.edu.br/sigaa/public/curso/portal.jsf?id=30569&lc=en_US",
+      "evidence": "Duração consultada em 14/11/2026; referência institucional específica do curso."
+    },
+    {
+      "id": "hospital_duration",
+      "url": "https://concurso4.fundacaocefetminas.org.br/documentos/OrientacoesManifestacaodeInteresseGraduacaoRetificao99638470504506342582.pdf",
+      "evidence": "Duração consultada em 14/11/2026; referência institucional específica do curso."
+    },
+    {
+      "id": "public_management_duration",
+      "url": "https://sigaa.ifpa.edu.br/sigaa/public/curso/portal.jsf?id=30588&lc=en_US",
+      "evidence": "Duração consultada em 14/11/2026; referência institucional específica do curso."
+    },
+    {
+      "id": "sanitation_post_duration",
+      "url": "https://sigaa.ifpa.edu.br/sigaa/public/curso/portal.jsf?id=17315471&lc=pt_BR",
+      "evidence": "Duração consultada em 14/11/2026; referência institucional específica do curso."
+    },
+    {
+      "id": "masters_duration",
+      "url": "https://www.ifpa.edu.br/ultimas-noticias/2978-ifpa-abre-selecao-para-mestrado-profissional-em-engenharia-de-materiais-em-belem",
+      "evidence": "Duração consultada em 14/11/2026; referência institucional específica do curso."
     }
   ],
   "courses": [
     {
       "nome": "Técnico em Agrimensura (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Desenvolvimento de Sistemas (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Design de Interiores (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Edificações (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Eletrônica (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Eletrotécnica (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Estradas (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Eventos (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Mecânica (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Metalurgia (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Mineração (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Química (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Recursos Pesqueiros (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Saneamento (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Telecomunicações (Integrado)",
-      "sources": ["integrated"],
+      "sources": [
+        "integrated"
+      ],
       "modalidade": "integrado",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "anual",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO126638962103450011752.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Agente Comunitário de Saúde (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Aquicultura (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Edificações (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Eletrônica (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Eletrotécnica (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 24,
+        "regime_etapas": "semestral",
+        "total_etapas": 4,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Eventos (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Geodésia e Cartografia (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Guia de Turismo (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Hospedagem (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Mecânica (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 24,
+        "regime_etapas": "semestral",
+        "total_etapas": 4,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Mineração (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 24,
+        "regime_etapas": "semestral",
+        "total_etapas": 4,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Química (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Saneamento (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 18,
+        "regime_etapas": "semestral",
+        "total_etapas": 3,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Segurança do Trabalho (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 24,
+        "regime_etapas": "semestral",
+        "total_etapas": 4,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Telecomunicações (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 24,
+        "regime_etapas": "semestral",
+        "total_etapas": 4,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Técnico em Vigilância em Saúde (Subsequente)",
-      "sources": ["subsequent"],
+      "sources": [
+        "subsequent"
+      ],
       "modalidade": "subsequente",
-      "nivel": "tecnico"
+      "nivel": "tecnico",
+      "duracao": {
+        "meses": 24,
+        "regime_etapas": "semestral",
+        "total_etapas": 4,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeofertadevagasRETIFICADO128638962102482321811.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Bacharelado em Engenharia de Controle e Automação",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "bacharelado",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 60,
+        "regime_etapas": "semestral",
+        "total_etapas": 10,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Bacharelado em Engenharia de Materiais",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "bacharelado",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 60,
+        "regime_etapas": "semestral",
+        "total_etapas": 10,
+        "fonte": "https://sigaa.ifpa.edu.br/sigaa/public/curso/portal.jsf?id=30569&lc=en_US",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Bacharelado em Engenharia Elétrica",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "bacharelado",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 60,
+        "regime_etapas": "semestral",
+        "total_etapas": 10,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em Ciências Biológicas",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em Geografia",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em História",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em Letras - Língua Portuguesa",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em Matemática",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em Pedagogia",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Licenciatura em Química",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "licenciatura",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 48,
+        "regime_etapas": "semestral",
+        "total_etapas": 8,
+        "fonte": "https://ifpa.edu.br/ultimas-noticias/2981-campus-belem-abre-processo-seletivo-com-465-vagas-em-cursos-de-engenharia-licenciatura-e-tecnologia",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Tecnologia em Análise e Desenvolvimento de Sistemas",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "tecnologia",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "semestral",
+        "total_etapas": 6,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeOfertaRETIFICADO127638962101809261842.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Tecnologia em Gestão Hospitalar",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "tecnologia",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 36,
+        "regime_etapas": "semestral",
+        "total_etapas": 6,
+        "fonte": "https://concurso4.fundacaocefetminas.org.br/documentos/OrientacoesManifestacaodeInteresseGraduacaoRetificao99638470504506342582.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Tecnologia em Gestão Pública",
-      "sources": ["undergraduate_pse"],
+      "sources": [
+        "undergraduate_pse"
+      ],
       "modalidade": "tecnologia",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 30,
+        "regime_etapas": "semestral",
+        "total_etapas": 5,
+        "fonte": "https://sigaa.ifpa.edu.br/sigaa/public/curso/portal.jsf?id=30588&lc=en_US",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Tecnologia em Saneamento Ambiental",
-      "sources": ["undergraduate_psu"],
+      "sources": [
+        "undergraduate_psu"
+      ],
       "modalidade": "tecnologia",
-      "nivel": "graduacao"
+      "nivel": "graduacao",
+      "duracao": {
+        "meses": 30,
+        "regime_etapas": "semestral",
+        "total_etapas": 5,
+        "fonte": "https://concurso26.fundacaocefetminas.org.br/documentos/AnexoIQuadrodeOfertaRETIFICADO127638962101809261842.pdf",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Especialização em Linguagens e Artes na Formação Docente",
-      "sources": ["post_languages"],
+      "sources": [
+        "post_languages"
+      ],
       "modalidade": "especializacao",
-      "nivel": "pos_graduacao"
+      "nivel": "pos_graduacao",
+      "duracao": {
+        "status": "a_confirmar",
+        "fonte": "https://prosel.ifpa.edu.br/especializacao-em-linguagens-e-artes-na-formacao-docente-2026-belem",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Especialização em Tecnologia Social em Saneamento, Saúde e Ambiente na Amazônia",
-      "sources": ["post_sanitation"],
+      "sources": [
+        "post_sanitation"
+      ],
       "modalidade": "especializacao",
-      "nivel": "pos_graduacao"
+      "nivel": "pos_graduacao",
+      "duracao": {
+        "minimo_meses": 18,
+        "maximo_meses": 24,
+        "fonte": "https://sigaa.ifpa.edu.br/sigaa/public/curso/portal.jsf?id=17315471&lc=pt_BR",
+        "verificado_em": "2026-11-14"
+      }
     },
     {
       "nome": "Mestrado Profissional em Engenharia de Materiais",
-      "sources": ["post_materials"],
+      "sources": [
+        "post_materials"
+      ],
       "modalidade": "mestrado",
-      "nivel": "pos_graduacao"
+      "nivel": "pos_graduacao",
+      "duracao": {
+        "minimo_meses": 12,
+        "maximo_meses": 24,
+        "fonte": "https://www.ifpa.edu.br/ultimas-noticias/2978-ifpa-abre-selecao-para-mestrado-profissional-em-engenharia-de-materiais-em-belem",
+        "verificado_em": "2026-11-14"
+      }
     }
   ]
 }

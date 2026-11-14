@@ -61,7 +61,7 @@ async function courseDetails(c, details) {
             fail(503, 'A equipe precisa configurar os cursos e suas etapas no banco.');
         throw error;
     }
-    const course = courses[0];
+    const course = require('./course-duration.service').enrich(courses[0]);
     if (!course || ![1, true].includes(course.ativo)) fail(400, 'Selecione um curso ativo válido.');
     if (
         !['semestral', 'anual'].includes(course.regime_etapas) ||
@@ -70,7 +70,8 @@ async function courseDetails(c, details) {
         course.total_etapas > 20
     )
         fail(409, 'A equipe precisa configurar o regime e o número de etapas deste curso.');
-    if (details.etapa_atual > course.total_etapas)
+    const maximumStage = Math.max(Number(course.total_etapas), course.regime_etapas === 'anual' ? 4 : 8);
+    if (details.etapa_atual > maximumStage)
         fail(400, 'Selecione uma etapa válida para o curso.');
     return {
         ...details,

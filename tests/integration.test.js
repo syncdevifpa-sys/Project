@@ -121,7 +121,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
     );
     assert.equal(targets.publicProjects.children.length, 1);
     assert.equal(targets.publicNews.children[0].children[2].href, 'notice.html?id=12');
-    assert.equal(targets.publicProjects.children[0].children[2].href, 'projects.html?projeto=8');
+    assert.equal(targets.publicProjects.children[0].children[2].href, 'project.html?id=8');
     assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
     assert.equal(targets.publicNews.children.length, 2);
     targets.homeNewsSearch.value = 'matriculas secretaria';

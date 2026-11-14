@@ -291,7 +291,7 @@
         document.querySelectorAll('.ar-hero, .ar-detail, .hero-card, .home-campus-banner').forEach((node, i) => {
             /* Turmas mantém as chaves existentes; ofertas dinâmicas são decoradas por classes.js. */
             const publication =
-                page === 'notice.html' ? new URLSearchParams(location.search).get('id') || '' : '';
+                ['notice.html','project.html'].includes(page) ? new URLSearchParams(location.search).get('id') || '' : '';
             if (page === 'index.html' && !currentOwner()) return;
             const key =
                 page === 'classes.html'

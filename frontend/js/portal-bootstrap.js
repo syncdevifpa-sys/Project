@@ -12,6 +12,7 @@
             root.setAttribute('data-motion', 'reduced');
         const session = JSON.parse(localStorage.getItem('arcadiaSessao') || '{}');
         if (!localStorage.getItem('arcadiaToken') || !session.tipo_usuario) return;
+        root.setAttribute('data-topbar-mount', 'pending');
         root.setAttribute('data-portal-layout', 'sidebar');
         root.setAttribute(
             'data-sidebar-size',
@@ -19,6 +20,7 @@
         );
         root.setAttribute('data-portal-navigation', 'pending');
         window.setTimeout(function () {
+            root.removeAttribute('data-topbar-mount');
             if (root.getAttribute('data-portal-navigation') === 'pending') {
                 root.removeAttribute('data-portal-navigation');
                 root.removeAttribute('data-portal-layout');

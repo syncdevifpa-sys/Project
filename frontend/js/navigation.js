@@ -343,7 +343,7 @@
         groups.forEach((group) => {
             const active =
                 group.links.some(([href]) => href === page) ||
-                (group.name === 'Conteúdo' && page === 'notice.html');
+                (group.name === 'Conteúdo' && ['notice.html','project.html'].includes(page));
             const section = document.createElement('details');
             section.className = 'ar-sidebar-group';
             section.dataset.active = String(active);
@@ -369,7 +369,7 @@
             group.links.forEach(([href, name, glyph]) => {
                 const item = link(href, name, glyph);
                 if (href === 'admin.html') item.id = 'adminAccess';
-                if (href === page || (page === 'notice.html' && href === 'notices.html')) {
+                if (href === page || (page === 'notice.html' && href === 'notices.html') || (page === 'project.html' && href === 'projects.html')) {
                     item.setAttribute('aria-current', href === page ? 'page' : 'true');
                     currentLabel = page === 'notice.html' ? 'Publicação' : name;
                 }
@@ -522,7 +522,7 @@
                 for (const item of nav.querySelectorAll('a[href]')) {
                     const href = item.getAttribute('href') || item.href.split('/').pop();
                     const active =
-                        href === next || (next === 'notice.html' && href === 'notices.html');
+                        href === next || (next === 'notice.html' && href === 'notices.html') || (next === 'project.html' && href === 'projects.html');
                     if (active) {
                         item.setAttribute('aria-current', href === next ? 'page' : 'true');
                         label = next === 'notice.html' ? 'Publicação' : item.textContent.trim();

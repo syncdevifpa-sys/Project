@@ -1,5 +1,5 @@
 /* Prévia local: dados fictícios; calendário e publicações somente em memória, sem banco ou mensagens. */
-const express = require('../node_modules/express');
+const express = require('express');
 const fs = require('fs'),
     path = require('path');
 const db = require('../backend/src/config/database');
@@ -36,6 +36,7 @@ db.getConnection = async () => {
 };
 process.env.JWT_SECRET = 'read-only-preview-key';
 const app = express();
+app.use(express.json({ limit: '2mb' }));
 /* Rotas locais de demonstração: nunca consultam nem escrevem no banco real. */
 app.get('/api', (_req, res) => res.json({ message: 'Prévia Arcádia em memória', preview: true }));
 const demoPerson = (req) => {
@@ -59,7 +60,9 @@ app.get('/api/external/nomes', (_req, res) =>
 );
 app.get('/api/courses', (_req, res) =>
     res.json([
-        { id_curso: 1, nome: 'Curso de demonstração', regime_etapas: 'semestral', total_etapas: 6 }
+        { id_curso: 1, nome: 'Curso de demonstração semestral', ativo: 1, regime_etapas: 'semestral', total_etapas: 6 },
+        { id_curso: 2, nome: 'Curso de demonstração anual', ativo: 1, regime_etapas: 'anual', total_etapas: 3 },
+        { id_curso: 3, nome: 'Curso sem configuração', ativo: 1 }
     ])
 );
 const demoSubject = {
@@ -93,6 +96,7 @@ const demoDetail = (req, aggregate = false) => ({
     people: [],
     pending: [],
     posts: [
+        {id_publicacao: 2, tipo: 'agenda', tipo_atividade: 'aula_extra', titulo: 'Aula extra de revisão — exemplo', inicio: '2026-11-20T18:30', fim: '2026-11-20T20:10', situacao: 'ativo', criado_em: demoPublishedAt},
         {
             id_post: 1,
             tipo: 'aviso',
@@ -112,6 +116,7 @@ app.get('/api/classes/cohorts/3/info', (_req, res) =>
         vices: []
     })
 );
+app.get('/api/classes/11/schedule-activities', (_req,res)=>res.json([{id_horario:1,id_disciplina:11,disciplina:'Disciplina de demonstração',data:'2026-11-18',hora_inicio:'18:30',hora_fim:'20:10',motivo:'Cancelamento de exemplo, somente em memória',sala:'Sala de exemplo'}]));
 app.get('/api/classes/11/schedule', (_req, res) =>
     res.json([
         {
@@ -163,18 +168,14 @@ app.get('/api/document-library', (req, res) =>
 );
 app.get('/api/document-library/public', (_req, res) => res.json([]));
 app.get('/api/document-library/reviews', (_req, res) => res.json([]));
-app.get(['/api/tasks', '/api/tasks/my'], (_req, res) =>
-    res.json([
-        {
-            id_tarefa: 1,
-            titulo: 'Tarefa fictícia para conferir visualizações',
-            categoria: 'Acadêmico',
-            prioridade: 'media',
-            status: 'aberta',
-            observacao: 'Exemplo em memória'
-        }
-    ])
-);
+const taskDemoRows=[{id_tarefa:1,titulo:'Tarefa fictícia para conferir arquivamento',categoria:'Acadêmico',prioridade:'media',status:'aberta',observacao:'Exemplo em memória',arquivo_disponivel:true,arquivada_em:null}];
+app.get(['/api/tasks','/api/tasks/my'],(req,res)=>res.json(taskDemoRows.filter(row=>req.query.include_archived==='1'||!row.arquivada_em)));
+app.put('/api/tasks/:id/archive',(req,res)=>{
+ const task=taskDemoRows.find(row=>String(row.id_tarefa)===req.params.id);
+ if(!task) return res.status(404).json({error:'Tarefa não encontrada.'});
+ task.arquivada_em=req.body.arquivada?new Date().toISOString():null;
+ res.json({message:task.arquivada_em?'Tarefa arquivada.':'Tarefa restaurada.'});
+});
 app.get('/api/admin/resources', (_req, res) => res.json([]));
 app.get('/api/admin/people/users', (_req, res) =>
     res.json([
@@ -212,7 +213,7 @@ app.post(
         }
     }
 );
-app.use(express.json({ limit: '2mb' }));
+
 for (const [kind, prefix] of [
     ['users', 'auth'],
     ['external', 'external']
@@ -300,6 +301,16 @@ app.post('/api/read-notices/:id', (_req, res) => res.json({ affectedRows: 1 }));
     capa: 'data:image/jpeg;base64,' + fs.readFileSync(path.join(__dirname,
         '../frontend/assets/landing/news-' + slug.substring(0, 4) + '-1.jpg')).toString('base64')
 }));
+/* Anúncio editorial para revisão local; não é publicado no site nem no banco. */
+noticeDemoRows.push({
+    id_aviso: 12, id_usuario: 4, tipo_publicacao: 'noticia', categoria: 'evento',
+    publico_alvo: 'todos', situacao: 'publicado', data_publicacao: demoPublishedAt,
+    titulo: 'Conheça o Arcádia: um mural de apoio à comunidade do IFPA Campus Belém',
+    resumo: 'Desenvolvido por alunos do campus, o projeto acadêmico reúne notícias, projetos e ferramentas para facilitar o acesso à informação e a organização do dia a dia.',
+    descricao: 'Encontrar informações e acompanhar as atividades do campus pode ficar mais simples. Com essa proposta, alunos do IFPA Campus Belém desenvolvem o Arcádia, um projeto acadêmico que funciona como mural de apoio à comunidade do campus.\n\nEm um só ambiente, o site reúne notícias e avisos, calendário, projetos da comunidade e recursos de organização pessoal. A proposta é aproximar as pessoas das informações que fazem parte da sua rotina e dar visibilidade às iniciativas desenvolvidas no campus.\n\nQuem visita o site pode conhecer as publicações e os projetos públicos. Ao criar uma conta, também pode acessar ferramentas pessoais, como tarefas e biblioteca de documentos. O acesso às turmas e aos recursos vinculados a perfis depende das permissões e da validação previstas no portal.\n\nO Arcádia está em desenvolvimento. A participação da comunidade, com sugestões e relatos de dificuldades, ajuda a orientar as próximas melhorias. O projeto não substitui o SIGAA nem os canais oficiais da instituição; editais, prazos e orientações devem ser conferidos nas fontes responsáveis.\n\nExplore o mural, conheça as iniciativas e envie suas sugestões para portalarcadia.contato@gmail.com.',
+    capa: 'data:image/jpeg;base64,' + fs.readFileSync(path.join(__dirname,
+        '../frontend/assets/landing/arcadia-biblioteca-real-v3.jpg')).toString('base64')
+});
 app.get('/api/notices', (_req, res) => res.json(noticeDemoRows));
 app.get('/api/notices/:id', (req, res) => {
     const notice = noticeDemoRows.find((row) => String(row.id_aviso) === req.params.id);

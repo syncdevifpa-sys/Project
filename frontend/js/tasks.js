@@ -44,6 +44,8 @@ window.Arcadia = window.Arcadia || {};
 
     A.tasks = {
         ...crud,
+        list: () => api.expect(api.get(BASE + '?include_archived=1')),
+        archive: (id, arquivada) => api.expect(api.put(BASE + '/' + encodeURIComponent(id) + '/archive', { arquivada })),
         patch,
 
         PRIORIDADES: ['baixa', 'media', 'alta'],

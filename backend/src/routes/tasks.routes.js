@@ -7,7 +7,8 @@ const {
     getTaskById,
     createTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    archiveTask
 } = require('../controllers/tasks.controller');
 
 const { authenticateSubject: authenticateToken } = require('../middlewares/subject.middleware');
@@ -19,6 +20,7 @@ router.get('/:id', authenticateToken, getTaskById);
 router.post('/', authenticateToken, createTask);
 
 router.put('/:id', authenticateToken, updateTask);
+router.put('/:id/archive', authenticateToken, archiveTask);
 
 router.delete('/:id', authenticateToken, deleteTask);
 

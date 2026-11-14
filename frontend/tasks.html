@@ -236,6 +236,7 @@
             <details class="ar-collection-filter-panel ar-compact-filters" id="taskFilterDetails">
               <summary>Filtros<span id="taskFilterSummary">Todas</span></summary>
               <div class="ar-collection-filter-body ar-compact-filter-body">
+                <label class="ar-field">Exibir<select id="taskArchiveScope"><option value="active">Tarefas ativas</option><option value="archived">Arquivadas</option></select></label>
                 <div
                   class="ar-chipbar"
                   role="group"
@@ -367,6 +368,7 @@
     <script src="js/task-filters.js"></script>
     <script src="js/reminder-time.js"></script>
     <script src="js/task-reminders.js"></script>
+    <script src="js/global-search.js"></script>
     <script src="js/portal.js"></script>
     <script src="js/page-help.js"></script>
     <script src="js/compact-filters.js"></script>
@@ -428,11 +430,12 @@
 
         function visiveis() {
           var status = FILTRO_STATUS[filtro];
+          var base = tarefas.filter(function(t) { return Boolean(t.arquivada_em) === (document.getElementById('taskArchiveScope').value === 'archived'); });
           var lista = status
-            ? tarefas.filter(function (t) {
+            ? base.filter(function (t) {
                 return t.status === status;
               })
-            : tarefas.slice();
+            : base.slice();
           return A.taskFilters.visible(lista, {
             query: document.getElementById('taskSearch').value,
             sort: document.getElementById('taskSort').value
@@ -451,11 +454,13 @@
               '" data-id="' + id + '" title="' + rotulo + '" aria-label="' + rotulo + ': ' +
               esc(t.titulo) + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + desenho + '</svg></button>';
           }
+          if (t.arquivada_em) return '<span class="ar-task-actions">' + acao('restaurar', 'Restaurar tarefa', '<path d="M3 10a9 9 0 1 1 2 8 M3 4v6h6"/>') + '</span>';
+          var arquivo = t.arquivo_disponivel ? acao('arquivar', 'Arquivar tarefa', '<path d="M3 3h18v5H3z M5 8v13h14V8 M10 12h4"/>') : '';
           var editar =
             acao('editar', 'Editar tarefa', '<path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/>');
           if (t.status === 'concluida')
-            return '<span class="ar-task-actions">' + editar + '<span class="ar-badge ar-badge--neutral">Concluída</span></span>';
-          var html = editar;
+            return '<span class="ar-task-actions">' + editar + arquivo + '<span class="ar-badge ar-badge--neutral">Concluída</span></span>';
+          var html = editar + arquivo;
           if (t.status === 'aberta') {
             html += acao('iniciar', 'Iniciar tarefa', '<path d="m8 5 11 7-11 7Z"/>');
           }
@@ -628,9 +633,11 @@
         function renderContagens(lista) {
           var status = FILTRO_STATUS[filtro];
           document.getElementById('taskFilterSummary').textContent =
+            (document.getElementById('taskArchiveScope').value === 'archived' ? 'Arquivadas · ' : '') +
             (status ? STATUS_UI[status].label : 'Todas') +
             (document.getElementById('taskSearch').value.trim() ? ' · busca ativa' : '');
-          var total = tarefas.length;
+          var base = tarefas.filter(function(t) { return Boolean(t.arquivada_em) === (document.getElementById('taskArchiveScope').value === 'archived'); });
+          var total = base.length;
           document
             .querySelectorAll('.ar-navpill a[href="tasks.html"] .ar-sup, .ar-hero-count')
             .forEach(function (el) {
@@ -639,7 +646,7 @@
           document.querySelectorAll('#chipbarTarefas .ar-chip').forEach(function (chip) {
             var status = FILTRO_STATUS[chip.getAttribute('data-status')];
             var n = status
-              ? tarefas.filter(function (t) {
+              ? base.filter(function (t) {
                   return t.status === status;
                 }).length
               : total;
@@ -691,6 +698,14 @@
             return;
           }
 
+          var action = btn.getAttribute('data-action');
+          if (action === 'arquivar' || action === 'restaurar') {
+            btn.disabled = true;
+            A.tasks.archive(tarefa.id_tarefa, action === 'arquivar').then(carregar).then(function() {
+              A.showToast(action === 'arquivar' ? 'Tarefa arquivada. Seus lembretes foram desligados.' : 'Tarefa restaurada.');
+            }).catch(function(err) { btn.disabled = false; erro(err); });
+            return;
+          }
           var novo = btn.getAttribute('data-action') === 'concluir' ? 'concluida' : 'em_andamento';
           var anterior = tarefa.status;
           var mensagem = novo === 'concluida' ? 'Tarefa concluída.' : 'Tarefa iniciada.';
@@ -725,6 +740,7 @@
 
         document.getElementById('taskSearch').addEventListener('input', render);
         document.getElementById('taskSort').addEventListener('change', render);
+        document.getElementById('taskArchiveScope').addEventListener('change', render);
         carregar();
       });
     </script>

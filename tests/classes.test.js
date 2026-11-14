@@ -747,3 +747,19 @@ test('oferta exige catálogo disponível e usa seu nome quando título opcional 
     assert.equal(missing.writes.length, 0);
     await assert.rejects(fixture().service.create(7, body), { status: 503 });
 });
+
+test('atividades unificadas validam tipo, datas e cancelamento sem alterar o formato histórico', async () => {
+    for(const kind of ['projeto','atividade','trabalho','avaliacao']) {
+        const f=fixture();
+        await f.service.savePost(7,3,{tipo:'projeto',tipo_atividade:kind,titulo:'Preparação',inicio:'2026-11-20T09:00'});
+        const classification=f.writes.find(row=>row.sql.includes('SET tipo_atividade='));
+        assert.equal(classification.args[0],kind);
+        assert.ok(f.lifecycle.includes('commit'));
+    }
+    assert.throws(()=>entry({tipo:'agenda',tipo_atividade:'aula_cancelada',titulo:'Aula',situacao:'cancelado'}),{status:400});
+    assert.throws(()=>entry({tipo:'projeto',tipo_atividade:'aula_cancelada',titulo:'Aula',inicio:'2026-11-20T09:00',situacao:'cancelado'}),{status:400});
+    assert.equal(entry({tipo:'agenda',tipo_atividade:'aula_cancelada',titulo:'Aula',inicio:'2026-11-20T09:00',situacao:'cancelado'})[7],'cancelado');
+    const stranger=fixture({teacher:88});
+    await assert.rejects(stranger.service.savePost(7,3,{tipo:'projeto',tipo_atividade:'avaliacao',titulo:'Prova'}),{status:403});
+    assert.equal(stranger.writes.length,0);
+});

@@ -109,6 +109,7 @@ test('todas as disciplinas autorizadas da turma compartilham a grade, inclusive 
                         canCreate: true
                     };
                 if (path.endsWith('/info')) return {};
+                if (path.endsWith('/schedule-activities')) return [];
                 if (path.endsWith('/schedule'))
                     return path.includes('/9/')
                         ? [

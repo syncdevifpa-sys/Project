@@ -17,11 +17,11 @@
     };
     const call = (path, method = 'GET', body) =>
         A.api.expect(A.api.request('/api/classes' + path, { method, body }));
-    async function exceptions(subject, schedule, canManage) {
+    async function exceptions(subject, schedule, canManage, onAddExtra) {
         const dialog = node('dialog');
         dialog.className = 'ar-dialog ar-notice-editor';
         dialog.setAttribute('aria-labelledby', 'classExceptionsTitle');
-        const title = node('h2', 'Exceções de aula');
+        const title = node('h2', canManage ? 'Adicionar ou cancelar aula' : 'Alterações de aula');
         title.id = 'classExceptionsTitle';
         const list = node('div'),
             status = node('p');
@@ -47,12 +47,20 @@
                         )
                     )
                 );
-                status.textContent = current.length ? '' : 'Nenhuma exceção registrada.';
+                status.textContent = current.length ? '' : 'Nenhuma alteração registrada para este horário.';
             } catch (e) {
                 status.textContent = e.message;
             }
         }
         if (canManage) {
+            if (onAddExtra) {
+                const extra = node('button', '+ Adicionar aula extra');
+                extra.type = 'button';
+                extra.className = 'ar-btn ar-btn--primary';
+                extra.onclick = () => { dialog.close(); onAddExtra(); };
+                dialog.insertBefore(extra, list);
+                dialog.insertBefore(node('p', 'A aula extra usa uma data própria. Para cancelar uma aula semanal, escolha a data abaixo.'), list);
+            }
             const form = node('form');
             form.className = 'ar-calendar-import-row';
             const dateLabel = node('label', 'Data da aula');
@@ -68,12 +76,18 @@
             const reason = node('input');
             reason.maxLength = 300;
             reasonLabel.append(reason);
-            const label = node('label', 'Cancelar somente esta aula');
-            const canceled = node('input');
-            canceled.type = 'checkbox';
-            canceled.checked = true;
-            label.append(canceled);
-            const save = node('button', 'Salvar exceção');
+            const label = node('label', 'O que deseja fazer?');
+            label.className = 'ar-field';
+            const action = node('select');
+            for (const [value, text] of [['cancelar','Cancelar aula nesta data'], ['restabelecer','Restabelecer aula cancelada']]) {
+                const option = node('option', text);
+                option.value = value;
+                action.append(option);
+            }
+            action.value = 'cancelar';
+            label.append(action);
+            const save = node('button', 'Cancelar aula');
+            action.onchange = () => { save.textContent = action.value === 'cancelar' ? 'Cancelar aula' : 'Restabelecer aula'; };
             save.type = 'submit';
             save.className = 'ar-btn';
             form.append(dateLabel, reasonLabel, label, save);
@@ -84,7 +98,7 @@
                     const previous = current.find((row) => row.data === date.value);
                     await call(endpoint, 'PUT', {
                         data: date.value,
-                        cancelada: canceled.checked,
+                        cancelada: action.value === 'cancelar',
                         motivo: reason.value,
                         versao: previous?.versao || 0
                     });
@@ -362,7 +376,7 @@
         const actionsList = node('details');
         actionsList.className = 'ac-schedule-actions-list';
         actionsList.append(
-            node('summary', canManage ? 'Lista e ações dos horários' : 'Detalhes dos horários'),
+            node('summary', canManage ? 'Cancelar aulas e gerenciar horários' : 'Detalhes dos horários'),
             list
         );
         root.append(status, retry, grid, actionsList);
@@ -497,10 +511,10 @@
                         };
                         actions.append(change, remove);
                     }
-                    const changes = node('button', 'Exceções de aula');
+                    const changes = node('button', canManage ? 'Adicionar ou cancelar aula' : 'Ver alterações de aula');
                     changes.type = 'button';
                     changes.className = 'ar-btn ar-btn--quiet';
-                    changes.onclick = () => exceptions(subject, row, canManage);
+                    changes.onclick = () => exceptions(subject, row, canManage, offering.onAddExtra);
                     actions.append(changes);
                     item.append(copy, actions);
                     list.append(item);
@@ -539,6 +553,13 @@
                 showEditor(add);
             };
             toolbar.append(add);
+            if (offering.onAddExtra) {
+                const extra = node('button', '+ Aula extra');
+                extra.type = 'button';
+                extra.className = 'ar-btn';
+                extra.onclick = offering.onAddExtra;
+                toolbar.append(extra);
+            }
             dialog.addEventListener('close', () => {
                 if (returnFocus?.isConnected) returnFocus.focus();
             });

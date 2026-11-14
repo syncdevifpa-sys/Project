@@ -26,6 +26,14 @@ async function authorizeContext(db, owner, row, { lock=false, sending=false }={}
     if (link.kind==='tarefa') {
         const [rows]=await db.execute('SELECT id_tarefa,status FROM tarefas WHERE id_tarefa=? AND '+who.column+'=?'+(who.external?' AND id_usuario IS NULL':'')+suffix,[link.key,who.id]);
         if (!rows.length) fail(404,'Tarefa não encontrada para esta conta.');
+        if (sending || row.ativo) {
+            try {
+                const [archived] = await db.execute('SELECT id_tarefa FROM tarefa_arquivos WHERE id_tarefa=?', [link.key]);
+                if (archived.length) fail(409,'Tarefa arquivada não recebe lembretes ativos.');
+            } catch (error) {
+                if (error.code !== 'ER_NO_SUCH_TABLE') throw error;
+            }
+        }
         if ((sending || row.ativo) && rows[0].status==='concluida') fail(409,'Tarefa concluída não recebe lembretes ativos.');
         return rows[0];
     }
