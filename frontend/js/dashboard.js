@@ -658,7 +658,7 @@
                           const read = !isUnread(n);
                           return (
                               '<li><a class="db-notice' + (read ? ' is-read' : '') + '" data-notice="' + esc(n.id_aviso) +
-                              '" href="notice.html?id=' + encodeURIComponent(n.id_aviso) + '">' +
+                              '" href="' + esc(A.noticeLinks.path(n)) + '">' +
                               '<p class="db-notice-title">' + (read ? '' : '<span class="db-sr-only">Não lido: </span>') +
                               esc(n.titulo) + '</p><p class="db-notice-meta">' +
                               (Number(n.urgente) ? '<span class="db-pill db-pill--urgent">Urgente</span>' : '') +
@@ -833,7 +833,7 @@
                 hint: noticeMeta(n).split(',')[0],
                 run: () => {
                     readOne(n.id_aviso);
-                    go('notice.html?id=' + encodeURIComponent(n.id_aviso));
+                    go(A.noticeLinks.path(n));
                 }
             });
             const portal = A.openCommandPalette

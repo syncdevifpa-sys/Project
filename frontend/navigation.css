@@ -1,3 +1,8 @@
+/* O layout lateral usa a barra atual desde o primeiro quadro de carregamento. */
+html[data-portal-layout='sidebar'] .ar-nav > :is(.ar-navpill, .ar-grouped-nav) {
+  display: none;
+}
+
 .ar-grouped-nav {
   display: flex;
   align-items: center;

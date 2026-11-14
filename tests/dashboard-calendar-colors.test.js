@@ -10,6 +10,7 @@ test('painel identifica categorias do calendário e aplica cores personalizadas 
         ready = [],
         properties = {};
     const A = {
+        noticeLinks: require('../frontend/js/notice-links'),
         auth: { exigirLogin: () => true, getSessao: () => ({ id_usuario: 4 }) },
         calendarCategories: require('../frontend/js/calendar-categories'),
         showToast: (message) => assert.fail(message),

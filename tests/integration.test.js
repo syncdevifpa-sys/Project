@@ -110,6 +110,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
             }
         }
     });
+    vm.runInContext(fs.readFileSync(path.join(root, 'frontend/js/notice-links.js'), 'utf8'), context);
     vm.runInContext(fs.readFileSync(path.join(root, 'frontend/js/landing.js'), 'utf8'), context);
     await new Promise((resolve) => setImmediate(resolve));
     assert.equal(calls.length, 1);
@@ -120,7 +121,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         '<script>private()</script>'
     );
     assert.equal(targets.publicProjects.children.length, 1);
-    assert.equal(targets.publicNews.children[0].children[2].href, 'notice.html?id=12');
+    assert.equal(targets.publicNews.children[0].children[2].href, '/noticias/12/script-private-script');
     assert.equal(targets.publicProjects.children[0].children[2].href, 'project.html?id=8');
     assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
     assert.equal(targets.publicNews.children.length, 2);
@@ -128,7 +129,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
     searchEvents.input();
     assert.equal(targets.publicNews.children.length, 1);
     assert.equal(targets.publicNews.children[0].children[0].textContent, 'Matrículas abertas');
-    assert.equal(targets.publicNews.children[0].children[2].href, 'notice.html?id=13');
+    assert.equal(targets.publicNews.children[0].children[2].href, '/noticias/13/matriculas-abertas');
 });
 
 test('início público usa projeções públicas e independe da sessão', async () => {
