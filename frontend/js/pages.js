@@ -57,6 +57,39 @@
                 /[&<>"']/g,
                 (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
             );
+        /* Copia o endereço da publicação; o campo selecionável cobre navegadores sem clipboard. */
+        function addCopyLink(actions, row, project = false) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'ar-btn ar-btn--secondary';
+            button.textContent = 'Copiar link';
+            button.setAttribute('aria-label', project ? 'Copiar link deste projeto' : 'Copiar link desta publicação');
+            const path = project ? '/project.html?id=' + encodeURIComponent(row.id_projeto) : A.noticeLinks.path(row);
+            const url = new URL(path, location.origin).href;
+            let fallback;
+            listen(button, 'click', async () => {
+                button.disabled = true;
+                try {
+                    await navigator.clipboard.writeText(url);
+                    A.showToast?.('Link copiado.');
+                } catch {
+                    if (!fallback) {
+                        fallback = document.createElement('input');
+                        fallback.type = 'text';
+                        fallback.readOnly = true;
+                        fallback.value = url;
+                        fallback.setAttribute('aria-label', 'Link da publicação para copiar');
+                        actions.append(fallback);
+                    }
+                    fallback.focus();
+                    fallback.select();
+                    A.showToast?.('Selecione e copie o link exibido.');
+                } finally {
+                    button.disabled = false;
+                }
+            });
+            actions.append(button);
+        }
         const value = (id) => root.querySelector('#' + id)?.value.trim() || '';
         const categories = {
             Enrollment: 'matricula',
@@ -1257,6 +1290,7 @@
                 cleanups.push(A.noticeCover.enableReveal(detail.querySelector('.ar-publication-media')));
             }
             const actions = $('.ar-detail-actions');actions.replaceChildren();
+            addCopyLink(actions, row, true);
             if (A.contentEditor?.canEdit('projects',row)) {
                 const edit = document.createElement('button');edit.type='button';edit.className='ar-btn';edit.textContent='Editar projeto';
                 edit.addEventListener('click',()=>A.contentEditor.open('projects',row,projectDetail));actions.append(edit);
@@ -1314,6 +1348,7 @@
                 });
                 actions.append(button);
             }
+            addCopyLink(actions, r);
             const detail = title.closest('.ar-detail');
             detail?.querySelector('.ar-notice-cover')?.remove();
             body.parentElement?.querySelector('.ar-publication-media')?.remove();
