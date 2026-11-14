@@ -377,10 +377,26 @@
         const actionsList = node('details');
         actionsList.className = 'ac-schedule-actions-list';
         actionsList.hidden = true;
+        actionsList.id = 'scheduleActions-' + subject;
+        let configure;
         actionsList.append(
             node('summary', canManage ? 'Configurar aula' : 'Ver detalhes dos horários'),
             list
         );
+        if (canManage) {
+            configure = node('button', 'Configurar aula');
+            configure.type = 'button';
+            configure.className = 'ar-btn';
+            configure.setAttribute('aria-controls', actionsList.id);
+            configure.setAttribute('aria-expanded', 'false');
+            configure.disabled = !offering.onAddExtra;
+            configure.onclick = () => {
+                actionsList.open = !actionsList.open;
+                configure.setAttribute('aria-expanded', String(actionsList.open));
+            };
+            actionsList.className += ' ac-schedule-actions-list--managed';
+            toolbar.append(configure);
+        }
         if (canManage && offering.onAddExtra) {
             const extra = node('button', 'Adicionar aula extra');
             extra.type = 'button';
@@ -448,6 +464,10 @@
                 list.replaceChildren();
                 actionsList.hidden = rows.length === 0 && !(canManage && offering.onAddExtra);
                 if (actionsList.hidden) actionsList.open = false;
+                if (configure) {
+                    configure.disabled = actionsList.hidden;
+                    configure.setAttribute('aria-expanded', String(actionsList.open));
+                }
                 for (const row of rows) {
                     const item = node('article');
                     item.className = 'ac-schedule-item';
