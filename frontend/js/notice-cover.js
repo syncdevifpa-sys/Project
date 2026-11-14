@@ -218,27 +218,7 @@
         });
     }
     function openProject(project) {
-        const dialog = document.createElement('dialog');
-        dialog.className = 'ar-dialog ar-project-reader';
-        const heading = document.createElement('h2');
-        heading.textContent = project.titulo;
-        const close = document.createElement('button');
-        close.type = 'button'; close.className = 'ar-iconbtn'; close.textContent = '×';
-        close.setAttribute('aria-label','Fechar projeto');
-        close.addEventListener('click',()=>dialog.close());
-        const content = document.createElement('section');
-        content.className = 'ar-detail';
-        if (valid(project.capa)) content.insertAdjacentHTML('afterbegin','<div class="ar-publication-media">'+markup(project.capa,'Capa: '+project.titulo)+'</div>');
-        const body = document.createElement('div');
-        A.noticeText.render(body,project.descricao || '');
-        content.append(heading,body);
-        if (!A.dialogShell) dialog.append(close);
-        dialog.append(content);
-        document.body.append(dialog);
-        const media = content.querySelector('.ar-publication-media');
-        const cleanup = media ? enableReveal(media) : ()=>{};
-        dialog.addEventListener('close',()=>{cleanup();dialog.remove();},{once:true});
-        A.dialogShell ? A.dialogShell.open(dialog) : dialog.showModal();
+        window.location.href = 'project.html?id=' + encodeURIComponent(project.id_projeto);
     }
     A.noticeCover = { valid, markup, decorate, editor, enableReveal, linkCard, openProject };
 })((window.Arcadia = window.Arcadia || {}));

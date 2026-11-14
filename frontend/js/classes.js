@@ -14,17 +14,15 @@
         status = q('#classStatus');
     A.classAppearance.decorate(q('.ar-hero'), 'overview', 'Minhas turmas');
     const labels = {
-        aviso: 'Avisos',
+        atividades: 'Atividades',
         material: 'Materiais',
-        projeto: 'Projetos e atividades',
-        agenda: 'Agenda',
         people: 'Participantes',
         horarios: 'Horários'
     };
     let data = { subjects: [], invites: [] },
         selected = null,
         detail = null,
-        tab = 'aviso',
+        tab = 'atividades',
         generation = 0,
         reloadGeneration = 0;
     const el = (tag, text, cls) => {
@@ -283,7 +281,7 @@
             selected = 'cohort:' + id + ':' + (period || periodKey(result.subject));
             rememberSelection();
             detail = result;
-            if (tab === 'people') tab = 'aviso';
+            if (tab === 'people') tab = 'atividades';
             renderSubjects();
             render();
             message('');
@@ -685,7 +683,8 @@
                         A.classSchedule.mount(content, {
                             ...offer,
                             showGrid: false,
-                            onChange: loadWeekly
+                            onChange: loadWeekly,
+                            onAddExtra: () => openExtraClass(offer.id_disciplina)
                         });
                 };
                 picker.addEventListener('change', choose);
@@ -693,7 +692,7 @@
             } else {
                 const content = el('div');
                 scheduleControls.append(content);
-                A.classSchedule.mount(content, { ...d, showGrid: false, onChange: loadWeekly });
+                A.classSchedule.mount(content, { ...d, showGrid: false, onChange: loadWeekly, onAddExtra: () => openExtraClass(d.id_disciplina) });
             }
             return;
         }
@@ -781,11 +780,11 @@
             }
             return;
         }
-        if (tab === 'projeto')
+        if (tab === 'atividades')
             host.append(
                 el(
                     'p',
-                    'Projetos e atividades desta disciplina. Consulte as orientações e o prazo do professor. Envie trabalhos pelo canal indicado na atividade.',
+                    'Avisos, aulas canceladas, projetos, trabalhos e avaliações reunidos com suas datas. Envie trabalhos pelo canal indicado pelo professor.',
                     'ac-note'
                 )
             );
@@ -794,7 +793,7 @@
                 btn(
                     'Adicionar ' +
                         {
-                            aviso: 'aviso',
+                            atividades: 'atividade',
                             material: 'material',
                             projeto: 'projeto ou atividade',
                             agenda: 'evento'
@@ -802,8 +801,10 @@
                     () => postEditor()
                 )
             );
-        const visible = posts.filter((p) => p.tipo === tab);
-        if (!visible.length) host.append(el('p', 'Nenhum conteúdo nesta seção.', 'ac-empty'));
+        const visible = posts.filter((p) => tab === 'atividades' ? p.tipo !== 'material' : p.tipo === tab).sort((a,b) => String(b.inicio || b.criado_em).localeCompare(String(a.inicio || a.criado_em)));
+        const empty = el('p', 'Nenhum conteúdo nesta seção.', 'ac-empty');
+        if (!visible.length) host.append(empty);
+        if (tab === 'atividades') loadScheduleActivities(host, d, empty);
         for (const post of visible) {
             const row = el(
                 'article',
@@ -811,6 +812,7 @@
                 'ac-post' + (post.situacao === 'cancelado' ? ' ac-cancelled' : '')
             );
             row.append(
+                el('p', ({aviso:'Aviso',aula_cancelada:'Aula cancelada',aula_extra:'Aula extra',projeto:'Projeto',atividade:'Atividade',trabalho:'Trabalho',avaliacao:'Avaliação',agenda:'Evento',material:'Material'})[post.tipo_atividade || post.tipo] || 'Atividade', 'ac-meta'),
                 el('h3', post.titulo),
                 el('p', 'Publicado em ' + dateText(post.criado_em), 'ac-meta')
             );
@@ -1158,9 +1160,50 @@
         );
         e.submit((id) => call('/' + id + '/invites', 'POST', { email: email.value }));
     }
-    async function postEditor(post) {
+    /* Cancelamentos são lidos dos horários oficiais; restabelecer a aula remove o aviso. */
+    async function loadScheduleActivities(host, offering, empty) {
+        const area = el('section');
+        area.setAttribute('aria-label', 'Cancelamentos registrados nos horários');
+        const feedback = el('p', 'Carregando alterações de aula…', 'ac-meta');
+        feedback.setAttribute('role', 'status');
+        area.append(feedback);
+        host.append(area);
+        const offers = detail.aggregate
+            ? data.subjects.filter(row => String(row.id_turma) === String(offering.id_turma) && periodKey(row) === periodKey(offering))
+            : [offering];
+        const loadChanges = async () => {
+            feedback.textContent = 'Carregando alterações de aula…';
+            const results = await Promise.allSettled(offers.map(row => call('/' + row.id_disciplina + '/schedule-activities')));
+            if (!area.isConnected) return;
+            area.replaceChildren(feedback);
+            const changes = results.flatMap(result => result.status === 'fulfilled' ? result.value : []);
+            const unique = new Map(changes.map(row => [row.id_horario + ':' + row.data, row]));
+            for (const row of unique.values()) {
+                const card = el('article', undefined, 'ac-post ac-cancelled');
+                card.append(el('h3', 'Aula cancelada · ' + (row.disciplina || offering.nome)));
+                card.append(el('p', row.data.split('-').reverse().join('/') + ' · ' + row.hora_inicio + '–' + row.hora_fim, 'ac-meta'));
+                if (row.motivo) card.append(el('p', row.motivo));
+                if (row.sala) card.append(el('p', 'Sala: ' + row.sala, 'ac-meta'));
+                card.append(btn('Ver horários', () => { tab = 'horarios'; render(); }));
+                area.append(card);
+            }
+            if (changes.length) empty.hidden = true;
+            const failure = results.find(result => result.status === 'rejected');
+            feedback.textContent = failure ? 'Não foi possível consultar todos os cancelamentos de aula.' : '';
+            if (failure) A.connection?.offerRetry(feedback, loadChanges, failure.reason);
+        };
+        await loadChanges();
+    }
+    async function openExtraClass(id) {
+        await load(id);
+        if (String(selected) !== String(id) || !detail?.subject?.canManage) return;
+        tab = 'atividades';
+        render();
+        postEditor(null, 'aula_extra');
+    }
+    async function postEditor(post, initialActivity = 'atividade') {
         try {
-            const kind = post?.tipo || tab;
+            const kind = post?.tipo || (tab === 'atividades' ? 'projeto' : tab);
             const library =
                 kind === 'material' ? await api.expect(api.get('/api/document-library')) : null;
             const e = editor(post ? 'Editar publicação' : 'Adicionar publicação');
@@ -1175,6 +1218,7 @@
                     maxLength: 3000
                 });
             let item, link, start, end, state;
+            const activity = kind !== 'material' ? e.select('Tipo de atividade', [['aviso','Aviso'],['aula_cancelada','Aula cancelada'],['aula_extra','Aula extra'],['projeto','Projeto'],['atividade','Atividade'],['trabalho','Trabalho'],['avaliacao','Avaliação'],['agenda','Evento']], post?.tipo_atividade || post?.tipo || initialActivity) : null;
             if (kind === 'material') {
                 item = e.select(
                     'Documento da minha biblioteca (opcional)',
@@ -1201,14 +1245,14 @@
                     value: post?.url,
                     maxLength: 2000
                 });
-            if (kind === 'agenda' || kind === 'projeto') {
+            if (kind !== 'material') {
                 const local = (v) => (v ? String(v).slice(0, 16) : '');
-                start = e.field(kind === 'projeto' ? 'Prazo (opcional)' : 'Início', {
+                start = e.field('Data / prazo (opcional)', {
                     type: 'datetime-local',
                     value: local(post?.inicio),
-                    required: kind === 'agenda'
+                    required: false
                 });
-                if (kind === 'agenda') {
+                if (kind !== 'material') {
                     end = e.field('Fim (opcional)', {
                         type: 'datetime-local',
                         value: local(post?.fim)
@@ -1221,6 +1265,15 @@
                         ],
                         post?.situacao || 'ativo'
                     );
+                    const updateActivity = () => {
+                        start.required = ['agenda', 'aula_cancelada', 'aula_extra'].includes(activity.value);
+                        start.parentElement.firstChild.textContent = start.required ? 'Data e horário' : 'Data / prazo (opcional)';
+                        state.disabled = activity.value === 'aula_cancelada';
+                        if (state.disabled) state.value = 'cancelado';
+                    };
+                    activity.addEventListener('change', updateActivity);
+                    updateActivity();
+                    e.fields.append(el('p', 'Informe a data para eventos, aulas extras e aulas canceladas. Este registro comunica o cancelamento; a grade semanal continua em Horários.', 'ac-meta'));
                 }
             }
             e.submit((id) =>
@@ -1228,14 +1281,15 @@
                     '/' + id + '/posts' + (post ? '/' + post.id_publicacao : ''),
                     post ? 'PUT' : 'POST',
                     {
-                        tipo: kind,
+                        tipo: activity ? (activity.value === 'aviso' ? 'aviso' : ['agenda','aula_cancelada','aula_extra'].includes(activity.value) ? 'agenda' : 'projeto') : kind,
+                        tipo_atividade: activity?.value || null,
                         titulo: title.value,
                         descricao: description.value,
                         id_item: item?.value || null,
                         url: link?.value || null,
                         inicio: start?.value || null,
                         fim: end?.value || null,
-                        situacao: state?.value || 'ativo'
+                        situacao: activity?.value === 'aula_cancelada' ? 'cancelado' : state?.value || 'ativo'
                     }
                 )
             );

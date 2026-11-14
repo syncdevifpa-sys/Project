@@ -189,7 +189,7 @@
             if (/^[1-9]\d*$/.test(String(id || ''))) {
                 const link = document.createElement('a');
                 link.className = 'text-link';
-                link.href = news ? 'notice.html?id=' + id : 'projects.html?projeto=' + id;
+                link.href = news ? 'notice.html?id=' + id : 'project.html?id=' + id;
                 link.textContent = news ? 'Abrir publicação →' : 'Ver projeto →';
                 card.append(link);
             }

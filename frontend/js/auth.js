@@ -609,6 +609,9 @@ window.Arcadia = window.Arcadia || {};
                         if (senha.length < 8) {
                             return showError('A senha deve ter pelo menos 8 caracteres.');
                         }
+                        if (tipo_usuario === 'discente' && (!Number(form.querySelector('#curso')?.value) || !Number(form.querySelector('#studentCourseInfo')?.value))) {
+                            return showError('Selecione o curso e sua etapa atual. Se não houver opções de ano ou semestre, solicite à equipe a configuração desse curso.');
+                        }
 
                         try {
                             const { ok, status, data } = await api.post(
@@ -894,6 +897,7 @@ window.Arcadia = window.Arcadia || {};
                 cursoSelect.required = academicVisible;
                 cursoSelect.disabled = !academicVisible;
             }
+            window.Arcadia.courseStages?.setEnabled?.(cursoSelect, ehAluno);
             lastRole = tipo;
             if (signupSubmit) signupSubmit.disabled = !publicRole;
             if (roleHelp)

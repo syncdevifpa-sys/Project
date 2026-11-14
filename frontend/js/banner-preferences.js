@@ -114,7 +114,7 @@
     }
     function pageKey(page, search = '') {
         const publication =
-            page === 'notice.html' ? new URLSearchParams(search).get('id') || '' : '';
+            ['notice.html','project.html'].includes(page) ? new URLSearchParams(search).get('id') || '' : '';
         return page === 'classes.html'
             ? 'overview'
             : 'page:' +

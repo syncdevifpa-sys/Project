@@ -398,15 +398,15 @@
             'display:none; align-items:flex-start; padding-top:80px; z-index:100;';
 
         scrim.innerHTML =
-            '<div class="ar-pal" role="dialog" aria-label="Ir para uma área do portal">' +
+            '<div class="ar-pal" role="dialog" aria-label="Pesquisar no Arcádia">' +
             '<div class="ar-pal-top">' +
             '<label class="ar-search" style="width:100%">' +
             getIconSvg('search', 16) +
-            '<span class="ar-sr">Ir para uma área do portal</span>' +
-            '<input type="search" id="ar-pal-input" placeholder="Digite uma área: avisos, projetos, calendário..." autocomplete="off">' +
+            '<span class="ar-sr">Pesquisar no Arcádia</span>' +
+            '<input type="search" id="ar-pal-input" placeholder="Pesquisar pessoas, projetos, avisos e eventos..." autocomplete="off">' +
             '<kbd class="ar-kbd">Esc</kbd>' +
             '</label>' +
-            '<p class="ar-pal-hint">Busque uma seção, como Avisos, Tarefas ou Documentos.</p>' +
+            '<p class="ar-pal-hint">Pesquise conteúdos e pessoas aos quais sua conta tem acesso.</p>' +
             '<div class="ar-chipbar" id="ar-pal-scopes" role="group" aria-label="Seções da busca">' +
             '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos e notícias</button>' +
@@ -416,6 +416,7 @@
                 : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="People">Pessoas</button>' +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Calendar">Calendário</button>' +
             '</div>' +
             '</div>' +
             '<div class="ar-pal-body">' +
@@ -444,6 +445,36 @@
         var activeScope = 'All';
         var activeIndex = 0;
         var filteredItems = [];
+        var contentItems = [], loadGeneration = 0, busySearch = false;
+        var searchStatus = document.createElement('p');
+        searchStatus.className = 'ar-pal-hint';searchStatus.setAttribute('role','status');
+        resultsEl.before(searchStatus);
+        var retrySearch = document.createElement('button');retrySearch.type='button';retrySearch.className='ar-btn';retrySearch.textContent='Tentar novamente';retrySearch.hidden=true;
+        resultsEl.before(retrySearch);
+        const session = () => window.Arcadia.auth?.getSessao?.() || {};
+        const owner = () => JSON.stringify([session().id_usuario,session().tipo_usuario,window.Arcadia.auth?.estaLogado?.() || false]);
+        scrim.loadSearch = async function () {
+            const request = ++loadGeneration, originalOwner = owner();
+            contentItems = [];busySearch = true;retrySearch.hidden = true;
+            searchStatus.textContent='Carregando conteúdos pesquisáveis…';renderResults();
+            try {
+                const data = await window.Arcadia.globalSearch.load(window.Arcadia.api,window.Arcadia.auth?.estaLogado?.() || false,session().tipo_usuario === 'externo');
+                if (request !== loadGeneration || owner() !== originalOwner) return;
+                contentItems = data.items;
+                searchStatus.textContent = data.failed.length ? 'Algumas áreas não puderam ser consultadas. Os demais resultados estão disponíveis.' : '';
+                retrySearch.hidden = !data.failed.length;
+            } catch {
+                if (request === loadGeneration) {searchStatus.textContent='Não foi possível carregar os conteúdos. Tente novamente.';retrySearch.hidden=false;}
+            } finally {
+                if (request === loadGeneration) {busySearch=false;renderResults();}
+            }
+        };
+        retrySearch.addEventListener('click',()=>scrim.loadSearch());
+        window.addEventListener('storage', event => {
+            if (event.key === 'arcadiaSessao' || event.key === 'arcadiaToken' || event.key === null) { ++loadGeneration;contentItems=[];renderResults(); }
+        });
+        const escapeResult = text => String(text || '').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
 
         function updatePreview(item) {
             if (!item) {
@@ -461,15 +492,7 @@
 
         function renderResults() {
             var q = input.value.trim().toLowerCase();
-            filteredItems = PALETTE_DATA.filter(function (it) {
-                if (activeScope !== 'All' && it.type !== activeScope) return false;
-                if (!q) return true;
-                return (
-                    it.title.toLowerCase().indexOf(q) > -1 ||
-                    it.meta.toLowerCase().indexOf(q) > -1 ||
-                    (it.desc && it.desc.toLowerCase().indexOf(q) > -1)
-                );
-            });
+            filteredItems = window.Arcadia.globalSearch.match([...PALETTE_DATA,...contentItems],q,activeScope);
 
             if (filteredItems.length === 0) {
                 resultsEl.innerHTML =
@@ -477,7 +500,7 @@
                     '<span class="ar-empty-icon">' +
                     getIconSvg('search', 22) +
                     '</span>' +
-                    '<div class="ar-empty-title">Nenhum resultado encontrado</div>' +
+                    '<div class="ar-empty-title">' + (busySearch ? 'Pesquisando…' : 'Nenhum resultado encontrado') + '</div>' +
                     '<p class="ar-empty-desc">Confira o texto ou busque outra palavra. Consulte eventos anteriores no Calendário.</p>' +
                     '</div>';
                 updatePreview(null);
@@ -506,10 +529,10 @@
                         getIconSvg(pair.item.icon || 'bell', 16) +
                         '<div style="min-width:0; flex:1;">' +
                         '<b>' +
-                        pair.item.title +
+                        escapeResult(pair.item.title) +
                         '</b>' +
                         '<small style="display:block; color:var(--ink-muted); font-size:12px;">' +
-                        pair.item.meta +
+                        escapeResult(pair.item.meta) +
                         '</small>' +
                         '</div>' +
                         '</div>';
@@ -577,6 +600,8 @@
         var input = scrim.querySelector('#ar-pal-input');
         if (input) {
             input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles:true }));
+            scrim.loadSearch?.();
             setTimeout(function () {
                 input.focus();
             }, 50);

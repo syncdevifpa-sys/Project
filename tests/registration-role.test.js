@@ -158,7 +158,7 @@ test('cadastro de todos os vínculos usa conta externa até aprovação, incluin
             '#teacherMatricula': { value: '12345' },
             '#teacherUsername': { value: 'professor.teste' },
             '#teacherFormacao': { value: 'Licenciatura' },
-            '#studentCourseInfo': { value: 'Informática · 1º semestre' }
+            '#studentCourseInfo': { value: '1' }
         };
         let submit, request;
         const form = {

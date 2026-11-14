@@ -289,6 +289,16 @@ function createClassSchedule(database = db) {
             };
         });
     }
+    /* A área de atividades lê as mesmas exceções, sem criar avisos duplicados. */
+    async function activities(owner, key) {
+        const actor = await access.actor(database, owner);
+        const offering = await subject(database, actor, key);
+        const [rows] = await database.execute(
+            "SELECT h.id_horario,h.id_disciplina,DATE_FORMAT(e.data,'%Y-%m-%d') AS data,TIME_FORMAT(h.hora_inicio,'%H:%i') AS hora_inicio,TIME_FORMAT(h.hora_fim,'%H:%i') AS hora_fim,e.motivo,h.sala FROM academico_horario_excecoes e JOIN academico_horarios h ON h.id_horario=e.id_horario WHERE h.id_disciplina=? AND h.ativo=1 AND e.cancelada=1 AND e.data BETWEEN h.vigencia_inicio AND h.vigencia_fim ORDER BY e.data DESC,h.hora_inicio",
+            [id(key)]
+        );
+        return rows.map(row => ({ ...row, disciplina: offering.nome, tipo_atividade: 'aula_cancelada' }));
+    }
     /* Exceções alteram uma data da recorrência, preservando o horário original. */
     async function exceptions(owner, key, schedule) {
         const a = await access.actor(database, owner);
@@ -345,6 +355,6 @@ function createClassSchedule(database = db) {
             };
         });
     }
-    return { list, save, remove, agenda, exceptions, exception };
+    return { list, save, remove, agenda, activities, exceptions, exception };
 }
 module.exports = { createClassSchedule, fields, expand, overlaps };

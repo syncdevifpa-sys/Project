@@ -9,6 +9,7 @@
         'js/notice-editor.js',
         'js/notice-filters.js',
         'js/notice-text.js',
+        'js/publication-model.js',
         'js/avatar-editor.js',
         'js/notice-cover.js',
         'js/content-views.js'
@@ -23,6 +24,7 @@
             scripts: ['js/notices.js', ...helpers, 'js/pages.js'],
             controller: 'pages'
         },
+        'project.html': { scripts: [...helpers, 'js/pages.js'], controller: 'pages' },
         'projects.html': { scripts: [...helpers, 'js/pages.js'], controller: 'pages' },
         'dashboard.html': {
             scripts: [
@@ -371,6 +373,7 @@
                 for (const pageClass of ['ar-filter-page', 'ar-settings-page']) {
                     document.body.classList.toggle(pageClass, prepared.pageClasses.includes(pageClass));
                 }
+                A.topbar?.syncBreadcrumb();
                 document.title = prepared.title;
                 currentUrl = url.href;
                 A.bannerBootstrap?.apply();

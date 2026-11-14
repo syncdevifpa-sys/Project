@@ -343,3 +343,13 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* O controle de sair só aparece na posição final; o bootstrap libera o fallback se necessário. */
+html[data-topbar-mount=pending] .ar-nav-end > :is([data-sign-out],[data-logout],#adminLogout,#externalLogout) { visibility:hidden; }
+/* Pesquisa e caminho da tela fazem parte de uma única superfície translúcida. */
+.ar-topbar-ready.ar-has-sidebar .ar-nav { background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px); }
+.ar-topbar-ready.ar-has-sidebar .ar-nav.ar-nav--breadcrumbs { flex-wrap:wrap;max-height:none;gap:8px 10px; }
+.ar-nav > .ar-crumbs { flex:1 0 100%;min-width:0;margin:0;padding:4px 2px 0;border:0;background:transparent; }
+.ar-nav > .ar-crumbs ol { margin:0;flex-wrap:nowrap; }
+.ar-nav > .ar-crumbs li:last-child { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+body:has(.ar-nav--breadcrumbs) { --portal-header-offset:140px; }

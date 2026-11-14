@@ -70,7 +70,8 @@ async function courseDetails(c, details) {
         course.total_etapas > 20
     )
         fail(409, 'A equipe precisa configurar o regime e o número de etapas deste curso.');
-    if (details.etapa_atual > course.total_etapas)
+    const maximumStage = course.regime_etapas === 'anual' ? 4 : 8;
+    if (details.etapa_atual > maximumStage)
         fail(400, 'Selecione uma etapa válida para o curso.');
     return {
         ...details,

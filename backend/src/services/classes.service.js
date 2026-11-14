@@ -35,6 +35,11 @@ function date(value) {
 function entry(body) {
     if (!['aviso', 'material', 'projeto', 'agenda'].includes(body.tipo))
         fail(400, 'Tipo de publicação inválido.');
+    if (body.tipo_atividade != null) {
+        const kinds = { aviso: 'aviso', aula_cancelada: 'agenda', aula_extra: 'agenda', projeto: 'projeto', atividade: 'projeto', trabalho: 'projeto', avaliacao: 'projeto', agenda: 'agenda' };
+        if (kinds[body.tipo_atividade] !== body.tipo) fail(400, 'Tipo de atividade inválido.');
+        if (body.tipo_atividade === 'aula_cancelada' && body.situacao !== 'cancelado') fail(400, 'Marque a aula como cancelada.');
+    }
     const start = date(body.inicio),
         end = date(body.fim);
     if (end && (!start || end < start)) fail(400, 'O fim deve ser igual ou posterior ao início.');
@@ -774,6 +779,16 @@ function createClasses(database = db) {
         const values = entry(body);
         return transaction(owner, async (c, actor) => {
             const d = await scope(c, actor, subject, true);
+            /* A classificação nova é opcional para clientes antigos; nenhuma informação é descartada. */
+            async function classify(postId) {
+                if (!Object.hasOwn(body, 'tipo_atividade') || body.tipo_atividade == null) return;
+                try {
+                    await c.execute('UPDATE academico_publicacoes SET tipo_atividade=? WHERE id_publicacao=? AND id_disciplina=?', [body.tipo_atividade, postId, d.id_disciplina]);
+                } catch (error) {
+                    if (error.code === 'ER_BAD_FIELD_ERROR') fail(503, 'Habilite os tipos de atividade no banco de dados antes de salvar.');
+                    throw error;
+                }
+            }
             let previous = null;
             if (key) {
                 const [rows] = await c.execute(
@@ -796,12 +811,14 @@ function createClasses(database = db) {
                     [...values, id(key), d.id_disciplina]
                 );
                 if (!result.affectedRows) fail(404, 'Publicação não encontrada.');
+                await classify(id(key));
                 return { id_publicacao: id(key) };
             }
             const [result] = await c.execute(
                 'INSERT INTO academico_publicacoes (tipo,titulo,descricao,id_item,url,inicio,fim,situacao,id_disciplina,id_autor) VALUES (?,?,?,?,?,?,?,?,?,?)',
                 [...values, d.id_disciplina, owner]
             );
+            await classify(result.insertId);
             return { id_publicacao: result.insertId };
         });
     }

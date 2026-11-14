@@ -18,6 +18,9 @@ const action = (fn) => async (q, s, next) => {
 const cohortInfo = require('../services/cohort-info.service').createCohortInfo();
 const classSchedule = require('../services/class-schedule.service').createClassSchedule();
 const academic = require('../services/academic-management.service').createAcademicManagement();
+router.get('/:id/schedule-activities', action(async (q, s) =>
+    s.json(await classSchedule.activities(q.user.id_usuario, q.params.id))
+));
 router.get(
     '/academic/features',
     action(async (q, s) => s.json(await academic.features(q.user.id_usuario)))

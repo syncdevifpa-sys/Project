@@ -93,13 +93,14 @@ function fixture() {
             createElement: (tag) => new Element(tag)
         }
     });
-    const mount = (id = 8, manage = true) =>
+    const mount = (id = 8, manage = true, onAddExtra) =>
         A.classSchedule.mount(host, {
             id_disciplina: id,
             nome: 'Dados',
             ano_letivo: 2026,
             regime_letivo: 'legado',
-            canManage: manage
+            canManage: manage,
+            onAddExtra
         });
     const button = (text) => walk(host).find((n) => n.tag === 'button' && n.textContent === text);
     const fill = () => {
@@ -351,4 +352,13 @@ test('filtros combinam turnos, Tudo prevalece e nenhum turno tem retorno explíc
     const another = new Element('div');
     f.renderGrid(another, rows);
     assert.equal(walk(another).filter((n) => n.tag === 'strong').length, 3);
+});
+
+
+test('botão de aula extra usa o fluxo da disciplina e não aparece para participantes', async () => {
+    const f=fixture();let opened=0;
+    f.mount(8,true,()=>opened++);await settle();
+    f.button('+ Aula extra').onclick();assert.equal(opened,1);
+    f.mount(8,false,()=>opened++);await settle();
+    assert.equal(f.button('+ Aula extra'),undefined);
 });

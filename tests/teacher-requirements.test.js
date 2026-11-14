@@ -14,6 +14,7 @@ function fixture({
     changedEmail = false,
     intent = 'docente',
     requested = 'docente',
+    regime = 'semestral',
     events = []
 } = {}) {
     const queries = [],
@@ -54,7 +55,7 @@ function fixture({
                             id_curso: 1,
                             nome: 'Informática',
                             ativo: 1,
-                            regime_etapas: 'semestral',
+                            regime_etapas: regime,
                             total_etapas: 6
                         }
                     ]
@@ -676,4 +677,16 @@ test('HTTP mantém solicitante externo, protege Requisitos e invalida a sessão 
             .status,
         401
     );
+});
+
+
+test('cadastro aceita o quarto ano e o oitavo semestre e rejeita etapas acima do limite', async () => {
+    for (const [regime, maximum] of [['anual',4],['semestral',8]]) {
+        const f=fixture({pending:false,intent:'externo',regime});
+        await f.service.startChange(5,{...body,tipo_solicitado:'discente',id_curso:1,etapa_atual:maximum});
+        assert.equal(f.writes.find(q=>q.sql.startsWith('INSERT INTO docente_requisitos')).args.at(-1), maximum);
+        const invalid=fixture({pending:false,intent:'externo',regime});
+        await assert.rejects(invalid.service.startChange(5,{...body,tipo_solicitado:'discente',id_curso:1,etapa_atual:maximum+1}),{status:400});
+        assert.ok(invalid.lifecycle.includes('rollback'));
+    }
 });
