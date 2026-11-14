@@ -1548,14 +1548,6 @@ a:not(.btn):not(.wordmark):focus-visible {
   color: var(--color-ink);
   margin-bottom: var(--space-sm);
 }
-.public-card details {
-  margin-top: var(--space-sm);
-}
-.public-card summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--color-ink);
-}
 .home-return {
   display: none;
 }
@@ -1957,9 +1949,6 @@ a:not(.btn):not(.wordmark):focus-visible {
   min-width: 0;
   display: flex;
   flex-direction: column;
-}
-.public-card > details {
-  margin-top: auto;
 }
 /* Menu do celular rola quando não cabe na altura da tela. */
 .nav-mobile-panel.is-open {

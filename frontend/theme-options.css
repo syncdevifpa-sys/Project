@@ -261,12 +261,8 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
     box-shadow:0 5px 16px #4678d94d;
   }
 }
-/* O link real cobre o cartão; controles editoriais ficam acima dessa área. */
-:is(.ar-card,.public-card):has(a[href*='notice.html?id=']) { position:relative; }
+/* As ações editoriais acompanham o fluxo do cartão. */
 .ar-card .ar-notice-card-actions { position:static; }
-:is(.ar-card,.public-card) a[href*='notice.html?id=']::after { content:''; position:absolute; inset:0; border-radius:inherit; z-index:1; }
-:is(.ar-card,.public-card):has(a[href*='notice.html?id=']) :is(button,summary,input,select,textarea,a:not([href*='notice.html?id='])) { position:relative; z-index:2; }
-:is(.ar-card,.public-card):has(a[href*='notice.html?id=']:focus-visible) { outline:2px solid var(--focus); outline-offset:3px; }
 @media (prefers-reduced-motion:reduce) {
   html[data-preview-season] :is(.ar-btn,.db-btn,.btn) { transition:none; }
   html[data-preview-season] :is(.ar-btn,.db-btn,.btn):hover { transform:none; }
@@ -294,11 +290,9 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
   box-shadow:none;
 }
 /* Cartões clicáveis, navegação e ferramentas respondem sem disputar destaque. */
-:is(.ar-card,.public-card):has(a[href*='notice.html?id=']),
 .ar-portal-sidebar a,
 .ar-iconbtn { transition:box-shadow .16s ease,transform .16s ease,background-color .16s ease; }
 @media (hover:hover) {
-  :is(.ar-card,.public-card):has(a[href*='notice.html?id=']):hover { box-shadow:0 6px 20px #547fa824; transform:translateY(-2px); }
   .ar-portal-sidebar a:not([aria-current='page']):hover { background:color-mix(in srgb,var(--page-banner-tint,var(--accent)) 14%,var(--surface)); transform:translateX(2px); }
   .ar-iconbtn:not(:disabled):hover { background:var(--surface-sunken); box-shadow:0 2px 8px #547fa824; }
   html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not(:disabled):not([aria-pressed]):not([role='tab']):not([data-mode]):not([data-library-view]):not([data-library-mode]):not(.ar-btn--danger):not(.ar-btn--flag):not(.btn-delete):hover {
@@ -309,9 +303,7 @@ html[data-preview-season] :is(.ar-btn,.db-btn,.btn):not([aria-pressed]):not([rol
   }
 }
 @media (prefers-reduced-motion:reduce) {
-  :is(.ar-card,.public-card):has(a[href*='notice.html?id=']),.ar-portal-sidebar a,.ar-iconbtn { transition:none; transform:none !important; }
 }
-html[data-motion='reduced'] :is(.ar-card,.public-card):has(a[href*='notice.html?id=']),
 html[data-motion='reduced'] .ar-portal-sidebar a,
 html[data-motion='reduced'] .ar-iconbtn { transition:none; transform:none; }
 

@@ -194,17 +194,6 @@
                 card.append(link);
             }
             window.Arcadia?.noticeCover?.decorate(card, item.capa, 'Capa: ' + item.titulo);
-            if (news && item.resumo && item.descricao) {
-                const details = document.createElement('details');
-                const summary = document.createElement('summary');
-                summary.textContent = 'Ler publicação completa';
-                const body = document.createElement('p');
-                body.textContent = item.descricao;
-                if (window.Arcadia?.noticeText)
-                    window.Arcadia.noticeText.render(body, body.textContent);
-                details.append(summary, body);
-                card.append(details);
-            }
             window.Arcadia?.noticeCover?.linkCard?.(card, card.querySelector('a.text-link'));
             target.append(card);
         });

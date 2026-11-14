@@ -44,8 +44,6 @@ module.exports = function hybridPreview(html) {
     .public-card.ar-notice-with-cover > .ar-notice-cover {position:relative;inset:auto;width:calc(100% + 44px);height:210px;margin:-22px -22px 8px;border-radius:20px 20px 0 0;align-self:center;flex-shrink:0}
     .public-card .ar-notice-cover:after {display:none}
     .public-card .ar-notice-cover img {object-fit:contain;border-radius:0}
-    .public-card details {font-size:13px;width:100%}
-    .public-card details p {font-size:14px;line-height:1.6}
     .public-card:has(a[href="notice.html?id=8"]) {order:-1}
     #public-projects {padding-bottom:56px}
     .site-footer {margin-top:40px;border-top:1px solid var(--color-card-border)}
