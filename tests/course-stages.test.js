@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-test('cadastro oferece quatro anos ou oito semestres conforme o regime do curso', () => {
+test('cadastro limita a duração de cada curso a uma etapa adicional', () => {
     class Select {
         constructor() {
             this.children = [];
@@ -46,7 +46,10 @@ test('cadastro oferece quatro anos ou oito semestres conforme o regime do curso'
     assert.equal(course.children.length, 4);
     course.value = '8';
     course.events.change();
-    assert.equal(stage.children[8].textContent, '8º semestre');
+    assert.equal(stage.children[7].textContent, '7º semestre');
+    assert.equal(stage.children.length, 8);
+    A.courseStages.attach(course, stage, courses, 8, 8);
+    assert.equal(stage.value, '');
     assert.equal(stage.value, '');
     stage.value = '4';
     A.courseStages.setEnabled(course, false);

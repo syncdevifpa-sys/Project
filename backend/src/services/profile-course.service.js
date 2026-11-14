@@ -48,7 +48,7 @@ async function validateAcademicEdit(connection, current, data, role) {
     let rows;
     try {
         [rows] = await connection.execute(
-            'SELECT id_curso,regime_etapas,total_etapas FROM cursos WHERE id_curso=? AND ativo=TRUE',
+            'SELECT id_curso, nome, regime_etapas, total_etapas FROM cursos WHERE id_curso = ? AND ativo = TRUE',
             [course]
         );
     } catch (error) {
@@ -56,22 +56,15 @@ async function validateAcademicEdit(connection, current, data, role) {
             fail(503, 'A estrutura de etapas dos cursos ainda precisa ser habilitada no banco.');
         throw error;
     }
-    const row = rows[0];
+    const { enrich, stageLimit } = require('./course-duration.service');
+    const row = enrich(rows[0]);
     if (!row) fail(400, 'Selecione um curso ativo válido.');
-    if (
-        !['anual', 'semestral'].includes(row.regime_etapas) ||
-        !Number.isInteger(row.total_etapas) ||
-        row.total_etapas < 1 ||
-        row.total_etapas > 20
-    )
-        fail(
-            409,
-            'Configure o regime e a quantidade real de etapas deste curso antes de alterar a etapa do aluno.'
-        );
-    if (!Number.isInteger(stage) || stage < 1 || stage > row.total_etapas)
+    const maximum = stageLimit(row);
+    if (!maximum) fail(409, 'Configure o regime e a quantidade real de etapas deste curso antes de alterar a etapa do aluno.');
+    if (!Number.isInteger(stage) || stage < 1 || stage > maximum)
         fail(
             400,
-            `A etapa deve estar entre 1 e ${row.total_etapas} ${row.regime_etapas === 'anual' ? 'anos' : 'semestres'}.`
+            `A etapa deve estar entre 1 e ${maximum} ${(row.regime_referencia || row.regime_etapas) === 'anual' ? 'anos' : 'semestres'}.`
         );
 }
 module.exports = { validateProfileCourse, validateCourseSelection, validateAcademicEdit };

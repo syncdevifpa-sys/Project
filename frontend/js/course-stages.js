@@ -1,4 +1,4 @@
-/* Regime e duração do curso; preserva quatro anos ou oito semestres e cursos mais longos. */
+/* Limite por curso: duração oficial mais uma etapa do mesmo regime. */
 (function (A) {
     const states = new WeakMap();
     function attach(course, stage, courses, selectedCourse, selectedStage) {
@@ -19,15 +19,17 @@
                 const selected = state.courses.find(
                     (row) => String(row.id_curso) === String(course.value)
                 );
+                const regime = selected?.regime_referencia || selected?.regime_etapas;
+                const total = Number(selected?.etapas_referencia ?? selected?.total_etapas);
                 const valid =
                     selected &&
-                    ['anual', 'semestral'].includes(selected.regime_etapas) &&
-                    Number.isInteger(Number(selected.total_etapas)) &&
-                    selected.total_etapas >= 1 &&
-                    selected.total_etapas <= 20;
-                const maximum = Math.max(Number(selected?.total_etapas) || 0, selected?.regime_etapas === 'anual' ? 4 : 8);
+                    ['anual', 'semestral'].includes(regime) &&
+                    Number.isInteger(total) &&
+                    total >= 1 &&
+                    total <= 20;
+                const maximum = total + 1;
                 if (state.duration) {
-                    state.duration.textContent = selected?.duracao_texto ? 'Duração de referência: ' + selected.duracao_texto : '';
+                    state.duration.textContent = selected?.duracao_texto ? 'Duração de referência: ' + selected.duracao_texto + (valid ? ' · Permitido até o ' + maximum + 'º ' + (regime === 'anual' ? 'ano' : 'semestre') : '') : '';
                     state.duration.hidden = !state.duration.textContent;
                 }
                 stage.replaceChildren();
@@ -45,7 +47,7 @@
                     for (let n = 1; n <= maximum; n++) {
                         const option = document.createElement('option');
                         option.value = String(n);
-                        option.textContent = `${n}º ${selected.regime_etapas === 'anual' ? 'ano' : 'semestre'}`;
+                        option.textContent = `${n}º ${regime === 'anual' ? 'ano' : 'semestre'}`;
                         stage.append(option);
                     }
                 const number = Number(value);

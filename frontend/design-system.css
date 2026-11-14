@@ -220,17 +220,16 @@ html.db-v3-on[data-theme='dark'] .db-pill--today {
 .ar-card,
 .ar-sset,
 .ar-library,
-.ac-context,
-.ac-content {
+.ac-context {
   background: var(--surface);
   border-color: var(--line);
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
 }
 .ar-hero:not(.ar-banner-personal):not(.db-hello) {
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
 }
 .ar-hero:not(.ar-banner-personal):not(.db-hello) .ar-hero-art {
   color: var(--brand-blue);

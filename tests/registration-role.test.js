@@ -107,13 +107,13 @@ test('clique seleciona professor/servidor e volta para aluno sem conceder cadast
             r.teacherInputs.every((input) =>
                 input.id === 'studentCourseInfo'
                     ? input.disabled
-                    : input.required === !(index === 2 && input.id === 'teacherFormacao') &&
+                    : input.required === !(index === 2 && ['teacherFormacao','teacherUsername'].includes(input.id)) &&
                       input.disabled === false
             )
         );
         assert.match(
             r.help.textContent,
-            index === 1 ? /Requisitos|Comunidade externa/ : /Formação é opcional/
+            index === 1 ? /Requisitos|Comunidade externa/ : /opcionais/
         );
     }
     r.buttons[0].click();

@@ -20,8 +20,9 @@ function text(value, max, label) {
 function fields(body, type = 'docente') {
     if (!['docente', 'servidor', 'discente'].includes(type))
         fail(400, 'Vínculo solicitado inválido.');
-    const name = text(body.nome_usuario, 40, 'Nome de usuário').toLowerCase();
-    if (!/^[a-z0-9][a-z0-9._-]{2,39}$/.test(name))
+    const usernameOptional = type === 'servidor' && (body.nome_usuario == null || (typeof body.nome_usuario === 'string' && !body.nome_usuario.trim()));
+    const name = usernameOptional ? '' : text(body.nome_usuario, 40, 'Nome de usuário').toLowerCase();
+    if (name && !/^[a-z0-9][a-z0-9._-]{2,39}$/.test(name))
         fail(400, 'Use de 3 a 40 letras, números, ponto, hífen ou sublinhado no nome de usuário.');
     if (type === 'discente') {
         try {
@@ -63,19 +64,13 @@ async function courseDetails(c, details) {
     }
     const course = require('./course-duration.service').enrich(courses[0]);
     if (!course || ![1, true].includes(course.ativo)) fail(400, 'Selecione um curso ativo válido.');
-    if (
-        !['semestral', 'anual'].includes(course.regime_etapas) ||
-        !Number.isInteger(course.total_etapas) ||
-        course.total_etapas < 1 ||
-        course.total_etapas > 20
-    )
-        fail(409, 'A equipe precisa configurar o regime e o número de etapas deste curso.');
-    const maximumStage = Math.max(Number(course.total_etapas), course.regime_etapas === 'anual' ? 4 : 8);
+    const maximumStage = require('./course-duration.service').stageLimit(course);
+    if (!maximumStage) fail(409, 'A equipe precisa configurar o regime e o número de etapas deste curso.');
     if (details.etapa_atual > maximumStage)
         fail(400, 'Selecione uma etapa válida para o curso.');
     return {
         ...details,
-        curso_informado: `${course.nome} · ${details.etapa_atual}º ${course.regime_etapas === 'anual' ? 'ano' : 'semestre'}`
+        curso_informado: `${course.nome} · ${details.etapa_atual}º ${(course.regime_referencia || course.regime_etapas) === 'anual' ? 'ano' : 'semestre'}`
     };
 }
 async function insertRequest(c, external, details, profile) {

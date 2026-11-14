@@ -19,7 +19,7 @@
         A.api.expect(A.api.request('/api/classes' + path, { method, body }));
     async function exceptions(subject, schedule, canManage, onAddExtra) {
         const dialog = node('dialog');
-        dialog.className = 'ar-dialog ar-notice-editor';
+        dialog.className = 'ac-editor ac-class-change-dialog';
         dialog.setAttribute('aria-labelledby', 'classExceptionsTitle');
         const title = node('h2', canManage ? 'Adicionar ou cancelar aula' : 'Alterações de aula');
         title.id = 'classExceptionsTitle';
@@ -62,7 +62,7 @@
                 dialog.insertBefore(node('p', 'A aula extra usa uma data própria. Para cancelar uma aula semanal, escolha a data abaixo.'), list);
             }
             const form = node('form');
-            form.className = 'ar-calendar-import-row';
+            form.className = 'ac-fields ac-class-change-form';
             const dateLabel = node('label', 'Data da aula');
             dateLabel.className = 'ar-field';
             const date = node('input');

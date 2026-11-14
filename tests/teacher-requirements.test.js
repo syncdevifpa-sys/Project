@@ -680,8 +680,8 @@ test('HTTP mantém solicitante externo, protege Requisitos e invalida a sessão 
 });
 
 
-test('cadastro aceita o quarto ano e o oitavo semestre e rejeita etapas acima do limite', async () => {
-    for (const [regime, maximum] of [['anual',4],['semestral',8]]) {
+test('cadastro aceita uma etapa além da duração e rejeita a segunda etapa extra', async () => {
+    for (const [regime, maximum] of [['anual',4],['semestral',7]]) {
         const f=fixture({pending:false,intent:'externo',regime});
         await f.service.startChange(5,{...body,tipo_solicitado:'discente',id_curso:1,etapa_atual:maximum});
         assert.equal(f.writes.find(q=>q.sql.startsWith('INSERT INTO docente_requisitos')).args.at(-1), maximum);
@@ -689,4 +689,13 @@ test('cadastro aceita o quarto ano e o oitavo semestre e rejeita etapas acima do
         await assert.rejects(invalid.service.startChange(5,{...body,tipo_solicitado:'discente',id_curso:1,etapa_atual:maximum+1}),{status:400});
         assert.ok(invalid.lifecycle.includes('rollback'));
     }
+});
+
+test('usuário do SIGAA é opcional apenas para Servidor, sem aceitar valores inválidos preenchidos',()=>{
+ assert.equal(fields({matricula:'12345'},'servidor').nome_usuario,'');
+ assert.equal(fields({matricula:'12345',nome_usuario:'   '},'servidor').nome_usuario,'');
+ assert.equal(fields({...body,nome_usuario:'Servidor.Teste'},'servidor').nome_usuario,'servidor.teste');
+ assert.throws(()=>fields({...body,nome_usuario:''},'docente'),{status:400});
+ assert.throws(()=>fields({...body,nome_usuario:'',id_curso:1,etapa_atual:1},'discente'),{status:400});
+ assert.throws(()=>fields({...body,nome_usuario:'<invalido>'},'servidor'),{status:400});
 });

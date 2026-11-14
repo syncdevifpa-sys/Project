@@ -1,5 +1,9 @@
 .ac-week-grid-scroll {
+  min-width: 0;
+  width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
+  contain: inline-size;
   overflow: auto;
   max-height: min(70dvh, 760px);
   scrollbar-gutter: stable;
@@ -120,11 +124,11 @@
 .ac-week-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 16px;
+  gap: 4px 12px;
   align-items: center;
   border: 0;
   padding: 0;
-  margin: 16px 0 4px;
+  margin: 10px 0 2px;
   min-width: 0;
 }
 .ac-week-filters legend {
@@ -132,18 +136,20 @@
   margin-inline-end: 16px;
   padding: 0;
   font-weight: 600;
-  line-height: 44px;
+  line-height: 36px;
+  font-size: 12px;
 }
 .ac-week-filters label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
+  gap: 6px;
+  min-height: 36px;
+  font-size: 13px;
   cursor: pointer;
 }
 .ac-week-filters input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   margin: 0;
   accent-color: var(--cyan);
 }
@@ -176,3 +182,6 @@
 .ac-week-grid :is(th,td) { padding:10px; }
 .ac-week-grid caption { background:var(--surface);font-size:15px; }
 @media(max-width:600px) { .ac-week-grid-scroll { max-height:65dvh; }.ac-week-grid td { min-width:150px; }.ac-week-grid :is(th,td) { padding:8px; } }
+
+/* No toque, preserva a área de interação sem aumentar a fonte. */
+@media (pointer: coarse) { .ac-week-filters label, .ac-schedule-actions-list > summary { min-height:44px; } }
