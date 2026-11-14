@@ -13,7 +13,7 @@
   flex-wrap: nowrap;
   box-sizing: border-box;
 }
-.ar-topbar-ready .ar-nav .ar-grouped-nav {
+.ar-topbar-ready .ar-nav :is(.ar-grouped-nav, .ar-navpill) {
   display: none;
 }
 .ar-topbar-ready .ar-nav .ar-nav-end {
