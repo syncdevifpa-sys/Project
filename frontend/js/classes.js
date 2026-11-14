@@ -1204,7 +1204,7 @@
             const kind = post?.tipo || (initialActivity === 'aula_extra' || tab === 'atividades' ? 'projeto' : tab);
             const library =
                 kind === 'material' ? await api.expect(api.get('/api/document-library')) : null;
-            const e = editor(post ? 'Editar publicação' : initialActivity === 'aula_extra' ? 'Agendar aula extra' : 'Adicionar publicação');
+            const e = editor(post ? 'Editar publicação' : initialActivity === 'aula_extra' ? 'Configurar aula' : 'Adicionar publicação');
             const title = e.field('Título', {
                     value: post?.titulo,
                     required: true,
@@ -1216,7 +1216,7 @@
                     maxLength: 3000
                 });
             let item, link, start, end, state;
-            const activity = kind !== 'material' ? e.select('Tipo de atividade', [['aviso','Aviso'],['aula_cancelada','Aula cancelada'],['aula_extra','Aula extra'],['projeto','Projeto'],['atividade','Atividade'],['trabalho','Trabalho'],['avaliacao','Avaliação'],['agenda','Evento']], post?.tipo_atividade || post?.tipo || initialActivity) : null;
+            const activity = kind !== 'material' ? e.select('Tipo de atividade', initialActivity === 'aula_extra' ? [['aula_extra', 'Aula extra'], ['aula_cancelada', 'Cancelamento de aula']] : [['aviso','Aviso'],['aula_cancelada','Aula cancelada'],['aula_extra','Aula extra'],['projeto','Projeto'],['atividade','Atividade'],['trabalho','Trabalho'],['avaliacao','Avaliação'],['agenda','Evento']], post?.tipo_atividade || post?.tipo || initialActivity) : null;
             if (kind === 'material') {
                 item = e.select(
                     'Documento da minha biblioteca (opcional)',

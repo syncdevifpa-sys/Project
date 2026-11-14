@@ -338,7 +338,7 @@
         hint.append(
             node(
                 'p',
-                'Cadastrar horário semanal cria aulas que se repetem durante a vigência. Em Configurar aula, você pode adicionar uma aula extra em uma data específica ou escolher um horário cadastrado para cancelar ou restabelecer uma aula.'
+                'Cadastrar horário semanal cria aulas que se repetem durante a vigência. Configurar aula abre um formulário para escolher entre aula extra e cancelamento de aula. Os horários semanais cadastrados têm opções de edição e de cancelamento de uma ocorrência.'
             ),
             node(
                 'p',
@@ -380,30 +380,19 @@
         actionsList.id = 'scheduleActions-' + subject;
         let configure;
         actionsList.append(
-            node('summary', canManage ? 'Configurar aula' : 'Ver detalhes dos horários'),
+            node('summary', canManage ? 'Horários semanais cadastrados' : 'Ver detalhes dos horários'),
             list
         );
         if (canManage) {
             configure = node('button', 'Configurar aula');
             configure.type = 'button';
             configure.className = 'ar-btn';
-            configure.setAttribute('aria-controls', actionsList.id);
-            configure.setAttribute('aria-expanded', 'false');
+            configure.setAttribute('aria-haspopup', 'dialog');
             configure.disabled = !offering.onAddExtra;
             configure.onclick = () => {
-                actionsList.open = !actionsList.open;
-                configure.setAttribute('aria-expanded', String(actionsList.open));
+                offering.onAddExtra?.();
             };
-            actionsList.className += ' ac-schedule-actions-list--managed';
             toolbar.append(configure);
-        }
-        if (canManage && offering.onAddExtra) {
-            const extra = node('button', 'Adicionar aula extra');
-            extra.type = 'button';
-            extra.className = 'ar-btn';
-            extra.onclick = offering.onAddExtra;
-            actionsList.append(extra);
-            actionsList.hidden = false;
         }
         root.append(status, retry, grid, actionsList);
         let generation = 0;
@@ -462,11 +451,10 @@
                         { turno: offering.turno }
                     );
                 list.replaceChildren();
-                actionsList.hidden = rows.length === 0 && !(canManage && offering.onAddExtra);
+                actionsList.hidden = rows.length === 0;
                 if (actionsList.hidden) actionsList.open = false;
                 if (configure) {
-                    configure.disabled = actionsList.hidden;
-                    configure.setAttribute('aria-expanded', String(actionsList.open));
+                    configure.disabled = !offering.onAddExtra;
                 }
                 for (const row of rows) {
                     const item = node('article');

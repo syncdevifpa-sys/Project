@@ -673,22 +673,6 @@
   min-width: 0;
   max-width: 100%;
 }
-/* A gestão abre pelo botão da barra de Horários. */
-.ac-schedule-actions-list--managed > summary {
-  display: none;
-}
-.ac-schedule-actions-list--managed:not([open]) > * {
-  display: none;
-}
-.ac-schedule-actions-list--managed[open] {
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-}
-.ac-schedule-actions-list--managed > .ar-btn {
-  margin-top: 10px;
-}
 
 /* O link de administração é filho da navegação de disciplinas. */
 .ac-context nav > .ar-btn {
