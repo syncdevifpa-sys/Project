@@ -19,3 +19,17 @@ test('configuração explícita é preservada e pós-graduação não recebe sem
  assert.equal(enrich({nome:'Especialização em Linguagens e Artes na Formação Docente'}).duracao_texto,'Duração a confirmar');
  for(const course of catalog.courses){assert.ok(course.duracao);assert.match(course.duracao.fonte,/^https:\/\//);}
 });
+
+test('limitador usa a referência oficial mais uma etapa sem aumentar todos os cursos igualmente',()=>{
+ const {stageLimit}=require('../backend/src/services/course-duration.service');
+ for(const [name,maximum] of [
+ ['Técnico em Desenvolvimento de Sistemas (Integrado)',4],
+ ['Técnico em Aquicultura (Subsequente)',4],
+ ['Tecnologia em Análise e Desenvolvimento de Sistemas',7],
+ ['Tecnologia em Gestão Pública',6],
+ ['Bacharelado em Engenharia Elétrica',11]]) {
+   assert.equal(stageLimit(enrich({nome:name})),maximum);
+ }
+ assert.equal(stageLimit(enrich({nome:'Bacharelado em Engenharia Elétrica',regime_etapas:'anual',total_etapas:5})),11);
+ assert.equal(stageLimit({regime_etapas:null,total_etapas:null}),null);
+});

@@ -1,8 +1,9 @@
 .ac-workspace {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-  gap: 24px;
-  margin: 20px 0;
+  grid-template-columns: minmax(200px, 250px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  margin: 16px 0;
 }
 .ac-context {
   align-self: start;
@@ -80,8 +81,8 @@
   width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
-  margin: 20px 0;
-  padding: 5px;
+  margin: 14px 0;
+  padding: 4px;
   background: var(--surface-sunken);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -200,7 +201,7 @@
   padding: 20px;
   margin: 12px 0;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   overflow-wrap: anywhere;
 }
@@ -610,3 +611,35 @@
 .ac-management-panel { box-sizing:border-box;position:absolute;z-index:25;right:0;top:100%;width:min(620px,calc(100vw - 48px));max-height:65dvh;overflow:auto;box-shadow:var(--shadow-float); }
 .ac-management:not([open]) > .ac-management-panel { display:none; }
 @media(max-width:760px) { .ac-management-panel { right:auto;left:0; } }
+
+/* Turmas adapta-se ao espaço real que sobra depois do menu lateral. */
+#classesApp { container-type: inline-size; }
+.ac-workspace > :is(.ac-context, .ac-content) { min-width: 0; max-width: 100%; }
+.ac-workspace > .ac-context { padding: 16px; }
+.ac-context > h2 { margin: 0; font-size: 1.25rem; line-height: 1.35; }
+.ac-content > #classContent { display: grid; gap: 12px; min-width: 0; }
+#classContent > * { min-width: 0; max-width: 100%; }
+#classContent > .ar-btn { justify-self: start; }
+#classContent .ac-post { margin: 0; min-width: 0; padding: 16px; }
+#classContent > section[aria-label] { display: grid; gap: 12px; min-width: 0; }
+#classContent .ac-post h3 { margin: 0; font-size: 1.15rem; line-height: 1.4; }
+#classContent .ac-post p { margin: 8px 0 0; line-height: 1.55; }
+#classContent .ac-post .ac-actions { margin-top: 12px; }
+.ac-actions > .ar-btn { max-width: 100%; white-space: normal; }
+.ac-class-change-form { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; margin-top: 16px; }
+.ac-class-change-form .ar-btn { min-height: 44px; align-self: end; }
+.ac-class-change-dialog .ar-dialog-shell-body > p { line-height: 1.5; }
+@container (max-width: 860px) {
+  .ac-workspace { grid-template-columns: minmax(0, 1fr); }
+  .ac-context nav { max-height: 200px; overflow-y: auto; overscroll-behavior: contain; }
+}
+@container (max-width: 520px) {
+  .ac-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .ac-tabs button { min-width: 0; padding-inline: 8px; }
+  .ac-subject-banner { padding: 16px; }
+  .ac-subject-banner > h2 { font-size: 1.25rem; }
+}
+@media (max-width: 560px) {
+  .ac-class-change-form { grid-template-columns: minmax(0, 1fr); }
+  .ac-schedule-toolbar > .ar-btn { flex: 1 1 140px; max-width: 100%; white-space: normal; }
+}

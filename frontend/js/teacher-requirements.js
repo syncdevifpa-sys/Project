@@ -15,6 +15,9 @@
         const kind = role.value,
             student = kind === 'discente';
         form.elements.formacao.required = kind === 'docente';
+        form.elements.nome_usuario.required = kind !== 'servidor';
+        const usernameLabel = document.getElementById('requestedUsernameLabel');
+        if (usernameLabel) usernameLabel.textContent = 'Nome de usuário no SIGAA' + (kind === 'servidor' ? ' (opcional)' : '');
         course.required = student;
         stage.required = student;
         course.disabled = !student;

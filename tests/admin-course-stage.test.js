@@ -6,11 +6,13 @@ const current = { id_curso: 2, periodo: 3 };
 test('edição administrativa valida etapa por duração e regime do curso real', async () => {
     const c = connection({ id_curso: 2, regime_etapas: 'anual', total_etapas: 3 });
     await validateAcademicEdit(c, current, { periodo: 3 }, 'discente');
-    await assert.rejects(validateAcademicEdit(c, current, { periodo: 4 }, 'discente'), {
+    await validateAcademicEdit(c, current, { periodo: 4 }, 'discente');
+    await assert.rejects(validateAcademicEdit(c, current, { periodo: 5 }, 'discente'), {
         status: 400
     });
     const semester = connection({ id_curso: 2, regime_etapas: 'semestral', total_etapas: 6 });
-    await validateAcademicEdit(semester, current, { periodo: 6 }, 'discente');
+    await validateAcademicEdit(semester, current, { periodo: 7 }, 'discente');
+    await assert.rejects(validateAcademicEdit(semester, current, { periodo: 8 }, 'discente'), {status:400});
 });
 test('mudança de curso pede revisão explícita da etapa e não inventa duração para legado', async () => {
     const c = connection({ id_curso: 3, regime_etapas: null, total_etapas: null });

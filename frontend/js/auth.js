@@ -875,11 +875,13 @@ window.Arcadia = window.Arcadia || {};
                               ? !ehAluno && requestedRole
                               : requestedRole;
                     input.required =
-                        applicable && !(tipo === 'servidor' && input.id === 'teacherFormacao');
+                        applicable && !(tipo === 'servidor' && ['teacherFormacao', 'teacherUsername'].includes(input.id));
                     input.disabled = !applicable;
                     if (['studentCourseInfo', 'teacherFormacao'].includes(input.id))
                         input.closest('.ar-input-group').hidden = !applicable;
                 }
+                const usernameLabel = document.getElementById('teacherUsernameLabel');
+                if (usernameLabel) usernameLabel.textContent = 'Nome de usuário no SIGAA' + (tipo === 'servidor' ? ' (opcional)' : '');
                 const trainingLabel = document.getElementById('teacherFormacaoLabel');
                 if (trainingLabel)
                     trainingLabel.textContent =
@@ -906,7 +908,7 @@ window.Arcadia = window.Arcadia || {};
                     : tipo === 'docente'
                       ? 'Professor: confirme seu e-mail e aguarde a análise dos Requisitos. Enquanto isso, sua conta terá acesso de Comunidade externa.'
                       : tipo === 'servidor'
-                        ? 'Servidor: confirme seu e-mail e aguarde a análise do vínculo. Formação é opcional; até a aprovação, seu acesso será de Comunidade externa.'
+                        ? 'Servidor: confirme seu e-mail e aguarde a análise do vínculo. Usuário do SIGAA e formação são opcionais; até a aprovação, seu acesso será de Comunidade externa.'
                         : tipo === 'externo'
                           ? 'Comunidade externa: use qualquer e-mail válido. Sua conta permite acessar seu perfil e publicações abertas, sem permissões institucionais.'
                           : (tipo === 'docente' ? 'Professor' : 'Servidor') +

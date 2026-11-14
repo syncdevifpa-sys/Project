@@ -1,6 +1,6 @@
 # Cadastro, tarefas arquivadas e atividades da turma
 
-O cadastro solicita curso antes da etapa atual. O regime vem da configuração do curso; o cadastro oferece quatro anos ou oito semestres, ampliando o limite para cursos oficialmente mais longos, como engenharias com dez semestres. O limite de cadastro não altera a duração registrada do curso. Um curso sem regime ou duração configurados continua indisponível para escolher etapa. A configuração existente é feita com `regime_etapas` e `total_etapas`, conforme `1.1.33-course-stages.sql`.
+O cadastro solicita curso antes da etapa atual. O regime vem da configuração do curso; o limite do cadastro é a duração oficial mais uma etapa: um ano adicional em cursos anuais ou um semestre adicional nos semestrais. Por exemplo, três anos permitem até o quarto ano; seis semestres permitem até o sétimo; dez semestres permitem até o décimo primeiro. O limite de cadastro não altera a duração registrada do curso. Um curso sem regime ou duração configurados continua indisponível para escolher etapa. A configuração existente é feita com `regime_etapas` e `total_etapas`, conforme `1.1.33-course-stages.sql`.
 
 Em Turmas, **Atividades** reúne avisos, projetos, atividades, trabalhos, avaliações, eventos e aulas canceladas. Materiais e Horários continuam separados. Registros antigos são exibidos sem conversão ou exclusão. Cancelar uma atividade comunica o cancelamento; não reescreve a grade semanal. Eventos e aulas canceladas exigem data e horário.
 

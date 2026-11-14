@@ -110,3 +110,7 @@ dialog.ar-dialog-shell[open] {
     padding-bottom: max(14px, env(safe-area-inset-bottom));
   }
 }
+
+/* Formulários de todas as abas respeitam a largura interna da janela. */
+.ar-dialog-shell-body :is(form, fieldset, label) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.ar-dialog-shell-body :is(input:not([type=checkbox]):not([type=radio]), select, textarea) { min-width: 0; max-width: 100%; box-sizing: border-box; }
