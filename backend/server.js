@@ -116,7 +116,9 @@ if (process.env.VERCEL || process.env.NODE_ENV === 'production')
         (_req, res) => res.sendStatus(404)
     );
 app.use(require('./src/routes/public-notice.routes').createPublicNoticeRouter(
-    require('./src/models/notices.model')
+    require('./src/models/notices.model'),
+    'https://portalarcadia.vercel.app',
+    require('./src/models/projects.model')
 ));
 app.use(express.static(path.join(__dirname, '../frontend')));
 console.log('Application routes configured.');

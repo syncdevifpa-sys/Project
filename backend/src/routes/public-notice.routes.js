@@ -7,9 +7,45 @@ const links = require('../../../frontend/js/notice-links');
 const escape = (value) => String(value ?? '').replace(/[&<>"']/g,
     (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const text = (value) => String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.app') {
+/* Lista somente URLs que podem ser abertas pelo visitante. */
+function renderSitemap(rows, origin = 'https://portalarcadia.vercel.app', projects = []) {
+    const urls = ['<url><loc>' + escape(origin + '/') + '</loc></url>'];
+    function add(url, row) {
+        const updated = row.atualizado_em || row.data_publicacao || row.criado_em;
+        const date = updated instanceof Date ? updated :
+            typeof updated === 'string' && /^\d{4}-\d{2}-\d{2}/.test(updated) ? new Date(updated) : null;
+        const lastmod = date && Number.isFinite(date.getTime())
+            ? '<lastmod>' + date.toISOString() + '</lastmod>' : '';
+        urls.push('<url><loc>' + escape(origin + url) + '</loc>' + lastmod + '</url>');
+    }
+    for (const row of rows) {
+        if (canReadNotice(row, null) && /^[1-9]\d*$/.test(String(row.id_aviso)))
+            add(links.path(row), row);
+    }
+    for (const project of projects) {
+        if (project.aprovacao === 'aprovado' && project.visibilidade === 'publico' &&
+            /^[1-9]\d*$/.test(String(project.id_projeto)))
+            add('/project.html?id=' + project.id_projeto, project);
+    }
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+        urls.join('\n') + '\n</urlset>\n';
+}
+function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.app', projectsModel = null) {
     const router = express.Router();
     const template = fs.readFileSync(path.join(__dirname, '../../../frontend/notice.html'), 'utf8');
+    router.get('/sitemap.xml', async (_req, res) => {
+        res.set('Cache-Control', 'no-store');
+        try {
+            const [rows, projects] = await Promise.all([
+                model.listNotices(),
+                projectsModel ? projectsModel.listProjects() : []
+            ]);
+            res.type('application/xml').send(renderSitemap(rows, origin, projects));
+        } catch {
+            res.status(503).type('text/plain').send('Sitemap temporariamente indisponível.');
+        }
+    });
     router.get('/noticias/:id/capa', async (req, res, next) => {
         try {
             res.set('Cache-Control', 'no-store');
@@ -57,4 +93,4 @@ function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.
     });
     return router;
 }
-module.exports = { createPublicNoticeRouter };
+module.exports = { createPublicNoticeRouter, renderSitemap };
