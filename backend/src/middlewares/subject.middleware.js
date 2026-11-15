@@ -10,7 +10,7 @@ function authenticateSubject(req, res, next) {
         ? authenticateExternal(req, res, next)
         : authenticateToken(req, res, next);
 }
-const allowed = /^\/(?:notices|calendar|projects|tasks|public|auth|email-verification|password-recovery)(?:\/|$)/;
+const allowed = /^\/(?:notices|calendar|projects|tasks|google-workspace|public|auth|email-verification|password-recovery)(?:\/|$)/;
 const externalAllowed = /^\/external\/(?:me|logout|email-status|email-change|compartilhamento|account|reminders)(?:\/|$)|^\/external\/space\/(?:profile|agenda|registrations|projects)(?:\/|$)|^\/teacher-requirements\/mine(?:\/change)?\/?$/;
 function externalScope(req, res, next) {
     const claims = jwt.decode((req.headers.authorization || '').split(' ')[1] || '');

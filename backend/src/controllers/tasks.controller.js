@@ -2,6 +2,9 @@ const { validateContent, editContent } = require('../services/content-edit.servi
 const tasksModel = require('../models/tasks.model');
 const { taskOwner } = require('../middlewares/subject.middleware');
 function schemaUnavailable(req, res, error) {
+    if (error.code === 'ER_DATA_TOO_LONG' && /observacao/.test(error.sqlMessage || error.message || '')) {
+        res.status(503).json({error:'Aplique google-workspace.sql no banco para salvar observações longas. Seus dados permanecem no formulário.'});return true;
+    }
     if (!req.externalUser || !['ER_BAD_FIELD_ERROR','ER_NO_SUCH_TABLE'].includes(error.code)) return false;
     res.status(503).json({ error: 'Atualize o banco com a migração 1.1.27 para usar tarefas pessoais da Comunidade externa.' });
     return true;

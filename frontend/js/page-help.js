@@ -36,7 +36,7 @@
         ],
         'tasks.html': [
             'Tarefas',
-            'Organize suas tarefas e confira os prazos. Busca, filtros e modos de visualização ajudam a encontrar o que precisa fazer. No celular, Filtros abre um quadro na parte superior; toque fora ou pressione Escape para fechar. Lembretes não confirmam entrega de e-mail.'
+            'Organize suas tarefas e confira os prazos. Busca, filtros e modos de visualização ajudam a encontrar o que precisa fazer. No celular, Filtros abre um quadro na parte superior; toque fora ou pressione Escape para fechar. Lembretes não confirmam entrega de e-mail. Enviar tarefas ao Google permite marcar até 25 itens e escolher Agenda, Tasks ou ambos. Você confere a conta antes de autorizar; não há sincronização automática.'
         ],
         'documents.html': [
             'Documentos',
@@ -44,7 +44,7 @@
         ],
         'classes.html': [
             'Turmas',
-            'Selecione uma turma e uma disciplina para consultar conteúdos e horários. O acesso depende do seu vínculo. O ? nos horários explica os controles da grade.'
+            'Selecione uma turma e uma disciplina para consultar conteúdos e horários. O acesso depende do seu vínculo. O ? nos horários explica os controles da grade. Em Atividades, Criar tarefa pessoal abre um formulário com título, descrição, prazo e referência da disciplina. Salvar não altera a atividade original.'
         ],
         'people.html': [
             'Pessoas',

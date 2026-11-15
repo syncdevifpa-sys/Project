@@ -1,0 +1,17 @@
+/* Controles da integração: confirmação explícita e seleção em lote. */
+.ar-google-dialog { width:min(680px,calc(100vw - 24px));max-height:90dvh;overflow:auto;padding:20px;box-sizing:border-box; }
+.ar-google-form { display:grid;gap:12px; }
+.ar-google-dialog :is(input[type=search],select) { width:100%;min-width:0;min-height:44px;box-sizing:border-box;font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px; }
+.ar-google-selection { display:grid;gap:6px;max-height:36dvh;overflow:auto;overscroll-behavior:contain; }
+.ar-google-choice { display:flex;gap:10px;align-items:start;min-height:44px;padding:8px;box-sizing:border-box;overflow-wrap:anywhere; }
+.ar-google-choice input { width:20px;height:20px;flex:none; }
+.ar-google-actions { display:flex;gap:10px;align-items:center;flex-wrap:wrap; }
+.ar-google-results { padding-inline-start:20px;line-height:1.6;overflow-wrap:anywhere; }
+.ar-google-settings { padding:20px;min-width:0; }
+.ar-google-settings p { line-height:1.6; }
+@media(max-width:600px){.ar-google-dialog :is(input,select){font-size:16px;}.ar-google-dialog .ar-btn{max-width:100%;white-space:normal;}}
+
+.ar-google-dialog .ar-dialog-shell-body { display:grid;gap:12px; }
+.ar-google-dialog p { margin:0;line-height:1.5; }
+.ar-google-form > label { display:flex;align-items:center;gap:8px; }
+.ar-google-form > label input { width:20px;height:20px; }

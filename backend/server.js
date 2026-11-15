@@ -84,6 +84,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/courses', coursesRoutes);
 app.use('/api/tasks', tasksRoutes);
+app.use('/api/google-workspace', require('./src/routes/googleWorkspace.routes'));
 app.use('/api/content', require('./src/routes/content.routes'));
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/calendar-import', require('./src/routes/calendarImport.routes'));

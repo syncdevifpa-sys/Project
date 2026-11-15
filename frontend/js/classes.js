@@ -89,6 +89,10 @@
                 );
             }
             data = result;
+            if (!selected && typeof URLSearchParams === 'function' && typeof location !== 'undefined') {
+                const linked=Number(new URLSearchParams(location.search||'').get('disciplina'));
+                if (data.subjects?.some(subject=>Number(subject.id_disciplina)===linked)) selected=linked;
+            }
             if (data.catalogOnly) {
                 q('#classCreate').hidden = true;
                 q('#classTabs').hidden = true;
@@ -866,6 +870,18 @@
                         }
                     })
                 );
+            if (tab === 'atividades' && post.situacao !== 'cancelado') actions.append(btn('Criar tarefa pessoal', () => {
+                try {
+                    const source = A.classTask.draft(post, d, location.origin);
+                    const modal = A.contentEditor.open('tasks', null, () => {
+                        A.showToast?.('Tarefa pessoal criada. Ela está disponível em Tarefas.');
+                    }, source.fields);
+                    if (modal) {
+                        const note = el('p', 'Revise os dados antes de salvar. A tarefa será sua; a atividade da turma não será modificada.'+(source.truncated?' A descrição excede 5.000 caracteres; a observação traz um resumo e o link de origem.':''), 'ac-note');
+                        modal.querySelector('form').before(note);
+                    }
+                } catch(error) { message(error.message); }
+            }));
             row.append(actions);
             host.append(row);
         }

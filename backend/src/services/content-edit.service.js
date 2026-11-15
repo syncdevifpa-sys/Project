@@ -215,6 +215,7 @@ async function editContent(kind, id, body, actorId) {
                 409,
                 'Atualize as categorias do calendário no banco antes de salvar esta categoria.'
             );
+        if (kind === 'tasks' && error.code === 'ER_DATA_TOO_LONG' && /observacao/.test(error.sqlMessage || error.message || '')) fail(503,'Aplique google-workspace.sql no banco para salvar observações longas.');
         throw error;
     } finally {
         connection.release();
