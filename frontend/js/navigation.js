@@ -196,6 +196,7 @@
                           ['notices.html', 'Avisos e notícias', 'news'],
                           ['calendar.html', 'Calendário', 'calendar'],
                           ['projects.html', 'Projetos', 'projects'],
+                          ['documents.html', 'Documentos', 'file'],
                           ['campus-map.html', 'Mapa do campus', 'map']
                       ]
                   },
@@ -227,6 +228,7 @@
                             ['calendar.html', 'Calendário', 'calendar'],
                             ['people.html', 'Pessoas', 'people'],
                             ['projects.html', 'Projetos', 'projects'],
+                          ['documents.html', 'Documentos', 'file'],
                             ['campus-map.html', 'Mapa do campus', 'map']
                         ]
                     }

@@ -13,6 +13,8 @@
                 });
             return [...rows].sort((a, b) => {
                 const pinned = (value) => value === true || value === 1;
+                const urgent = Number(pinned(b.urgente)) - Number(pinned(a.urgente));
+                if (urgent) return urgent;
                 const priority = Number(pinned(b.fixado)) - Number(pinned(a.fixado));
                 if (priority) return priority;
                 let result = 0;
@@ -21,8 +23,8 @@
                 else if (mode === 'deadline')
                     result = (time(a.data_prazo) ?? Infinity) - (time(b.data_prazo) ?? Infinity);
                 else {
-                    const aa = time(a.data_publicacao),
-                        bb = time(b.data_publicacao);
+                    const aa = time(a.data_publicacao || a.criado_em),
+                        bb = time(b.data_publicacao || b.criado_em);
                     result =
                         aa === null
                             ? bb === null
@@ -35,7 +37,7 @@
                 return (
                     (Number.isNaN(result) ? 0 : result) ||
                     title(a, b) ||
-                    Number(a.id_aviso) - Number(b.id_aviso)
+                    Number(a.id_aviso || a.id_projeto) - Number(b.id_aviso || b.id_projeto)
                 );
             });
         },

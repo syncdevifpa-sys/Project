@@ -329,8 +329,8 @@ html[data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-ac
 html[data-motion='reduced'][data-preview-season] :is(.btn-pill,.btn-submit,.ar-btn-submit,.ar-dialog-actions button,.ar-banner-appearance-actions button) { transition:none; transform:none; }
 
 /* Edição de projetos e demais conteúdos usa a mesma ferramenta discreta. */
-.ar-content-edit { align-self:flex-end; margin-top:8px; border-color:transparent; background:transparent; color:var(--ink-muted); }
-.ar-project-delete { align-self:flex-end; border-color:transparent; background:transparent; color:var(--ink-muted); }
+.ar-content-edit { align-self:center; margin-top:0; border-color:transparent; background:transparent; color:var(--ink-muted); }
+.ar-project-delete { align-self:center; border-color:transparent; background:transparent; color:var(--ink-muted); }
 .ar-project-delete:hover { color:var(--danger); }
 .ar-task-actions { display:inline-flex; align-items:center; flex-wrap:wrap; gap:6px; }
 .ar-task-actions .ar-task-action { flex:0 0 36px; width:36px; height:36px; padding:0; border:0; background:transparent; color:var(--ink-muted); }

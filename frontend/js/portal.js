@@ -11,6 +11,7 @@
 
     /* Catálogo de ícones SVG do portal */
     var ICONS = {
+        pin: '<path d="m16 3 5 5-4 2-3 5-3-3-5 3 3-5-3-3 5-3 2-4Z M9 15l-6 6"/>',
         'external-link': '<path d="M14 3h7v7M21 3 10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/>',
         'copy': '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
         'edit': '<path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/>',
@@ -376,10 +377,7 @@
         }
     ];
     var externalPalette = window.Arcadia?.auth?.getSessao()?.tipo_usuario === 'externo';
-    if (externalPalette)
-        PALETTE_DATA = PALETTE_DATA.filter(function (item) {
-            return item.type !== 'Documents';
-        });
+
     var SCOPE_LABELS = {
         Notices: 'Avisos e notícias',
         Tasks: 'Tarefas',
@@ -413,9 +411,7 @@
             '<button type="button" class="ar-chip" aria-pressed="true" data-scope="All">Todos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Notices">Avisos e notícias</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Tasks">Tarefas</button>' +
-            (externalPalette
-                ? ''
-                : '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>') +
+            '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Documents">Documentos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Projects">Projetos</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="People">Pessoas</button>' +
             '<button type="button" class="ar-chip" aria-pressed="false" data-scope="Calendar">Calendário</button>' +
@@ -488,8 +484,8 @@
             }
             prevEyebrow.textContent = SCOPE_LABELS[item.type] || item.type;
             prevTitle.textContent = item.title;
-            prevMeta.textContent = item.meta;
-            prevDesc.textContent = item.desc || '';
+            prevMeta.textContent = item.meta || '';
+            prevDesc.textContent = window.Arcadia.globalSearch.plain(item.desc || '');
         }
 
         function renderResults() {

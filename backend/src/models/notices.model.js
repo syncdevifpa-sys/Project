@@ -34,7 +34,7 @@ async function listNotices() {
                 criado_em,
                 atualizado_em
             FROM avisos
-            ORDER BY fixado DESC, data_publicacao DESC
+            ORDER BY urgente DESC, fixado DESC, data_publicacao DESC, id_aviso DESC
         `);
 
         return notices;

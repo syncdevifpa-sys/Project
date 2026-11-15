@@ -28,7 +28,7 @@ test('menu móvel tem ícone reconhecível e rótulo, sem aviso redundante da p�
             assert.ok(f.nodes.some((n) => n.href === 'login.html'));
             assert.ok(
                 !f.nodes.some((n) =>
-                    ['admin.html', 'classes.html', 'people.html', 'documents.html'].includes(n.href)
+                    ['admin.html', 'classes.html', 'people.html'].includes(n.href)
                 )
             );
         }
@@ -221,7 +221,7 @@ test('sidebar marks current section, gates administration and remembers icon rai
         'projects.html'
     ])
         assert.ok(destinations.includes(path));
-    for (const path of ['documents.html', 'classes.html', 'admin.html'])
+    for (const path of ['classes.html', 'admin.html'])
         assert.ok(!destinations.includes(path));
 });
 test('mobile drawer closes with Escape, backdrop and navigation; restores background access', () => {
@@ -344,7 +344,7 @@ test('mapa é acessível na navegação pública, institucional e externa sem ab
                 !f.nodes.some(
                     (node) =>
                         node.tag === 'a' &&
-                        ['classes.html', 'admin.html', 'documents.html'].includes(
+                        ['classes.html', 'admin.html'].includes(
                             node.href
                         )
                 )

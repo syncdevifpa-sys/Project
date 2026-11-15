@@ -26,7 +26,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
     const hero = { textContent: '' };
     let load;
     const document = {
-        createElement: () => ({ append() {}, addEventListener() {}, value: '' }),
+        createElement: () => ({ append() {}, after() {}, setAttribute() {}, addEventListener() {}, value: '' }),
         addEventListener(event, fn) {
             load = fn;
         },
@@ -53,6 +53,7 @@ test('filtros em português preservam os valores enviados à API e exibem os ró
         window: {
             Arcadia: {
                 noticeText: { summary: value => value },
+                noticeFilters: { sort: (rows,mode) => { const scope={window:{Arcadia:{}}};vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js','utf8'),scope);return scope.window.Arcadia.noticeFilters.sort(rows,mode); } },
                 contentFields: require('../frontend/js/content-fields'),
                 auth: { getSessao: () => ({ tipo_usuario: 'docente' }) },
                 showToast: (message) => assert.fail(message),

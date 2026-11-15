@@ -339,3 +339,19 @@
  .ar-content-list .ar-notice-cover { width: 80px; height: 80px; }
  .ar-content-list .ar-card-title { font-size: 1.1rem; }
 }
+
+/* Ações alinhadas e miniaturas sem máscara no modo lista. */
+:is(#noticesCardsGrid,#gridProjetos) > .ar-card { display:flex;flex-direction:column;min-width:0; }
+:is(#noticesCardsGrid,#gridProjetos) .ar-notice-card-actions, .ar-card-actions { display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:10px; }
+:is(#noticesCardsGrid,#gridProjetos) .ar-iconbtn { box-sizing:border-box;width:44px;height:44px;min-height:44px;min-width:44px;padding:8px;align-self:center; }
+:is(#noticesCardsGrid,#gridProjetos) .ar-notice-cover { height:200px;flex:none; }
+.ar-content-list .ar-notice-cover { mask-image:none!important;filter:none!important; }
+.ar-content-list .ar-notice-cover::after { display:none!important; }
+.ar-content-list .ar-notice-cover img { filter:none!important;mask-image:none!important;opacity:1; }
+.ar-content-list .ar-cover-reveal-toggle { display:none; }
+
+/* A lista de avisos usa o mesmo cartão, sem degradê sobre a miniatura. */
+#noticeCompactList .ar-notice-cover::after { display:none; }
+:is(#noticeCompactList,#gridProjetos) .ar-content-list .ar-notice-cover { height:90px; }
+#noticeCompactList .ar-notice-cover { width:90px;height:90px;float:inline-start;margin-inline-end:12px; }
+#noticeCompactList .ar-card { display:flow-root; }

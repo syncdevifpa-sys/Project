@@ -13,7 +13,7 @@ test('falha parcial na busca mantém conteúdo autorizado das demais fontes',asy
  const result=await search.load({get:path=>path==='/api/projects'?Promise.reject(Error('offline')):Promise.resolve([]),expect:p=>p},true,false);
  assert.deepEqual(result.failed,['Projects']);assert.deepEqual(result.items,[]);
  const paths=[];await search.load({get:path=>{paths.push(path);return {notices:[],projects:[]}},expect:p=>p},false,false);
- assert.deepEqual(paths,['/api/public']);
+ assert.deepEqual(paths,['/api/public','/api/document-library/public']);
 });
 test('metadados escondem vagas zeradas e datas ausentes ou impossíveis',()=>{
  assert.deepEqual(publication.metadata({vagas:0,data_evento:'2026-02-30'}),[]);

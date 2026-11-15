@@ -12,6 +12,7 @@
     }
 })(typeof window === 'undefined' ? {} : window, function () {
     'use strict';
+    const iconHelp = ' Ícones: lápis edita, lixeira exclui com confirmação, seta externa abre o link, cópia compartilha e alfinete fixa. Ações só aparecem quando sua conta tem permissão. A pesquisa superior consulta conteúdos acessíveis, sem incluir a administração.';
     const topics = {
         'dashboard.html': [
             'Meu painel',
@@ -19,7 +20,7 @@
         ],
         'notices.html': [
             'Avisos e notícias',
-            'Use a busca desta aba para encontrar publicações. Em Filtros, refine categoria, público e situação. Quadro, tabela e lista mostram os mesmos resultados.'
+            'Use a busca desta aba para encontrar publicações. Em Filtros, refine categoria, público e situação. Urgentes aparecem antes dos fixados; a ordem escolhida vale dentro de cada grupo. Quadro, tabela e lista mostram os mesmos resultados.'
         ],
         'notice.html': [
             'Publicação',
@@ -27,7 +28,7 @@
         ],
         'projects.html': [
             'Projetos',
-            'Busque por título, descrição ou responsável. Combine a busca com eixo e situação em Filtros. As opções de envio e inscrição dependem do projeto e da sua conta.'
+            'Busque por título, descrição ou responsável. Combine a busca com eixo e situação em Filtros. Ordenar por muda a ordem; projetos fixados aparecem primeiro. As opções de envio e inscrição dependem do projeto e da sua conta.'
         ],
         'calendar.html': [
             'Calendário',
@@ -35,11 +36,11 @@
         ],
         'tasks.html': [
             'Tarefas',
-            'Organize suas tarefas e confira os prazos. Busca, filtros e modos de visualização ajudam a encontrar o que precisa fazer. Lembretes não confirmam entrega de e-mail.'
+            'Organize suas tarefas e confira os prazos. Busca, filtros e modos de visualização ajudam a encontrar o que precisa fazer. No celular, Filtros abre um quadro na parte superior; toque fora ou pressione Escape para fechar. Lembretes não confirmam entrega de e-mail.'
         ],
         'documents.html': [
             'Documentos',
-            'A biblioteca reúne arquivos e links. Solicitações acadêmicas ficam em uma área separada. Os limites e as instruções aparecem ao adicionar um documento.'
+            'A biblioteca reúne arquivos e links. Geral permite visitantes; Contas do Arcádia inclui campus e comunidade externa; Somente campus exige conta institucional; Privado fica só para o dono. Clique no cartão para ver a descrição completa. Solicitações acadêmicas ficam em uma área separada. Os limites e as instruções aparecem ao adicionar um documento.'
         ],
         'classes.html': [
             'Turmas',
@@ -99,7 +100,7 @@
             title.textContent = topic[0] + ' — ajuda';
             dialog.setAttribute('aria-labelledby', title.id);
             const description = document.createElement('p');
-            description.textContent = topic[1];
+            description.textContent = topic[1] + iconHelp;
             const close = document.createElement('button');
             close.type = 'button';
             close.className = 'ar-btn ar-btn--secondary';

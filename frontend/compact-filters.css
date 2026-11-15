@@ -153,7 +153,7 @@
 @media (max-width: 700px) {
   .ar-compact-filters > .ar-compact-filter-body {
     position: fixed;
-    inset: auto auto 12px 12px;
+    inset: max(92px, env(safe-area-inset-top)) auto auto 12px;
     width: min(360px, calc(100vw - 24px));
     max-height: min(60dvh, 420px);
     grid-template-columns: minmax(0, 1fr);
