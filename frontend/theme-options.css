@@ -332,6 +332,9 @@ html[data-motion='reduced'][data-preview-season] :is(.btn-pill,.btn-submit,.ar-b
 .ar-content-edit { align-self:center; margin-top:0; border-color:transparent; background:transparent; color:var(--ink-muted); }
 .ar-project-delete { align-self:center; border-color:transparent; background:transparent; color:var(--ink-muted); }
 .ar-project-delete:hover { color:var(--danger); }
+/* Nos quadros de tarefas, as ações ficam alinhadas na base dos cartões. */
+#tarefasCards > .ar-card { display:flex; flex-direction:column; min-width:0; }
+#tarefasCards > .ar-card > .ar-task-actions { margin-top:auto; padding-top:12px; }
 .ar-task-actions { display:inline-flex; align-items:center; flex-wrap:wrap; gap:6px; }
 .ar-task-actions .ar-task-action { flex:0 0 36px; width:36px; height:36px; padding:0; border:0; background:transparent; color:var(--ink-muted); }
 .ar-task-actions .ar-task-action:hover { color:var(--ink); background:var(--surface-sunken); }
