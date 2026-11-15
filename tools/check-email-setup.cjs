@@ -17,6 +17,11 @@ const checks = {
     segredo_cotas_32_bytes:
         Buffer.byteLength(process.env.RATE_LIMIT_SECRET || process.env.JWT_SECRET || '') >= 32
 };
+/* A checagem opcional distingue SMTP de lembretes efetivamente habilitados. */
+if (process.argv.includes('--reminders')) {
+    checks.REMINDER_EMAIL_ENABLED = process.env.REMINDER_EMAIL_ENABLED === 'true';
+    checks.CRON_SECRET_32_caracteres = typeof process.env.CRON_SECRET === 'string' && process.env.CRON_SECRET.length >= 32;
+}
 (async () => {
     if (process.argv.includes('--schema-local')) {
         if (!['localhost', '127.0.0.1', '::1'].includes(process.env.DB_HOST)) {

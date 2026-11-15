@@ -131,3 +131,14 @@ test('migração invalida avisos ao concluir ou alterar prazo e exclui avisos vi
     assert.ok(spec.foreignKeys.some((fk) => fk.table === 'lembretes' && fk.columns === 'id_tarefa' && fk.ref === 'tarefas' && fk.delete === 'CASCADE'));
     assert.match(sql, /PRIMARY KEY \(id_lembrete, versao\)/);
 });
+
+test('processador adia a fila antes de reservar quando faltam os 17s de margem', async t => {
+ const previous=process.env.REMINDER_EMAIL_ENABLED;
+ process.env.REMINDER_EMAIL_ENABLED='true';
+ t.after(()=>{if(previous===undefined)delete process.env.REMINDER_EMAIL_ENABLED;else process.env.REMINDER_EMAIL_ENABLED=previous;});
+ let checks=0,writes=0,sends=0;
+ const db={execute:async sql=>{if(sql.startsWith('SELECT l.id_lembrete'))return[[{id_lembrete:1,versao:1},{id_lembrete:2,versao:1}]];writes++;throw Error('Não deveria reservar');}};
+ const mail={recoveryConfigured:()=>true,sendReminder:async()=>{sends++;}};
+ const result=await createDispatcher(db,mail,{clock:()=>checks++===0?0:8001}).run();
+ assert.equal(result.deferred,2);assert.equal(writes,0);assert.equal(sends,0);
+});
