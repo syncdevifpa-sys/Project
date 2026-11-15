@@ -235,7 +235,7 @@ CREATE TABLE tarefas (
     data_entrega    DATE,                              -- "Prazo de entrega"
     prioridade      ENUM('baixa', 'media', 'alta') NOT NULL DEFAULT 'media',
     status          ENUM('aberta', 'em_andamento', 'concluida') NOT NULL DEFAULT 'aberta',
-    observacao      VARCHAR(150),                      -- "Aguardando assinatura", "Relatório semestral"
+    observacao      TEXT,                      -- descrição pessoal e referência da atividade de origem
     concluida_em    DATE NULL,                         -- "Finalizado em 05 set"
     criado_em       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -913,3 +913,17 @@ CREATE TABLE conta_nome_pedidos (
   revisado_em DATETIME NULL,
   INDEX idx_nome_pendente (tipo,id_conta,estado)
 );
+
+-- Destinos para os envios manuais ao Google.
+-- Execute uma vez no banco atual. Não armazena tokens, senhas nem textos de tarefas.
+CREATE TABLE google_export_destinos (
+ titular_tipo ENUM('users','external') NOT NULL,
+ titular_id INT NOT NULL,
+ google_sub VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+ calendar_id VARCHAR(1024) NULL,
+ tasklist_id VARCHAR(1024) NULL,
+ reserva CHAR(48) CHARACTER SET ascii NULL,
+ reserva_ate DATETIME NULL,
+ atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ PRIMARY KEY(titular_tipo,titular_id,google_sub)
+) ENGINE=InnoDB;
