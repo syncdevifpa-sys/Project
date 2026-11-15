@@ -168,8 +168,18 @@
             });
             if (!response.ok) {
                 if (response.status === 401) credential = null;
-                const message =
-                    response.status === 403
+                const details = await response.json().catch(() => ({}));
+                const reasons = [details.error?.status, ...(details.error?.errors || []).map(e => e.reason), ...(details.error?.details || []).map(e => e.reason)];
+                const service = path.startsWith('tasks/') ? 'Google Tasks' : path.startsWith('calendar/') ? 'Google Agenda' : 'Google';
+                const message = reasons.some(r => ['SERVICE_DISABLED', 'accessNotConfigured'].includes(r))
+                    ? service + ' API não está habilitada no projeto Google Cloud. Ative a API e tente novamente.'
+                    : reasons.some(r => ['ACCESS_TOKEN_SCOPE_INSUFFICIENT', 'insufficientPermissions'].includes(r))
+                      ? 'Falta permissão para ' + service + '. Use Trocar conta Google e autorize esse serviço.'
+                      : response.status === 429
+                        ? service + ' atingiu o limite temporário de requisições. Aguarde antes de tentar novamente.'
+                        : response.status === 400
+                          ? service + ' recusou os dados da tarefa (erro 400). O envio não foi confirmado.'
+                          : response.status === 403
                         ? 'O Google recusou o acesso. Confira a API, as permissões e os usuários de teste.'
                         : response.status === 404
                           ? 'O item não existe mais no Google.'
@@ -341,6 +351,7 @@
                     'Conta selecionada: ' +
                     profile.email +
                     '. Revise e clique em Enviar selecionadas.';
+                A.showToast?.('Conta Google conectada: ' + profile.email);
             } catch (error) {
                 feedback.textContent = error.message;
             } finally {
@@ -371,6 +382,9 @@
             try {
                 /* A janela Google é aberta diretamente pelo clique, antes de qualquer outra espera. */
                 await authorize(select.value);
+                const profile = await googleRequest('GET', 'profile');
+                feedback.textContent = 'Conexão confirmada com ' + profile.email + '. Preparando envio…';
+                A.showToast?.('Conexão Google confirmada: ' + profile.email);
                 const current = await A.api.expect(A.api.get('/api/tasks'));
                 const fresh = current.filter(
                     (t) => selected.has(Number(t.id_tarefa)) && !t.arquivada_em
@@ -403,7 +417,7 @@
                     output.result.filter((r) => r.ok).length +
                     ' operação(ões) confirmada(s) em ' +
                     output.email +
-                    '. Falhas permanecem selecionadas; nada será reenviado automaticamente.';
+                    '. As tarefas ficam na lista Arcádia do Google Tasks. Falhas permanecem selecionadas; nada será reenviado automaticamente.';
                 submit.textContent = 'Enviar seleção novamente';
             } catch (error) {
                 feedback.textContent = error.message;
@@ -490,6 +504,7 @@
                 await authorize('both');
                 const profile = await googleRequest('GET', 'profile');
                 status.textContent = 'Autorização confirmada nesta aba: ' + profile.email;
+                A.showToast?.('Conta Google conectada: ' + profile.email + '. Para copiar tarefas, use Enviar tarefas ao Google.');
                 disconnect.disabled = false;
             } catch (error) {
                 status.textContent = error.message;
