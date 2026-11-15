@@ -2,7 +2,7 @@ const database = require('../config/database');
 const email = require('./email.service');
 const { authorizeContext,context }=require('./reminder-context.service');
 /* Reserva e fase SMTP persistidas: somente falhas comprovadamente anteriores ao SMTP podem repetir. */
-function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),budget=45000}={}) {
+function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),budget=25000}={}) {
     async function run() {
         if(process.env.REMINDER_EMAIL_ENABLED!=='true' || !mail.recoveryConfigured())
             return {disabled:true,sent:0,failed:0,cancelled:0};
@@ -15,7 +15,7 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
             ORDER BY l.agendado_utc,l.id_lembrete LIMIT 20`);
         const result={sent:0,failed:0,cancelled:0,deferred:0};
         for(let i=0;i<due.length;i++) {
-            /* Reservar margem para o limite absoluto de 15s do SMTP e finalização. */
+            /* Orçamento de 25s: reserva 15s para SMTP e 2s para finalizar antes dos 30s do agendador. */
             if(clock()-started>budget-17000) { result.deferred=due.length-i;break; }
             const item=due[i],keys=[item.id_lembrete,item.versao];
             let [claim]=await db.execute('INSERT IGNORE INTO lembrete_envios(id_lembrete,versao) SELECT id_lembrete,versao FROM lembretes WHERE id_lembrete=? AND versao=?',keys);

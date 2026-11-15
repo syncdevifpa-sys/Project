@@ -146,7 +146,7 @@ test('evolução SQL mantém uma tabela de lembretes, checksum independente e in
     }
     for(const trigger of spec.triggers) assert.ok(fresh.includes('CREATE TRIGGER '+trigger.name+' '));
     const config=JSON.parse(fs.readFileSync('vercel.json','utf8'));
-    assert.deepEqual(config.crons,[{path:'/api/internal/reminders/run',schedule:'0 12 * * *'}]);
+    assert.ok(!(config.crons || []).some(job => job.path === '/api/internal/reminders/run'), 'o agendamento externo não deve coexistir com o cron diário');
     const html=fs.readFileSync('frontend/calendar.html','utf8');
     assert.ok(html.indexOf('js/reminder-time.js')<html.indexOf('js/task-reminders.js'));
     assert.ok(html.includes('task-reminders.css'));
