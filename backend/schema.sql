@@ -306,6 +306,7 @@ CREATE TABLE calendario (
 -- 8. PROJETOS (pesquisa, extensão, ensino, inovação)
 -- ---------------------------------------------------------------------
 CREATE TABLE projetos (
+    fixado BOOLEAN NOT NULL DEFAULT FALSE,
     visibilidade ENUM('privado','publico') NOT NULL DEFAULT 'privado',
     permite_externos TINYINT(1) NOT NULL DEFAULT 0,
     id_projeto        INT AUTO_INCREMENT PRIMARY KEY,

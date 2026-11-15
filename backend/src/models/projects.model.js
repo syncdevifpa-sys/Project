@@ -21,6 +21,8 @@ async function publicQuery(sql, params = []) {
                 );
             else if (/capa/.test(message) && sql.includes('            capa,'))
                 sql = sql.replace('            capa,', '            NULL AS capa,');
+            else if (/fixado/.test(message) && sql.includes('            fixado,'))
+                sql = sql.replace('            fixado,', '            0 AS fixado,');
             else throw e;
         }
     }
@@ -32,6 +34,7 @@ async function listProjects(options = {}) {
             id_projeto,
             id_usuario,
             titulo,
+            fixado,
             descricao,
             capa,
             eixo,
@@ -66,6 +69,7 @@ async function findProjectById(projectId) {
             id_projeto,
             id_usuario,
             titulo,
+            fixado,
             descricao,
             capa,
             eixo,
@@ -109,6 +113,12 @@ async function createProject(userId, projectData) {
         visibilidade = 'privado'
     } = projectData;
 
+    let pinAvailable = false;
+    if (projectData.fixado) {
+        const [columns] = await db.execute("SHOW COLUMNS FROM projetos LIKE 'fixado'");
+        pinAvailable = columns.some(column => column.Field === 'fixado');
+        if (!pinAvailable) throw Object.assign(new Error('Atualize o banco com project-pinning.sql para fixar projetos.'), {status:409});
+    }
     let coverAvailable = false;
     if (projectData.capa) {
         const [columns] = await db.execute("SHOW COLUMNS FROM projetos LIKE 'capa'");
@@ -137,9 +147,9 @@ async function createProject(userId, projectData) {
             situacao,
             data_inicio,
             data_fim,
-            visibilidade${coverAvailable ? ', capa' : ''}
+            visibilidade${coverAvailable ? ', capa' : ''}${pinAvailable ? ', fixado' : ''}
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${coverAvailable ? ', ?' : ''})
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${coverAvailable ? ', ?' : ''}${pinAvailable ? ', ?' : ''})
     `,
         [
             userId,
@@ -156,7 +166,8 @@ async function createProject(userId, projectData) {
             data_inicio,
             data_fim,
             visibilidade,
-            ...(coverAvailable ? [projectData.capa] : [])
+            ...(coverAvailable ? [projectData.capa] : []),
+            ...(pinAvailable ? [true] : [])
         ]
     );
 

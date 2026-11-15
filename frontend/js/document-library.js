@@ -98,6 +98,7 @@
     }
     function coverFor(item) {
         const cover = element('div', undefined, 'ar-library-cover');
+        if (item.tipo === 'link') cover.classList.add('ar-library-cover--link');
         if (item.tipo !== 'arquivo' || !item.id_item) {
             cover.append(
                 icon(item.tipo),

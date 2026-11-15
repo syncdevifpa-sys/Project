@@ -184,7 +184,8 @@ dialog:is(.ar-dialog, .ar-library-dialog, .ar-confirm-dialog) {
     font-size: max(16px, 1em);
   }
   .ar-compact-filters > .ar-compact-filter-body {
-    bottom: max(12px, env(safe-area-inset-bottom));
+    top: max(92px, env(safe-area-inset-top));
+    bottom: auto;
     max-height: min(60dvh, 420px);
   }
 }
@@ -220,4 +221,34 @@ dialog:is(.ar-dialog, .ar-library-dialog, .ar-confirm-dialog) {
   .ar-publication-media .ar-notice-cover img { max-height: 70dvh; }
   .ar-cover-reveal-toggle { margin-right: 12px; }
   .ar-app :is(.ar-content-views, .ar-chipbar, .ar-filter-summary) { max-width: 100%; }
+}
+
+/* Banner público e caminho da publicação adaptados ao celular. */
+@media(max-width:700px){
+ .home-campus-banner { display:flex;flex-direction:column;min-height:0; }
+ .home-campus-banner > :is(img,figure,.home-campus-banner-media) { width:100%;max-width:100%;min-width:0; }
+ .home-campus-banner-content { width:100%;box-sizing:border-box;padding:20px; }
+ .home-campus-banner h1,.home-campus-banner h2 { font-size:clamp(1.8rem,7vw,2.4rem);overflow-wrap:anywhere; }
+ .ar-crumbs { display:flex;flex-wrap:wrap;gap:6px;line-height:1.4;min-width:0;font-size:12px; }
+ .ar-crumbs :is(a,span,strong) { min-width:0;overflow-wrap:anywhere;white-space:normal; }
+ .ar-hero-title { overflow-wrap:anywhere; }
+}
+
+/* O espaço de leitura varia pela densidade da tela, sem escalar a página inteira. */
+@media(max-width:700px){
+ body { --mobile-content-width:94%; }
+ body.ar-settings-page { --mobile-content-width:92%; }
+ body.ar-filter-page,body.ar-calendar-page { --mobile-content-width:100%; }
+ .ar-app > main.ar-route-main { inline-size:var(--mobile-content-width);max-inline-size:100%;margin-inline:auto;box-sizing:border-box; }
+ #classesApp { inline-size:100%;max-inline-size:100%;box-sizing:border-box; }
+ .ar-app :is(.ar-card-desc,.ar-library-description,.ar-detail-desc,.ar-hero-desc),
+ .ar-academic-card p,.ar-page-help-dialog p { font-size:1rem;line-height:1.6; }
+ .ar-app :is(.ar-card-meta,.ar-library-publisher) { font-size:.875rem;line-height:1.5; }
+ .ar-app :is(.ar-field-label,.ar-check-label) { font-size:.9375rem; }
+ .ar-app :is(.ar-table,.ac-schedule-table) :is(td,th) { font-size:.9375rem;line-height:1.5; }
+}
+
+@media(max-width:700px){
+ .ar-settings-page fieldset { min-inline-size:0;max-inline-size:100%;box-sizing:border-box; }
+ .ar-settings-page fieldset .ar-btn { max-inline-size:100%;white-space:normal; }
 }

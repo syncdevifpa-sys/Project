@@ -294,6 +294,7 @@
                     `${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${esc(label(categories, r.categoria))} · ${esc(A.noticeAudiences.format(r.publico_alvo))} · ${date(r.data_publicacao)}`,
                     `<div class="ar-notice-card-actions"><a class="ar-link ar-iconbtn" href="${A.noticeLinks.path(r)}" title="Abrir publicação" aria-label="Abrir publicação"><span data-icon="external-link"></span></a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-iconbtn btn-edit" data-id="${esc(r.id_aviso)}" aria-label="Editar publicação: ${esc(r.titulo)}" title="Editar publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/></svg></button><button type="button" class="ar-iconbtn btn-delete" data-id="${esc(r.id_aviso)}" aria-label="Excluir publicação: ${esc(r.titulo)}" title="Excluir publicação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : ''}</div>`
                 );
+                if (r.urgente === true || r.urgente === 1) html = html.replace('<h3', '<span class="ar-pinned-label">Urgente</span><h3');
                 if (r.fixado === true || r.fixado === 1) html = html.replace('<h3', '<span class="ar-pinned-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m16 3 5 5-4 2-3 5-3-3-5 3 3-5-3-3 5-3 2-4Z M9 15l-6 6"/></svg>Fixado</span><h3');
                 return A.noticeCover?.valid(r.capa)
                     ? html
@@ -358,11 +359,7 @@
                 grid.innerHTML = list.map(noticeCard).join('') || '<p>Nenhum aviso encontrado.</p>';
                 if (compact) {
                     compact.innerHTML =
-                        list
-                            .map(
-                                (r) =>
-                                    `<li><article class="ar-card">${A.noticeCover?.valid(r.capa) ? A.noticeCover.markup(r.capa, "Capa: " + r.titulo) : ""}<h3 class="ar-card-title"><a href="${A.noticeLinks.path(r)}">${esc(r.titulo)}</a></h3><p class="ar-card-meta">${r.tipo_publicacao === 'noticia' ? 'Notícia' : 'Aviso'} · ${date(r.data_publicacao)} · ${esc(label(noticeStatuses, r.situacao))}</p>${r.resumo ? `<p class="ar-card-desc">${esc(r.resumo)}</p>` : ''}<a class="ar-link ar-iconbtn" href="${A.noticeLinks.path(r)}" title="Abrir publicação" aria-label="Abrir publicação"><span data-icon="external-link"></span></a>${A.noticeActions.canDelete(r) ? `<button type="button" class="ar-btn btn-edit" data-id="${esc(r.id_aviso)}">Editar publicação</button>` : ''}</article></li>`
-                            )
+                        list.map(r => '<li>' + noticeCard(r) + '</li>')
                             .join('') || '<li>Nenhuma publicação encontrada.</li>';
                 }
                 table.innerHTML = list
@@ -545,6 +542,14 @@
             situationLabel.append('Situação do projeto', situation);
             $('#chipbarProjetos').after(situationLabel);
             situation.addEventListener('change', render);
+            const order = document.createElement('select');
+            order.id = 'projectSort';
+            order.setAttribute('aria-label', 'Ordenar projetos');
+            for (const [value,text] of [['recent','Mais recentes'],['oldest','Mais antigos'],['title','Título A–Z'],['title-desc','Título Z–A']]) {
+                const option = document.createElement('option');option.value=value;option.textContent=text;order.append(option);
+            }
+            const orderLabel = document.createElement('label');orderLabel.className='ar-field';orderLabel.append('Ordenar por',order);
+            situationLabel.after(orderLabel);order.addEventListener('change',render);
             const bar = filterBar(
                 '#chipbarProjetos',
                 tracks,
@@ -577,7 +582,7 @@
                     : '';
             }
             function render() {
-                const visible = bar.visible();
+                const visible = A.noticeFilters.sort(bar.visible(), order.value || 'recent');
                 if (searchStatus)
                     searchStatus.textContent =
                         visible.length +
@@ -587,13 +592,14 @@
                 grid.innerHTML =
                     visible
                         .map((r) => {
-                            const markup = card(
+                            let markup = card(
                                 r.titulo,
                                 A.noticeText.summary(r.descricao),
                                 `${esc(label(tracks, r.eixo))} · ${esc(situations[r.situacao] || r.situacao || '')} · ${esc(r.responsavel_nome || '')}${r.aprovacao ? `<br>Revisão da publicação: ${esc({ pendente: 'Em análise', aprovado: 'Aprovada', recusado: 'Recusada' }[r.aprovacao] || r.aprovacao)}` : ''}`,
-                                `<a class="ar-link ar-iconbtn" data-open-project="${esc(r.id_projeto)}" href="project.html?id=${encodeURIComponent(r.id_projeto)}" aria-label="Ver projeto: ${esc(r.titulo)}" title="Abrir projeto"><span data-icon="external-link"></span></a>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
-                                (A.projectActions?.canDelete() ? `<button type="button" class="ar-iconbtn ar-project-delete" data-delete-project="${esc(r.id_projeto)}" title="Excluir projeto" aria-label="Excluir projeto: ${esc(r.titulo)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : '')
+                                `<div class="ar-card-actions"><a class="ar-link ar-iconbtn" data-open-project="${esc(r.id_projeto)}" href="project.html?id=${encodeURIComponent(r.id_projeto)}" aria-label="Ver projeto: ${esc(r.titulo)}" title="Abrir projeto"><span data-icon="external-link"></span></a>` + projectActions(r) + editAction('projects', r, r.id_projeto) +
+                                (A.projectActions?.canDelete() ? `<button type="button" class="ar-iconbtn ar-project-delete" data-delete-project="${esc(r.id_projeto)}" title="Excluir projeto" aria-label="Excluir projeto: ${esc(r.titulo)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>` : '') + '</div>'
                             );
+                            if (r.fixado === true || r.fixado === 1) markup = markup.replace('<h3','<span class="ar-pinned-label"><span data-icon="pin" aria-hidden="true"></span>Fixado</span><h3');
                             return A.noticeCover?.valid(r.capa)
                                 ? markup.replace('class="ar-card"','class="ar-card ar-notice-with-cover"').replace(
                                       '<h3',
@@ -1327,12 +1333,14 @@
                 edit.type = 'button';
                 edit.className = 'ar-btn ar-btn--secondary';
                 edit.textContent = 'Editar publicação';
+                A.compactAction?.(edit, 'Editar');
                 edit.addEventListener('click', () => A.noticeEditor.open(r, noticeDetail));
                 actions.append(edit);
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'ar-btn ar-btn--secondary';
                 button.textContent = 'Excluir publicação';
+                A.compactAction?.(button, 'Excluir');
                 button.addEventListener('click', async () => {
                     button.disabled = true;
                     try {

@@ -126,6 +126,10 @@ async function editContent(kind, id, body, actorId) {
         );
         if (!rows.length) fail(404, 'Registro não encontrado.');
         const row = rows[0];
+        if (kind === 'projects' && Object.hasOwn(values, 'fixado') && row.fixado === undefined) {
+            if (values.fixado) fail(409, 'Atualize o banco com project-pinning.sql para fixar projetos.');
+            delete values.fixado;
+        }
         if (kind === 'projects' && Object.hasOwn(values, 'capa') && row && row.capa === undefined) {
             if (values.capa)
                 fail(

@@ -4,8 +4,10 @@ async function publicProjects() {
     try {
         const [columns] = await db.execute("SHOW COLUMNS FROM projetos LIKE 'capa'");
         const cover = columns.some((column) => column.Field === 'capa') ? 'capa' : 'NULL AS capa';
+        const [pinColumns] = await db.execute("SHOW COLUMNS FROM projetos LIKE 'fixado'");
+        const pinned = pinColumns.some(column => column.Field === 'fixado');
         return await db.execute(
-            `SELECT id_projeto,titulo,descricao,eixo,data_inicio,data_fim,${cover} FROM projetos WHERE aprovacao = 'aprovado' AND visibilidade = 'publico' ORDER BY criado_em DESC`
+            `SELECT id_projeto,titulo,descricao,eixo,data_inicio,data_fim,${cover},${pinned ? 'fixado' : '0 AS fixado'} FROM projetos WHERE aprovacao = 'aprovado' AND visibilidade = 'publico' ORDER BY ${pinned ? 'fixado DESC, ' : ''}criado_em DESC`
         );
     } catch (error) {
         if (error.code === 'ER_BAD_FIELD_ERROR') return [[]];
@@ -23,9 +25,9 @@ router.get('/', async (req, res, next) => {
             ? 'tipo_publicacao'
             : "'aviso' AS tipo_publicacao";
         const [[notices], [projects]] = await Promise.all([
-            db.execute(`SELECT id_aviso, titulo, resumo, descricao, data_publicacao, ${coverColumn}, ${typeColumn}
+            db.execute(`SELECT id_aviso, titulo, resumo, descricao, data_publicacao, urgente, fixado, ${coverColumn}, ${typeColumn}
                 FROM avisos WHERE situacao = 'publicado' AND (FIND_IN_SET('todos', publico_alvo) > 0 OR FIND_IN_SET('externo', publico_alvo) > 0)
-                ORDER BY fixado DESC, data_publicacao DESC`),
+                ORDER BY urgente DESC, fixado DESC, data_publicacao DESC`),
             publicProjects()
         ]);
         res.json({ notices, projects });

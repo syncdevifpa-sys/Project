@@ -107,6 +107,7 @@
             fields: [
                 title,
                 description,
+                ['fixado', 'Fixar projeto', 'checkbox'],
                 [
                     'eixo',
                     'Área temática',

@@ -12,7 +12,8 @@
     const areaLabel = node('label', 'Gestão'),
         area = node('select');
     for (const [value, label] of [
-        ['records', 'Turmas e ofertas'],
+        ['records', 'Turmas'],
+        ['offers', 'Ofertas de disciplinas'],
         ['catalog', 'Catálogo de disciplinas'],
         ['requests', 'Pedidos de entrada']
     ]) {
@@ -41,7 +42,8 @@
         button('Atualizar', (event) => run(event.currentTarget, status, reload))
     );
     host.append(
-        node('h2', 'Turmas e disciplinas'),
+        node('h2', 'Gestão de turmas e disciplinas'),
+        node('p', 'Turma reúne os alunos de um curso. Oferta de disciplina vincula uma disciplina, professor e período letivo a essa turma.'),
         node(
             'p',
             'Arquivar preserva o histórico. Restaurar reativa o registro escolhido. Exclusão definitiva exige ausência de vínculos e confirmação do nome.'
@@ -65,7 +67,7 @@
     async function reload() {
         status.textContent = 'Carregando gestão acadêmica…';
         list.replaceChildren();
-        stateLabel.hidden = area.value !== 'records';
+        stateLabel.hidden = !['records', 'offers'].includes(area.value);
         add.hidden = area.value !== 'catalog';
         if (area.value === 'requests') {
             await review(list, status, reload);
@@ -98,7 +100,7 @@
             for (const row of rows) {
                 const key = type === 'turma' ? row.id_turma : row.id_disciplina,
                     card = node('article', undefined, 'ar-academic-card');
-                card.append(node('h3', (type === 'turma' ? 'Turma: ' : 'Oferta: ') + row.nome));
+                card.append(node('h3', (type === 'turma' ? 'Turma: ' : 'Oferta de disciplina: ') + row.nome));
                 if (type === 'oferta')
                     card.append(
                         node(

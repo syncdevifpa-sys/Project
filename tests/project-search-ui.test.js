@@ -72,6 +72,7 @@ function fixture(query = '') {
     ];
     const A = {
         noticeText: { summary: value => value },
+                noticeFilters: { sort: (rows,mode) => { const scope={window:{Arcadia:{}}};vm.runInNewContext(fs.readFileSync('frontend/js/notice-filters.js','utf8'),scope);return scope.window.Arcadia.noticeFilters.sort(rows,mode); } },
         auth: { getSessao: () => ({ tipo_usuario: 'externo' }) },
         contentFields: require('../frontend/js/content-fields'),
         contentEditor: { canEdit: () => false },

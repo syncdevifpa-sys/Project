@@ -356,3 +356,16 @@ body:has(.ar-nav--breadcrumbs) { --portal-header-offset:140px; }
 
 /* Duração do curso acompanha o campo sem competir com o título. */
 .ar-course-duration {display:block;margin-top:6px;font:inherit;font-size:.8125rem;line-height:1.5;color:var(--text-muted, #596579);overflow-wrap:anywhere;}
+
+/* A lista vem primeiro na leitura e ocupa a largura útil da pesquisa. */
+#ar-command-palette-scrim .ar-pal-list { min-width:0; }
+#ar-command-palette-scrim .ar-pal-body { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start; }
+#ar-command-palette-scrim .ar-pal-item b { white-space:normal;overflow-wrap:anywhere; }
+@media(max-width:800px){
+ #ar-command-palette-scrim .ar-pal-body { grid-template-columns:1fr; }
+ #ar-command-palette-scrim .ar-pal-preview { display:none; }
+ #ar-command-palette-scrim .ar-pal-top { padding:12px; }
+}
+
+/* Reserva o espaço do fechamento sem sobrepor o campo ou o indicador Esc. */
+#ar-command-palette-scrim .ar-pal-top > .ar-search { width:calc(100% - 44px)!important;margin-inline-end:44px; }

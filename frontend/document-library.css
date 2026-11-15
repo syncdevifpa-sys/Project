@@ -465,3 +465,6 @@
 .ar-library-item-info h4 a { color: inherit; text-decoration: none; }
 .ar-library-items[data-view="list"] .ar-library-cover { width: 80px; height: 100px; }
 .ar-library-status input { box-sizing: border-box; max-width: 100%; width: 100%; }
+
+/* Links usam uma identificação compacta; arquivos mantêm sua prévia. */
+.ar-library-cover--link { min-height:64px;height:80px; }
