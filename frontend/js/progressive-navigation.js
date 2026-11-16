@@ -386,6 +386,8 @@
                 });
                 const installedMain = currentMain;
                 await mounted?.ready;
+                /* Aguarda a aplicação dos estilos antes de retirar a proteção visual. */
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
                 if (installedMain !== currentMain || !installedMain.isConnected) return;
                 A.setupCompactFilters?.(currentMain);
                 currentMain.inert = false;
