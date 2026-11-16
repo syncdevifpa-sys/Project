@@ -168,6 +168,42 @@ function createAcademicManagement(database = db) {
                 throw error;
             });
     }
+    /* Excluir do catálogo também remove suas ofertas; a turma e os arquivos originais permanecem. */
+    async function catalogImpact(owner, key) {
+        await requireReady();
+        const a = await access.actor(database, owner);
+        if (!admin(a)) fail(403, 'Somente administradores excluem disciplinas do catálogo.');
+        const [items] = await database.execute('SELECT id_catalogo,nome,versao FROM academico_catalogo_disciplinas WHERE id_catalogo=?', [id(key)]);
+        if (!items.length) fail(404, 'Disciplina não encontrada.');
+        const [offers] = await database.execute('SELECT d.id_disciplina,d.nome,d.id_turma,d.ano_letivo,d.regime_letivo,d.semestre,t.nome AS turma FROM academico_oferta_catalogo v JOIN academico_disciplinas d ON d.id_disciplina=v.id_disciplina JOIN academico_turmas t ON t.id_turma=d.id_turma WHERE v.id_catalogo=? ORDER BY d.id_disciplina', [id(key)]);
+        return { ...items[0], ofertas: offers };
+    }
+    async function destroyCatalog(owner, key, body) {
+        await requireReady();
+        return access.transaction(owner, async (c, a) => {
+            if (!admin(a)) fail(403, 'Somente administradores excluem disciplinas do catálogo.');
+            const [items] = await c.execute('SELECT id_catalogo,nome,versao FROM academico_catalogo_disciplinas WHERE id_catalogo=? FOR UPDATE', [id(key)]);
+            const row = items[0];
+            if (!row) fail(404, 'Disciplina não encontrada.');
+            if (body.confirmacao !== 'EXCLUIR_CATALOGO_E_OFERTAS' || body.nome_confirmacao !== row.nome)
+                fail(400, 'Digite o nome exato e confirme a exclusão da disciplina e de suas ofertas.');
+            if (!Number.isSafeInteger(body.versao) || body.versao !== row.versao)
+                fail(409, 'A disciplina foi alterada. Reabra a confirmação para revisar.');
+            const [offers] = await c.execute('SELECT id_disciplina FROM academico_oferta_catalogo WHERE id_catalogo=? ORDER BY id_disciplina FOR UPDATE', [id(key)]);
+            const ids = offers.map(item => item.id_disciplina);
+            if (!Array.isArray(body.ofertas_confirmadas) || body.ofertas_confirmadas.length !== ids.length ||
+                [...body.ofertas_confirmadas].sort((a,b)=>a-b).some((value,index)=>!Number.isSafeInteger(value)||value!==ids[index]))
+                fail(409, 'As ofertas vinculadas mudaram. Reabra a confirmação para revisar antes de excluir.');
+            for (const offerId of ids) {
+                await c.execute('SELECT id_disciplina FROM academico_disciplinas WHERE id_disciplina=? FOR UPDATE', [offerId]);
+                await audit(c, a, 'oferta', offerId, 'excluir_por_catalogo', null, {id_catalogo:row.id_catalogo,nome_catalogo:row.nome});
+                await c.execute('DELETE FROM academico_disciplinas WHERE id_disciplina=?', [offerId]);
+            }
+            await audit(c, a, 'catalogo', row.id_catalogo, 'excluir_definitivamente', null, {nome:row.nome,ofertas_excluidas:ids});
+            await c.execute('DELETE FROM academico_catalogo_disciplinas WHERE id_catalogo=?', [row.id_catalogo]);
+            return { message: 'Disciplina removida do catálogo e ' + ids.length + ' oferta(s) excluída(s).', ofertas_excluidas:ids.length };
+        });
+    }
     async function adminList(owner, state = 'ativas') {
         await requireReady();
         const a = await access.actor(database, owner);
@@ -609,6 +645,8 @@ function createAcademicManagement(database = db) {
         features,
         catalog,
         saveCatalog,
+        catalogImpact,
+        destroyCatalog,
         adminList,
         history,
         archive,

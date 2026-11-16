@@ -119,3 +119,14 @@ test('banco migrado persiste tipo na criação, leitura e edição sem alterar c
     assert.match(sql, /DEFAULT ''aviso''/);
     assert.doesNotMatch(sql, /\bDROP\b|\bDELETE\b|\bUPDATE\b/);
 });
+
+
+test('salvar notícia ou projeto limpa espaços extras e mantém parágrafos e comandos de estilo válidos',()=>{
+ const {validateContent}=require('../backend/src/services/content-edit.service');
+ const value='  Primeiro   parágrafo. \r\n\r\n\r\n\r\nSegundo\u00a0parágrafo.  '.replace(/\\r/g,'\r').replace(/\\n/g,'\n').replace(/\\u00a0/g,'\u00a0');
+ const expected='Primeiro parágrafo.\n\nSegundo parágrafo.';
+ assert.equal(validateNotice({resumo:value}).resumo,expected);
+ assert.equal(validateContent('projects',{descricao:value}).descricao,expected);
+ const formatted='[alinhar=justify]**Texto**[/alinhar]';
+ assert.equal(validateNotice({resumo:formatted}).resumo,formatted);
+});

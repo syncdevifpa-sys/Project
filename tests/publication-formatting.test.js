@@ -32,3 +32,18 @@ test('alinhamentos e cores aninhados não deixam comandos internos visíveis',()
  assert.equal(host.children[0].children[0].style.textAlign,'justify');
 });
 
+
+
+test('leitura reduz espaços acidentais e restos de comandos sem juntar parágrafos',()=>{
+ const {A,node}=setup(),host=node('div');
+ assert.equal(A.noticeText.normalize('  Primeiro   parágrafo. \r\n\r\n\r\n Segundo\u00a0parágrafo.  '),'Primeiro parágrafo.\n\nSegundo parágrafo.');
+ A.noticeText.render(host,'Texto[/alinhar] https://example.test/publicacao[/cor]');
+ const leaves=n=>[n.textContent,...n.children.flatMap(leaves)].join('');
+ assert.doesNotMatch(leaves(host),/\[\/(?:alinhar|cor)\]/);
+ const link=host.children.find(n=>n.tag==='a');assert.equal(link.href,'https://example.test/publicacao');
+});
+test('compartilhamento remove comandos de alinhamento, cor e estilos sem colar palavras',()=>{
+ const links=require('../frontend/js/notice-links');
+ assert.equal(links.plainText('[alinhar=justify]**Texto** [cor=#123456]_formatado_[/cor][/alinhar][alinhar=left]Outro parágrafo[/alinhar]'),'Texto formatado Outro parágrafo');
+ assert.equal(links.path({id_aviso:9,titulo:'[cor=#123456]Notícia importante[/cor]'}),'/noticias/9/noticia-importante');
+});

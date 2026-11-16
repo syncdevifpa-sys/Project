@@ -121,7 +121,7 @@ test('página pública carrega conteúdo sem autenticação e trata texto como t
         '<script>private()</script>'
     );
     assert.equal(targets.publicProjects.children.length, 1);
-    assert.equal(targets.publicNews.children[0].children[2].href, '/noticias/12/script-private-script');
+    assert.equal(targets.publicNews.children[0].children[2].href, '/noticias/12/private');
     assert.equal(targets.publicProjects.children[0].children[2].href, 'project.html?id=8');
     assert.ok(covers.includes('data:image/jpeg;base64,/9j/AA=='));
     assert.equal(targets.publicNews.children.length, 2);

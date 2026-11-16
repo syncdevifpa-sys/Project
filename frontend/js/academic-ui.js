@@ -89,7 +89,7 @@
             };
             queueMicrotask(() => fields.querySelector('input,select,textarea')?.focus());
         }
-        return { box, fields, field, submit };
+        return { box, fields, field, submit, save };
     }
     async function reloadAfter(result, reload, status) {
         try {

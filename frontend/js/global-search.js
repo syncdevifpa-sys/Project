@@ -4,7 +4,7 @@
 })(typeof window==='undefined'?globalThis:window,function(noticeLinks){
  'use strict';
  /* O índice recebe somente respostas autorizadas; não inclui contatos privados nem administração. */
- const plain=value=>String(value??'').replace(/\[(?:\/?(?:alinhar|cor|color|tamanho|fonte|bold|italic|sublinhar|justify))(?:=[^\]]*)?\]/gi,'').replace(/<[^>]*>/g,' ').replace(/\*\*|__/g,'').replace(/\s+/g,' ').trim();
+ const plain=noticeLinks.plainText;
  const normalize=value=>plain(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const labels={discente:'aluno estudante',docente:'professor',servidor:'servidor',externo:'comunidade externa',pesquisa:'pesquisa',extensao:'extensão',inovacao:'inovação',evento:'evento eventos',calendario:'calendário calendario',edital:'edital editais',publicado:'publicado',calendario:'calendário',concluida:'concluída'};
  function match(items,query,scope='All'){

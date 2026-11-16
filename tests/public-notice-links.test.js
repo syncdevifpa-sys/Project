@@ -6,7 +6,7 @@ const { path } = require('../frontend/js/notice-links');
 
 test('notícia pública entrega endereço canônico, texto e capa próprios no HTML inicial', async (t) => {
     const rows = {
-        9: { id_aviso: 9, titulo: 'Biblioteca & extensão', resumo: 'Novidades <script>alert(1)</script>', descricao: 'Conteúdo público', situacao: 'publicado', publico_alvo: 'todos', capa: 'data:image/png;base64,aGVsbG8=' },
+        9: { id_aviso: 9, titulo: 'Biblioteca & extensão', resumo: '[alinhar=justify]**Novidades** [cor=#123456]do campus[/cor][/alinhar]', descricao: 'Conteúdo público', situacao: 'publicado', publico_alvo: 'todos', capa: 'data:image/png;base64,aGVsbG8=' },
         10: { id_aviso: 10, titulo: 'Título secreto', descricao: 'Texto secreto', situacao: 'publicado', publico_alvo: 'docente', capa: 'data:image/png;base64,aGVsbG8=' },
         11: { id_aviso: 11, titulo: 'Rascunho secreto', situacao: 'rascunho', publico_alvo: 'todos' }
     };
@@ -20,6 +20,8 @@ test('notícia pública entrega endereço canônico, texto e capa próprios no H
     const response = await fetch(origin + path(rows[9]));
     const html = await response.text();
     assert.equal(response.status, 200);
+    assert.doesNotMatch(html, /\[\/?(?:alinhar|cor)/);
+    assert.match(html, /og:description" content="Novidades do campus/);
     assert.match(html, /og:title" content="Biblioteca &amp; extensão/);
     assert.match(html, /og:image" content="https:\/\/portalarcadia.vercel.app\/noticias\/9\/capa/);
     assert.match(html, /data-notice-id="9"/);

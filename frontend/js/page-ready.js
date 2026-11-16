@@ -31,11 +31,16 @@
         status.textContent = 'Carregando Arcádia';
         document.body.append(status);
     }
+    let motionStarted = false;
     function ready() {
         root.removeAttribute('data-page-loading');
         clearTimeout(timeout);
         status?.remove();
         style.remove();
+        if (document.body && !motionStarted) {
+            motionStarted = true;
+            startMotion();
+        }
     }
     timeout = setTimeout(ready, 5000);
     document.addEventListener('DOMContentLoaded', announce, { once:true });
@@ -47,4 +52,43 @@
         ]).then(() => requestAnimationFrame(ready));
     }, { once:true });
     window.addEventListener('pageshow', event => { if (event.persisted) ready(); });
+    /* Entradas curtas sem dividir palavras, alterar o layout ou encobrir conteúdo. */
+    function startMotion() {
+        if (!Element.prototype.animate || !window.MutationObserver) return;
+        const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const active = new Set();
+        const seen = new WeakSet();
+        const selector = 'main h1,main h2,main [role="tabpanel"],main [id$="Panel"],main > section';
+        const reduced = () => preference.matches || root.getAttribute('data-motion') === 'reduced';
+        function reveal(element, repeat) {
+            if (reduced() || (!repeat && seen.has(element)) || element.closest('dialog,[contenteditable="true"],[hidden]')) return;
+            const rect = element.getBoundingClientRect();
+            if (!rect.width || !rect.height || rect.top > innerHeight || rect.bottom < 0) return;
+            seen.add(element);
+            const title = /^H[12]$/.test(element.tagName);
+            const frames = title
+                ? [{ opacity: 0.35, translate: '0 5px' }, { opacity: 1, translate: '0 0' }]
+                : [{ opacity: 0.55 }, { opacity: 1 }];
+            const animation = element.animate(frames, { duration: title ? 300 : 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
+            active.add(animation);
+            animation.finished.catch(() => {}).finally(() => active.delete(animation));
+        }
+        function scan(container) {
+            if (container.nodeType !== 1) return;
+            if (container.matches(selector)) reveal(container);
+            container.querySelectorAll(selector).forEach(element => reveal(element));
+        }
+        scan(document.body);
+        /* Abas locais e navegação sem recarregar recebem a mesma entrada. */
+        new MutationObserver(records => {
+            for (const record of records) {
+                if (record.type === 'attributes') {
+                    if (!record.target.hidden && record.target.matches(selector)) reveal(record.target, true);
+                } else record.addedNodes.forEach(scan);
+            }
+        }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'] });
+        function cancelReduced() { if (reduced()) active.forEach(animation => animation.cancel()); }
+        preference.addEventListener('change', cancelReduced);
+        new MutationObserver(cancelReduced).observe(root, { attributes: true, attributeFilter: ['data-motion'] });
+    }
 })();

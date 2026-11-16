@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { normalizeRichText } = require('../../../frontend/js/notice-links');
 const enums = {
     tipo_publicacao: ['aviso', 'noticia'],
     categoria: ['matricula', 'edital', 'evento', 'cancelamento', 'calendario'],
@@ -22,7 +23,7 @@ function validateNotice(body, creation = false) {
                     value.length > limit
                 )
                     fail(400, 'Texto inválido em ' + key + '.');
-                value = value.trim();
+                value = ['resumo','descricao'].includes(key) ? normalizeRichText(value) : value.trim();
                 if (!value && ['titulo', 'resumo'].includes(key))
                     fail(400, 'Preencha título e resumo.');
                 values[key] = value || null;

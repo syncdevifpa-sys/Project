@@ -68,7 +68,7 @@
         ],
         'admin.html': [
             'Administração',
-            'Escolha Pessoas e conteúdo, Requisitos ou Turmas. Confira o vínculo solicitado antes de aprovar. Desativar preserva histórico; excluir definitivamente remove dados vinculados.'
+            'Escolha Pessoas e conteúdo, Requisitos ou Turmas. Confira o vínculo solicitado antes de aprovar. Desativar preserva histórico. No Catálogo, excluir uma disciplina também exclui suas ofertas e os conteúdos vinculados; confira a lista e digite o nome para confirmar. As turmas e os arquivos originais da biblioteca permanecem.'
         ]
     };
     const forPage = (page) => topics[page] || null;

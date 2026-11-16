@@ -1,5 +1,12 @@
 (function (A) {
     'use strict';
+    /* Remove espaços acidentais sem juntar parágrafos nem palavras. */
+    function normalize(value) {
+        if (A.noticeLinks?.normalizeRichText) return A.noticeLinks.normalizeRichText(value);
+        return String(value ?? '').replace(/\r\n?/g,'\n').replace(/\u00a0/g,' ')
+            .split('\n').map(line=>line.replace(/[ \t]+/g,' ').trim()).join('\n')
+            .replace(/\n{3,}/g,'\n\n').trim();
+    }
     function renderLinks(target, value) {
             const text = String(value ?? '');
             target.style.whiteSpace = 'pre-wrap';
@@ -13,7 +20,7 @@
                 }
             };
             for (const match of text.matchAll(/\bhttps?:\/\/[^\s<>"']+/gi)) {
-                let token = match[0].replace(/[.,;:!?]+$/g, '');
+                let token = match[0].split(/\[(?:\/?(?:alinhar|cor|color|bold|italic|sublinhar))(?:=|\])/i)[0].replace(/[.,;:!?]+$/g, '');
                 while (
                     token.endsWith(')') &&
                     (token.match(/\)/g) || []).length > (token.match(/\(/g) || []).length
@@ -52,7 +59,7 @@
         renderLinks(target, text.slice(offset));
     }
     function render(target, value, depth = 0) {
-        const text = String(value ?? '');
+        const text = depth === 0 ? normalize(value) : String(value ?? '');
         target.replaceChildren();
         target.style.whiteSpace = 'pre-wrap';
         target.style.overflowWrap = 'anywhere';
@@ -100,9 +107,8 @@
             return;
         }
         /* Restos de comandos incompletos não viram texto público; o conteúdo é preservado. */
-        const control = /\[alinhar=(?:left|center|right|justify)\]|\[cor=#[0-9a-f]{6}\]/gi;
-        const hasControl = /\[alinhar=(?:left|center|right|justify)\]|\[cor=#[0-9a-f]{6}\]/i.test(text);
-        const plain = text.replace(control, '').replace(hasControl ? /\[\/(?:alinhar|cor)\]/g : /$^/g, '');
+        const control = /\[(?:alinhar|cor)=[^\]]*\]/gi;
+        const plain = text.replace(control, '').replace(/\[\/(?:alinhar|cor)\]/gi, '');
         if (!/^\s*(?:[-•] |\d+\. |#{2,3} )/m.test(plain)) return inline(target, plain);
         let list;
         for (const [index, line] of plain.split('\n').entries()) {
@@ -175,7 +181,7 @@
             if ((blockTags.includes(tag) || node.classList?.contains('ar-text-aligned')) && !text.endsWith('\n')) text += '\n';
             return text;
         }
-        return children(root).replace(/\n$/, '');
+        return normalize(children(root));
     }
     /* Edição visual: o campo original mantém apenas a representação restrita para salvar. */
     function editor(input) {
@@ -191,7 +197,10 @@
         render(area, input.value);
         input.hidden = true;
         input.required = false;
-        input.before(area);
+        const shell = document.createElement('div');
+        shell.className = 'ar-editor-shell';
+        input.before(shell);
+        shell.append(area);
         const panel = document.createElement('div');
         panel.className = 'ar-basic-text-editor ar-span-2';
         const toolbar = document.createElement('div');
@@ -219,7 +228,16 @@
             remember();
             sync();
         }
-        ['keyup','mouseup','touchend','input','blur'].forEach(event=>area.addEventListener(event, remember));
+        const refresh = () => {
+            remember();
+            for(const button of toolbar.querySelectorAll('[data-format-command]')) {
+                const name=button.dataset.formatCommand;
+                if(['bold','italic','underline','justifyLeft','justifyCenter','justifyRight','justifyFull'].includes(name)) {
+                    try { button.setAttribute('aria-pressed',String(document.queryCommandState(name))); } catch {}
+                }
+            }
+        };
+        ['keyup','mouseup','touchend','input','blur'].forEach(event=>area.addEventListener(event, refresh));
         area.addEventListener('input', sync);
         toolbar.addEventListener('mousedown', event=>{ if (event.target.closest('button')) event.preventDefault(); });
         /* Colagens e arquivos não inserem HTML executável nem conteúdo externo no editor. */
@@ -237,6 +255,14 @@
                 area.setAttribute('aria-invalid','true');
             } else area.removeAttribute('aria-invalid');
         }, true);
+        const extra = document.createElement('div');
+        extra.className = 'ar-editor-extra';
+        const more = document.createElement('details');
+        more.className = 'ar-editor-more';
+        const moreLabel = document.createElement('summary');
+        moreLabel.textContent = 'Mais opções';
+        moreLabel.setAttribute('aria-label','Mais opções de formatação');
+        more.append(moreLabel,extra);
         if (input.name !== 'resumo') {
             const style = document.createElement('select');
             style.setAttribute('aria-label', 'Estilo do parágrafo');
@@ -261,7 +287,7 @@
             button.title = label;
             button.setAttribute('aria-label', label);
             button.addEventListener('click', () => command(before));
-            toolbar.append(button);
+            (['bold','italic','underline','undo','redo'].includes(before) ? toolbar : extra).append(button);
         }
         const color = document.createElement('input');
         color.type = 'color';
@@ -269,11 +295,11 @@
         color.title = 'Cor do texto selecionado';
         color.setAttribute('aria-label', 'Cor do texto selecionado');
         color.addEventListener('change', () => command('foreColor', color.value));
-        toolbar.append(color);
+        extra.append(color);
         const divider = document.createElement('span');
         divider.className = 'ar-text-toolbar-divider';
         divider.setAttribute('aria-hidden', 'true');
-        toolbar.append(divider);
+        extra.append(divider);
         const alignments = [
             ['left', 'Alinhar à esquerda', 'M4 5h16M4 10h10M4 15h16M4 20h10'],
             ['center', 'Centralizar', 'M4 5h16M7 10h10M4 15h16M7 20h10'],
@@ -286,19 +312,21 @@
             button.title = label;
             button.setAttribute('aria-label', label);
             button.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="' + path + '"/></svg>';
+            button.dataset.formatCommand = {left:'justifyLeft',center:'justifyCenter',right:'justifyRight',justify:'justifyFull'}[value];
             button.addEventListener('click', () => command({left:'justifyLeft', center:'justifyCenter', right:'justifyRight', justify:'justifyFull'}[value]));
-            toolbar.append(button);
+            extra.append(button);
         }
+        toolbar.append(more);
         const hint = document.createElement('small');
         hint.textContent = 'Selecione o texto para formatar. O alinhamento se aplica ao parágrafo.';
         panel.append(toolbar, hint);
-        input.parentElement.after(panel);
+        shell.prepend(panel);
     }
     function summary(value, limit = 240) {
         const target = document.createElement('div');
         render(target, value || '');
-        const text = target.textContent.replace(/\s+/g, ' ').trim();
+        const text = A.noticeLinks?.plainText ? A.noticeLinks.plainText(value) : target.textContent.replace(/\s+/g, ' ').trim();
         return text.length > limit ? text.slice(0, limit - 1).replace(/\s+\S*$/, '') + '…' : text;
     }
-    A.noticeText = { render, editor, serializeEditor, summary };
+    A.noticeText = { render, editor, serializeEditor, summary, normalize };
 })((window.Arcadia = window.Arcadia || {}));
