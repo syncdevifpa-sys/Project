@@ -1,25 +1,38 @@
 /* O degradê integra a fotografia à superfície, acompanhando o tema. */
-.ar-basic-text-editor { margin-top:-10px;display:grid;gap:8px;min-width:0; }
-.ar-visual-text-editor { min-height:100px;max-height:340px;overflow:auto;padding:14px 16px;border:1px solid var(--border,#ccd2d7);border-radius:10px;background:var(--surface,#fff);color:var(--ink,#17252e);font-family:inherit;font-size:15px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text; }
-.ar-visual-text-editor:focus { outline:2px solid var(--accent,#68bdcf);outline-offset:2px; }
-.ar-visual-text-editor[aria-invalid=true] { border-color:var(--danger,#b32020); }
+/* Editor visual: ferramentas no topo, área de escrita e opções avançadas recolhidas. */
+.ar-editor-shell { min-width:0; max-width:100%; border:1px solid var(--line,#ccd2d7); border-radius:12px; background:var(--surface,#fff); }
+.ar-basic-text-editor { display:grid; gap:6px; margin:0; padding:8px; border-bottom:1px solid var(--line); }
+.ar-text-toolbar { position:relative; display:flex; align-items:center; flex-wrap:wrap; gap:4px; min-width:0; }
+.ar-text-toolbar :is(button,input[type=color]) { flex:0 0 36px; width:36px; height:36px; min-height:36px; padding:6px; border:1px solid transparent; border-radius:6px; background:transparent; color:var(--ink); cursor:pointer; }
+.ar-text-toolbar button { display:inline-flex; align-items:center; justify-content:center; }
+.ar-text-toolbar :is(button:hover,button[aria-pressed=true]) { background:var(--surface-sunken); border-color:var(--line); }
+.ar-text-toolbar [data-format-command=bold] { font-weight:800; }
+.ar-text-toolbar [data-format-command=italic] { font-style:italic; }
+.ar-text-toolbar [data-format-command=underline] { text-decoration:underline; }
+.ar-text-toolbar select { flex:0 1 142px; width:142px; min-width:0; min-height:36px; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--surface-sunken); color:var(--ink); font:inherit; font-size:14px; }
+.ar-text-toolbar :focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.ar-editor-more { margin-left:auto; }
+.ar-editor-more summary { cursor:pointer; min-height:36px; padding:8px; box-sizing:border-box; font-size:13px; border-radius:6px; }
+.ar-editor-extra { position:absolute; right:0; top:calc(100% + 6px); z-index:5; display:flex; flex-wrap:wrap; align-items:center; gap:6px; width:min(300px,100%); padding:10px; box-sizing:border-box; background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow-float); }
+.ar-editor-more:not([open]) .ar-editor-extra { display:none; }
+.ar-text-toolbar-divider { width:1px; height:24px; background:var(--line); margin-inline:4px; }
+.ar-basic-text-editor small { color:var(--ink-muted); font-size:12px; line-height:1.4; }
+.ar-visual-text-editor { min-height:160px; max-height:420px; overflow:auto; padding:18px; border:0; border-radius:0 0 12px 12px; background:var(--surface); color:var(--ink); font:inherit; font-size:16px; line-height:1.65; white-space:pre-wrap; overflow-wrap:anywhere; cursor:text; }
+.ar-visual-text-editor :is(p,div) { margin:0; }
+.ar-visual-text-editor:focus { outline:2px solid var(--ink-muted); outline-offset:-2px; }
+.ar-visual-text-editor[aria-invalid=true] { outline:2px solid var(--danger); }
 .ar-notice-editor textarea[hidden] { display:none; }
-.ar-text-toolbar { display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:6px;border:1px solid var(--border,#ccd2d7);border-radius:10px;background:var(--surface,#fff); }
-.ar-text-toolbar button,.ar-text-toolbar input[type=color] { width:36px;height:36px;border:1px solid var(--border,#ccd2d7);border-radius:6px;background:var(--surface,#fff);color:var(--ink,#17252e);cursor:pointer; }
-.ar-text-toolbar button[data-format-command=bold] { font-weight:800; }
-.ar-text-toolbar button[data-format-command=italic] { font-style:italic; }
-.ar-text-toolbar button[data-format-command=underline] { text-decoration:underline; }
-.ar-text-toolbar button { display:inline-flex;justify-content:center;align-items:center;transition:background-color 160ms ease,border-color 160ms ease; }
-.ar-text-toolbar button:hover { background:color-mix(in srgb,var(--accent,#78c5d5) 16%,var(--surface,#fff));border-color:var(--ink-muted,#6c7b85); }
-.ar-text-toolbar-divider { width:1px;height:24px;background:var(--border,#ccd2d7);margin-inline:4px; }
-.ar-basic-text-editor small { color:var(--ink-muted,#63717b);font-size:12px;line-height:1.5; }
-.ar-text-toolbar input[type=color] { padding:6px; }
-.ar-text-aligned { line-height:1.7; }
-.ar-text-toolbar :focus-visible { outline:2px solid var(--accent,#17607a);outline-offset:2px; }
-.ar-text-preview { padding:16px;border:1px solid var(--border,#ccd2d7);border-radius:10px;background:var(--surface,#fff);min-height:64px;max-height:220px;overflow:auto;line-height:1.65;font-size:14px; }
-.ar-text-list { display:block;padding-inline-start:1.3em;margin-block:6px; }
-.ar-text-list-item { display:list-item;list-style-type:disc;white-space:pre-wrap; }
-@media(pointer:coarse) { .ar-text-toolbar button,.ar-text-toolbar input[type=color] { width:44px;height:44px; } }
+.ar-text-aligned { line-height:inherit; }
+.ar-text-preview { padding:16px; border:1px solid var(--line); border-radius:10px; background:var(--surface); min-height:64px; max-height:220px; overflow:auto; line-height:1.65; font-size:14px; }
+.ar-text-list { display:block; padding-inline-start:1.3em; margin-block:6px; }
+.ar-text-list-item { display:list-item; list-style-type:disc; white-space:pre-wrap; }
+@media (pointer:coarse) { .ar-text-toolbar :is(button,input[type=color]) { flex-basis:44px; width:44px; height:44px; } .ar-editor-more summary { min-height:44px; } }
+@media(max-width:600px) {
+ .ar-visual-text-editor { min-height:180px; max-height:50dvh; padding:12px; }
+ .ar-basic-text-editor { padding:6px; }
+ .ar-editor-more[open] { width:100%; }
+ .ar-editor-more[open] .ar-editor-extra { position:static; width:100%; box-shadow:none; margin-top:6px; }
+}
 .ar-cover-editor {
   min-width: 0;
   display: grid;
@@ -123,9 +136,6 @@ html[data-motion=reduced] .ar-detail.is-cover-scrolled > :is(.ar-detail-title,.a
 .ar-related-publications a small { display:block;color:var(--ink-muted);margin-top:6px;line-height:1.5; }
 .ar-pinned-label { display:inline-flex;align-items:center;gap:5px;color:var(--ink);font-size:12px;font-weight:650; }
 .ar-pinned-label svg { width:15px;height:15px;flex:none; }
-.ar-text-toolbar select { min-height:36px;max-width:150px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit;padding:4px 8px; }
-.ar-text-toolbar { gap:6px;background:var(--surface-sunken); }
-.ar-text-toolbar .ar-editor-action { font-style:normal;font-weight:500;text-decoration:none; }
 .ar-text-list--numbered .ar-text-list-item { list-style-type:decimal; }
 @media(max-width:900px) { .ar-reading-layout { grid-template-columns:1fr;gap:24px;width:100%; }.ar-related-publications { position:static; }.ar-publication-story { max-width:none; } }
 
@@ -139,3 +149,16 @@ html[data-motion=reduced] .ar-detail.is-cover-scrolled > :is(.ar-detail-title,.a
 #gridProjetos .ar-card-meta { margin-top:auto;line-height:1.5; }
 #gridProjetos .ar-card > [data-open-project] { align-self:start; }
 .ar-info[hidden],.ar-related-publications[hidden] { display:none; }
+
+/* Leitura: títulos completos e largura contida também em telas estreitas. */
+.ar-detail :is(.ar-detail-title,.ar-detail-desc),.ar-publication-story { min-width:0; max-width:100%; overflow-wrap:anywhere; }
+.ar-publication-story > .body { line-height:1.65; overflow-wrap:anywhere; }
+:is(#noticesCardsGrid,#gridProjetos) .ar-card-title { white-space:normal; overflow-wrap:anywhere; }
+@media(max-width:600px) {
+ .ar-reading-layout { width:100%; gap:16px; margin:20px 0; }
+ .ar-publication-story > .body { font-size:16px; line-height:1.65; }
+ .ar-detail .ar-detail-title { font-size:clamp(1.6rem,6vw,2.2rem); line-height:1.18; }
+ .ar-detail .ar-publication-media { width:100%; max-width:100%; margin-inline:0; }
+ .ar-publication-media .ar-notice-cover img { width:100%; object-fit:contain; object-position:center; }
+ .ar-route-main > .ar-crumbs { max-width:100%; box-sizing:border-box; }
+}

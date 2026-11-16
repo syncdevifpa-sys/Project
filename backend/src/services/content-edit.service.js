@@ -1,5 +1,6 @@
 /* Validação compartilhada e edição transacional com verificação do autor atual. */
 const db = require('../config/database');
+const { normalizeRichText } = require('../../../frontend/js/notice-links');
 const definitions = require('../../../frontend/js/content-fields');
 const tables = {
     tasks: 'tarefas',
@@ -54,7 +55,7 @@ function validateContent(kind, body, creation = false) {
                 Buffer.byteLength(value) > (type === 'textarea' ? 65535 : (max || 65535) * 4)
             )
                 fail(400, 'Texto inválido em ' + name + '.');
-            value = value.trim();
+            value = kind === 'projects' && name === 'descricao' ? normalizeRichText(value) : value.trim();
             if (type === 'url' && value) {
                 let url;
                 try {

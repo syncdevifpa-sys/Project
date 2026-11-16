@@ -6,7 +6,7 @@ const { canReadNotice } = require('../services/notice-visibility.service');
 const links = require('../../../frontend/js/notice-links');
 const escape = (value) => String(value ?? '').replace(/[&<>"']/g,
     (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
-const text = (value) => String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+const text = links.plainText;
 /* Lista somente URLs que podem ser abertas pelo visitante. */
 function renderSitemap(rows, origin = 'https://portalarcadia.vercel.app', projects = []) {
     const urls = ['<url><loc>' + escape(origin + '/') + '</loc></url>'];
@@ -64,7 +64,7 @@ function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.
             const row = await model.findNoticeById(req.params.id);
             const readable = row && canReadNotice(row, null);
             let head = '<base href="/">';
-            const title = readable ? row.titulo + ' · Arcádia' : 'Publicação · Arcádia';
+            const title = readable ? text(row.titulo) + ' · Arcádia' : 'Publicação · Arcádia';
             if (readable) {
                 const canonical = origin + links.path(row);
                 if (req.path !== links.path(row)) return res.redirect(302, links.path(row));
@@ -74,7 +74,7 @@ function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.
                     '<meta name="description" content="' + escape(description) + '">' +
                     '<meta property="og:type" content="article">' +
                     '<meta property="og:site_name" content="Arcádia">' +
-                    '<meta property="og:title" content="' + escape(row.titulo) + '">' +
+                    '<meta property="og:title" content="' + escape(text(row.titulo)) + '">' +
                     '<meta property="og:description" content="' + escape(description) + '">' +
                     '<meta property="og:url" content="' + escape(canonical) + '">' +
                     '<meta property="og:image" content="' + escape(image) + '">' +

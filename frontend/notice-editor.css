@@ -139,3 +139,15 @@ dialog.ar-notice-editor {
 .ar-calendar-import-row select {
   max-width: 100%;
 }
+
+/* Campos e rodapé do editor respeitam a janela e o teclado virtual. */
+.ar-notice-editor .ar-form-grid { min-width:0; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.ar-notice-editor .ar-field { min-width:0; max-width:100%; }
+.ar-notice-editor .ar-editor-shell { margin-top:6px; }
+.ar-notice-editor .ar-profile-actions { z-index:6; gap:8px; flex-wrap:wrap; }
+@media(max-width:600px) {
+ .ar-notice-editor .ar-form-grid { grid-template-columns:minmax(0,1fr); }
+ .ar-notice-editor .ar-span-2 { grid-column:1/-1; }
+ .ar-notice-editor :is(input,select,textarea) { font-size:16px; }
+ .ar-notice-editor .ar-profile-actions .ar-btn { flex:1 1 120px; white-space:normal; }
+}

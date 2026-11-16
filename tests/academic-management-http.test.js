@@ -71,6 +71,9 @@ test('HTTP acadêmico exige sessão institucional e não aceita privilégio admi
             403,
             path
         );
+    assert.equal((await fetch(base+'/academic/catalog/7',{method:'DELETE',headers,body:JSON.stringify({confirmacao:'EXCLUIR_CATALOGO_E_OFERTAS'})})).status,403);
+    assert.equal((await fetch(base+'/academic/catalog/7/impact',{headers})).status,403);
+    assert.equal((await fetch(base+'/academic/catalog/7',{method:'DELETE'})).status,401);
     const external = {
         Authorization:
             'Bearer ' +

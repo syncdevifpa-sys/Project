@@ -68,7 +68,7 @@
         ),
         node(
             'p',
-            'Arquivar preserva o histórico. Restaurar reativa o registro escolhido. Exclusão definitiva exige ausência de vínculos e confirmação do nome.'
+            'Arquivar preserva o histórico. Restaurar reativa o registro escolhido. Excluir uma disciplina do catálogo também remove suas ofertas e os vínculos apresentados na confirmação.'
         ),
         areaNavigation,
         toolbar,
@@ -310,7 +310,9 @@
                     name = node('th', row.nome),
                     action = node('td');
                 name.setAttribute('scope', 'row');
-                action.append(button('Editar disciplina', () => catalogEditor(row)));
+                const controls=node('div',undefined,'ar-academic-actions');
+                controls.append(button('Editar disciplina', () => catalogEditor(row)), button('Excluir disciplina', () => catalogDelete(row)));
+                action.append(controls);
                 tr.append(
                     name,
                     node(
@@ -394,6 +396,26 @@
                 motivo: reason.value
             });
             await reloadAfter(result, reload, status);
+        });
+    }
+    function catalogDelete(row) {
+        const e=dialog('Excluir disciplina e ofertas','Excluir disciplina e ofertas');
+        const impact=node('p','Carregando ofertas vinculadas…');impact.setAttribute('role','status');
+        e.fields.append(node('p','Esta ação exclui definitivamente a disciplina do catálogo, todas as suas ofertas (inclusive arquivadas), matrículas, convites, horários e publicações das ofertas. As turmas, contas e arquivos originais da biblioteca não são excluídos.'),impact);
+        const list=node('ul');e.fields.append(list);
+        const name=e.field('Digite o nome exato: '+row.nome,'','text',true);
+        name.maxLength=150;
+        let snapshot;
+        e.save.disabled=true;
+        call('/catalog/'+row.id_catalogo+'/impact').then(result=>{
+            snapshot=result;impact.textContent=result.ofertas.length+' oferta(s) será(ão) excluída(s).';
+            for(const offer of result.ofertas)list.append(node('li',offer.turma+' · '+offer.nome+' · '+offer.ano_letivo+(offer.regime_letivo==='semestral'?'.'+offer.semestre:'')));
+            e.save.disabled=false;
+        }).catch(error=>impact.textContent=error.message);
+        e.submit(async()=>{
+            if(!snapshot)throw Error('Aguarde a conferência das ofertas vinculadas.');
+            const result=await call('/catalog/'+row.id_catalogo,'DELETE',{confirmacao:'EXCLUIR_CATALOGO_E_OFERTAS',nome_confirmacao:name.value,versao:snapshot.versao,ofertas_confirmadas:snapshot.ofertas.map(offer=>offer.id_disciplina)});
+            await reloadAfter(result,reload,status);
         });
     }
     function catalogEditor(row) {

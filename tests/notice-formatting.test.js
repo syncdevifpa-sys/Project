@@ -15,7 +15,9 @@ test('formatação restrita preserva ênfase, cor e tópicos sem interpretar HTM
  assert.ok(nodes.some(n=>n.style.color==='#174c66'));
  assert.equal(nodes.filter(n=>n.attrs.role==='listitem').length,2);
  assert.equal(nodes.some(n=>['img','script'].includes(n.tag)),false);
- assert.ok(nodes.some(n=>n.textContent.includes('[cor=red]')));
+ assert.ok(nodes.some(n=>n.textContent.includes('inválido')));
+ assert.ok(!nodes.some(n=>/\[\/?cor/.test(n.textContent)));
+ assert.ok(!nodes.some(n=>n.style.color==='red'));
 });
 test('links com sublinhados continuam íntegros na publicação formatada',()=>{
  const {A,target}=setup();

@@ -41,6 +41,8 @@ router.put(
         s.json(await academic.saveCatalog(q.user.id_usuario, q.body || {}, q.params.id))
     )
 );
+router.get('/academic/catalog/:id/impact', action(async (q,s) => s.json(await academic.catalogImpact(q.user.id_usuario,q.params.id))));
+router.delete('/academic/catalog/:id', action(async (q,s) => s.json(await academic.destroyCatalog(q.user.id_usuario,q.params.id,q.body || {}))));
 router.get(
     '/academic/management',
     action(async (q, s) => s.json(await academic.adminList(q.user.id_usuario, q.query.estado)))
