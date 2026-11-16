@@ -79,10 +79,11 @@
         }
         if (blocks.length) {
             let offset = 0;
-            const append = (value) => {
+            const append = (value, beforeBlock = false) => {
                 const previous = target.lastElementChild || target.children?.[target.children.length - 1];
                 /* A quebra depois de um bloco já é visual: não a desenha uma segunda vez. */
                 if (previous?.className === 'ar-text-aligned' && value.startsWith('\n')) value = value.slice(1);
+                else if (beforeBlock && value.endsWith('\n')) value = value.slice(0, -1);
                 if (!value) return;
                 if (/^\n+$/.test(value)) {
                     for (let i = 0; i < value.length; i++) target.append(document.createElement('br'));
@@ -93,7 +94,7 @@
                 target.append(part);
             };
             for (const block of blocks) {
-                append(text.slice(offset, block.start));
+                append(text.slice(offset, block.start), block.type === 'alinhar');
                 const part = document.createElement('span');
                 if (block.type === 'alinhar') {
                     part.className = 'ar-text-aligned';part.style.display = 'block';part.style.textAlign = block.value;
@@ -149,7 +150,7 @@
             let result = '';
             for (const child of Array.from(parent.childNodes || [])) {
                 const tag = child.tagName?.toLowerCase();
-                if (blockTags.includes(tag) && result && !result.endsWith('\n')) result += '\n';
+                if ((blockTags.includes(tag) || child.classList?.contains('ar-text-aligned')) && result && !result.endsWith('\n')) result += '\n';
                 result += walk(child);
             }
             return result;

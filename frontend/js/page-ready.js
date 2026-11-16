@@ -58,16 +58,32 @@
         const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
         const active = new Set();
         const seen = new WeakSet();
-        const selector = 'main h1,main h2,main [role="tabpanel"],main [id$="Panel"],main > section';
+        const selector = 'main h1,main h2,main [role="tabpanel"],main [data-view-panel],main [id$="Panel"],main > section,main .ar-card,main .public-card';
+        /* Revelação ao rolar, como no tutorial, com deslocamento e duração menores. */
+        const pending = new WeakSet();
+        const viewport = window.IntersectionObserver ? new IntersectionObserver(entries => {
+            for (const entry of entries) if (entry.isIntersecting) {
+                viewport.unobserve(entry.target);
+                pending.delete(entry.target);
+                reveal(entry.target);
+            }
+        }, { threshold: 0.12 }) : null;
         const reduced = () => preference.matches || root.getAttribute('data-motion') === 'reduced';
         function reveal(element, repeat) {
             if (reduced() || (!repeat && seen.has(element)) || element.closest('dialog,[contenteditable="true"],[hidden]')) return;
             const rect = element.getBoundingClientRect();
-            if (!rect.width || !rect.height || rect.top > innerHeight || rect.bottom < 0) return;
+            if (!rect.width || !rect.height) return;
+            if (rect.top > innerHeight || rect.bottom < 0) {
+                if (viewport && !pending.has(element) && !seen.has(element)) {
+                    pending.add(element);
+                    viewport.observe(element);
+                }
+                return;
+            }
             seen.add(element);
             const title = /^H[12]$/.test(element.tagName);
             const frames = title
-                ? [{ opacity: 0.35, translate: '0 5px' }, { opacity: 1, translate: '0 0' }]
+                ? [{ opacity: 0.35, translate: '0 8px' }, { opacity: 1, translate: '0 0' }]
                 : [{ opacity: 0.55 }, { opacity: 1 }];
             const animation = element.animate(frames, { duration: title ? 300 : 220, easing: 'cubic-bezier(.2,.7,.3,1)' });
             active.add(animation);
@@ -83,10 +99,11 @@
         new MutationObserver(records => {
             for (const record of records) {
                 if (record.type === 'attributes') {
-                    if (!record.target.hidden && record.target.matches(selector)) reveal(record.target, true);
+                    if (record.attributeName === 'hidden' && !record.target.hidden && record.target.matches(selector)) reveal(record.target, true);
+                    else if (record.attributeName === 'style' && record.target.matches('[data-view-panel],[role=tabpanel]') && /display\s*:\s*none/.test(record.oldValue || '') && record.target.style.display !== 'none') reveal(record.target, true);
                 } else record.addedNodes.forEach(scan);
             }
-        }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'] });
+        }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden','style'], attributeOldValue: true });
         function cancelReduced() { if (reduced()) active.forEach(animation => animation.cancel()); }
         preference.addEventListener('change', cancelReduced);
         new MutationObserver(cancelReduced).observe(root, { attributes: true, attributeFilter: ['data-motion'] });

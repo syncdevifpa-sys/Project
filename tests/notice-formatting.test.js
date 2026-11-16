@@ -36,3 +36,11 @@ test('alinhamento permite somente opções conhecidas e conserva a formatação 
  A.noticeText.render(target,'[alinhar=expression(alert(1))]texto[/alinhar]');
  assert.equal(walk(target).some(n=>n.style.textAlign),false);
 });
+
+test('alinhamento não desenha uma quebra extra antes do parágrafo',()=>{
+ const {A,target}=setup();
+ A.noticeText.render(target,'Primeira linha.\n[alinhar=justify]Segunda linha.[/alinhar]\nTerceira linha.');
+ assert.equal(target.children[0].children[0].textContent,'Primeira linha.');
+ assert.equal(target.children[1].className,'ar-text-aligned');
+ assert.equal(target.children[2].children[0].textContent,'Terceira linha.');
+});
