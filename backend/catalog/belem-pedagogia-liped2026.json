@@ -1,0 +1,456 @@
+{
+  "fonte": "https://sigaa.ifpa.edu.br/sigaa/link/public/curso/curriculo/23612496",
+  "consultado_em": "2026-11-15",
+  "campus": "Belém",
+  "curso": "Licenciatura em Pedagogia",
+  "matriz": "LIPED2026",
+  "vigencia": "2026.2",
+  "periodos": {
+    "minimo": 8,
+    "medio": 8,
+    "maximo": 12
+  },
+  "disciplinas": [
+    {
+      "codigo": "LIPED0280",
+      "nome": "SEMINÁRIO DOCÊNCIA NO ENSINO SUPERIOR",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0281",
+      "nome": "LETRAMENTOS DE GÊNERO",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0282",
+      "nome": "ESTUDOS PÓS COLONIAIS E DECOLONIAIS EM EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0283",
+      "nome": "TEORIA SOCIAL COGNITIVA (TSC) NO CONTEXTO EDUCACIONAL",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0225",
+      "nome": "ANTROPOLOGIA DA EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0226",
+      "nome": "FILOSOFIA DA EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0227",
+      "nome": "HISTÓRIA DA EDUCAÇÃO",
+      "carga_horaria": 67,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0228",
+      "nome": "PSICOLOGIA DO DESENVOLVIMENTO",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0229",
+      "nome": "SOCIOLOGIA DA EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0230",
+      "nome": "METODOLOGIA CIENTÍFICA",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0231",
+      "nome": "ESTÁGIO SUPERVISIONADO I – APROXIMAÇÕES PEDAGÓGICAS",
+      "carga_horaria": 50,
+      "periodo": 1,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0284",
+      "nome": "AUTORREGULAÇÃO DA APRENDIZAGEM",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0285",
+      "nome": "INTELIGÊNCIA ARTIFICIAL E EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0286",
+      "nome": "NEUROCIÊNCIA E EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0287",
+      "nome": "SABERES E IDENTIDADE DOCENTE",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Optativa"
+    },
+    {
+      "codigo": "LIPED0232",
+      "nome": "DIDÁTICA",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0233",
+      "nome": "INTRODUÇÃO À LIBRAS",
+      "carga_horaria": 67,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0234",
+      "nome": "EDUCAÇÃO ESPECIAL E INCLUSIVA",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0235",
+      "nome": "RELAÇÕES INTERPESSOAIS NO CONTEXTO EDUCACIONAL",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0236",
+      "nome": "PSICOLOGIA DA APRENDIZAGEM",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0237",
+      "nome": "CORPOREIDADE E EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0238",
+      "nome": "ESTÁGIO SUPERVISIONADO II – ATUAÇÃO DO PEDAGOGO/A EM AMBIENTE NÃO ESCOLAR",
+      "carga_horaria": 50,
+      "periodo": 2,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0239",
+      "nome": "PSICOGÊNESE DA LINGUAGEM ORAL E ESCRITA",
+      "carga_horaria": 50,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0240",
+      "nome": "LUDICIDADE E EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0241",
+      "nome": "ENSINO DE CIÊNCIAS HUMANAS NA EDUCAÇÃO INFANTIL",
+      "carga_horaria": 67,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0242",
+      "nome": "ENSINO DE LINGUAGEM NA EDUCAÇÃO INFANTIL",
+      "carga_horaria": 67,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0243",
+      "nome": "TECNOLOGIAS EDUCACIONAIS",
+      "carga_horaria": 67,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0244",
+      "nome": "ESTATÍSTICA APLICADA A EDUCAÇÃO",
+      "carga_horaria": 50,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0245",
+      "nome": "ESTÁGIO SUPERVISIONADO III – EDUCAÇÃO INFANTIL I",
+      "carga_horaria": 50,
+      "periodo": 3,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0246",
+      "nome": "ENSINO DE CIÊNCIAS DA NATUREZA NA EDUCAÇÃO INFANTIL",
+      "carga_horaria": 67,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0247",
+      "nome": "ENSINO DA MATEMÁTICA NA EDUCAÇÃO INFANTIL",
+      "carga_horaria": 67,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0248",
+      "nome": "CIÊNCIA, TECNOLOGIA, SOCIEDADE E AMBIENTE",
+      "carga_horaria": 67,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0249",
+      "nome": "INOVAÇÕES PEDAGÓGICAS",
+      "carga_horaria": 67,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0250",
+      "nome": "ALFABETIZAÇÃO LETRAMENTO",
+      "carga_horaria": 67,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0251",
+      "nome": "EDUCAÇÃO PARA AS RELAÇÕES ÉTNICORRACIAIS",
+      "carga_horaria": 67,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0252",
+      "nome": "ESTÁGIO SUPERVISIONADO IV – EDUCAÇÃO INFANTIL II",
+      "carga_horaria": 50,
+      "periodo": 4,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0253",
+      "nome": "ENSINO DE CIÊNCIAS HUMANAS NO ENSINO FUNDAMENTAL",
+      "carga_horaria": 67,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0254",
+      "nome": "ENSINO DE LINGUAGEM NO ENSINO FUNDAMENTAL",
+      "carga_horaria": 67,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0255",
+      "nome": "POLÍTICAS E LEGISLAÇÕES EDUCACIONAIS",
+      "carga_horaria": 50,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0256",
+      "nome": "PLANEJAMENTO EDUCACIONAL",
+      "carga_horaria": 50,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0257",
+      "nome": "AVALIAÇÃO EDUCACIONAL",
+      "carga_horaria": 50,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0258",
+      "nome": "EDUCAÇÃO EM DIREITOS HUMANOS E DIVERSIDADES",
+      "carga_horaria": 50,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0259",
+      "nome": "ESTÁGIO SUPERVISIONADO V – ENSINO FUNDAMENTAL I",
+      "carga_horaria": 50,
+      "periodo": 5,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0260",
+      "nome": "CURRÍCULO, TRABALHO E CULTURA",
+      "carga_horaria": 50,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0261",
+      "nome": "ENSINO DE CIÊNCIAS DA NATUREZA NO ENSINO FUNDAMENTAL",
+      "carga_horaria": 67,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0262",
+      "nome": "ENSINO DA MATEMÁTICA NO ENSINO FUNDAMENTAL",
+      "carga_horaria": 67,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0263",
+      "nome": "EDUCAÇÃO BILINGUE DE SURDOS",
+      "carga_horaria": 67,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0264",
+      "nome": "AFROFUTURISMO E LETRAMENTO DE FUTUROS",
+      "carga_horaria": 67,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0265",
+      "nome": "PESQUISA EDUCACIONAL",
+      "carga_horaria": 50,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0266",
+      "nome": "ESTÁGIO SUPERVISIONADO VI – ENSINO FUNDAMENTAL II",
+      "carga_horaria": 50,
+      "periodo": 6,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0267",
+      "nome": "EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA",
+      "carga_horaria": 50,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0268",
+      "nome": "DIDÁTICA NA EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA",
+      "carga_horaria": 50,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0269",
+      "nome": "EDUCAÇÃO DE JOVENS, ADULTOS E IDOSOS",
+      "carga_horaria": 67,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0270",
+      "nome": "PEDAGOGIA SOCIAL",
+      "carga_horaria": 67,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0271",
+      "nome": "EDUCAÇÃO DO CAMPO, DAS ÁGUAS E DAS FLORESTAS",
+      "carga_horaria": 67,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0272",
+      "nome": "SEMINÁRIO DE PESQUISA EDUCACIONAL",
+      "carga_horaria": 100,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0273",
+      "nome": "ESTÁGIO SUPERVISIONADO VII – EDUCAÇÃO DE JOVENS, ADULTOS E IDOSOS",
+      "carga_horaria": 50,
+      "periodo": 7,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0274",
+      "nome": "EDUCAÇÃO À DISTÂNCIA E INFORMÁTICA EDUCATIVA",
+      "carga_horaria": 67,
+      "periodo": 8,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0275",
+      "nome": "COORDENAÇÃO PEDAGÓGICA EM AMBIENTES ESCOLARES",
+      "carga_horaria": 50,
+      "periodo": 8,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0276",
+      "nome": "GESTÃO DE INSTITUIÇÕES EDUCACIONAIS",
+      "carga_horaria": 50,
+      "periodo": 8,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0277",
+      "nome": "TRABALHO DE CONCLUSÃO DE CURSO",
+      "carga_horaria": 50,
+      "periodo": 8,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0278",
+      "nome": "ESTÁGIO SUPERVISIONADO VIII – GESTÃO E COORDENAÇÃO ESCOLAR",
+      "carga_horaria": 50,
+      "periodo": 8,
+      "natureza": "Obrigatória"
+    },
+    {
+      "codigo": "LIPED0279",
+      "nome": "ATIVIDADES COMPLEMENTARES",
+      "carga_horaria": 200,
+      "periodo": 8,
+      "natureza": "Obrigatória"
+    }
+  ]
+}

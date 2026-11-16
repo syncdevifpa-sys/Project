@@ -683,7 +683,7 @@ CREATE TABLE academico_disciplinas (
  id_disciplina INT AUTO_INCREMENT PRIMARY KEY,
  id_turma INT NOT NULL,
  id_professor INT NOT NULL,
- nome VARCHAR(100) NOT NULL,
+ nome VARCHAR(150) NOT NULL,
  ano_letivo SMALLINT UNSIGNED NOT NULL,
  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
  UNIQUE KEY uq_oferta_turma (id_turma,nome,ano_letivo,regime_letivo,semestre),

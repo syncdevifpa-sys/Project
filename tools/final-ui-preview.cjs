@@ -506,6 +506,13 @@ const projectDemoRows = [
 }));
 app.get('/api/projects', (_req, res) => res.json(projectDemoRows));
 app.get('/api/projects/my', (_req, res) => res.json([]));
+/* Catálogo oficial na prévia: leitura apenas; IDs temporários, sem gravar no banco. */
+app.get('/api/classes/academic/management', (_req,res)=>res.json({cohorts:[{id_turma:3,nome:'Turma de demonstração',curso:'Curso de demonstração',campus:'Belém'}],offers:[{id_disciplina:11,nome:'Disciplina de demonstração',turma:'Turma de demonstração',ano_letivo:2026,regime_letivo:'anual',professor:'Docente de exemplo'}]}));
+app.get('/api/classes/academic/catalog', (_req,res)=>{
+ const data=require('../backend/catalog/belem-curriculos-sigaa.json'), names=new Map();
+ for(const c of data.cursos)for(const m of c.matrizes)for(const d of m.disciplinas||[]){const name=d.nome.normalize('NFKC').replace(/\s+/g,' ').trim();names.set(name.toLowerCase(),name);}
+ res.json([...names.values()].sort((a,b)=>a.localeCompare(b,'pt-BR')).map((nome,i)=>({id_catalogo:100000+i,nome,legado:0,ativo:1,versao:0})));
+});
 app.get(/^\/api\//, (_req, res) => res.json([]));
 app.use('/api', (_req, res) => res.status(405).json({ error: 'Prévia sem gravação' }));
 app.get('/:file.html', (req, res, next) => {

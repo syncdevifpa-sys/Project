@@ -206,49 +206,7 @@ html.db-v3-on .ar-site-footer a:hover,
 html.db-v3-on .ar-site-footer .ar-privacy-reopen:hover {
   color: var(--db-ink);
 }
-/* Toast do portal: pílula marinho centralizada na base */
-html.db-v3-on #ar-toast-dock {
-  left: 50% !important;
-  right: auto !important;
-  bottom: calc(24px + var(--db-bottom-h)) !important;
-  translate: -50% 0;
-  align-items: center;
-  max-width: calc(100vw - 32px);
-}
-html.db-v3-on #ar-toast-dock .ar-toast {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 6px 6px 6px 20px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--db-navy);
-  color: #fff;
-  font-family: var(--db-sans);
-  font-size: 14px;
-  box-shadow: var(--db-shadow-1);
-}
-html.db-v3-on #ar-toast-dock .ar-toast > svg {
-  display: none;
-}
-html.db-v3-on #ar-toast-dock .ar-toast-action {
-  height: 36px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--db-cream);
-  color: var(--db-navy);
-  font-weight: 700;
-  cursor: pointer;
-}
-html.db-v3-on #ar-toast-dock .ar-toast-action:hover {
-  background: #fff;
-}
-html.db-v3-on #ar-toast-dock .ar-iconbtn {
-  color: #fff;
-  background: transparent;
-}
+/* As notificações usam o componente compartilhado de bundle.css. */
 
 /* =====================================================================
    Conteúdo do painel

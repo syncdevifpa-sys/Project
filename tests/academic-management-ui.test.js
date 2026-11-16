@@ -218,3 +218,22 @@ test('gravação confirmada e falha de recarga informam os dois resultados sem i
         /Registro salvo.*Não foi possível atualizar.*Servidor indisponível/
     );
 });
+
+
+test('admin separa as áreas e apresenta disciplinas em uma tabela por turma nas ofertas', async () => {
+ const f=fixture(),original=f.A.api.request;
+ f.A.api.request=async(path,options)=>{
+  if(path.includes('/management?'))return {cohorts:[{id_turma:10,nome:'Turma A',curso:'Técnico',campus:'Belém'},{id_turma:11,nome:'Turma B',curso:'Outro curso',campus:'Belém'}],offers:[{id_disciplina:21,id_turma:10,nome:'Matemática',turma:'Turma A',ano_letivo:2026,regime_letivo:'anual',professor:'Docente A'},{id_disciplina:22,id_turma:10,nome:'Física',turma:'Turma A',ano_letivo:2026,regime_letivo:'anual',professor:'Docente A'},{id_disciplina:23,id_turma:11,nome:'Biologia',turma:'Turma B',ano_letivo:2026,regime_letivo:'semestral',semestre:2,professor:'Docente B'}]};
+  if(path.includes('/catalog?'))return [{id_catalogo:31,nome:'Matemática',ativo:1}];
+  return original(path,options);
+ };
+ vm.runInNewContext(fs.readFileSync('frontend/js/admin-academic.js','utf8'),f.context);
+ await settle();await settle();
+ const panel=f.ids.get('adminAcademicPanel'),tables=()=>all(panel).filter(n=>n.tag==='table');
+ assert.equal(tables().length,1);assert.match(tables()[0].textContent,/Turma A/);assert.doesNotMatch(tables()[0].textContent,/Matemática/);
+ all(panel).find(n=>n.tag==='button'&&n.textContent==='Ofertas').onclick();await settle();await settle();
+ assert.equal(tables().length,2);assert.match(tables()[0].textContent,/Matemática.*Física/);assert.doesNotMatch(tables()[0].textContent,/Biologia/);assert.match(tables()[1].textContent,/Biologia.*2026.2.*Docente B/);
+ assert.equal(all(panel).find(n=>n.tag==='button'&&n.textContent==='Ofertas').attributes['aria-pressed'],'true');
+ all(panel).find(n=>n.tag==='button'&&n.textContent==='Catálogo').onclick();await settle();await settle();
+ assert.equal(tables().length,1);assert.match(tables()[0].textContent,/Matemática.*Editar disciplina/);assert.doesNotMatch(tables()[0].textContent,/Biologia/);
+});

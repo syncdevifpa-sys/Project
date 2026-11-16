@@ -227,8 +227,6 @@
             dock = document.createElement('div');
             dock.id = 'ar-toast-dock';
             dock.className = 'ar-toast-dock';
-            dock.style.cssText =
-                'position:fixed; bottom:24px; right:24px; z-index:99; display:flex; flex-direction:column; gap:8px; pointer-events:none;';
             document.body.appendChild(dock);
         }
 

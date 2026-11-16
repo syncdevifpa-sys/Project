@@ -446,7 +446,7 @@ function createClasses(database = db) {
             fail(400, 'Envie apenas o título e o período desta oferta.');
         return transaction(owner, async (c, actor) => {
             const d = await scope(c, actor, key, true),
-                name = text(body.nome, 100, 'Título da oferta');
+                name = text(body.nome, 150, 'Título da oferta');
             const hasPeriod = ['ano_letivo', 'regime_letivo', 'semestre'].some((k) =>
                 Object.hasOwn(body, k)
             );
@@ -494,7 +494,7 @@ function createClasses(database = db) {
                         (period ? ',ano_letivo=?,regime_letivo=?,semestre=?' : '') +
                         ' WHERE id_disciplina=?',
                     [
-                        text(body.nome, 100, 'Disciplina'),
+                        text(body.nome, 150, 'Disciplina'),
                         professor,
                         ...(period
                             ? [period.ano_letivo, period.regime_letivo, period.semestre]
