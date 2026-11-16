@@ -110,7 +110,9 @@
                     Number(notice.id_usuario) !== Number(session.id_usuario)
                 )
                     type = { publico: 'Público · todos podem consultar' };
-                const label = document.createElement('label');
+                /* O editor tem vários controles: um label externo ativaria o primeiro seletor. */
+                const richText = ['notices', 'projects'].includes(resource) && ['resumo', 'descricao'].includes(name);
+                const label = document.createElement(richText ? 'div' : 'label');
                 label.className =
                     'ar-field' +
                     (['titulo', 'resumo', 'descricao'].includes(name) ? ' ar-span-2' : '');
@@ -153,8 +155,7 @@
                 inputs[name] = input;
                 label.append(input);
                 form.append(label);
-                if (['notices', 'projects'].includes(resource) && ['resumo', 'descricao'].includes(name))
-                    A.noticeText?.editor(input);
+                if (richText) A.noticeText?.editor(input);
             }
             if (resource === 'calendar' && A.calendarColors) {
                 const preview = document.createElement('p');

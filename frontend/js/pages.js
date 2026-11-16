@@ -265,6 +265,17 @@
             filterDetails.open = false;
             if (new URLSearchParams(location.search).get('tipo') === 'noticia')
                 $('#filterNoticeType').value = 'noticia';
+            /* Situação abre todas as colunas sem herdar o filtro inicial de publicados. */
+            let statusFilterTouched = false;
+            function statusViewDefaults() {
+                if (!statusFilterTouched && $('[data-notice-views] [data-view="quadro"][aria-pressed="true"]'))
+                    $$('[data-filter-situacao]').forEach(input => { input.checked = true; });
+            }
+            $('[data-notice-views]')?.addEventListener('click', () => {
+                queueMicrotask(() => { statusViewDefaults(); render(); });
+            });
+            $$('[data-filter-situacao]').forEach(input => input.addEventListener('change', () => { statusFilterTouched = true; }));
+            statusViewDefaults();
             function visible() {
                 const text = value('filterTextNotices').toLowerCase();
                 const type = $('#filterNoticeType').value;
