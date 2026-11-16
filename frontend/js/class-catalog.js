@@ -22,7 +22,7 @@
         const feedback = make('p');
         feedback.setAttribute('role', 'status');
         e.fields.append(feedback);
-        const title = e.field('Título nesta turma (opcional)', { maxLength: 100 });
+        const title = e.field('Título nesta turma (opcional)', { maxLength: 150 });
         const help = make('details');
         help.className = 'ac-catalog-help';
         const toggle = make('summary', '?');
@@ -77,7 +77,7 @@
             const label = make('label', 'Nome da nova disciplina'),
                 input = make('input');
             input.type = 'text';
-            input.maxLength = 100;
+            input.maxLength = 150;
             label.append(input);
             const save = make('button', 'Cadastrar e selecionar');
             save.type = 'button';

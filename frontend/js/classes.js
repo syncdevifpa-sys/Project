@@ -1066,7 +1066,7 @@
             const name = e.field('Título nesta turma', {
                 value: subject.nome,
                 required: true,
-                maxLength: 100
+                maxLength: 150
             });
             const period = A.classPeriod.fields(e, subject, true);
             const professor = e.select(
@@ -1102,7 +1102,7 @@
         const name = e.field('Título desta oferta', {
             value: subject.nome,
             required: true,
-            maxLength: 100
+            maxLength: 150
         });
         e.fields.append(
             el(

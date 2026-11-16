@@ -2243,45 +2243,65 @@ a.ar-user:hover {
 .ar-pal-keys .ar-kbd {
   margin-top: 0;
 }
-/* Toast com desfazer (heurística 3) */
+/* Notificação única: tamanho limitado, contraste do tema e ações acessíveis. */
+.ar-toast-dock {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(420px, calc(100vw - 32px));
+  pointer-events: none;
+}
 .ar-toast {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 6px 6px 6px var(--space-4);
-  min-height: 44px;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 10px 10px 10px 14px;
   box-sizing: border-box;
-  border-radius: var(--radius-full);
-  background: var(--action);
-  color: var(--on-action);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
   box-shadow: var(--shadow-float);
   font-size: 14px;
-  line-height: 20px;
+  line-height: 1.45;
   font-weight: 500;
+  pointer-events: auto;
+  animation: ar-toast-enter .18s ease-out;
 }
-.ar-toast-msg {
-  margin-right: var(--space-2);
-}
+.ar-toast > svg { flex: 0 0 18px; width: 18px; height: 18px; color: var(--green-ink, currentColor); }
+.ar-toast-msg { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
 .ar-toast-action {
+  flex: 0 0 auto;
   font: inherit;
   font-weight: 600;
-  color: var(--on-action);
-  background: transparent;
-  border: 1px solid var(--on-action);
-  border-radius: var(--radius-full);
-  height: 32px;
-  padding: 0 var(--space-4);
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-height: 36px;
+  padding: 6px 10px;
   cursor: pointer;
 }
-.ar-toast-action:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: var(--focus-ring);
+.ar-toast-action:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.ar-toast .ar-iconbtn { flex: 0 0 36px; width: 36px; height: 36px; min-height: 36px; padding: 8px; background: transparent; border-color: transparent; color: var(--ink-muted); }
+.ar-toast .ar-iconbtn:hover { background: var(--surface-sunken); color: var(--ink); }
+@keyframes ar-toast-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 600px) {
+  .ar-toast-dock { right: 12px; left: 12px; width: auto; bottom: calc(12px + env(safe-area-inset-bottom) + var(--db-bottom-h, 0px)); }
+  .ar-toast { flex-wrap: wrap; gap: 8px; padding: 10px; }
+  .ar-toast-msg { flex-basis: calc(100% - 78px); }
+  .ar-toast-action { order: 4; margin-left: 26px; max-width: calc(100% - 26px); white-space: normal; }
+  .ar-toast .ar-iconbtn { flex-basis: 44px; width: 44px; height: 44px; }
 }
-.ar-toast .ar-iconbtn {
-  background: transparent;
-  border-color: transparent;
-  color: var(--on-action);
-}
+@media (prefers-reduced-motion: reduce) { .ar-toast { animation: none; } }
+html[data-motion='reduced'] .ar-toast { animation: none; }
 /* Estado vazio: busca sem resultado nunca é beco sem saída */
 .ar-empty {
   display: flex;

@@ -13,7 +13,7 @@ const id = (value) => {
 };
 const admin = (a) => a.is_admin === true || a.is_admin === 1;
 const normalized = (value) => {
-    const s = optional(value, 100, 'Disciplina');
+    const s = optional(value, 150, 'Disciplina');
     if (!s) fail(400, 'Informe o nome da disciplina.');
     return s.normalize('NFKC').replace(/\s+/g, ' ').trim();
 };
