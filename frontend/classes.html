@@ -1,8 +1,29 @@
 <!doctype html>
 <html lang="pt-BR" data-theme="light">
   <head>
-    <script src="js/page-ready.js"></script>
     <meta charset="utf-8" />
+<!-- arcadia-loader:start -->
+<style id="arcadia-critical-loader">
+        html[data-page-loading] body { visibility:hidden; }
+        html[data-page-loading]::before {
+            content:'';position:fixed;inset:0;z-index:2147483646;background:#f5f6f8;
+        }
+        html[data-page-loading]::after {
+            content:'';position:fixed;top:50%;left:50%;z-index:2147483647;
+            width:36px;height:36px;margin:-18px 0 0 -18px;box-sizing:border-box;
+            border:3px solid #cdd3dc;border-top-color:#176b9a;border-radius:50%;
+            animation:arcadia-page-spin .8s linear infinite;
+        }
+        html[data-page-load-error]::after { display:none; }
+        html[data-theme='dark'][data-page-loading]::before { background:#101214; }
+        html[data-theme='dark'][data-page-loading]::after { border-color:#3b424b;border-top-color:#8dd7e8; }
+        @keyframes arcadia-page-spin { to { transform:rotate(360deg); } }
+        @media(prefers-reduced-motion:reduce) { html[data-page-loading]::after { animation:none; } }
+        .ar-page-loading-status { position:fixed;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;visibility:visible; }
+    </style>
+<script>document.documentElement.setAttribute("data-page-loading","true");</script>
+<!-- arcadia-loader:end -->
+<script src="js/page-ready.js"></script>
     <script src="js/notice-links.js"></script>
     <script src="js/post-login-scroll.js"></script>
     <script src="js/banner-preferences.js"></script>

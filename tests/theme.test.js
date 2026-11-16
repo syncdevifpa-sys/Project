@@ -42,7 +42,7 @@ function context(mode, prefersDark, blocked = false) {
 
 test('Início público e painel respeitam tema salvo antes dos estilos', () => {
     const dashboard = fs.readFileSync(path.join(root, 'frontend/dashboard.html'), 'utf8');
-    const bootstrap = dashboard.match(/<script>([\s\S]*?)<\/script>/)[1];
+    const bootstrap = [...dashboard.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]).find(code => code.includes('THEME_KEY'));
     const index = fs.readFileSync(path.join(root, 'frontend/index.html'), 'utf8');
     assert.ok(index.indexOf('src="js/theme.js"') < index.indexOf('href="landing.css"'));
     for (const code of [source, bootstrap]) {
