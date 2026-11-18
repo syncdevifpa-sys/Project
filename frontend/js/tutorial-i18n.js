@@ -183,6 +183,14 @@
             'Technical program graduates in gowns at the graduation ceremony',
         'Exemplo da interface com dados de demonstração. As informações da sua conta serão diferentes.':
             'Example of the interface with demo data. Your account information will be different.',
+        'Seu perfil': 'Your profile',
+        'Foto, nome e contatos do seu jeito.': 'Photo, name and contacts your way.',
+        'Tarefas e compromissos do dia.': 'Today’s tasks and events.',
+        'Avisos': 'Notices',
+        'O mural oficial do campus.': 'The official campus board.',
+        'Tela Seus dados nas Configurações, com foto, nome e vínculo do aluno': 'Your details screen in Settings, with the student photo, name and enrollment',
+        'Meu painel da Arcádia no celular, com tarefas da semana e o próximo compromisso': 'Arcadia “My dashboard” on a phone, with this week’s tasks and the next event',
+        'Avisos e notícias do campus no celular': 'Campus notices and news on a phone',
         'Meu painel da Arcádia no celular, com dados de demonstração': 'Arcadia “My dashboard” on a phone, with demo data',
         'Funciona no navegador do computador, do tablet e do celular, sem precisar instalar nada.':
             'Works in the browser on your computer, tablet and phone, with nothing to install.',
@@ -445,6 +453,14 @@
             'Egresados de los cursos técnicos con toga en la ceremonia de graduación',
         'Exemplo da interface com dados de demonstração. As informações da sua conta serão diferentes.':
             'Ejemplo de la interfaz con datos de demostración. La información de tu cuenta será diferente.',
+        'Seu perfil': 'Tu perfil',
+        'Foto, nome e contatos do seu jeito.': 'Foto, nombre y contactos a tu manera.',
+        'Tarefas e compromissos do dia.': 'Tareas y compromisos del día.',
+        'Avisos': 'Avisos',
+        'O mural oficial do campus.': 'El mural oficial del campus.',
+        'Tela Seus dados nas Configurações, com foto, nome e vínculo do aluno': 'Pantalla Tus datos en Configuración, con foto, nombre y vínculo del estudiante',
+        'Meu painel da Arcádia no celular, com tarefas da semana e o próximo compromisso': '“Mi panel” de Arcadia en el celular, con las tareas de la semana y el próximo compromiso',
+        'Avisos e notícias do campus no celular': 'Avisos y noticias del campus en el celular',
         'Meu painel da Arcádia no celular, com dados de demonstração': '“Mi panel” de Arcadia en el celular, con datos de demostración',
         'Funciona no navegador do computador, do tablet e do celular, sem precisar instalar nada.':
             'Funciona en el navegador de la computadora, la tableta y el celular, sin instalar nada.',
