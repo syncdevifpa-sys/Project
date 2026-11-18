@@ -388,8 +388,25 @@
         for (const m of medidas) {
             m.el.style.setProperty('--gw', `${arred(m.largura, 1)}px`);
             m.el.style.setProperty('--gh', `${arred(m.altura, 1)}px`);
+            // Texto centralizado (.about-quote): cada linha é deslocada para o seu
+            // meio cair no meio do degradê, então o azul fica centrado em toda linha.
+            const porLinha = m.el.closest('.about-quote');
+            const linhas = new Map();
+            if (porLinha) {
+                m.caixas.forEach((c) => {
+                    const k = Math.round(c.top);
+                    const l = linhas.get(k) || { esq: Infinity, dir: -Infinity };
+                    l.esq = Math.min(l.esq, c.left);
+                    l.dir = Math.max(l.dir, c.right);
+                    linhas.set(k, l);
+                });
+            }
             m.mascaras.forEach((w, i) => {
-                w.style.setProperty('--gx', `${arred(m.caixas[i].left - m.esquerda, 1)}px`);
+                const l = porLinha && linhas.get(Math.round(m.caixas[i].top));
+                const gx = l
+                    ? m.caixas[i].left - l.esq + (m.largura - (l.dir - l.esq)) / 2
+                    : m.caixas[i].left - m.esquerda;
+                w.style.setProperty('--gx', `${arred(gx, 1)}px`);
                 w.style.setProperty('--gy', `${arred(m.caixas[i].top - m.topo, 1)}px`);
             });
         }
