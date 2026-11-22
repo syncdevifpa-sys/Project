@@ -1,7 +1,7 @@
 /* Somente mensagens transacionais iniciadas pelo servidor. Não há relay de boas-vindas. */
 const nodemailer = require('nodemailer');
 const { emailAddress } = require('./email-address.service');
-const { confirmationHTML, resetPasswordHTML } = require('./email-templates.service');
+const { confirmationHTML, resetPasswordHTML, reminderHTML, reminderText } = require('./email-templates.service');
 
 function recoveryConfigured() {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.APP_URL) return false;
@@ -127,7 +127,8 @@ async function sendReminder(toEmail, reminder) {
                 envelope: { from: sender, to: [recipient] },
                 subject: 'Seu lembrete — Arcádia',
                 messageId: `<arcadia-reminder-${reminder.id}-${reminder.versao}@${new URL(process.env.APP_URL).hostname}>`,
-                text: `Lembrete: ${reminder.titulo}\n\nAbra seus lembretes: ${link.href}\nVocê autorizou estes avisos. Para desativar, abra Meus lembretes e notificações no Calendário ou em Tarefas.`,
+                text: reminderText(link, reminder),
+                html: reminderHTML(link, reminder),
                 disableFileAccess: true,
                 disableUrlAccess: true
             }),
