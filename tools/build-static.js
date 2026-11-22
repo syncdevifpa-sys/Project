@@ -40,7 +40,10 @@ const localPreviews = new Set([
     'typed',
     'classes-preview.html',
     'classes-preview.css',
-    'classes-preview.js'
+    'classes-preview.js',
+    // Estas páginas precisam passar pelo Express para receber metadados públicos.
+    'project.html',
+    'documents.html'
 ]);
 fs.cpSync(path.join(root, 'frontend'), target, {
     recursive: true,

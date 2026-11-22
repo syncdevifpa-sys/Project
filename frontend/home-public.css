@@ -46,3 +46,10 @@ html[data-theme=dark] .home-content-page .site-nav .nav-login:hover { color:#fff
  .home-content-page .site-nav { flex-wrap:wrap;gap:8px;min-height:90px;padding-block:12px; }
  .home-content-page .site-nav .nav-actions { margin-inline-start:auto;max-width:100%;gap:6px;flex-wrap:wrap; }
 }
+
+html[data-theme] .home-content-page .home-primary-actions .btn--primary { background:#2563eb !important;background-image:none !important;color:#fff !important;border:1px solid #2563eb !important; }
+.home-campus-banner-content .home-more-info { color:var(--personal-banner-ink,var(--default-banner-ink,var(--color-ink)));opacity:1; }
+
+/* Alternância de tema visível na navegação, também para visitantes. */
+.home-content-page .nav-actions .theme-toggle { flex:0 0 36px;width:36px;height:36px;display:inline-grid;place-items:center;padding:8px;border:1px solid var(--color-card-border);border-radius:50%;background:transparent;color:var(--color-ink); }
+.home-content-page .nav-actions .theme-toggle svg { width:18px;height:18px; }

@@ -99,6 +99,7 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
     vm.runInNewContext(fs.readFileSync('frontend/js/document-library.js', 'utf8'), {
         window: { Arcadia: A },
         URLSearchParams,
+        location: { search: '' },
         FormData: class {
             constructor() {
                 this.fields = new Map();
@@ -120,6 +121,7 @@ test('erro de envio mantém descrição e PDF; contador e limite impedem excesso
         document: {
             body,
             activeElement: null,
+            querySelector: () => null,
             getElementById: (id) => (id === 'documentLibrary' ? root : null),
             querySelectorAll: (selector) =>
                 selector === '[data-library-document]' ? [trigger] : [],
