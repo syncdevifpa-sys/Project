@@ -212,7 +212,7 @@
         }
         if (!groups.size) nav.append(el('p', 'Sem disciplinas.', 'ac-meta'));
         if (data.canAdminister) {
-            const management = el('a', 'Administrar turmas e arquivadas', 'ar-btn ar-btn-cta');
+            const management = el('a', 'Administrar turmas e arquivadas', 'ar-btn');
             management.href = 'admin.html#turmas';
             nav.append(management);
         }
@@ -838,7 +838,7 @@
                             link.password
                         )
                             continue;
-                        const a = el('a', 'Abrir link', 'ar-btn ar-btn-cta');
+                        const a = el('a', 'Abrir link', 'ar-btn');
                         a.href = link.href;
                         a.target = '_blank';
                         a.rel = 'noopener noreferrer';

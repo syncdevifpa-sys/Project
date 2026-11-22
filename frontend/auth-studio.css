@@ -2,26 +2,26 @@
    À esquerda, um painel cinza-claro com pontilhado, a marca, um cartão flutuante
    mostrando o portal e a frase em serifa; à direita, o formulário limpo. */
 :root {
-  --au-page: #ececec;
+  --au-page: #e9f0eb;
   --au-card: #ffffff;
-  --au-panel: #f4f4f4;
-  --au-ink: #111111;
-  --au-muted: #6b6b6b;
-  --au-line: #e3e3e3;
+  --au-panel: #e6efe8;
+  --au-ink: #172a1e;
+  --au-muted: #53675a;
+  --au-line: #ccdbd0;
   --au-field: #ffffff;
-  --au-dot: #1a1a1a;
-  --au-blue: #2563eb;
+  --au-dot: #245c3b;
+  --au-blue: #246640;
   --au-serif: 'Times New Roman', Times, serif;
 }
 :root[data-theme='dark'] {
-  --au-page: #0d0f13;
-  --au-card: #15181d;
-  --au-panel: #1b1f25;
-  --au-ink: #f2f3f5;
-  --au-muted: #a3a8b1;
-  --au-line: #2b3038;
-  --au-field: #1b1f25;
-  --au-dot: #e8eaee;
+  --au-page: #0b1a13;
+  --au-card: #151f19;
+  --au-panel: #1b2b21;
+  --au-ink: #f0f7f2;
+  --au-muted: #a8c0b0;
+  --au-line: #304a38;
+  --au-field: #1b2b21;
+  --au-dot: #c4dbcc;
 }
 
 html,
@@ -216,8 +216,11 @@ body::after {
 
 .ar-auth-visual-title {
   position: absolute;
-  left: 28px;
-  bottom: 26px;
+  inset-inline: clamp(20px, 3vw, 36px);
+  bottom: 28px;
+  max-width: 34ch;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
   z-index: 3;
   margin: 0;
   color: var(--au-ink);
@@ -527,7 +530,11 @@ body::after {
     margin-right: -40px;
   }
   .ar-auth-visual-title {
-    padding-right: 22px;
+    padding-inline: 0;
+    max-width: 32ch;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
   }
 }
 
@@ -572,7 +579,7 @@ body::after {
     transform: none;
   }
   .ar-auth-visual-title {
-    align-self: flex-start;
+    align-self: center;
   }
 }
 .ar-auth-visual .ar-auth-visual-sub { color: var(--au-ink); opacity: 0.62; font-weight: 600; }
@@ -612,20 +619,20 @@ body::after {
 }
 .ar-auth-a-lines path {
   fill: none;
-  stroke: #163f6e;
+  stroke: #246640;
   stroke-width: 22;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .ar-auth-a-lines .ar-auth-a-inner {
-  stroke: #7b46b0;
+  stroke: #4b805b;
   stroke-width: 20;
 }
 .ar-auth-a-nodes circle {
-  fill: #163f6e;
+  fill: #246640;
 }
 .ar-auth-a-nodes .ar-auth-a-inner {
-  fill: #7b46b0;
+  fill: #4b805b;
 }
 .ar-auth-visual-mark { display: block; line-height: 0; }
 .ar-auth-visual .ar-auth-visual-a { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -671,13 +678,13 @@ body::after {
 }
 .ar-auth-visual-a path {
   fill: none;
-  stroke: #163f6e;
+  stroke: #246640;
   stroke-width: 24;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .ar-auth-visual-a circle {
-  fill: #163f6e;
+  fill: #246640;
 }
 /* Emblema com as cores originais; o trecho roxo vira azul, sem engrossar. */
 .ar-auth-visual-mark .ar-auth-visual-logo {
@@ -786,3 +793,7 @@ form[data-acesso='cadastro'] .ar-field-hint {
 #teacherSignupFields:has(#studentCourseInfo:disabled) > .ar-input-group:has(#teacherMatricula) {
   grid-column: 1 / -1;
 }
+
+/* As ações de acesso usam o verde institucional nos dois temas. */
+.ar-auth-branded .ar-btn-cta,.ar-auth-form-col .ar-btn-submit { background:#246640 !important;color:#fff !important;border-color:#246640 !important; }
+.ar-auth-branded .ar-btn-cta:hover,.ar-auth-form-col .ar-btn-submit:hover { background:#246640 !important;color:#fff !important;border-color:#246640 !important; }
