@@ -8,7 +8,7 @@ const escape = (value) => String(value ?? '').replace(/[&<>"']/g,
     (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const text = links.plainText;
 /* Lista somente URLs que podem ser abertas pelo visitante. */
-function renderSitemap(rows, origin = 'https://portalarcadia.vercel.app', projects = []) {
+function renderSitemap(rows, origin = 'https://portalarcadia.vercel.app', projects = [], documents = []) {
     const urls = ['<url><loc>' + escape(origin + '/') + '</loc></url>'];
     function add(url, row) {
         const updated = row.atualizado_em || row.data_publicacao || row.criado_em;
@@ -27,21 +27,98 @@ function renderSitemap(rows, origin = 'https://portalarcadia.vercel.app', projec
             /^[1-9]\d*$/.test(String(project.id_projeto)))
             add('/project.html?id=' + project.id_projeto, project);
     }
+    for (const item of documents) if (item.visibilidade === 'publico' && /^[1-9]\d*$/.test(String(item.id_item)))
+        add('/documents.html?material='+item.id_item+'&busca='+encodeURIComponent(item.titulo || ''),item);
     return '<?xml version="1.0" encoding="UTF-8"?>\n' +
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
         urls.join('\n') + '\n</urlset>\n';
 }
-function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.app', projectsModel = null) {
+function createPublicNoticeRouter(model, origin = 'https://portalarcadia.vercel.app', projectsModel = null, documentLibrary = null) {
     const router = express.Router();
     const template = fs.readFileSync(path.join(__dirname, '../../../frontend/notice.html'), 'utf8');
+    /* Projetos públicos entregam conteúdo e metadados sem exigir execução de JavaScript. */
+    const projectTemplate = fs.readFileSync(path.join(__dirname, '../../../frontend/project.html'), 'utf8');
+    const publicProject = row => row?.aprovacao === 'aprovado' && row.visibilidade === 'publico';
+    router.get('/projetos/:id/capa', async (req,res,next) => {
+        try {
+            res.set('Cache-Control','no-store');
+            if (!/^[1-9]\d*$/.test(req.params.id) || !projectsModel) return res.sendStatus(404);
+            const row = await projectsModel.findProjectById(req.params.id);
+            if (!publicProject(row)) return res.sendStatus(404);
+            const image = typeof row.capa === 'string' && row.capa.length <= 750000 ? /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(row.capa) : null;
+            if (!image) return res.sendStatus(404);
+            res.type('image/'+image[1]).send(Buffer.from(image[2],'base64'));
+        } catch(error) { next(error); }
+    });
+    router.get('/project.html', async (req,res,next) => {
+        if (!projectsModel) return next();
+        try {
+            res.set('Cache-Control','no-store');
+            if (!/^[1-9]\d*$/.test(String(req.query.id || ''))) return res.status(404).send('Projeto não encontrado.');
+            const row = await projectsModel.findProjectById(req.query.id);
+            const readable = publicProject(row);
+            let html = projectTemplate, head = '';
+            if (readable) {
+                const title = text(row.titulo), description = text(row.descricao).slice(0,220);
+                const canonical = origin+'/project.html?id='+row.id_projeto;
+                const image = row.capa ? origin+'/projetos/'+row.id_projeto+'/capa' : origin+'/assets/arcadia-emblem.png';
+                head = '<link rel="canonical" href="'+escape(canonical)+'">'+
+                    '<meta name="description" content="'+escape(description)+'">'+
+                    '<meta property="og:type" content="article"><meta property="og:site_name" content="Arcádia">'+
+                    '<meta property="og:title" content="'+escape(title)+'">'+
+                    '<meta property="og:description" content="'+escape(description)+'">'+
+                    '<meta property="og:url" content="'+escape(canonical)+'">'+
+                    '<meta property="og:image" content="'+escape(image)+'">'+
+                    '<meta name="twitter:card" content="summary_large_image">';
+                html = html.replace(/<title>[^<]*<\/title>/,()=>'<title>'+escape(title)+' · Arcádia</title>')
+                    .replace(/(<h1 class="ar-detail-title">)[^<]*(<\/h1>)/,(_,open,close)=>open+escape(title)+close)
+                    .replace('<div class="body" style="margin: 0"></div>',()=>'<div class="body" style="margin: 0"><p>'+escape(text(row.descricao))+'</p></div>');
+            } else head = '<meta name="robots" content="noindex,nofollow">';
+            html = html.replace('<head>',()=>'<head>'+head);
+            if (!row) res.status(404);
+            res.type('html').send(html);
+        } catch(error) { next(error); }
+    });
+    router.get('/documents.html', async (req,res,next) => {
+        if (!documentLibrary) return next();
+        if (!req.query.material) return res.type('html').send(fs.readFileSync(path.join(__dirname,'../../../frontend/documents.html'),'utf8'));
+        res.set('Cache-Control','no-store');
+        try {
+            if (!/^[1-9]\d*$/.test(String(req.query.material))) return res.sendStatus(404);
+            let item;
+            try { item = await documentLibrary.readable(null,req.query.material,null); }
+            catch(error) { if (error.status !== 404 && error.statusCode !== 404) throw error; }
+            const readable = item?.visibilidade === 'publico';
+            let html = fs.readFileSync(path.join(__dirname,'../../../frontend/documents.html'),'utf8');
+            let head = '<meta name="robots" content="noindex,nofollow">';
+            if (readable) {
+                const title = text(item.titulo), description = text(item.descricao).slice(0,220);
+                const canonical = origin+'/documents.html?material='+item.id_item+'&busca='+encodeURIComponent(item.titulo || '');
+                const image = item.tipo === 'arquivo' ? origin+'/api/document-library/items/'+item.id_item+'/preview' : origin+'/assets/arcadia-emblem.png';
+                head = '<link rel="canonical" href="'+escape(canonical)+'">'+
+                    '<meta name="description" content="'+escape(description)+'">'+
+                    '<meta property="og:type" content="article"><meta property="og:site_name" content="Arcádia">'+
+                    '<meta property="og:title" content="'+escape(title)+'">'+
+                    '<meta property="og:description" content="'+escape(description)+'">'+
+                    '<meta property="og:url" content="'+escape(canonical)+'">'+
+                    '<meta property="og:image" content="'+escape(image)+'">'+
+                    '<meta name="twitter:card" content="summary_large_image">';
+                html = html.replace(/<title>[^<]*<\/title>/,()=>'<title>'+escape(title)+' · Documentos · Arcádia</title>')
+                    .replace('<section class="ar-library"',()=>'<article data-document-search-result><h2>'+escape(title)+'</h2><p>'+escape(text(item.descricao))+'</p></article><section class="ar-library"');
+            }
+            html = html.replace('<head>',()=>'<head>'+head);
+            res.status(readable?200:404).type('html').send(html);
+        } catch(error) { next(error); }
+    });
     router.get('/sitemap.xml', async (_req, res) => {
         res.set('Cache-Control', 'no-store');
         try {
-            const [rows, projects] = await Promise.all([
+            const [rows, projects, documents] = await Promise.all([
                 model.listNotices(),
-                projectsModel ? projectsModel.listProjects() : []
+                projectsModel ? projectsModel.listProjects() : [],
+                documentLibrary ? documentLibrary.publicList(null) : []
             ]);
-            res.type('application/xml').send(renderSitemap(rows, origin, projects));
+            res.type('application/xml').send(renderSitemap(rows, origin, projects, documents));
         } catch {
             res.status(503).type('text/plain').send('Sitemap temporariamente indisponível.');
         }

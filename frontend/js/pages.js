@@ -1255,7 +1255,11 @@
             const grid = $('#gridPessoas');
             const searchPeople = document.createElement('input');
             searchPeople.type='search';searchPeople.className='ar-input';searchPeople.placeholder='Pesquisar pessoas';searchPeople.setAttribute('aria-label','Pesquisar pessoas');
-            searchPeople.value=new URLSearchParams(location.search).get('busca') || '';grid.before(searchPeople);listen(searchPeople,'input',render);
+            searchPeople.id = 'peopleSearch';
+            const searchField = document.createElement('label');
+            searchField.className = 'ar-people-search';
+            searchField.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>';
+            searchPeople.value=new URLSearchParams(location.search).get('busca') || '';searchField.append(searchPeople);grid.before(searchField);listen(searchPeople,'input',render);
             const bar = filterBar('#chipbarPessoas', audiences, () => rows, 'tipo_usuario', render);
             function render() {
                 const query = searchPeople.value;

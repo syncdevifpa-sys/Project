@@ -36,7 +36,7 @@
         ],
         'tasks.html': [
             'Tarefas',
-            'Organize suas tarefas e confira os prazos. Busca, filtros e modos de visualização ajudam a encontrar o que precisa fazer. No celular, Filtros abre um quadro na parte superior; toque fora ou pressione Escape para fechar. Lembretes não confirmam entrega de e-mail. Enviar tarefas ao Google permite marcar até 25 itens e escolher Agenda, Tasks ou ambos. Você confere a conta antes de autorizar; não há sincronização automática.'
+            'Organize suas tarefas e confira os prazos. A lixeira exclui a tarefa após confirmação; arquivar preserva o registro. Tarefas não concluídas com prazo anterior a hoje aparecem como Atrasadas, inclusive na coluna de Situação. Busca, filtros e modos de visualização ajudam a encontrar o que precisa fazer. No celular, Filtros abre um quadro na parte superior; toque fora ou pressione Escape para fechar. Lembretes não confirmam entrega de e-mail. Enviar tarefas ao Google permite marcar até 25 itens e escolher Agenda, Tasks ou ambos. Você confere a conta antes de autorizar; não há sincronização automática.'
         ],
         'documents.html': [
             'Documentos',

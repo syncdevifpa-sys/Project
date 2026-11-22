@@ -226,9 +226,9 @@ html[data-motion='reduced'] .home-campus-banner-content .btn--primary:hover {
 }
 /* Botão "Explorar publicações" (área nova do Luciano) no mesmo azul sólido. */
 html .home-campus-banner-content .home-primary-actions .btn--primary {
-  border: 1px solid var(--hp-accent) !important;
+  border: 1px solid #2563eb !important;
   border-radius: 999px !important;
-  background: var(--hp-accent) !important;
+  background: #2563eb !important;
   background-image: none !important;
   color: #fff !important;
   box-shadow: none !important;
@@ -242,5 +242,11 @@ html .home-campus-banner-content .home-primary-actions .btn--primary:is(:hover, 
   box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--hp-accent) 70%, transparent) !important;
 }
 html[data-theme='dark'] .home-campus-banner-content .home-primary-actions .btn--primary {
-  color: #0b1220 !important;
+  color: #fff !important;
+}
+
+/* Ações do banner mantêm contraste, inclusive com uma cor personalizada. */
+.home-campus-banner-content :is(.home-visitor-actions,.home-member-actions) > .text-link {
+ color:var(--personal-banner-ink,var(--default-banner-ink,var(--color-ink,#17202b)));
+ opacity:1;visibility:visible;display:inline-block;
 }

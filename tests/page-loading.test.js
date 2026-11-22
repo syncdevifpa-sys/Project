@@ -10,7 +10,7 @@ test('cada página entrega a proteção de carregamento antes dos arquivos exter
   if(!html.includes('js/page-ready.js'))continue;
   const critical=html.match(/<style id="arcadia-critical-loader">([\s\S]*?)<\/style>/);
   assert.ok(critical,name);
-  assert.equal(critical[1],css,name+' deve acompanhar a fonte compartilhada; execute node tools/sync-page-loader.cjs');
+  assert.equal(critical[1].replace(/\r\n/g,'\n'),css.replace(/\r\n/g,'\n'),name+' deve acompanhar a fonte compartilhada; execute node tools/sync-page-loader.cjs');
   assert.ok(html.indexOf(critical[0])<html.indexOf('<script src='),name);
   assert.ok(html.indexOf('<meta charset=')<1024,name);
   const attrs={};

@@ -1454,3 +1454,16 @@ html body.ar-has-sidebar .ar-split:has(> .ar-snav) :is(form, fieldset, #profileS
     padding: 24px 20px;
   }
 }
+
+/* Pesquisa de pessoas legível e contida em celular, tablet e computador. */
+.ar-people-search { display:flex;align-items:center;gap:10px;width:min(100%,560px);box-sizing:border-box;min-width:0;min-height:44px;padding:0 14px;margin:4px 0 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface,#fff);color:var(--ink); }
+.ar-people-search > svg { flex:0 0 18px; }
+.ar-people-search > input.ar-input { flex:1;min-width:0;width:100%;border:0;border-radius:0;box-shadow:none;background:transparent;color:inherit;padding:12px 0;font:inherit;font-size:16px; }
+.ar-people-search:focus-within { outline:2px solid var(--ink-muted);outline-offset:2px; }
+.ar-people-search > input:focus { outline:none; }
+#kanbanGrid { grid-template-columns:repeat(4,minmax(220px,1fr)); }
+@media(max-width:1100px) { #kanbanGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { #kanbanGrid { grid-template-columns:minmax(0,1fr); } }
+
+/* O resultado referenciado fica identificado sem esconder os demais resultados. */
+.ar-library-item[aria-current=true] { outline:2px solid var(--ink-muted);outline-offset:2px; }
