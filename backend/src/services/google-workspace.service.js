@@ -25,7 +25,9 @@ function destinations(body) {
         }
     return result;
 }
-function createWorkspace(database = db) {
+function createWorkspace(database = db, { dialect = 'mysql' } = {}) {
+    if (dialect === 'postgres') return require('./postgres/google-workspace').createWorkspace(database);
+    if (dialect !== 'mysql') throw new Error('Dialeto de banco não suportado.');
     const keys = (owner, sub) => {
         const who = identity(owner);
         return [who.kind, who.id, subject(sub)];

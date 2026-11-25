@@ -1,0 +1,10 @@
+{
+  "source": "arcadiabd-local-schema.sql",
+  "sourceSha256": "0026f4af08c9e104e0c4ab0d1c5f87ae081aecb85171ebba0cd1d61e5b0f5a22",
+  "schemaSha256": "a970cb7d45276075f68a9f7b0c9bc41147f6e3a47a9db40b55e92102fd07675d",
+  "statements": 334,
+  "tables": 53,
+  "views": 3,
+  "functions": 7,
+  "triggers": 24
+}

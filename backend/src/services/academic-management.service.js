@@ -24,6 +24,7 @@ const targets = {
 function createAcademicManagement(database = db) {
     const access = createCohortInfo(database);
     async function ready(c = database) {
+        if (c.dialect === 'postgres') return c.schemaReady();
         try {
             const [rows] = await c.execute(
                 "SELECT checksum FROM arcadia_schema_migrations WHERE versao='1.1.31'"
