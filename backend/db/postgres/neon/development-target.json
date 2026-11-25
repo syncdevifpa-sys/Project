@@ -1,0 +1,10 @@
+{
+  "projectId": "flat-tree-91254155",
+  "branchId": "br-small-recipe-bblidqnf",
+  "branchName": "dev/arcadia-postgres-migration",
+  "database": "arcadiabd",
+  "endpointId": "ep-floral-resonance-bbs5f7ew",
+  "directHost": "ep-floral-resonance-bbs5f7ew.c-15.us-east-1.aws.neon.tech",
+  "verifiedVia": "Neon MCP list_branch_computes",
+  "verifiedOn": "2026-11-23"
+}

@@ -41,6 +41,19 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
                     AND ((u.situacao='ativo' AND l.id_externo IS NULL) OR (x.situacao='ativo' AND l.id_usuario IS NULL))
                     AND l.agendado_utc BETWEEN DATE_SUB(UTC_TIMESTAMP(),INTERVAL 48 HOUR) AND UTC_TIMESTAMP() FOR UPDATE`,keys);
                 const row=rows[0];
+                if (row && c.dialect === 'postgres') {
+                    // LEFT JOIN não admite trava no lado opcional. Revalidar sob travas
+                    // explícitas para não enviar após retirada de consentimento/bloqueio.
+                    const external=Boolean(row.id_externo),key=external?row.id_externo:row.id_usuario;
+                    const [accounts]=await c.execute(external
+                        ? 'SELECT email,situacao,email_lembretes FROM publico_externo WHERE id_externo=? FOR UPDATE'
+                        : 'SELECT email,situacao FROM usuarios WHERE id_usuario=? FOR UPDATE',[key]);
+                    const [states]=await c.execute('SELECT email,confirmado_em FROM email_estado WHERE tipo=? AND identidade=? FOR UPDATE',[external?'external':'users',key]);
+                    const [preferences]=external?[[]]:await c.execute('SELECT email_lembretes FROM preferencias_notificacao WHERE id_usuario=? FOR UPDATE',[key]);
+                    row.email=accounts[0]?.email;
+                    row.email_lembretes=accounts[0]?.situacao==='ativo'?(external?accounts[0].email_lembretes:preferences[0]?.email_lembretes):0;
+                    row.email_confirmado=states[0]?.email;row.confirmado_em=states[0]?.confirmado_em;
+                }
                 let allowed=row && [1,true].includes(row.email_lembretes) && row.confirmado_em && row.email_confirmado?.toLowerCase()===row.email?.toLowerCase();
                 if(allowed) {
                     try {
