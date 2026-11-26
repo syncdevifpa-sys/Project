@@ -4806,5 +4806,76 @@
     "conflict": [
       "id_tarefa"
     ]
+  },
+  "conta_nomes": {
+    "columns": [
+      {
+        "name": "tipo",
+        "type": "enum('users','external')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_conta",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_exibicao",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "tipo",
+      "id_conta"
+    ],
+    "identity": null,
+    "unique": [],
+    "conflict": [
+      "tipo",
+      "id_conta"
+    ]
+  },
+  "de_para": {
+    "columns": [
+      {
+        "name": "id_apagar",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_manter",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_apagar"
+    ],
+    "identity": null,
+    "unique": [],
+    "conflict": [
+      "id_apagar"
+    ]
   }
 }
