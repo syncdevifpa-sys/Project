@@ -16,6 +16,36 @@
         return;
     }
     $('adminLogout').addEventListener('click', () => A.auth.logout());
+    const driveButton = document.createElement('button');
+    driveButton.type = 'button';
+    driveButton.className = 'ar-btn ar-btn--secondary ar-btn--sm';
+    driveButton.textContent = 'Conectar Google Drive';
+    if (location.hostname.endsWith('-sync-dev1.vercel.app') && location.hostname.includes('test-google-drive')) {
+        $('adminLogout').before(driveButton);
+        const outcome = new URLSearchParams(location.search).get('drive');
+        if (outcome) {
+            const message = document.createElement('p');
+            message.setAttribute('role', 'status');
+            message.textContent = outcome === 'connected'
+                ? 'Conta dedicada do Google Drive autorizada.'
+                : 'Não foi possível autorizar o Drive. Tente novamente com a conta dedicada.';
+            document.querySelector('main').prepend(message);
+        }
+        driveButton.addEventListener('click', async () => {
+            driveButton.disabled = true;
+            try {
+                const response = await fetch('/api/google-drive/authorize', {
+                    method: 'POST', headers: { Authorization: 'Bearer ' + A.token.get() }
+                });
+                const data = await response.json();
+                if (!response.ok) throw Error(data.error);
+                location.assign(data.url);
+            } catch (error) {
+                status.textContent = error.message || 'Não foi possível iniciar a conexão do Drive.';
+                driveButton.disabled = false;
+            }
+        });
+    }
     const labels = {
         id_usuario: 'ID',
         id_externo: 'ID',
