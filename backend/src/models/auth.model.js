@@ -12,6 +12,7 @@ async function findUserByEmail(email) {
             SELECT
                 id_usuario,
                 nome,
+                nome_social,
                 email,
                 foto,
                 senha,

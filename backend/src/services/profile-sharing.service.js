@@ -108,7 +108,7 @@ function publicPerson(user, preferences) {
     const prefs = own(preferences);
     const result = {
         id_usuario: user.id_usuario,
-        nome: user.nome,
+        nome: user.nome_social?.trim() || user.nome,
         nome_social: user.nome_social,
         tipo_usuario: user.tipo_usuario,
         setor: user.setor,
