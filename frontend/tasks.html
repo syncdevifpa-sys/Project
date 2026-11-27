@@ -91,7 +91,6 @@
       <link rel="stylesheet" href="topbar.css" />
       <link rel="stylesheet" href="design-system.css" />
       <link rel="stylesheet" href="theme-options.css" />
-      <link rel="stylesheet" href="portal-studio.css" />
     <script src="js/theme-options.js"></script>
 
     <link rel="stylesheet" href="banner-appearance.css" />
@@ -277,6 +276,7 @@
                   >
                     Todos<sup class="ar-sup">(0)</sup>
                   </button>
+                  <button type="button" class="ar-chip" aria-pressed="false" data-status="Late" data-filter-key="Late">Atrasadas<sup class="ar-sup">(0)</sup></button>
                   <button
                     type="button"
                     class="ar-chip"
@@ -404,11 +404,13 @@
 
         /* ---- Tabelas de apoio: valores do banco -> texto/cores da interface ---- */
         var STATUS_UI = {
+          atrasada: { label: 'Atrasada', badge: 'yellow' },
           aberta: { label: 'Aberta', badge: 'cyan' },
           em_andamento: { label: 'Em andamento', badge: 'yellow' },
           concluida: { label: 'Concluída', badge: 'green' }
         };
         var FILTRO_STATUS = {
+          Late: 'atrasada',
           'All': null,
           'Open': 'aberta',
           'In Progress': 'em_andamento',
@@ -458,7 +460,7 @@
           var base = tarefas.filter(function(t) { return Boolean(t.arquivada_em) === (document.getElementById('taskArchiveScope').value === 'archived'); });
           var lista = status
             ? base.filter(function (t) {
-                return t.status === status;
+                return status === 'atrasada' ? A.taskFilters.isOverdue(t) : t.status === status;
               })
             : base.slice();
           return A.taskFilters.visible(lista, {
@@ -468,7 +470,7 @@
         }
 
         function statusUi(t) {
-          return STATUS_UI[t.status] || { label: esc(t.status), badge: 'neutral' };
+          return STATUS_UI[A.taskFilters.viewStatus(t)] || { label: esc(t.status), badge: 'neutral' };
         }
 
         function botoes(t) {
@@ -479,14 +481,15 @@
               '" data-id="' + id + '" title="' + rotulo + '" aria-label="' + rotulo + ': ' +
               esc(t.titulo) + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + desenho + '</svg></button>';
           }
-          if (t.arquivada_em) return '<span class="ar-task-actions">' + acao('restaurar', 'Restaurar tarefa', '<path d="M3 10a9 9 0 1 1 2 8 M3 4v6h6"/>') + '</span>';
+          var excluir = acao('excluir', 'Excluir tarefa', '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>');
+          if (t.arquivada_em) return '<span class="ar-task-actions">' + acao('restaurar', 'Restaurar tarefa', '<path d="M3 10a9 9 0 1 1 2 8 M3 4v6h6"/>') + excluir + '</span>';
           var arquivo = t.arquivo_disponivel ? acao('arquivar', 'Arquivar tarefa', '<path d="M3 3h18v5H3z M5 8v13h14V8 M10 12h4"/>') : '';
           var editar =
             acao('editar', 'Editar tarefa', '<path d="m16 3 5 5-12 12-6 1 1-6Z M14 5l5 5"/>');
           if (t.status === 'concluida')
-            return '<span class="ar-task-actions">' + editar + arquivo + acao('google', 'Enviar tarefa ao Google', '<path d="M14 3h7v7M21 3 10 14M10 3H3v18h18v-7"/>') + '<span class="ar-badge ar-badge--neutral">Concluída</span></span>';
+            return '<span class="ar-task-actions">' + editar + arquivo + acao('google', 'Enviar tarefa ao Google', '<path d="M14 3h7v7M21 3 10 14M10 3H3v18h18v-7"/>') + excluir + '<span class="ar-badge ar-badge--neutral">Concluída</span></span>';
           var google = acao('google', 'Enviar tarefa ao Google', '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18m-9 3 3 3-3 3m3-3H9"/>');
-          var html = editar + arquivo + google;
+          var html = editar + arquivo + google + excluir;
           if (t.status === 'aberta') {
             html += acao('iniciar', 'Iniciar tarefa', '<path d="m8 5 11 7-11 7Z"/>');
           }
@@ -496,12 +499,12 @@
 
         /* ---- Renderização (uma única coleção alimenta os quatro modos de visualização) ---- */
         function renderBoard(lista) {
-          var colunas = ['aberta', 'em_andamento', 'concluida'];
+          var colunas = ['atrasada', 'aberta', 'em_andamento', 'concluida'];
           kanban.innerHTML = colunas
             .map(function (status) {
               var ui = STATUS_UI[status];
               var itens = lista.filter(function (t) {
-                return t.status === status;
+                return A.taskFilters.viewStatus(t) === status;
               });
               var corpo =
                 itens
@@ -673,7 +676,7 @@
             var status = FILTRO_STATUS[chip.getAttribute('data-status')];
             var n = status
               ? base.filter(function (t) {
-                  return t.status === status;
+                  return status === 'atrasada' ? A.taskFilters.isOverdue(t) : t.status === status;
                 }).length
               : total;
             var sup = chip.querySelector('.ar-sup');
@@ -726,6 +729,17 @@
           }
 
           var action = btn.getAttribute('data-action');
+          if (action === 'excluir') {
+            btn.disabled = true;
+            A.confirmAction({ title: 'Excluir tarefa', message: 'Excluir esta tarefa e seus lembretes? Esta ação é definitiva.', items: [tarefa.titulo], confirmLabel: 'Excluir tarefa' }).then(async function(confirmed) {
+              if (!confirmed) return;
+              await A.tasks.remove(tarefa.id_tarefa);
+              tarefas = tarefas.filter(function(item) { return String(item.id_tarefa) !== String(tarefa.id_tarefa); });
+              render();
+              A.showToast('Tarefa excluída.');
+            }).catch(erro).finally(function() { if (btn.isConnected) btn.disabled = false; });
+            return;
+          }
           if (action === 'arquivar' || action === 'restaurar') {
             btn.disabled = true;
             A.tasks.archive(tarefa.id_tarefa, action === 'arquivar').then(carregar).then(function() {

@@ -17,15 +17,16 @@ function account(kind) {
 async function current(c, kind, id, lock = false) {
     const [table, key] = account(kind);
     const [rows] = await c.execute(
-        `SELECT nome FROM ${table} WHERE ${key}=?${lock ? ' FOR UPDATE' : ''}`,
+        `SELECT nome${kind === 'users' ? ', nome_social' : ''} FROM ${table} WHERE ${key}=?${lock ? ' FOR UPDATE' : ''}`,
         [id]
     );
     if (!rows.length) fail('Conta não encontrada.', 404);
-    return rows[0].nome;
+    return rows[0];
 }
 async function read(kind, id) {
     account(kind);
-    const full = await current(db, kind, id);
+    const profile = await current(db, kind, id);
+    const full = profile.nome;
     try {
         const [requests] = await db.execute(
             'SELECT id_pedido,nome_solicitado,estado,motivo,criado_em FROM conta_nome_pedidos WHERE tipo=? AND id_conta=? ORDER BY id_pedido DESC LIMIT 1',
@@ -33,6 +34,7 @@ async function read(kind, id) {
         );
         return {
             nome: full,
+            nome_exibicao: profile.nome_social?.trim() || full,
             pedido: requests[0] || null,
             disponivel: true
         };
@@ -40,6 +42,7 @@ async function read(kind, id) {
         if (error.code === 'ER_NO_SUCH_TABLE')
             return {
                 nome: full,
+                nome_exibicao: profile.nome_social?.trim() || full,
                 pedido: null,
                 disponivel: false
             };
@@ -53,7 +56,7 @@ async function request(kind, id, body) {
     const c = await db.getConnection();
     try {
         await c.beginTransaction();
-        const original = await current(c, kind, id, true);
+        const { nome: original } = await current(c, kind, id, true);
         if (original === proposed) fail('O nome já é igual ao cadastrado.');
         const [pending] = await c.execute(
             "SELECT id_pedido FROM conta_nome_pedidos WHERE tipo=? AND id_conta=? AND estado='pendente'",
@@ -97,7 +100,7 @@ async function review(id, actor, body) {
             [id]
         );
         if (!lookup.length) fail('Solicitação não encontrada.', 404);
-        const original = await current(c, lookup[0].tipo, lookup[0].id_conta, true);
+        const { nome: original } = await current(c, lookup[0].tipo, lookup[0].id_conta, true);
         const [rows] = await c.execute(
             'SELECT * FROM conta_nome_pedidos WHERE id_pedido=? FOR UPDATE',
             [id]

@@ -70,7 +70,7 @@
                 const title = document.getElementById('confProfileName');
                 if (title)
                     title.textContent =
-                        A.firstPersonName?.(result.nome) || result.nome.trim().split(/\s+/)[0];
+                        A.firstPersonName?.(result.nome_exibicao || result.nome) || (result.nome_exibicao || result.nome).trim().split(/\s+/)[0];
                 return result;
             }
             requestForm.addEventListener('submit', async (e) => {

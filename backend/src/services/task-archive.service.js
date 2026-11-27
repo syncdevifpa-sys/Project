@@ -1,7 +1,9 @@
 /* Arquivamento preserva a tarefa e verifica o titular dentro da transação. */
 const database = require('../config/database');
 const { identity, id } = require('./reminder-context.service');
-function createTaskArchive(db = database) {
+function createTaskArchive(db = database, { dialect = 'mysql' } = {}) {
+    if (dialect === 'postgres') return require('./postgres/task-archive').createTaskArchive(db);
+    if (dialect !== 'mysql') throw new Error('Dialeto de banco não suportado.');
     async function annotate(tasks) {
         if (!tasks.length) return tasks;
         try {

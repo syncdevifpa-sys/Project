@@ -214,7 +214,7 @@ function createGoogleAuth({
                 token,
                 user: {
                     ...identity,
-                    nome: user.nome,
+                    nome: user.nome_social?.trim() || user.nome,
                     email: user.email,
                     foto: user.foto || '',
                     tipo_usuario: type,

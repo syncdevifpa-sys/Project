@@ -1,0 +1,4881 @@
+{
+  "cursos": {
+    "columns": [
+      {
+        "name": "id_curso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "nome",
+        "type": "varchar(120)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nivel",
+        "type": "enum('tecnico','graduacao','pos_graduacao')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'tecnico'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ativo",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "regime_etapas",
+        "type": "enum('semestral','anual')",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "total_etapas",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_curso"
+    ],
+    "identity": "id_curso",
+    "unique": [
+      [
+        "nome"
+      ]
+    ],
+    "conflict": [
+      "id_curso"
+    ]
+  },
+  "usuarios": {
+    "columns": [
+      {
+        "name": "id_externo_origem",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "nome",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_social",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "telefone",
+        "type": "varchar(20)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "senha",
+        "type": "varchar(255)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo_usuario",
+        "type": "enum('discente','docente','servidor')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "matricula",
+        "type": "varchar(30)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_curso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "periodo",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "setor",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "sobre",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "foto",
+        "type": "mediumtext",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "preferencias",
+        "type": "json",
+        "pgType": "jsonb",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "is_admin",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "situacao",
+        "type": "enum('ativo','pendente','bloqueado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'ativo'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ultimo_acesso",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_usuario"
+    ],
+    "identity": "id_usuario",
+    "unique": [
+      [
+        "id_externo_origem"
+      ],
+      [
+        "email"
+      ],
+      [
+        "matricula"
+      ]
+    ],
+    "conflict": [
+      "id_usuario"
+    ]
+  },
+  "publico_externo": {
+    "columns": [
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "nome",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "telefone",
+        "type": "varchar(20)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "senha",
+        "type": "varchar(255)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "organizacao",
+        "type": "varchar(120)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "situacao",
+        "type": "enum('ativo','bloqueado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'ativo'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ultimo_acesso",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email_lembretes",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "consentimento_lembretes_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "intencao_cadastro",
+        "type": "enum('externo','docente','servidor','discente')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'externo'",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_externo"
+    ],
+    "identity": "id_externo",
+    "unique": [
+      [
+        "email"
+      ]
+    ],
+    "conflict": [
+      "id_externo"
+    ]
+  },
+  "perfil_compartilhamento": {
+    "columns": [
+      {
+        "name": "id_compartilhamento",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "contato_email",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "''",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "contato_handle",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "''",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "contato_telefone",
+        "type": "varchar(30)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "''",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "mostrar_email",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "mostrar_handle",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "mostrar_telefone",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "mostrar_foto",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "foto",
+        "type": "mediumtext",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_compartilhamento"
+    ],
+    "identity": "id_compartilhamento",
+    "unique": [
+      [
+        "id_usuario"
+      ],
+      [
+        "id_externo"
+      ]
+    ],
+    "conflict": [
+      "id_usuario"
+    ]
+  },
+  "tokens": {
+    "columns": [
+      {
+        "name": "id_token",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "token",
+        "type": "varchar(255)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "dispositivo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": "'Navegador Web'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ip",
+        "type": "varchar(45)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ultimo_acesso",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "expiracao",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_token"
+    ],
+    "identity": "id_token",
+    "unique": [
+      [
+        "token"
+      ]
+    ],
+    "conflict": [
+      "id_token"
+    ]
+  },
+  "google_identidades": {
+    "columns": [
+      {
+        "name": "google_sub",
+        "type": "varchar(255)",
+        "pgType": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "google_sub"
+    ],
+    "unique": [
+      [
+        "id_usuario"
+      ],
+      [
+        "id_externo"
+      ]
+    ],
+    "conflict": [
+      "google_sub"
+    ]
+  },
+  "recuperacao_senha": {
+    "columns": [
+      {
+        "name": "id_recuperacao",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "token_hash",
+        "type": "char(64)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "expiracao",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "usado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_recuperacao"
+    ],
+    "identity": "id_recuperacao",
+    "unique": [
+      [
+        "token_hash"
+      ]
+    ],
+    "conflict": [
+      "id_recuperacao"
+    ]
+  },
+  "seguranca_limites": {
+    "columns": [
+      {
+        "name": "chave",
+        "type": "char(64)",
+        "pgType": "CHAR(64)",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "janela",
+        "type": "bigint",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tentativas",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "expira_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "chave"
+    ],
+    "unique": [],
+    "conflict": [
+      "chave"
+    ]
+  },
+  "seguranca_email_lock": {
+    "columns": [
+      {
+        "name": "chave",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "chave"
+    ],
+    "unique": [],
+    "conflict": [
+      "chave"
+    ]
+  },
+  "email_estado": {
+    "columns": [
+      {
+        "name": "tipo",
+        "type": "enum('users','external')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "identidade",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "regime",
+        "type": "enum('novo','legado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "confirmado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "tipo",
+      "identidade"
+    ],
+    "unique": [],
+    "conflict": [
+      "tipo",
+      "identidade"
+    ]
+  },
+  "email_tokens": {
+    "columns": [
+      {
+        "name": "id_token_email",
+        "type": "bigint",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "tipo",
+        "type": "enum('users','external')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "identidade",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email_destino",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email_anterior",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "finalidade",
+        "type": "enum('cadastro','troca')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "token_hash",
+        "type": "char(64)",
+        "pgType": "CHAR(64)",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "expira_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "usado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_token_email"
+    ],
+    "identity": "id_token_email",
+    "unique": [
+      [
+        "token_hash"
+      ]
+    ],
+    "conflict": [
+      "id_token_email"
+    ]
+  },
+  "avisos": {
+    "columns": [
+      {
+        "name": "id_aviso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo_publicacao",
+        "type": "enum('aviso','noticia')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'aviso'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "capa",
+        "type": "mediumtext",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "resumo",
+        "type": "text",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "categoria",
+        "type": "enum('matricula','edital','evento','cancelamento','calendario')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'matricula'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "publico_alvo",
+        "type": "set('todos','discente','docente','servidor','externo')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'todos'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "situacao",
+        "type": "enum('rascunho','publicado','arquivado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'publicado'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "urgente",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "fixado",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "referencia",
+        "type": "varchar(50)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_prazo",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_evento",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "vagas",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "detalhes",
+        "type": "json",
+        "pgType": "jsonb",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_publicacao",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_aviso"
+    ],
+    "identity": "id_aviso",
+    "unique": [],
+    "conflict": [
+      "id_aviso"
+    ]
+  },
+  "avisos_lidos": {
+    "columns": [
+      {
+        "name": "id_aviso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "lido_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_aviso",
+      "id_usuario"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_aviso",
+      "id_usuario"
+    ]
+  },
+  "tarefas": {
+    "columns": [
+      {
+        "name": "id_tarefa",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "categoria",
+        "type": "varchar(40)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "'Acadêmico'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "responsavel",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_entrega",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "prioridade",
+        "type": "enum('baixa','media','alta')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'media'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "status",
+        "type": "enum('aberta','em_andamento','concluida')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'aberta'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "observacao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "concluida_em",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_tarefa"
+    ],
+    "identity": "id_tarefa",
+    "unique": [],
+    "conflict": [
+      "id_tarefa"
+    ]
+  },
+  "documentos": {
+    "columns": [
+      {
+        "name": "id_documento",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_responsavel",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "protocolo",
+        "type": "varchar(20)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo",
+        "type": "enum('pdf','requerimento','assinatura')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'requerimento'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "status",
+        "type": "enum('solicitado','em_analise','pendente','pronto')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'solicitado'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "observacao",
+        "type": "varchar(255)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "previsao",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_emissao",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "arquivo",
+        "type": "varchar(255)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_documento"
+    ],
+    "identity": "id_documento",
+    "unique": [
+      [
+        "protocolo"
+      ]
+    ],
+    "conflict": [
+      "id_documento"
+    ]
+  },
+  "calendario": {
+    "columns": [
+      {
+        "name": "origem_calendario",
+        "type": "enum('agenda','ifpa')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'ifpa'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_evento",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "categoria",
+        "type": "enum('matricula','cancelamento','evento','edital','feriado','ferias','aniversario','atividades_campus','sabado_letivo','periodo_academico','culminancia_bimestral','recesso','registro_academico','ponto_facultativo','avaliacao','interrupcao_presencial','ferias_docentes')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'evento'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "oculto",
+        "type": "tinyint(1)",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "visibilidade",
+        "type": "enum('publico','pessoal','institucional','comunidade')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'publico'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "periodo_letivo",
+        "type": "varchar(60)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_evento",
+        "type": "date",
+        "pgType": "date",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_fim",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "hora_inicio",
+        "type": "time",
+        "pgType": "time",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "hora_fim",
+        "type": "time",
+        "pgType": "time",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "local",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_evento"
+    ],
+    "identity": "id_evento",
+    "unique": [],
+    "conflict": [
+      "id_evento"
+    ]
+  },
+  "projetos": {
+    "columns": [
+      {
+        "name": "fixado",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "visibilidade",
+        "type": "enum('privado','publico')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'privado'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "permite_externos",
+        "type": "tinyint(1)",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_projeto",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "capa",
+        "type": "mediumtext",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "eixo",
+        "type": "enum('pesquisa','extensao','ensino','inovacao')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'pesquisa'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "responsavel_nome",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "rotulo_responsavel",
+        "type": "varchar(20)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "'Coordenação'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "vagas",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "unidade_vaga",
+        "type": "varchar(20)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "'vagas'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "link",
+        "type": "varchar(500)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "situacao",
+        "type": "enum('ativo','inscricoes','em_selecao','em_andamento','encerrado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'ativo'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "aprovacao",
+        "type": "enum('pendente','aprovado','recusado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'pendente'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "aprovado_por",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_inicio",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_fim",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_projeto"
+    ],
+    "identity": "id_projeto",
+    "unique": [],
+    "conflict": [
+      "id_projeto"
+    ]
+  },
+  "projeto_inscricoes": {
+    "columns": [
+      {
+        "name": "id_projeto",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "status",
+        "type": "enum('inscrito','aprovado','recusado','cancelado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'inscrito'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_projeto",
+      "id_usuario"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_projeto",
+      "id_usuario"
+    ]
+  },
+  "agenda_externa": {
+    "columns": [
+      {
+        "name": "id_evento",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "categoria",
+        "type": "varchar(40)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "'evento'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_evento",
+        "type": "date",
+        "pgType": "date",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_fim",
+        "type": "date",
+        "pgType": "date",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "hora_inicio",
+        "type": "time",
+        "pgType": "time",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "hora_fim",
+        "type": "time",
+        "pgType": "time",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "local",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_evento"
+    ],
+    "identity": "id_evento",
+    "unique": [],
+    "conflict": [
+      "id_evento"
+    ]
+  },
+  "lembretes": {
+    "columns": [
+      {
+        "name": "id_tarefa",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "agendado_utc",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "fuso_horario",
+        "type": "varchar(64)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "'America/Fortaleza'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "enviar_email",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_lembrete",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_evento",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo",
+        "type": "enum('prazo','evento')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'prazo'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data_lembrete",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ativo",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_evento_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "contexto",
+        "type": "enum('avulso','tarefa','calendario','agenda_externa')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'avulso'",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_lembrete"
+    ],
+    "identity": "id_lembrete",
+    "unique": [],
+    "conflict": [
+      "id_lembrete"
+    ]
+  },
+  "links_uteis": {
+    "columns": [
+      {
+        "name": "id_link",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "varchar(255)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "url",
+        "type": "varchar(500)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "categoria",
+        "type": "varchar(50)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": "'Institucional'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ordem",
+        "type": "smallint",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_link"
+    ],
+    "identity": "id_link",
+    "unique": [],
+    "conflict": [
+      "id_link"
+    ]
+  },
+  "documento_pastas": {
+    "columns": [
+      {
+        "name": "id_pasta",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_pasta"
+    ],
+    "identity": "id_pasta",
+    "unique": [
+      [
+        "id_usuario",
+        "nome"
+      ]
+    ],
+    "conflict": [
+      "id_pasta"
+    ]
+  },
+  "documento_itens": {
+    "columns": [
+      {
+        "name": "id_item",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_pasta",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "varchar(3000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "autor_obra",
+        "type": "varchar(500)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "visibilidade",
+        "type": "enum('privado','publico','campus','comunidade')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'privado'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisao",
+        "type": "enum('nenhuma','pendente','aprovado','recusado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'nenhuma'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao_revisao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo_revisao",
+        "type": "varchar(1000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "enviado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisado_por",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo",
+        "type": "enum('link','arquivo')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "url",
+        "type": "varchar(2000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_arquivo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "mime",
+        "type": "varchar(50)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tamanho",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "conteudo",
+        "type": "mediumblob",
+        "pgType": "bytea",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_item"
+    ],
+    "identity": "id_item",
+    "unique": [],
+    "conflict": [
+      "id_item"
+    ]
+  },
+  "documento_armazenamento": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id"
+    ],
+    "unique": [],
+    "conflict": [
+      "id"
+    ]
+  },
+  "documento_salvos": {
+    "columns": [
+      {
+        "name": "id_salvo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_item",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_pasta",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_salvo"
+    ],
+    "identity": "id_salvo",
+    "unique": [
+      [
+        "id_usuario",
+        "id_item"
+      ]
+    ],
+    "conflict": [
+      "id_usuario",
+      "id_item"
+    ]
+  },
+  "academico_turmas": {
+    "columns": [
+      {
+        "name": "descricao",
+        "type": "varchar(1000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "sala_oficial",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao_sala",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_representante",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_vice1",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_vice2",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "whatsapp_representante",
+        "type": "varchar(20)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "consentimento_whatsapp_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_chave",
+        "type": "varchar(100)",
+        "pgType": "VARCHAR(100)",
+        "nullable": false,
+        "default": "''",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "arquivada_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_turma",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_curso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ano_ingresso",
+        "type": "smallint",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "turno",
+        "type": "enum('manha','tarde','noite','integral')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "campus",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_turma"
+    ],
+    "identity": "id_turma",
+    "unique": [
+      [
+        "nome_chave"
+      ],
+      [
+        "id_curso",
+        "nome",
+        "ano_ingresso",
+        "turno",
+        "campus"
+      ]
+    ],
+    "conflict": [
+      "id_turma"
+    ]
+  },
+  "academico_disciplinas": {
+    "columns": [
+      {
+        "name": "regime_letivo",
+        "type": "enum('legado','anual','semestral')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'legado'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "semestre",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atribuicao_ativa",
+        "type": "tinyint(1)",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "arquivada_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_turma",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_professor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ano_letivo",
+        "type": "smallint",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_disciplina"
+    ],
+    "identity": "id_disciplina",
+    "unique": [
+      [
+        "id_turma",
+        "nome",
+        "ano_letivo",
+        "regime_letivo",
+        "semestre"
+      ]
+    ],
+    "conflict": [
+      "id_disciplina"
+    ]
+  },
+  "academico_matriculas": {
+    "columns": [
+      {
+        "name": "ativa",
+        "type": "tinyint(1)",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "encerrado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_aluno",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_disciplina",
+      "id_aluno"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_disciplina",
+      "id_aluno"
+    ]
+  },
+  "academico_convites": {
+    "columns": [
+      {
+        "name": "id_convite",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "estado",
+        "type": "enum('pendente','aceito','recusado','cancelado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'pendente'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "expira_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_convite"
+    ],
+    "identity": "id_convite",
+    "unique": [
+      [
+        "id_disciplina",
+        "email"
+      ]
+    ],
+    "conflict": [
+      "id_disciplina",
+      "email"
+    ]
+  },
+  "academico_publicacoes": {
+    "columns": [
+      {
+        "name": "id_autor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_publicacao",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo",
+        "type": "enum('aviso','material','projeto','agenda')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titulo",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "descricao",
+        "type": "varchar(3000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_item",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "url",
+        "type": "varchar(2000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "inicio",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "fim",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "situacao",
+        "type": "enum('ativo','cancelado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'ativo'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo_atividade",
+        "type": "varchar(30)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_publicacao"
+    ],
+    "identity": "id_publicacao",
+    "unique": [],
+    "conflict": [
+      "id_publicacao"
+    ]
+  },
+  "docente_requisitos": {
+    "columns": [
+      {
+        "name": "id_curso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "etapa_atual",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "curso_informado",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "origem_solicitacao",
+        "type": "enum('cadastro','configuracoes')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'cadastro'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tipo_solicitado",
+        "type": "enum('docente','servidor','discente')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'docente'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_requisito",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "matricula",
+        "type": "varchar(30)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_usuario",
+        "type": "varchar(40)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "formacao",
+        "type": "varchar(300)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "estado",
+        "type": "enum('pendente','aprovado','recusado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'pendente'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "justificativa",
+        "type": "varchar(1000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisado_por",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_requisito"
+    ],
+    "identity": "id_requisito",
+    "unique": [
+      [
+        "id_externo"
+      ],
+      [
+        "id_usuario"
+      ],
+      [
+        "nome_usuario"
+      ]
+    ],
+    "conflict": [
+      "id_requisito"
+    ]
+  },
+  "projeto_inscricoes_externas": {
+    "columns": [
+      {
+        "name": "id_projeto",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "status",
+        "type": "enum('inscrito','aprovado','recusado','cancelado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'inscrito'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_projeto",
+      "id_externo"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_projeto",
+      "id_externo"
+    ]
+  },
+  "academico_saidas_professor": {
+    "columns": [
+      {
+        "name": "id_saida",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_professor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "encerrado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_saida"
+    ],
+    "identity": "id_saida",
+    "unique": [],
+    "conflict": [
+      "id_saida"
+    ]
+  },
+  "preferencias_notificacao": {
+    "columns": [
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "email_lembretes",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "consentido_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_usuario"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_usuario"
+    ]
+  },
+  "lembrete_envios": {
+    "columns": [
+      {
+        "name": "id_lembrete",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "estado",
+        "type": "enum('reservado','enviado','falhou','cancelado','aguardando','enviando')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'reservado'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "reservado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "finalizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tentativas",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "proxima_tentativa_utc",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_lembrete",
+      "versao"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_lembrete",
+      "versao"
+    ]
+  },
+  "inscricoes_editais": {
+    "columns": [
+      {
+        "name": "id_inscricao",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_aviso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "status",
+        "type": "enum('inscrito','em_analise','deferido','indeferido','aprovado')",
+        "pgType": "text",
+        "nullable": true,
+        "default": "'inscrito'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "text",
+        "pgType": "text",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "anexo_url",
+        "type": "varchar(500)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "timestamp",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_inscricao"
+    ],
+    "identity": "id_inscricao",
+    "unique": [
+      [
+        "id_aviso",
+        "id_usuario"
+      ]
+    ],
+    "conflict": [
+      "id_inscricao"
+    ]
+  },
+  "conta_vinculos": {
+    "columns": [
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_requisito",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_externo"
+    ],
+    "unique": [
+      [
+        "id_usuario"
+      ],
+      [
+        "id_requisito"
+      ]
+    ],
+    "conflict": [
+      "id_externo"
+    ]
+  },
+  "agenda_vinculos": {
+    "columns": [
+      {
+        "name": "id_evento_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_evento",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_evento_externo"
+    ],
+    "unique": [
+      [
+        "id_evento"
+      ]
+    ],
+    "conflict": [
+      "id_evento_externo"
+    ]
+  },
+  "vinculo_auditoria": {
+    "columns": [
+      {
+        "name": "id_auditoria",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_requisito",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_externo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_admin",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "acao",
+        "type": "varchar(30)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "varchar(1000)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_auditoria"
+    ],
+    "identity": "id_auditoria",
+    "unique": [],
+    "conflict": [
+      "id_auditoria"
+    ]
+  },
+  "academico_salas_historico": {
+    "columns": [
+      {
+        "name": "id_alteracao",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_turma",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_autor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_autor",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "sala_anterior",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "sala_nova",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao_anterior",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "alterado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_alteracao"
+    ],
+    "identity": "id_alteracao",
+    "unique": [],
+    "conflict": [
+      "id_alteracao"
+    ]
+  },
+  "academico_horarios": {
+    "columns": [
+      {
+        "name": "id_horario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "dia_semana",
+        "type": "tinyint",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "hora_inicio",
+        "type": "time",
+        "pgType": "time",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "hora_fim",
+        "type": "time",
+        "pgType": "time",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "vigencia_inicio",
+        "type": "date",
+        "pgType": "date",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "vigencia_fim",
+        "type": "date",
+        "pgType": "date",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "sala",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_autor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ativo",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_horario"
+    ],
+    "identity": "id_horario",
+    "unique": [],
+    "conflict": [
+      "id_horario"
+    ]
+  },
+  "academico_horario_excecoes": {
+    "columns": [
+      {
+        "name": "id_horario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "data",
+        "type": "date",
+        "pgType": "date",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "cancelada",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "varchar(300)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_autor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_horario",
+      "data"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_horario",
+      "data"
+    ]
+  },
+  "arcadia_schema_migrations": {
+    "columns": [
+      {
+        "name": "versao",
+        "type": "varchar(32)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "checksum",
+        "type": "char(64)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "verificado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "versao"
+    ],
+    "unique": [],
+    "conflict": [
+      "versao"
+    ]
+  },
+  "cadastro_auditoria": {
+    "columns": [
+      {
+        "name": "id_auditoria",
+        "type": "bigint",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_admin",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "campos",
+        "type": "json",
+        "pgType": "jsonb",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_auditoria"
+    ],
+    "identity": "id_auditoria",
+    "unique": [],
+    "conflict": [
+      "id_auditoria"
+    ]
+  },
+  "conta_nome_pedidos": {
+    "columns": [
+      {
+        "name": "id_pedido",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "tipo",
+        "type": "enum('users','external')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_conta",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_anterior",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_solicitado",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "estado",
+        "type": "enum('pendente','aprovado','recusado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'pendente'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "varchar(1000)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisado_por",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "revisado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_pedido"
+    ],
+    "identity": "id_pedido",
+    "unique": [],
+    "conflict": [
+      "id_pedido"
+    ]
+  },
+  "google_export_destinos": {
+    "columns": [
+      {
+        "name": "titular_tipo",
+        "type": "enum('users','external')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "titular_id",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "google_sub",
+        "type": "varchar(255)",
+        "pgType": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "calendar_id",
+        "type": "varchar(1024)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "tasklist_id",
+        "type": "varchar(1024)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "reserva",
+        "type": "char(48)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "reserva_ate",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "atualizado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "titular_tipo",
+      "titular_id",
+      "google_sub"
+    ],
+    "unique": [],
+    "conflict": [
+      "titular_tipo",
+      "titular_id",
+      "google_sub"
+    ]
+  },
+  "academico_catalogo_disciplinas": {
+    "columns": [
+      {
+        "name": "id_catalogo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "nome",
+        "type": "varchar(150)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_chave",
+        "type": "varchar(160)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "legado",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ativo",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_catalogo"
+    ],
+    "identity": "id_catalogo",
+    "unique": [
+      [
+        "nome_chave"
+      ]
+    ],
+    "conflict": [
+      "id_catalogo"
+    ]
+  },
+  "academico_oferta_catalogo": {
+    "columns": [
+      {
+        "name": "id_disciplina",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_catalogo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_disciplina"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_disciplina"
+    ]
+  },
+  "academico_vinculos_turma": {
+    "columns": [
+      {
+        "name": "id_turma",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_aluno",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_curso",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ativa",
+        "type": "boolean",
+        "pgType": "smallint",
+        "nullable": false,
+        "default": "1",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_curso_ativo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": true,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "ingresso_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "saida_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_turma",
+      "id_aluno"
+    ],
+    "unique": [
+      [
+        "id_aluno",
+        "id_curso_ativo"
+      ]
+    ],
+    "conflict": [
+      "id_turma",
+      "id_aluno"
+    ]
+  },
+  "academico_pedidos_ingresso": {
+    "columns": [
+      {
+        "name": "id_pedido",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "id_turma",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_aluno",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "estado",
+        "type": "enum('pendente','aprovado','recusado','cancelado')",
+        "pgType": "text",
+        "nullable": false,
+        "default": "'pendente'",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "turma_pendente",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": true,
+        "identity": false
+      },
+      {
+        "name": "versao",
+        "type": "int",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "0",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_decisor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "varchar(500)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "decidido_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_pedido"
+    ],
+    "identity": "id_pedido",
+    "unique": [
+      [
+        "id_aluno",
+        "turma_pendente"
+      ]
+    ],
+    "conflict": [
+      "id_pedido"
+    ]
+  },
+  "academico_gestao_historico": {
+    "columns": [
+      {
+        "name": "id_registro",
+        "type": "bigint",
+        "pgType": "bigint",
+        "nullable": false,
+        "default": "AS",
+        "generated": false,
+        "identity": true
+      },
+      {
+        "name": "tipo",
+        "type": "enum('turma','oferta','catalogo','ingresso','vinculo')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_alvo",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "acao",
+        "type": "varchar(40)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_autor",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_autor",
+        "type": "varchar(200)",
+        "pgType": "citext",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "motivo",
+        "type": "varchar(500)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "detalhes",
+        "type": "json",
+        "pgType": "jsonb",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "criado_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_registro"
+    ],
+    "identity": "id_registro",
+    "unique": [],
+    "conflict": [
+      "id_registro"
+    ]
+  },
+  "tarefa_arquivos": {
+    "columns": [
+      {
+        "name": "id_tarefa",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "arquivada_em",
+        "type": "datetime",
+        "pgType": "timestamp without time zone",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_tarefa"
+    ],
+    "unique": [],
+    "conflict": [
+      "id_tarefa"
+    ]
+  },
+  "conta_nomes": {
+    "columns": [
+      {
+        "name": "tipo",
+        "type": "enum('users','external')",
+        "pgType": "text",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_conta",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "nome_exibicao",
+        "type": "varchar(100)",
+        "pgType": "citext",
+        "nullable": true,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "tipo",
+      "id_conta"
+    ],
+    "identity": null,
+    "unique": [],
+    "conflict": [
+      "tipo",
+      "id_conta"
+    ]
+  },
+  "de_para": {
+    "columns": [
+      {
+        "name": "id_apagar",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      },
+      {
+        "name": "id_manter",
+        "type": "int",
+        "pgType": "integer",
+        "nullable": false,
+        "default": null,
+        "generated": false,
+        "identity": false
+      }
+    ],
+    "primary": [
+      "id_apagar"
+    ],
+    "identity": null,
+    "unique": [],
+    "conflict": [
+      "id_apagar"
+    ]
+  }
+}

@@ -17,7 +17,7 @@ test('confirmação tem botão e alternativa curtos com o mesmo link íntegro e 
     assert.match(visible, /só pode ser utilizado uma vez/);
     assert.match(visible, /Na página, clique em/);
     assert.match(visible, /não solicitou.*ignore/);
-    assert.match(html, /background-color:#1b4332;color:#ffffff/);
+    assert.match(html, /background-color:#2146a3;color:#ffffff/);
     assert.match(html, /padding:14px 24px/);
     assert.doesNotMatch(html, /<script|<form|<img|@import|onclick|http-equiv="refresh"/i);
 });
@@ -28,3 +28,4 @@ test('URL interpolada é escapada como atributo, sem permitir markup ou requisi�
     assert.ok(!html.includes('<test>'));
     assert.equal((html.match(/href=/g) || []).length, 2);
 });
+

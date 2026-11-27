@@ -112,10 +112,11 @@
                     type = { publico: 'Público · todos podem consultar' };
                 /* O editor tem vários controles: um label externo ativaria o primeiro seletor. */
                 const richText = ['notices', 'projects'].includes(resource) && ['resumo', 'descricao'].includes(name);
+                const taskContent = resource === 'tasks' && name === 'observacao';
                 const label = document.createElement(richText ? 'div' : 'label');
                 label.className =
                     'ar-field' +
-                    (['titulo', 'resumo', 'descricao'].includes(name) ? ' ar-span-2' : '');
+                    (taskContent || ['titulo', 'resumo', 'descricao'].includes(name) ? ' ar-span-2' : '');
                 label.textContent = text;
                 const input = document.createElement(
                     typeof type === 'object' ? 'select' : type === 'textarea' ? 'textarea' : 'input'
@@ -128,7 +129,7 @@
                         option.textContent = text;
                         input.append(option);
                     }
-                else if (type === 'textarea') input.rows = 3;
+                else if (type === 'textarea') input.rows = taskContent ? 15 : 3;
                 else input.type = type;
                 if (max) input.maxLength = max;
                 if (

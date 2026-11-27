@@ -1,0 +1,94 @@
+{
+  "baseline": "postgres-inicial-1",
+  "checksumAlgorithm": "sha256-utf8-lf",
+  "tables": 52,
+  "courses": 48,
+  "subjects": 1450,
+  "sources": [
+    {
+      "file": "backend/catalog/belem-curriculos-sigaa.json",
+      "sha256": "558fbb2af620c4e056abbd258ead056e7cb86a1a7bb8bc79d437ef47f2c7b864"
+    },
+    {
+      "file": "backend/db/migrations/1.1.25.json",
+      "sha256": "a12c570f97892ec9134b9bfd66db572d23c610d953fe1ad19f097890c8934901"
+    },
+    {
+      "file": "backend/db/migrations/1.1.26.json",
+      "sha256": "f754f237b9c0dc63365b685b4b322a1cbf3d5e30165098e135ac87bf9b2824d1"
+    },
+    {
+      "file": "backend/db/migrations/1.1.27.json",
+      "sha256": "a400879ffced51e88bbb14f123b18088039b937ee0c92b03b8dfcc446134cf35"
+    },
+    {
+      "file": "backend/db/migrations/1.1.28.json",
+      "sha256": "0c1b478f1d65eeb5ef074f92cb3d54a7e7d0007dc0d8ee8c791849dce87bcb82"
+    },
+    {
+      "file": "backend/db/migrations/1.1.29.json",
+      "sha256": "65e17cc51ecf41038888b71b2e43db2465f71060ca4f8260dedaf2294f78726b"
+    },
+    {
+      "file": "backend/db/migrations/1.1.30.json",
+      "sha256": "ac642f57a263a70da796e6e9c068b2d8afe2247f4fb3ce190045ae74090f212e"
+    },
+    {
+      "file": "backend/db/migrations/1.1.31.json",
+      "sha256": "0bb4cf6b2a097d372faefb46eeba3cce10c35ebe2bbee76cac6289fb5ca1d300"
+    },
+    {
+      "file": "backend/db/pending/1.1.33-course-stages.sql",
+      "sha256": "388b67cf7c5888979e3b676a8e0cf4d289019df77129db0271ca5e7935f41b6a"
+    },
+    {
+      "file": "backend/db/pending/account-audit.sql",
+      "sha256": "5258501f6a1c6b81e80681f8179ca281c394eeb3197b9ecd92b1efef5a04a621"
+    },
+    {
+      "file": "backend/db/pending/account-names.sql",
+      "sha256": "f2feac5cbde210874cd34d264816d3a09a18c5a6103188580578a0f552ea5b45"
+    },
+    {
+      "file": "backend/db/pending/course-durations-2026.sql",
+      "sha256": "7038e90ea72c309852d905476967a911400480e609237af183114848912db8b2"
+    },
+    {
+      "file": "backend/db/pending/document-authorship.sql",
+      "sha256": "12863420b37ede3b75b468bfc843824ac4f24a177fbe710cb28767d1effbcd35"
+    },
+    {
+      "file": "backend/db/pending/document-library-audiences.sql",
+      "sha256": "e60363345bce9c82e9532de259ac53a68cc24aa8023270b280f1c4de70526bf0"
+    },
+    {
+      "file": "backend/db/pending/google-workspace.sql",
+      "sha256": "346f460d7b6006d6bae9a33132ce4db20a5282045c7ced81aec004d5b9f3f964"
+    },
+    {
+      "file": "backend/db/pending/project-cover.sql",
+      "sha256": "697a067cc7d3aba7898bc41efe12f11f04b2b8ba9b4374d50989750b2e725dff"
+    },
+    {
+      "file": "backend/db/pending/project-pinning.sql",
+      "sha256": "12463406cf4295e2f4a90b6ec5664766ccecd10c141b996b6773cd398816ea00"
+    },
+    {
+      "file": "backend/db/pending/subject-catalog-length.sql",
+      "sha256": "9765f76f0c67da8b7e8105353f92cfefa7d78481505886db1da8c35c67b50259"
+    },
+    {
+      "file": "backend/db/pending/tasks-archive-class-activities.sql",
+      "sha256": "9248aaef99213778c2cc806b45e5475a3e7906c60d70fb6a5df1f96e844de2e6"
+    },
+    {
+      "file": "backend/db/postgres/triggers.sql",
+      "sha256": "530e9221de3c38ff911eb7a95b5e48b83296c6b4e0fcccddfc18d44285a76bc7"
+    },
+    {
+      "file": "backend/schema.sql",
+      "sha256": "03c57a66a4f1246f57f7a69b94cebaa4baffeda29fb059dba6b8af0525a4ca45"
+    }
+  ],
+  "sha256": "e3b6751993f1ee1d86f65ad03a48ffb1b43e030d0497b521dca28cf824c655af"
+}

@@ -98,7 +98,7 @@ async function login(req, res) {
             token,
             user: {
                 id_usuario: user.id_usuario,
-                nome: user.nome,
+                nome: user.nome_social?.trim() || user.nome,
                 email: user.email,
                 foto: user.foto || '',
                 tipo_usuario: user.tipo_usuario,

@@ -10,7 +10,7 @@
     const find = (selector) => root.querySelector(selector);
     const status = find('[data-library-status]');
     let layout = 'board';
-    let searchText = '',
+    let searchText = new URLSearchParams(location.search).get('busca') || '',
         formatFilter = 'all';
     const normalizeSearch = (text) =>
         String(text || '')
@@ -211,6 +211,11 @@
             if (reviewTab) reviewTab.hidden = !mine.canReview;
             if (mode === 'review' && !mine.canReview) mode = 'mine';
             publicItems = shared;
+            if (new URLSearchParams(location.search).has('busca')) {
+                mode = 'public';active = 'all';
+                find('[data-library-search]').value = searchText;
+            }
+            document.querySelector('[data-document-search-result]')?.remove();
             if (
                 active !== 'all' &&
                 active !== 'root' &&
@@ -219,7 +224,10 @@
                 active = 'all';
             render();
             const linked = new URLSearchParams(location.search).get('material');
-            if (linked && !readerDialog) {
+            if (linked && new URLSearchParams(location.search).has('busca')) {
+                const selected = [...root.querySelectorAll('[data-document-id]')].find(row=>row.dataset.documentId === linked);
+                if (selected) { selected.setAttribute('aria-current','true');selected.tabIndex=-1;selected.focus({preventScroll:true});selected.scrollIntoView({block:'center'}); }
+            } else if (linked && !readerDialog) {
                 const item = await api.expect(api.get(endpoint + '/items/' + encodeURIComponent(linked)));
                 openMaterial(item);
             }
@@ -395,10 +403,11 @@
         }
         for (const item of visible) {
             const row = element('article', undefined, 'ar-library-item');
+            row.dataset.documentId = String(item.id_item);
             const info = element('div', undefined, 'ar-library-item-info');
             const heading = element('h4');
             const readerLink = element('a', item.titulo || 'Material indisponível');
-            readerLink.href = 'documents.html?material=' + encodeURIComponent(item.id_item);
+            readerLink.href = 'documents.html?material=' + encodeURIComponent(item.id_item) + (item.visibilidade === 'publico' ? '&busca='+encodeURIComponent(item.titulo || '') : '');
             readerLink.addEventListener('click', event => {
                 if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
                 event.preventDefault();
@@ -566,7 +575,7 @@
         }
     }
     async function copyMaterialLink(item) {
-        const link = new URL('documents.html?material=' + encodeURIComponent(item.id_item), document.baseURI).href;
+        const link = new URL('documents.html?material=' + encodeURIComponent(item.id_item) + (item.visibilidade === 'publico' ? '&busca='+encodeURIComponent(item.titulo || '') : ''), document.baseURI).href;
         try {
             await navigator.clipboard.writeText(link);
             A.showToast?.('Link copiado.');

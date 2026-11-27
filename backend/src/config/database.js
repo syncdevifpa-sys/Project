@@ -1,5 +1,14 @@
-const mysql = require('mysql2/promise');
 if (!process.env.VERCEL) require('dotenv').config();
+
+if (require('../database/driver').driver() === 'postgres') {
+    const {Pool}=require('pg');
+    const {config}=require('../database/postgres');
+    const pool=new Pool({...config(),options:'-c timezone=America/Fortaleza'});
+    pool.on('error',()=>console.error('PostgreSQL: conexão ociosa indisponível.'));
+    module.exports=require('../database/postgres-backend').createBackend(pool);
+    if(process.env.VERCEL)require('@vercel/functions').attachDatabasePool(pool);
+} else {
+const mysql = require('mysql2/promise');
 
 const connection = mysql.createPool({
     host: process.env.DB_HOST,
@@ -24,4 +33,5 @@ const connection = mysql.createPool({
 module.exports = connection;
 if (process.env.VERCEL) {
     require('@vercel/functions').attachDatabasePool(connection.pool);
+}
 }

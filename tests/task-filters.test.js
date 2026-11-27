@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const { visible } = require('../frontend/js/task-filters');
+const { visible, isOverdue, viewStatus } = require('../frontend/js/task-filters');
 const rows = [
     {
         id_tarefa: 1,
@@ -105,7 +105,7 @@ test('controles de Tarefas atualizam quadro, tabela, lista e contagem pela mesma
             Arcadia: {
                 auth: { exigirLogin: () => true },
                 tasks: { list: async () => rows },
-                taskFilters: { visible },
+                taskFilters: { visible, isOverdue, viewStatus },
                 showToast: (m) => assert.fail(m),
                 noticeText: { render() {} }
             }
@@ -129,4 +129,12 @@ test('controles de Tarefas atualizam quadro, tabela, lista e contagem pela mesma
     assert.doesNotMatch(get('taskCompactList').innerHTML, /Reunião/);
     chips[0].events.click();
     assert.match(get('tarefasSummary').textContent, /3 tarefas/);
+});
+
+test('atraso considera o dia completo, não muda o status salvo e ignora conclusão e arquivo',()=>{
+ const now=new Date(2026,10,22,12);
+ for(const status of ['aberta','em_andamento']){const row={status,data_entrega:'2026-11-21'};assert.equal(viewStatus(row,now),'atrasada');assert.equal(row.status,status);}
+ for(const data_entrega of ['2026-11-22','2026-11-23',null,'','2026-02-30'])assert.equal(isOverdue({status:'aberta',data_entrega},now),false);
+ assert.equal(isOverdue({status:'concluida',data_entrega:'2026-01-01'},now),false);
+ assert.equal(isOverdue({status:'aberta',data_entrega:'2026-01-01',arquivada_em:'2026-02-01'},now),false);
 });

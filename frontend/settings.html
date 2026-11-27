@@ -1299,7 +1299,7 @@
 
         if (sessao.nome) {
           document.getElementById('confProfileName').textContent = window.Arcadia.firstPersonName(
-            sessao.nome
+            sessao.nome_social?.trim() || sessao.nome
           );
           document.getElementById('campoNome').value = sessao.nome;
         }
@@ -1743,13 +1743,15 @@
                   var novaSessao = Object.assign({}, sessao, data.usuario);
                   sessao = novaSessao;
                   localStorage.setItem('arcadiaSessao', JSON.stringify(novaSessao));
-                  document.getElementById('confProfileName').textContent = novaSessao.nome;
+                  var displayName = novaSessao.nome_social?.trim() || novaSessao.nome;
+                  var firstName = Arcadia.firstPersonName(displayName);
+                  document.getElementById('confProfileName').textContent = firstName;
                   document.querySelectorAll('.ar-user-name').forEach(function (el) {
-                    el.textContent = novaSessao.nome;
+                    el.textContent = firstName;
                   });
-                  renderProfileAvatar(novaSessao.foto, novaSessao.nome);
+                  renderProfileAvatar(novaSessao.foto, displayName);
                   if (Arcadia.updateUserAvatar)
-                    Arcadia.updateUserAvatar(novaSessao.foto, novaSessao.nome);
+                    Arcadia.updateUserAvatar(novaSessao.foto, displayName);
                   var courseName = novaSessao.id_curso
                     ? coursePicker.selectedOptions[0]?.textContent || ''
                     : '';

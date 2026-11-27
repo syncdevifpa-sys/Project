@@ -26,6 +26,9 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
                 c=await db.getConnection();await c.beginTransaction();
                 const [rows]=await c.execute(`SELECT l.*,COALESCE(u.email,x.email) AS email,
                     t.status AS tarefa_status,t.id_usuario AS dono_tarefa,
+                    t.titulo AS tarefa_titulo,t.observacao AS tarefa_descricao,
+                    DATE_FORMAT(t.data_entrega,'%Y-%m-%d') AS tarefa_prazo,
+                    t.responsavel AS tarefa_responsavel,t.prioridade AS tarefa_prioridade,t.categoria AS tarefa_categoria,
                     CASE WHEN l.id_externo IS NULL THEN p.email_lembretes ELSE x.email_lembretes END AS email_lembretes,
                     e.email AS email_confirmado,e.confirmado_em
                     FROM lembretes l
@@ -38,6 +41,19 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
                     AND ((u.situacao='ativo' AND l.id_externo IS NULL) OR (x.situacao='ativo' AND l.id_usuario IS NULL))
                     AND l.agendado_utc BETWEEN DATE_SUB(UTC_TIMESTAMP(),INTERVAL 48 HOUR) AND UTC_TIMESTAMP() FOR UPDATE`,keys);
                 const row=rows[0];
+                if (row && c.dialect === 'postgres') {
+                    // LEFT JOIN não admite trava no lado opcional. Revalidar sob travas
+                    // explícitas para não enviar após retirada de consentimento/bloqueio.
+                    const external=Boolean(row.id_externo),key=external?row.id_externo:row.id_usuario;
+                    const [accounts]=await c.execute(external
+                        ? 'SELECT email,situacao,email_lembretes FROM publico_externo WHERE id_externo=? FOR UPDATE'
+                        : 'SELECT email,situacao FROM usuarios WHERE id_usuario=? FOR UPDATE',[key]);
+                    const [states]=await c.execute('SELECT email,confirmado_em FROM email_estado WHERE tipo=? AND identidade=? FOR UPDATE',[external?'external':'users',key]);
+                    const [preferences]=external?[[]]:await c.execute('SELECT email_lembretes FROM preferencias_notificacao WHERE id_usuario=? FOR UPDATE',[key]);
+                    row.email=accounts[0]?.email;
+                    row.email_lembretes=accounts[0]?.situacao==='ativo'?(external?accounts[0].email_lembretes:preferences[0]?.email_lembretes):0;
+                    row.email_confirmado=states[0]?.email;row.confirmado_em=states[0]?.confirmado_em;
+                }
                 let allowed=row && [1,true].includes(row.email_lembretes) && row.confirmado_em && row.email_confirmado?.toLowerCase()===row.email?.toLowerCase();
                 if(allowed) {
                     try {
@@ -55,7 +71,9 @@ function createDispatcher(db=database,mail=email,{clock=()=>performance.now(),bu
                 if(!phase.affectedRows) throw new Error('RESERVATION_LOST');
                 attempted=true;
                 await mail.sendReminder(row.email,{titulo:row.titulo,id:item.id_lembrete,versao:item.versao,
-                    calendar:Boolean(row.id_externo)||row.tipo==='evento'||['calendario','agenda_externa'].includes(context(row).kind)});
+                    descricao:row.descricao,
+                    task:context(row).kind==='tarefa'?{titulo:row.tarefa_titulo||row.titulo,descricao:row.tarefa_descricao,data_entrega:row.tarefa_prazo,responsavel:row.tarefa_responsavel,prioridade:row.tarefa_prioridade,status:row.tarefa_status,categoria:row.tarefa_categoria}:null,
+                    calendar:context(row).kind!=='tarefa'&&(Boolean(row.id_externo)||row.tipo==='evento'||['calendario','agenda_externa'].includes(context(row).kind))});
                 await c.execute("UPDATE lembrete_envios SET estado='enviado',finalizado_em=UTC_TIMESTAMP() WHERE id_lembrete=? AND versao=?",keys);
                 await c.commit();result.sent++;
             } catch {

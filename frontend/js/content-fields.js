@@ -72,7 +72,7 @@
                     'Situação',
                     { aberta: 'Aberta', em_andamento: 'Em andamento', concluida: 'Concluída' }
                 ],
-                ['observacao', 'Observação', 'textarea', 5000]
+                ['observacao', 'Conteúdo da tarefa', 'textarea', 5000]
             ]
         },
         documents: {

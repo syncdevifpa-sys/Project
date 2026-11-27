@@ -142,3 +142,9 @@ test('processador adia a fila antes de reservar quando faltam os 17s de margem',
  const result=await createDispatcher(db,mail,{clock:()=>checks++===0?0:8001}).run();
  assert.equal(result.deferred,2);assert.equal(writes,0);assert.equal(sends,0);
 });
+
+test('processador entrega detalhes atuais da tarefa autorizada e não manda tarefa externa ao calendário',async()=>{
+ const original=process.env.REMINDER_EMAIL_ENABLED;process.env.REMINDER_EMAIL_ENABLED='true';
+ try{const f=dispatchFixture({id_usuario:null,id_externo:7,tarefa_titulo:'Título atual',tarefa_descricao:'Descrição completa',tarefa_prazo:'2026-11-24',tarefa_responsavel:'João',tarefa_prioridade:'alta',tarefa_categoria:'Acadêmico'});await f.dispatcher.run();assert.equal(f.sends.length,1);assert.deepEqual(f.sends[0][1].task,{titulo:'Título atual',descricao:'Descrição completa',data_entrega:'2026-11-24',responsavel:'João',prioridade:'alta',status:'aberta',categoria:'Acadêmico'});assert.equal(f.sends[0][1].calendar,false);}
+ finally{if(original===undefined)delete process.env.REMINDER_EMAIL_ENABLED;else process.env.REMINDER_EMAIL_ENABLED=original;}
+});

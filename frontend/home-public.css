@@ -32,6 +32,11 @@
 .home-content-page .site-nav .btn { background:var(--surface-card);color:var(--color-ink);border-color:var(--color-line); }
 .home-content-page .site-nav .btn:hover { background:var(--surface-alt);border-color:var(--color-ink); }
 
+html .home-content-page .site-nav .nav-login { background:linear-gradient(110deg,#f6f3ec,#c6def8);color:#0b1f3a;border:1px solid #bfd1e8; }
+html[data-theme=dark] .home-content-page .site-nav .nav-login { background:linear-gradient(110deg,#0b1f3a,#1d45a3);color:#fff;border-color:#557098; }
+html .home-content-page .site-nav .nav-login::before { content:none; }
+html .home-content-page .site-nav .nav-login:hover { color:#0b1f3a;filter:brightness(.97); }
+html[data-theme=dark] .home-content-page .site-nav .nav-login:hover { color:#fff;filter:brightness(1.13); }
 
 @media(max-width:700px){
  .home-content-page .home-campus-banner-content { min-width:0;padding:20px;box-sizing:border-box;font-size:16px; }
@@ -42,6 +47,12 @@
  .home-content-page .site-nav .nav-actions { margin-inline-start:auto;max-width:100%;gap:6px;flex-wrap:wrap; }
 }
 
+html[data-theme] .home-content-page .home-primary-actions .btn--primary { background:#2563eb !important;background-image:none !important;color:#fff !important;border:1px solid #2563eb !important; }
+.home-campus-banner-content .home-more-info { color:var(--personal-banner-ink,var(--default-banner-ink,var(--color-ink)));opacity:1; }
+
+/* Alternância de tema visível na navegação, também para visitantes. */
+.home-content-page .nav-actions .theme-toggle { flex:0 0 36px;width:36px;height:36px;display:inline-grid;place-items:center;padding:8px;border:1px solid var(--color-card-border);border-radius:50%;background:transparent;color:var(--color-ink); }
+.home-content-page .nav-actions .theme-toggle svg { width:18px;height:18px; }
 /* ---------- Ajustes do Renzo por cima da home do Luciano ---------- */
 :root {
   --hp-accent: #2563eb;

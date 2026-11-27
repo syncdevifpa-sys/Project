@@ -717,13 +717,15 @@
                 .then(function (response) {
                     if (!response.ok || A.token.get() !== nameToken) return;
                     var identity = response.data;
-                    var display = identity.nome;
+                    var display = identity.nome_exibicao || identity.nome;
                     display = A.formatPersonName?.(display) || display;
                     if (!display) return;
                     document.querySelectorAll('.ar-user-name').forEach(function (node) {
                         node.textContent =
-                            A.firstPersonName?.(identity.nome) || display.split(/\s+/)[0];
+                            A.firstPersonName?.(display) || display.split(/\s+/)[0];
                     });
+                    var greeting = document.getElementById('painelUserGreeting');
+                    if (greeting) greeting.textContent = A.firstPersonName?.(display) || display.split(/\s+/)[0];
                     updateUserAvatar(sessao.foto, display);
                 })
                 .catch(function () {});
