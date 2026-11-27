@@ -129,7 +129,7 @@
                         option.textContent = text;
                         input.append(option);
                     }
-                else if (type === 'textarea') input.rows = taskContent ? 7 : 3;
+                else if (type === 'textarea') input.rows = taskContent ? 15 : 3;
                 else input.type = type;
                 if (max) input.maxLength = max;
                 if (
