@@ -10,6 +10,11 @@ const account = 'portalarcadia.contato@gmail.com';
 
 function config() {
     if (process.env.VERCEL_ENV !== 'preview') return null;
+    if (process.env.DB_CLIENT !== 'postgres') return null;
+    const database = new URL(process.env.POSTGRES_URL);
+    const testHost = 'ep-floral-resonance-bbs5f7ew.c-15.us-east-1.aws.neon.tech';
+    const pooledTestHost = testHost.replace('.', '-pooler.');
+    if (![testHost, pooledTestHost].includes(database.hostname) || database.pathname !== '/arcadiabd') return null;
     const { GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: secret, GOOGLE_DRIVE_REDIRECT_URI: uri,
         GOOGLE_DRIVE_ENCRYPTION_KEY: rawKey } = process.env;
     if (!clientId || !secret || !uri || !/^[a-f0-9]{64}$/i.test(rawKey || '')) return null;
