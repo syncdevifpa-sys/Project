@@ -4,16 +4,16 @@ body {
   color: var(--ink);
   font: 15px/1.5 var(--font-sans);
 }
-.admin-intro {
+.admin-intro:not(.ar-hero) {
   padding: var(--space-6);
   border-radius: var(--radius-lg);
   background: var(--cyan);
   color: var(--on-field);
 }
-.admin-intro h1 {
+.admin-intro:not(.ar-hero) h1 {
   margin: 0 0 var(--space-2);
 }
-.admin-intro p {
+.admin-intro:not(.ar-hero) p {
   margin: 0;
   max-width: 75ch;
   color: var(--on-field-muted);
@@ -126,7 +126,7 @@ textarea {
   min-height: 24px;
 }
 @media (max-width: 760px) {
-  .admin-intro,
+  .admin-intro:not(.ar-hero),
   .admin-panel {
     padding: var(--space-4);
   }
